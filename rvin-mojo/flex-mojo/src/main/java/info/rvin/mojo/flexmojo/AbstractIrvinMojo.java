@@ -1,6 +1,5 @@
 package info.rvin.mojo.flexmojo;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
