@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:itest="info.rvin.itest.*">
+
+	<mx:Script>
+		<![CDATA[
+			import info.rvin.itest.ScriptClass;
+
+			private var aVar:ScriptClass;
+
+		]]>
+	</mx:Script>
+
+	<itest:MxmlClass label="Test"/>
+
+</mx:Application>
