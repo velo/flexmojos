@@ -1,9 +1,5 @@
 package info.rvin.mojo.flexmojo.compiler;
 
-import flex2.tools.oem.Builder;
-import flex2.tools.oem.Configuration;
-import flex2.tools.oem.Report;
-
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.File;
@@ -21,6 +17,10 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+
+import flex2.tools.oem.Builder;
+import flex2.tools.oem.Configuration;
+import flex2.tools.oem.Report;
 
 public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		AbstractIrvinMojo {
@@ -40,7 +40,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean accessible;
 
 	/**
-	 * FIXME add documentarion
+	 * Sets the locales that the compiler uses to replace <code>{locale}</code>
+	 * tokens that appear in some configuration values. This is equivalent to
+	 * using the <code>compiler.locale</code> option of the mxmlc or compc
+	 * compilers.
 	 * 
 	 * @parameter
 	 */
@@ -71,7 +74,48 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean showWarnings;
 
 	/**
-	 * FIXME need javadocs
+	 * Enables checking of the following ActionScript warnings:
+	 * 
+	 * <pre>
+	 * --compiler.warn-array-tostring-changes
+	 * --compiler.warn-assignment-within-conditional
+	 * --compiler.warn-bad-array-cast
+	 * --compiler.warn-bad-bool-assignment
+	 * --compiler.warn-bad-date-cast
+	 * --compiler.warn-bad-es3-type-method
+	 * --compiler.warn-bad-es3-type-prop
+	 * --compiler.warn-bad-nan-comparison
+	 * --compiler.warn-bad-null-assignment
+	 * --compiler.warn-bad-null-comparison
+	 * --compiler.warn-bad-undefined-comparison
+	 * --compiler.warn-boolean-constructor-with-no-args
+	 * --compiler.warn-changes-in-resolve
+	 * --compiler.warn-class-is-sealed
+	 * --compiler.warn-const-not-initialized
+	 * --compiler.warn-constructor-returns-value
+	 * --compiler.warn-deprecated-event-handler-error
+	 * --compiler.warn-deprecated-function-error
+	 * --compiler.warn-deprecated-property-error
+	 * --compiler.warn-duplicate-argument-names
+	 * --compiler.warn-duplicate-variable-def
+	 * --compiler.warn-for-var-in-changes
+	 * --compiler.warn-import-hides-class
+	 * --compiler.warn-instance-of-changes
+	 * --compiler.warn-internal-error
+	 * --compiler.warn-level-not-supported
+	 * --compiler.warn-missing-namespace-decl
+	 * --compiler.warn-negative-uint-literal
+	 * --compiler.warn-no-constructor
+	 * --compiler.warn-no-explicit-super-call-in-constructor
+	 * --compiler.warn-no-type-decl
+	 * --compiler.warn-number-from-string-changes
+	 * --compiler.warn-scoping-change-in-this
+	 * --compiler.warn-slow-text-field-addition
+	 * --compiler.warn-unlikely-function-value
+	 * --compiler.warn-xml-class-has-changed
+	 * </pre>
+	 * 
+	 * @see Warning
 	 */
 	private Warning warnigs;
 
@@ -84,7 +128,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean debug;
 
 	/**
-	 * FIXME need javadoc
+	 * A password that is embedded in the application
 	 * 
 	 * @parameter
 	 */
@@ -177,9 +221,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Sets the context root path so that the compiler can replace
-	 * <code>{context.root}</code> tokens for service channel endpoints. *
+	 * <code>{context.root}</code> tokens for service channel endpoints.
 	 * 
-	 * @parameter
+	 * @parameter default-value=""
 	 */
 	private String contextRoot;
 
@@ -191,7 +235,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean linkReport;
 
 	/**
-	 * FIXME
+	 * Sets a list of artifacts to omit from linking when building an
+	 * application. This is equivalent to using the <code>load-externs</code>
+	 * option of the mxmlc or compc compilers.
 	 * 
 	 * @parameter
 	 */
@@ -218,6 +264,48 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter
 	 */
 	private String output;
+
+	/**
+	 * specifies the version of the player the application is targeting.
+	 * Features requiring a later version will not be compiled into the
+	 * application. The minimum value supported is "9.0.0".
+	 * 
+	 * @parameter
+	 * TODO
+	 */
+	private String targetPlayer;
+
+	/**
+	 * Sets the metadata section of the application SWF. This is equivalent to
+	 * the <code>raw-metadata</code> option of the mxmlc or compc compilers.
+	 * 
+	 * Need a well-formed XML fragment
+	 * 
+	 * @parameter
+	 */
+	private String metadata;
+
+	/**
+	 * Define the base path to all RSL libraries.
+	 * 
+	 * Accept some special tokens:
+	 * <pre>
+	 * ${contextRoot}		- replace by defined context root
+	 * ${groupId}			- replace by library groupId
+	 * ${artifactId}		- replace by library artifactId
+	 * ${version}			- replace by library version
+	 * <pre>
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * 	${contextRoot}/rsl/${artifactId}.swf
+	 * 	http://www.mydomain.com/myflexapplication/${artifactId}.swf
+	 * </pre>
+	 * 
+	 * @parameter default-value="/${contextRoot}/rsl/${artifactId}-${version}.swf"
+	 */
+	private String rslPath;
 
 	/**
 	 * TODO
@@ -305,6 +393,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			urlToFile(url, fontsSer);
 			fonts.setLocalFontsSnapshot(fontsSer);
 		}
+		
+		if(rslPath == null) {
+			rslPath = contextRoot;
+		}
+		
+		if(!rslPath.startsWith("/")) {
+			rslPath += '/';
+		}
+
+		if(!rslPath.endsWith("/")) {
+			rslPath += '/';
+		}
 
 		configuration = builder.getDefaultConfiguration();
 		configure();
@@ -341,12 +441,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	protected void configure() throws MojoExecutionException {
 		configuration.setExternalLibraryPath(getDependenciesPath("external"));
+
 		configuration.includeLibraries(getDependenciesPath("internal"));
+
 		configuration.setLibraryPath(getDependenciesPath("merged"));
 		configuration.addLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getResourcesBundles());
-		// FIXME
-		// configuration.setRuntimeSharedLibraries(getDependenciesPath("runtime"));
+
+		configuration.setRuntimeSharedLibraries(getRSLPaths(getDependencies("runtime")));
+
 		configuration.setTheme(getDependenciesPath("theme"));
 
 		configuration.enableAccessibility(accessible);
@@ -402,7 +505,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 		configuration.keepLinkReport(linkReport);
 		configuration.setConfiguration(configFile);
-		
+
 		if (loadExterns != null) {
 			List<File> externsFiles = new ArrayList<File>();
 
@@ -416,8 +519,27 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 			configuration.setExterns(externsFiles.toArray(new File[externsFiles
 					.size()]));
+
+			if (metadata != null) {
+				configuration.setSWFMetaData(metadata);
+			}
 		}
 
+	}
+
+	private String[] getRSLPaths(List<Dependency> dependencies) {
+		List<String> rsls = new ArrayList<String>();
+		
+		for (Dependency dependency : dependencies) {
+			String rsl = rslPath;
+			rsl = rsl.replace("${contextRoot}", contextRoot);
+			rsl = rsl.replace("${groupId}", dependency.getGroupId());
+			rsl = rsl.replace("${artifactId}", dependency.getArtifactId());
+			rsl = rsl.replace("${version}", dependency.getVersion());
+			rsls.add(rsl);
+		}
+
+		return rsls.toArray(new String[rsls.size()]);
 	}
 
 	private File[] getResourcesBundles() {
@@ -444,11 +566,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			return null;
 
 		List<File> files = new ArrayList<File>();
-		for (Dependency d : getDependencies()) {
-			if (scope.equals(d.getScope())) {
-				Artifact a = getArtifact(d);
-				files.add(a.getFile());
-			}
+		for (Dependency d : getDependencies(scope)) {
+			Artifact a = getArtifact(d);
+			files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
 	}

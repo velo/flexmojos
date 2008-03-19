@@ -1,5 +1,7 @@
 package info.rvin.mojo.flexmojo;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -81,6 +83,20 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	@SuppressWarnings("unchecked")
 	protected List<Dependency> getDependencies() {
 		return project.getDependencies();
+	}
+
+	protected List<Dependency> getDependencies(String scope)
+			throws MojoExecutionException {
+		if (scope == null)
+			return null;
+
+		List<Dependency> dependencies = new ArrayList<Dependency>();
+		for (Dependency d : getDependencies()) {
+			if (scope.equals(d.getScope())) {
+				dependencies.add(d);
+			}
+		}
+		return dependencies;
 	}
 
 	protected Artifact getArtifact(Dependency dependency)
