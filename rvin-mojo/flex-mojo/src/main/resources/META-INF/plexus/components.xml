@@ -1,0 +1,110 @@
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
+
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>swc</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>swf</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swf</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swf</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile-swf</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		
+		<!-- Air support -->
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>aswc</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<extension>swc</extension>
+				<type>aswc</type>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>aswc</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-aswc</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>aswf</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<extension>swf</extension>
+				<type>aswf</type>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>aswf</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-aswf</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swf</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile-swf</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+	</components>
+</component-set>
