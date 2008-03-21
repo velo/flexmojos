@@ -6,7 +6,6 @@ package info.rvin.mojo.flexmojo.compiler;
  * @goal compile-aswf
  * @requiresDependencyResolution
  * @phase compile
- * @requiresProject
  */
 public class AirApplicationMojo extends ApplicationMojo {
 

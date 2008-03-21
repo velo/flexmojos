@@ -6,7 +6,6 @@ package info.rvin.mojo.flexmojo.compiler;
  * @goal compile-aswc
  * @requiresDependencyResolution
  * @phase compile
- * @requiresProject
  */
 public class AirLibraryMojo extends LibraryMojo {
 
