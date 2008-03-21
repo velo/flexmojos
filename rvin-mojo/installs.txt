@@ -1,0 +1,37 @@
+@java
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-parser -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-parser.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-util -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-util.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-css -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-css.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-script -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-script.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-dom -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-dom.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-ext -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-ext.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-gvt -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-gvt.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-svg-dom -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-svg-dom.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-transcoder -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-transcoder.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-xml -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-xml.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-svggen -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-svggen.jar
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.batik -DartifactId=batik-bridge -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\batik-bridge.jar
+
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.velocity -DartifactId=mm-velocity -Dversion=1.4 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\mm-velocity-1.4.jar
+
+mvn install:install-file -DgeneratePom=true -DgroupId=com.adobe.xerces -DartifactId=xercesPatch -Dversion=3.0.0.3.0.0.477 -Dpackaging=jar -Dfile=D:\flex\workspace\sdk\lib\xercesPatch.jar
+
+
+@Flex
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=playerglobal -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=framework -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=framework -Dversion=3.0.0.3.0.0.477 -Dpackaging=swf -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=framework -Dversion=3.0.0.3.0.0.477 -Dpackaging=swz -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=framework -Dversion=3.0.0.3.0.0.477 -Dpackaging=rb -Dclassifier=en_US -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=rpc -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=rpc -Dversion=3.0.0.3.0.0.477 -Dpackaging=swf -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=rpc -Dversion=3.0.0.3.0.0.477 -Dpackaging=swz -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=rpc -Dversion=3.0.0.3.0.0.477 -Dpackaging=rb -Dclassifier=en_US -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=flex -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=utilities -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+
+@Air
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=airglobal -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=airframework -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DartifactId=airframework -Dversion=3.0.0.3.0.0.477 -Dpackaging=rb -Dclassifier=en_US -Dfile=/path/to/file
+mvn install:install-file -DgroupId=com.adobe.flex.sdk -DgeneratePom=true -DartifactId=servicemonitor -Dversion=3.0.0.3.0.0.477 -Dpackaging=swc -Dfile=/path/to/file
