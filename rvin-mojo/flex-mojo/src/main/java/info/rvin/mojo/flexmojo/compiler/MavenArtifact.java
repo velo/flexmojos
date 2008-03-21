@@ -17,7 +17,7 @@
  */
 package info.rvin.mojo.flexmojo.compiler;
 
-public class LoadExterns {
+public class MavenArtifact {
 
 	private String groupId;
 	
