@@ -19,9 +19,16 @@ package info.rvin.mojo.flexmojo.compiler;
 
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -176,6 +183,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean optimize;
 
 	/**
+	 * If the <code>incremental</code> input argument is <code>false</code>,
+	 * this method recompiles all parts of the object. If the
+	 * <code>incremental</code> input argument is <code>true</code>, this
+	 * method compiles only the parts of the object that have changed since the
+	 * last compilation.
+	 * 
+	 * @parameter default-value="false"
+	 */
+	private boolean incremental;
+
+	/**
 	 * Keep the following AS3 metadata in the bytecodes.
 	 * 
 	 * @parameter
@@ -218,6 +236,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean verboseStacktraces;
 
 	/**
+	 * FIXME need javadoc
+	 * 
 	 * @parameter
 	 */
 	private Font fonts;
@@ -258,7 +278,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * 
 	 * @parameter
 	 */
-	private LoadExterns[] loadExterns;
+	private MavenArtifact[] loadExterns;
 
 	/**
 	 * Prints a list of resource bundles to a file for input to the compc
@@ -288,7 +308,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * application. The minimum value supported is "9.0.0".
 	 * 
 	 * @parameter
-	 * TODO
 	 */
 	private String targetPlayer;
 
@@ -306,12 +325,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Define the base path to all RSL libraries.
 	 * 
 	 * Accept some special tokens:
+	 * 
 	 * <pre>
-	 * ${contextRoot}		- replace by defined context root
-	 * ${groupId}			- replace by library groupId
-	 * ${artifactId}		- replace by library artifactId
-	 * ${version}			- replace by library version
-	 * <pre>
+	 * {contextRoot}		- replace by defined context root
+	 * {groupId}			- replace by library groupId
+	 * {artifactId}			- replace by library artifactId
+	 * {version}			- replace by library version
+	 * </pre>
 	 * 
 	 * For example:
 	 * 
@@ -320,9 +340,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * 	http://www.mydomain.com/myflexapplication/${artifactId}.swf
 	 * </pre>
 	 * 
-	 * @parameter default-value="/${contextRoot}/rsl/${artifactId}-${version}.swf"
+	 * @parameter default-value="/{contextRoot}/rsl/{artifactId}-{version}.swf"
+	 * 
 	 */
-	private String rslPath;
+	protected String rslPath;
+
+	/**
+	 * Previous compilation data, used to incremental builds
+	 */
+	private File compilationData;
 
 	/**
 	 * TODO
@@ -368,10 +394,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 
 		if (output == null) {
-			outputFile = new File(build.getOutputDirectory(), build
-					.getFinalName());
+			outputFile = new File(build.getDirectory(), build.getFinalName()
+					+ "." + project.getPackaging());
 		} else {
-			outputFile = new File(build.getOutputDirectory(), output);
+			outputFile = new File(build.getDirectory(), output);
 		}
 
 		if (configFile == null) {
@@ -387,8 +413,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 		if (configFile == null) {
 			URL url = getClass().getResource("/empty-config.xml");
-			configFile = new File(build.getOutputDirectory(),
-					getConfigFileName());
+			configFile = new File(build.getDirectory(), getConfigFileName());
 			urlToFile(url, configFile);
 		}
 		if (!configFile.exists()) {
@@ -406,25 +431,29 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				// if(os.contains("windows")) {
 				url = getClass().getResource("/fonts/winFonts.ser");
 			}
-			File fontsSer = new File(build.getOutputDirectory(), "fonts.ser");
+			File fontsSer = new File(build.getDirectory(), "fonts.ser");
 			urlToFile(url, fontsSer);
 			fonts.setLocalFontsSnapshot(fontsSer);
 		}
-		
-		if(rslPath == null) {
+
+		if (rslPath == null) {
 			rslPath = contextRoot;
 		}
-		
-		if(!rslPath.startsWith("/")) {
+
+		if (!rslPath.startsWith("/")) {
 			rslPath += '/';
 		}
 
-		if(!rslPath.endsWith("/")) {
+		if (!rslPath.endsWith("/")) {
 			rslPath += '/';
 		}
 
 		configuration = builder.getDefaultConfiguration();
 		configure();
+
+		compilationData = new File(build.getDirectory(), project
+				.getArtifactId()
+				+ "-" + project.getVersion() + ".incr");
 	}
 
 	protected String getConfigFileName() {
@@ -447,12 +476,41 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		long bytes;
 		try {
-			bytes = builder.build(true);
+			if (incremental && compilationData.exists()) {
+				builder.load(loadCompilationData());
+			}
+			bytes = builder.build(incremental);
+			if (incremental) {
+				if (compilationData.exists()) {
+					compilationData.delete();
+					compilationData.createNewFile();
+				}
+
+				builder.save(saveCompilationData());
+			}
 		} catch (Exception ex) {
 			throw new MojoFailureException(ex.getMessage());
 		}
 		if (bytes == 0) {
 			throw new MojoFailureException("Error compiling!");
+		}
+	}
+
+	private OutputStream saveCompilationData() throws MojoExecutionException {
+		try {
+			return new BufferedOutputStream(new FileOutputStream(
+					compilationData));
+		} catch (FileNotFoundException e) {
+			throw new MojoExecutionException("Can't save compilation data.");
+		}
+	}
+
+	private InputStream loadCompilationData() throws MojoExecutionException {
+		try {
+			return new BufferedInputStream(new FileInputStream(compilationData));
+		} catch (FileNotFoundException e) {
+			throw new MojoExecutionException(
+					"Previows compilation data not found.");
 		}
 	}
 
@@ -465,7 +523,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.addLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getResourcesBundles());
 
-		configuration.setRuntimeSharedLibraries(getRSLPaths(getDependencies("runtime")));
+		configuration
+				.setRuntimeSharedLibraries(getRSLPaths(getDependencies("runtime")));
 
 		configuration.setTheme(getDependenciesPath("theme"));
 
@@ -498,7 +557,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 
-		configuration.setLocale(locales);
+		// When using the resource-bundle-list option, you must also set the
+		// value of the locale option to an empty string.
+		if (listResourceBundle) {
+			configuration.setLocale(new String[0]);
+		} else {
+			configuration.setLocale(locales);
+		}
 
 		if (namespaces != null) {
 			for (Namespace namespace : namespaces) {
@@ -526,10 +591,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (loadExterns != null) {
 			List<File> externsFiles = new ArrayList<File>();
 
-			for (LoadExterns extern : loadExterns) {
+			for (MavenArtifact mvnArtifact : loadExterns) {
 				Artifact artifact = artifactFactory
-						.createArtifactWithClassifier(extern.getGroupId(),
-								extern.getArtifactId(), extern.getVersion(),
+						.createArtifactWithClassifier(mvnArtifact.getGroupId(),
+								mvnArtifact.getArtifactId(), mvnArtifact.getVersion(),
 								"xml", "link-report");
 				resolveArtifact(artifact);
 				externsFiles.add(artifact.getFile());
@@ -546,13 +611,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	private String[] getRSLPaths(List<Dependency> dependencies) {
 		List<String> rsls = new ArrayList<String>();
-		
+
 		for (Dependency dependency : dependencies) {
 			String rsl = rslPath;
-			rsl = rsl.replace("${contextRoot}", contextRoot);
-			rsl = rsl.replace("${groupId}", dependency.getGroupId());
-			rsl = rsl.replace("${artifactId}", dependency.getArtifactId());
-			rsl = rsl.replace("${version}", dependency.getVersion());
+			rsl = rsl.replace("{contextRoot}", contextRoot);
+			rsl = rsl.replace("{groupId}", dependency.getGroupId());
+			rsl = rsl.replace("{artifactId}", dependency.getArtifactId());
+			rsl = rsl.replace("{version}", dependency.getVersion());
 			rsls.add(rsl);
 		}
 
@@ -560,19 +625,25 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	}
 
 	private File[] getResourcesBundles() {
+		if (locales == null || locales.length == 0) {
+			return new File[0];
+		}
+
 		List<File> resouceBundles = new ArrayList<File>();
 		for (Dependency dependency : getDependencies()) {
-			Artifact artifact = artifactFactory.createArtifactWithClassifier(
-					dependency.getGroupId(), dependency.getArtifactId(),
-					dependency.getVersion(), "rb", "en_US");
-			try {
-				resolveArtifact(artifact);
-			} catch (MojoExecutionException e) {
-				// Dont found? SKIP =D
-				continue;
+			for (String locale : locales) {
+				Artifact artifact = artifactFactory
+						.createArtifactWithClassifier(dependency.getGroupId(),
+								dependency.getArtifactId(), dependency
+										.getVersion(), "rb", locale);
+				try {
+					resolveArtifact(artifact);
+					resouceBundles.add(artifact.getFile());
+				} catch (MojoExecutionException e) {
+					// Dont found? SKIP =D
+					continue;
+				}
 			}
-
-			resouceBundles.add(artifact.getFile());
 		}
 		return resouceBundles.toArray(new File[resouceBundles.size()]);
 	}
@@ -697,12 +768,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	private void writeResourceBundleList(Report report)
 			throws MojoExecutionException {
-		File resourceBundle = new File(build.getDirectory(),
-				"resourceBundle.list");
+		File resourceBundle = new File(build.getDirectory(), project
+				.getArtifactId()
+				+ "-" + project.getVersion() + "-resourceBundle.properties");
 		Writer writer;
 		try {
 			writer = new FileWriter(resourceBundle);
-			report.writeLinkReport(writer);
+			String[] bundles = report.getResourceBundleNames();
+			for (String bundle : bundles) {
+				writer.write(bundle);
+				writer.write(' ');
+			}
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
@@ -710,7 +786,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 					"An error has ocurried while recording resourceBundle list",
 					e);
 		}
-		projectHelper.attachArtifact(project, "list", "resource-bundle",
+		projectHelper.attachArtifact(project, "properties", "resource-bundle",
 				resourceBundle);
 	}
 
