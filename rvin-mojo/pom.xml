@@ -8,8 +8,8 @@
 
 	<packaging>pom</packaging>
 
-	<name>Rvin Maven Mojo</name>
-	<url>http://maven.apache.org</url>
+	<name>Flex Mojos</name>
+	<url>http://code.google.com/p/flex-mojos</url>
 
 	<build>
 		<plugins>
@@ -21,11 +21,9 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>
@@ -35,10 +33,41 @@
 		</plugins>
 	</build>
 
-    <modules>
-        <module>flex-mojo</module>
-        <module>flex-support</module>
-        <module>air-support</module>
-        <module>flex-mojo-IT</module>
-    </modules>
+	<developers>
+		<developer>
+			<id>velo.br</id>
+			<name>Marvin Herman Froeder</name>
+			<email>velo.br at gmail.com</email>
+			<roles>
+				<role>Author Developer</role>
+			</roles>
+			<timezone>-3</timezone>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<url>http://code.google.com/p/flex-mojos/issues/list</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>LGPL License.</name>
+			<url>http://www.gnu.org/copyleft/lesser.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:svn:http://flex-mojos.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://code.google.com/p/flex-mojos/source/browse</url>
+	</scm>
+
+	<modules>
+		<module>flex-mojo</module>
+		<module>flex-support</module>
+		<module>air-support</module>
+		<module>flex-mojo-IT</module>
+	</modules>
+
 </project>
