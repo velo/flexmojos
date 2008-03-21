@@ -31,7 +31,6 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal compile-swf
  * @requiresDependencyResolution
  * @phase compile
- * @requiresProject
  */
 public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
@@ -63,6 +62,10 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 					}
 				}
 			}
+		}
+		
+		if(sourceFile == null) {
+			throw new MojoExecutionException("Source file not found and not expecified!");
 		}
 
 		// need to initialize builder before go super
