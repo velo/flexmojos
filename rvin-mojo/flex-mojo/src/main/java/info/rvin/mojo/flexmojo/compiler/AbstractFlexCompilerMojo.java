@@ -471,8 +471,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 				builder.save(saveCompilationData());
 			}
-		} catch (Exception ex) {
-			throw new MojoFailureException(ex.getMessage());
+		} catch (IOException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		} catch (MojoExecutionException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new MojoExecutionException(e.getMessage(), e);
 		}
 		if (bytes == 0) {
 			throw new MojoFailureException("Error compiling!");
@@ -577,8 +581,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			for (MavenArtifact mvnArtifact : loadExterns) {
 				Artifact artifact = artifactFactory
 						.createArtifactWithClassifier(mvnArtifact.getGroupId(),
-								mvnArtifact.getArtifactId(), mvnArtifact.getVersion(),
-								"xml", "link-report");
+								mvnArtifact.getArtifactId(), mvnArtifact
+										.getVersion(), "xml", "link-report");
 				resolveArtifact(artifact);
 				externsFiles.add(artifact.getFile());
 			}
