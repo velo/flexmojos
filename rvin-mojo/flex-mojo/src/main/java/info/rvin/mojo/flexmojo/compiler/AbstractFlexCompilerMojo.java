@@ -329,6 +329,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected String rslPath;
 
 	/**
+	 * Enable or disable the computation of a digest for the created swf
+	 * library. This is equivalent to using the
+	 * <code>compiler.computDigest</code> in the compc compiler.
+	 * 
+	 * @parameter default-value="true"
+	 */
+	private boolean computeDigest;
+
+	/**
 	 * Previous compilation data, used to incremental builds
 	 */
 	private File compilationData;
@@ -519,6 +528,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.allowSourcePathOverlap(allowSourcePathOverlap);
 		configuration.useActionScript3(as3);
 		configuration.enableDebugging(debug, debugPassword);
+		configuration.enableDigestComputation(computeDigest);
 		configuration.useECMAScript(es);
 
 		// Fonts
@@ -762,9 +772,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		try {
 			writer = new FileWriter(resourceBundle);
 			String[] bundles = report.getResourceBundleNames();
-			for (String bundle : bundles) {
-				writer.write(bundle);
-				writer.write(' ');
+			if (bundles != null) {
+				for (String bundle : bundles) {
+					writer.write(bundle);
+					writer.write(' ');
+				}
 			}
 			writer.flush();
 			writer.close();
