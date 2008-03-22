@@ -67,7 +67,6 @@
 		<module>flex-mojo</module>
 		<module>flex-support</module>
 		<module>air-support</module>
-		<module>flex-mojo-IT</module>
 	</modules>
 
 </project>
