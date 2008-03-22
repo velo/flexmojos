@@ -18,9 +18,7 @@ package info.rvin.mojo.flexmojo.compiler;
 
 import flex2.tools.oem.Library;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -108,6 +106,12 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 		if (!checkNullOrEmpty(includeFiles)) {
 			for (File file : includeFiles) {
+				if(file == null) {
+					throw new MojoFailureException("Cannot include a null file");
+				}
+				if(!file.exists()) {
+					throw new MojoFailureException("File " + file.getName() + " not found");
+				}
 				builder.addArchiveFile(file.getName(), file);
 			}
 		}
@@ -151,8 +155,14 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 		}
 
 		if (!checkNullOrEmpty(includeSources)) {
-			for (File source : includeSources) {
-				builder.addComponent(source);
+			for (File file : includeSources) {
+				if(file == null) {
+					throw new MojoFailureException("Cannot include a null file");
+				}
+				if(!file.exists()) {
+					throw new MojoFailureException("File " + file.getName() + " not found");
+				}
+				builder.addComponent(file);
 			}
 		}
 
