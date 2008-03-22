@@ -65,8 +65,6 @@
 
 	<modules>
 		<module>flex-mojo</module>
-		<module>flex-support</module>
-		<module>air-support</module>
 	</modules>
 
 </project>
