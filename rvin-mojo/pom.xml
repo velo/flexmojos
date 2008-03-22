@@ -71,7 +71,7 @@
 
 	<modules>
 		<module>flex-mojo</module>
-		<module>flex-mojo-IT</module>
+		<!-- cant release <module>flex-mojo-IT</module>  -->
 		<module>flex-support</module>
 		<module>air-support</module>
 	</modules>
