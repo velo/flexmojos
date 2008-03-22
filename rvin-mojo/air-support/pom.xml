@@ -23,6 +23,9 @@
 				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration>
+					<includeSources>
+						<param>${basedir}/src/main/flex</param>
+					</includeSources>
 					<locales>
 						<param>en_US</param>
 					</locales>
