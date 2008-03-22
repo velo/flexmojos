@@ -63,6 +63,12 @@
 		<url>http://code.google.com/p/flex-mojos/source/browse</url>
 	</scm>
 
+	<distributionManagement>
+		<repository>
+			<url>../repository</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>flex-mojo</module>
 	</modules>
