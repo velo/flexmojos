@@ -39,11 +39,17 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	 * 
 	 * @parameter
 	 */
-	private File sourceFile;
+	private String sourceFile;
+	/**
+	 * The file to be compiled
+	 */
+	private File source;
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
-		if (sourceFile == null) {
+		if (sourceFile != null) {
+			source = new File(build.getSourceDirectory(), sourceFile);
+		} else {
 			File[] files = new File(build.getSourceDirectory())
 					.listFiles(new FileFilter() {
 						public boolean accept(File pathname) {
@@ -52,27 +58,31 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 					});
 
 			if (files.length == 1) {
-				sourceFile = files[0];
+				source = files[0];
 			}
 			if (files.length > 1) {
 				for (File file : files) {
 					if (file.getName().equalsIgnoreCase("main.mxml")
 							|| file.getName().equalsIgnoreCase("main.as")) {
-						sourceFile = file;
+						source = file;
 					}
 				}
 			}
 		}
-		
-		if(sourceFile == null) {
-			throw new MojoExecutionException("Source file not found and not expecified!");
+
+		if (source == null) {
+			throw new MojoExecutionException(
+					"Source file not expecified and no default found!");
+		}
+		if (!source.exists()) {
+			throw new MojoFailureException("Unable to find " + sourceFile);
 		}
 
 		// need to initialize builder before go super
 		try {
-			builder = new Application(sourceFile);
+			builder = new Application(source);
 		} catch (FileNotFoundException e) {
-			throw new MojoFailureException("Unable to find " + sourceFile);
+			throw new MojoFailureException("Unable to find " + source);
 		}
 		super.setUp();
 

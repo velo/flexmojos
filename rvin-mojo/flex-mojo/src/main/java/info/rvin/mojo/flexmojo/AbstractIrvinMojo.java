@@ -2,12 +2,15 @@ package info.rvin.mojo.flexmojo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
@@ -16,6 +19,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
@@ -59,6 +63,16 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	protected ArtifactResolver resolver;
 
 	/**
+	 * @component
+	 */
+	protected ArtifactMetadataSource artifactMetadataSource;
+
+	/**
+	 * @component
+	 */
+	protected MavenProjectBuilder mavenProjectBuilder;
+
+	/**
 	 * @parameter expression="${localRepository}"
 	 */
 	protected ArtifactRepository localRepository;
@@ -80,22 +94,35 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected List<Dependency> getDependencies() {
-		return project.getDependencies();
+	protected Set<Artifact> getDependencyArtifacts()
+			throws MojoExecutionException {
+		ArtifactResolutionResult arr;
+		try {
+			arr = resolver
+					.resolveTransitively(project.getDependencyArtifacts(),
+							project.getArtifact(), remoteRepositories,
+							localRepository, artifactMetadataSource);
+		} catch (ArtifactResolutionException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		} catch (ArtifactNotFoundException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		}
+		Set<Artifact> result = arr.getArtifacts();
+		return result;
 	}
 
-	protected List<Dependency> getDependencies(String scope)
+	protected List<Artifact> getDependencyArtifacts(String scope)
 			throws MojoExecutionException {
 		if (scope == null)
 			return null;
 
-		List<Dependency> dependencies = new ArrayList<Dependency>();
-		for (Dependency d : getDependencies()) {
-			if (scope.equals(d.getScope())) {
-				dependencies.add(d);
+		List<Artifact> artifacts = new ArrayList<Artifact>();
+		for (Artifact artifact : getDependencyArtifacts()) {
+			if (scope.equals(artifact.getScope())) {
+				artifacts.add(artifact);
 			}
 		}
-		return dependencies;
+		return artifacts;
 	}
 
 	protected Artifact getArtifact(Dependency dependency)

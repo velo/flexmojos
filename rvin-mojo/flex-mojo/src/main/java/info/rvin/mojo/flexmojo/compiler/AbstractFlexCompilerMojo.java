@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -329,15 +328,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected String rslPath;
 
 	/**
-	 * Enable or disable the computation of a digest for the created swf
-	 * library. This is equivalent to using the
-	 * <code>compiler.computDigest</code> in the compc compiler.
-	 * 
-	 * @parameter default-value="true"
-	 */
-	private boolean computeDigest;
-
-	/**
 	 * Previous compilation data, used to incremental builds
 	 */
 	private File compilationData;
@@ -520,7 +510,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.addLibraryPath(getResourcesBundles());
 
 		configuration
-				.setRuntimeSharedLibraries(getRSLPaths(getDependencies("runtime")));
+				.setRuntimeSharedLibraries(getRSLPaths(getDependencyArtifacts("runtime")));
+		configuration.addExternalLibraryPath(getDependenciesPath("runtime"));
 
 		configuration.setTheme(getDependenciesPath("theme"));
 
@@ -528,7 +519,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.allowSourcePathOverlap(allowSourcePathOverlap);
 		configuration.useActionScript3(as3);
 		configuration.enableDebugging(debug, debugPassword);
-		configuration.enableDigestComputation(computeDigest);
 		configuration.useECMAScript(es);
 
 		// Fonts
@@ -606,36 +596,36 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	}
 
-	private String[] getRSLPaths(List<Dependency> dependencies) {
+	private String[] getRSLPaths(List<Artifact> artifacts) {
 		List<String> rsls = new ArrayList<String>();
 
-		for (Dependency dependency : dependencies) {
+		for (Artifact artifact : artifacts) {
 			String rsl = rslPath;
 			rsl = rsl.replace("{contextRoot}", contextRoot);
-			rsl = rsl.replace("{groupId}", dependency.getGroupId());
-			rsl = rsl.replace("{artifactId}", dependency.getArtifactId());
-			rsl = rsl.replace("{version}", dependency.getVersion());
+			rsl = rsl.replace("{groupId}", artifact.getGroupId());
+			rsl = rsl.replace("{artifactId}", artifact.getArtifactId());
+			rsl = rsl.replace("{version}", artifact.getVersion());
 			rsls.add(rsl);
 		}
 
 		return rsls.toArray(new String[rsls.size()]);
 	}
 
-	private File[] getResourcesBundles() {
+	private File[] getResourcesBundles() throws MojoExecutionException {
 		if (locales == null || locales.length == 0) {
 			return new File[0];
 		}
 
 		List<File> resouceBundles = new ArrayList<File>();
-		for (Dependency dependency : getDependencies()) {
+		for (Artifact artifact : getDependencyArtifacts()) {
 			for (String locale : locales) {
-				Artifact artifact = artifactFactory
-						.createArtifactWithClassifier(dependency.getGroupId(),
-								dependency.getArtifactId(), dependency
+				Artifact rbArtifact = artifactFactory
+						.createArtifactWithClassifier(artifact.getGroupId(),
+								artifact.getArtifactId(), artifact
 										.getVersion(), "rb", locale);
 				try {
-					resolveArtifact(artifact);
-					resouceBundles.add(artifact.getFile());
+					resolveArtifact(rbArtifact);
+					resouceBundles.add(rbArtifact.getFile());
 				} catch (MojoExecutionException e) {
 					// Dont found? SKIP =D
 					continue;
@@ -651,8 +641,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			return null;
 
 		List<File> files = new ArrayList<File>();
-		for (Dependency d : getDependencies(scope)) {
-			Artifact a = getArtifact(d);
+		for (Artifact a : getDependencyArtifacts(scope)) {
 			files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
