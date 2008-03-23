@@ -38,6 +38,15 @@ import org.apache.maven.plugin.MojoFailureException;
 public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 	/**
+	 * Enable or disable the computation of a digest for the created swf
+	 * library. This is equivalent to using the
+	 * <code>compiler.computDigest</code> in the compc compiler.
+	 * 
+	 * @parameter default-value="true"
+	 */
+	private boolean computeDigest;
+
+	/**
 	 * This is the equilvalent of the <code>include-classes</code> option of
 	 * the compc compiler.
 	 * 
@@ -106,11 +115,12 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 		if (!checkNullOrEmpty(includeFiles)) {
 			for (File file : includeFiles) {
-				if(file == null) {
+				if (file == null) {
 					throw new MojoFailureException("Cannot include a null file");
 				}
-				if(!file.exists()) {
-					throw new MojoFailureException("File " + file.getName() + " not found");
+				if (!file.exists()) {
+					throw new MojoFailureException("File " + file.getName()
+							+ " not found");
 				}
 				builder.addArchiveFile(file.getName(), file);
 			}
@@ -156,16 +166,18 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 		if (!checkNullOrEmpty(includeSources)) {
 			for (File file : includeSources) {
-				if(file == null) {
+				if (file == null) {
 					throw new MojoFailureException("Cannot include a null file");
 				}
-				if(!file.exists()) {
-					throw new MojoFailureException("File " + file.getName() + " not found");
+				if (!file.exists()) {
+					throw new MojoFailureException("File " + file.getName()
+							+ " not found");
 				}
 				builder.addComponent(file);
 			}
 		}
 
+		configuration.enableDigestComputation(computeDigest);
 	}
 
 	private boolean checkNullOrEmpty(Object[] includeClasses) {
