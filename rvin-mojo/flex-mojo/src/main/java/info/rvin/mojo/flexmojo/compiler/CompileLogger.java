@@ -15,12 +15,19 @@ public class CompileLogger implements Logger {
 
 	public void log(Message msg, int errorCode, String source) {
 		if (Message.ERROR.equals(msg.getLevel())) {
-			log.error(msg.toString());
+			log.error(getMessage(msg, source));
 		} else if (Message.INFO.equals(msg.getLevel())) {
-			log.info(msg.toString());
+			log.info(getMessage(msg, source));
 		} else if (Message.WARNING.equals(msg.getLevel())) {
-			log.warn(msg.toString());
+			log.warn(getMessage(msg, source));
 		}
+	}
+
+	private String getMessage(Message msg, String source) {
+		if (source != null && !"".equals(source)) {
+			return msg.toString() + "\n" + source;
+		}
+		return msg.toString();
 	}
 
 }
