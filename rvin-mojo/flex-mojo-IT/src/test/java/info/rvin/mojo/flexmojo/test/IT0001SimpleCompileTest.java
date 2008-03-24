@@ -17,7 +17,7 @@ import org.apache.maven.it.util.ResourceExtractor;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * 
  */
-public class SimpleCompileTest extends AbstractMavenIntegrationTestCase {
+public class IT0001SimpleCompileTest extends AbstractMavenIntegrationTestCase {
 
 	public void testAirLibrary() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
