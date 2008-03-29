@@ -8,9 +8,9 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flex-maven-support</artifactId>
+	<artifactId>air-maven-support</artifactId>
 
-	<name>Flex support</name>
+	<name>Air support</name>
 
 	<packaging>pom</packaging>
 
@@ -34,10 +34,36 @@
 		</plugins>
 	</build>
 
+    <repositories>
+        <repository>
+            <id>flex-mojos-repository</id>
+            <url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>flex-mojos-repository</id>
+            <url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>playerglobal</artifactId>
+			<artifactId>airglobal</artifactId>
 			<version>3.0.0.3.0.0.477</version>
 			<type>swc</type>
 			<scope>external</scope>
@@ -63,6 +89,18 @@
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
 			<artifactId>utilities</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>airframework</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>servicemonitor</artifactId>
 			<version>3.0.0.3.0.0.477</version>
 			<type>swc</type>
 		</dependency>
