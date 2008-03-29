@@ -394,7 +394,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 		if (configFile == null) {
-			URL url = getClass().getResource("/empty-config.xml");
+			URL url = getClass().getResource("/configs/" + getConfigFileName());
 			configFile = new File(build.getDirectory(), getConfigFileName());
 			urlToFile(url, configFile);
 		}
@@ -505,8 +505,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		configuration.includeLibraries(getDependenciesPath("internal"));
 
-		configuration.setLibraryPath(getDependenciesPath("merged"));
-		configuration.addLibraryPath(getDependenciesPath("compile"));
+		configuration.setLibraryPath(getDependenciesPath("compile"));
+		configuration.addLibraryPath(getDependenciesPath("merged"));
 		configuration.addLibraryPath(getResourcesBundles());
 
 		configuration
@@ -621,8 +621,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			for (String locale : locales) {
 				Artifact rbArtifact = artifactFactory
 						.createArtifactWithClassifier(artifact.getGroupId(),
-								artifact.getArtifactId(), artifact
-										.getVersion(), "rb", locale);
+								artifact.getArtifactId(),
+								artifact.getVersion(), "rb", locale);
 				try {
 					resolveArtifact(rbArtifact);
 					resouceBundles.add(rbArtifact.getFile());
@@ -642,7 +642,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		List<File> files = new ArrayList<File>();
 		for (Artifact a : getDependencyArtifacts(scope)) {
-			files.add(a.getFile());
+			//https://bugs.adobe.com/jira/browse/SDK-15073
+			//Workarround begin
+			File dest = new File(build.getDirectory(),"libraries/"+ scope +"/" +a.getArtifactId() + ".swc");
+			try {
+				FileUtils.copyFile(a.getFile(), dest);
+			} catch (IOException e) {
+				throw new MojoExecutionException(e.getMessage(), e);
+			}
+			files.add(dest);
+			//Workarround end
+			//files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
 	}
