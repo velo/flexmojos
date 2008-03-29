@@ -8,9 +8,9 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flex-maven-support</artifactId>
+    <artifactId>flex-super-pom</artifactId>
 
-	<name>Flex support</name>
+    <name>Flex Super Pom</name>
 
 	<packaging>pom</packaging>
 
@@ -20,7 +20,6 @@
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration>
 					<includeSources>
