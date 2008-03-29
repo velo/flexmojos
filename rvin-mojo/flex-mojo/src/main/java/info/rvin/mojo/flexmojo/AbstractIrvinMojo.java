@@ -1,9 +1,13 @@
 package info.rvin.mojo.flexmojo;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -25,8 +29,6 @@ import org.apache.maven.project.MavenProjectHelper;
 /**
  * 
  * Encapsulate the access to Maven API. Some times just to hide Java 5 warnings
- * 
- * @author tech35212
  * 
  */
 public abstract class AbstractIrvinMojo extends AbstractMojo {
@@ -161,5 +163,36 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	protected abstract void tearDown() throws MojoExecutionException,
 			MojoFailureException;
+
+	protected File[] getSourcePaths() {
+		getLog()
+				.info(
+						"sourcePaths CoC, using source directory plus resources directory!");
+		List<File> files = new ArrayList<File>();
+	
+		File source = new File(build.getSourceDirectory());
+		if (source.exists()) {
+			files.add(source);
+		}
+	
+		List<Resource> resources = getResources();
+		for (Resource resource : resources) {
+			File resourceFile = new File(resource.getDirectory());
+			if (resourceFile.exists()) {
+				files.add(resourceFile);
+			}
+		}
+	
+		return files.toArray(new File[files.size()]);
+	}
+
+	protected void urlToFile(URL url, File file)
+			throws MojoExecutionException {
+				try {
+					FileUtils.copyURLToFile(url, file);
+				} catch (IOException e) {
+					throw new MojoExecutionException("?!");
+				}
+			}
 
 }
