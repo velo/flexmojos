@@ -71,9 +71,11 @@
 
 	<modules>
 		<module>flex-mojo</module>
-		<!-- cant release <module>flex-mojo-IT</module>  -->
-		<module>flex-support</module>
-		<module>air-support</module>
+		<!-- cant release -->
+		<module>flex-mojo-IT</module>
+		<module>super-poms/flex</module>
+		<module>super-poms/air</module>
+		<module>asdoc-mojo</module>
 	</modules>
 
 </project>
