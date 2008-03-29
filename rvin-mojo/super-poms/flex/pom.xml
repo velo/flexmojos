@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-alpha4</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>flex-maven-support</artifactId>
@@ -20,7 +20,7 @@
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-				<version>1.0-alpha4</version>
+				<version>1.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration>
 					<includeSources>
@@ -34,7 +34,7 @@
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
 				<artifactId>asdoc</artifactId>
-				<version>1.0-alpha4</version>
+				<version>1.0-SNAPSHOT</version>
 			</plugin>
 		</plugins>
 	</build>
