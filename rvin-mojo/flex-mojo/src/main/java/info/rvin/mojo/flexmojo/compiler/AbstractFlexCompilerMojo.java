@@ -354,25 +354,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 		if (sourcePaths == null) {
-			getLog()
-					.info(
-							"sourcePaths CoC, using source directory plus resources directory!");
-			List<File> files = new ArrayList<File>();
-
-			File source = new File(build.getSourceDirectory());
-			if (source.exists()) {
-				files.add(source);
-			}
-
-			List<Resource> resources = getResources();
-			for (Resource resource : resources) {
-				File resourceFile = new File(resource.getDirectory());
-				if (resourceFile.exists()) {
-					files.add(resourceFile);
-				}
-			}
-
-			sourcePaths = files.toArray(new File[files.size()]);
+			sourcePaths = getSourcePaths();
 		}
 
 		if (output == null) {
@@ -440,15 +422,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	protected String getConfigFileName() {
 		return "flex-config.xml";
-	}
-
-	private void urlToFile(URL url, File file) throws MojoExecutionException {
-		try {
-			FileUtils.copyURLToFile(url, file);
-		} catch (IOException e) {
-			throw new MojoExecutionException("?!");
-		}
-		file.deleteOnExit();
 	}
 
 	public void run() throws MojoExecutionException, MojoFailureException {
