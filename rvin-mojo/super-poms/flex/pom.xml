@@ -34,7 +34,6 @@
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
 				<artifactId>asdoc</artifactId>
-				<version>1.0-alpha2-SNAPSHOT</version>
 			</plugin>
 		</plugins>
 	</build>
