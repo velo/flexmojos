@@ -328,6 +328,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected String rslPath;
 
 	/**
+	 * Sets the location of the Flex Data Services service configuration file.
+	 * This is equivalent to using the <code>compiler.services</code> option
+	 * of the mxmlc and compc compilers.
+	 * 
+	 * If not define will look inside resources directory for
+	 * services-config.xml
+	 * 
+	 * @parameter
+	 */
+	private File services;
+
+	/**
 	 * Previous compilation data, used to incremental builds
 	 */
 	private File compilationData;
@@ -382,6 +394,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 		if (!configFile.exists()) {
 			throw new MojoExecutionException("Unable to find " + configFile);
+		}
+
+		if (services == null) {
+			List<Resource> resources = getResources();
+			for (Resource resource : resources) {
+				File cfg = new File(resource.getDirectory(),
+						"services-config.xml");
+				if (cfg.exists()) {
+					services = cfg;
+					break;
+				}
+			}
 		}
 
 		if (fonts == null) {
@@ -547,6 +571,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 		configuration.keepLinkReport(linkReport);
 		configuration.setConfiguration(configFile);
+		configuration.setServiceConfiguration(services);
 
 		if (loadExterns != null) {
 			List<File> externsFiles = new ArrayList<File>();
@@ -615,17 +640,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		List<File> files = new ArrayList<File>();
 		for (Artifact a : getDependencyArtifacts(scope)) {
-			//https://bugs.adobe.com/jira/browse/SDK-15073
-			//Workarround begin
-			File dest = new File(build.getDirectory(),"libraries/"+ scope +"/" +a.getArtifactId() + ".swc");
+			// https://bugs.adobe.com/jira/browse/SDK-15073
+			// Workarround begin
+			File dest = new File(build.getDirectory(), "libraries/" + scope
+					+ "/" + a.getArtifactId() + ".swc");
 			try {
 				FileUtils.copyFile(a.getFile(), dest);
 			} catch (IOException e) {
 				throw new MojoExecutionException(e.getMessage(), e);
 			}
 			files.add(dest);
-			//Workarround end
-			//files.add(a.getFile());
+			// Workarround end
+			// files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
 	}
