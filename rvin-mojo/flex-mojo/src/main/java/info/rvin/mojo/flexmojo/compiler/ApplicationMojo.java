@@ -47,10 +47,15 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
+		File sourceDirectory = new File(build.getSourceDirectory());
+		if(!sourceDirectory.exists()) {
+			throw new MojoExecutionException("Unable to found sourceDirectory: " + sourceDirectory);
+		}
+
 		if (sourceFile != null) {
-			source = new File(build.getSourceDirectory(), sourceFile);
+			source = new File(sourceDirectory, sourceFile);
 		} else {
-			File[] files = new File(build.getSourceDirectory())
+			File[] files = sourceDirectory
 					.listFiles(new FileFilter() {
 						public boolean accept(File pathname) {
 							return pathname.isFile();
