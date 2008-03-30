@@ -2,16 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>info.rvin.mojo</groupId>
-		<artifactId>mojo</artifactId>
-		<version>1.0-alpha5-SNAPSHOT</version>
-	</parent>
+	<groupId>info.rvin.mojo</groupId>
+	<artifactId>flex-super-pom</artifactId>
+	<version>1.0-beta2-SNAPSHOT</version>
 
-    <artifactId>flex-super-pom</artifactId>
-  <version>1.0-beta2-SNAPSHOT</version>
-
-    <name>Flex Super Pom</name>
+	<name>Flex Super Pom</name>
 
 	<packaging>pom</packaging>
 
