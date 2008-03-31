@@ -2,6 +2,34 @@
 
 <component-set>
 	<components>
+		<!-- i18n resource bundles -->
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>resource-bundle</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>resource-bundle</type>
+				<extension>swc</extension>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>resource-bundle</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-resource-bundle</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<!-- Flex -->
 		<component>
 			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
 			<role-hint>swc</role-hint>
@@ -34,7 +62,7 @@
 				</phases>
 			</configuration>
 		</component>
-		
+
 		<!-- Air support -->
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
@@ -61,7 +89,7 @@
 				</phases>
 			</configuration>
 		</component>
-		
+
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
 			<role-hint>aswf</role-hint>
