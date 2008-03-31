@@ -610,24 +610,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	}
 
 	private File[] getResourcesBundles() throws MojoExecutionException {
-		if (locales == null || locales.length == 0) {
-			return new File[0];
-		}
-
 		List<File> resouceBundles = new ArrayList<File>();
 		for (Artifact artifact : getDependencyArtifacts()) {
-			for (String locale : locales) {
-				Artifact rbArtifact = artifactFactory
-						.createArtifactWithClassifier(artifact.getGroupId(),
-								artifact.getArtifactId(),
-								artifact.getVersion(), "rb", locale);
-				try {
-					resolveArtifact(rbArtifact);
-					resouceBundles.add(rbArtifact.getFile());
-				} catch (MojoExecutionException e) {
-					// Dont found? SKIP =D
-					continue;
-				}
+			if ("resource-bundle".equals(artifact.getType())) {
+				resouceBundles.add(artifact.getFile());
 			}
 		}
 		return resouceBundles.toArray(new File[resouceBundles.size()]);

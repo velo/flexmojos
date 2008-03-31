@@ -95,22 +95,27 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 		return build.getResources();
 	}
 
+	private Set<Artifact> dependencyArtifacts;
+
 	@SuppressWarnings("unchecked")
 	protected Set<Artifact> getDependencyArtifacts()
 			throws MojoExecutionException {
-		ArtifactResolutionResult arr;
-		try {
-			arr = resolver
-					.resolveTransitively(project.getDependencyArtifacts(),
-							project.getArtifact(), remoteRepositories,
-							localRepository, artifactMetadataSource);
-		} catch (ArtifactResolutionException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ArtifactNotFoundException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
+		if (dependencyArtifacts == null) {
+			ArtifactResolutionResult arr;
+			try {
+				arr = resolver.resolveTransitively(project
+						.getDependencyArtifacts(), project.getArtifact(),
+						remoteRepositories, localRepository,
+						artifactMetadataSource);
+			} catch (ArtifactResolutionException e) {
+				throw new MojoExecutionException(e.getMessage(), e);
+			} catch (ArtifactNotFoundException e) {
+				throw new MojoExecutionException(e.getMessage(), e);
+			}
+			Set<Artifact> result = arr.getArtifacts();
+			dependencyArtifacts = result;
 		}
-		Set<Artifact> result = arr.getArtifacts();
-		return result;
+		return dependencyArtifacts;
 	}
 
 	protected List<Artifact> getDependencyArtifacts(String scope)
@@ -120,7 +125,8 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 		List<Artifact> artifacts = new ArrayList<Artifact>();
 		for (Artifact artifact : getDependencyArtifacts()) {
-			if (scope.equals(artifact.getScope())) {
+			if ("swc".equals(artifact.getType())
+					&& scope.equals(artifact.getScope())) {
 				artifacts.add(artifact);
 			}
 		}
@@ -169,12 +175,12 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 				.info(
 						"sourcePaths CoC, using source directory plus resources directory!");
 		List<File> files = new ArrayList<File>();
-	
+
 		File source = new File(build.getSourceDirectory());
 		if (source.exists()) {
 			files.add(source);
 		}
-	
+
 		List<Resource> resources = getResources();
 		for (Resource resource : resources) {
 			File resourceFile = new File(resource.getDirectory());
@@ -182,17 +188,16 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 				files.add(resourceFile);
 			}
 		}
-	
+
 		return files.toArray(new File[files.size()]);
 	}
 
-	protected void urlToFile(URL url, File file)
-			throws MojoExecutionException {
-				try {
-					FileUtils.copyURLToFile(url, file);
-				} catch (IOException e) {
-					throw new MojoExecutionException("?!");
-				}
-			}
+	protected void urlToFile(URL url, File file) throws MojoExecutionException {
+		try {
+			FileUtils.copyURLToFile(url, file);
+		} catch (IOException e) {
+			throw new MojoExecutionException("?!");
+		}
+	}
 
 }
