@@ -30,6 +30,33 @@
 				<groupId>info.rvin.mojo</groupId>
 				<artifactId>asdoc</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>info.rvin.mojo</groupId>
+				<artifactId>flexbuilder</artifactId>
+				<configuration>
+					<additionalBuildcommands>
+						<buildCommand>
+							<name>com.adobe.flexbuilder.project.flexbuilder</name>
+							<arguments></arguments>
+						</buildCommand>
+					</additionalBuildcommands>
+					<additionalProjectnatures>
+						<projectnature>com.adobe.flexbuilder.project.flexnature</projectnature>
+						<projectnature>com.adobe.flexbuilder.project.actionscriptnature</projectnature>
+					</additionalProjectnatures>
+					<additionalConfig>
+						<file>
+							<name>.settings/org.eclipse.core.resources.prefs</name>
+							<content>
+								<![CDATA[
+eclipse.preferences.version=1
+encoding/<project>=utf-8
+									]]>
+							</content>
+						</file>
+					</additionalConfig>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -81,9 +108,23 @@
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>framework</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+            <type>resource-bundle</type>
+            <classifier>en_US</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
 			<artifactId>rpc</artifactId>
 			<version>3.0.0.3.0.0.477</version>
 			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>rpc</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+            <type>resource-bundle</type>
+            <classifier>en_US</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
@@ -96,6 +137,13 @@
 			<artifactId>airframework</artifactId>
 			<version>3.0.0.3.0.0.477</version>
 			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>airframework</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+            <type>resource-bundle</type>
+            <classifier>en_US</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
