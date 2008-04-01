@@ -17,9 +17,9 @@ package info.rvin.mojo.flexmojo.compiler;
  */
 
 import flex2.tools.oem.Application;
+import info.rvin.flexmojos.utilities.AppUtil;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -48,32 +48,12 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 		File sourceDirectory = new File(build.getSourceDirectory());
-		if(!sourceDirectory.exists()) {
-			throw new MojoExecutionException("Unable to found sourceDirectory: " + sourceDirectory);
+		if (!sourceDirectory.exists()) {
+			throw new MojoExecutionException(
+					"Unable to found sourceDirectory: " + sourceDirectory);
 		}
 
-		if (sourceFile != null) {
-			source = new File(sourceDirectory, sourceFile);
-		} else {
-			File[] files = sourceDirectory
-					.listFiles(new FileFilter() {
-						public boolean accept(File pathname) {
-							return pathname.isFile();
-						}
-					});
-
-			if (files.length == 1) {
-				source = files[0];
-			}
-			if (files.length > 1) {
-				for (File file : files) {
-					if (file.getName().equalsIgnoreCase("main.mxml")
-							|| file.getName().equalsIgnoreCase("main.as")) {
-						source = file;
-					}
-				}
-			}
-		}
+		source = AppUtil.resolveSourceFile(project, sourceFile);
 
 		if (source == null) {
 			throw new MojoExecutionException(
@@ -94,4 +74,5 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 		builder.setOutput(outputFile);
 
 	}
+
 }
