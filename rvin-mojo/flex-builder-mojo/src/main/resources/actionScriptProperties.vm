@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties 
+        mainApplicationPath="$mainApplication" 
+        version="3"
+        >
+
+    <compiler 
+            additionalCompilerArguments="-locale en_US" 
+            copyDependentFiles="true" 
+            enableModuleDebug="true" 
+            generateAccessible="false" 
+            htmlExpressInstall="true" 
+            htmlGenerate="true" 
+            htmlHistoryManagement="true" 
+            htmlPlayerVersion="9.0.28" 
+            htmlPlayerVersionCheck="true" 
+            outputFolderPath="bin-debug" 
+            sourceFolderPath="src/main/flex" 
+            strict="true" 
+            useApolloConfig="false" 
+            verifyDigests="true" 
+            warn="true"
+            >
+
+        <compilerSourcePath>
+#foreach ($path in $sources)
+            <compilerSourcePathEntry 
+                    kind="1" 
+                    linkType="1" 
+                    path="$path"
+                    />
+#end 
+        </compilerSourcePath>
+
+        <libraryPath
+                defaultLinkType="1">
+    $dependencies.size()
+#foreach ($artifact in $dependencies)
+            <libraryPathEntry 
+                    kind="3" 
+                    linkType="1" 
+                    path="$artifact.getFile().getAbsolutePath()" 
+                    useDefaultLinkType="false"
+                    />
+#end
+        </libraryPath>
+
+        <sourceAttachmentPath/>
+
+    </compiler>
+
+    <applications>
+        <application 
+                path="swf.mxml"
+                />
+    </applications>
+
+    <modules/>
+    
+    <buildCSSFiles/>
+
+</actionScriptProperties>
