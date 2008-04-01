@@ -76,8 +76,6 @@
 	<modules>
 		<module>utils</module>
 		<module>flex-mojo</module>
-		<module>asdoc-mojo</module>
-		<module>flex-builder-mojo</module>
 
 		<!-- cant release 
 			<module>flex-mojo-IT</module>-->
