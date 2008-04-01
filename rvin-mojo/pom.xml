@@ -11,6 +11,10 @@
 	<name>Flex Mojos</name>
 	<url>http://code.google.com/p/flex-mojos</url>
 
+	<prerequisites>
+		<maven>2.0.7</maven>
+	</prerequisites>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -70,12 +74,14 @@
 	</distributionManagement>
 
 	<modules>
+		<module>utils</module>
 		<module>flex-mojo</module>
 		<module>asdoc-mojo</module>
-		
+		<module>flex-builder-mojo</module>
+
 		<!-- cant release 
-		<module>flex-mojo-IT</module>-->
-		
+			<module>flex-mojo-IT</module>-->
+
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
 	</modules>
