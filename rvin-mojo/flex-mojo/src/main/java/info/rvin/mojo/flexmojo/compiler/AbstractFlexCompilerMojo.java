@@ -53,7 +53,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * 
 	 * @parameter
 	 */
-	private String[] locales;
+	protected String[] locales;
 
 	/**
 	 * List of path elements that form the roots of ActionScript class
@@ -263,14 +263,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private MavenArtifact[] loadExterns;
 
 	/**
-	 * Prints a list of resource bundles to a file for input to the compc
-	 * compiler to create a resource bundle SWC file.
-	 * 
-	 * @parameter default-value="false"
-	 */
-	private boolean listResourceBundle;
-
-	/**
 	 * Load a file containing configuration options
 	 * 
 	 * @parameter
@@ -325,7 +317,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter default-value="/{contextRoot}/rsl/{artifactId}-{version}.swf"
 	 * 
 	 */
-	protected String rslPath;
+	private String rslPath;
 
 	/**
 	 * Sets the location of the Flex Data Services service configuration file.
@@ -338,7 +330,27 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter
 	 */
 	private File services;
-
+	
+	/**
+	 * When true resources are compiled into Application or Library.
+	 * 
+	 * @parameter default-value="true"
+	 */
+	private boolean mergeResourceBundle;
+	
+	/**
+	 * Define the base path to locate resouce bundle files
+	 * 
+	 * Accept some special tokens:
+	 * 
+	 * <pre>
+	 * {locale}		- replace by locale name
+	 * </pre>
+	 * 
+	 * @parameter default-value="${basedir}/src/main/locales/{locale}"
+	 */
+	protected String resourceBundlePath;
+	
 	/**
 	 * Previous compilation data, used to incremental builds
 	 */
@@ -543,10 +555,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		// When using the resource-bundle-list option, you must also set the
 		// value of the locale option to an empty string.
-		if (listResourceBundle) {
-			configuration.setLocale(new String[0]);
-		} else {
+		if (mergeResourceBundle) {
 			configuration.setLocale(locales);
+		} else {
+			configuration.setLocale(new String[0]);
 		}
 
 		if (namespaces != null) {
@@ -649,11 +661,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (linkReport) {
 			writeLinkReport(builder.getReport());
 		}
-		if (listResourceBundle) {
-			writeResourceBundleList(builder.getReport());
+		if (!mergeResourceBundle) {
+			getLog().info("Compiling resources bundles!");
+			String[] bundles = builder.getReport().getResourceBundleNames();
+			project.getProperties().put("flex-resource-bundle", bundles);
+			writeResourceBundle(bundles);
 		}
 
 	}
+
+	protected abstract void writeResourceBundle(String[] bundles) throws MojoExecutionException;
 
 	private void configureWarnings(Configuration cfg) {
 		cfg.showActionScriptWarnings(showWarnings);
@@ -745,32 +762,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 						.getUnlikelyFunctionValue());
 		cfg.checkActionScriptWarning(Configuration.WARN_XML_CLASS_HAS_CHANGED,
 				warnigs.getXmlClassHasChanged());
-	}
-
-	private void writeResourceBundleList(Report report)
-			throws MojoExecutionException {
-		File resourceBundle = new File(build.getDirectory(), project
-				.getArtifactId()
-				+ "-" + project.getVersion() + "-resourceBundle.properties");
-		Writer writer;
-		try {
-			writer = new FileWriter(resourceBundle);
-			String[] bundles = report.getResourceBundleNames();
-			if (bundles != null) {
-				for (String bundle : bundles) {
-					writer.write(bundle);
-					writer.write(' ');
-				}
-			}
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			throw new MojoExecutionException(
-					"An error has ocurried while recording resourceBundle list",
-					e);
-		}
-		projectHelper.attachArtifact(project, "properties", "resource-bundle",
-				resourceBundle);
 	}
 
 	private void writeLinkReport(Report report) throws MojoExecutionException {
