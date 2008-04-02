@@ -17,13 +17,14 @@ package info.rvin.mojo.flexmojo.compiler;
  */
 
 import flex2.tools.oem.Application;
-import info.rvin.flexmojos.utilities.AppUtil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Goal which touches a timestamp file.
@@ -53,7 +54,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 					"Unable to found sourceDirectory: " + sourceDirectory);
 		}
 
-		source = AppUtil.resolveSourceFile(project, sourceFile);
+		source = resolveSourceFile(project, sourceFile);
 
 		if (source == null) {
 			throw new MojoExecutionException(
@@ -75,4 +76,46 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 	}
 
+	@Override
+	protected void writeResourceBundle(String[] bundles)
+			throws MojoExecutionException {
+		throw new MojoExecutionException(
+				"Can't use flex-mojos to generate localized SWFs.\n"
+						+ "Please see https://bugs.adobe.com/jira/browse/SDK-15139 for details");
+	}
+
+	/**
+	 * @param project
+	 *            maven project
+	 * @param sourceFile
+	 *            sugested name on pom
+	 * @return
+	 */
+	public static File resolveSourceFile(MavenProject project, String sourceFile) {
+
+		File sourceDirectory = new File(project.getBuild().getSourceDirectory());
+
+		if (sourceFile != null) {
+			return new File(sourceDirectory, sourceFile);
+		} else {
+			File[] files = sourceDirectory.listFiles(new FileFilter() {
+				public boolean accept(File pathname) {
+					return pathname.isFile();
+				}
+			});
+
+			if (files.length == 1) {
+				return files[0];
+			}
+			if (files.length > 1) {
+				for (File file : files) {
+					if (file.getName().equalsIgnoreCase("main.mxml")
+							|| file.getName().equalsIgnoreCase("main.as")) {
+						return file;
+					}
+				}
+			}
+			return null;
+		}
+	}
 }
