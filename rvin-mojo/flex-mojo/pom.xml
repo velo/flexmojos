@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>flex-compiler-mojo</artifactId>
-	<version>1.0-alpha6</version>
+	<version>1.0-alpha7-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -60,10 +60,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-  <scm>
-    <connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/flex-compiler-mojo-1.0-alpha6</connection>
-    <developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/flex-compiler-mojo-1.0-alpha6</developerConnection>
-    <url>http://code.google.com/p/flex-mojos/source/browse/tags/flex-compiler-mojo-1.0-alpha6</url>
-  </scm>
 </project>
