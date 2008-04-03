@@ -63,7 +63,7 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<compile>info.rvin.mojo:flex-compiler-mojo:compile-aswc</compile>
+                    <compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
 					<!--
 						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
 						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
@@ -89,7 +89,7 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<compile>info.rvin.mojo:flex-compiler-mojo:compile-aswf</compile>
+                    <compile>info.rvin.mojo:flex-compiler-mojo:compile-swf</compile>
 					<!--
 						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swf</test-compile>
 						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile-swf</test>
