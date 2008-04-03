@@ -4,8 +4,8 @@
 
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
-		<artifactId>flex-maven-support</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<artifactId>flex-super-pom</artifactId>
+		<version>1.0-beta2</version>
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
@@ -14,17 +14,5 @@
 	<name>Simple Flex Library</name>
 
 	<packaging>swf</packaging>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>info.rvin.mojo</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<version>1.0-SNAPSHOT</version>
-				<extensions>true</extensions>
-				<configuration></configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
