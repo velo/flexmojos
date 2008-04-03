@@ -75,7 +75,7 @@
 
 	<modules>
 		<module>utils</module>
-		<module>flex-mojo</module>
+		<module>compiler-mojo</module>
 
 		<!-- cant release 
 			<module>flex-mojo-IT</module>-->

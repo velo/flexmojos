@@ -16,9 +16,8 @@ package info.rvin.mojo.flexmojo.compiler;
  * limitations under the License.
  */
 
+import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
-
-import info.rvin.mojo.flexmojo.compiler.CompileLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +150,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 								mvnArtifact.getArtifactId(), mvnArtifact
 										.getVersion(), "properties",
 								"resource-bundle");
-				resolveArtifact(artifact);
+				resolveArtifact(artifact, resolver, localRepository, remoteRepositories);
 				String bundleFile;
 				try {
 					bundleFile = FileUtils.readFileToString(artifact.getFile());
