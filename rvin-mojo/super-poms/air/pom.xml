@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>air-super-pom</artifactId>
-	<version>1.0-beta3-SNAPSHOT</version>
+	<version>1.0-beta2-SNAPSHOT</version>
 
 	<name>Air Super Pom</name>
 
@@ -18,7 +19,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<includeSources>
-						<param>${basedir}/src/main/flex</param>
+						<param>${project.build.sourceDirectory}</param>
 					</includeSources>
 					<locales>
 						<param>en_US</param>
@@ -36,7 +37,7 @@
 					<additionalBuildcommands>
 						<buildCommand>
 							<name>com.adobe.flexbuilder.project.flexbuilder</name>
-							<arguments />
+							<arguments></arguments>
 						</buildCommand>
 					</additionalBuildcommands>
 					<additionalProjectnatures>
