@@ -1,7 +1,8 @@
 package info.rvin.flexmojos.asdoc;
 
 import flex2.tools.ASDoc;
-import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
+
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,15 +13,76 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.MavenProjectHelper;
 
 /**
  * @goal asdoc
  * @requiresDependencyResolution
  */
-public class AsDocMojo extends AbstractIrvinMojo {
+public class AsDocMojo extends AbstractMojo {
+
+	/**
+	 * The maven project.
+	 * 
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	protected MavenProject project;
+
+	/**
+	 * @parameter expression="${project.build}"
+	 * @required
+	 * @readonly
+	 */
+	protected Build build;
+
+	/**
+	 * @component
+	 */
+	protected MavenProjectHelper projectHelper;
+
+	/**
+	 * @component
+	 */
+	protected ArtifactFactory artifactFactory;
+
+	/**
+	 * @component
+	 */
+	protected ArtifactResolver resolver;
+
+	/**
+	 * @component
+	 */
+	protected ArtifactMetadataSource artifactMetadataSource;
+
+	/**
+	 * @component
+	 */
+	protected MavenProjectBuilder mavenProjectBuilder;
+
+	/**
+	 * @parameter expression="${localRepository}"
+	 */
+	protected ArtifactRepository localRepository;
+
+	/**
+	 * @parameter expression="${project.remoteArtifactRepositories}"
+	 */
+	@SuppressWarnings("unchecked")
+	protected List remoteRepositories;
 
 	/**
 	 * A list of classes to document. These classes must be in the source path.
@@ -162,14 +224,14 @@ public class AsDocMojo extends AbstractIrvinMojo {
 
 	private File fontsSnapshot;
 
-	@Override
+	@SuppressWarnings("unchecked")
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
 		if (docSources == null) {
-			docSources = getSourcePaths();
+			docSources = MavenUtils.getSourcePaths(build);
 		}
 
 		libraries = new ArrayList<File>();
-		for (Artifact artifact : getDependencyArtifacts()) {
+		for (Artifact artifact : MavenUtils.getDependencyArtifacts(project, resolver, localRepository, remoteRepositories, artifactMetadataSource)) {
 			libraries.add(artifact.getFile());
 		}
 
@@ -181,7 +243,7 @@ public class AsDocMojo extends AbstractIrvinMojo {
 		}
 
 		if (configFile == null) {
-			List<Resource> resources = getResources();
+			List<Resource> resources = build.getResources();
 			for (Resource resource : resources) {
 				File cfg = new File(resource.getDirectory(),
 						getConfigFileName());
@@ -194,7 +256,11 @@ public class AsDocMojo extends AbstractIrvinMojo {
 		if (configFile == null) {
 			URL url = getClass().getResource("/configs/" + getConfigFileName());
 			configFile = new File(build.getDirectory(), getConfigFileName());
-			urlToFile(url, configFile);
+			try {
+				FileUtils.copyURLToFile(url, configFile);
+			} catch (IOException e) {
+				throw new MojoExecutionException("Error creating config.xml");
+			}
 		}
 		if (!configFile.exists()) {
 			throw new MojoExecutionException("Unable to find " + configFile);
@@ -211,7 +277,11 @@ public class AsDocMojo extends AbstractIrvinMojo {
 				url = getClass().getResource("/fonts/winFonts.ser");
 			}
 			File fontsSer = new File(build.getDirectory(), "fonts.ser");
-			urlToFile(url, fontsSer);
+			try {
+				FileUtils.copyURLToFile(url, fontsSer);
+			} catch (IOException e) {
+				throw new MojoExecutionException("Error creating fonts.ser");
+			}
 			fontsSnapshot = fontsSer;
 		}
 
@@ -231,12 +301,6 @@ public class AsDocMojo extends AbstractIrvinMojo {
 		return "config.xml";
 	}
 
-	/*
-	 * c:\flex\flex_sdk_3.0.0.477_mpl\bin\asdoc -doc-sources=./ -source-path=./
-	 * -library-path+="c:\Program Files\Adobe\Flex Builder 3
-	 * Plug-in\sdks\3.0.0\frameworks\libs\datavisualization.swc"
-	 */
-	@Override
 	protected void run() throws MojoExecutionException, MojoFailureException {
 		List<String> args = new ArrayList<String>();
 
@@ -314,10 +378,15 @@ public class AsDocMojo extends AbstractIrvinMojo {
 		args.add(sb.toString());
 	}
 
-	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
 
+	}
+
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		setUp();
+		run();
+		tearDown();
 	}
 
 }

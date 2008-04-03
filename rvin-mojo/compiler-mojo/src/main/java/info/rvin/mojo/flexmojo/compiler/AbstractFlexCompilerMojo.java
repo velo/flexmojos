@@ -1,6 +1,7 @@
 package info.rvin.mojo.flexmojo.compiler;
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
+import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.BufferedInputStream;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -376,10 +376,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 		if (sourcePaths == null) {
-			sourcePaths = getSourcePaths();
+			sourcePaths = MavenUtils.getSourcePaths(build);
 		}
 
 		if (output == null) {
@@ -390,27 +391,28 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 
 		if (configFile == null) {
-			List<Resource> resources = getResources();
+			List<Resource> resources = build.getResources();
 			for (Resource resource : resources) {
 				File cfg = new File(resource.getDirectory(),
-						getConfigFileName());
+						"config.xml");
 				if (cfg.exists()) {
 					configFile = cfg;
 					break;
 				}
 			}
 		}
+		
 		if (configFile == null) {
-			URL url = getClass().getResource("/configs/" + getConfigFileName());
-			configFile = new File(build.getDirectory(), getConfigFileName());
-			urlToFile(url, configFile);
+			getLog().debug("No config found, generating one!");
+			configFile = MavenUtils.getConfigFile(build);
 		}
+		
 		if (!configFile.exists()) {
 			throw new MojoExecutionException("Unable to find " + configFile);
 		}
 
 		if (services == null) {
-			List<Resource> resources = getResources();
+			List<Resource> resources = build.getResources();
 			for (Resource resource : resources) {
 				File cfg = new File(resource.getDirectory(),
 						"services-config.xml");
@@ -419,22 +421,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 					break;
 				}
 			}
-		}
-
-		if (fonts == null) {
-			fonts = new Font();
-			String os = System.getProperty("os.name").toLowerCase();
-			URL url;
-			if (os.contains("mac")) {
-				url = getClass().getResource("/fonts/macFonts.ser");
-			} else {
-				// And linux?!
-				// if(os.contains("windows")) {
-				url = getClass().getResource("/fonts/winFonts.ser");
-			}
-			File fontsSer = new File(build.getDirectory(), "fonts.ser");
-			urlToFile(url, fontsSer);
-			fonts.setLocalFontsSnapshot(fontsSer);
 		}
 
 		if (rslPath == null) {
@@ -455,10 +441,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		compilationData = new File(build.getDirectory(), project
 				.getArtifactId()
 				+ "-" + project.getVersion() + ".incr");
-	}
-
-	protected String getConfigFileName() {
-		return "flex-config.xml";
 	}
 
 	public void run() throws MojoExecutionException, MojoFailureException {
@@ -520,8 +502,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.addLibraryPath(getResourcesBundles());
 
 		configuration
-				.setRuntimeSharedLibraries(getRSLPaths(getDependencyArtifacts("runtime")));
-		configuration.addExternalLibraryPath(getDependenciesPath("runtime"));
+				.setRuntimeSharedLibraries(getRSLPaths(getDependencyArtifacts("rsl")));
+		configuration.addExternalLibraryPath(getDependenciesPath("rsl"));
 
 		configuration.setTheme(getDependenciesPath("theme"));
 
@@ -540,7 +522,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.setMaximumGlyphsPerFace(fonts.getMaxGlyphsPerFace());
 			// configuration.setFontLanguageRange(null, null);
 			// FIXME how to use this
-			configuration.setLocalFontSnapshot(fonts.getLocalFontsSnapshot());
+			if(fonts.getLocalFontsSnapshot() != null){
+				configuration.setLocalFontSnapshot(fonts.getLocalFontsSnapshot());
+			} else {
+				getLog().debug("No fonts snapshot found, generating one!");
+				configuration.setLocalFontSnapshot(MavenUtils.getFontsFile(build));
+			}
+		} else {
+			getLog().debug("No fonts snapshot found, generating one!");
+			configuration.setLocalFontSnapshot(MavenUtils.getFontsFile(build));
 		}
 
 		configuration.setActionScriptMetadata(keepAs3Metadatas);

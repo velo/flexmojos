@@ -2,9 +2,13 @@ package info.rvin.flexmojos.utilities;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -12,6 +16,8 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
@@ -56,7 +62,7 @@ public class MavenUtils {
 	}
 
 	/**
-	 * @param project 
+	 * @param project
 	 * @param resolver
 	 * @param localRepository
 	 * @param remoteRepositories
@@ -86,7 +92,8 @@ public class MavenUtils {
 	}
 
 	/**
-	 * @param artifact Artifact to be resolved
+	 * @param artifact
+	 *            Artifact to be resolved
 	 * @param resolver
 	 * @param localRepository
 	 * @param remoteRepositories
@@ -105,4 +112,53 @@ public class MavenUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static File[] getSourcePaths(Build build) {
+		List<File> files = new ArrayList<File>();
+
+		File source = new File(build.getSourceDirectory());
+		if (source.exists()) {
+			files.add(source);
+		}
+
+		List<Resource> resources = build.getResources();
+		for (Resource resource : resources) {
+			File resourceFile = new File(resource.getDirectory());
+			if (resourceFile.exists()) {
+				files.add(resourceFile);
+			}
+		}
+
+		return files.toArray(new File[files.size()]);
+	}
+
+	public static File getConfigFile(Build build) throws MojoExecutionException {
+		URL url = MavenUtils.class.getResource("/configs/config.xml");
+		File configFile = new File(build.getDirectory(), "config.xml");
+		try {
+			FileUtils.copyURLToFile(url, configFile);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error generating config file.", e);
+		}
+		return configFile;
+	}
+
+	public static File getFontsFile(Build build) throws MojoExecutionException {
+		String os = System.getProperty("os.name").toLowerCase();
+		URL url;
+		if (os.contains("mac")) {
+			url = MavenUtils.class.getResource("/fonts/macFonts.ser");
+		} else {
+			// TODO And linux?!
+			// if(os.contains("windows")) {
+			url = MavenUtils.class.getResource("/fonts/winFonts.ser");
+		}
+		File fontsSer = new File(build.getDirectory(), "fonts.ser");
+		try {
+			FileUtils.copyURLToFile(url, fontsSer);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error copying fonts file.", e);
+		}
+		return fontsSer;
+	}
 }
