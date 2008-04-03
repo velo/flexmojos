@@ -17,6 +17,7 @@
  */
 package info.rvin.mojo.flexmojo.compiler;
 
+import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.BufferedInputStream;
@@ -347,14 +348,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter
 	 */
 	private File services;
-	
+
 	/**
 	 * When true resources are compiled into Application or Library.
 	 * 
 	 * @parameter default-value="true"
 	 */
 	private boolean mergeResourceBundle;
-	
+
 	/**
 	 * Define the base path to locate resouce bundle files
 	 * 
@@ -367,7 +368,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter default-value="${basedir}/src/main/locales/{locale}"
 	 */
 	protected String resourceBundlePath;
-	
+
 	/**
 	 * Previous compilation data, used to incremental builds
 	 */
@@ -610,7 +611,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 						.createArtifactWithClassifier(mvnArtifact.getGroupId(),
 								mvnArtifact.getArtifactId(), mvnArtifact
 										.getVersion(), "xml", "link-report");
-				resolveArtifact(artifact);
+				resolveArtifact(artifact, resolver, localRepository,
+						remoteRepositories);
 				externsFiles.add(artifact.getFile());
 			}
 			configuration.setExterns(externsFiles.toArray(new File[externsFiles
@@ -687,7 +689,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	}
 
-	protected abstract void writeResourceBundle(String[] bundles) throws MojoExecutionException;
+	protected abstract void writeResourceBundle(String[] bundles)
+			throws MojoExecutionException;
 
 	private void configureWarnings(Configuration cfg) {
 		cfg.showActionScriptWarnings(showWarnings);
