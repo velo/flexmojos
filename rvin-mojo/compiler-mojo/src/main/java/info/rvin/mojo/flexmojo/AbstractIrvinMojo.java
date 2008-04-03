@@ -1,5 +1,7 @@
 package info.rvin.mojo.flexmojo;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -12,12 +14,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -101,19 +99,9 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	protected Set<Artifact> getDependencyArtifacts()
 			throws MojoExecutionException {
 		if (dependencyArtifacts == null) {
-			ArtifactResolutionResult arr;
-			try {
-				arr = resolver.resolveTransitively(project
-						.getDependencyArtifacts(), project.getArtifact(),
-						remoteRepositories, localRepository,
-						artifactMetadataSource);
-			} catch (ArtifactResolutionException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
-			} catch (ArtifactNotFoundException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
-			}
-			Set<Artifact> result = arr.getArtifacts();
-			dependencyArtifacts = result;
+			dependencyArtifacts = MavenUtils.getDependencyArtifacts(project,
+					resolver, localRepository, remoteRepositories,
+					artifactMetadataSource);
 		}
 		return dependencyArtifacts;
 	}
@@ -131,27 +119,6 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 			}
 		}
 		return artifacts;
-	}
-
-	protected Artifact getArtifact(Dependency dependency)
-			throws MojoExecutionException {
-		Artifact artifact = artifactFactory.createArtifactWithClassifier(
-				dependency.getGroupId(), dependency.getArtifactId(), dependency
-						.getVersion(), dependency.getType(), dependency
-						.getClassifier());
-		resolveArtifact(artifact);
-		return artifact;
-	}
-
-	protected void resolveArtifact(Artifact artifact)
-			throws MojoExecutionException {
-		try {
-			resolver.resolve(artifact, remoteRepositories, localRepository);
-		} catch (ArtifactResolutionException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ArtifactNotFoundException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		}
 	}
 
 	public final void execute() throws MojoExecutionException,
