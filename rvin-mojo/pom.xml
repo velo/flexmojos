@@ -75,13 +75,16 @@
 
 	<modules>
 		<module>utils</module>
-		<module>compiler-mojo</module>
 
-		<!-- cant release 
-			<module>flex-mojo-IT</module>-->
+		<module>compiler-mojo</module>
+		<module>asdoc-mojo</module>
 
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
+
+		<!-- cant release -->
+		<module>flex-mojo-IT</module>
+
 	</modules>
 
 </project>
