@@ -4,7 +4,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>air-super-pom</artifactId>
-	<version>1.0-beta2-SNAPSHOT</version>
+	<version>1.0-beta2</version>
 
 	<name>Air Super Pom</name>
 
