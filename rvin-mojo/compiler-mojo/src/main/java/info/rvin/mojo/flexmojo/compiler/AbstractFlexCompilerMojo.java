@@ -677,7 +677,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (mergeResourceBundle != null && !mergeResourceBundle) {
 			getLog().info("Compiling resources bundles!");
 			String[] bundles = builder.getReport().getResourceBundleNames();
-//			project.getProperties().put("flex-resource-bundle", bundles);
 			writeResourceBundle(bundles);
 		}
 
