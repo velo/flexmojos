@@ -19,6 +19,8 @@ package info.rvin.mojo.flexmojo.compiler;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -150,7 +152,8 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 								mvnArtifact.getArtifactId(), mvnArtifact
 										.getVersion(), "properties",
 								"resource-bundle");
-				resolveArtifact(artifact, resolver, localRepository, remoteRepositories);
+				resolveArtifact(artifact, resolver, localRepository,
+						remoteRepositories);
 				String bundleFile;
 				try {
 					bundleFile = FileUtils.readFileToString(artifact.getFile());
@@ -202,11 +205,15 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 			return;
 		}
 		for (String locale : locales) {
-			String path = resourceBundlePath.replace("{locale}", locale);
-			File localePath = new File(path);
+			getLog().info("Generating resource-bundle for " + locale);
+			File localePath = MavenUtils.getLocaleResourcePath(
+					resourceBundlePath, locale);
+
 			if (!localePath.exists()) {
-				throw new MojoExecutionException(
-						"Unable to find locales path: " + path);
+				getLog().error(
+						"Unable to find locales path: "
+								+ localePath.getAbsolutePath());
+				continue;
 			}
 
 			Library localized = new Library();

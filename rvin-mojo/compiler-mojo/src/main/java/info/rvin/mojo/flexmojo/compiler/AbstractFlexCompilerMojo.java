@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -335,9 +336,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * When true resources are compiled into Application or Library.
 	 * 
-	 * @parameter default-value="true"
+	 * When false resources are compiled into separated Application or Library
+	 * files.
+	 * 
+	 * If not defined no resourceBundle generation is done
+	 * 
+	 * @parameter
 	 */
-	private boolean mergeResourceBundle;
+	private Boolean mergeResourceBundle;
 
 	/**
 	 * Define the base path to locate resouce bundle files
@@ -381,6 +387,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 		if (sourcePaths == null) {
 			sourcePaths = MavenUtils.getSourcePaths(build);
+			if (mergeResourceBundle != null && mergeResourceBundle) {
+				List<File> paths = new ArrayList<File>(Arrays
+						.asList(sourcePaths));
+				for (String locale : locales) {
+					File localeResourcePath = MavenUtils.getLocaleResourcePath(
+							resourceBundlePath, locale);
+					paths.add(localeResourcePath);
+				}
+				sourcePaths = paths.toArray(new File[paths.size()]);
+			}
 		}
 
 		if (output == null) {
@@ -393,20 +409,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (configFile == null) {
 			List<Resource> resources = build.getResources();
 			for (Resource resource : resources) {
-				File cfg = new File(resource.getDirectory(),
-						"config.xml");
+				File cfg = new File(resource.getDirectory(), "config.xml");
 				if (cfg.exists()) {
 					configFile = cfg;
 					break;
 				}
 			}
 		}
-		
+
 		if (configFile == null) {
 			getLog().debug("No config found, generating one!");
 			configFile = MavenUtils.getConfigFile(build);
 		}
-		
+
 		if (!configFile.exists()) {
 			throw new MojoExecutionException("Unable to find " + configFile);
 		}
@@ -447,6 +462,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		builder.setLogger(new CompileLogger(getLog()));
 
 		builder.setConfiguration(configuration);
+
+		getLog().info(
+				"Flex compiler configurations:"
+						+ configuration.toString().replace("--", "\n-"));
 
 		long bytes;
 		try {
@@ -522,11 +541,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.setMaximumGlyphsPerFace(fonts.getMaxGlyphsPerFace());
 			// configuration.setFontLanguageRange(null, null);
 			// FIXME how to use this
-			if(fonts.getLocalFontsSnapshot() != null){
-				configuration.setLocalFontSnapshot(fonts.getLocalFontsSnapshot());
+			if (fonts.getLocalFontsSnapshot() != null) {
+				configuration.setLocalFontSnapshot(fonts
+						.getLocalFontsSnapshot());
 			} else {
 				getLog().debug("No fonts snapshot found, generating one!");
-				configuration.setLocalFontSnapshot(MavenUtils.getFontsFile(build));
+				configuration.setLocalFontSnapshot(MavenUtils
+						.getFontsFile(build));
 			}
 		} else {
 			getLog().debug("No fonts snapshot found, generating one!");
@@ -546,7 +567,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		// When using the resource-bundle-list option, you must also set the
 		// value of the locale option to an empty string.
-		if (mergeResourceBundle) {
+		if (mergeResourceBundle == null || mergeResourceBundle) {
 			configuration.setLocale(locales);
 		} else {
 			configuration.setLocale(new String[0]);
@@ -653,7 +674,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (linkReport) {
 			writeLinkReport(builder.getReport());
 		}
-		if (!mergeResourceBundle) {
+		if (mergeResourceBundle != null && !mergeResourceBundle) {
 			getLog().info("Compiling resources bundles!");
 			String[] bundles = builder.getReport().getResourceBundleNames();
 			project.getProperties().put("flex-resource-bundle", bundles);
