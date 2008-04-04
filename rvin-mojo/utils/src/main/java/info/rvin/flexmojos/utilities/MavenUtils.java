@@ -42,7 +42,9 @@ public class MavenUtils {
 		} else {
 			File[] files = sourceDirectory.listFiles(new FileFilter() {
 				public boolean accept(File pathname) {
-					return pathname.isFile();
+					return pathname.isFile()
+							&& (pathname.getName().endsWith(".mxml") || pathname
+									.getName().endsWith(".as"));
 				}
 			});
 
@@ -160,5 +162,16 @@ public class MavenUtils {
 			throw new MojoExecutionException("Error copying fonts file.", e);
 		}
 		return fontsSer;
+	}
+
+	public static File getLocaleResourcePath(String resourceBundlePath,
+			String locale) throws MojoExecutionException {
+		String path = resourceBundlePath.replace("{locale}", locale);
+		File localePath = new File(path);
+		if (!localePath.exists()) {
+			throw new MojoExecutionException("Unable to find locales path: "
+					+ path);
+		}
+		return localePath;
 	}
 }
