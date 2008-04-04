@@ -1,7 +1,7 @@
 package info.rvin.flexmojos.flexbuilder;
 
 import info.rvin.flexmojos.flexbuilder.util.CompileConfigurationLoader;
-import info.rvin.flexmojos.utilities.AppUtil;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -81,7 +81,7 @@ public class FlexbuilderMojo extends EclipsePlugin {
 	private void writeAsProperties() throws Exception {
 		VelocityContext context = new VelocityContext();
 		context.put("dependencies", getDependencyArtifacts());
-		context.put("mainApplication", AppUtil.resolveSourceFile(project,
+		context.put("mainApplication", MavenUtils.resolveSourceFile(project,
 				CompileConfigurationLoader.getCompilerPluginSetting(project,
 						"sourceFile")));
 
