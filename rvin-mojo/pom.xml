@@ -37,6 +37,19 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>flex-mojos-repository</id>
+			<url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<developers>
 		<developer>
 			<id>velo.br</id>
