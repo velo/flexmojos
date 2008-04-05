@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -269,7 +268,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * 
 	 * @parameter
 	 */
-	private File configFile;
+	protected File configFile;
 
 	/**
 	 * The filename of the SWF movie to create
@@ -518,7 +517,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		configuration.setLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getDependenciesPath("merged"));
-		configuration.addLibraryPath(getResourcesBundles());
+		if(mergeResourceBundle) {
+			configuration.addLibraryPath(getResourcesBundles());
+		}
 
 		configuration
 				.setRuntimeSharedLibraries(getRSLPaths(getDependencyArtifacts("rsl")));
@@ -539,20 +540,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.setFontManagers(fonts.getManagers());
 			configuration.setMaximumCachedFonts(fonts.getMaxCachedFonts());
 			configuration.setMaximumGlyphsPerFace(fonts.getMaxGlyphsPerFace());
-			// configuration.setFontLanguageRange(null, null);
 			// FIXME how to use this
-			if (fonts.getLocalFontsSnapshot() != null) {
-				configuration.setLocalFontSnapshot(fonts
-						.getLocalFontsSnapshot());
-			} else {
-				getLog().debug("No fonts snapshot found, generating one!");
-				configuration.setLocalFontSnapshot(MavenUtils
-						.getFontsFile(build));
-			}
-		} else {
-			getLog().debug("No fonts snapshot found, generating one!");
-			configuration.setLocalFontSnapshot(MavenUtils.getFontsFile(build));
+			// configuration.setFontLanguageRange(null, null);
 		}
+		File fontsSnapshot = getFontsSnapshot();
+		if (fontsSnapshot == null || !fontsSnapshot.exists()) {
+			throw new MojoExecutionException("LocalFontSnapshot not found "
+					+ fontsSnapshot);
+		}
+		configuration.setLocalFontSnapshot(fontsSnapshot);
 
 		configuration.setActionScriptMetadata(keepAs3Metadatas);
 		configuration
@@ -612,11 +608,21 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.setExterns(externsFiles.toArray(new File[externsFiles
 					.size()]));
 
-			if (metadata != null) {
-				configuration.setSWFMetaData(metadata);
-			}
 		}
 
+		if (metadata != null) {
+			configuration.setSWFMetaData(metadata);
+		}
+
+	}
+
+	protected File getFontsSnapshot() throws MojoExecutionException {
+		if (fonts != null && fonts.getLocalFontsSnapshot() != null) {
+			return fonts.getLocalFontsSnapshot();
+		} else {
+			getLog().debug("No fonts snapshot found, generating one!");
+			return MavenUtils.getFontsFile(build);
+		}
 	}
 
 	private String[] getRSLPaths(List<Artifact> artifacts) {
@@ -634,7 +640,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		return rsls.toArray(new String[rsls.size()]);
 	}
 
-	private File[] getResourcesBundles() throws MojoExecutionException {
+	protected File[] getResourcesBundles() throws MojoExecutionException {
 		List<File> resouceBundles = new ArrayList<File>();
 		for (Artifact artifact : getDependencyArtifacts()) {
 			if ("resource-bundle".equals(artifact.getType())) {
@@ -644,7 +650,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		return resouceBundles.toArray(new File[resouceBundles.size()]);
 	}
 
-	private File[] getDependenciesPath(String scope)
+	protected File[] getDependenciesPath(String scope)
 			throws MojoExecutionException {
 		if (scope == null)
 			return null;
@@ -653,14 +659,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		for (Artifact a : getDependencyArtifacts(scope)) {
 			// https://bugs.adobe.com/jira/browse/SDK-15073
 			// Workarround begin
-			File dest = new File(build.getDirectory(), "libraries/" + scope
-					+ "/" + a.getArtifactId() + ".swc");
-			try {
-				FileUtils.copyFile(a.getFile(), dest);
-			} catch (IOException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
-			}
-			files.add(dest);
+			files.add(MavenUtils.getArtifactFile(a, scope, build));
 			// Workarround end
 			// files.add(a.getFile());
 		}
@@ -671,19 +670,51 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
 		project.getArtifact().setFile(outputFile);
+		Report report = builder.getReport();
 		if (linkReport) {
-			writeLinkReport(builder.getReport());
+			writeLinkReport(report);
 		}
 		if (mergeResourceBundle != null && !mergeResourceBundle) {
-			getLog().info("Compiling resources bundles!");
-			String[] bundles = builder.getReport().getResourceBundleNames();
-			writeResourceBundle(bundles);
+			writeResourceBundle(report);
 		}
 
 	}
 
-	protected abstract void writeResourceBundle(String[] bundles)
-			throws MojoExecutionException;
+	private void writeResourceBundle(Report report)
+			throws MojoExecutionException {
+		getLog().info("Compiling resources bundles!");
+		if (locales == null || locales.length == 0) {
+			getLog()
+					.warn("Resource-bundle generation fail: No locale defined.");
+			return;
+		}
+
+		String[] bundles = report.getResourceBundleNames();
+
+		if (bundles == null || bundles.length == 0) {
+			getLog()
+					.warn(
+							"Resource-bundle generation fail: No resource-bundle found.");
+			return;
+		}
+
+		for (String locale : locales) {
+			getLog().info("Generating resource-bundle for " + locale);
+			File localePath = MavenUtils.getLocaleResourcePath(
+					resourceBundlePath, locale);
+
+			if (!localePath.exists()) {
+				getLog().error(
+						"Unable to find locales path: "
+								+ localePath.getAbsolutePath());
+				continue;
+			}
+			writeResourceBundle(bundles, locale, localePath);
+		}
+	}
+
+	protected abstract void writeResourceBundle(String[] bundles,
+			String locale, File localePath) throws MojoExecutionException;
 
 	private void configureWarnings(Configuration cfg) {
 		cfg.showActionScriptWarnings(showWarnings);
