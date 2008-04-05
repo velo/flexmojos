@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-alpha5-SNAPSHOT</version>
+		<version>1.0-alpha6-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>asdoc</artifactId>
