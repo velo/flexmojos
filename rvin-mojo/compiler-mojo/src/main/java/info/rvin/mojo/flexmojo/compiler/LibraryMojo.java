@@ -19,8 +19,6 @@ package info.rvin.mojo.flexmojo.compiler;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
 
-import info.rvin.flexmojos.utilities.MavenUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -101,6 +99,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 		super.setUp();
 
 		builder.setOutput(outputFile);
+		builder.setDirectory(new File(build.getDirectory()));
 
 		if (checkNullOrEmpty(includeClasses) && checkNullOrEmpty(includeFiles)
 				&& checkNullOrEmpty(includeNamespaces)
@@ -197,57 +196,40 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	}
 
 	@Override
-	protected void writeResourceBundle(String[] bundles)
-			throws MojoExecutionException {
-		if (locales == null || locales.length == 0) {
-			getLog()
-					.warn("Resource-bundle generation fail: No locale defined.");
-			return;
+	protected void writeResourceBundle(String[] bundles, String locale,
+			File localePath) throws MojoExecutionException {
+		getLog().info("Generating resource-bundle for " + locale);
+
+		Library localized = new Library();
+		localized.setConfiguration(configuration);
+
+		localized.setLogger(new CompileLogger(getLog()));
+
+		configuration.addLibraryPath(new File[] { outputFile });
+		configuration.setLocale(new String[] { locale });
+		configuration.setSourcePath(new File[] { localePath });
+		for (String bundle : bundles) {
+			localized.addResourceBundle(bundle);
 		}
-		for (String locale : locales) {
-			getLog().info("Generating resource-bundle for " + locale);
-			File localePath = MavenUtils.getLocaleResourcePath(
-					resourceBundlePath, locale);
 
-			if (!localePath.exists()) {
-				getLog().error(
-						"Unable to find locales path: "
-								+ localePath.getAbsolutePath());
-				continue;
-			}
+		File output = new File(build.getDirectory(), project.getArtifactId()
+				+ "-" + project.getVersion() + "-" + locale + ".swc");
 
-			Library localized = new Library();
-			localized.setConfiguration(configuration);
-
-			localized.setLogger(new CompileLogger(getLog()));
-
-			configuration.addLibraryPath(new File[] { outputFile });
-			configuration.setLocale(new String[] { locale });
-			configuration.setSourcePath(new File[] { localePath });
-			for (String bundle : bundles) {
-				localized.addResourceBundle(bundle);
-			}
-
-			File output = new File(build.getDirectory(), project
-					.getArtifactId()
-					+ "-" + project.getVersion() + "-" + locale + ".swc");
-
-			localized.setOutput(output);
-			long bytes;
-			try {
-				bytes = localized.build(false);
-			} catch (IOException e) {
-				throw new MojoExecutionException(
-						"Unable to compile resource bundle", e);
-			}
-			if (bytes == 0) {
-				throw new MojoExecutionException(
-						"Unable to compile resource bundle");
-			}
-
-			projectHelper.attachArtifact(project, "resource-bundle", locale,
-					output);
+		localized.setOutput(output);
+		long bytes;
+		try {
+			bytes = localized.build(false);
+		} catch (IOException e) {
+			throw new MojoExecutionException(
+					"Unable to compile resource bundle", e);
 		}
+		if (bytes == 0) {
+			throw new MojoExecutionException(
+					"Unable to compile resource bundle");
+		}
+
+		projectHelper
+				.attachArtifact(project, "resource-bundle", locale, output);
 	}
 
 }

@@ -17,11 +17,20 @@ package info.rvin.mojo.flexmojo.compiler;
  */
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
+import static java.util.Arrays.*;
 import flex2.tools.oem.Application;
+
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -76,11 +85,69 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	}
 
 	@Override
-	protected void writeResourceBundle(String[] bundles)
-			throws MojoExecutionException {
-		throw new MojoExecutionException(
-				"Can't use flex-mojos to generate localized SWFs.\n"
-						+ "Please see https://bugs.adobe.com/jira/browse/SDK-15139 for details");
+	protected void writeResourceBundle(String[] bundles, String locale,
+			File localePath) throws MojoExecutionException {
+		
+		//Dont break this method in parts, is a work around
+
+		File output = new File(build.getDirectory(), project.getArtifactId()
+				+ "-" + project.getVersion() + "-" + locale + ".swf");
+
+		/*
+		 * mxmlc -locale=en_US -source-path=locale/{locale}
+		 * -include-resource-bundles=FlightReservation2,SharedResources,collections,containers,controls,core,effects,formatters,skins,styles
+		 * -output=src/Resources_en_US.swf
+		 */
+
+		String bundlesString = Arrays.toString(bundles) //
+				.replace("[", "") // remove start [
+				.replace("]", "") // remove end ]
+				.replace(", ", ","); // remove spaces
+
+		ArrayList<File> external = new ArrayList<File>();
+		ArrayList<File> internal = new ArrayList<File>();
+		ArrayList<File> merged = new ArrayList<File>();
+
+		external.addAll(asList(getDependenciesPath("external")));
+		external.addAll(asList(getDependenciesPath("rsl")));
+
+		internal.addAll(asList(getDependenciesPath("internal")));
+
+		merged.addAll(asList(getDependenciesPath("compile")));
+		merged.addAll(asList(getDependenciesPath("merged")));
+		merged.addAll(asList(getResourcesBundles()));
+
+
+		Set<String> args = new HashSet<String>();
+		// args.addAll(Arrays.asList(configs));
+		args.add("-locale=" + locale);
+		args.add("-source-path=" + localePath.getAbsolutePath());
+		args.add("-include-resource-bundles=" + bundlesString);
+		args.add("-output=" + output.getAbsolutePath());
+		args.add("-compiler.fonts.local-fonts-snapshot="
+				+ getFontsSnapshot().getAbsolutePath());
+		args.add("-load-config=" + configFile.getAbsolutePath());
+		args.add("-external-library-path=" + toString(external));
+		args.add("-include-libraries=" + toString(internal));
+		args.add("-library-path=" + toString(merged));
+
+		// Just a work around
+		// TODO https://bugs.adobe.com/jira/browse/SDK-15139
+		flex2.tools.Compiler.mxmlc(args.toArray(new String[args.size()]));
+
+		projectHelper.attachArtifact(project, "swf", locale, output);
+	}
+
+	private String toString(List<File> libs) {
+		StringBuilder sb = new StringBuilder();
+		for (File lib : libs) {
+			if (sb.length() != 0) {
+				sb.append(',');
+			}
+
+			sb.append(lib.getAbsolutePath());
+		}
+		return sb.toString();
 	}
 
 }
