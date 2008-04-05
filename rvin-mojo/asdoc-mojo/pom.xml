@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>asdoc</artifactId>
-			<version>(,3.0]</version>
+			<version>3.0.0.3.0.0.477</version>
 		</dependency>
 
 		<dependency>
