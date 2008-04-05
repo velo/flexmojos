@@ -93,6 +93,20 @@ public class MavenUtils {
 		return result;
 	}
 
+	public static File getArtifactFile(Artifact a, String scope, Build build)
+			throws MojoExecutionException {
+		File dest = new File(build.getDirectory(), "libraries/" + scope + "/"
+				+ a.getArtifactId() + ".swc");
+		if (!dest.exists()) {
+			try {
+				FileUtils.copyFile(a.getFile(), dest);
+			} catch (IOException e) {
+				throw new MojoExecutionException(e.getMessage(), e);
+			}
+		}
+		return dest;
+	}
+
 	/**
 	 * @param artifact
 	 *            Artifact to be resolved
