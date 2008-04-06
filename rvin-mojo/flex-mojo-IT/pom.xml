@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
 			<artifactId>flex-compiler-mojo</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0-alpha7-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
