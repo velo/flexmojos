@@ -517,7 +517,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		configuration.setLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getDependenciesPath("merged"));
-		if(mergeResourceBundle) {
+		if (mergeResourceBundle == null || mergeResourceBundle) {
 			configuration.addLibraryPath(getResourcesBundles());
 		}
 
