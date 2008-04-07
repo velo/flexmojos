@@ -17,16 +17,32 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-        <dependency>
-            <groupId>info.rvin.mojo</groupId>
-            <artifactId>util</artifactId>
-            <version>1.0-alpha2-SNAPSHOT</version>
-        </dependency>
+		<dependency>
+			<groupId>info.rvin.mojo</groupId>
+			<artifactId>util</artifactId>
+			<version>1.0-alpha2-SNAPSHOT</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>flex-compiler-oem</artifactId>
 			<version>3.0.0.3.0.0.477</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>plexus</groupId>
+			<artifactId>plexus-velocity</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 
 		<dependency>

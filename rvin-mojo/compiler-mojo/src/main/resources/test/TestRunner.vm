@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+                creationComplete="onCreationComplete()">
+    
+    <mx:Script>
+        <![CDATA[
+
+            import flexunit.junit.JUnitTestRunner;
+            import flexunit.framework.TestSuite;
+
+            [Bindable]
+            private var runner : JUnitTestRunner;
+
+            private function onCreationComplete() : void {
+                status.text = "Please wait running test suite...";
+                runner = new JUnitTestRunner();
+                runner.run( createSuite(), onTestComplete );
+            }
+
+            private function onTestComplete() : void {
+                status.text = "Finished running test suite.";
+                fscommand( "quit" );
+            }
+
+            private function createSuite() : TestSuite {
+                var testSuite : TestSuite = new TestSuite();
+#foreach ($testClass in $testClasses)
+                testSuite.addTest( new TestSuite( $testClass ) );
+#end 
+                return testSuite;
+            }
+
+        ]]>
+    </mx:Script>
+
+    <mx:Label id="status" />
+
+</mx:Application>
