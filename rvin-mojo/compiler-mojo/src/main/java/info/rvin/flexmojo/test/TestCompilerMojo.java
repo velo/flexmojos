@@ -30,6 +30,12 @@ public class TestCompilerMojo extends ApplicationMojo {
 		File testFolder = new File(build.getTestSourceDirectory());
 		if (!testFolder.exists()) {
 			getLog().warn("Test folder not found" + testFolder);
+			return;
+		}
+		
+		File outputFolder = new File(build.getTestOutputDirectory());
+		if(!outputFolder.exists()) {
+			outputFolder.mkdirs();
 		}
 
 		List<String> testClasses = getTestClasses(testFolder);
@@ -142,6 +148,27 @@ public class TestCompilerMojo extends ApplicationMojo {
 		configuration.addSourcePath(MavenUtils.getTestSourcePaths(build));
 		configuration.allowSourcePathOverlap(true);
 
+	}
+	
+	@Override
+	public void run() throws MojoExecutionException, MojoFailureException {
+		File testFolder = new File(build.getTestSourceDirectory());
+		if (!testFolder.exists()) {
+			return;
+		}
+
+		super.run();
+	}
+	
+	@Override
+	protected void tearDown() throws MojoExecutionException,
+			MojoFailureException {
+		File testFolder = new File(build.getTestSourceDirectory());
+		if (!testFolder.exists()) {
+			return;
+		}
+
+		super.tearDown();
 	}
 
 }
