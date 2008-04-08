@@ -34,10 +34,8 @@ package info.rvin.mojo.flexmojo.compiler;
  */
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
-
-import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -65,11 +62,12 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	 * 
 	 * @parameter
 	 */
-	private String sourceFile;
+	protected String sourceFile;
+
 	/**
 	 * The file to be compiled
 	 */
-	private File source;
+	protected File source;
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
@@ -79,7 +77,9 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 					"Unable to found sourceDirectory: " + sourceDirectory);
 		}
 
-		source = resolveSourceFile(project, sourceFile);
+		if (source == null) {
+			source = resolveSourceFile(project, sourceFile);
+		}
 
 		if (source == null) {
 			throw new MojoExecutionException(
@@ -104,8 +104,8 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	@Override
 	protected void writeResourceBundle(String[] bundles, String locale,
 			File localePath) throws MojoExecutionException {
-		
-		//Dont break this method in parts, is a work around
+
+		// Dont break this method in parts, is a work around
 
 		File output = new File(build.getDirectory(), project.getArtifactId()
 				+ "-" + project.getVersion() + "-" + locale + ".swf");
@@ -133,7 +133,6 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 		merged.addAll(asList(getDependenciesPath("compile")));
 		merged.addAll(asList(getDependenciesPath("merged")));
 		merged.addAll(asList(getResourcesBundles()));
-
 
 		Set<String> args = new HashSet<String>();
 		// args.addAll(Arrays.asList(configs));
