@@ -74,9 +74,12 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 */
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
-		
+
 		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
-		
+		if (!swf.exists()) {
+			return;
+		}
+
 		// Start a thread that receives the FlexUnit results.
 		receiveFlexUnitResults();
 	}
@@ -261,7 +264,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 				log(formatLogReport(root));
 
 			// Get the output file name.
-			final File file = new File(build.getTestOutputDirectory(), "TestReport.xml");
+			final File file = new File(build.getTestOutputDirectory(),
+					"TestReport.xml");
 
 			// Pretty print the document to disk.
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -331,6 +335,9 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	@Override
 	protected void run() throws MojoExecutionException, MojoFailureException {
+		if (!swf.exists()) {
+			return;
+		}
 
 		// Start the browser and run the FlexUnit tests.
 		final FlexUnitLauncher browser = new FlexUnitLauncher();
@@ -355,6 +362,10 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
+
+		if (!swf.exists()) {
+			return;
+		}
 
 		if (executionError != null) {
 			throw executionError;
