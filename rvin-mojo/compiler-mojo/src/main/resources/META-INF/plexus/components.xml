@@ -21,10 +21,8 @@
 			<configuration>
 				<phases>
 					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
-					<!--
-						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
-						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
-					-->
+					<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile</test-compile>
+					<test>info.rvin.mojo:flex-compiler-mojo:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>

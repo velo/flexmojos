@@ -1,43 +1,57 @@
 package info.rvin.flexmojo.test;
 
-import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
+import info.rvin.flexmojos.utilities.MavenUtils;
+import info.rvin.mojo.flexmojo.compiler.ApplicationMojo;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.Writer;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
  * @goal test-compile
  * @requiresDependencyResolution
  * @phase test
  */
-public class TestCompilerMojo extends AbstractIrvinMojo {
+public class TestCompilerMojo extends ApplicationMojo {
 
-	/**
-	 * @component
-	 */
-	private VelocityComponent velocityComponent;
-
-	@SuppressWarnings("unchecked")
 	@Override
-	protected void setUp() throws MojoExecutionException, MojoFailureException {
+	public void setUp() throws MojoExecutionException, MojoFailureException {
+
 		File testFolder = new File(build.getTestSourceDirectory());
 		if (!testFolder.exists()) {
 			getLog().warn("Test folder not found" + testFolder);
 		}
 
+		List<String> testClasses = getTestClasses(testFolder);
+
+		File testSourceFile;
+		try {
+			testSourceFile = generateTester(testClasses);
+		} catch (Exception e) {
+			throw new MojoExecutionException(
+					"Unable to generate tester class.", e);
+		}
+
+		sourceFile = null;
+		source = testSourceFile;
+
+		outputFile = new File(build.getTestOutputDirectory(), "TestRunner.swf");
+
+		super.setUp();
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> getTestClasses(File testFolder) {
 		Collection<File> testFiles = FileUtils.listFiles(testFolder,
 				new FileFileFilter() {
 					@Override
@@ -63,50 +77,70 @@ public class TestCompilerMojo extends AbstractIrvinMojo {
 			testClass = testClass.replace('\\', '.'); // Windows OS
 			testClasses.add(testClass);
 		}
-
-		try {
-			generateTester(testClasses);
-		} catch (Exception e) {
-			throw new MojoExecutionException(
-					"Unable to generate tester class.", e);
-		}
+		return testClasses;
 	}
 
-	private void generateTester(List<String> testClasses) throws Exception {
-		VelocityContext context = new VelocityContext();
-		context.put("testClasses", testClasses);
+	private File generateTester(List<String> testClasses) throws Exception {
+		// can't use velocity, got:
+		// java.io.InvalidClassException:
+		// org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for
+		// deserialization
 
-		Template template = velocityComponent.getEngine().getTemplate(
+		StringBuilder imports = new StringBuilder();
+
+		for (String testClass : testClasses) {
+			imports.append("import ");
+			imports.append(testClass);
+			imports.append(";");
+			imports.append('\n');
+		}
+
+		StringBuilder classes = new StringBuilder();
+
+		for (String testClass : testClasses) {
+			testClass = testClass.substring(testClass.lastIndexOf('.') + 1);
+			classes.append("testSuite.addTest( new TestSuite(");
+			classes.append(testClass);
+			classes.append(") );");
+			classes.append('\n');
+		}
+
+		InputStream templateSource = getClass().getResourceAsStream(
 				"/test/TestRunner.vm");
-
-		Writer writer = null;
-		try {
-			File testOutputDirectory = new File(build.getTestOutputDirectory());
-			if(!testOutputDirectory.exists()) {
-				testOutputDirectory.mkdirs();
-			}
-			writer = new FileWriter(new File(testOutputDirectory,
-					project.getArtifactId() + "TestRunner"
-							+ project.getVersion() + ".mxml"));
-			template.merge(context, writer);
-		} finally {
-			if (writer != null) {
-				writer.flush();
-				writer.close();
-			}
-		}
+		String sourceString = IOUtils.toString(templateSource);
+		sourceString = sourceString.replace("$imports", imports);
+		sourceString = sourceString.replace("$testClasses", classes);
+		File testSourceFile = new File(build.getTestOutputDirectory(),
+				"TestRunner.mxml");
+		FileWriter fileWriter = new FileWriter(testSourceFile);
+		IOUtils.write(sourceString, fileWriter);
+		fileWriter.flush();
+		fileWriter.close();
+		return testSourceFile;
 	}
 
 	@Override
-	protected void run() throws MojoExecutionException, MojoFailureException {
-		// TODO Auto-generated method stub
+	protected void configure() throws MojoExecutionException {
+		super.configure();
 
-	}
+		// Remove all libraries
+		configuration.setExternalLibraryPath(null);
+		configuration.setIncludes(null);
+		configuration.setRuntimeSharedLibraries(null);
 
-	@Override
-	protected void tearDown() throws MojoExecutionException,
-			MojoFailureException {
-		// TODO Auto-generated method stub
+		// Set all dependencies as merged
+		configuration.setLibraryPath(getDependenciesPath("compile"));
+		configuration.addLibraryPath(getDependenciesPath("merged"));
+		configuration.addLibraryPath(getDependenciesPath("external"));
+		configuration.addLibraryPath(getResourcesBundles());
+		configuration.addLibraryPath(getDependenciesPath("internal"));
+		configuration.addLibraryPath(getDependenciesPath("rsl"));
+		// and add test libraries
+		configuration.addLibraryPath(getDependenciesPath("test"));
+
+		configuration.addSourcePath(new File[]{new File(build.getTestOutputDirectory())});
+		configuration.addSourcePath(MavenUtils.getTestSourcePaths(build));
+		configuration.allowSourcePathOverlap(true);
 
 	}
 

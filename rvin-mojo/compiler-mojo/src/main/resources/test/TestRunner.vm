@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
                 creationComplete="onCreationComplete()">
-    
+<!--can't use velocity, got:
+java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for deserialization-->
     <mx:Script>
         <![CDATA[
 
             import flexunit.junit.JUnitTestRunner;
             import flexunit.framework.TestSuite;
+$imports
 
             [Bindable]
             private var runner : JUnitTestRunner;
@@ -24,9 +26,7 @@
 
             private function createSuite() : TestSuite {
                 var testSuite : TestSuite = new TestSuite();
-#foreach ($testClass in $testClasses)
-                testSuite.addTest( new TestSuite( $testClass ) );
-#end 
+$testClasses
                 return testSuite;
             }
 

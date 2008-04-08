@@ -398,11 +398,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 
-		if (output == null) {
-			outputFile = new File(build.getDirectory(), build.getFinalName()
-					+ "." + project.getPackaging());
-		} else {
-			outputFile = new File(build.getDirectory(), output);
+		if (outputFile == null) {
+			if (output == null) {
+				outputFile = new File(build.getDirectory(), build
+						.getFinalName()
+						+ "." + project.getPackaging());
+			} else {
+				outputFile = new File(build.getDirectory(), output);
+			}
 		}
 
 		if (configFile == null) {
