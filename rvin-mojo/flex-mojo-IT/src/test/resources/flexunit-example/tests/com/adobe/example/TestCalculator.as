@@ -1,4 +1,4 @@
-package tests.com.adobe.example
+package com.adobe.example
 {
 	import flexunit.framework.TestCase;
 	import com.adobe.example.Calculator;
@@ -37,11 +37,6 @@ package tests.com.adobe.example
 			var result : Number = calculator.multiply( 2, 4 );
 			assertEquals( 8, result );
 		}
-		
-		public function testMultiplyFail() : void
-		{
-			var result : Number = calculator.multiply( 2, 4 );
-			assertEquals( 6, result );
-		}
+
 	}
 }
