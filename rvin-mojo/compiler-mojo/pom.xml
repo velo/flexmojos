@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>flex-compiler-mojo</artifactId>
-	<version>1.0-alpha7-SNAPSHOT</version>
+	<version>1.0-alpha7</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
 			<artifactId>util</artifactId>
-			<version>1.0-alpha2-SNAPSHOT</version>
+			<version>1.0-alpha2</version>
 		</dependency>
 
 		<dependency>
@@ -71,4 +71,10 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+  <scm>
+    <connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/flex-compiler-mojo-1.0-alpha7</connection>
+    <developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/flex-compiler-mojo-1.0-alpha7</developerConnection>
+    <url>http://code.google.com/p/flex-mojos/source/browse/tags/flex-compiler-mojo-1.0-alpha7</url>
+  </scm>
 </project>
