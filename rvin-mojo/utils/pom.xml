@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>util</artifactId>
-	<version>1.0-alpha2</version>
+	<version>1.0-alpha3-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -48,11 +48,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-
-  <scm>
-    <connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/util-1.0-alpha2</connection>
-    <developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/util-1.0-alpha2</developerConnection>
-    <url>http://code.google.com/p/flex-mojos/source/browse/tags/util-1.0-alpha2</url>
-  </scm>
 </project>
