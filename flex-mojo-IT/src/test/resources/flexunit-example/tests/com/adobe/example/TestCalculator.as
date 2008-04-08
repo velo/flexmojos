@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package tests.com.adobe.example
+package com.adobe.example
 {
 	import flexunit.framework.TestCase;
 	import com.adobe.example.Calculator;
@@ -54,11 +54,6 @@ package tests.com.adobe.example
 			var result : Number = calculator.multiply( 2, 4 );
 			assertEquals( 8, result );
 		}
-		
-		public function testMultiplyFail() : void
-		{
-			var result : Number = calculator.multiply( 2, 4 );
-			assertEquals( 6, result );
-		}
+
 	}
 }
