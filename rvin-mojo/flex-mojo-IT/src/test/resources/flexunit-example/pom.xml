@@ -19,4 +19,21 @@
 		<testSourceDirectory>tests</testSourceDirectory>
 	</build>
 
+	<dependencies>
+		<dependency>
+			<groupId>flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>0.85</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>flexunit.junit</groupId>
+			<artifactId>FlexUnitOptional</artifactId>
+			<version>2007/09/27</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 </project>
