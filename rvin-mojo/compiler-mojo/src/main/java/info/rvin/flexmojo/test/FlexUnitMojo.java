@@ -65,7 +65,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	private int port = 1024;
 	private int socketTimeout = 60000; // milliseconds
 	private boolean failOnTestFailure = true;
-	private File swf = new File("D:/flex/workspace/rvin-mojo/flex-mojo-IT/src/test/resources/flexunit-example/target/test-classes/TestRunner.swf");
+	private File swf;
 
 	private MojoExecutionException executionError; // BAD IDEA
 
@@ -74,6 +74,9 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 */
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
+		
+		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
+		
 		// Start a thread that receives the FlexUnit results.
 		receiveFlexUnitResults();
 	}
@@ -258,7 +261,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 				log(formatLogReport(root));
 
 			// Get the output file name.
-			final File file = new File("D:/flex/workspace/rvin-mojo/flex-mojo-IT/src/test/resources/flexunit-example/target/test-classes/Report.xml");
+			final File file = new File(build.getTestOutputDirectory(), "TestReport.xml");
 
 			// Pretty print the document to disk.
 			final OutputFormat format = OutputFormat.createPrettyPrint();
