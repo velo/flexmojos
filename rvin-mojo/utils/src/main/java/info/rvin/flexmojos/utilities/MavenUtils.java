@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -17,9 +18,12 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 public class MavenUtils {
 
@@ -130,24 +134,33 @@ public class MavenUtils {
 
 	@SuppressWarnings("unchecked")
 	public static File[] getSourcePaths(Build build) {
-		List<File> files = new ArrayList<File>();
+		return getFiles(build.getSourceDirectory(), build.getResources());
+	}
 
-		File source = new File(build.getSourceDirectory());
+	@SuppressWarnings("unchecked")
+	public static File[] getTestSourcePaths(Build build) {
+		return getFiles(build.getTestSourceDirectory(), build.getTestResources());
+	}
+	
+	private static File[] getFiles(String sourceDirectory, List<Resource> resources) {
+		List<File> files = new ArrayList<File>();
+		
+		File source = new File(sourceDirectory);
 		if (source.exists()) {
 			files.add(source);
 		}
-
-		List<Resource> resources = build.getResources();
+		
 		for (Resource resource : resources) {
 			File resourceFile = new File(resource.getDirectory());
 			if (resourceFile.exists()) {
 				files.add(resourceFile);
 			}
 		}
-
+		
 		return files.toArray(new File[files.size()]);
+		
 	}
-
+	
 	public static File getConfigFile(Build build) throws MojoExecutionException {
 		URL url = MavenUtils.class.getResource("/configs/config.xml");
 		File configFile = new File(build.getDirectory(), "config.xml");
@@ -187,5 +200,67 @@ public class MavenUtils {
 					+ path);
 		}
 		return localePath;
+	}
+
+
+	/**
+	 * Extract an property from pom.xml
+	 * 
+	 * @param project
+	 * @param optionName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static String getCompilerPluginSetting(MavenProject project,
+			String optionName) {
+		String value = findCompilerPluginSettingInPlugins(project.getModel()
+				.getBuild().getPlugins(), optionName);
+		if (value == null
+				&& project.getModel().getBuild().getPluginManagement() != null) {
+			value = findCompilerPluginSettingInPlugins(project.getModel()
+					.getBuild().getPluginManagement().getPlugins(), optionName);
+		}
+		return value;
+	}
+
+	/**
+	 * Returns a compiler plugin settings from a list of plugins .
+	 * 
+	 * @param project
+	 *            maven project
+	 * @return option value (may be null)
+	 */
+	@SuppressWarnings("unchecked")
+	private static String findCompilerPluginSettingInPlugins(
+			List<Plugin> plugins, String optionName) {
+		String value = null;
+
+		for (Iterator<Plugin> it = plugins.iterator(); it.hasNext();) {
+			Plugin plugin = (Plugin) it.next();
+
+			if (plugin.getArtifactId().equals("flex-compiler-mojo")) {
+				Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
+
+				// this is the default setting
+				if (o != null && o.getChild(optionName) != null) {
+					value = o.getChild(optionName).getValue();
+				}
+
+				List<PluginExecution> executions = plugin.getExecutions();
+
+				// a different source/target version can be configured for test
+				// sources compilation
+				for (Iterator<PluginExecution> iter = executions.iterator(); iter
+						.hasNext();) {
+					PluginExecution execution = (PluginExecution) iter.next();
+					o = (Xpp3Dom) execution.getConfiguration();
+
+					if (o != null && o.getChild(optionName) != null) {
+						value = o.getChild(optionName).getValue();
+					}
+				}
+			}
+		}
+		return value;
 	}
 }
