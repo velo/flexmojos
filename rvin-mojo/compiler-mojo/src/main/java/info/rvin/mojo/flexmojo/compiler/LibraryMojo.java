@@ -99,7 +99,6 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 		super.setUp();
 
 		builder.setOutput(outputFile);
-		builder.setDirectory(new File(build.getDirectory()));
 
 		if (checkNullOrEmpty(includeClasses) && checkNullOrEmpty(includeFiles)
 				&& checkNullOrEmpty(includeNamespaces)
