@@ -110,7 +110,7 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 		return artifacts;
 	}
 
-	public final void execute() throws MojoExecutionException,
+	public void execute() throws MojoExecutionException,
 			MojoFailureException {
 		setUp();
 		run();
