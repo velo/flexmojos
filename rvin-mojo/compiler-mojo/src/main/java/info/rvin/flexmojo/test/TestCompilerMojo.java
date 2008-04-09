@@ -4,6 +4,8 @@ import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.compiler.ApplicationMojo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,6 +26,31 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class TestCompilerMojo extends ApplicationMojo {
 
+	/**
+     * Set this to 'true' to bypass unit tests entirely.
+     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     *
+     * @parameter expression="${maven.test.skip}"
+	 */
+	private boolean skipTests;
+
+	/**
+	 * @parameter
+	 */
+	private File template;
+
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		File testFolder = new File(build.getTestSourceDirectory());
+		if (skipTests) {
+			getLog().warn("Skipping test phase.");
+		} else if (!testFolder.exists()) {
+			getLog().warn("Test folder not found" + testFolder);
+		} else {
+			super.execute();
+		}
+	}
+
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 
@@ -32,9 +59,9 @@ public class TestCompilerMojo extends ApplicationMojo {
 			getLog().warn("Test folder not found" + testFolder);
 			return;
 		}
-		
+
 		File outputFolder = new File(build.getTestOutputDirectory());
-		if(!outputFolder.exists()) {
+		if (!outputFolder.exists()) {
 			outputFolder.mkdirs();
 		}
 
@@ -111,8 +138,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 			classes.append('\n');
 		}
 
-		InputStream templateSource = getClass().getResourceAsStream(
-				"/test/TestRunner.vm");
+		InputStream templateSource = getTemplate();
 		String sourceString = IOUtils.toString(templateSource);
 		sourceString = sourceString.replace("$imports", imports);
 		sourceString = sourceString.replace("$testClasses", classes);
@@ -123,6 +149,23 @@ public class TestCompilerMojo extends ApplicationMojo {
 		fileWriter.flush();
 		fileWriter.close();
 		return testSourceFile;
+	}
+
+	private InputStream getTemplate() throws MojoExecutionException {
+		if (template == null) {
+			return getClass().getResourceAsStream("/test/TestRunner.vm");
+		} else if (!template.exists()) {
+			throw new MojoExecutionException("Template file not found: "
+					+ template);
+		} else {
+			try {
+				return new FileInputStream(template);
+			} catch (FileNotFoundException e) {
+				//Never should happen
+				throw new MojoExecutionException("Error reading template file",
+						e);
+			}
+		}
 	}
 
 	@Override
@@ -144,12 +187,13 @@ public class TestCompilerMojo extends ApplicationMojo {
 		// and add test libraries
 		configuration.addLibraryPath(getDependenciesPath("test"));
 
-		configuration.addSourcePath(new File[]{new File(build.getTestOutputDirectory())});
+		configuration.addSourcePath(new File[] { new File(build
+				.getTestOutputDirectory()) });
 		configuration.addSourcePath(MavenUtils.getTestSourcePaths(build));
 		configuration.allowSourcePathOverlap(true);
 
 	}
-	
+
 	@Override
 	public void run() throws MojoExecutionException, MojoFailureException {
 		File testFolder = new File(build.getTestSourceDirectory());
@@ -159,7 +203,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 
 		super.run();
 	}
-	
+
 	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {

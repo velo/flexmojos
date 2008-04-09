@@ -53,6 +53,23 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	private MojoExecutionException executionError; // BAD IDEA
 
 	/**
+	 * @parameter default-value="false" expression="maven.test.skip"
+	 */
+	private boolean skipTests;
+
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		File testFolder = new File(build.getTestSourceDirectory());
+		if (skipTests) {
+			// getLog().warn("Skipping test phase.");
+		} else if (!testFolder.exists()) {
+			// getLog().warn("Test folder not found" + testFolder);
+		} else {
+			super.execute();
+		}
+	}
+
+	/**
 	 * Called by Ant to execute the task.
 	 */
 	@Override
