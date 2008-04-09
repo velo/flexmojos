@@ -12,6 +12,7 @@
 
 	<build>
 		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
