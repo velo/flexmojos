@@ -74,11 +74,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 */
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
-
 		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
-		if (!swf.exists()) {
-			return;
-		}
 
 		// Start a thread that receives the FlexUnit results.
 		receiveFlexUnitResults();
@@ -335,10 +331,6 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	@Override
 	protected void run() throws MojoExecutionException, MojoFailureException {
-		if (!swf.exists()) {
-			return;
-		}
-
 		// Start the browser and run the FlexUnit tests.
 		final FlexUnitLauncher browser = new FlexUnitLauncher();
 		try {
@@ -362,10 +354,6 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
-
-		if (!swf.exists()) {
-			return;
-		}
 
 		if (executionError != null) {
 			throw executionError;
