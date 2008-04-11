@@ -2,6 +2,7 @@ package info.rvin.flexmojo.test;
 
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +65,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			// getLog().warn("Skipping test phase.");
 		} else if (!testFolder.exists()) {
 			// getLog().warn("Test folder not found" + testFolder);
+		} else if (GraphicsEnvironment.isHeadless()) {
+			getLog().error("Can't run flexunit in headless enviroment.");
 		} else {
 			super.execute();
 		}
