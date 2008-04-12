@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -23,7 +22,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>air-super-pom</artifactId>
-	<version>1.0-beta3-SNAPSHOT</version>
+	<version>1.0-beta3</version>
 
 	<name>Air Super Pom</name>
 
@@ -56,7 +55,7 @@
 					<additionalBuildcommands>
 						<buildCommand>
 							<name>com.adobe.flexbuilder.project.flexbuilder</name>
-							<arguments></arguments>
+							<arguments />
 						</buildCommand>
 					</additionalBuildcommands>
 					<additionalProjectnatures>
