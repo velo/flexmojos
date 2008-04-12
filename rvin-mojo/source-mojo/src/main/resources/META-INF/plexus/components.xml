@@ -1,0 +1,13 @@
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>java-source</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>java-source</type>
+				<extension>swc</extension>
+			</configuration>
+		</component>
+	</components>
+</component-set>
