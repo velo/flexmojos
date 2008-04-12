@@ -267,6 +267,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Load a file containing configuration options
 	 * 
+	 * If not defined, by default will search for one on resources folder.
+	 * 
+	 * If not found an empty config file will be generated at target folder.
+	 * This file doesn't reflect the configurations defined on pom.xml, is only
+	 * put there because flex-compiler-oem always try to read a config.xml.
+	 * 
 	 * @parameter
 	 */
 	protected File configFile;
@@ -312,7 +318,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * {extension}			- replace by library extension swf or swz
 	 * </pre>
 	 * 
-	 *  default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}"
+	 * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}"
 	 * 
 	 * @parameter
 	 */
@@ -457,15 +463,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				}
 			}
 		}
-		
-		if(rslUrls == null) {
-			rslUrls = new String[]{"/{contextRoot}/rsl/{artifactId}-{version}.{extension}"};
+
+		if (rslUrls == null) {
+			rslUrls = new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 		}
-		
-		if(policyFileUrls == null) {
-			policyFileUrls = new String[]{""};
+
+		if (policyFileUrls == null) {
+			policyFileUrls = new String[] { "" };
 		}
-		
 
 		configuration = builder.getDefaultConfiguration();
 		configure();
@@ -633,7 +638,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	}
 
-	private void resolveRuntimeLibraries(String scope, String extension) throws MojoExecutionException {
+	private void resolveRuntimeLibraries(String scope, String extension)
+			throws MojoExecutionException {
 		List<Artifact> rsls = getDependencyArtifacts(scope);
 		for (Artifact artifact : rsls) {
 			String artifactPath = getArtifactFile(artifact, scope, build)
@@ -651,7 +657,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		String[] domains = new String[policyFileUrls.length];
 		for (int i = 0; i < policyFileUrls.length; i++) {
 			String domain = policyFileUrls[i];
-			if(contextRoot != null) {
+			if (contextRoot != null) {
 				domain = domain.replace("{contextRoot}", contextRoot);
 			}
 			domain = domain.replace("{groupId}", artifact.getGroupId());
@@ -666,7 +672,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		String[] rsls = new String[rslUrls.length];
 		for (int i = 0; i < rslUrls.length; i++) {
 			String rsl = rslUrls[i];
-			if(contextRoot != null) {
+			if (contextRoot != null) {
 				rsl = rsl.replace("{contextRoot}", contextRoot);
 			}
 			rsl = rsl.replace("{groupId}", artifact.getGroupId());
