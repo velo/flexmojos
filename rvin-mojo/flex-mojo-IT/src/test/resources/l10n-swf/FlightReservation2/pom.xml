@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.rvin.mojo</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>1.0-beta2-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.adobe.flex.samples</groupId>
+	<artifactId>FlightReservation2</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>swf</packaging>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>info.rvin.mojo</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<configuration>
+					<debug>true</debug>
+					<sourceFile>FlightReservation2.mxml</sourceFile>
+					<mergeResourceBundle>false</mergeResourceBundle>
+					<resourceBundlePath>${basedir}/locale/{locale}</resourceBundlePath>
+					<locales>
+						<param>en_US</param>
+						<param>ja_JP</param>
+					</locales>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>framework</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+			<type>resource-bundle</type>
+			<classifier>ja_JP</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.sdk</groupId>
+			<artifactId>rpc</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+			<type>resource-bundle</type>
+			<classifier>ja_JP</classifier>
+		</dependency>
+	</dependencies>
+
+</project>
