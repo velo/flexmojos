@@ -1,6 +1,7 @@
 package info.rvin.mojo.flexmojo.compiler;
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
+import static info.rvin.flexmojos.utilities.MavenUtils.getArtifactFile;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
@@ -297,7 +298,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private String metadata;
 
 	/**
-	 * Define the base path to all RSL libraries.
+	 * rslUrls array of URLs. The first RSL URL in the list is the primary RSL.
+	 * The remaining RSL URLs will only be loaded if the primary RSL fails to
+	 * load.
 	 * 
 	 * Accept some special tokens:
 	 * 
@@ -306,19 +309,34 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * {groupId}			- replace by library groupId
 	 * {artifactId}			- replace by library artifactId
 	 * {version}			- replace by library version
+	 * {extension}			- replace by library extension swf or swz
 	 * </pre>
 	 * 
-	 * For example:
+	 *  default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}"
+	 * 
+	 * @parameter
+	 */
+	private String[] rslUrls;
+
+	/**
+	 * policyFileUrls array of policy file URLs. Each entry in the rslUrls array
+	 * must have a corresponding entry in this array. A policy file may be
+	 * needed in order to allow the player to read an RSL from another domain.
+	 * If a policy file is not required, then set it to an empty string.
+	 * 
+	 * Accept some special tokens:
 	 * 
 	 * <pre>
-	 * 	${contextRoot}/rsl/${artifactId}.swf
-	 * 	http://www.mydomain.com/myflexapplication/${artifactId}.swf
+	 * {contextRoot}		- replace by defined context root
+	 * {groupId}			- replace by library groupId
+	 * {artifactId}			- replace by library artifactId
+	 * {version}			- replace by library version
+	 * {extension}			- replace by library extension swf or swz
 	 * </pre>
 	 * 
-	 * @parameter default-value="/{contextRoot}/rsl/{artifactId}-{version}.swf"
-	 * 
+	 * @parameter
 	 */
-	private String rslPath;
+	private String[] policyFileUrls;
 
 	/**
 	 * Sets the location of the Flex Data Services service configuration file.
@@ -439,18 +457,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				}
 			}
 		}
-
-		if (rslPath == null) {
-			rslPath = contextRoot;
+		
+		if(rslUrls == null) {
+			rslUrls = new String[]{"/{contextRoot}/rsl/{artifactId}-{version}.{extension}"};
 		}
-
-		if (!rslPath.startsWith("/")) {
-			rslPath += '/';
+		
+		if(policyFileUrls == null) {
+			policyFileUrls = new String[]{""};
 		}
-
-		if (!rslPath.endsWith("/")) {
-			rslPath += '/';
-		}
+		
 
 		configuration = builder.getDefaultConfiguration();
 		configure();
@@ -524,9 +539,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.addLibraryPath(getResourcesBundles());
 		}
 
-		configuration
-				.setRuntimeSharedLibraries(getRSLPaths(getDependencyArtifacts("rsl")));
-		configuration.addExternalLibraryPath(getDependenciesPath("rsl"));
+		resolveRuntimeLibraries("rsl", "swf");
+		resolveRuntimeLibraries("caching", "swz");
 
 		configuration.setTheme(getDependenciesPath("theme"));
 
@@ -619,6 +633,51 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	}
 
+	private void resolveRuntimeLibraries(String scope, String extension) throws MojoExecutionException {
+		List<Artifact> rsls = getDependencyArtifacts(scope);
+		for (Artifact artifact : rsls) {
+			String artifactPath = getArtifactFile(artifact, scope, build)
+					.getAbsolutePath();
+			String[] rslUrls = getRslUrls(artifact, extension);
+			String[] rslPolicyFileUrls = getRslPolicyFileUrls(artifact);
+			configuration.addRuntimeSharedLibraryPath(artifactPath, rslUrls,
+					rslPolicyFileUrls);
+		}
+
+		configuration.addExternalLibraryPath(getDependenciesPath(scope));
+	}
+
+	private String[] getRslPolicyFileUrls(Artifact artifact) {
+		String[] domains = new String[policyFileUrls.length];
+		for (int i = 0; i < policyFileUrls.length; i++) {
+			String domain = policyFileUrls[i];
+			if(contextRoot != null) {
+				domain = domain.replace("{contextRoot}", contextRoot);
+			}
+			domain = domain.replace("{groupId}", artifact.getGroupId());
+			domain = domain.replace("{artifactId}", artifact.getArtifactId());
+			domain = domain.replace("{version}", artifact.getVersion());
+			domains[i] = domain;
+		}
+		return domains;
+	}
+
+	private String[] getRslUrls(Artifact artifact, String extension) {
+		String[] rsls = new String[rslUrls.length];
+		for (int i = 0; i < rslUrls.length; i++) {
+			String rsl = rslUrls[i];
+			if(contextRoot != null) {
+				rsl = rsl.replace("{contextRoot}", contextRoot);
+			}
+			rsl = rsl.replace("{groupId}", artifact.getGroupId());
+			rsl = rsl.replace("{artifactId}", artifact.getArtifactId());
+			rsl = rsl.replace("{version}", artifact.getVersion());
+			rsl = rsl.replace("{extension}", extension);
+			rsls[i] = rsl;
+		}
+		return rsls;
+	}
+
 	protected File getFontsSnapshot() throws MojoExecutionException {
 		if (fonts != null && fonts.getLocalFontsSnapshot() != null) {
 			return fonts.getLocalFontsSnapshot();
@@ -626,21 +685,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			getLog().debug("No fonts snapshot found, generating one!");
 			return MavenUtils.getFontsFile(build);
 		}
-	}
-
-	private String[] getRSLPaths(List<Artifact> artifacts) {
-		List<String> rsls = new ArrayList<String>();
-
-		for (Artifact artifact : artifacts) {
-			String rsl = rslPath;
-			rsl = rsl.replace("{contextRoot}", contextRoot);
-			rsl = rsl.replace("{groupId}", artifact.getGroupId());
-			rsl = rsl.replace("{artifactId}", artifact.getArtifactId());
-			rsl = rsl.replace("{version}", artifact.getVersion());
-			rsls.add(rsl);
-		}
-
-		return rsls.toArray(new String[rsls.size()]);
 	}
 
 	protected File[] getResourcesBundles() throws MojoExecutionException {
