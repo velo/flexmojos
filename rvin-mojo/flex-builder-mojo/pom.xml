@@ -46,7 +46,7 @@
         <dependency>
             <groupId>info.rvin.mojo</groupId>
             <artifactId>util</artifactId>
-            <version>1.0-alpha2-SNAPSHOT</version>
+            <version>1.0-alpha3-SNAPSHOT</version>
         </dependency>
 
 		<dependency>
