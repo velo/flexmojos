@@ -3,7 +3,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>flex-super-pom</artifactId>
-	<version>1.0-beta3</version>
+	<version>1.0-beta4-SNAPSHOT</version>
 
 	<name>Flex Super Pom</name>
 
