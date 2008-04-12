@@ -97,8 +97,8 @@
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
 
-		<!-- cant release -->
-		<module>flex-mojo-IT</module>
+		<!-- cant release 
+		<module>flex-mojo-IT</module>-->
 	</modules>
 
 	<reporting>
