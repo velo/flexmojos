@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<timezones>
+	<timezone where="LAX" delta="-0800"/> <!-- Los Angeles, USA -->
+	<timezone where="JFK" delta="-0500"/> <!-- New York, USA -->
+	<timezone where="GRU" delta="-0300"/> <!-- Sao Paulo, Brazil -->
+	<timezone where="CPT" delta="+0200"/> <!-- Cape Town, South Africa -->
+	<timezone where="LHR" delta="+0000"/> <!-- London, England -->
+	<timezone where="SVO" delta="+0300"/> <!-- Moscow, Russia -->
+	<timezone where="DXB" delta="+0400"/> <!-- Dubai, United Arab Emirates -->
+	<timezone where="DEL" delta="+0530"/> <!-- New Delhi, India -->
+	<timezone where="SHA" delta="+0800"/> <!-- Shanghai, China -->
+	<timezone where="NRT" delta="+0900"/> <!-- Tokyo, Japan -->
+	<timezone where="SYD" delta="+1000"/> <!-- Sydney, Australia -->
+</timezones>

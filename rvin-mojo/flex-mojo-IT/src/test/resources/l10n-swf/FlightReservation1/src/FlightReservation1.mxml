@@ -1,0 +1,1069 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" width="1000" height="520"
+				preinitialize="application_preinitializeHandler(event)"
+				initialize="application_initializeHandler(event)"
+				viewSourceURL="srcview/index.html">
+
+	<mx:Metadata>
+		[ResourceBundle("FlightReservation1")]
+	</mx:Metadata>
+	
+	<mx:XML id="flights" source="Flights.xml"/>
+	
+	<mx:XML id="timezones" source="Timezones.xml"/>
+	
+	<mx:DateFormatter id="dateFormatter"
+					  formatString="{resourceManager.getString(MY_BUNDLE, 'DATE_FORMAT')}"/>
+	
+	<mx:DateFormatter id="timeFormatter"
+					  formatString="{resourceManager.getString(MY_BUNDLE, 'TIME_FORMAT')}"/>
+	
+	<mx:DateFormatter id="durationFormatter"
+					  formatString="{resourceManager.getString(MY_BUNDLE, 'DURATION_FORMAT')}"/>
+	
+	<mx:CurrencyFormatter id="priceFormatter"
+						  precision="{resourceManager.getString(MY_BUNDLE, 'CURRENCY_PRECISION')}"/>
+	
+	<mx:Script>
+	<![CDATA[
+	
+		//
+		//  Constants
+		//
+
+		/**
+		 *  The name of the resource bundle
+		 *  containing the application-specific resources.
+		 */
+		private static const MY_BUNDLE:String = "FlightReservation1";
+		
+		/**
+		 *  Speed in km/hr, used to determine
+		 *  flight durations based on route distance.
+		 */
+		private static const SPEED:Number = 1000;
+
+		//
+		//  Variables
+		//
+
+		/**
+		 *  The locales which this application supports.
+		 *  This is the dataProvider for the Language combobox.
+		 */
+		private var locales:Array = [ "en_US", "ja_JP" ];
+		
+		/**
+		 *  The initial locale that the application uses.
+		 *  We attempt to load this from a local SharedObject at startup,
+		 *  but default to "en_US" if this SharedObject doesn't exist.
+		 */
+		private var initialLocale:String = "en_US";
+		
+		//
+		//  Methods: Processing of XML data
+		//
+		
+		/**
+		 *  Walks the <route> tags in flights.xml to build
+		 *  an Array of airport codes for departures,
+		 *  sorted by localized city name.
+		 *  This is used as the dataProvider for the "From:" ComboBox.
+		 */
+		private function getDepartureCodes():Array
+		{
+			var codes:Array = [];
+			
+			var n:int = flights.route.length();
+			for (var i:int = 0; i < n; i++)
+			{
+				var route:XML = flights.route[i];
+				var fromCode:String = route.@from.toString();
+				if (codes.indexOf(fromCode) == -1)
+					codes.push(fromCode);
+			}
+			
+			return codes;
+		}
+		
+		/**
+		 *  Given a departure airport code, walks the <route> tags
+		 *  in flights.xml to build an Array of airport codes for arrivals,
+		 *  sorted by localized city name.
+		 *  This is used as the dataProvider for the "To:" ComboBox.
+		 *  Note that this Array contains only those places you
+		 *  can fly to, based on where you are flying from.
+		 */
+		private function getArrivalCodes(departureCode:String):Array
+		{
+			var codes:Array = [];
+			
+			var n:int = flights.route.length();
+			for (var i:int = 0; i < n; i++)
+			{
+				var route:XML = flights.route[i];
+				var fromCode:String = route.@from.toString();
+				var toCode:String = route.@to.toString();
+				if ((fromCode == departureCode || departureCode == null) &&
+					route.flight.length() > 0 &&
+					codes.indexOf(toCode) == -1)
+				{
+					codes.push(toCode);
+				}
+			}
+			
+			return codes;
+		}
+		
+     	/**
+     	 *  Given a <flight>, returns its locale departure time as a Date. 
+     	 */
+     	private function getDepartureTime(flight:XML):Date
+     	{
+  			var departs:String = flight.@departs;
+				// 'departs' will be a 4-character 24-hour time
+				// such as "0800" or "1630".
+			var hour:int = int(departs.substring(0, 2));
+			var minute:int = int(departs.substring(2, 4));
+			var time:Date = new Date(0, 0, 0, hour, minute);
+			return time;
+    	}
+    	
+    	/**
+    	 *  Given an airport code like "JFK", returns the number
+    	 *  of milliseconds by which the local timezone differs from GMT.
+    	 */
+    	private function getTimezoneDelta(airportCode:String):Number
+    	{
+    		var delta:String =
+    			timezones.timezone.(@where == airportCode).@delta;
+    		var sign:String = delta.substring(0, 1);
+    		var hh:String = delta.substring(1, 3);
+    		var mm:String = delta.substring(3, 5);
+    		var milliseconds:int = (60 * int(hh) + int(mm)) * 60 * 1000;
+    		if (sign == "-")
+    			milliseconds = -milliseconds;
+    		return milliseconds;
+    	}
+    	
+    	/**
+    	 *  Given a <route> and a <flight> on that route,
+    	 *  returns the locale arrival time as a Date.
+    	 */
+    	private function getArrivalTime(route:XML, flight:XML):Date
+    	{
+    		var departureTime:Number = getDepartureTime(flight).getTime();
+    		
+    		var departureDelta:Number = getTimezoneDelta(route.@from);
+    		var arrivalDelta:Number = getTimezoneDelta(route.@to);
+    		
+    		var distance:Number = route.@distance; // in km
+    		var duration:Number =
+    			distance / SPEED * 60 * 60 * 1000; // in milliseconds
+    		
+    		var arrivalTime:Number = departureTime - departureDelta +
+    								 duration + arrivalDelta;
+    		
+    		return new Date(arrivalTime);
+    	}
+    	
+		//
+		//  Methods: Locale-specific formatting
+		//
+		
+     	/**
+     	 *  Formats a price, using locale-dependent currency.
+     	 *  The price="..." attribute in flights.xml
+     	 *  is in U.S. dollars and the CURRENCY_CONVERSION resource
+     	 *  converts dollars to the unit appropriate for the locale.
+     	 */
+		private function formatPrice(price:Number):String
+		{
+			var currencyConversionFactor:Number =
+				resourceManager.getNumber(MY_BUNDLE, "CURRENCY_CONVERSION");
+			
+			return priceFormatter.format(price * currencyConversionFactor);
+		}
+		
+     	/**
+     	 *  Formats the Arrival Time info in the Summary panel.
+     	 */
+	   	private function formatArrivalTime(route:XML, flight:XML):String
+    	{
+  			var departureTime:Date = getDepartureTime(flight);
+			var arrivalTime:Date = getArrivalTime(route, flight);
+			
+			var s:String = timeFormatter.format(arrivalTime);
+			if (arrivalTime.day != departureTime.day)
+				s += " (next day)";
+			return s;
+    	}
+    	
+     	/**
+     	 *  Formats the Duration info in the Summary panel
+     	 *  using a locale-dependent format.
+     	 *  The passed-in duration of the flight is specified
+     	 *  in fractional hours, and has been calculated
+		 *  from the flight distance in flights.xml by assuming
+		 *  that the plane's speed is the constant SPEED.
+      	 */
+    	private function formatDuration(duration:Number):String
+    	{
+    		var hours:int = int(duration);
+     		var minutes:int = int((duration - Math.floor(duration)) * 60);
+  			var d:Date = new Date(0, 0, 0, hours, minutes);
+    		
+    		return durationFormatter.format(d);
+    	}
+    	
+     	/**
+     	 *  Formats the Distance info in the Summary panel,
+     	 *  using locale-dependent units (miles, kilometers, etc.)
+     	 *  The distance="..." attribute in flights.xml
+     	 *  is in kilometers and the DISTANCE_CONVERSION resource
+     	 *  converts kilometers to the unit appropriate for the locale.
+     	 */
+    	private function formatDistance(km:Number):String
+    	{
+    		var distanceConversionFactor:Number =
+    			resourceManager.getNumber(MY_BUNDLE, "DISTANCE_CONVERSION");
+    			
+    		return resourceManager.getString(
+    			MY_BUNDLE, "DISTANCE_FORMAT",
+    			[ int(km * distanceConversionFactor) ]);
+    	}
+     	
+		//
+		//  Methods: Support for the Language combobox
+		//
+
+		/**
+		 *  The labelFunction for the Language combobox.
+		 *  It takes a locale such as "en_US"
+		 *  and produces the localized string "English".
+		 */
+		private function languageComboBoxLabelFunction(item:Object):String
+		{
+			var locale:String = String(item);
+			return resourceManager.getString(MY_BUNDLE, locale);
+		}
+		
+		/**
+		 *  Comparison function for sorting the 'locales' Array,
+		 *  which is the dataProvider for the Language combobox.
+		 *  The sort order is locale-dependent,
+		 *  because the localized language names for the locales
+		 *  are presented in alphabetical order.
+		 */
+		private function localeCompareFunction(item1:Object, item2:Object):int
+		{
+			var language1:String = languageComboBoxLabelFunction(item1);
+			var language2:String = languageComboBoxLabelFunction(item2);
+			
+			if (language1 < language2)
+				return -1;
+			if (language1 > language2)
+				return 1;
+			return 0;
+		}
+		
+		/**
+		 *  Repopulates the Language combobox with localized language names
+		 *  for the supported locales, alphabetized by language name.
+		 */
+		private function updateLanguageComboBox():void
+		{
+			var oldSelectedItem:Object = languageComboBox.selectedItem;
+			
+			// Repopulate the combobox with locales,
+			// re-sorting by localized language name.
+			locales.sort(localeCompareFunction);
+			languageComboBox.dataProvider = locales;
+			
+			languageComboBox.selectedItem = oldSelectedItem;
+		}
+		
+		/**
+		 *  Switches the user interface to display in a different locale.
+		 *  This method is called when the user changes the selection
+		 *  in the Language combobox.
+		 */
+		private function switchLocale(newLocale:String):void
+		{
+			resourceManager.localeChain = [ newLocale ];
+			
+			updateLanguageComboBox();
+			
+			updateDepartureCityComboBox();
+			updateArrivalCityComboBox();
+			
+			departureDateField.selectedDate = departureDateField.selectedDate;
+			returnDateField.selectedDate = returnDateField.selectedDate;
+			
+			updateSummary();
+		}
+		
+		//
+		//  Methods: Support for the From and To comboboxes
+		//
+
+		/**
+		 *  The labelFunction for the From and To comboboxes.
+		 *  It takes an airport code such as "JFK"
+		 *  and returns a localized string like "New York (JFK)".
+		 */
+		private function cityLabelFunction(item:Object):String
+		{
+			var airportCode:String = String(item);
+			var city:String =
+				resourceManager.getString(MY_BUNDLE, airportCode);
+			return city + " (" + airportCode + ")";
+		}
+		
+		/**
+		 *  Comparison function for sorting the From and To comboboxes.
+		 *  The sort order is locale-dependent,
+		 *  because the localized city names for the airport codes
+		 *  are presented in alphabetical order.
+		 */
+		private function cityCompareFunction(item1:Object, item2:Object):int
+		{
+			var label1:String = cityLabelFunction(item1);
+			var label2:String = cityLabelFunction(item2);
+			
+			if (label1 < label2)
+				return -1;
+			if (label1 > label2)
+				return 1;
+			return 0;
+		}
+		
+		/**
+		 *  Repopulates the From combobox
+		 *  with airport codes sorted by city name.
+		 *  Called when the app starts
+		 *  and when the user changes the language.
+		 */
+		private function updateDepartureCityComboBox():void
+		{
+			var oldSelectedItem:Object = departureCityComboBox.selectedItem;
+			
+			// Repopulate athe combobox with airport codes,
+			// re-sorting by localized city name.
+			var dp:Array = getDepartureCodes();
+			dp.sort(cityCompareFunction);
+			departureCityComboBox.dataProvider = dp;
+			
+			// Restore the previously selected item if there was one.
+			departureCityComboBox.selectedItem = oldSelectedItem;
+		}
+		
+		/**
+		 *  Repopulates the To combobox with airport codes sorted by city name.
+		 *  Called when the app starts and when the user changes
+		 *  the From city or the language.
+		 */
+		private function updateArrivalCityComboBox():void
+		{
+			var oldSelectedItem:Object = arrivalCityComboBox.selectedItem;
+			
+			var departureCode:String =
+				departureCityComboBox.selectedItem as String;
+
+			// Repopulate the combobox with airport codes,
+			// re-sorting by localized city name.
+			var dp:Array = getArrivalCodes(departureCode);
+			dp.sort(cityCompareFunction);
+			arrivalCityComboBox.dataProvider = dp;
+			
+			// Restore the previously selected item if there was one
+			// and it isn't the same as the From city.
+			if (oldSelectedItem &&
+				oldSelectedItem != departureCityComboBox.selectedItem)
+			{
+				arrivalCityComboBox.selectedItem = oldSelectedItem;
+			}
+		}
+
+		/**
+		 *  Based on the selections in the From and To comboxes,
+		 *  returns the <route> from the From city to the To city.
+		 */
+		private function getDepartingRoute():XML
+		{
+			if (!departureCityComboBox.selectedItem ||
+				!arrivalCityComboBox.selectedItem)
+			{
+				return null;
+			}
+			
+			var departureCode:String =
+				departureCityComboBox.selectedItem as String;
+			
+			var arrivalCode:String =
+				arrivalCityComboBox.selectedItem as String;
+			
+			return flights.route.(@from == departureCode &&
+								  @to == arrivalCode)[0];
+		}
+		
+		/**
+		 *  Based on the selections in the From and To comboxes,
+		 *  returns the <route> from the To city to the From city.
+		 */
+		private function getReturnRoute():XML
+		{
+			if (!departureCityComboBox.selectedItem ||
+				!arrivalCityComboBox.selectedItem)
+			{
+				return null;
+			}
+			
+			var departureCode:String =
+				departureCityComboBox.selectedItem as String;
+			
+			var arrivalCode:String =
+				arrivalCityComboBox.selectedItem as String;
+				
+			return flights.route.(@from == arrivalCode &&
+								  @to == departureCode)[0];
+		}
+		
+		//
+		//  Methods: Support for the Departing Date and Return Date datefields
+		//
+
+		/**
+		 *  The labelFunction for the Departure Date and Return Date.
+		 *  It takes a Date and returns a locale-dependent String
+		 *  like "Wed, Apr 4, 2007".
+		 */
+		private function dateFieldLabelFunction(date:Date):String
+		{
+			return dateFormatter.format(date);
+		}
+		
+		/**
+		 *  The parseFunction for the Departure Date.
+		 *  When you use a labelFunction, you must also use parseFunction
+		 *  even though nothing needs to be parsed.
+		 */
+		public function departureDateFieldParseFunction(
+							value:String, inputFormat:String):Date
+		{
+			return departureDateField.selectedDate;
+     	}	
+     	
+		/**
+		 *  The parseFunction for the Return Date.
+		 *  When you use a labelFunction, you must also use parseFunction
+		 *  even though nothing needs to be parsed.
+		 */
+		public function returnDateFieldParseFunction(
+							value:String, inputFormat:String):Date
+		{
+			return returnDateField.selectedDate;
+     	}
+     	
+		//
+		//  Methods: Support for the Departing Flights
+		// and Return Flights datagrids.
+		//
+
+      	/**
+		 *  The labelFunction for the Time column of the datagrids.
+		 *  It takes a <flight> and returns a locale-dependent String
+		 *  like "4:15 PM".
+		 */
+		private function timeColumnLabelFunction(
+								item:Object,
+								column:DataGridColumn):String
+		{
+			var flight:XML = XML(item);
+			return timeFormatter.format(getDepartureTime(flight));
+		}
+		
+      	/**
+		 *  Comparison function for sorting the Time column of the datagrids.
+		 */
+		private function timeColumnSortCompareFunction(
+								item1:Object, item2:Object):int
+		{
+			var time1:String = item1.@departs;
+			var time2:String = item2.@departs;
+			
+			if (time1 < time2)
+				return -1;
+			else if (time1 > time2)
+				return 1;
+			return 0;
+		}
+		
+		/**
+		 *  The labelFunction for the Price column of the datagrids.
+		 *  It takes a <flight> and returns a locale-dependent String
+		 *  like "$1234.56" in the appropriate currency.
+		 */
+		private function priceColumnLabelFunction(
+								item:Object,
+								column:DataGridColumn = null):String
+		{
+			var flight:XML = XML(item);
+			var price:Number = Number(flight.@price);
+			
+			if (serviceRadioButtonGroup.selectedValue == "business")
+				price *= 2;
+			else if (serviceRadioButtonGroup.selectedValue == "firstClass")
+				price *= 3;
+			
+			return formatPrice(price);
+		}
+		
+      	/**
+		 *  Comparison function for sorting the Price column of the datagrids.
+		 */
+		private function priceColumnSortCompareFunction(
+								item1:Object, item2:Object):int
+		{
+			var price1:Number = item1.@price;
+			var price2:Number = item2.@price;
+			
+			if (price1 < price2)
+				return -1;
+			else if (price1 > price2)
+				return 1;
+			return 0;
+		}
+		
+		/**
+		 *  Updates the DataGrid displaying departing flights.
+		 *  This method is called when the user changes
+		 *  the departure date, return date,
+		 *  depature city, or return city.
+		 */
+		private function updateDepartingFlights():void
+		{
+			// Find the <route> from the 'From' city to the 'To' city.
+			var route:XML = getDepartingRoute();
+
+			// Display the <flight> children of that <route>.
+			departingFlightsDataGrid.dataProvider = route ? route.flight : null;
+		}
+		
+		/**
+		 *  Updates the DataGrid displaying return flights.
+		 *  This method is called when the user changes
+		 *  the departure date, return date,
+		 *  depature city, or return city.
+		 */
+		private function updateReturnFlights():void
+		{
+			// Find the <route> from the 'To' city to the 'From' city.
+			var route:XML = getReturnRoute();
+
+			// Display the <flight> children of that <route>.
+			returnFlightsDataGrid.dataProvider = route ? route.flight : null;
+		}
+
+		//
+		//  Methods: Support for the Summary panel
+		//
+
+		/**
+		 *  Updates the departure and return summaries.
+		 */
+		private function updateSummary():void
+		{
+			var departingRoute:XML = getDepartingRoute();
+			var returnRoute:XML = getReturnRoute();
+			
+			var departingFlight:XML =
+				XML(departingFlightsDataGrid.selectedItem);
+			var returnFlight:XML =
+				XML(returnFlightsDataGrid.selectedItem);
+			
+			if (departingFlightsDataGrid.selectedItem)
+			{
+				summaryDepartingFromCity.text =
+					departureCityComboBox.selectedLabel;
+				summaryDepartingToCity.text =
+					arrivalCityComboBox.selectedLabel;
+				
+				summaryDepartingDate.text =
+					dateFormatter.format(departureDateField.selectedDate);
+				summaryDepartingTime.text =
+					timeFormatter.format(getDepartureTime(departingFlight));				
+				summaryDepartingArrivalTime.text =
+					formatArrivalTime(departingRoute, departingFlight);
+				
+				var departingDistance:Number = departingRoute.@distance;
+				summaryDepartingDuration.text =
+					formatDuration(departingDistance / SPEED);
+				summaryDepartingDistance.text =
+					formatDistance(departingDistance);
+				
+				summaryDepartingFlightID.text = departingFlight.@id;
+			}
+			else
+			{
+				summaryDepartingFromCity.text = "";
+				summaryDepartingToCity.text = "";
+				summaryDepartingDate.text = "";
+				summaryDepartingTime.text = "";
+				summaryDepartingArrivalTime.text = "";
+				summaryDepartingDuration.text = "";
+				summaryDepartingDistance.text = "";
+				summaryDepartingFlightID.text = "";
+			}
+			
+			if (returnFlightsDataGrid.selectedItem)
+			{
+				summaryReturnFromCity.text =
+					arrivalCityComboBox.selectedLabel;
+				summaryReturnToCity.text =
+					departureCityComboBox.selectedLabel;
+				
+				summaryReturnDate.text =
+					dateFormatter.format(returnDateField.selectedDate);
+				summaryReturnTime.text =
+					timeFormatter.format(getDepartureTime(returnFlight));
+				summaryReturnArrivalTime.text =
+					formatArrivalTime(returnRoute, returnFlight);
+				
+				var returnDistance:Number = returnRoute.@distance;
+				summaryReturnDuration.text =
+					formatDuration(returnDistance / SPEED);
+				summaryReturnDistance.text =
+					formatDistance(returnDistance);
+				
+				summaryReturnFlightID.text = returnFlight.@id;
+			}
+			else
+			{
+				summaryReturnFromCity.text = "";
+				summaryReturnToCity.text = "";
+				summaryReturnDate.text = "";
+				summaryReturnTime.text = "";
+				summaryReturnArrivalTime.text = "";
+				summaryReturnDuration.text = "";
+				summaryReturnDistance.text = "";
+				summaryReturnFlightID.text = "";
+			}
+			
+			var totalPrice:Number = Number(departingFlight.@price);
+			if (travelTypeRadioButtonGroup.selectedValue == "roundTrip")
+				totalPrice += Number(returnFlight.@price);
+			totalPrice *= adultNumericStepper.value +
+						  childNumericStepper.value / 2;
+			if (serviceRadioButtonGroup.selectedValue == "business")
+				totalPrice *= 2;
+			else if (serviceRadioButtonGroup.selectedValue == "firstClass")
+				totalPrice *= 3;
+			totalPriceLabel.text = formatPrice(totalPrice);
+			
+			bookItButton.enabled =
+				travelTypeRadioButtonGroup.selectedValue == "roundTrip" &&
+			    departingFlightsDataGrid.selectedItem &&
+			    returnFlightsDataGrid.selectedItem ||
+			    travelTypeRadioButtonGroup.selectedValue == "oneWay" &&
+			    departingFlightsDataGrid.selectedItem;
+		}
+		
+		//
+		//  Event handlers
+		//
+			
+		/**
+		 *  Called when the application starts,
+		 *  before any children have been created.
+		 */
+		private function application_preinitializeHandler(event:Event):void
+		{
+			// If the app has already run, it should have saved
+			// the last selected locale in a local SharedObject.
+			var sharedObject:SharedObject = SharedObject.getLocal("savedData");
+			if (sharedObject &&
+				sharedObject.data &&
+				sharedObject.data["locale"])
+			{
+				initialLocale = sharedObject.data["locale"];
+			}
+
+			resourceManager.localeChain = [ initialLocale ];
+		}
+
+		/**
+		 *  Called when the application starts,
+		 *  after its children have been created.
+		 */
+		private function application_initializeHandler(event:Event):void
+		{
+			updateLanguageComboBox();
+			languageComboBox.selectedItem = initialLocale;
+			
+			updateDepartureCityComboBox();
+			updateArrivalCityComboBox();
+		
+			var now:Date = new Date();
+			var today:Date = new Date(now.getFullYear(), 
+									  now.getMonth(),
+									  now.getDate());
+			
+			// Departure date can be today or later.
+			departureDateField.selectableRange = { rangeStart: today };
+			departureDateField.selectedDate = today;
+			
+			// Return date can be today or later.
+			returnDateField.selectableRange = { rangeStart: today };
+			returnDateField.selectedDate = today;
+
+			updateDepartingFlights();
+			updateReturnFlights();
+			
+			updateSummary();
+		}
+			
+		/**
+		 *  Called when the user selects "English" or "Japanese"
+		 *  from the Language combobox.
+		 */
+		private function languageComboBox_changeHandler(event:Event):void
+		{
+			var newLocale:String = String(languageComboBox.selectedItem);
+			
+			// Save the new locale in a local SharedObject
+			// so that we can start up the application in this locale
+			// the next time it is launched.
+			var sharedObject:SharedObject = SharedObject.getLocal("savedData");
+			sharedObject.data["locale"] = newLocale;
+			
+			switchLocale(newLocale);
+		}
+		
+		/**
+		 *  Called when the user selects a departure city
+		 *  in the "From" combobox.
+		 */
+		private function departureCityComboBox_changeHandler(event:Event):void
+		{
+			// Change the To combobox to display only cities
+			// with flights arriving from the new departure city.
+			updateArrivalCityComboBox();
+			
+			updateDepartingFlights();
+			updateReturnFlights();
+			
+			updateSummary();
+		}
+			
+		/**
+		 *  Called when the user selects an arrival city
+		 *  in the "To" combobox.
+		 */
+		private function arrivalCityComboBox_changeHandler(event:Event):void
+		{
+			updateDepartingFlights();
+			updateReturnFlights();
+			
+			updateSummary();
+		}
+			
+		/**
+		 *  Called when the user selects the "Round Trip" or "One Way"
+		 *  radio button.
+		 */
+		private function travelTypeRadioButtonGroup_changeHandler(
+								event:Event):void
+		{
+			var b:Boolean =
+				travelTypeRadioButtonGroup.selectedValue == "roundTrip";
+			
+			returnDateField.enabled = b;
+			
+			returnFlightsLabel.visible = b;
+			returnFlightsDataGrid.visible = b;
+			arrivalSummaryForm.visible = b;
+			hRule.visible = b;
+			
+			updateSummary();
+		}
+
+		/**
+		 *  Called when the user changes the Departure Date.
+		 */
+		private function departureDateField_changeHandler(event:Event):void
+		{
+			returnDateField.selectableRange =
+				{ rangeStart: departureDateField.selectedDate };
+
+			// The Return Date can't be earlier than the Departure Date.
+			if (departureDateField.selectedDate > returnDateField.selectedDate)
+				returnDateField.selectedDate = departureDateField.selectedDate;
+			
+			updateDepartingFlights();
+			updateReturnFlights();
+			updateSummary();
+		}
+		
+		/**
+		 *  Called when the user changes the Return Date.
+		 */
+		private function returnDateField_changeHandler(event:Event):void
+		{
+			updateReturnFlights();
+			updateSummary();
+		}
+		
+		/**
+		 *  Called when the user changes the number of adults.
+		 */
+		private function adultNumericStepper_changeHandler(event:Event):void
+		{
+			updateSummary();
+		}
+
+		/**
+		 *  Called when the user changes the number of children.
+		 */
+		private function childNumericStepper_changeHandler(event:Event):void
+		{
+			updateSummary();
+		}
+		
+		/**
+		 *  Called when the user selects a departing flight.
+		 */
+		private function departingFlightsDataGrid_changeHandler(
+								event:Event):void
+		{
+			updateSummary();
+		}
+
+		/**
+		 *  Called when the user selects a return flight.
+		 */
+		private function returnFlightsDataGrid_changeHandler(event:Event):void
+		{
+			updateSummary();
+		}
+
+		/**
+		 *  Called when the user selects the "Coach", "Business",
+		 *  or "First Class" radio button.
+		 */
+		private function serviceRadioButtonGroup_changeHandler(event:Event):void
+		{
+			departingFlightsDataGrid.invalidateList();
+			returnFlightsDataGrid.invalidateList();
+			
+			updateSummary();
+		}
+
+	]]>
+	</mx:Script>
+
+	<mx:Style>
+
+		FormItemLabel
+		{
+			fontWeight: bold;
+		}
+		
+		.myHighlight
+		{
+			color:#990000;
+		}
+
+	</mx:Style>
+
+	<mx:ApplicationControlBar width="100%" height="30">
+		<mx:Label fontSize="14" fontWeight="bold"
+				  text="{resourceManager.getString(MY_BUNDLE, 'APP_TITLE')}"/>
+		<mx:Spacer width="100%"/>
+		<mx:Label text="{resourceManager.getString(MY_BUNDLE, 'LANGUAGE_LABEL')}"/>
+		<mx:ComboBox id="languageComboBox"
+					 labelFunction="languageComboBoxLabelFunction"
+					 change="languageComboBox_changeHandler(event)"/>
+	</mx:ApplicationControlBar>
+
+	<mx:HBox id="myHB" width="100%" height="100%" horizontalAlign="center">
+	
+		<mx:Panel width="100%" height="100%"
+				  title="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_TITLE')}">
+			<mx:Form width="100%" verticalGap="15">
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_FROM')}">
+					<mx:ComboBox id="departureCityComboBox" width="170" rowCount="11"
+								 prompt="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_SELECT')}"
+								 labelFunction="cityLabelFunction"
+								 change="departureCityComboBox_changeHandler(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_TO')}">
+					<mx:ComboBox id="arrivalCityComboBox" width="170" rowCount="11"
+								 prompt="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_SELECT')}"
+								 labelFunction="cityLabelFunction"
+								 change="arrivalCityComboBox_changeHandler(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_TRIP_TYPE')}">
+					<mx:RadioButtonGroup id="travelTypeRadioButtonGroup" selectedValue="roundTrip"
+										 change="travelTypeRadioButtonGroup_changeHandler(event)"/>
+					<mx:RadioButton id="roundTripRadioButton" groupName="travelTypeRadioButtonGroup"
+									label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_ROUND_TRIP')}"
+									value="roundTrip"/>
+					<mx:RadioButton id="oneWayRadioButton" groupName="travelTypeRadioButtonGroup"
+									label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_ONE_WAY')}"
+									value="oneWay"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_DEPARTURE_DATE')}">
+					<mx:DateField id="departureDateField" width="185"
+								  labelFunction="dateFieldLabelFunction"
+								  parseFunction="departureDateFieldParseFunction"
+								  change="departureDateField_changeHandler(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_RETURN_DATE')}">
+					<mx:DateField id="returnDateField" width="185"
+								  labelFunction="dateFieldLabelFunction"
+								  parseFunction="returnDateFieldParseFunction"
+								  change="returnDateField_changeHandler(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_PASSENGERS')}"
+							 direction="horizontal">
+					<mx:VBox verticalGap="0">
+						<mx:NumericStepper id="adultNumericStepper" width="80"
+										   maximum="10" value="1" 
+										   change="adultNumericStepper_changeHandler(event)"/>
+						<mx:Label text="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_ADULTS')}"/>
+					</mx:VBox>
+					<mx:VBox verticalGap="0" >
+						<mx:NumericStepper id="childNumericStepper" width="80"
+										   maximum="10"
+										   change="childNumericStepper_changeHandler(event)"/>
+						<mx:Label text="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_CHILDREN')}"/>
+					</mx:VBox>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_SERVICE')}">
+					<mx:RadioButtonGroup id="serviceRadioButtonGroup" selectedValue="coach"
+										 change="serviceRadioButtonGroup_changeHandler(event)"/>
+					<mx:RadioButton id="coachRadioButton" groupName="serviceRadioButtonGroup"
+									label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_COACH')}"
+									value="coach"/>
+					<mx:RadioButton id="businessRadioButton" groupName="serviceRadioButtonGroup"
+									label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_BUSINESS')}"
+									value="business"/>
+					<mx:RadioButton id="firstClassButton" groupName="serviceRadioButtonGroup"
+									label="{resourceManager.getString(MY_BUNDLE, 'FILTER_PANEL_FIRST_CLASS')}"
+									value="firstClass"/>
+				</mx:FormItem>
+			</mx:Form>
+		</mx:Panel>
+
+		<mx:Panel width="100%" height="100%" paddingTop="8" paddingLeft="8" paddingRight="8"
+				  title="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_TITLE')}">
+			<mx:Label id="departingFlightsLabel" fontWeight="bold"
+					  text="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_DEPARTING_FLIGHTS')}"/>
+			<mx:DataGrid id="departingFlightsDataGrid" width="100%" height="154"
+						 resizableColumns="false"
+						 change="departingFlightsDataGrid_changeHandler(event)">
+				<mx:columns>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_FLIGHT')}"
+									   dataField="@id" sortable="false"/>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_TIME')}"
+									   textAlign="right"
+									   labelFunction="timeColumnLabelFunction"
+									   sortCompareFunction="timeColumnSortCompareFunction"/>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_PRICE')}"
+									   textAlign="right"
+									   labelFunction="priceColumnLabelFunction"
+									   sortCompareFunction="priceColumnSortCompareFunction"/>
+				</mx:columns>
+			</mx:DataGrid>
+			<mx:Label id="returnFlightsLabel" fontWeight="bold"
+					  text="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_RETURN_FLIGHTS')}"/>
+			<mx:DataGrid id="returnFlightsDataGrid" width="100%" height="154"
+						 resizableColumns="false"
+						 change="returnFlightsDataGrid_changeHandler(event)">
+				<mx:columns>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_FLIGHT')}"
+									   dataField="@id" sortable="false"/>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_TIME')}"
+									   textAlign="right"
+									   labelFunction="timeColumnLabelFunction"
+									   sortCompareFunction="timeColumnSortCompareFunction"/>
+					<mx:DataGridColumn headerText="{resourceManager.getString(MY_BUNDLE, 'SELECTION_PANEL_PRICE')}"
+									   textAlign="right"
+									   labelFunction="priceColumnLabelFunction"
+									   sortCompareFunction="priceColumnSortCompareFunction"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</mx:Panel>
+
+		<mx:Panel width="100%" height="100%" paddingTop="8" verticalGap="0"
+				  title="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_TITLE')}">
+			<mx:Form id="departureSummaryForm" paddingTop="0" paddingBottom="0" verticalGap="0">
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_FROM')}">
+					<mx:Label id="summaryDepartingFromCity" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_TO')}">
+					<mx:Label id="summaryDepartingToCity" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DEPARTURE_DATE')}">
+					<mx:Label id="summaryDepartingDate" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DEPARTURE_TIME')}">
+					<mx:Label id="summaryDepartingTime" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_ARRIVAL_TIME')}">
+					<mx:Label id="summaryDepartingArrivalTime" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DURATION')}">
+					<mx:Label id="summaryDepartingDuration" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DISTANCE')}">
+					<mx:Label id="summaryDepartingDistance" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_FLIGHT_NUMBER')}">
+					<mx:Label id="summaryDepartingFlightID" styleName="myHighlight"/>
+				</mx:FormItem>
+			</mx:Form>
+			<mx:HRule width="100%"/>
+			<mx:Form id="arrivalSummaryForm" paddingTop="0" paddingBottom="0" verticalGap="0">
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_FROM')}">
+					<mx:Label id="summaryReturnFromCity" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_TO')}">
+					<mx:Label id="summaryReturnToCity" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DEPARTURE_DATE')}">
+					<mx:Label id="summaryReturnDate" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DEPARTURE_TIME')}">
+					<mx:Label id="summaryReturnTime" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_ARRIVAL_TIME')}">
+					<mx:Label id="summaryReturnArrivalTime" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DURATION')}">
+					<mx:Label id="summaryReturnDuration" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_DISTANCE')}">
+					<mx:Label id="summaryReturnDistance" styleName="myHighlight"/>
+				</mx:FormItem>
+				<mx:FormItem label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_FLIGHT_NUMBER')}">
+					<mx:Label id="summaryReturnFlightID" styleName="myHighlight"/>
+				</mx:FormItem>
+			</mx:Form>
+			<mx:HRule id="hRule" width="100%"/>
+			<mx:VBox width="100%" height="100%"
+					 horizontalAlign="center" verticalAlign="middle" verticalGap="10">
+				<mx:HBox width="100%">					
+					<mx:Label width="50%" text="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_TOTAL_PRICE')}"
+							  textAlign="right" fontWeight="bold"/>
+					<mx:Label id="totalPriceLabel" width="50%" fontWeight="bold" styleName="myHighlight"/>
+				</mx:HBox>
+				<mx:Button id="bookItButton" enabled="false" styleName="myHighlight"
+						   label="{resourceManager.getString(MY_BUNDLE, 'SUMMARY_PANEL_BOOK_IT')}"/>
+			</mx:VBox>				
+		</mx:Panel>
+
+	</mx:HBox>
+
+</mx:Application>
