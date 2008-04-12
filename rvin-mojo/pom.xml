@@ -92,6 +92,7 @@
 		<module>compiler-mojo</module>
 		<module>asdoc-mojo</module>
 		<module>flex-builder-mojo</module>
+		<module>source-mojo</module>
 
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
