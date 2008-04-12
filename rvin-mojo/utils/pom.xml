@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-alpha6-SNAPSHOT</version>
+		<version>1.0-beta1</version>
 	</parent>
 
 	<artifactId>util</artifactId>
-	<version>1.0-alpha3-SNAPSHOT</version>
+	<version>1.0-beta1</version>
 
 	<packaging>jar</packaging>
 
