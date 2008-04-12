@@ -1,12 +1,98 @@
+<!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
+
 <component-set>
 	<components>
+		<!-- i18n resource bundles -->
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
-			<role-hint>java-source</role-hint>
+			<role-hint>resource-bundle</role-hint>
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
-				<type>java-source</type>
+				<type>resource-bundle</type>
 				<extension>swc</extension>
+			</configuration>
+		</component>
+
+		<!-- Flex -->
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>swc</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
+					<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile</test-compile>
+					<test>info.rvin.mojo:flex-compiler-mojo:test-run</test>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>swf</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swf</compile>
+					<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile</test-compile>
+					<test>info.rvin.mojo:flex-compiler-mojo:test-run</test>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<!-- Air support -->
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>aswc</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<extension>swc</extension>
+				<type>aswc</type>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>aswc</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swc</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>aswf</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<extension>swf</extension>
+				<type>aswf</type>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>aswf</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swf</compile>
+					<!--
+						<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile-swf</test-compile>
+						<test>org.apache.maven.plugins:maven-swc-plugin:test-compile-swf</test>
+					-->
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
 			</configuration>
 		</component>
 	</components>
