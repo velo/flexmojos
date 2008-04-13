@@ -65,8 +65,9 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			// getLog().warn("Skipping test phase.");
 		} else if (!testFolder.exists()) {
 			// getLog().warn("Test folder not found" + testFolder);
-		} else if (GraphicsEnvironment.isHeadless()) {
-			getLog().error("Can't run flexunit in headless enviroment.");
+//TODO need to check problems on MAC OS
+//		} else if (GraphicsEnvironment.isHeadless()) {
+//			getLog().error("Can't run flexunit in headless enviroment.");
 		} else {
 			super.execute();
 		}
