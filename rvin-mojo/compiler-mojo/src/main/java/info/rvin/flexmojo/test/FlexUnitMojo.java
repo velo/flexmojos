@@ -2,7 +2,6 @@ package info.rvin.flexmojo.test;
 
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,8 +21,8 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 /**
- * 
- * based on:
+ * Goal to run FlexUnit tests.
+ * Based on:
  * http://weblogs.macromedia.com/pmartin/archives/2007/09/flexunit_for_an_2.cfm
  * 
  * @goal test-run
