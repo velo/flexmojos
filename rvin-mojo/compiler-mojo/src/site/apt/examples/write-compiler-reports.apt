@@ -1,0 +1,30 @@
+ ------
+ Write Compiler Reports
+ ------
+ Joost den Boer
+ ------
+ 13 april 2008
+ ------
+
+Write Compiler Reports
+
+  The flex compiler has support to write a <link> and <configuration> report.
+  To enable the writing of these reports, set the corresponding configuration
+  property to <<true>>. The reports are created in the <target> directory.
+  
+  Example of enabling writing both the link report and configuration report.
+  
++-----
+  <plugins>
+      <plugin>
+        <groupId>info.rvin.mojo</groupId>
+        <artifactId>flex-compiler-mojo</artifactId>
+        <configuration>
+          <linkReport>true</linkReport>
+          <configurationReport>true</configurationReport>
+        </configuration>
+      </plugin>
+      ...
+  </plugins>
++-----
+  
