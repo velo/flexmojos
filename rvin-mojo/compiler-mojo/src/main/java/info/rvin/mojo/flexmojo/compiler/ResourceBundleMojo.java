@@ -20,6 +20,8 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 
 /**
+ * Goal which is used to create a resouce bundle package
+ * 
  * @goal compile-resource-bundle
  * @requiresDependencyResolution
  * @phase compile
