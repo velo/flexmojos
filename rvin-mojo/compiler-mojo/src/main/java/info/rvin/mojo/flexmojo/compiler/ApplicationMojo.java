@@ -32,7 +32,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which compiles the Flex sources into an application for either
+ * Flex or AIR depending on the package type.
  * 
  * @goal compile-swf
  * @requiresDependencyResolution
