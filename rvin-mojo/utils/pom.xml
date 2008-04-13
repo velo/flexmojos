@@ -13,6 +13,7 @@
 	<packaging>jar</packaging>
 
 	<name>Flex Mojos utilities</name>
+	<inceptionYear>2008</inceptionYear>
 
 	<dependencies>
 		<dependency>
@@ -33,4 +34,23 @@
 		</dependency>
 	</dependencies>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+			</plugin>
+	        <plugin>
+		       <groupId>org.apache.maven.plugins</groupId>
+		       <artifactId>maven-javadoc-plugin</artifactId>
+		    </plugin>			
+		</plugins>
+	</reporting>
 </project>
