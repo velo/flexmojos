@@ -14,7 +14,12 @@
 	<packaging>maven-plugin</packaging>
 
 	<name>Flex Compiler Maven Mojo</name>
-	<url>http://maven.apache.org</url>
+	<description>
+		With this maven plugin Flex3/AS3 sources can be compiled into
+		a SWC or SWF package.
+	</description>
+	<url>http://code.google.com/p/flex-mojos/</url>
+	<inceptionYear>2008</inceptionYear>
 
 	<dependencies>
 		<dependency>
