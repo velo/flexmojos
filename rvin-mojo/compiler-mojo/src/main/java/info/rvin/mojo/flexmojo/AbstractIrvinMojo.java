@@ -68,22 +68,35 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	protected MavenProjectBuilder mavenProjectBuilder;
 
 	/**
+	 * Local repository to be used by the plugin to resolve dependencies.
+	 * 
 	 * @parameter expression="${localRepository}"
 	 */
 	protected ArtifactRepository localRepository;
 
 	/**
+	 * List of remote repositories to be used by the plugin to resolve dependencies.
+	 * 
 	 * @parameter expression="${project.remoteArtifactRepositories}"
 	 */
 	@SuppressWarnings("unchecked")
 	protected List remoteRepositories;
 
+	/**
+	 * Construct Mojo instance
+	 */
 	public AbstractIrvinMojo() {
 		super();
 	}
 
+	// dependency artifactes
 	private Set<Artifact> dependencyArtifacts;
 
+	/**
+	 * Returns Set of dependency artifacts which are resolved for the project.
+	 * @return Set of dependency artifacts.
+	 * @throws MojoExecutionException
+	 */
 	@SuppressWarnings("unchecked")
 	protected Set<Artifact> getDependencyArtifacts()
 			throws MojoExecutionException {
@@ -95,6 +108,12 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 		return dependencyArtifacts;
 	}
 
+	/**
+	 * Get dependency artifacts for given scope
+	 * @param scope for which to get artifacts
+	 * @return List of artifacts
+	 * @throws MojoExecutionException
+	 */
 	protected List<Artifact> getDependencyArtifacts(String scope)
 			throws MojoExecutionException {
 		if (scope == null)
@@ -110,6 +129,9 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 		return artifacts;
 	}
 
+	/**
+	 * Executes plugin
+	 */
 	public void execute() throws MojoExecutionException,
 			MojoFailureException {
 		setUp();
@@ -117,12 +139,30 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 		tearDown();
 	}
 
+	/**
+	 * Perform setup before plugin is run.
+	 * 
+	 * @throws MojoExecutionException
+	 * @throws MojoFailureException
+	 */
 	protected abstract void setUp() throws MojoExecutionException,
 			MojoFailureException;
 
+	/**
+	 * Perform plugin functionality
+	 * 
+	 * @throws MojoExecutionException
+	 * @throws MojoFailureException
+	 */
 	protected abstract void run() throws MojoExecutionException,
 			MojoFailureException;
 
+	/**
+	 * Perform (cleanup) actions after plugin has run
+	 * 
+	 * @throws MojoExecutionException
+	 * @throws MojoFailureException
+	 */
 	protected abstract void tearDown() throws MojoExecutionException,
 			MojoFailureException;
 
