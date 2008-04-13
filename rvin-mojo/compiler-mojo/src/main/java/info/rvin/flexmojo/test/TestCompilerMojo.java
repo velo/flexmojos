@@ -15,7 +15,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -27,17 +27,26 @@ import org.apache.maven.plugin.MojoFailureException;
 public class TestCompilerMojo extends ApplicationMojo {
 
 	/**
-     * Set this to 'true' to bypass unit tests entirely.
-     * Its use is NOT RECOMMENDED, but quite convenient on occasion.
-     *
-     * @parameter expression="${maven.test.skip}"
+	 * Set this to 'true' to bypass unit tests entirely. Its use is NOT
+	 * RECOMMENDED, but quite convenient on occasion.
+	 * 
+	 * @parameter expression="${maven.test.skip}"
 	 */
 	private boolean skipTests;
 
 	/**
 	 * @parameter
 	 */
-	private File template;
+	private File testRunnerTemplate;
+
+	/**
+	 * File to be tested.
+	 * 
+	 * If not defined assumes Test*.as and *Test.as
+	 * 
+	 * @parameter
+	 */
+	private String[] includeTestFiles;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -53,7 +62,9 @@ public class TestCompilerMojo extends ApplicationMojo {
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
-
+		if (includeTestFiles == null) {
+			includeTestFiles = new String[] { "Test*.as", "*Test.as" };
+		}
 
 		File outputFolder = new File(build.getTestOutputDirectory());
 		if (!outputFolder.exists()) {
@@ -82,17 +93,8 @@ public class TestCompilerMojo extends ApplicationMojo {
 	@SuppressWarnings("unchecked")
 	private List<String> getTestClasses(File testFolder) {
 		Collection<File> testFiles = FileUtils.listFiles(testFolder,
-				new FileFileFilter() {
-					@Override
-					public boolean accept(File file) {
-						String name = file.getName();
-						if (name.startsWith("Test")
-								&& (name.endsWith(".as") || name
-										.endsWith(".mxml")))
-							return true;
-						return false;
-					}
-				}, DirectoryFileFilter.DIRECTORY);
+				new WildcardFileFilter(includeTestFiles),
+				DirectoryFileFilter.DIRECTORY);
 
 		List<String> testClasses = new ArrayList<String>();
 
@@ -148,16 +150,16 @@ public class TestCompilerMojo extends ApplicationMojo {
 	}
 
 	private InputStream getTemplate() throws MojoExecutionException {
-		if (template == null) {
+		if (testRunnerTemplate == null) {
 			return getClass().getResourceAsStream("/test/TestRunner.vm");
-		} else if (!template.exists()) {
+		} else if (!testRunnerTemplate.exists()) {
 			throw new MojoExecutionException("Template file not found: "
-					+ template);
+					+ testRunnerTemplate);
 		} else {
 			try {
-				return new FileInputStream(template);
+				return new FileInputStream(testRunnerTemplate);
 			} catch (FileNotFoundException e) {
-				//Never should happen
+				// Never should happen
 				throw new MojoExecutionException("Error reading template file",
 						e);
 			}
