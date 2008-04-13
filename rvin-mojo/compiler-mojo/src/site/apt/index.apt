@@ -1,0 +1,86 @@
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 09 april 2008
+ ------
+
+
+Flex compiler plugin
+
+  The Flex Compiler Plugin is used to compile the sources of your flex project.
+  This plugin uses the opensource flex compiler oem to compile the sources.
+  
+  This Flex Compiler Plugin can create application and library files for both
+  Flex and AIR depending on the package.
+
+* Goals Overview
+
+  The Flex Compiler Plugin has two goals.  Both are already bound to their proper
+  phases within the Maven Lifecycle and are therefore, automatically executed
+  during their respective phases.
+
+  * {{{compile-swf-mojo.html}flex-compiler-mojo:compile-swf}} is bound to the compile phase and
+  is used to compile the main Flex source files into an application file. Depending on the
+  package type, either a Flex application (swf) or AIR application (aswf) is created.
+
+  * {{{compile-swc-mojo.html}flex-compiler-mojo:compile-swc}} is bound to the compile phase and
+  is used to compile a library file. Depending on the package type, either a Flex library (swc)
+  or AIR library (aswc) is created.
+
+  * {{{compile-resource-bundle-mojo.html}flex-compiler-mojo:compile-resource-bundle}} is bound to the compile phase and
+  is used to compile a resource bundle.
+
+  * {{{test-compile-mojo.html}flex-compiler-mojo:test-compile}} is bound to the
+  test-compile phase and is used to compile the Flex test source files.
+
+  * {{{test-run-mojo.html}flex-compiler-mojo:test-run}} is bound to the
+  test phase and is used to run the Flex tests.
+
+* Usage
+
+  Instructions on how to use the Compiler Plugin can be found
+  {{{usage.html}here}}.
+  
+* Default Flex Configuration
+
+  Below the default configuration which is used to compile the Flex sources. 
+  This configuration can be changed by adding a configuration section to the plugin in your
+  pom. See {{{usage.html}usage}} for more information.
+
+  The flex compiler includes the fonts for both Windows and Mac. Depending on the system on which the compilation
+  is done, the correct fonts file is copied to the target directory.
+
++-----
+-compiler.accessible=false
+-compiler.allow-source-path-overlap=false
+-compiler.as3=true
+-compiler.debug=true
+-compiler.es=false
+-compiler.external-library-path <project-directory>\target\libraries\external\playerglobal.swc
+-compiler.fonts.local-fonts-snapshot <project-directory>\target\fonts.ser
+-compiler.include-libraries=
+-compiler.keep-generated-actionscript=false
+-compiler.library-path [ALL_DEPENDEND_LIBRARIES]
+-compiler.locale en_US
+-compiler.optimize=true
+-compiler.source-path <project-directory>\src
+-compiler.strict=true
+-compiler.theme=
+-compiler.verbose-stacktraces=false
+-load-config <project-directory>\target\config.xml
+-runtime-shared-libraries=
+-use-network=true
++-----
+
+* Examples
+
+  To provide you with better understanding on some usages of the Flex Compiler
+  Plugin, you can take a look into the following examples:
+
+  * {{{examples/compile-library.html}Compiling a library}}
+
+  * {{{examples/generate-html-files.html}Generate html files with the Flex application}}
+
+  * {{{examples/change-compiler-configuration.html}Change compiler configuration}}
