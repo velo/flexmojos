@@ -20,6 +20,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
+ * Goal to compile the Flex test sources.
+ * 
  * @goal test-compile
  * @requiresDependencyResolution
  * @phase test
