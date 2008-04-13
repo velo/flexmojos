@@ -84,3 +84,5 @@ Flex compiler plugin
   * {{{examples/generate-html-files.html}Generate html files with the Flex application}}
 
   * {{{examples/change-compiler-configuration.html}Change compiler configuration}}
+  
+  * {{{examples/write-compiler-reports.html}Write compiler reports}}
