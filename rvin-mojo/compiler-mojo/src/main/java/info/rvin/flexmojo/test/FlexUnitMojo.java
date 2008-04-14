@@ -53,7 +53,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	private MojoExecutionException executionError; // BAD IDEA
 
 	/**
-	 * @parameter default-value="false" expression="maven.test.skip"
+	 * @parameter default-value="false" expression="${maven.test.skip}"
 	 */
 	private boolean skipTests;
 
@@ -62,7 +62,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 		setUp();
 		
 		if (skipTests) {
-			// getLog().warn("Skipping test phase.");
+			getLog().warn("Skipping test phase.");
 		} else if (swf == null || !swf.exists()) {
 			getLog().warn("Skipping test run. Runner not found: " + swf);
 //TODO need to check problems on MAC OS
@@ -322,7 +322,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 * @throws MojoExecutionException
 	 */
 	private void handleFailures() throws MojoExecutionException {
-		if (failures) {
+		if (failures && failOnTestFailure) {
 			throw new MojoExecutionException("Some tests fail");
 		}
 	}
