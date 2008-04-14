@@ -50,20 +50,36 @@ public class TestCompilerMojo extends ApplicationMojo {
 	 */
 	private String[] includeTestFiles;
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		File testFolder = new File(build.getTestSourceDirectory());
-		if (skipTests) {
-			getLog().warn("Skipping test phase.");
-		} else if (!testFolder.exists()) {
-			getLog().warn("Test folder not found" + testFolder);
-		} else {
-			super.execute();
-		}
-	}
+	private List<String> testClasses;
+
+	private File testFolder;
 
 	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		testFolder = new File(build.getTestSourceDirectory());
+		
+		if (skipTests) {
+			getLog().warn("Skipping test phase.");
+			return;
+		} else if (!testFolder.exists()) {
+			getLog().warn("Test folder not found" + testFolder);
+			return;
+		}
+		
+		setUp();
+		
+		if (testClasses == null || testClasses.isEmpty()) {
+			getLog().warn("No test classes found for pattern: " + includeTestFiles);
+		} else {
+			run();
+			tearDown();
+		}
+	}
+	
+	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
+		isSetProjectFile = false;
+		
 		if (includeTestFiles == null) {
 			includeTestFiles = new String[] { "Test*.as", "*Test.as" };
 		}
@@ -73,8 +89,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 			outputFolder.mkdirs();
 		}
 
-		File testFolder = new File(build.getTestSourceDirectory());
-		List<String> testClasses = getTestClasses(testFolder);
+		testClasses = getTestClasses();
 
 		File testSourceFile;
 		try {
@@ -93,7 +108,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> getTestClasses(File testFolder) {
+	private List<String> getTestClasses() {
 		Collection<File> testFiles = FileUtils.listFiles(testFolder,
 				new WildcardFileFilter(includeTestFiles),
 				DirectoryFileFilter.DIRECTORY);

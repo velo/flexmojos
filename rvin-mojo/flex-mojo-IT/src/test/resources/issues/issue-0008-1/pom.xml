@@ -14,4 +14,8 @@
 
 	<packaging>swf</packaging>
 
+    <build>
+       <testSourceDirectory>src/main/flex</testSourceDirectory>
+    </build>
+
 </project>
