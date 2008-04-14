@@ -72,6 +72,12 @@ public class MavenUtils {
 						return file;
 					}
 				}
+				for (File file : files) {
+					if (file.getName().equalsIgnoreCase("Index.mxml")
+							|| file.getName().equalsIgnoreCase("Index.as")) {
+						return file;
+					}
+				}
 			}
 			return null;
 		}
