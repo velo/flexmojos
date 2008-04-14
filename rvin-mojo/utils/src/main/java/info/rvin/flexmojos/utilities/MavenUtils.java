@@ -67,8 +67,8 @@ public class MavenUtils {
 			}
 			if (files.length > 1) {
 				for (File file : files) {
-					if (file.getName().equalsIgnoreCase("main.mxml")
-							|| file.getName().equalsIgnoreCase("main.as")) {
+					if (file.getName().equalsIgnoreCase("Main.mxml")
+							|| file.getName().equalsIgnoreCase("Main.as")) {
 						return file;
 					}
 				}
