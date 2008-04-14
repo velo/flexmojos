@@ -59,16 +59,18 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		File testFolder = new File(build.getTestSourceDirectory());
+		setUp();
+		
 		if (skipTests) {
 			// getLog().warn("Skipping test phase.");
-		} else if (!testFolder.exists()) {
-			// getLog().warn("Test folder not found" + testFolder);
+		} else if (swf == null || !swf.exists()) {
+			getLog().warn("Skipping test run. Runner not found: " + swf);
 //TODO need to check problems on MAC OS
 //		} else if (GraphicsEnvironment.isHeadless()) {
 //			getLog().error("Can't run flexunit in headless enviroment.");
 		} else {
-			super.execute();
+			run();
+			tearDown();
 		}
 	}
 
@@ -78,9 +80,6 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
 		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
-
-		// Start a thread that receives the FlexUnit results.
-		receiveFlexUnitResults();
 	}
 
 	/**
@@ -334,6 +333,9 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	@Override
 	protected void run() throws MojoExecutionException, MojoFailureException {
+		// Start a thread that receives the FlexUnit results.
+		receiveFlexUnitResults();
+
 		// Start the browser and run the FlexUnit tests.
 		final FlexUnitLauncher browser = new FlexUnitLauncher();
 		try {
