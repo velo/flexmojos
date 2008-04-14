@@ -60,6 +60,15 @@
 			</roles>
 			<timezone>-3</timezone>
 		</developer>
+		<developer>
+			<id>joost</id>
+			<name>Joost den Boer</name>
+			<email>jdboer at e-id.nl</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
 	</developers>
 
 	<issueManagement>
