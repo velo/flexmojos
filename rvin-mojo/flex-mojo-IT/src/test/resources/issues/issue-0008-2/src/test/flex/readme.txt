@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
+====
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
     Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
 
@@ -16,25 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+====
 
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>info.rvin.mojo</groupId>
-		<artifactId>flex-super-pom</artifactId>
-		<version>1.0-beta2</version>
-	</parent>
-
-	<groupId>info.rvin.itest.issues</groupId>
-	<artifactId>issue-0008-2</artifactId>
-	<version>1.0-SNAPSHOT</version>
-
-	<packaging>swf</packaging>
-	
-	<build>
-	   <testSourceDirectory>src/main/flex</testSourceDirectory>
-	</build>
-
-</project>
+This file was put here only to be sure the folder is not emply.
+http://code.google.com/p/flex-mojos/issues/detail?id=8
