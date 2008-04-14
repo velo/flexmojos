@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,6 +51,15 @@ public class TestCompilerMojo extends ApplicationMojo {
 	 */
 	private String[] includeTestFiles;
 
+	/**
+	 * Files to exclude from testing.
+	 * 
+	 * If not defined, assumes no exclusions
+	 * 
+	 * @parameter
+	 */
+	private String[] excludeTestFiles;
+	
 	private List<String> testClasses;
 
 	private File testFolder;
@@ -113,6 +123,14 @@ public class TestCompilerMojo extends ApplicationMojo {
 				new WildcardFileFilter(includeTestFiles),
 				DirectoryFileFilter.DIRECTORY);
 
+		if (excludeTestFiles != null && excludeTestFiles.length > 0) {
+			getLog().debug("excludeTestFiles: "+Arrays.asList(excludeTestFiles));
+			Collection<File> excludedTestFiles = FileUtils.listFiles(testFolder,
+				new WildcardFileFilter(excludeTestFiles),
+				DirectoryFileFilter.DIRECTORY);
+			testFiles.removeAll(excludedTestFiles);
+		}
+
 		List<String> testClasses = new ArrayList<String>();
 
 		int trimPoint = testFolder.getAbsolutePath().length() + 1;
@@ -125,6 +143,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 			testClass = testClass.replace('\\', '.'); // Windows OS
 			testClasses.add(testClass);
 		}
+		getLog().debug("testClasses: "+testClasses);
 		return testClasses;
 	}
 
