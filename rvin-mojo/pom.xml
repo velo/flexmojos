@@ -9,7 +9,11 @@
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos</name>
-	<url>http://code.google.com/p/flex-mojos</url>
+	<url>http://docs.flex-mojos.info</url>
+	<organization>
+		<name>Flex-Mojos</name>
+		<url>http://www.flex-mojos.info</url>
+	</organization>
 
 	<prerequisites>
 		<maven>2.0.7</maven>
@@ -64,10 +68,13 @@
 			<id>joost</id>
 			<name>Joost den Boer</name>
 			<email>jdboer at e-id.nl</email>
+			<url>http://joost.claroquesi.info</url>
+			<organization>E-id! Internet Strategies B.V.</organization>
+			<organizationUrl>http://www.e-id.nl</organizationUrl>
 			<roles>
-				<role>Developer</role>
+				<role>Developer Documentation</role>
 			</roles>
-			<timezone>+3</timezone>
+			<timezone>+1</timezone>
 		</developer>
 	</developers>
 
@@ -91,10 +98,22 @@
 
 	<distributionManagement>
 		<repository>
-			<url>../repository</url>
+			<id>maven.flex-mojos.info</id>
+			<name>Flex-Mojos Release Repository</name>
+			<url>scp://repository.flex-mojos.info/www/flex-mojos/repository</url>
 		</repository>
+		<snapshotRepository>
+			<id>maven.flex-mojos.info</id>
+			<name>Flex-Mojos Snapshot Repository</name>
+			<url>scp://snapshot.flex-mojos.info/www/flex-mojos/snapshot</url>
+		</snapshotRepository>
+		<site>
+			<id>maven.flex-mojos.info</id>
+			<name>Flex-Mojos Plugin Documentation Site</name>
+			<url>scp://docs.flex-mojos.info/www/flex-mojos/docs</url>
+		</site>
 	</distributionManagement>
-
+	
 	<modules>
 		<module>utils</module>
 
@@ -102,6 +121,7 @@
 		<module>asdoc-mojo</module>
 		<module>flex-builder-mojo</module>
 		<module>source-mojo</module>
+		<module>source-view-mojo</module>
 
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
@@ -127,6 +147,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
 			</plugin>
+		    <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-jxr-plugin</artifactId>
+		    </plugin>
+	        <plugin>
+		       <groupId>org.apache.maven.plugins</groupId>
+		       <artifactId>maven-javadoc-plugin</artifactId>
+		    </plugin>			
 		</plugins>
 	</reporting>
 
