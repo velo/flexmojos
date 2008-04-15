@@ -18,7 +18,6 @@
 		With this maven plugin Flex3/AS3 sources can be compiled into
 		a SWC or SWF package.
 	</description>
-	<url>http://code.google.com/p/flex-mojos/</url>
 	<inceptionYear>2008</inceptionYear>
 
 	<dependencies>
