@@ -76,6 +76,15 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+		<developer>
+			<id>logan</id>
+			<name>Logan Allred</name>
+			<email>RedBugz at gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
 	</developers>
 
 	<issueManagement>
@@ -113,7 +122,7 @@
 			<url>scp://docs.flex-mojos.info/www/flex-mojos/docs</url>
 		</site>
 	</distributionManagement>
-	
+
 	<modules>
 		<module>utils</module>
 
@@ -126,8 +135,8 @@
 		<module>super-poms/flex</module>
 		<module>super-poms/air</module>
 
-		<!-- cant release 
-		<module>flex-mojo-IT</module>-->
+		<!-- cant release -->
+		<module>flex-mojo-IT</module>
 	</modules>
 
 	<reporting>
@@ -147,14 +156,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>
 			</plugin>
-		    <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-jxr-plugin</artifactId>
-		    </plugin>
-	        <plugin>
-		       <groupId>org.apache.maven.plugins</groupId>
-		       <artifactId>maven-javadoc-plugin</artifactId>
-		    </plugin>			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</reporting>
 
