@@ -29,8 +29,8 @@
 		</dependency>
 		<dependency>
 			<groupId>flexunit.junit</groupId>
-			<artifactId>FlexUnitOptional</artifactId>
-			<version>2007/09/27</version>
+			<artifactId>flexunit-optional</artifactId>
+			<version>0.85</version>
 			<type>swc</type>
 			<scope>test</scope>
 		</dependency>
