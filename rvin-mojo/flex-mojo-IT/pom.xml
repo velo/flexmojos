@@ -27,12 +27,6 @@
 	</repositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>info.rvin.mojo</groupId>
-			<artifactId>flex-compiler-mojo</artifactId>
-			<version>1.0-alpha8-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
