@@ -18,7 +18,6 @@
 package info.rvin.flexmojos.asdoc;
 
 import flex2.tools.ASDoc;
-
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
@@ -198,7 +197,7 @@ public class AsDocMojo extends AbstractMojo {
 	 * 
 	 * @parameter
 	 */
-	private File output;
+	protected File output;
 
 	/**
 	 * The descriptions to use when describing a package in the documentation.
@@ -248,7 +247,9 @@ public class AsDocMojo extends AbstractMojo {
 		}
 
 		libraries = new ArrayList<File>();
-		for (Artifact artifact : MavenUtils.getDependencyArtifacts(project, resolver, localRepository, remoteRepositories, artifactMetadataSource)) {
+		for (Artifact artifact : MavenUtils.getDependencyArtifacts(project,
+				resolver, localRepository, remoteRepositories,
+				artifactMetadataSource)) {
 			libraries.add(artifact.getFile());
 		}
 
