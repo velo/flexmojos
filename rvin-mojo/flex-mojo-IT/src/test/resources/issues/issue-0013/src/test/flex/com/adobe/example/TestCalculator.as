@@ -33,9 +33,6 @@ package com.adobe.example
 		}
 		
 
-		public function testError() : void {
-			 throw new Error();
-			}
 		public function testMultiplyPass() : void
 		{
 			var result : Number = calculator.multiply( 2, 4 );
