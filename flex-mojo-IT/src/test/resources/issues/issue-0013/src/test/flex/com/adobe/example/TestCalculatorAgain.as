@@ -55,9 +55,5 @@ package com.adobe.example
 			assertEquals( 8, result );
 		}
 
-        public function testError() : void {
-             throw new Error();
-        }
-
 	}
 }
