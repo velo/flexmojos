@@ -64,6 +64,13 @@ public class TestCompilerMojo extends ApplicationMojo {
 
 	private File testFolder;
 
+	/**
+	 * Socket connect port for flex/java communication
+	 * 
+	 * @parameter default-value="3539"
+	 */
+	private int testPort;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		testFolder = new File(build.getTestSourceDirectory());
@@ -176,6 +183,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 		String sourceString = IOUtils.toString(templateSource);
 		sourceString = sourceString.replace("$imports", imports);
 		sourceString = sourceString.replace("$testClasses", classes);
+		sourceString = sourceString.replace("$port", String.valueOf(testPort));
 		File testSourceFile = new File(build.getTestOutputDirectory(),
 				"TestRunner.mxml");
 		FileWriter fileWriter = new FileWriter(testSourceFile);

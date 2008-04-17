@@ -16,6 +16,7 @@ $imports
             private function onCreationComplete() : void {
                 status.text = "Please wait running test suite...";
                 runner = new JUnitTestRunner();
+                runner.port = $port;
                 runner.run( createSuite(), onTestComplete );
             }
 
