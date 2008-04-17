@@ -19,8 +19,7 @@ public class UnzipUtils {
 		ZipInputStream zis = new ZipInputStream(bis);
 		ZipEntry entry = null;
 		while ((entry = zis.getNextEntry()) != null) {
-			File entryDestination = new File(destination,
-					entry.getName());
+			File entryDestination = new File(destination, entry.getName());
 			if (entry.isDirectory()) {
 				entryDestination.mkdirs();
 				continue;
