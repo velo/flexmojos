@@ -38,8 +38,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 /**
- * Goal to run FlexUnit tests.
- * Based on:
+ * Goal to run FlexUnit tests. Based on:
  * http://weblogs.macromedia.com/pmartin/archives/2007/09/flexunit_for_an_2.cfm
  * 
  * @goal test-run
@@ -61,10 +60,13 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	private boolean complete;
 	private boolean verbose = true;
 
-	// attributes from ant task def
-	private int port = 1024;
+	/**
+	 * Socket connect port for flex/java communication
+	 * 
+	 * @parameter default-value="3539"
+	 */
+	private int testPort;
 	private int socketTimeout = 60000; // milliseconds
-	private boolean failOnTestFailure = true;
 	private File swf;
 
 	private MojoExecutionException executionError; // BAD IDEA
@@ -74,17 +76,22 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 */
 	private boolean skipTests;
 
+	/**
+	 * Place where all test reports are saved
+	 */
+	private File reportPath;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		setUp();
-		
+
 		if (skipTests) {
 			getLog().warn("Skipping test phase.");
 		} else if (swf == null || !swf.exists()) {
 			getLog().warn("Skipping test run. Runner not found: " + swf);
-//TODO need to check problems on MAC OS
-//		} else if (GraphicsEnvironment.isHeadless()) {
-//			getLog().error("Can't run flexunit in headless enviroment.");
+			// TODO need to check problems on MAC OS
+			// } else if (GraphicsEnvironment.isHeadless()) {
+			// getLog().error("Can't run flexunit in headless enviroment.");
 		} else {
 			run();
 			tearDown();
@@ -97,6 +104,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
 		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
+		reportPath = new File(build.getDirectory(), "test-reports");
+		reportPath.mkdirs();
 	}
 
 	/**
@@ -163,8 +172,10 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			}
 
 			private void sendPolicyFile() throws IOException {
-				out.write(MessageFormat.format(DOMAIN_POLICY,
-						new Object[] { Integer.toString(port) }).getBytes());
+				out
+						.write(MessageFormat.format(DOMAIN_POLICY,
+								new Object[] { Integer.toString(testPort) })
+								.getBytes());
 
 				out.write(NULL_BYTE);
 
@@ -192,7 +203,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			}
 
 			private void openServerSocket() throws IOException {
-				serverSocket = new ServerSocket(port);
+				serverSocket = new ServerSocket(testPort);
 				serverSocket.setSoTimeout(socketTimeout);
 
 				if (verbose) {
@@ -272,6 +283,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			final Element root = document.getRootElement();
 			final String name = root.valueOf("@name");
 			final int numFailures = Integer.parseInt(root.valueOf("@failures"));
+			final int numErrors = Integer.parseInt(root.valueOf("@errors"));
+			final int totalProblems = numFailures + numErrors;
 
 			if (verbose)
 				log("Running " + name);
@@ -279,8 +292,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 				log(formatLogReport(root));
 
 			// Get the output file name.
-			final File file = new File(build.getTestOutputDirectory(),
-					"TestReport.xml");
+			final File file = new File(reportPath, name + "-TestReport.xml");
 
 			// Pretty print the document to disk.
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -290,21 +302,15 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			writer.close();
 
 			// First write the report, then fail the build if the test failed.
-			if (numFailures > 0) {
+			if (totalProblems > 0) {
 				failures = true;
 
 				if (verbose) {
 					log("flexunit test " + name + " failed.");
 				}
 
-				if (failOnTestFailure) {
-					throw new MojoExecutionException("flexunit test " + name
-							+ " failed.");
-				}
 			}
 
-		} catch (MojoExecutionException be) {
-			throw be;
 		} catch (Exception e) {
 			throw new MojoExecutionException("error writing report to disk", e);
 		}
@@ -339,7 +345,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 * @throws MojoExecutionException
 	 */
 	private void handleFailures() throws MojoExecutionException {
-		if (failures && failOnTestFailure) {
+		if (failures) {
 			throw new MojoExecutionException("Some tests fail");
 		}
 	}
