@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -22,51 +23,27 @@
 
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
-		<artifactId>mojo</artifactId>
-		<version>1.0-beta2-SNAPSHOT</version>
+		<artifactId>flex-super-pom</artifactId>
+		<version>1.0-beta2</version>
 	</parent>
 
-	<artifactId>asdoc</artifactId>
-	<version>1.0-alpha3-SNAPSHOT</version>
+	<groupId>info.rvin.itest.issues</groupId>
+	<artifactId>issue-0017</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-	<packaging>maven-plugin</packaging>
+	<packaging>swc</packaging>
 
-	<name>AsDoc Maven Mojo</name>
+	<build>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
+	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>info.rvin.mojo</groupId>
-			<artifactId>util</artifactId>
-			<version>1.0-beta2-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.adobe.flex</groupId>
-			<artifactId>asdoc</artifactId>
-			<version>3.0.0.3.0.0.477</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>2.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.reporting</groupId>
-			<artifactId>maven-reporting-impl</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-	</dependencies>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>info.rvin.mojo</groupId>
+				<artifactId>asdoc</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>
