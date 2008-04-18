@@ -237,8 +237,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean verboseStacktraces;
 
 	/**
-	 * Local Fonts Snapshot File containing cached system font licensing 
-	 * information produced via <code>java -cp mxmlc.jar flex2.tools.FontSnapshot (fontpath)</code>.
+	 * Local Fonts Snapshot File containing cached system font licensing
+	 * information produced via
+	 * <code>java -cp mxmlc.jar flex2.tools.FontSnapshot (fontpath)</code>.
 	 * Will default to winFonts.ser on Windows XP and macFonts.ser on Mac OS X.
 	 * 
 	 * @parameter
@@ -272,8 +273,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * 
 	 * @parameter default-value="false"
 	 */
-	private boolean linkReport;
-	
+	protected boolean linkReport;
+
 	/**
 	 * Writes the configuration report to a file after the build.
 	 * 
@@ -433,6 +434,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected boolean isSetProjectFile = true;
 
 	/**
+	 * Generated link report file
+	 */
+	protected File linkReportFile;
+
+	/**
 	 * Construct instance
 	 */
 	public AbstractFlexCompilerMojo() {
@@ -488,7 +494,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (!configFile.exists()) {
 			throw new MojoExecutionException("Unable to find " + configFile);
 		} else {
-			getLog().info("Using configuration file "+configFile);
+			getLog().info("Using configuration file " + configFile);
 		}
 
 		if (services == null) {
@@ -531,30 +537,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				"Flex compiler configurations:"
 						+ configuration.toString().replace("--", "\n-"));
 
-		long bytes;
-		try {
-			if (incremental && compilationData.exists()) {
-				builder.load(loadCompilationData());
-			}
-			bytes = builder.build(incremental);
-			if (incremental) {
-				if (compilationData.exists()) {
-					compilationData.delete();
-					compilationData.createNewFile();
-				}
-
-				builder.save(saveCompilationData());
-			}
-		} catch (IOException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (MojoExecutionException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		}
-		if (bytes == 0) {
-			throw new MojoFailureException("Error compiling!");
-		}
+		// if (incremental && compilationData.exists()) {
+		// builder.load(loadCompilationData());
+		// }
+		build(builder);
+		// if (incremental) {
+		// if (compilationData.exists()) {
+		// compilationData.delete();
+		// compilationData.createNewFile();
+		// }
+		//
+		// builder.save(saveCompilationData());
+		// }
 	}
 
 	/**
@@ -574,6 +568,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Loads compilation data to support incremental compilation
+	 * 
 	 * @return InputStream of compilation data
 	 * @throws MojoExecutionException
 	 */
@@ -718,7 +713,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		configuration.addExternalLibraryPath(getDependenciesPath(scope));
 	}
-	
+
 	/**
 	 * Gets RslPolicyFileUrls for given artifact
 	 * 
@@ -765,6 +760,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Get Fonts snapshot
+	 * 
 	 * @return File of font snapshot
 	 * @throws MojoExecutionException
 	 */
@@ -795,7 +791,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Get array of files for dependency artfacts for given scope
-	 * @param scope for which to get files
+	 * 
+	 * @param scope
+	 *            for which to get files
 	 * @return Array of dependency artifact files
 	 * @throws MojoExecutionException
 	 */
@@ -821,7 +819,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
-		if(isSetProjectFile){
+		if (isSetProjectFile) {
 			project.getArtifact().setFile(outputFile);
 		}
 		Report report = builder.getReport();
@@ -839,7 +837,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Write a resource bundle
-	 * @param report from which to obtain info about resource bundle
+	 * 
+	 * @param report
+	 *            from which to obtain info about resource bundle
 	 * @throws MojoExecutionException
 	 */
 	private void writeResourceBundle(Report report)
@@ -889,7 +889,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Configure warnings
 	 * 
-	 * @param cfg Configuration instance to configure
+	 * @param cfg
+	 *            Configuration instance to configure
 	 */
 	private void configureWarnings(Configuration cfg) {
 		cfg.showActionScriptWarnings(showWarnings);
@@ -986,8 +987,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Writes configuration report to file
 	 * 
-	 * @param report contains info to write
-	 * @throws MojoExecutionException throw if an error occurs during writing of report to file
+	 * @param report
+	 *            contains info to write
+	 * @throws MojoExecutionException
+	 *             throw if an error occurs during writing of report to file
 	 */
 	private void writeLinkReport(Report report) throws MojoExecutionException {
 
@@ -997,10 +1000,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Writes configuration report to file
 	 * 
-	 * @param report contains info to write
-	 * @throws MojoExecutionException throw if an error occurs during writing of report to file
+	 * @param report
+	 *            contains info to write
+	 * @throws MojoExecutionException
+	 *             throw if an error occurs during writing of report to file
 	 */
-	private void writeConfigurationReport(Report report) throws MojoExecutionException {
+	private void writeConfigurationReport(Report report)
+			throws MojoExecutionException {
 
 		writeReport(report, "config");
 	}
@@ -1008,11 +1014,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Writes a report to a file.
 	 * 
-	 * @param report Report containing info to write to file
-	 * @param type Type of report to write. Valid types are <code>link</code> and <code>config</code>.
-	 * @throws MojoExecutionException throw if an error occurs during writing of report to file
+	 * @param report
+	 *            Report containing info to write to file
+	 * @param type
+	 *            Type of report to write. Valid types are <code>link</code>
+	 *            and <code>config</code>.
+	 * @throws MojoExecutionException
+	 *             throw if an error occurs during writing of report to file
 	 */
-	private void writeReport(Report report, String type) throws MojoExecutionException {
+	private void writeReport(Report report, String type)
+			throws MojoExecutionException {
 		File fileReport = new File(build.getDirectory(), project
 				.getArtifactId()
 				+ "-" + project.getVersion() + "-" + type + "-report.xml");
@@ -1020,19 +1031,21 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		Writer writer = null;
 		try {
 			writer = new FileWriter(fileReport);
-			if("link".equals(type)) {
+			if ("link".equals(type)) {
 				report.writeLinkReport(writer);
-			} else if("config".equals(type)) {
+				linkReportFile = fileReport;
+			} else if ("config".equals(type)) {
 				report.writeConfigurationReport(writer);
 			}
-			
-			getLog().info("Written "+type+" report to "+fileReport);
+
+			getLog().info("Written " + type + " report to " + fileReport);
 		} catch (IOException e) {
 			throw new MojoExecutionException(
-					"An error has ocurried while recording "+type+"-report", e);
+					"An error has ocurried while recording " + type + "-report",
+					e);
 		} finally {
 			try {
-				if(null != writer) {
+				if (null != writer) {
 					writer.flush();
 					writer.close();
 				}
@@ -1041,7 +1054,22 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 
-		projectHelper.attachArtifact(project, "xml", type+"-report", fileReport);
+		projectHelper.attachArtifact(project, "xml", type + "-report",
+				fileReport);
 	}
-	
+
+	protected void build(E builder) throws MojoExecutionException {
+		long bytes;
+		try {
+			bytes = builder.build(incremental);
+		} catch (IOException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		}
+		if (bytes == 0) {
+			throw new MojoExecutionException("Error compiling!");
+		}
+	}
+
 }
