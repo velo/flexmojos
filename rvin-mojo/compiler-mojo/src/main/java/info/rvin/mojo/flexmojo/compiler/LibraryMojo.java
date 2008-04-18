@@ -217,17 +217,8 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 				+ "-" + project.getVersion() + "-" + locale + ".swc");
 
 		localized.setOutput(output);
-		long bytes;
-		try {
-			bytes = localized.build(false);
-		} catch (IOException e) {
-			throw new MojoExecutionException(
-					"Unable to compile resource bundle", e);
-		}
-		if (bytes == 0) {
-			throw new MojoExecutionException(
-					"Unable to compile resource bundle");
-		}
+
+		build(localized);
 
 		projectHelper
 				.attachArtifact(project, "resource-bundle", locale, output);
