@@ -17,7 +17,7 @@
  */
 package info.rvin.flexmojos.flexbuilder;
 
-import info.rvin.flexmojos.flexbuilder.util.CompileConfigurationLoader;
+import info.rvin.flexmojos.utilities.CompileConfigurationLoader;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
