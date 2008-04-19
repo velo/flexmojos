@@ -1,4 +1,4 @@
-package info.rvin.flexmojos.flexbuilder.util;
+package info.rvin.flexmojos.utilities;
 
 import java.util.Iterator;
 import java.util.List;
