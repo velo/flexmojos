@@ -145,6 +145,7 @@ public class MavenUtils {
 		if (!dest.exists()) {
 			try {
 				FileUtils.copyFile(a.getFile(), dest);
+				dest.deleteOnExit();
 			} catch (IOException e) {
 				throw new MojoExecutionException(e.getMessage(), e);
 			}
