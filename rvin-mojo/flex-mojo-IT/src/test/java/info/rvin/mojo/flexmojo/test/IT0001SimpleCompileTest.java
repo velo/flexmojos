@@ -19,16 +19,16 @@ import org.apache.maven.it.util.ResourceExtractor;
  */
 public class IT0001SimpleCompileTest extends AbstractMavenIntegrationTestCase {
 
-	public void testAirLibrary() throws Exception {
-		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
-				"/simple-air-library");
-		Verifier verifier = new Verifier(testDir.getAbsolutePath(), true);
-		verifier.deleteArtifact("info.rvin.itest", "simple-air-library",
-				"1.0-SNAPSHOT", "aswc");
-		verifier.executeGoal("install");
-		verifier.verifyErrorFreeLog();
-		verifier.resetStreams();
-	}
+//	public void testAirLibrary() throws Exception {
+//		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
+//				"/simple-air-library");
+//		Verifier verifier = new Verifier(testDir.getAbsolutePath(), true);
+//		verifier.deleteArtifact("info.rvin.itest", "simple-air-library",
+//				"1.0-SNAPSHOT", "aswc");
+//		verifier.executeGoal("install");
+//		verifier.verifyErrorFreeLog();
+//		verifier.resetStreams();
+//	}
 
 	public void testFlexLibrary() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
@@ -41,16 +41,16 @@ public class IT0001SimpleCompileTest extends AbstractMavenIntegrationTestCase {
 		verifier.resetStreams();
 	}
 
-	public void testAirApplication() throws Exception {
-		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
-				"/simple-air-application");
-		Verifier verifier = new Verifier(testDir.getAbsolutePath(), true);
-		verifier.deleteArtifact("info.rvin.itest", "simple-air-application",
-				"1.0-SNAPSHOT", "aswf");
-		verifier.executeGoal("install");
-		verifier.verifyErrorFreeLog();
-		verifier.resetStreams();
-	}
+//	public void testAirApplication() throws Exception {
+//		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
+//				"/simple-air-application");
+//		Verifier verifier = new Verifier(testDir.getAbsolutePath(), true);
+//		verifier.deleteArtifact("info.rvin.itest", "simple-air-application",
+//				"1.0-SNAPSHOT", "aswf");
+//		verifier.executeGoal("install");
+//		verifier.verifyErrorFreeLog();
+//		verifier.resetStreams();
+//	}
 
 	public void testFlexApplication() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
