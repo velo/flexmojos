@@ -171,7 +171,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 				build(moduleBuilder);
 
 				projectHelper
-						.attachArtifact(project, "swf", moduleName, module);
+						.attachArtifact(project, "swf", moduleName, outputModule);
 
 			}
 		}
