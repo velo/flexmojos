@@ -146,6 +146,7 @@
 		<module>utils</module>
 
 		<module>compiler-mojo</module>
+		<module>encrypter-mojo</module>
 		<module>asdoc-mojo</module>
 		<module>flex-builder-mojo</module>
 		<module>source-mojo</module>
