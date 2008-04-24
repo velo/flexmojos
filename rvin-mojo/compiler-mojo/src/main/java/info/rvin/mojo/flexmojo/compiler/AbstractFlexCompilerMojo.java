@@ -788,9 +788,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		List<File> files = new ArrayList<File>();
 		for (Artifact a : getDependencyArtifacts(scope)) {
 			// https://bugs.adobe.com/jira/browse/SDK-15073
-			// Workarround begin
-			files.add(MavenUtils.getArtifactFile(a, scope, build));
-			// Workarround end
+			// Workaround begin
+			if (a.getGroupId().equals("com.adobe.flex.sdk") &&
+					a.getArtifactId().equals("playerglobal")) {
+				files.add(MavenUtils.getArtifactFile(a, scope, build));
+			} else {
+				files.add(a.getFile());
+			}
+			// Workaround end
 			// files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
