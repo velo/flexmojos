@@ -26,9 +26,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * Utility class to help get information from Maven objects
- * like files, source paths, resolve dependencies, etc.
- * 
+ * Utility class to help get information from Maven objects like files, source
+ * paths, resolve dependencies, etc.
+ *
  * @author velo.br
  *
  */
@@ -39,13 +39,12 @@ public class MavenUtils {
 
 	/**
 	 * Resolve a source file in a maven project
-	 * 
+	 *
 	 * @param project
 	 *            maven project
 	 * @param sourceFile
 	 *            sugested name on pom
-	 * @return
-	 * 			source file or null if source not found 
+	 * @return source file or null if source not found
 	 */
 	public static File resolveSourceFile(MavenProject project, String sourceFile) {
 
@@ -84,22 +83,22 @@ public class MavenUtils {
 	}
 
 	/**
-	 * Get dependency artifacts for a project using the local and remote repositories
-	 * to resolve the artifacts
-	 * 
+	 * Get dependency artifacts for a project using the local and remote
+	 * repositories to resolve the artifacts
+	 *
 	 * @param project
-	 * 				maven project
+	 *            maven project
 	 * @param resolver
-	 * 				artifact resolver
+	 *            artifact resolver
 	 * @param localRepository
-	 * 				artifact repository
+	 *            artifact repository
 	 * @param remoteRepositories
-	 * 				List of remote repositories
+	 *            List of remote repositories
 	 * @param artifactMetadataSource
-	 * 				artifactMetadataSource
+	 *            artifactMetadataSource
 	 * @return all dependencies from the project
 	 * @throws MojoExecutionException
-	 * 				thrown if an exception occured during artifact resolving
+	 *             thrown if an exception occured during artifact resolving
 	 */
 	@SuppressWarnings("unchecked")
 	public static Set<Artifact> getDependencyArtifacts(MavenProject project,
@@ -123,50 +122,56 @@ public class MavenUtils {
 	}
 
 	/**
-	 * Get the file reference of an SWC artifact.<br> 
-	 * If the artifact file does not exist in the [build-dir]/libraries/[scope] directory, the artifact
-	 * file is copied to that location.
-	 * 
+	 * Get the file reference of an SWC artifact.<br>
+	 * If the artifact file does not exist in the [build-dir]/libraries/[scope]
+	 * directory, the artifact file is copied to that location.
+	 *
 	 * @param a
-	 * 			artifact for which to retrieve the file reference
+	 *            artifact for which to retrieve the file reference
 	 * @param scope
-	 * 			scope of the library
+	 *            scope of the library
 	 * @param build
-	 * 			build for which to get the artifact
+	 *            build for which to get the artifact
 	 * @return swc artifact file reference
-	 * @throws MojoExecutionException thrown if an IOException occurs while
-	 * 			copying the file to the [build-dir]/libraries/[scope] directory
-	 * 
+	 * @throws MojoExecutionException
+	 *             thrown if an IOException occurs while copying the file to the
+	 *             [build-dir]/libraries/[scope] directory
+	 *
 	 */
 	public static File getArtifactFile(Artifact a, String scope, Build build)
 			throws MojoExecutionException {
-		File dest = new File(build.getDirectory(), "libraries/" + scope + "/"
-				+ a.getArtifactId() + ".swc");
-		if (!dest.exists()) {
-			try {
-				FileUtils.copyFile(a.getFile(), dest);
-				dest.deleteOnExit();
-			} catch (IOException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
+		if (a.getGroupId().equals("com.adobe.flex.sdk")
+				&& a.getArtifactId().equals("playerglobal")) {
+			File dest = new File(build.getDirectory(), "libraries/" + scope
+					+ "/" + a.getArtifactId() + ".swc");
+			if (!dest.exists()) {
+				try {
+					FileUtils.copyFile(a.getFile(), dest);
+					dest.deleteOnExit();
+				} catch (IOException e) {
+					throw new MojoExecutionException(e.getMessage(), e);
+				}
 			}
+			return dest;
+		} else {
+			return a.getFile();
 		}
-		return dest;
 	}
 
 	/**
 	 * Use the resolver to resolve the given artifact in the local or remote
 	 * repositories.
-	 * 
+	 *
 	 * @param artifact
 	 *            Artifact to be resolved
 	 * @param resolver
-	 * 			ArtifactResolver to use for resolving the artifact
+	 *            ArtifactResolver to use for resolving the artifact
 	 * @param localRepository
-	 * 			ArtifactRepository
+	 *            ArtifactRepository
 	 * @param remoteRepositories
-	 * 			List of remote artifact repositories
+	 *            List of remote artifact repositories
 	 * @throws MojoExecutionException
-	 * 			thrown if an exception occured during artifact resolving
+	 *             thrown if an exception occured during artifact resolving
 	 */
 	@SuppressWarnings("unchecked")
 	public static void resolveArtifact(Artifact artifact,
@@ -183,11 +188,10 @@ public class MavenUtils {
 
 	/**
 	 * Get the source paths for all resources in the source directory.
-	 * 
+	 *
 	 * @param build
-	 * 			Build for this to get all source paths
-	 * @return
-	 * 			Array of source paths for all resources in the source directory
+	 *            Build for this to get all source paths
+	 * @return Array of source paths for all resources in the source directory
 	 */
 	@SuppressWarnings("unchecked")
 	public static File[] getSourcePaths(Build build) {
@@ -196,56 +200,57 @@ public class MavenUtils {
 
 	/**
 	 * Get the test-source paths for all resources in the test-source directory.
-	 * 
+	 *
 	 * @param build
-	 * 			Build for this to get all test-source paths
-	 * @return
-	 * 			Array of test-source paths for all resources in the test-source directory
+	 *            Build for this to get all test-source paths
+	 * @return Array of test-source paths for all resources in the test-source
+	 *         directory
 	 */
 	@SuppressWarnings("unchecked")
 	public static File[] getTestSourcePaths(Build build) {
-		return getFiles(build.getTestSourceDirectory(), build.getTestResources());
+		return getFiles(build.getTestSourceDirectory(), build
+				.getTestResources());
 	}
 
 	/**
 	 * Get array of Files for all resources in the resources list.
-	 * 
+	 *
 	 * @param sourceDirectory
-	 * 			path to source directory
+	 *            path to source directory
 	 * @param resources
-	 * 			List of Resources
-	 * @return
-	 * 			Array of Files for given source directory and resources
+	 *            List of Resources
+	 * @return Array of Files for given source directory and resources
 	 */
-	private static File[] getFiles(String sourceDirectory, List<Resource> resources) {
+	private static File[] getFiles(String sourceDirectory,
+			List<Resource> resources) {
 		List<File> files = new ArrayList<File>();
-		
+
 		File source = new File(sourceDirectory);
 		if (source.exists()) {
 			files.add(source);
 		}
-		
+
 		for (Resource resource : resources) {
 			File resourceFile = new File(resource.getDirectory());
 			if (resourceFile.exists()) {
 				files.add(resourceFile);
 			}
 		}
-		
+
 		return files.toArray(new File[files.size()]);
-		
+
 	}
-	
+
 	/**
-	 * Returns file reference to config.xml file. Copies the config file to
-	 * the build directory.
-	 * 
+	 * Returns file reference to config.xml file. Copies the config file to the
+	 * build directory.
+	 *
 	 * @param build
-	 * 			Build for which to get the config.xml file
-	 * @return 
-	 * 			file reference to config.xml file
+	 *            Build for which to get the config.xml file
+	 * @return file reference to config.xml file
 	 * @throws MojoExecutionException
-	 * 			thrown if the config file could not be copied to the build directory
+	 *             thrown if the config file could not be copied to the build
+	 *             directory
 	 */
 	public static File getConfigFile(Build build) throws MojoExecutionException {
 		URL url = MavenUtils.class.getResource("/configs/config.xml");
@@ -260,15 +265,16 @@ public class MavenUtils {
 
 	/**
 	 * Returns the file reference to the fonts file. Depending on the os, the
-	 * correct fonts.ser file is used.
-	 * The fonts file is copied to the build directory.
-	 * 
+	 * correct fonts.ser file is used. The fonts file is copied to the build
+	 * directory.
+	 *
 	 * @param build
-	 * 			Build for which to get the fonts file
+	 *            Build for which to get the fonts file
 	 * @return file reference to fonts file
 	 * @throws MojoExecutionException
-	 * 			thrown if the config file could not be copied to the build directory
-	 * 
+	 *             thrown if the config file could not be copied to the build
+	 *             directory
+	 *
 	 * TODO Implement for linux?
 	 */
 	public static File getFontsFile(Build build) throws MojoExecutionException {
@@ -291,15 +297,16 @@ public class MavenUtils {
 	}
 
 	/**
-	 * Returns the file reference to a localize resourceBundlePath. Replaces the {locale}
-	 * variable in the given resourceBundlePath with given locale.
-	 * 
+	 * Returns the file reference to a localize resourceBundlePath. Replaces the
+	 * {locale} variable in the given resourceBundlePath with given locale.
+	 *
 	 * @param resourceBundlePath
-	 * 			Path to resource bundle.
+	 *            Path to resource bundle.
 	 * @param locale
-	 * 			Locale
-	 * @throws MojoExecutionException thrown if the resourceBundlePath for
-	 * 			given locale can not be found
+	 *            Locale
+	 * @throws MojoExecutionException
+	 *             thrown if the resourceBundlePath for given locale can not be
+	 *             found
 	 * @return File reference to the resourceBundlePath for given locale
 	 */
 	public static File getLocaleResourcePath(String resourceBundlePath,
@@ -313,16 +320,14 @@ public class MavenUtils {
 		return localePath;
 	}
 
-
 	/**
 	 * Extract an plugin setting property from pom.xml
-	 * 
+	 *
 	 * @param project
-	 * 			Maven project
+	 *            Maven project
 	 * @param optionName
-	 * 			Name of option to lookup
-	 * @return
-	 * 			Value of optionName
+	 *            Name of option to lookup
+	 * @return Value of optionName
 	 */
 	@SuppressWarnings("unchecked")
 	public static String getCompilerPluginSetting(MavenProject project,
@@ -339,11 +344,11 @@ public class MavenUtils {
 
 	/**
 	 * Returns a compiler plugin settings from a list of plugins .
-	 * 
+	 *
 	 * @param plugins
-	 *          List of plugins
+	 *            List of plugins
 	 * @param optionName
-	 * 			Name of option to lookup
+	 *            Name of option to lookup
 	 * @return option value (may be null)
 	 */
 	@SuppressWarnings("unchecked")
