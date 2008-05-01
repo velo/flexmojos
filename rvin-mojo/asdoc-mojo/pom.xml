@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>asdoc</artifactId>
-	<version>1.0-alpha4</version>
+	<version>1.0-alpha5-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -56,10 +56,4 @@
 			<version>2.0.2</version>
 		</dependency>
 	</dependencies>
-
-  <scm>
-    <connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/asdoc-1.0-alpha4</connection>
-    <developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/asdoc-1.0-alpha4</developerConnection>
-    <url>http://code.google.com/p/flex-mojos/source/browse/asdoc/tags/asdoc-1.0-alpha4</url>
-  </scm>
 </project>
