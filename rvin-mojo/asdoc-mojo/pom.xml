@@ -26,6 +26,13 @@
 			<artifactId>asdoc</artifactId>
 			<version>3.0.0.3.0.0.477</version>
 		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>asdoc</artifactId>
+			<version>3.0.0.3.0.0.477</version>
+			<classifier>template</classifier>
+			<type>zip</type>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-io</groupId>
