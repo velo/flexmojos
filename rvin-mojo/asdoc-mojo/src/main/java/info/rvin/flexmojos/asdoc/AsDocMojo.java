@@ -4,6 +4,7 @@ import flex2.tools.ASDoc;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.apache.maven.project.MavenProjectHelper;
  * @requiresDependencyResolution
  */
 public class AsDocMojo extends AbstractMojo {
+	private static final String WINDOWS_OS = "Windows";
 
 	/**
 	 * The maven project.
@@ -82,6 +84,11 @@ public class AsDocMojo extends AbstractMojo {
 	 */
 	@SuppressWarnings("unchecked")
 	protected List remoteRepositories;
+
+	/**
+	 * @parameter expression="${plugin.artifacts}"
+	 */
+	private List<Artifact> pluginArtifacts;
 
 	/**
 	 * A list of classes to document. These classes must be in the source path.
@@ -294,14 +301,62 @@ public class AsDocMojo extends AbstractMojo {
 		}
 
 		if (templatesPath == null) {
-			templatesPath = new File(build.getDirectory(), "templates");
-			templatesPath.mkdirs();
-			try {
-				UnzipUtils.unzip(getClass().getResourceAsStream(
-						"/asdoc/templates.zip"), templatesPath);
-			} catch (IOException e) {
-				throw new MojoExecutionException(e.getMessage(), e);
+			templatesPath = generateDefaultTemplate();
+		}
+	}
+
+	private File generateDefaultTemplate() throws MojoExecutionException {
+		File templates = new File(build.getDirectory(), "templates");
+		templates.mkdirs();
+		try {
+			for (Artifact artifact : pluginArtifacts) {
+				if ("template".equals(artifact.getClassifier())) {
+					UnzipUtils.unzip(new FileInputStream(artifact.getFile()),
+							templates);
+					return templates;
+				}
 			}
+
+			throw new MojoExecutionException(
+					"Unable to generate default template.");
+		} catch (IOException e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		} finally {
+			linuxPatch();
+		}
+	}
+
+	private void linuxPatch() throws MojoExecutionException {
+		if (!isWindows()) {
+			Runtime runtime = Runtime.getRuntime();
+			String statement = String.format("chmod u+x %s/%s", templatesPath
+					.getAbsolutePath(), "asDocHelper.linux");
+			try {
+				Process p = runtime.exec(statement);
+				if (0 != p.waitFor()) {
+					throw new MojoExecutionException(String
+							.format("Unable to execute %s. Return value = %d"));
+				}
+			} catch (Exception e) {
+				throw new MojoExecutionException(String.format(
+						"Unable to execute %s", statement));
+			}
+
+		}
+	}
+
+	/**
+	 * Return a boolean to show if we are running on Windows.
+	 *
+	 * @return true if we are running on Windows.
+	 */
+	private boolean isWindows() {
+		String os = System.getProperty("os.name");
+
+		if (os.startsWith(WINDOWS_OS)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
