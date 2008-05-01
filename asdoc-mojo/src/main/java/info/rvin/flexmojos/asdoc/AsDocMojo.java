@@ -339,14 +339,14 @@ public class AsDocMojo extends AbstractMojo {
 		} catch (IOException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		} finally {
-			linuxPatch();
+			linuxPatch(templates);
 		}
 	}
 
-	private void linuxPatch() throws MojoExecutionException {
+	private void linuxPatch(File templates) throws MojoExecutionException {
 		if (!isWindows()) {
 			Runtime runtime = Runtime.getRuntime();
-			String statement = String.format("chmod u+x %s/%s", templatesPath
+			String statement = String.format("chmod u+x %s/%s", templates
 					.getAbsolutePath(), "asDocHelper.linux");
 			try {
 				Process p = runtime.exec(statement);
@@ -367,7 +367,7 @@ public class AsDocMojo extends AbstractMojo {
 	 *
 	 * @return true if we are running on Windows.
 	 */
-	private boolean isWindows() {
+	private static boolean isWindows() {
 		String os = System.getProperty("os.name");
 
 		if (os.startsWith(WINDOWS_OS)) {
