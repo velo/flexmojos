@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>info.rvin.mojo</groupId>
+		<artifactId>mojo</artifactId>
+		<version>1.0-beta2-SNAPSHOT</version>
+	</parent>
+	<artifactId>generator-mojo</artifactId>
+	<version>1.0-alpha1-SNAPSHOT</version>
+	<packaging>maven-plugin</packaging>
+
+	<name>AS3 Generator Maven Mojo</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.graniteds</groupId>
+			<artifactId>generator</artifactId>
+			<version>1.1.0-RC1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ant</groupId>
+					<artifactId>ant</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>2.0.7</version>
+		</dependency>
+	</dependencies>
+
+</project>
