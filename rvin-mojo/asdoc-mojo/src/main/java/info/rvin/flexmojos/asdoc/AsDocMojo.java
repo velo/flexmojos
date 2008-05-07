@@ -322,15 +322,15 @@ public class AsDocMojo extends AbstractMojo {
 		} catch (IOException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		} finally {
-			linuxPatch(templates);
+			makeHelperExecutable(templates);
 		}
 	}
 
-	private void linuxPatch(File templates) throws MojoExecutionException {
+	private void makeHelperExecutable(File templates) throws MojoExecutionException {
 		if (!isWindows()) {
 			Runtime runtime = Runtime.getRuntime();
 			String statement = String.format("chmod u+x %s/%s", templates
-					.getAbsolutePath(), "asDocHelper.linux");
+					.getAbsolutePath(), "asDocHelper" + (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1 ? ".linux" : ""));
 			try {
 				Process p = runtime.exec(statement);
 				if (0 != p.waitFor()) {
