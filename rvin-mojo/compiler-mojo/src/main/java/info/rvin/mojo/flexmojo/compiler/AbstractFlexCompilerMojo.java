@@ -33,12 +33,8 @@ import flex2.tools.oem.Report;
 public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		AbstractIrvinMojo {
 
-	/**
-	 * output performance benchmark
-	 *
-	 * @parameter default-value="false"
-	 */
-	private boolean benchmark;
+	private static final String COMPATIBILITY_2_0_0 = "2.0.0";
+	private static final String COMPATIBILITY_2_0_1 = "2.0.1";
 
 	/**
 	 * Turn on generation of accessible SWFs.
@@ -392,6 +388,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected String resourceBundlePath;
 
 	/**
+	 * This is equilvalent to the
+	 * <code>compiler.mxmlc.compatibility-version</code> option of the compc
+	 * compiler. Must be in the form <major>.<minor>.<revision>
+	 *
+	 * Valid values: <tt>2.0.0</tt> and <tt>2.0.1</tt>
+	 *
+	 * @see http://livedocs.adobe.com/flex/3/html/help.html?content=versioning_4.html
+	 *
+	 * @parameter
+	 */
+	private String compatibilityVersion;
+
+	/**
 	 * Previous compilation data, used to incremental builds
 	 */
 	private File compilationData;
@@ -671,6 +680,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		if (metadata != null) {
 			configuration.setSWFMetaData(metadata);
+		}
+
+		if (compatibilityVersion != null) {
+			if (!COMPATIBILITY_2_0_0.equals(compatibilityVersion)
+					&& !COMPATIBILITY_2_0_1.equals(compatibilityVersion)) {
+				throw new MojoExecutionException(
+						"Invalid compatibility version " + compatibilityVersion);
+			} else if (COMPATIBILITY_2_0_0.equals(compatibilityVersion)) {
+				configuration.setCompatibilityVersion(2, 0, 0);
+			} else if (COMPATIBILITY_2_0_1.equals(compatibilityVersion)) {
+				configuration.setCompatibilityVersion(2, 0, 1);
+			} else {
+				throw new IllegalStateException("Should never reach this");
+			}
 		}
 
 	}
