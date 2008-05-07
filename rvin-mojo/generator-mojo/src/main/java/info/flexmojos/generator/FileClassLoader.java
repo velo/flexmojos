@@ -54,6 +54,12 @@ public class FileClassLoader extends ClassLoader {
 			}
 		}
 
+		Package p = c.getPackage();
+		if(p == null) {
+			String packageName = name.substring(0, name.lastIndexOf('.'));
+			p = super.definePackage(packageName, null, null, null, null, null, null, null);
+		}
+
 		// Resolve class definition if approrpriate
 		if (resolve)
 			resolveClass(c);
