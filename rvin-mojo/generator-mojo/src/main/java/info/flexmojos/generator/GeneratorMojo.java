@@ -28,11 +28,8 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.granite.generator.GenerationController;
 import org.granite.generator.GenerationListener;
 import org.granite.generator.Generator;
-import org.granite.generator.ant.JavaAs3Controller;
-import org.granite.generator.ant.PackageTranslator;
 import org.granite.generator.as3.As3TypeFactory;
 import org.granite.generator.as3.DefaultAs3TypeFactory;
 import org.granite.generator.as3.JavaFileGenerationUnit;
@@ -70,17 +67,47 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	protected Build build;
 
+	/**
+	 * Defines the default as3 generation style to use.
+	 *
+	 * Valid values: <tt>granite-gas3</tt>
+	 *
+	 * @parameter default-value="granite-gas3"
+	 */
+	private String style;
+
 	private File classesDirectory;
 
 	/**
 	 * @parameter
 	 */
-	private File outputdir;
+	private File outputDirectory;
 
 	/**
 	 * @parameter
 	 */
 	private String uid = "uid";
+
+	/**
+	 * @parameter
+	 */
+	private String[] entityTemplate;
+
+	/**
+	 * @parameter
+	 */
+	private String[] interfacetemplate;
+
+	/**
+	 * @parameter
+	 */
+	private String[] beanTemplate;
+
+	/**
+	 * @parameter
+	 */
+	private String[] enumTemplate;
+
 
 	public void execute() throws MojoExecutionException {
 		setUp();
@@ -109,11 +136,21 @@ public class GeneratorMojo extends AbstractMojo {
 
 	private Generator<Class<?>, JavaFileGenerationUnit> getGenerator() {
 		As3TypeFactory as3TypeFactory = new DefaultAs3TypeFactory();
-		List<PackageTranslator> translators = new ArrayList<PackageTranslator>();
-		GenerationController<Class<?>, JavaFileGenerationUnit> controller = new JavaAs3Controller(
-				new GenLogger(getLog()), as3TypeFactory, outputdir
-						.getAbsolutePath(), uid, translators, null, null, null,
-				null, null, null, null, false);
+
+		FlexmojosAs3Controller controller =
+			new FlexmojosAs3Controller(as3TypeFactory);
+		controller.setStyle(style);
+		controller.setBeanTemplateUris(beanTemplate);
+		controller.setEntityTemplateUris(entityTemplate);
+		controller.setEnumTemplateUris(enumTemplate);
+		controller.setInterfaceTemplateUris(interfacetemplate);
+		controller.setOutputDirectory(outputDirectory);
+		controller.setUid(uid);
+
+//			new JavaAs3Controller(
+//				new GenLogger(getLog()), as3TypeFactory, outputdir
+//						.getAbsolutePath(), uid, translators, null, null, null,
+//				null, null, null, null, false);
 
 		GenerationListener<JavaFileGenerationUnit> listener = new GenerationListener<JavaFileGenerationUnit>() {
 			public void generating(JavaFileGenerationUnit unit) {
@@ -155,16 +192,18 @@ public class GeneratorMojo extends AbstractMojo {
 		return classes;
 	}
 
-	private void setUp() {
+	private void setUp() throws MojoExecutionException {
 		if (includeClasses == null) {
 			includeClasses = new String[] { "*.class" };
 		}
 
 		classesDirectory = new File(build.getOutputDirectory());
 
-		if (outputdir == null) {
-			outputdir = new File(build.getDirectory(), "as3-generated");
-			outputdir.mkdirs();
+		if (outputDirectory == null) {
+			outputDirectory = new File(build.getDirectory(), "as3-generated");
+			outputDirectory.mkdirs();
 		}
+
 	}
+
 }
