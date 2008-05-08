@@ -247,7 +247,9 @@ public class AsDocMojo extends AbstractMojo {
 		for (Artifact artifact : MavenUtils.getDependencyArtifacts(project,
 				resolver, localRepository, remoteRepositories,
 				artifactMetadataSource)) {
-			libraries.add(artifact.getFile());
+			if ("swc".equals(artifact.getType())) {
+				libraries.add(artifact.getFile());
+			}
 		}
 
 		if (output == null) {
