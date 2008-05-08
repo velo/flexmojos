@@ -7,7 +7,7 @@
 		<version>1.0-beta1</version>
 	</parent>
 	<artifactId>generator-mojo</artifactId>
-	<version>1.0-alpha1</version>
+	<version>1.0-alpha2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>AS3 Generator Maven Mojo</name>
@@ -41,11 +41,4 @@
 			<version>2.0.7</version>
 		</dependency>
 	</dependencies>
-
-
-  <scm>
-    <connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/generator-mojo-1.0-alpha1</connection>
-    <developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/generator-mojo-1.0-alpha1</developerConnection>
-    <url>http://code.google.com/p/flex-mojos/source/browse/tags/generator-mojo-1.0-alpha1</url>
-  </scm>
 </project>
