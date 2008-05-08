@@ -93,8 +93,6 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	private String style;
 
-	private File classesDirectory;
-
 	/**
 	 * @parameter
 	 */
@@ -260,8 +258,6 @@ public class GeneratorMojo extends AbstractMojo {
 		if (includeClasses == null) {
 			includeClasses = new String[] { "*.class" };
 		}
-
-		classesDirectory = new File(build.getOutputDirectory());
 
 		if (outputDirectory == null) {
 			outputDirectory = new File(build.getDirectory(), "generated-sources");
