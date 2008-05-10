@@ -178,7 +178,7 @@ public class GeneratorMojo extends AbstractMojo {
 		for (Artifact artifact : artifacts) {
 			if ("jar".equals(artifact.getType())) {
 				File file = artifact.getFile();
-				if (file.exists()) {
+				if (file != null && file.exists()) {
 					jarDependencies.add(file);
 				} else {
 					getLog().warn("Dependency file not found: " + artifact);
