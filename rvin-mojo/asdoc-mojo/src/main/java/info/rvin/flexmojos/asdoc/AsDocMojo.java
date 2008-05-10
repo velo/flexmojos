@@ -31,7 +31,6 @@ import org.apache.maven.project.MavenProjectHelper;
  * @requiresDependencyResolution
  */
 public class AsDocMojo extends AbstractMojo {
-	private static final String WINDOWS_OS = "Windows";
 
 	/**
 	 * The maven project.
@@ -284,9 +283,8 @@ public class AsDocMojo extends AbstractMojo {
 		}
 
 		if (fontsSnapshot == null) {
-			String os = System.getProperty("os.name").toLowerCase();
 			URL url;
-			if (os.contains("mac")) {
+			if (MavenUtils.isMac()) {
 				url = getClass().getResource("/fonts/macFonts.ser");
 			} else {
 				// And linux?!
@@ -329,10 +327,10 @@ public class AsDocMojo extends AbstractMojo {
 	}
 
 	private void makeHelperExecutable(File templates) throws MojoExecutionException {
-		if (!isWindows()) {
+		if (!MavenUtils.isWindows()) {
 			Runtime runtime = Runtime.getRuntime();
 			String statement = String.format("chmod u+x %s/%s", templates
-					.getAbsolutePath(), "asDocHelper" + (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1 ? ".linux" : ""));
+					.getAbsolutePath(), "asDocHelper" + (MavenUtils.isLinux() ? ".linux" : ""));
 			try {
 				Process p = runtime.exec(statement);
 				if (0 != p.waitFor()) {
@@ -344,21 +342,6 @@ public class AsDocMojo extends AbstractMojo {
 						"Unable to execute %s", statement));
 			}
 
-		}
-	}
-
-	/**
-	 * Return a boolean to show if we are running on Windows.
-	 *
-	 * @return true if we are running on Windows.
-	 */
-	private static boolean isWindows() {
-		String os = System.getProperty("os.name");
-
-		if (os.startsWith(WINDOWS_OS)) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 
