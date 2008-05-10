@@ -33,6 +33,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  *
  */
 public class MavenUtils {
+	private static final String WINDOWS_OS = "windows";
+	private static final String MAC_OS = "mac os x";
+	private static final String MAC_OS_DARWIN = "darwin";
+	private static final String LINUX_OS = "linux";
 
 	private MavenUtils() {
 	}
@@ -278,9 +282,8 @@ public class MavenUtils {
 	 * TODO Implement for linux?
 	 */
 	public static File getFontsFile(Build build) throws MojoExecutionException {
-		String os = System.getProperty("os.name").toLowerCase();
 		URL url;
-		if (os.contains("mac")) {
+		if (MavenUtils.isMac()) {
 			url = MavenUtils.class.getResource("/fonts/macFonts.ser");
 		} else {
 			// TODO And linux?!
@@ -383,5 +386,36 @@ public class MavenUtils {
 			}
 		}
 		return value;
+	}
+	
+	public static String osString() {
+		return System.getProperty("os.name").toLowerCase();
+	}
+	
+	/**
+	 * Return a boolean to show if we are running on Windows.
+	 * 
+	 * @return true if we are running on Windows.
+	 */
+	public static boolean isWindows() {
+		return osString().startsWith(WINDOWS_OS);
+	}
+	
+	/**
+	 * Return a boolean to show if we are running on Linux.
+	 * 
+	 * @return true if we are running on Linux.
+	 */
+	public static boolean isLinux() {
+		return osString().startsWith(LINUX_OS);
+	}
+	
+	/**
+	 * Return a boolean to show if we are running on Mac OS X.
+	 * 
+	 * @return true if we are running on Mac OS X.
+	 */
+	public static boolean isMac() {
+		return osString().startsWith(MAC_OS) || osString().startsWith(MAC_OS_DARWIN);
 	}
 }
