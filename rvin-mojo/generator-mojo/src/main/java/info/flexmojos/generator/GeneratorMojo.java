@@ -94,7 +94,7 @@ public class GeneratorMojo extends AbstractMojo {
 	private String style;
 
 	/**
-	 * @parameter
+	 * @parameter expression="${project.build.directory}/generated-sources/flex-mojos"
 	 */
 	private File outputDirectory;
 
@@ -126,7 +126,7 @@ public class GeneratorMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException {
 		setUp();
 
-		List<File> jarDependencies = getJarDependencies();
+		List<Artifact> jarDependencies = getJarDependencies();
 		if (jarDependencies.isEmpty()) {
 			getLog().warn("No jar dependencies found.");
 			return;
@@ -155,29 +155,29 @@ public class GeneratorMojo extends AbstractMojo {
 				clazz = loader.loadClass(className);
 				count += generator.generate(clazz);
 			} catch (Exception e) {
-				throw new MojoExecutionException(
+				getLog().warn(
 						"Could not generate AS3 beans for: '" + clazz + "'", e);
 			}
 		}
 		getLog().info(count + " files generated.");
 	}
 
-	private URL[] getUrls(List<File> jarDependencies)
+	private URL[] getUrls(List<Artifact> jarDependencies)
 			throws MalformedURLException {
 		URL[] urls = new URL[jarDependencies.size()];
 		for (int i = 0; i < jarDependencies.size(); i++) {
-			urls[i] = jarDependencies.get(i).toURL();
+			urls[i] = jarDependencies.get(i).getFile().toURL();
 		}
 		return urls;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<File> getJarDependencies() {
-		List<File> jarDependencies = new ArrayList<File>();
+	private List<Artifact> getJarDependencies() {
+		List<Artifact> jarDependencies = new ArrayList<Artifact>();
 		Set<Artifact> artifacts = project.getDependencyArtifacts();
 		for (Artifact artifact : artifacts) {
 			if ("jar".equals(artifact.getType())) {
-				jarDependencies.add(artifact.getFile());
+				jarDependencies.add(artifact);
 			}
 		}
 		return jarDependencies;
@@ -213,10 +213,14 @@ public class GeneratorMojo extends AbstractMojo {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> getClasses(List<File> jarDependencies)
+	private List<String> getClasses(List<Artifact> jarDependencies)
 			throws IOException {
 		List<String> classes = new ArrayList<String>();
-		for (File file : jarDependencies) {
+		for (Artifact artifact : jarDependencies) {
+			File file = artifact.getFile();
+			if(!file.exists()) {
+				getLog().warn("Unable to resolve artifact " + artifact);
+			}
 			JarInputStream jar = new JarInputStream(new FileInputStream(file));
 
 			JarEntry jarEntry;
@@ -259,8 +263,7 @@ public class GeneratorMojo extends AbstractMojo {
 			includeClasses = new String[] { "*.class" };
 		}
 
-		if (outputDirectory == null) {
-			outputDirectory = new File(build.getDirectory(), "generated-sources");
+		if (!outputDirectory.exists()) {
 			outputDirectory.mkdirs();
 		}
 
