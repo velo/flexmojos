@@ -132,11 +132,7 @@
 		<module>flex-builder-mojo</module>
 		<module>source-mojo</module>
 		<module>source-view-mojo</module>
-        <module>generator-mojo</module>
-
-		<module>super-poms/flex</module>
-		<module>super-poms/air</module>
-        <module>archetypes</module>
+		<module>generator-mojo</module>
 
 		<!-- cant release
 		<module>flex-mojo-IT</module> -->
