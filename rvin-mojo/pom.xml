@@ -130,7 +130,6 @@
 		<module>encrypter-mojo</module>
 		<module>asdoc-mojo</module>
 		<module>source-mojo</module>
-		<module>source-view-mojo</module>
 		<module>generator-mojo</module>
 
 		<!-- cant release
