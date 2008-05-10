@@ -220,6 +220,7 @@ public class GeneratorMojo extends AbstractMojo {
 			File file = artifact.getFile();
 			if(!file.exists()) {
 				getLog().warn("Unable to resolve artifact " + artifact);
+				continue;
 			}
 			JarInputStream jar = new JarInputStream(new FileInputStream(file));
 
