@@ -126,7 +126,7 @@ public class GeneratorMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException {
 		setUp();
 
-		List<Artifact> jarDependencies = getJarDependencies();
+		List<File> jarDependencies = getJarDependencies();
 		if (jarDependencies.isEmpty()) {
 			getLog().warn("No jar dependencies found.");
 			return;
@@ -162,22 +162,27 @@ public class GeneratorMojo extends AbstractMojo {
 		getLog().info(count + " files generated.");
 	}
 
-	private URL[] getUrls(List<Artifact> jarDependencies)
+	private URL[] getUrls(List<File> jarDependencies)
 			throws MalformedURLException {
 		URL[] urls = new URL[jarDependencies.size()];
 		for (int i = 0; i < jarDependencies.size(); i++) {
-			urls[i] = jarDependencies.get(i).getFile().toURL();
+			urls[i] = jarDependencies.get(i).toURL();
 		}
 		return urls;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Artifact> getJarDependencies() {
-		List<Artifact> jarDependencies = new ArrayList<Artifact>();
+	private List<File> getJarDependencies() {
+		List<File> jarDependencies = new ArrayList<File>();
 		Set<Artifact> artifacts = project.getDependencyArtifacts();
 		for (Artifact artifact : artifacts) {
 			if ("jar".equals(artifact.getType())) {
-				jarDependencies.add(artifact);
+				File file = artifact.getFile();
+				if (file.exists()) {
+					jarDependencies.add(file);
+				} else {
+					getLog().warn("Dependency file not found: " + artifact);
+				}
 			}
 		}
 		return jarDependencies;
@@ -213,15 +218,10 @@ public class GeneratorMojo extends AbstractMojo {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> getClasses(List<Artifact> jarDependencies)
+	private List<String> getClasses(List<File> jarDependencies)
 			throws IOException {
 		List<String> classes = new ArrayList<String>();
-		for (Artifact artifact : jarDependencies) {
-			File file = artifact.getFile();
-			if(!file.exists()) {
-				getLog().warn("Unable to resolve artifact " + artifact);
-				continue;
-			}
+		for (File file : jarDependencies) {
 			JarInputStream jar = new JarInputStream(new FileInputStream(file));
 
 			JarEntry jarEntry;
