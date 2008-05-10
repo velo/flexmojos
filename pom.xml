@@ -157,8 +157,8 @@
 		<module>super-poms/air</module>
         <module>archetypes</module>
 
-		<!-- cant release -->
-		<module>flex-mojo-IT</module>
+		<!-- cant release
+		<module>flex-mojo-IT</module> -->
 	</modules>
 
 	<reporting>
