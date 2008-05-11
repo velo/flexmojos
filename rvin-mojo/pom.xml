@@ -38,6 +38,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<templateFile>${basedir}/src/site/template.vm</templateFile>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -123,18 +130,14 @@
 		</site>
 	</distributionManagement>
 
-	<modules>
-		<module>utils</module>
-
-		<module>compiler-mojo</module>
-		<module>encrypter-mojo</module>
-		<module>asdoc-mojo</module>
-		<module>source-mojo</module>
-		<module>generator-mojo</module>
-
-		<!-- cant release
-		<module>flex-mojo-IT</module> -->
-	</modules>
+	<mailingLists>
+		<mailingList>
+			<name>Flex-mojos Google Group</name>
+			<unsubscribe>flex-mojos-unsubscribe@googlegroups.com</unsubscribe>
+			<post>flex-mojos@googlegroups.com</post>
+			<archive>http://groups.google.com/group/flex-mojos/</archive>
+		</mailingList>
+	</mailingLists>
 
 	<reporting>
 		<plugins>
@@ -161,7 +164,28 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changelog-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</reporting>
+
+	<modules>
+		<module>utils</module>
+
+		<module>compiler-mojo</module>
+		<module>encrypter-mojo</module>
+		<module>asdoc-mojo</module>
+		<module>source-mojo</module>
+		<module>generator-mojo</module>
+
+		<!-- cant release
+			<module>flex-mojo-IT</module> -->
+	</modules>
 
 </project>
