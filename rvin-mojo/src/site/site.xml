@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Maven">
+	<body>
+		<links>
+			<item name="Flex Mojos Blog" href="http://blog.flex-mojos.info/" />
+			<item name="Maven 2" href="http://maven.apache.org/" />
+		</links>
+
+		<menu name="Maven 2.0">
+			<item name="Introduction" href="index.html" />
+			<item name="Download" href="download.html" />
+			<item name="Release Notes" href="release-notes.html" />
+			<item name="General Information" href="about.html" />
+			<item name="For Maven 1.x Users" href="maven1.html" />
+			<item name="Road Map" href="roadmap.html" />
+		</menu>
+
+		<menu ref="reports" />
+
+	</body>
+
+	<poweredBy>
+		<logo name="Maven" href="http://maven.apache.org/" img="http://maven.apache.org/images/logos/maven-feather.png" />
+	</poweredBy>
+
+</project>
