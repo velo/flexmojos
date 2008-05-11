@@ -234,11 +234,15 @@ public class GeneratorMojo extends AbstractMojo {
 
 				String className = jarEntry.getName();
 
-				if (!jarEntry.isDirectory() && className.endsWith(".class")
-						&& matchWildCard(className, includeClasses)
+				if(jarEntry.isDirectory() || !className.endsWith(".class")) {
+					continue;
+				}
+
+				className = className.replace('/', '.');
+				className = className.substring(0, className.length() - 6);
+
+				if (matchWildCard(className, includeClasses)
 						&& !matchWildCard(className, excludeClasses)) {
-					className = className.replace('/', '.');
-					className = className.substring(0, className.length() - 6);
 					classes.add(className);
 				}
 			}
