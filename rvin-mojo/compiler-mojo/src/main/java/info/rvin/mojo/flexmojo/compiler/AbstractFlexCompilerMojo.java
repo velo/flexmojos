@@ -240,6 +240,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private Map<String, String> licenses;
 
 	/**
+	 * defines: specifies a list of define directive key and value pairs.
+	 * For example, CONFIG::debugging
+	 *
+	 * @parameter
+	 */
+	private Map<String, String> defines;
+
+	/**
 	 * Sets the context root path so that the compiler can replace
 	 * <code>{context.root}</code> tokens for service channel endpoints.
 	 *
@@ -628,6 +636,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 
+		if (defines != null) {
+			for (String defineName : defines.keySet()) {
+				String value = defines.get(defineName);
+				getLog().info("define "+defineName+" = "+value);
+				configuration.addDefineDirective(defineName, value);
+			}
+		}
+		
 		// When using the resource-bundle-list option, you must also set the
 		// value of the locale option to an empty string.
 		if (mergeResourceBundle == null || mergeResourceBundle) {
@@ -695,7 +711,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				throw new IllegalStateException("Should never reach this");
 			}
 		}
-
 	}
 
 	/**
