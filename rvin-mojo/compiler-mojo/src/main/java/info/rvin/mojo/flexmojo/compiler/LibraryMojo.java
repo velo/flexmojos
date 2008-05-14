@@ -30,9 +30,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Goal which compiles the Flex sources into a library for either
- * Flex or AIR depending.
- * 
+ * Goal which compiles the Flex sources into a library for either Flex or AIR
+ * depending.
+ *
  * @goal compile-swc
  * @requiresDependencyResolution
  * @phase compile
@@ -43,7 +43,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	 * Enable or disable the computation of a digest for the created swf
 	 * library. This is equivalent to using the
 	 * <code>compiler.computDigest</code> in the compc compiler.
-	 * 
+	 *
 	 * @parameter default-value="true"
 	 */
 	private boolean computeDigest;
@@ -51,7 +51,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is the equilvalent of the <code>include-classes</code> option of
 	 * the compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeClasses;
@@ -59,7 +59,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-file</code> option of the
 	 * compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File[] includeFiles;
@@ -67,7 +67,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-namespaces</code> option of
 	 * the compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeNamespaces;
@@ -75,7 +75,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-resource-bundles</code> option
 	 * of the compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeResourceBundles;
@@ -88,10 +88,25 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is the equilvalent of the <code>include-sources</code> option of
 	 * the compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File[] includeSources;
+
+	/**
+	 * -directory
+	 */
+	private String directory;
+
+	/**
+	 * -include-lookup-only
+	 */
+	private boolean includeLookupOly;
+
+	/**
+	 * -include-stylesheet <name> <path>
+	 */
+	private boolean includeStylesheet;
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {

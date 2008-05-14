@@ -240,8 +240,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private Map<String, String> licenses;
 
 	/**
-	 * defines: specifies a list of define directive key and value pairs.
-	 * For example, CONFIG::debugging
+	 * defines: specifies a list of define directive key and value pairs. For
+	 * example, CONFIG::debugging
 	 *
 	 * @parameter
 	 */
@@ -315,7 +315,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 *
 	 * @parameter
 	 */
-	private String metadata;
+	private String rawMetadata;
+
+	/**
+	 * //-metadata.contributor <name> //-metadata.creator <name>
+	 * //-metadata.date <text> //-metadata.description <text>
+	 * //-metadata.language <code>
+	 * //-metadata.localized-description <text> <lang>
+	 * //-metadata.localized-title <title> <lang>
+	 * //-metadata.publisher <name>
+	 * //-metadata.title <text>
+	 *
+	 */
+	private Metadata metadata;
 
 	/**
 	 * rslUrls array of URLs. The first RSL URL in the list is the primary RSL.
@@ -407,6 +419,91 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @parameter
 	 */
 	private String compatibilityVersion;
+
+	/**
+	 * -compiler.actionscript-file-encoding <string>
+	 */
+	private String encoding;
+
+	/**
+	 * -compiler.defaults-css-files [filename] [...]
+	 */
+	private String defaultsCssFile;
+
+	/**
+	 * -default-background-color <int>
+	 */
+	private int defaultBackgroundColor;
+
+	/**
+	 * -default-frame-rate <int>
+	 */
+	private int defaultFrameRate;
+
+	/**
+	 * -default-script-limits <max-recursion-depth> <max-execution-time>
+	 */
+	private int defaultScriptLimits;
+
+	/**
+	 * -default-size <width> <height>
+	 */
+	private int defaultSize;
+
+	/**
+	 * -dump-config <filename>
+	 */
+	private String dumpConfig;
+
+	/**
+	 * -externs [symbol] [...]
+	 */
+	private String externs;
+
+	/**
+	 * -frames.frame [label] [classname] [...]
+	 */
+	private String frames;
+
+	/**
+	 * -includes [symbol] [...]
+	 */
+	private String[] includes;
+
+	/**
+	 * -compiler.defaults-css-url <string>
+	 */
+	private String defaultsCssURL;
+
+	/**
+	 * -compiler.headless-server
+	 */
+	private boolean headlessServer;
+
+	/**
+	 * -compiler.keep-all-type-selectors
+	 */
+	private boolean keepAllTypeSelectors;
+
+	/**
+	 * -compiler.use-resource-bundle-metadata
+	 */
+	private boolean useResourceBundleMetadata;
+
+	/**
+	 * -resource-bundle-list <filename>
+	 */
+	private String resourceBundleList;
+
+	/**
+	 * -static-link-runtime-shared-libraries
+	 */
+	private boolean staticLinkRuntimeSharedLibraries;
+
+	/**
+	 * -verify-digests
+	 */
+	private boolean verifyDigests;
 
 	/**
 	 * Previous compilation data, used to incremental builds
@@ -639,11 +736,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (defines != null) {
 			for (String defineName : defines.keySet()) {
 				String value = defines.get(defineName);
-				getLog().info("define "+defineName+" = "+value);
+				getLog().info("define " + defineName + " = " + value);
 				configuration.addDefineDirective(defineName, value);
 			}
 		}
-		
+
 		// When using the resource-bundle-list option, you must also set the
 		// value of the locale option to an empty string.
 		if (mergeResourceBundle == null || mergeResourceBundle) {
@@ -694,8 +791,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		}
 
-		if (metadata != null) {
-			configuration.setSWFMetaData(metadata);
+		if (rawMetadata != null) {
+			configuration.setSWFMetaData(rawMetadata);
 		}
 
 		if (compatibilityVersion != null) {
