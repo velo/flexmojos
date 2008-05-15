@@ -27,6 +27,8 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
+ * Goal which generates documentation from the ActionScript sources.
+ * 
  * @goal asdoc
  * @requiresDependencyResolution
  */
