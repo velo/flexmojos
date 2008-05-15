@@ -1,0 +1,55 @@
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 12 may 2008
+ ------
+
+
+Flex Super Pom
+
+  A maven project for a Adobe Flex application needs a lot of configuration
+  and dependencies. Since this is common for all Flex projects, this Super Pom
+  is created to simplify the creation of Maven-Flex projects.
+  
+  No other information is added to this pom than that which is necessary
+  to compile and build the Flex project. 
+
+* Usage
+
+  Instructions on how to use the Flex Super Pom can be found
+  {{{usage.html}here}}.
+  
+* Configuration added by Flex Super Pom
+
+  * Sets source directory to src/main/flex
+  
+  * Sets test source directory to src/test/flex
+  
+  * Adds compiler plugin
+  
+  * Adds ASDoc plugin
+  
+  * Adds FlexBuilder plugin plus configuration needed for an Flex project in FlexBuilder
+  
+  * Adds Flex-Mojos repository
+  
+  * Adds Flex-Mojos Plugins repository
+
+  * Adds required dependencies for an Flex project
+
+    * playerglobal.swc
+
+    * flex.swc
+
+    * framework.swc
+
+    * framework_rb.swc (en_US)
+
+    * rpc.swc
+
+    * rpc_rb.swc (en_US)
+
+    * utilities.swc
+

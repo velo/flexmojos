@@ -1,0 +1,38 @@
+ ------
+ Usage
+ ------
+ Joost den Boer
+ ------
+ 12 may 2008
+ ------
+
+
+AIR Super Pom: Usage
+
+  Using the AIR Super Pom is really easy. Just add the AIR Super Pom as parent
+  pom for your AIR project and add the flex-mojos repository so the AIR Super Pom 
+  can be downloaded by maven.
+  
++-----
+<project>
+  ...  
+  <!-- Add the AIR Super Pom as parent pom to of project -->
+  <parent>
+    <groupId>info.rvin.mojo</groupId>
+    <artifactId>air-super-pom</artifactId>
+    <version>1.0-beta3-SNAPSHOT</version>
+  </parent>
+  ...
+  <!-- Add the Flex-Mojos repository so the AIR Super Pom can be downloaded by Maven -->
+  <repositories>
+    <repository>
+      <id>flex-mojos-repository</id>
+      <url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  ...
+</project>
++-----
