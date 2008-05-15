@@ -13,13 +13,25 @@ public class Font {
 	private boolean advancedAntiAliasing = true;
 
 	/**
-	 * -compiler.fonts.flash-type
+	 * Enables FlashType for embedded fonts, which provides greater clarity for
+	 * small fonts. This is equilvalent to using the
+	 * <code>compiler.fonts.flash-type</code> option for the mxmlc or compc
+	 * compilers.
+	 *
 	 */
-	private String flashType;
+	private boolean flashType = true;
 
 	/**
-	 * Defines ranges that can be used across multiple font-face declarations.
-	 * -compiler.fonts.languages.language-range <lang> <range>
+     * Sets a range to restrict the number of font glyphs embedded into the application.
+     * This is equivalent to using the <code>compiler.fonts.languages.language-range</code> option
+     * for the mxmlc or compc compilers.
+     *
+     * <p>
+     * For example:
+     *
+     * <pre>
+     * setFontLanguageRange("englishRange", "U+0020-U+007E");
+     * </pre>
 	 */
 	private Map<String, String> languages;
 
@@ -85,4 +97,21 @@ public class Font {
 	public void setLocalFontsSnapshot(File localFontsSnapshot) {
 		this.localFontsSnapshot = localFontsSnapshot;
 	}
+
+	public boolean isFlashType() {
+		return flashType;
+	}
+
+	public void setFlashType(boolean flashType) {
+		this.flashType = flashType;
+	}
+
+	public Map<String, String> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(Map<String, String> languages) {
+		this.languages = languages;
+	}
+
 }

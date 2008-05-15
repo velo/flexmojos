@@ -1,7 +1,7 @@
 package info.rvin.mojo.flexmojo.compiler;
 
-import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import static info.rvin.flexmojos.utilities.MavenUtils.getArtifactFile;
+import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
@@ -16,12 +16,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -303,7 +306,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Features requiring a later version will not be compiled into the
 	 * application. The minimum value supported is "9.0.0".
 	 *
-	 * @parameter
+	 * @parameter default-value="9.0.0"
 	 */
 	private String targetPlayer;
 
@@ -318,14 +321,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private String rawMetadata;
 
 	/**
-	 * //-metadata.contributor <name> //-metadata.creator <name>
-	 * //-metadata.date <text> //-metadata.description <text>
-	 * //-metadata.language <code>
-	 * //-metadata.localized-description <text> <lang>
-	 * //-metadata.localized-title <title> <lang>
-	 * //-metadata.publisher <name>
-	 * //-metadata.title <text>
+	 * SWF metadata useless there is no API to read it.
 	 *
+	 * @parameter
 	 */
 	private Metadata metadata;
 
@@ -421,87 +419,183 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private String compatibilityVersion;
 
 	/**
-	 * -compiler.actionscript-file-encoding <string>
+	 * Sets the ActionScript file encoding. The compiler uses this encoding to
+	 * read the ActionScript source files. This is equivalent to using the
+	 * <code>actionscript-file-encoding</code> option of the mxmlc or compc
+	 * compilers.
+	 *
+	 * <p>
+	 * The character encoding; for example <code>UTF-8</code> or
+	 * <code>Big5</code>.
+	 *
+	 * @parameter default-value="UTF-8"
 	 */
 	private String encoding;
 
 	/**
-	 * -compiler.defaults-css-files [filename] [...]
+	 * Sets the location of the default CSS file. This is equivalent to using
+	 * the <code>compiler.defaults-css-url</code> option of the mxmlc or compc
+	 * compilers</code>.
+	 *
+	 * @parameter
 	 */
-	private String defaultsCssFile;
+	private File defaultsCss;
 
 	/**
-	 * -default-background-color <int>
+	 * Sets the default background color. You can override this by using the
+	 * application code. This is the equivalent of the
+	 * <code>default-background-color</code> option of the mxmlc or compc
+	 * compilers.
+	 *
+	 * @parameter default-value="869CA7"
 	 */
-	private int defaultBackgroundColor;
+	private String defaultBackgroundColor;
 
 	/**
-	 * -default-frame-rate <int>
+	 * Sets the default frame rate to be used in the application. This is the
+	 * equivalent of the <code>default-frame-rate</code> option of the mxmlc
+	 * or compc compilers.
+	 *
+	 * @parameter default-value="24"
 	 */
 	private int defaultFrameRate;
 
 	/**
-	 * -default-script-limits <max-recursion-depth> <max-execution-time>
+	 * Sets the default script execution limits (which can be overridden by root
+	 * attributes). This is equivalent to using the
+	 * <code>default-script-limits</code> option of the mxmlc or compc
+	 * compilers.
+	 *
+	 * Recursion depth
+	 *
+	 * @parameter default-value="1000"
 	 */
-	private int defaultScriptLimits;
+	private int scriptMaxRecursionDepth;
 
 	/**
-	 * -default-size <width> <height>
+	 * Sets the default script execution limits (which can be overridden by root
+	 * attributes). This is equivalent to using the
+	 * <code>default-script-limits</code> option of the mxmlc or compc
+	 * compilers.
+	 *
+	 * Execution time, in seconds
+	 *
+	 * @parameter default-value="60"
 	 */
-	private int defaultSize;
+	private int scriptMaxExecutionTime;
 
 	/**
+	 * Sets the default application width in pixels. This is equivalent to using
+	 * the <code>default-size</code> option of the mxmlc or compc compilers.
+	 *
+	 * @parameter default-value="500"
+	 */
+	private int defaultSizeWidth;
+
+	/**
+	 * Sets the default application height in pixels. This is equivalent to
+	 * using the <code>default-size</code> option of the mxmlc or compc
+	 * compilers.
+	 *
+	 * @parameter default-value="375"
+	 */
+	private int defaultSizeHeight;
+
+	/**
+	 * TODO how to set this on flex-compiler-oem
+	 *
 	 * -dump-config <filename>
 	 */
 	private String dumpConfig;
 
 	/**
-	 * -externs [symbol] [...]
+	 * Sets a list of definitions to omit from linking when building an
+	 * application. This is equivalent to using the <code>externs</code>
+	 * option of the mxmlc and compc compilers.
+	 *
+	 * An array of definitions (for example, classes, functions, variables, or
+	 * namespaces).
+	 *
+	 * @parameter
 	 */
-	private String externs;
+	private String[] externs;
 
 	/**
-	 * -frames.frame [label] [classname] [...]
+	 * Sets a SWF frame label with a sequence of class names that are linked
+	 * onto the frame. This is equivalent to using the <code>frames.frame</code>
+	 * option of the mxmlc or compc compilers.
+	 *
+	 * @parameter
 	 */
-	private String frames;
+	private FrameLabel[] frames;
 
 	/**
-	 * -includes [symbol] [...]
+	 * Sets a list of definitions to always link in when building an
+	 * application. This is equivalent to using the <code>includes</code>
+	 * option of the mxmlc or compc compilers.
+	 *
+	 * An array of definitions (for example, classes, functions, variables, or
+	 * namespaces).
+	 *
+	 * @parameter
 	 */
 	private String[] includes;
 
 	/**
-	 * -compiler.defaults-css-url <string>
-	 */
-	private String defaultsCssURL;
-
-	/**
-	 * -compiler.headless-server
+	 * Sets the compiler when it runs on a server without a display. This is
+	 * equivalent to using the <code>compiler.headless-server</code> option of
+	 * the mxmlc or compc compilers.
+	 *
+	 * that value determines if the compiler is running on a server without a
+	 * display.
+	 *
+	 * @parameter default-value="false"
 	 */
 	private boolean headlessServer;
 
 	/**
-	 * -compiler.keep-all-type-selectors
+	 * Instructs the compiler to keep a style sheet's type selector in a SWF
+	 * file, even if that type (the class) is not used in the application.
+	 *
+	 * This is equivalent to using the
+	 * <code>compiler.keep-all-type-selectors</code> option of the mxmlc or
+	 * compc compilers.
+	 *
+	 * @parameter default-value="false"
 	 */
 	private boolean keepAllTypeSelectors;
 
 	/**
-	 * -compiler.use-resource-bundle-metadata
+	 * Determines whether resources bundles are included in the application.
+	 *
+	 * This is equivalent to using the
+	 * <code>compiler.use-resource-bundle-metadata</code> option of the mxmlc
+	 * or compc compilers.
+	 *
+	 * @parameter default-value="true"
 	 */
 	private boolean useResourceBundleMetadata;
 
 	/**
+	 * TODO how to set this on flex-compiler-oem
+	 *
 	 * -resource-bundle-list <filename>
 	 */
 	private String resourceBundleList;
 
 	/**
+	 * TODO how to set this on flex-compiler-oem
+	 *
 	 * -static-link-runtime-shared-libraries
 	 */
 	private boolean staticLinkRuntimeSharedLibraries;
 
 	/**
-	 * -verify-digests
+	 * Verifies the RSL loaded has the same digest as the RSL specified when the
+	 * application was compiled. This is equivalent to using the
+	 * <code>verify-digests</code> option in the mxmlc compiler.
+	 *
+	 * @parameter default-value="true"
 	 */
 	private boolean verifyDigests;
 
@@ -614,6 +708,22 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			policyFileUrls = new String[] { "" };
 		}
 
+		if (metadata == null) {
+			metadata = new Metadata();
+			if (project.getContributors() != null
+					&& !project.getContributors().isEmpty()) {
+				List<Contributor> contributors = project.getContributors();
+				for (Contributor c : contributors) {
+					metadata.addContributor(c.getName());
+				}
+				metadata.addCreator(contributors.get(0).getName());
+			}
+			metadata.setDate(DateFormat.getDateInstance().format(new Date()));
+			metadata.setDescription(project.getDescription());
+			metadata.setLanguages(Arrays.asList(locales));
+			metadata.setTitle(project.getName());
+		}
+
 		configuration = builder.getDefaultConfiguration();
 		configure();
 
@@ -709,11 +819,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (fonts != null) {
 			configuration.enableAdvancedAntiAliasing(fonts
 					.isAdvancedAntiAliasing());
+			configuration.enableFlashType(fonts.isFlashType());
 			configuration.setFontManagers(fonts.getManagers());
 			configuration.setMaximumCachedFonts(fonts.getMaxCachedFonts());
 			configuration.setMaximumGlyphsPerFace(fonts.getMaxGlyphsPerFace());
-			// FIXME how to use this
-			// configuration.setFontLanguageRange(null, null);
+			if (fonts.getLanguages() != null && !fonts.getLanguages().isEmpty()) {
+				for (String language : fonts.getLanguages().keySet()) {
+					configuration.setFontLanguageRange(language, fonts
+							.getLanguages().get(language));
+				}
+			}
 		}
 		File fontsSnapshot = getFontsSnapshot();
 		if (fontsSnapshot == null || !fontsSnapshot.exists()) {
@@ -795,6 +910,35 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.setSWFMetaData(rawMetadata);
 		}
 
+		if (metadata != null) {
+			if (metadata.getContributors() != null) {
+				for (String contributor : metadata.getContributors()) {
+					configuration.setSWFMetaData(Configuration.CONTRIBUTOR,
+							contributor);
+				}
+			}
+			if (metadata.getCreators() != null) {
+				for (String creator : metadata.getCreators()) {
+					configuration
+							.setSWFMetaData(Configuration.CREATOR, creator);
+				}
+			}
+			if (metadata.getDate() != null) {
+				configuration.setSWFMetaData(Configuration.DATE, metadata
+						.getDate());
+			}
+
+			if (metadata.getDescription() != null) {
+				configuration.setSWFMetaData(Configuration.DESCRIPTION,
+						metadata.getDescription());
+			}
+
+			if (metadata.getLanguages() != null) {
+				configuration.setSWFMetaData(Configuration.LANGUAGE, metadata
+						.getLanguages());
+			}
+		}
+
 		if (compatibilityVersion != null) {
 			if (!COMPATIBILITY_2_0_0.equals(compatibilityVersion)
 					&& !COMPATIBILITY_2_0_1.equals(compatibilityVersion)) {
@@ -808,6 +952,62 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				throw new IllegalStateException("Should never reach this");
 			}
 		}
+
+		configuration.setActionScriptFileEncoding(encoding);
+
+		if (targetPlayer != null) {
+			String[] nodes = targetPlayer.split("\\.");
+			if (nodes.length != 3 || !nodes[0].equals("9")) {
+				throw new MojoExecutionException("Invalid player version "
+						+ targetPlayer);
+			}
+			int[] versions = new int[nodes.length];
+			for (int i = 0; i < nodes.length; i++) {
+				try {
+					versions[i] = Integer.parseInt(nodes[i]);
+				} catch (NumberFormatException e) {
+					throw new MojoExecutionException("Invalid player version "
+							+ targetPlayer);
+				}
+			}
+			configuration
+					.setTargetPlayer(versions[0], versions[1], versions[2]);
+		}
+
+		if (defaultsCss != null)
+			configuration.setDefaultCSS(defaultsCss);
+
+		configuration.setDefaultBackgroundColor(Integer.parseInt(defaultBackgroundColor, 16));
+
+		configuration.setDefaultFrameRate(defaultFrameRate);
+
+		configuration.setDefaultScriptLimits(scriptMaxRecursionDepth,
+				scriptMaxExecutionTime);
+
+		configuration.setDefaultSize(defaultSizeWidth, defaultSizeHeight);
+
+		if (externs != null && externs.length > 0) {
+			configuration.setExterns(externs);
+		}
+
+		if (frames != null && frames.length > 0) {
+			for (FrameLabel frame : frames) {
+				configuration.setFrameLabel(frame.getLabel(), frame
+						.getClassNames());
+			}
+		}
+
+		if (includes != null && includes.length > 0) {
+			configuration.setIncludes(includes);
+		}
+
+		configuration.useHeadlessServer(headlessServer);
+
+		configuration.keepAllTypeSelectors(keepAllTypeSelectors);
+
+		configuration.useResourceBundleMetaData(useResourceBundleMetadata);
+
+		configuration.enableDigestVerification(verifyDigests);
 	}
 
 	/**
