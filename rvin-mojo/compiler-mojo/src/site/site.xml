@@ -8,15 +8,14 @@
 		<item name="Introduction" href="index.html"/>
 		<item name="Goals" href="plugin-info.html"/>
 		<item name="Usage" href="usage.html"/>
-		<item name="FAQ" href="faq.html"/>
+		<!--item name="FAQ" href="faq.html"/-->
 	</menu>
 
+	<!--
 	<menu name="Examples">
-		<item name="Compile Library" href="examples/compile-library.html"/>
-		<item name="Generate HTML files" href="examples/generate-html-files.html"/>		
 		<item name="Change compiler configuration" href="examples/change-compiler-configuration.html"/>
-		<item name="Write compiler reports" href="examples/write-compiler-reports.html"/>
 	</menu>
+	-->
 
 	<menu ref="reports"/>
 </body>
