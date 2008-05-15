@@ -1,0 +1,84 @@
+ ------
+ Usage
+ ------
+ Joost den Boer
+ ------
+ 12 may 2008
+ ------
+
+
+Flex Source Plugin: Usage
+
+
+* Running plugin from the {commandline}
+
+  If the Source Plugin is not added to the pom of your project, you can still run the
+  plugin from the commandline.
+  From the directory which contains the pom of your project, run:
+
++-----  
+mvn source-mojo:jar.
++-----
+
+  or, if you do not have the plugin in your maven repository, run:
+  
++-----
+mvn info.rvin.mojo:source-mojo:plugin-version:jar
++-----
+
+  Replace <plugin-version> with the version of the plugin you want to use. If you do not
+  have the plugin yet, it gets automatically downloaded. 
+
+
+* Running {automatically}
+
+  The Source Plugin is <not> bound to any phase and therefore does not get called
+  automatically when you run a build or create a package.
+  Add the Source plugin to the pom of your project or the parent pom to automatically
+  invoke the Source plugin. The <phase> determines when the plugin gets invoked. In the
+  example below the plugin gets executed in the <package> phase.
+
++-----
+<project>
+  ...
+  <build>
+    <!-- To define the plugin version in your parent POM -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>info.rvin.mojo<groupId>
+          <artifactId>source-mojo<artifactId>
+          <version>$pom.version<version>
+          <executions>
+            <execution>
+              <id>flex-source:jar</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <phase>package</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <!-- To use the plugin goals in your POM or parent POM -->
+    <plugins>
+      <plugin>
+        <groupId>info.rvin.mojo<groupId>
+        <artifactId>source-mojo<artifactId>
+        <version>$version<version>
+        <executions>
+          <execution>
+            <id>flex-source:jar</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----

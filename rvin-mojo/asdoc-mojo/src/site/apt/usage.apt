@@ -1,0 +1,58 @@
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 09 april 2008
+ ------
+
+
+Flex Compiler Plugin: Usage
+
+* Compiling Your Flex Sources
+
+  The goals for the Flex Compiler Plugin are bound to their respective phases in the
+  build lifecycle.  So to compile your sources, you need only to tell maven
+  until which lifecycle to execute.  The following will compile your sources:
+
++-----
+mvn compile
++-----
+
+  The above command will execute either <<<flex-compiler-mojo:compile-swc>>>,
+  <<<flex-compiler-mojo:compile-swf>>> or <<<flex-compiler-mojo:compile-resource-bundle>>> 
+  depending on package type of the project.
+  
+  To compile your test sources, you'll do:
+
++-----
+mvn test-compile
++-----
+
+  The above command will first compile the sources and then execute 
+  <<<flex-compiler-mojo:test-compile>>> since the compile phase happens a few phases
+  before the test-compile phase.
+
+* Configuring Your Compiler Plugin
+
+  Since the Flex Compiler Plugin executes automatically during their phases, you
+  don't have to put <<<executions>>> unlike the other plugins.
+
++-----
+<project>
+  ...
+  <build>
+	<plugins>
+		<plugin>
+			<groupId>info.rvin.mojo</groupId>
+			<artifactId>flex-compiler-mojo</artifactId>
+			<extensions>true</extensions>
+			<configuration>
+				<!-- put your configurations here -->
+			</configuration>
+		</plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++-----

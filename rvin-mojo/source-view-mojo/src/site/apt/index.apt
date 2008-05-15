@@ -1,0 +1,26 @@
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 12 may 2008
+ ------
+
+
+Flex Source-View plugin
+
+  TODO
+
+* Goals Overview
+
+  The Source-View Plugin has one goal: {{{source-view-mojo.html}source-view-mojo:source-view}}. This goal is
+  not bound to any phase. You can either run the plugin {{{usage.html#commandline}from the commandline}} or
+  add the plugin to your project pom and bind it to a phase so it gets {{{usage.html#automatically}automatically run}} each time
+  that phase is executed.
+
+  * {{{source-view-mojo.html}source-view-mojo:source-view}} TODO 
+
+* Usage
+
+  Instructions on how to use the Source-View Plugin can be found {{{usage.html}here}}.
+
