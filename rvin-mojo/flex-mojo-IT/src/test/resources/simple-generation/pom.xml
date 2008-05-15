@@ -33,11 +33,11 @@
                 <configuration>
                     <includeSources>
                         <path>${project.build.sourceDirectory}</path>
-                        <path>${project.build.directory}/generated-sources</path>
+                        <path>${project.build.directory}/generated-sources/flex-mojos</path>
                     </includeSources>
                     <sourcePaths>
                         <path>${project.build.sourceDirectory}</path>
-                        <path>${project.build.directory}/generated-sources</path>
+                        <path>${project.build.directory}/generated-sources/flex-mojos</path>
                     </sourcePaths>
                 </configuration>
             </plugin>
