@@ -13,6 +13,10 @@
 	<packaging>maven-plugin</packaging>
 
 	<name>AsDoc Maven Mojo</name>
+	<description>
+		This maven-plugin generates ActionScript documentation.
+	</description>
+	<inceptionYear>2008</inceptionYear>	
 
 	<dependencies>
 		<dependency>
