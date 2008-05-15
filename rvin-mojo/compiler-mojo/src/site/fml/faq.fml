@@ -2,16 +2,29 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
 	<part id="datavisualization">
 		<faq id="dependency">
-			<question>Where can I get datavisualization dependencies?</question>
+			<question>How to use charts or advanced datagrid?</question>
 			<answer>
 			<p>
-				Just add an configuration like this:
+				Is necessary to add data visualization dependencies:
 			</p>
 <pre>
-	<licenses>
-		<charts>put-your-license-here</charts>
-	</licenses>
+&lt;dependency&gt;
+    &lt;groupId&gt;com.adobe.flex.sdk&lt;/groupId&gt;
+    &lt;artifactId&gt;datavisualization&lt;/artifactId&gt;
+    &lt;version&gt;3.0.0.3.0.0.477&lt;/version&gt;
+    &lt;type&gt;swc&lt;/type&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.adobe.flex.sdk&lt;/groupId&gt;
+    &lt;artifactId&gt;datavisualization&lt;/artifactId&gt;
+    &lt;version&gt;3.0.0.3.0.0.477&lt;/version&gt;
+    &lt;type&gt;resource_bundle&lt;/type&gt;
+    &lt;classifier&gt;en_US&lt;/classifier&gt;
+&lt;/dependency&gt;
 </pre>
+
+<p></p>
+
 			</answer>
 		</faq>
 		<faq id="license">
