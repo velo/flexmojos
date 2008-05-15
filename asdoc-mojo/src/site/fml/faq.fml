@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<faqs id="FAQ" title="Frequently Asked Questions">
+	<part id="datavisualization">
+		<faq id="dependency">
+			<question>Where can I get datavisualization dependencies?</question>
+			<answer>
+			<p>
+				Just add an configuration like this:
+			</p>
+<pre>
+	<licenses>
+		<charts>put-your-license-here</charts>
+	</licenses>
+</pre>
+			</answer>
+		</faq>
+		<faq id="license">
+			<question>How to remove "Flex Charting Trial" water mark?</question>
+			<answer>
+			<p>In order to do that, you must have Charts license.</p>
+			<p>Them, just add licenses configuration to your pom.xml, like this:</p>
+<pre>
+...
+&lt;plugin&gt;
+	&lt;groupId&gt;info.rvin.mojo&lt;/groupId&gt;
+	&lt;artifactId&gt;flex-compiler-mojo&lt;/artifactId&gt;
+	&lt;configuration&gt;
+		...
+		&lt;licenses&gt;
+			&lt;charts&gt;put-your-license-here&lt;/charts&gt;
+		&lt;/licenses&gt;
+	&lt;/configuration&gt;
+&lt;/plugin&gt;
+</pre>
+			</answer>
+		</faq>
+	</part>
+</faqs>
