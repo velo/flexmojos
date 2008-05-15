@@ -1,0 +1,19 @@
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 09 april 2008
+ ------
+
+Change Compiler Configuration
+ 
+  There seems to be a bug in the Adobe Flex Compiler for java. Changes directly
+  made in the Configuration instance are used, but it seems configuration settings
+  in an external config.xml file are not used/merged even though the compiler
+  does say the configuration file is loaded.
+  In the configuration report of the build the settings in the loaded config.xml
+  are not visable.
+  
+  TODO: submit a bug to Adobe
+  

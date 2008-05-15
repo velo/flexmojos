@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+	<part id="datavisualization">
+		<faq id="dependency">
+			<question>Where can I get datavisualization dependencies?</question>
+			<answer>
+			<p>
+				Just add an configuration like this:
+			</p>
+<pre>
+	<licenses>
+		<charts>put-your-license-here</charts>
+	</licenses>
+</pre>
+			</answer>
+		</faq>
+		<faq id="license">
+			<question>How to remove "Flex Charting Trial" water mark?</question>
+			<answer>
+			<p>In order to do that, you must have Charts license.</p>
+			<p>Them, just add licenses configuration to your pom.xml, like this:</p>
+<pre>
+...
+&lt;plugin&gt;
+	&lt;groupId&gt;info.rvin.mojo&lt;/groupId&gt;
+	&lt;artifactId&gt;flex-compiler-mojo&lt;/artifactId&gt;
+	&lt;configuration&gt;
+		...
+		&lt;licenses&gt;
+			&lt;charts&gt;put-your-license-here&lt;/charts&gt;
+		&lt;/licenses&gt;
+	&lt;/configuration&gt;
+&lt;/plugin&gt;
+</pre>
+			</answer>
+		</faq>
+	</part>
+</faqs>
