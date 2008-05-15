@@ -94,24 +94,37 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	private File[] includeSources;
 
 	/**
-	 * -directory
+	 * Sets the RSL output directory.
+	 *
+	 * @parameter
 	 */
-	private String directory;
+	private File directory;
 
 	/**
+	 * TODO how to set this on flex-compiler-oem
+	 *
 	 * -include-lookup-only
 	 */
-	private boolean includeLookupOly;
+	private boolean includeLookupOnly;
 
 	/**
-	 * -include-stylesheet <name> <path>
+	 * Adds a CSS stylesheet to this <code>Library</code> object. This is
+	 * equilvalent to the <code>include-stylesheet</code> option of the compc
+	 * compiler.
+	 *
+	 * @parameter
 	 */
-	private boolean includeStylesheet;
+	private Stylesheet[] includeStylesheet;
 
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
 		// need to initialize builder before go super
 		builder = new Library();
+
+		if (directory != null) {
+			builder.setDirectory(directory);
+		}
+
 		super.setUp();
 
 		builder.setOutput(outputFile);
@@ -120,7 +133,8 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 				&& checkNullOrEmpty(includeNamespaces)
 				&& checkNullOrEmpty(includeResourceBundles)
 				&& checkNullOrEmpty(includeResourceBundlesArtifact)
-				&& checkNullOrEmpty(includeSources)) {
+				&& checkNullOrEmpty(includeSources)
+				&& checkNullOrEmpty(includeStylesheet)) {
 			throw new MojoExecutionException("Nothing to be included.");
 		}
 
@@ -195,15 +209,26 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 			}
 		}
 
+		if (checkNullOrEmpty(includeStylesheet)) {
+			for (Stylesheet sheet : includeStylesheet) {
+				if (!sheet.getPath().exists()) {
+					throw new MojoExecutionException("Stylesheet not found: "
+							+ sheet.getPath());
+				}
+				builder.addStyleSheet(sheet.getName(), sheet.getPath());
+			}
+		}
+
 		configuration.enableDigestComputation(computeDigest);
+
 	}
 
-	private boolean checkNullOrEmpty(Object[] includeClasses) {
-		if (includeClasses == null) {
+	private boolean checkNullOrEmpty(Object[] array) {
+		if (array == null) {
 			return true;
 		}
 
-		if (includeClasses.length == 0) {
+		if (array.length == 0) {
 			return false;
 		}
 
