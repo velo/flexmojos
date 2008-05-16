@@ -642,6 +642,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
+		if (locales == null) {
+			// TODO must generate based on system locale?
+			locales = new String[] { "en_US" };
+		}
+
 		if (sourcePaths == null) {
 			sourcePaths = MavenUtils.getSourcePaths(build);
 			if (mergeResourceBundle != null && mergeResourceBundle) {
@@ -957,7 +962,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		if (targetPlayer != null) {
 			String[] nodes = targetPlayer.split("\\.");
-			if (nodes.length != 3 || !nodes[0].equals("9")) {
+			if (nodes.length != 3) {
 				throw new MojoExecutionException("Invalid player version "
 						+ targetPlayer);
 			}
@@ -970,6 +975,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 							+ targetPlayer);
 				}
 			}
+			if (versions[0] < 9) {
+				throw new MojoExecutionException("Invalid player version "
+						+ targetPlayer);
+			}
 			configuration
 					.setTargetPlayer(versions[0], versions[1], versions[2]);
 		}
@@ -977,7 +986,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (defaultsCss != null)
 			configuration.setDefaultCSS(defaultsCss);
 
-		configuration.setDefaultBackgroundColor(Integer.parseInt(defaultBackgroundColor, 16));
+		configuration.setDefaultBackgroundColor(Integer.parseInt(
+				defaultBackgroundColor, 16));
 
 		configuration.setDefaultFrameRate(defaultFrameRate);
 
