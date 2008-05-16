@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+    <mx:Script>
+    	<![CDATA[
+
+    		private function startUp():void {
+    			var v:Vector.<int> = new Vector.<int>();
+    			v[0] = "STRING!"; //error
+    			v[1] = 12; //okay!
+    		}
+    	]]>
+    </mx:Script>
+	<mx:Label text="Hello World" />
+</mx:Application>
