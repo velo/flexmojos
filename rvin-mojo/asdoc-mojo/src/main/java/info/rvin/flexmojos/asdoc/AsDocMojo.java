@@ -28,7 +28,7 @@ import org.apache.maven.project.MavenProjectHelper;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
- * 
+ *
  * @goal asdoc
  * @requiresDependencyResolution
  */
@@ -116,7 +116,7 @@ public class AsDocMojo extends AbstractMojo {
 	 *
 	 * @parameter
 	 */
-	private Object[] docNamespaces;
+	private Namespace[] docNamespaces;
 
 	/**
 	 * A list of files that should be documented. If a directory name is in the
@@ -238,9 +238,22 @@ public class AsDocMojo extends AbstractMojo {
 	 */
 	private String compatibilityVersion;
 
+	/**
+	 * List of path elements that form the roots of ActionScript class
+	 * hierarchies.
+	 *
+	 * @parameter
+	 */
+	protected File[] sourcePaths;
+
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
-		if (docSources == null) {
+		if (sourcePaths == null) {
+			sourcePaths = MavenUtils.getSourcePaths(build);
+		}
+		if (docSources == null && docClasses == null && docNamespaces == null) {
+			getLog().warn(
+					"Nothing expecified to include.  Assuming source folders.");
 			docSources = MavenUtils.getSourcePaths(build);
 		}
 
@@ -328,11 +341,13 @@ public class AsDocMojo extends AbstractMojo {
 		}
 	}
 
-	private void makeHelperExecutable(File templates) throws MojoExecutionException {
+	private void makeHelperExecutable(File templates)
+			throws MojoExecutionException {
 		if (!MavenUtils.isWindows()) {
 			Runtime runtime = Runtime.getRuntime();
 			String statement = String.format("chmod u+x %s/%s", templates
-					.getAbsolutePath(), "asDocHelper" + (MavenUtils.isLinux() ? ".linux" : ""));
+					.getAbsolutePath(), "asDocHelper"
+					+ (MavenUtils.isLinux() ? ".linux" : ""));
 			try {
 				Process p = runtime.exec(statement);
 				if (0 != p.waitFor()) {
@@ -361,18 +376,101 @@ public class AsDocMojo extends AbstractMojo {
 		List<String> args = new ArrayList<String>();
 
 		addDocSources(args);
+		addDocClasses(args);
+		addDocNamespaces(args);
 		addSourcePath(args);
 		addLibraries(args);
-		addConfigFile(args);
-		addFontsSnapshot(args);
-		addTemplates(args);
 		addCompatibility(args);
-		addOutput(args);
+		addPackageDescriptions(args);
+		addExcludeClasses(args);
+		addFooter(args);
+		args.add("-templates-path=" + templatesPath.getAbsolutePath());
+		args.add("-window-title=" + windowTitle);
+		args.add("-main-title=" + mainTitle);
+		args.add("-left-frameset-width=" + leftFramesetWidth);
+		args.add("-exclude-dependencies=" + excludeDependencies);
+		args.add("-compiler.fonts.local-fonts-snapshot="
+				+ fontsSnapshot.getAbsolutePath());
+		args.add("-load-config=" + configFile.getAbsolutePath());
+		args.add("-output=" + output.getAbsolutePath());
 
-		System.out.println(args);
+		getLog().info(args.toString());
 
 		// I hate this, waiting for asdoc-oem
+		// https://bugs.adobe.com/jira/browse/SDK-15405
 		ASDoc.asdoc(args.toArray(new String[args.size()]));
+	}
+
+	private void addDocNamespaces(List<String> args) {
+		if (docNamespaces == null || docNamespaces.length == 0) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (Namespace namespace : docNamespaces) {
+			if (sb.length() == 0) {
+				sb.append("-doc-namespaces=");
+			} else {
+				sb.append(',');
+			}
+
+			sb.append(namespace.getUri());
+		}
+		args.add(sb.toString());
+	}
+
+	private void addDocClasses(List<String> args) {
+		if (docClasses == null || docClasses.length == 0) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String docClass : docClasses) {
+			if (sb.length() == 0) {
+				sb.append("-doc-classes=");
+			} else {
+				sb.append(',');
+			}
+
+			sb.append(docClass);
+		}
+		args.add(sb.toString());
+	}
+
+	private void addExcludeClasses(List<String> args) {
+		if (excludeClasses == null || excludeClasses.length == 0) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String excludeClass : excludeClasses) {
+			if (sb.length() == 0) {
+				sb.append("-exclude-classes=");
+			} else {
+				sb.append(',');
+			}
+
+			sb.append(excludeClass);
+		}
+
+		args.add(sb.toString());
+	}
+
+	private void addFooter(List<String> args) {
+		if (footer != null) {
+			args.add("-footer=" + footer);
+		}
+	}
+
+	private void addPackageDescriptions(List<String> args) {
+		if (packageDescriptions == null) {
+			return;
+		}
+
+		for (String pack : packageDescriptions.keySet()) {
+			args.add("-packages.package " + pack + " "
+					+ packageDescriptions.get(pack));
+		}
 	}
 
 	private void addCompatibility(List<String> args) {
@@ -382,24 +480,11 @@ public class AsDocMojo extends AbstractMojo {
 		}
 	}
 
-	private void addTemplates(List<String> args) {
-		args.add("-templates-path=" + templatesPath.getAbsolutePath());
-	}
-
-	private void addOutput(List<String> args) {
-		args.add("-output=" + output.getAbsolutePath());
-	}
-
-	private void addFontsSnapshot(List<String> args) {
-		args.add("-compiler.fonts.local-fonts-snapshot="
-				+ fontsSnapshot.getAbsolutePath());
-	}
-
-	private void addConfigFile(List<String> args) {
-		args.add("-load-config=" + configFile.getAbsolutePath());
-	}
-
 	private void addLibraries(List<String> args) {
+		if (libraries == null || libraries.size() == 0) {
+			return;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		for (File lib : libraries) {
 			if (sb.length() == 0) {
@@ -415,20 +500,28 @@ public class AsDocMojo extends AbstractMojo {
 	}
 
 	private void addSourcePath(List<String> args) {
+		if (sourcePaths == null || sourcePaths.length == 0) {
+			return;
+		}
+
 		StringBuilder sb = new StringBuilder();
-		for (File docs : docSources) {
+		for (File path : sourcePaths) {
 			if (sb.length() == 0) {
 				sb.append("-source-path=");
 			} else {
 				sb.append(',');
 			}
 
-			sb.append(docs.getAbsolutePath());
+			sb.append(path.getAbsolutePath());
 		}
 		args.add(sb.toString());
 	}
 
 	private void addDocSources(List<String> args) {
+		if (docSources == null || docSources.length == 0) {
+			return;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		for (File docs : docSources) {
 			if (sb.length() == 0) {
