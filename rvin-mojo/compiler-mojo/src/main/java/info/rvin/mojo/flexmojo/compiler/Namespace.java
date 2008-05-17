@@ -4,33 +4,33 @@ import java.io.File;
 
 public class Namespace {
 
-    private String uri;
-    
-    private File manifest;
+	private String uri;
 
-    public Namespace() {
-	super();
-    }
+	private File manifest;
 
-    public Namespace(String uri, File manifest) {
-	super();
-	this.uri = uri;
-	this.manifest = manifest;
-    }
+	public Namespace() {
+		super();
+	}
 
-    public String getUri() {
-	return uri;
-    }
+	public Namespace(String uri, File manifest) {
+		super();
+		this.uri = uri;
+		this.manifest = manifest;
+	}
 
-    public void setUri(String uri) {
-	this.uri = uri;
-    }
+	public String getUri() {
+		return uri;
+	}
 
-    public File getManifest() {
-	return manifest;
-    }
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 
-    public void setManifest(File manifest) {
-	this.manifest = manifest;
-    }
+	public File getManifest() {
+		return manifest;
+	}
+
+	public void setManifest(File manifest) {
+		this.manifest = manifest;
+	}
 }
