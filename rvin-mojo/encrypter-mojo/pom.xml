@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-RC2-SNAPSHOT</version>
+		<version>1.0-RC2</version>
 	</parent>
 
 	<artifactId>encrypter-mojo</artifactId>
-	<version>1.0-alpha2-SNAPSHOT</version>
+	<version>1.0-beta1</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
 			<artifactId>util</artifactId>
-			<version>1.0-beta3-SNAPSHOT</version>
+			<version>1.0-beta3</version>
 		</dependency>
 
         <dependency>
