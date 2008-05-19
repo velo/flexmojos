@@ -5,11 +5,11 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-RC2</version>
+		<version>1.0-RC3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>source-mojo</artifactId>
-	<version>1.0-beta1</version>
+	<version>1.0-alpha5-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
