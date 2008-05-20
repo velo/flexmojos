@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-        <version>1.0-RC2</version>
+        <version>1.0-RC3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>flex-compiler-mojo</artifactId>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
 			<artifactId>util</artifactId>
-			<version>1.0-beta3</version>
+			<version>1.0-beta4-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
