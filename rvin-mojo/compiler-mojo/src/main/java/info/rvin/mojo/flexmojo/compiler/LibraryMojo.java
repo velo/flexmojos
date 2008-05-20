@@ -152,7 +152,9 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 				&& checkNullOrEmpty(includeResourceBundlesArtifact)
 				&& checkNullOrEmpty(includeSources)
 				&& checkNullOrEmpty(includeStylesheet)) {
-			throw new MojoExecutionException("Nothing to be included.");
+			getLog().warn(
+					"Nothing expecified to include.  Assuming source folders.");
+			includeSources = sourcePaths.clone();
 		}
 
 		if (!checkNullOrEmpty(includeClasses)) {
@@ -226,7 +228,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 			}
 		}
 
-		if (checkNullOrEmpty(includeStylesheet)) {
+		if (!checkNullOrEmpty(includeStylesheet)) {
 			for (Stylesheet sheet : includeStylesheet) {
 				if (!sheet.getPath().exists()) {
 					throw new MojoExecutionException("Stylesheet not found: "
