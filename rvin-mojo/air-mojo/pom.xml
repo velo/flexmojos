@@ -4,15 +4,18 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-beta2-SNAPSHOT</version>
+		<version>1.0-RC3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>air-mojo</artifactId>
-	<version>1.0-alpha1-SNAPSHOT</version>
+	<version>1.0-alpha2-SNAPSHOT</version>
 
-	<packaging>jar</packaging>
+	<packaging>maven-plugin</packaging>
 
 	<name>Air Mojo</name>
+	<description>
+		Plugin to compile and package Adobe AIR an application.
+	</description>
 	<inceptionYear>2008</inceptionYear>
 
 	<dependencies>
@@ -20,6 +23,11 @@
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>adt</artifactId>
 			<version>3.0.0.3.0.0.477</version>
+		</dependency>
+		<dependency>
+			<groupId>info.rvin.mojo</groupId>
+			<artifactId>flex-compiler-mojo</artifactId>
+			<version>1.0-beta5-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
