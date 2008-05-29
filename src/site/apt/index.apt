@@ -1,0 +1,61 @@
+~~
+~~ Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+~~ Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+~~
+~~ This program is free software: you can redistribute it and/or modify
+~~ it under the terms of the GNU General Public License as published by
+~~ the Free Software Foundation, either version 3 of the License, or
+~~ (at your option) any later version.
+~~
+~~ This program is distributed in the hope that it will be useful,
+~~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~~ GNU General Public License for more details.
+~~
+~~ You should have received a copy of the GNU General Public License
+~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+~~
+
+ ------
+ Introduction
+ ------
+ Joost den Boer
+ ------
+ 15 may 2008
+ ------
+
+
+Flex-Mojos
+
+  Flex-Mojos is a collection of maven-plugins created to make it possible
+  to use Apache Maven to use to manage Adobe Flex plugins.
+  
+* Maven-Plugins
+
+  * {{{flex-compiler-mojo/index.html}flex-compiler-mojo}}
+  
+  The Flex Compiler plugin compiles all ActionScript sources. It can compile
+  the source into both 'swc' or 'swf' files. The plugin supports the following
+  packaging: swc, swf, aswc, aswf.
+
+  * {{{encryptor-mojo/index.html}encryptor-mojo}}
+  
+  The encryptor plugin can encrypt an swf files.
+  
+  * {{{asdoc/index.html}asdoc}}
+  
+  The ASDoc plugin generates ActionScript documention just like <javadoc>.
+  
+  * {{{source-mojo/index.html}source-mojo}}
+  
+  The Source plugin can create a <jar> package of all Adobe Flex sources
+  in your source directories.
+  
+* Other libraries
+
+  * {{{utils/index.html}utils}}
+  
+  The utils library contains common functionality used by the Flex-Mojo
+  plugins.
+  
+  TODO: Add super poms?
