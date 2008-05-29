@@ -7,52 +7,34 @@
  ------
 
 
-Flex Compiler Plugin: Usage
+Flex ASDoc Plugin: Usage
 
-* Compiling Your Flex Sources
+* Using ASDoc Mojo
 
-  The goals for the Flex Compiler Plugin are bound to their respective phases in the
-  build lifecycle.  So to compile your sources, you need only to tell maven
-  until which lifecycle to execute.  The following will compile your sources:
-
-+-----
-mvn compile
-+-----
-
-  The above command will execute either <<<flex-compiler-mojo:compile-swc>>>,
-  <<<flex-compiler-mojo:compile-swf>>> or <<<flex-compiler-mojo:compile-resource-bundle>>> 
-  depending on package type of the project.
+  You can use this mojo to generate ActionScript documentation. Default this is 
+  generated in the target/asdoc directory.
+  If you add the plugin to your project pom, like shown in {{{plugin-info.html}plugin-info usage}}, 
+  you can call this mojo using the command:
   
-  To compile your test sources, you'll do:
++-----
+asdoc:asdoc
++----- 
+
+  If you don't have the plugin in your project pom, use the full plugin name to
+  run the plugin
 
 +-----
-mvn test-compile
-+-----
+info.rvin.mojo:asdoc:<plugin-version>:asdoc
++----- 
 
-  The above command will first compile the sources and then execute 
-  <<<flex-compiler-mojo:test-compile>>> since the compile phase happens a few phases
-  before the test-compile phase.
+  Replace plugin-version with the version of the ASDoc plugin you want to use so it
+  can be downloaded by maven.
 
-* Configuring Your Compiler Plugin
 
-  Since the Flex Compiler Plugin executes automatically during their phases, you
-  don't have to put <<<executions>>> unlike the other plugins.
+* Using ASDoc Report
 
-+-----
-<project>
-  ...
-  <build>
-	<plugins>
-		<plugin>
-			<groupId>info.rvin.mojo</groupId>
-			<artifactId>flex-compiler-mojo</artifactId>
-			<extensions>true</extensions>
-			<configuration>
-				<!-- put your configurations here -->
-			</configuration>
-		</plugin>
-    </plugins>
-  </build>
-  ...
-</project>
-+-----
+  Both generate the ActionScript documentation and add an ASDoc report to 
+  the project reports of your project site.
+  Add the report to your project pom like shown in like shown in {{{plugin-info.html}plugin-info usage}}.
+
+  When generating your project site, the ASDoc report will also be generated.  

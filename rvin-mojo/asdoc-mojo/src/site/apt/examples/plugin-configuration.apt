@@ -1,0 +1,39 @@
+ ------
+ Plugin configuration
+ ------
+ Joost den Boer
+ ------
+ 28 may 2008
+ ------
+
+ASDoc Plugin Configuration
+
+  You can change the configuration of both the {{{../asdoc-mojo.html}asdoc}} 
+  and {{{../asdoc-report-mojo.html}asdoc-report}} by adding a <configuration> section
+  to the plugin in your project pom.
+  
+  Here an example of some configuration options you can set. 
+
++-----
+...
+<plugin>
+  <groupId>info.rvin.mojo<groupId>
+  <artifactId>asdoc<artifactId>
+  <version>1.0-alpha7-SNAPSHOT<version>
+  <configuration>
+    <!-- put your plugin configuration here -->
+    <footer>Mijn Footer</footer>
+    <mainTitle>My API Documentation</mainTitle>
+    <windowTitle>My Project Sample API</windowTitle>
+    <excludeClasses>
+      <excludeClass>main</excludeClass>
+      <excludeClass>qs.utils.ColorUtils</excludeClass>
+    </excludeClasses>
+    <output>target/site/asdoc</output>
+  </configuration>
+</plugin>
+...   
++-----
+
+  For a full list of configuration options, see the <Optional Parameters> of 
+  {{{../asdoc-mojo.html}asdoc}} or {{{../asdoc-report-mojo.html}asdoc-report}}.
