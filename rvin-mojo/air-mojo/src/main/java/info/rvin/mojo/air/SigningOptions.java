@@ -1,12 +1,8 @@
 /**
  * 
  */
-package info.rvin.adt;
+package info.rvin.mojo.air;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.adobe.argv.UsageError;
 
 /**
  * Class to provide signing options for the ADT tool.
@@ -15,24 +11,26 @@ import com.adobe.argv.UsageError;
  *
  */
 public class SigningOptions {
+	
+	private static String SEPERATOR = ", ";
 
 	// store type
-	private String storetype;
+	private String storetype = null;
 
 	// store password
-	private String storepass;
+	private String storepass = null;
 	
 	// keystore
-	private String keystore;
+	private String keystore = null;
 
 	// keystore password
-	private String keypass;
+	private String keypass = null;
 	
 	// provider name
-	private String providerName;
+	private String providerName = null;
 	
 	// tsa url
-	private String tsaUrl;
+	private String tsaUrl = null;
 	
 	/**
 	 * Default empty constructor
@@ -40,49 +38,6 @@ public class SigningOptions {
 	 */
 	public SigningOptions() {
 		super();
-	}
-	
-	/**
-	 * Returns a list of signing options set on this object
-	 * to use with the ADT tool.
-	 * 
-	 * @return List of options
-	 * @throws UsageError 
-	 */
-	public List<String> getSigningOptions() throws UsageError {
-		
-		List<String> options = new ArrayList<String>();
-		if(storetype != null) {
-			options.add("-storetype");
-			options.add(storetype);
-		}
-		if(keystore != null) {
-			options.add("-keystore");
-			options.add(keystore);
-		}
-		if(storepass != null) {
-			options.add("-storepass");
-			options.add(storepass);
-		}
-		if(keypass != null) {
-			options.add("-keypass");
-			options.add(keypass);
-		}
-		if(providerName != null) {
-			options.add("-providerName");
-			options.add(providerName);
-		}
-		if(tsaUrl != null) {
-			options.add("-tsa");
-			options.add(tsaUrl);
-		}
-		
-		if(options.isEmpty()) {
-			throw new UsageError("No signing options set");
-		}
-		
-		// return options
-		return options;
 	}
 
 	/**
@@ -167,6 +122,31 @@ public class SigningOptions {
 	 */
 	public void setTsaUrl(String tsaUrl) {
 		this.tsaUrl = tsaUrl;
+	}
+	
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		if(storetype != null) {
+			sb.append("storetype=").append(storetype).append(SEPERATOR);
+		}
+		if(keystore != null) {
+			sb.append("keystore=").append(keystore).append(SEPERATOR);
+		}
+		if(storepass != null) {
+			sb.append("storepass=").append(storepass).append(SEPERATOR);
+		}
+		if(keypass != null) {
+			sb.append("keypass=").append(keypass).append(SEPERATOR);
+		}
+		if(providerName != null) {
+			sb.append("providerName=").append(providerName).append(SEPERATOR);
+		}
+		if(tsaUrl != null) {
+			sb.append("tsaUrl=").append(tsaUrl).append(SEPERATOR);
+		}
+		return sb.toString();
 	}
 	
 }
