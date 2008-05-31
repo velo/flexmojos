@@ -128,7 +128,7 @@ public class GeneratorMojo extends AbstractMojo {
 	/**
 	 * @parameter
 	 */
-	private String[] interfacetemplate;
+	private String[] interfaceTemplate;
 
 	/**
 	 * @parameter
@@ -214,7 +214,7 @@ public class GeneratorMojo extends AbstractMojo {
 		controller.setBeanTemplateUris(beanTemplate);
 		controller.setEntityTemplateUris(entityTemplate);
 		controller.setEnumTemplateUris(enumTemplate);
-		controller.setInterfaceTemplateUris(interfacetemplate);
+		controller.setInterfaceTemplateUris(interfaceTemplate);
 		controller.setOutputDirectory(outputDirectory);
 		controller.setUid(uid);
 
