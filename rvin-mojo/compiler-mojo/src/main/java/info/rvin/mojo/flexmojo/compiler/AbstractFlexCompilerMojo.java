@@ -20,11 +20,16 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
+import org.apache.maven.model.Developer;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,6 +43,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	private static final String COMPATIBILITY_2_0_0 = "2.0.0";
 	private static final String COMPATIBILITY_2_0_1 = "2.0.1";
+
+	/**
+	 * license.properties locations get from
+	 * http://livedocs.adobe.com/flex/3/html/configuring_environment_2.html
+	 */
+	private static final File[] licensePropertiesLocations = new File[] {
+			new File( // Windows XP
+					"C:/Documents and Settings/All Users/Application Data/Adobe/Flex/license.properties"),
+			new File( // Windows Vista
+					"C:/ProgramData/Adobe/Flex/license.properties"),
+			new File( // Mac OSC
+					"/Library/Application Support/Adobe/Flex/license.properties"),
+			new File( // Linux
+					"~/.adobe/Flex/license.properties") };
 
 	/**
 	 * Turn on generation of accessible SWFs.
@@ -642,7 +661,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setUp() throws MojoExecutionException, MojoFailureException {
-		if (locales == null) {
+		if (locales == null || locales.length == 0) {
 			// TODO must generate based on system locale?
 			locales = new String[] { "en_US" };
 		}
@@ -715,18 +734,31 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		if (metadata == null) {
 			metadata = new Metadata();
+			if (project.getDevelopers() != null
+					&& !project.getDevelopers().isEmpty()) {
+				List<Developer> developers = project.getDevelopers();
+				for (Developer d : developers) {
+					metadata.setCreator(developers.get(0).getName());
+					break;
+				}
+			}
+
 			if (project.getContributors() != null
 					&& !project.getContributors().isEmpty()) {
 				List<Contributor> contributors = project.getContributors();
 				for (Contributor c : contributors) {
-					metadata.addContributor(c.getName());
+					metadata.setContributor(c.getName());
+					break;
 				}
-				metadata.addCreator(contributors.get(0).getName());
 			}
 			metadata.setDate(DateFormat.getDateInstance().format(new Date()));
-			metadata.setDescription(project.getDescription());
-			metadata.setLanguages(Arrays.asList(locales));
-			metadata.setTitle(project.getName());
+			metadata.setLanguage(locales[0]);
+			metadata.addDescription(locales[0], project.getDescription());
+			metadata.addTitle(locales[0], project.getName());
+		}
+
+		if (licenses == null) {
+			licenses = getLicenses();
 		}
 
 		configuration = builder.getDefaultConfiguration();
@@ -735,6 +767,46 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		compilationData = new File(build.getDirectory(), project
 				.getArtifactId()
 				+ "-" + project.getVersion() + ".incr");
+	}
+
+	private Map<String, String> getLicenses() throws MojoExecutionException {
+		File licensePropertyFile = null;
+		for (File lpl : licensePropertiesLocations) {
+			if (lpl.exists()) {
+				licensePropertyFile = lpl;
+				break;
+			}
+		}
+
+		if (licensePropertyFile == null) {
+			return null;
+		}
+
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream(licensePropertyFile));
+		} catch (FileNotFoundException e) {
+			getLog().warn(
+					"Unable to read license files "
+							+ licensePropertyFile.getAbsolutePath(), e);
+			return null;
+		} catch (IOException e) {
+			getLog().warn(
+					"Unable to read license files "
+							+ licensePropertyFile.getAbsolutePath(), e);
+			return null;
+		}
+
+		Map<String, String> licenses = new HashMap<String, String>();
+
+		Enumeration<?> names = props.propertyNames();
+		while (names.hasMoreElements()) {
+			String name = (String) names.nextElement();
+			String value = props.getProperty(name);
+			licenses.put(name, value);
+		}
+
+		return licenses;
 	}
 
 	/**
@@ -809,8 +881,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			configuration.addLibraryPath(getResourcesBundles());
 		}
 
-		resolveRuntimeLibraries("rsl", "swf");
 		resolveRuntimeLibraries("caching", "swz");
+		resolveRuntimeLibraries("rsl", "swf");
 
 		configuration.setTheme(getDependenciesPath("theme"));
 
@@ -916,31 +988,34 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 
 		if (metadata != null) {
-			if (metadata.getContributors() != null) {
-				for (String contributor : metadata.getContributors()) {
-					configuration.setSWFMetaData(Configuration.CONTRIBUTOR,
-							contributor);
-				}
+			if (metadata.getContributor() != null) {
+				configuration.setSWFMetaData(Configuration.CONTRIBUTOR,
+						metadata.getContributor());
 			}
-			if (metadata.getCreators() != null) {
-				for (String creator : metadata.getCreators()) {
-					configuration
-							.setSWFMetaData(Configuration.CREATOR, creator);
-				}
+
+			if (metadata.getCreator() != null) {
+				configuration.setSWFMetaData(Configuration.CREATOR, metadata
+						.getCreator());
 			}
+
 			if (metadata.getDate() != null) {
 				configuration.setSWFMetaData(Configuration.DATE, metadata
 						.getDate());
 			}
 
-			if (metadata.getDescription() != null) {
+			if (metadata.getDescriptions() != null) {
 				configuration.setSWFMetaData(Configuration.DESCRIPTION,
-						metadata.getDescription());
+						metadata.getDescriptions());
 			}
 
-			if (metadata.getLanguages() != null) {
+			if (metadata.getTitles() != null) {
+				configuration.setSWFMetaData(Configuration.TITLE, metadata
+						.getTitles());
+			}
+
+			if (metadata.getLanguage() != null) {
 				configuration.setSWFMetaData(Configuration.LANGUAGE, metadata
-						.getLanguages());
+						.getLanguage());
 			}
 		}
 
