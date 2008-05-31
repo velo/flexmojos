@@ -1,6 +1,7 @@
 package info.rvin.mojo.flexmojo.compiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +16,12 @@ public class Metadata {
 	/**
 	 * A contributor's name to store in the SWF metadata (repeatable)
 	 */
-	private List<String> contributors;
+	private String contributor;
 
 	/**
 	 * A creator's name to store in the SWF metadata (repeatable)
 	 */
-	private List<String> creators;
+	private String creator;
 
 	/**
 	 * The creation date to store in the SWF metadata
@@ -30,26 +31,12 @@ public class Metadata {
 	/**
 	 * The default description to store in the SWF metadata
 	 */
-	private String description;
+	private Map<String, String> descriptions;
 
 	/**
 	 * The language to store in the SWF metadata (i.e. EN, FR) (repeatable)
 	 */
-	private List<String> languages;
-
-	/**
-	 * -metadata.localized-description <text> <lang>
-	 *
-	 * A localized RDF/XMP description to store in the SWF metadata (repeatable)
-	 */
-	private Map<String, String> localizedDescription;
-
-	/**
-	 * -metadata.localized-title <title> <lang>
-	 *
-	 * A localized RDF/XMP title to store in the SWF metadata (repeatable)
-	 */
-	private Map<String, String> localizedTitle;
+	private String language;
 
 	/**
 	 * A publisher's name to store in the SWF metadata (repeatable)
@@ -59,22 +46,22 @@ public class Metadata {
 	/**
 	 * The default title to store in the SWF metadata
 	 */
-	private String title;
+	private Map<String, String> titles;
 
-	public List<String> getContributors() {
-		return contributors;
+	public String getContributor() {
+		return contributor;
 	}
 
-	public void setContributors(List<String> contributors) {
-		this.contributors = contributors;
+	public void setContributor(String contributor) {
+		this.contributor = contributor;
 	}
 
-	public List<String> getCreators() {
-		return creators;
+	public String getCreator() {
+		return creator;
 	}
 
-	public void setCreators(List<String> creators) {
-		this.creators = creators;
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 
 	public String getDate() {
@@ -85,36 +72,27 @@ public class Metadata {
 		this.date = date;
 	}
 
-	public String getDescription() {
-		return description;
+	public void addDescription(String locale, String description) {
+		if (descriptions == null) {
+			descriptions = new HashMap<String, String>();
+		}
+		descriptions.put(locale, description);
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public Map<String, String> getDescriptions() {
+		return descriptions;
 	}
 
-	public List<String> getLanguages() {
-		return languages;
+	public void setDescriptions(Map<String, String> description) {
+		this.descriptions = description;
 	}
 
-	public void setLanguages(List<String> languages) {
-		this.languages = languages;
+	public String getLanguage() {
+		return language;
 	}
 
-	public Map<String, String> getLocalizedDescription() {
-		return localizedDescription;
-	}
-
-	public void setLocalizedDescription(Map<String, String> localizedDescription) {
-		this.localizedDescription = localizedDescription;
-	}
-
-	public Map<String, String> getLocalizedTitle() {
-		return localizedTitle;
-	}
-
-	public void setLocalizedTitle(Map<String, String> localizedTitle) {
-		this.localizedTitle = localizedTitle;
+	public void setLanguage(String languages) {
+		this.language = languages;
 	}
 
 	public List<String> getPublishers() {
@@ -125,26 +103,19 @@ public class Metadata {
 		this.publishers = publishers;
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void addContributor(String name) {
-		if (this.contributors == null) {
-			this.contributors = new ArrayList<String>();
+	public void addTitle(String locale, String title) {
+		if (titles == null) {
+			titles = new HashMap<String, String>();
 		}
-		this.contributors.add(name);
+		titles.put(locale, title);
 	}
 
-	public void addCreator(String name) {
-		if (this.creators == null) {
-			this.creators = new ArrayList<String>();
-		}
-		this.creators.add(name);
+	public Map<String, String> getTitles() {
+		return titles;
+	}
+
+	public void setTitles(Map<String, String> titles) {
+		this.titles = titles;
 	}
 
 }

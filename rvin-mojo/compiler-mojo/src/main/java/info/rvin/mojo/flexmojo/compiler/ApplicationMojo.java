@@ -19,7 +19,6 @@ package info.rvin.mojo.flexmojo.compiler;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
 import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
-import flex2.tools.oem.LibraryCache;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +34,7 @@ import org.apache.maven.plugin.MojoFailureException;
 /**
  * Goal which compiles the Flex sources into an application for either Flex or
  * AIR depending on the package type.
- * 
+ *
  * @goal compile-swf
  * @requiresDependencyResolution
  * @phase compile
@@ -44,7 +43,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 	/**
 	 * The file to be compiled. The path must be relative with source folder
-	 * 
+	 *
 	 * @parameter
 	 */
 	protected String sourceFile;
@@ -52,7 +51,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	/**
 	 * The list of modules files to be compiled. The path must be relative with
 	 * source folder
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] moduleFiles;
@@ -62,7 +61,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 	/**
 	 * When true, tells flex-mojos to use link reports/load externs on modules
 	 * compilation
-	 * 
+	 *
 	 * @parameter default-value="true"
 	 */
 	private boolean loadExternsOnModules;
@@ -120,14 +119,13 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 		builder.setOutput(outputFile);
 	}
 
-	
+
 	@Override
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
 		super.tearDown();
 
 		if (modules != null) {
-			LibraryCache libCache = builder.getSwcCache();
 			configuration.addExterns(new File[] { linkReportFile });
 			for (File module : modules) {
 				getLog().info("Compiling module " + module);
@@ -143,9 +141,6 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 				moduleBuilder.setConfiguration(configuration);
 				moduleBuilder.setLogger(new CompileLogger(getLog()));
-				if(libCache != null) {
-					moduleBuilder.setSwcCache(libCache);
-				}
 				File outputModule = new File(build.getDirectory(), build
 						.getFinalName()
 						+ "-" + moduleName + "." + project.getPackaging());
