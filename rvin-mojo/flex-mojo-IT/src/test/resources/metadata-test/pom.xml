@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.rvin.mojo</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>1.0-beta2</version>
+	</parent>
+
+	<groupId>info.rvin.itest</groupId>
+	<artifactId>metadata-test</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>swf</packaging>
+
+	<name>Metadata Test project</name>
+	<description>Some kind of description text for test flex-metadata bugs</description>
+	<developers>
+		<developer>
+			<id>velo.br</id>
+			<name>Marvin Herman Froeder</name>
+			<email>velo.br at gmail.com</email>
+			<roles>
+				<role>Author Developer</role>
+			</roles>
+			<timezone>-3</timezone>
+		</developer>
+		<developer>
+			<id>joost</id>
+			<name>Joost den Boer</name>
+			<email>jdboer at e-id.nl</email>
+			<url>http://joost.claroquesi.info</url>
+			<organization>E-id! Internet Strategies B.V.</organization>
+			<organizationUrl>http://www.e-id.nl</organizationUrl>
+			<roles>
+				<role>Developer Documentation</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>logan</id>
+			<name>Logan Allred</name>
+			<email>RedBugz at gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+
+	<contributors>
+		<contributor>
+			<name>Justin</name>
+		</contributor>
+	</contributors>
+</project>
