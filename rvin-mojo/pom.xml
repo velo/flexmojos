@@ -4,7 +4,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>mojo</artifactId>
-	<version>1.0-RC3-SNAPSHOT</version>
+	<version>1.0-RC3</version>
 
 	<packaging>pom</packaging>
 
@@ -107,9 +107,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://flex-mojos.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/flex-mojos/source/browse</url>
+		<connection>scm:svn:http://flex-mojos.googlecode.com/svn/tags/mojo-1.0-RC3</connection>
+		<developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/tags/mojo-1.0-RC3</developerConnection>
+		<url>http://code.google.com/p/flex-mojos/source/browse/tags/mojo-1.0-RC3</url>
 	</scm>
 
 	<distributionManagement>
