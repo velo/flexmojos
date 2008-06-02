@@ -97,7 +97,6 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	 * @return Set of dependency artifacts.
 	 * @throws MojoExecutionException
 	 */
-	@SuppressWarnings("unchecked")
 	protected Set<Artifact> getDependencyArtifacts()
 			throws MojoExecutionException {
 		if (dependencyArtifacts == null) {
