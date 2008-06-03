@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-RC3-SNAPSHOT</version>
+		<version>1.0-RC3</version>
 	</parent>
 
 	<artifactId>asdoc</artifactId>
-	<version>1.0-alpha7-SNAPSHOT</version>
+	<version>1.0-alpha7</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
 			<artifactId>util</artifactId>
-			<version>1.0-beta4-SNAPSHOT</version>
+			<version>1.0-beta4</version>
 		</dependency>
 
 		<dependency>
