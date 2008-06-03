@@ -4,10 +4,10 @@
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-		<version>1.0-RC3</version>
+		<version>1.0-RC4-SNAPSHOT</version>
 	</parent>
 	<artifactId>generator-mojo</artifactId>
-	<version>1.0-alpha4</version>
+	<version>1.0-alpha5-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>AS3 Generator Maven Mojo</name>
