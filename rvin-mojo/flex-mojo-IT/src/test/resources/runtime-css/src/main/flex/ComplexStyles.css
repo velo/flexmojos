@@ -1,0 +1,21 @@
+/* styles/runtime/assets/ComplexStyles.css */
+Application {
+    theme-color: #9DBAEB;
+}
+Button {
+    fontFamily: Tahoma;
+    color: #000000;
+    fontSize: 11;
+    fontWeight: normal;
+    text-roll-over-color: #000000; 
+}
+
+.noMargins {
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    horizontal-gap: 0;
+    vertical-gap: 0;
+}
+
