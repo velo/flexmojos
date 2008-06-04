@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+
+    <mx:Script>
+        <![CDATA[
+
+            /**
+             * This is a variable
+             */
+            public var aVar:*;
+            
+            /**
+             * This is a function
+             */
+            public function bFunction():void {
+            }
+
+            This is a code with compilation problem =D
+
+        ]]>
+    </mx:Script>
+
+	<mx:Label text="Hello World" />
+</mx:Application>
