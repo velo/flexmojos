@@ -1,14 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-    <mx:Script>
-    	<![CDATA[
-
-    		private function startUp():void {
-    			var v:Vector.<int> = new Vector.<int>();
-    			v[0] = "STRING!"; //error
-    			v[1] = 12; //okay!
-    		}
-    	]]>
-    </mx:Script>
-	<mx:Label text="Hello World" />
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"
+	 creationComplete="onCreationComplete()" paddingTop="20"
+	   width="450" height="450">
+	<mx:Script>
+		<![CDATA[
+			import mx.core.FlexShape;
+			import mx.core.UIComponent;
+			import mx.core.FlexBitmap;
+			import __AS3__.vec.Vector;
+			/**
+			 * @private
+			 * Open up the namespace to use flash Api
+			 */
+			 use namespace flash10;
+			 /**
+			 * @private
+			 * The Cube Holder
+			 */
+			 private var myCubeHolder:UIComponent = new UIComponent();
+			 /**
+			 * @private
+			 */
+			 private var cubeFaces:Vector.<FlexShape> = new Vector.<FlexShape>(6);
+			 private function onCreationComplete():void
+			 {
+			 	addChild(myCubeHolder);
+			 	myCubeHolder.x = myCubeHolder.y=250;
+			 	createCubeFaces();
+			 	myCubeHolder.addEventListener(Event.ENTER_FRAME,onCubeHolderFrame);
+			 }
+ 
+			 private function onCubeHolderFrame(event:Event):void
+			 {
+			 	myCubeHolder.rotationX+=1;
+			 	myCubeHolder.rotationY+=1;
+ 
+ 
+ 
+			 }
+			 /**
+			 * @Private
+			 * We use this function to create the faces of the cube
+			 * which will be 6
+			 */
+			 private function createCubeFaces():void
+			 {
+			 	for(var i:int=0;i<6;i++)
+			 	{
+			 		cubeFaces[i] = new FlexShape();
+			 		cubeFaces[i].graphics.beginFill(Math.random()*0xFFFFFF,1);
+			 		cubeFaces[i].graphics.drawRect(-100,-100,100,100);
+			 		cubeFaces[i].graphics.endFill();
+			 		cubeFaces[i].blendMode = BlendMode.DARKEN;
+			  		myCubeHolder.addChild(cubeFaces[i]);
+ 
+			 	}
+ 
+ 
+			 	cubeFaces[0].z=100;
+ 
+			 	cubeFaces[1].rotationY=90;
+ 
+			 	cubeFaces[2].rotationX=-90;
+ 
+ 
+			 	cubeFaces[3].rotationY=90;
+			 	cubeFaces[3].x=-100;
+ 
+			 	cubeFaces[4].rotationX=90;
+			 	cubeFaces[4].y=-100;
+			 	cubeFaces[4].z=100;
+ 
+			 	//we do nothing with cubeFace[5] since it is already
+			 	//in its place
+ 
+ 
+ 
+ 
+			 }
+ 
+ 
+		]]>
+	</mx:Script>
 </mx:Application>
