@@ -146,7 +146,7 @@ public class MavenUtils {
 			throws MojoExecutionException {
 		if (a.getGroupId().equals("com.adobe.flex.sdk")
 				&& a.getArtifactId().equals("playerglobal")) {
-			File dest = new File(build.getDirectory(), "libraries/" + scope
+			File dest = new File(build.getOutputDirectory(), "libraries/" + scope
 					+ "/" + a.getArtifactId() + ".swc");
 			if (!dest.exists()) {
 				try {
@@ -258,7 +258,7 @@ public class MavenUtils {
 	 */
 	public static File getConfigFile(Build build) throws MojoExecutionException {
 		URL url = MavenUtils.class.getResource("/configs/config.xml");
-		File configFile = new File(build.getDirectory(), "config.xml");
+		File configFile = new File(build.getOutputDirectory(), "config.xml");
 		try {
 			FileUtils.copyURLToFile(url, configFile);
 		} catch (IOException e) {
@@ -290,7 +290,7 @@ public class MavenUtils {
 			// if(os.contains("windows")) {
 			url = MavenUtils.class.getResource("/fonts/winFonts.ser");
 		}
-		File fontsSer = new File(build.getDirectory(), "fonts.ser");
+		File fontsSer = new File(build.getOutputDirectory(), "fonts.ser");
 		try {
 			FileUtils.copyURLToFile(url, fontsSer);
 		} catch (IOException e) {
