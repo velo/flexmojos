@@ -1,0 +1,13 @@
+/* CSS file */
+Text
+{
+	fontFamily: Pussycat;
+}
+
+@font-face
+{
+	fontFamily: Pussycat;
+	fontWeight: normal;
+	fontStyle: normal;
+	src: url("/pusssa.ttf");
+}
