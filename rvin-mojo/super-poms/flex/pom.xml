@@ -3,7 +3,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>flex-super-pom</artifactId>
-	<version>1.0-beta4-SNAPSHOT</version>
+	<version>1.0-beta4</version>
 
 	<name>Flex Super Pom</name>
 
@@ -12,6 +12,7 @@
 	<build>
 		<sourceDirectory>src/main/flex</sourceDirectory>
 		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<outputDirectory>${project.build.directory}/flex-compiler</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
