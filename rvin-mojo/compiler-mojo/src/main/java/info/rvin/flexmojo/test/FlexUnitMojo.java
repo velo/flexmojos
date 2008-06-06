@@ -87,7 +87,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	@Override
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
 		swf = new File(build.getTestOutputDirectory(), "TestRunner.swf");
-		reportPath = new File(build.getDirectory(), "test-reports");
+		reportPath = new File(build.getDirectory(), "surefire-reports");
 		reportPath.mkdirs();
 	}
 
@@ -275,7 +275,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 				log(formatLogReport(root));
 
 			// Get the output file name.
-			final File file = new File(reportPath, name + "-TestReport.xml");
+			final File file = new File(reportPath, "TEST-" + name + ".xml");
 
 			// Pretty print the document to disk.
 			final OutputFormat format = OutputFormat.createPrettyPrint();
