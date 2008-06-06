@@ -737,7 +737,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 					&& !project.getDevelopers().isEmpty()) {
 				List<Developer> developers = project.getDevelopers();
 				for (Developer d : developers) {
-					metadata.setCreator(developers.get(0).getName());
+					metadata.setCreator(d.getName());
 					break;
 				}
 			}
