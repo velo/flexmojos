@@ -23,7 +23,7 @@ public class IT0010Issue0015Test extends AbstractMavenIntegrationTestCase {
 		}
 		verifier.resetStreams();
 		
-		File reportDir = new File(testDir, "target/test-reports");
+		File reportDir = new File(testDir, "target/surefire-reports");
 		assertEquals(2, reportDir.listFiles().length);
 	}
 
