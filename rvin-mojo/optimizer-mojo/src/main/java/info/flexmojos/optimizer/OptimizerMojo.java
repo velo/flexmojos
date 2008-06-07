@@ -67,13 +67,6 @@ public class OptimizerMojo extends AbstractMojo {
 	 */
 	protected MavenProjectHelper projectHelper;
 
-	/**
-	 * signed - true to create a signed digest, false otherwise.
-	 * 
-	 * @parameter default-value="false"
-	 */
-	private boolean signed;
-
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (!"swc".equals(project.getPackaging())) {
 			getLog().warn("Optimizer mojo can only be used on SWC projects.");
@@ -120,7 +113,7 @@ public class OptimizerMojo extends AbstractMojo {
 			FileInputStream input = new FileInputStream(swf);
 			byte[] bytes = new byte[(int) swf.length()];
 			input.read(bytes);
-			Digest d = new Digest(signed);
+			Digest d = new Digest();
 			getLog().debug(d.computeDigest(bytes));
 			return d;
 		} catch (IOException e) {
