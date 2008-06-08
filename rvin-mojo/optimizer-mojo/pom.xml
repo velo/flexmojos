@@ -18,12 +18,12 @@
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>optimizer</artifactId>
-			<version>3.0.0.3.0.0.477</version>
+			<version>3.0.0.477</version>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>digest</artifactId>
-			<version>3.0.0.3.0.0.477</version>
+			<version>3.0.0.477</version>
 		</dependency>
 
 		<dependency>

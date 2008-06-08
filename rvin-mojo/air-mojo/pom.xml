@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>adt</artifactId>
-			<version>3.0.0.3.0.0.477</version>
+			<version>3.0.0.477</version>
 		</dependency>
 		<dependency>
 			<groupId>info.rvin.mojo</groupId>
