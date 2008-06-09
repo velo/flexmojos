@@ -48,7 +48,7 @@
 	<repositories>
 		<repository>
 			<id>flex-mojos-repository</id>
-			<url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -104,9 +104,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://flex-mojos.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://flex-mojos.googlecode.com/svn/trunk/</developerConnection>
-		<url>http://code.google.com/p/flex-mojos/source/browse</url>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</developerConnection>
 	</scm>
 
 	<distributionManagement>
