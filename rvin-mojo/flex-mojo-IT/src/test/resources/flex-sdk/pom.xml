@@ -13,7 +13,7 @@
 	<repositories>
 		<repository>
 			<id>flex-mojos-repository</id>
-			<url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -26,13 +26,10 @@
 	<modules>
 		<module>framework</module>
 		<module>rpc</module>
+		<module>airframework</module>
 		<module>flex</module>
 		<module>utilities</module>
 		<module>haloclassic</module>
 		<module>flash-integration</module>
-
-                <!-- has some misterious bug -->
-		<module>airframework</module>
 	</modules>
-
 </project>
