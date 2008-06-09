@@ -18,41 +18,36 @@
 		With this maven plugin Flex3/AS3 sources can be compiled into
 		a SWC or SWF package.
 	</description>
-	<inceptionYear>2008</inceptionYear>
 
 	<dependencies>
 		<dependency>
-			<groupId>info.rvin.mojo</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>util</artifactId>
-			<version>1.0-beta5-SNAPSHOT</version>
+            <version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
 			<artifactId>flex-compiler-oem</artifactId>
-			<version>3.0.0.477</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>mxmlc</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1-beta-6</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>2.0.7</version>
 		</dependency>
 	</dependencies>
 </project>

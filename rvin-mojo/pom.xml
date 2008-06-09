@@ -14,10 +14,20 @@
 		<name>Flex-Mojos</name>
 		<url>http://www.flex-mojos.info</url>
 	</organization>
+    <inceptionYear>2008</inceptionYear>
 
 	<prerequisites>
-		<maven>2.0.7</maven>
+		<maven>${maven.version}</maven>
 	</prerequisites>
+
+    <properties>
+      <commons_io.version>1.3.2</commons_io.version>
+      <dom4j.version>1.6.1</dom4j.version>
+      <flex.sdk.version>3.0.0.477</flex.sdk.version>
+      <jaxen.version>1.1-beta-6</jaxen.version>
+      <maven.version>2.0.7</maven.version>
+      <testng.version>5.7</testng.version>
+    </properties>
 
 	<build>
 		<plugins>
@@ -183,5 +193,146 @@
 		<!-- cant release
 			<module>flex-mojo-IT</module> -->
 	</modules>
-
+    
+    <dependencyManagement>
+      <dependencies>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>flex-compiler-oem</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>mxmlc</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>${dom4j.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>jaxen</groupId>
+		<artifactId>jaxen</artifactId>
+		<version>${jaxen.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven</groupId>
+		<artifactId>maven-plugin-api</artifactId>
+		<version>${maven.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven</groupId>
+		<artifactId>maven-project</artifactId>
+		<version>${maven.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>adt</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.testng</groupId>
+		<artifactId>testng</artifactId>
+		<version>${testng.version}</version>
+		<scope>test</scope>
+		<classifier>jdk15</classifier>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>asdoc</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>asdoc</artifactId>
+		<version>${flex.sdk.version}</version>
+        <classifier>template</classifier>
+        <type>zip</type>
+	  </dependency>
+	  <dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>${commons_io.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven.reporting</groupId>
+		<artifactId>maven-reporting-impl</artifactId>
+		<version>2.0.2</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.velocity</groupId>
+		<artifactId>velocity</artifactId>
+		<version>1.5</version>
+	  </dependency>
+	  <dependency>
+		<groupId>plexus</groupId>
+		<artifactId>plexus-velocity</artifactId>
+		<version>1.1.1</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-eclipse-plugin</artifactId>
+		<version>2.4</version>
+		<type>maven-plugin</type>
+	  </dependency>
+	  <dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>3.8.1</version>
+		<scope>test</scope>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven.shared</groupId>
+		<artifactId>maven-verifier</artifactId>
+		<version>1.0</version>
+		<scope>test</scope>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven.its</groupId>
+		<artifactId>maven-integration-test-helper</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<scope>test</scope>
+	  </dependency>
+	  <dependency>
+		<groupId>org.graniteds</groupId>
+		<artifactId>generator</artifactId>
+		<version>1.1.0-RC1</version>
+		<exclusions>
+		  <exclusion>
+			<groupId>ant</groupId>
+			<artifactId>ant</artifactId>
+		  </exclusion>
+		</exclusions>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>optimizer</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>com.adobe.flex</groupId>
+		<artifactId>digest</artifactId>
+		<version>${flex.sdk.version}</version>
+	  </dependency>
+      
+	  <dependency>
+		<groupId>eu.cedarsoft.utils</groupId>
+        <artifactId>zip</artifactId>
+        <version>1.1</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-source-plugin</artifactId>
+		<version>2.0.4</version>
+		<type>maven-plugin</type>
+	  </dependency>
+	  <dependency>
+		<groupId>de.java2html</groupId>
+		<artifactId>java2html</artifactId>
+		<version>5.0</version>
+	  </dependency>
+      </dependencies>
+    </dependencyManagement>
+    
 </project>
