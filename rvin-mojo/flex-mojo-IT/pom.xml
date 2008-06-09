@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>info.rvin.mojo</groupId>
 		<artifactId>mojo</artifactId>
-        <version>1.0-beta2-SNAPSHOT</version>
+		<version>1.0-RC4-SNAPSHOT</version>
 	</parent>
-
 	<artifactId>flex-compiler-mojo-itest</artifactId>
-
 	<packaging>jar</packaging>
-
 	<name>Flex Compiler Maven Mojo ITest</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>info.rvin.mojo</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<!-- TODO: remove when snapshots are released -->
 	<repositories>
@@ -25,9 +31,7 @@
 			<snapshots></snapshots>
 		</repository>
 	</repositories>
-
 	<dependencies>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -46,6 +50,12 @@
 			<version>1.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>info.rvin.mojo</groupId>
+			<artifactId>flex-super-pom</artifactId>
+			<version>1.0-beta4</version>
+			<scope>test</scope>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
-
 </project>
