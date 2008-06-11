@@ -319,17 +319,17 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
-    <modules>
-        <module>utils</module>
-        <module>compiler-mojo</module>
-        <module>encrypter-mojo</module>
-        <module>asdoc-mojo</module>
-        <module>source-mojo</module>
-        <module>generator-mojo</module>
 
-        <!-- cant release -->
-            <module>flex-mojo-IT</module>
-    </modules>
-	
+		<modules>
+				<module>utils</module>
+				<module>compiler-mojo</module>
+				<module>encrypter-mojo</module>
+				<module>asdoc-mojo</module>
+				<module>source-mojo</module>
+				<module>generator-mojo</module>
+
+				<!-- cant release
+						<module>flex-mojo-IT</module> -->
+		</modules>
+
 </project>
