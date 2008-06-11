@@ -3,6 +3,8 @@ package info.rvin.mojo.flexmojo;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -113,15 +115,21 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 	 * @return List of artifacts
 	 * @throws MojoExecutionException
 	 */
-	protected List<Artifact> getDependencyArtifacts(String scope)
+	protected List<Artifact> getDependencyArtifacts(String...scopes)
 			throws MojoExecutionException {
-		if (scope == null)
+		if (scopes == null)
 			return null;
+		
+		if(scopes.length == 0) {
+			return new ArrayList<Artifact>();
+		}
+		
+		List<String> scopesList = Arrays.asList(scopes);
 
 		List<Artifact> artifacts = new ArrayList<Artifact>();
 		for (Artifact artifact : getDependencyArtifacts()) {
 			if ("swc".equals(artifact.getType())
-					&& scope.equals(artifact.getScope())) {
+					&& scopesList.contains(artifact.getScope())) {
 				artifacts.add(artifact);
 			}
 		}
