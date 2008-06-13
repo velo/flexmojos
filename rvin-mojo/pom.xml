@@ -4,7 +4,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>mojo</artifactId>
-	<version>1.0-RC4</version>
+	<version>1.0-RC5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos</name>
@@ -113,8 +113,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/mojo-1.0-RC4</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/mojo-1.0-RC4</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</developerConnection>
 	</scm>
 
 	<distributionManagement>
