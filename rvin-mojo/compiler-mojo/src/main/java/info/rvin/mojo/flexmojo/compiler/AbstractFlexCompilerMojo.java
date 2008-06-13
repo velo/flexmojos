@@ -1154,7 +1154,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 			rslArtifacts.removeAll(ordered);
 			if (original == rslArtifacts.size()) {
-				throw new RuntimeException("Unable to resolve " + rslArtifacts);
+				throw new MojoExecutionException("Unable to resolve " + rslArtifacts);
 			}
 		}
 
