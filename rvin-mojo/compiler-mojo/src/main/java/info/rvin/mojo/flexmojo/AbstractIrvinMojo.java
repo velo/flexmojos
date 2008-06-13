@@ -21,7 +21,6 @@ import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -39,15 +38,15 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 
 /**
- * 
+ *
  * Encapsulate the access to Maven API. Some times just to hide Java 5 warnings
- * 
+ *
  */
 public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	/**
 	 * The maven project.
-	 * 
+	 *
 	 * @parameter expression="${project}"
 	 * @required
 	 * @readonly
@@ -88,14 +87,14 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	/**
 	 * Local repository to be used by the plugin to resolve dependencies.
-	 * 
+	 *
 	 * @parameter expression="${localRepository}"
 	 */
 	protected ArtifactRepository localRepository;
 
 	/**
 	 * List of remote repositories to be used by the plugin to resolve dependencies.
-	 * 
+	 *
 	 * @parameter expression="${project.remoteArtifactRepositories}"
 	 */
 	@SuppressWarnings("unchecked")
@@ -136,11 +135,11 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 			throws MojoExecutionException {
 		if (scopes == null)
 			return null;
-		
+
 		if(scopes.length == 0) {
 			return new ArrayList<Artifact>();
 		}
-		
+
 		List<String> scopesList = Arrays.asList(scopes);
 
 		List<Artifact> artifacts = new ArrayList<Artifact>();
@@ -165,7 +164,7 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	/**
 	 * Perform setup before plugin is run.
-	 * 
+	 *
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
@@ -174,7 +173,7 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	/**
 	 * Perform plugin functionality
-	 * 
+	 *
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
@@ -183,7 +182,7 @@ public abstract class AbstractIrvinMojo extends AbstractMojo {
 
 	/**
 	 * Perform (cleanup) actions after plugin has run
-	 * 
+	 *
 	 * @throws MojoExecutionException
 	 * @throws MojoFailureException
 	 */
