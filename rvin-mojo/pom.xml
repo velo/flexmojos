@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>mojo</artifactId>
-	<version>1.0-RC5-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos</name>
@@ -113,8 +112,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/mojo-1.0</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/mojo-1.0</developerConnection>
 	</scm>
 
 	<distributionManagement>
