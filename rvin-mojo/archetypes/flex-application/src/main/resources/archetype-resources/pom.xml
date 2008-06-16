@@ -2,7 +2,7 @@
 		<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.rvin.mojo</groupId>
+		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
 		<version>1.0</version>
 	</parent>
@@ -18,7 +18,7 @@
 		<sourceDirectory>src/main/flex</sourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>info.rvin.mojo</groupId>
+				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
 				<configuration>
 					<locales>
