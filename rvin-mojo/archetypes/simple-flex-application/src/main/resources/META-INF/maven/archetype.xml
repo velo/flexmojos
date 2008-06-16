@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<archetype xmlns="http://maven.apache.org/Archetype/1.0.0">
-  <id>simple-flex-application</id>
-  <sources>
-    <source>src/main/flex/Main.mxml</source>
-  </sources>
-</archetype>
