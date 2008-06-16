@@ -326,6 +326,8 @@
 				<module>asdoc-mojo</module>
 				<module>source-mojo</module>
 				<module>generator-mojo</module>
+				<module>optimizer-mojo</module>
+				<module>archetypes</module>
 
 				<!-- cant release
 						<module>flex-mojo-IT</module> -->
