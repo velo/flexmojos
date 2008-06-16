@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+
+	<mx:Script>
+		<![CDATA[
+			// application version
+			public static const VERSION:String = BUILD::version;
+
+			// stores the svn build number
+			public static const BUILD_NUMBER:Number = BUILD::buildNumber;
+
+			// stores the timestamp of the last build
+			public static const BUILD_TIMESTAMP:Date = new Date(BUILD::timestamp);
+		]]>
+	</mx:Script>
+
+	<mx:Label text="Version: {VERSION} Build: {BUILD_NUMBER} Time: {BUILD_TIMESTAMP.toLocaleString()}" selectable="true" />
+
+</mx:Application>
