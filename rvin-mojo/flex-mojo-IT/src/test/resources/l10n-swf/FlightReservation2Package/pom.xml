@@ -10,7 +10,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>info.rvin.mojo</groupId>
+				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
 				<extensions>true</extensions>
 			</plugin>
