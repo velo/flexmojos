@@ -3,7 +3,7 @@
 
 	<groupId>info.rvin.mojo</groupId>
 	<artifactId>air-super-pom</artifactId>
-	<version>1.0-beta4-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<name>Air Super Pom</name>
 
@@ -11,6 +11,8 @@
 
 	<build>
 		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<outputDirectory>${project.build.directory}/flex-compiler</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>info.rvin.mojo</groupId>
@@ -59,6 +61,7 @@
 	</pluginRepositories>
 
 	<dependencies>
+		 <!-- Air SDK dependencies -->
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
 			<artifactId>airglobal</artifactId>
@@ -82,8 +85,8 @@
 			<groupId>com.adobe.flex.sdk</groupId>
 			<artifactId>framework</artifactId>
 			<version>3.0.0.477</version>
-            <type>resource-bundle</type>
-            <classifier>en_US</classifier>
+			<type>resource-bundle</type>
+			<classifier>en_US</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
@@ -95,8 +98,8 @@
 			<groupId>com.adobe.flex.sdk</groupId>
 			<artifactId>rpc</artifactId>
 			<version>3.0.0.477</version>
-            <type>resource-bundle</type>
-            <classifier>en_US</classifier>
+			<type>resource-bundle</type>
+			<classifier>en_US</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.sdk</groupId>
@@ -122,6 +125,22 @@
 			<artifactId>servicemonitor</artifactId>
 			<version>3.0.0.477</version>
 			<type>swc</type>
+		</dependency>
+
+		<!-- FlexUnit dependencies -->
+		<dependency>
+				<groupId>flexunit</groupId>
+				<artifactId>flexunit</artifactId>
+				<version>0.85</version>
+				<type>swc</type>
+				<scope>test</scope>
+		</dependency>
+		<dependency>
+				<groupId>flexunit.junit</groupId>
+				<artifactId>flexunit-optional</artifactId>
+				<version>0.85</version>
+				<type>swc</type>
+				<scope>test</scope>
 		</dependency>
 	</dependencies>
 
