@@ -10,7 +10,8 @@
 			public static const BUILD_NUMBER:Number = BUILD::buildNumber;
 
 			// stores the timestamp of the last build
-			public static const BUILD_TIMESTAMP:Date = new Date(BUILD::timestamp);
+			public static const BUILD_TIMESTAMP_NUMBER:Number = BUILD::timestamp;
+			public static const BUILD_TIMESTAMP:Date = new Date(BUILD_TIMESTAMP_NUMBER);
 		]]>
 	</mx:Script>
 
