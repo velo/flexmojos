@@ -36,7 +36,7 @@
 				<artifactId>flex-compiler-mojo</artifactId>
 				<configuration>
 					<defines>
-						<BUILD::mavenVersion>\"${pom.version}\"</BUILD::mavenVersion>
+						<BUILD::mavenVersion>"${pom.version}"</BUILD::mavenVersion>
 						<BUILD::buildNumber>${buildNumber}</BUILD::buildNumber>
 						<BUILD::timestamp>${timestamp}</BUILD::timestamp>
 					</defines>
