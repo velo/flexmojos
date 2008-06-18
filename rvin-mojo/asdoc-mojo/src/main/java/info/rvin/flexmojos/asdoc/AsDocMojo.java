@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import org.apache.maven.project.MavenProjectHelper;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
- * 
+ *
  * @goal asdoc
  * @requiresDependencyResolution
  */
@@ -37,7 +38,7 @@ public class AsDocMojo extends AbstractMojo {
 
 	/**
 	 * The maven project.
-	 * 
+	 *
 	 * @parameter expression="${project}"
 	 * @required
 	 * @readonly
@@ -95,11 +96,11 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * A list of classes to document. These classes must be in the source path.
 	 * This is the default option.
-	 * 
+	 *
 	 * This option works the same way as does the -include-classes option for
 	 * the compc component compiler. For more information, see Using compc, the
 	 * component compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] docClasses;
@@ -107,14 +108,14 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * A list of URIs whose classes should be documented. The classes must be in
 	 * the source path.
-	 * 
+	 *
 	 * You must include a URI and the location of the manifest file that defines
 	 * the contents of this namespace.
-	 * 
+	 *
 	 * This option works the same way as does the -include-namespaces option for
 	 * the compc component compiler. For more information, see Using compc, the
 	 * component compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private Namespace[] docNamespaces;
@@ -122,13 +123,13 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * A list of files that should be documented. If a directory name is in the
 	 * list, it is recursively searched.
-	 * 
+	 *
 	 * This option works the same way as does the -include-sources option for
 	 * the compc component compiler. For more information, see Using compc, the
 	 * component compiler.
-	 * 
+	 *
 	 * @parameter
-	 * 
+	 *
 	 */
 	private File[] docSources;
 
@@ -136,9 +137,9 @@ public class AsDocMojo extends AbstractMojo {
 	 * A list of classes that should not be documented. You must specify
 	 * individual class names. Alternatively, if the ASDoc comment for the class
 	 * contains the
-	 * 
+	 *
 	 * @private tag, is not documented.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] excludeClasses;
@@ -146,9 +147,9 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * Whether all dependencies found by the compiler are documented. If true,
 	 * the dependencies of the input classes are not documented.
-	 * 
+	 *
 	 * The default value is false.
-	 * 
+	 *
 	 * @parameter default-value="false"
 	 */
 	private boolean excludeDependencies;
@@ -156,7 +157,7 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * The text that appears at the bottom of the HTML pages in the output
 	 * documentation.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String footer;
@@ -165,20 +166,20 @@ public class AsDocMojo extends AbstractMojo {
 	 * An integer that changes the width of the left frameset of the
 	 * documentation. You can change this size to accommodate the length of your
 	 * package names.
-	 * 
+	 *
 	 * The default value is 210 pixels.
-	 * 
+	 *
 	 * @parameter default-value="120"
-	 * 
+	 *
 	 */
 	private int leftFramesetWidth;
 
 	/**
 	 * The text that appears at the top of the HTML pages in the output
 	 * documentation.
-	 * 
+	 *
 	 * The default value is "API Documentation".
-	 * 
+	 *
 	 * @parameter default-value="API Documentation"
 	 */
 	private String mainTitle;
@@ -186,7 +187,7 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * The output directory for the generated documentation. The default value
 	 * is "asdoc-output".
-	 * 
+	 *
 	 * @parameter
 	 */
 	protected File output;
@@ -194,7 +195,7 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * The descriptions to use when describing a package in the documentation.
 	 * You can specify more than one package option.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private Map<String, String> packageDescriptions;
@@ -204,16 +205,16 @@ public class AsDocMojo extends AbstractMojo {
 	 * asdoc/templates directory in the ASDoc installation directory. This
 	 * directory contains all the HTML, CSS, XSL, and image files used for
 	 * generating the output.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File templatesPath;
 
 	/**
 	 * The text that appears in the browser window in the output documentation.
-	 * 
+	 *
 	 * The default value is "API Documentation".
-	 * 
+	 *
 	 * @parameter default-value="API Documentation"
 	 */
 	private String windowTitle;
@@ -225,7 +226,7 @@ public class AsDocMojo extends AbstractMojo {
 
 	/**
 	 * Load a file containing configuration options
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File configFile;
@@ -234,7 +235,7 @@ public class AsDocMojo extends AbstractMojo {
 
 	/**
 	 * specifies a compatibility version. e.g. compatibility 2.0.1
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String compatibilityVersion;
@@ -242,7 +243,7 @@ public class AsDocMojo extends AbstractMojo {
 	/**
 	 * List of path elements that form the roots of ActionScript class
 	 * hierarchies.
-	 * 
+	 *
 	 * @parameter
 	 */
 	protected File[] sourcePaths;
@@ -346,20 +347,22 @@ public class AsDocMojo extends AbstractMojo {
 			throws MojoExecutionException {
 		if (!MavenUtils.isWindows()) {
 			Runtime runtime = Runtime.getRuntime();
-			String statement = String.format("chmod u+x %s/%s", templates
+			String pathname = String.format("%s/%s", templates
 					.getAbsolutePath(), "asDocHelper"
 					+ (MavenUtils.isLinux() ? ".linux" : ""));
+			String[] statements = new String[] { "chmod", "u+x", pathname };
 			try {
-				Process p = runtime.exec(statement);
-				if (0 != p.waitFor()) {
-					throw new MojoExecutionException(String
-							.format("Unable to execute %s. Return value = %d"));
+				Process p = runtime.exec(statements);
+				int result = p.waitFor();
+				if (0 != result) {
+					throw new MojoExecutionException(String.format(
+							"Unable to execute %s. Return value = %d", Arrays
+									.asList(statements), result));
 				}
 			} catch (Exception e) {
 				throw new MojoExecutionException(String.format(
-						"Unable to execute %s", statement));
+						"Unable to execute %s", Arrays.asList(statements)));
 			}
-
 		}
 	}
 
