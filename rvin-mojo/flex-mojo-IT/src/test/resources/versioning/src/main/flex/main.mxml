@@ -4,7 +4,7 @@
 	<mx:Script>
 		<![CDATA[
 			// application version
-			public static const VERSION:String = BUILD::version;
+			public static const VERSION:String = BUILD::mavenVersion;
 
 			// stores the svn build number
 			public static const BUILD_NUMBER:Number = BUILD::buildNumber;
