@@ -19,7 +19,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-                <artifactId>optimizer-mojo</artifactId>
+				<artifactId>optimizer-mojo</artifactId>
 				<executions>
 					<execution>
 						<goals>
