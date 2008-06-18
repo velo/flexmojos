@@ -28,11 +28,9 @@
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
-	<artifactId>simple-flex-application</artifactId>
+	<artifactId>versioning</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>swf</packaging>
-
-	<name>Simple Flex Library</name>
 
 	<build>
 		<plugins>
@@ -57,7 +55,7 @@
 				<artifactId>flex-compiler-mojo</artifactId>
 				<configuration>
 					<defines>
-						<BUILD::version>${pom.version}</BUILD::version>
+						<BUILD::version>\"${pom.version}\"</BUILD::version>
 						<BUILD::buildNumber>${buildNumber}</BUILD::buildNumber>
 						<BUILD::timestamp>${timestamp}</BUILD::timestamp>
 					</defines>
