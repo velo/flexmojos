@@ -20,9 +20,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swc</compile>
-					<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile</test-compile>
-					<test>info.rvin.mojo:flex-compiler-mojo:test-run</test>
+					<compile>info.flex-mojos:flex-compiler-mojo:compile-swc</compile>
+					<test-compile>info.flex-mojos:flex-compiler-mojo:test-compile</test-compile>
+					<test>info.flex-mojos:flex-compiler-mojo:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
@@ -34,9 +34,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<compile>info.rvin.mojo:flex-compiler-mojo:compile-swf</compile>
-					<test-compile>info.rvin.mojo:flex-compiler-mojo:test-compile</test-compile>
-					<test>info.rvin.mojo:flex-compiler-mojo:test-run</test>
+					<compile>info.flex-mojos:flex-compiler-mojo:compile-swf</compile>
+					<test-compile>info.flex-mojos:flex-compiler-mojo:test-compile</test-compile>
+					<test>info.flex-mojos:flex-compiler-mojo:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
