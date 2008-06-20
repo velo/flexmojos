@@ -738,6 +738,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			policyFileUrls = new String[] { "" };
 		}
 
+/* TODO problems running HFC with metadata
 		if (metadata == null) {
 			metadata = new Metadata();
 			if (project.getDevelopers() != null
@@ -764,6 +765,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				metadata.addTitle(locales[0], project.getName());
 			}
 		}
+*/
 
 		if (licenses == null) {
 			licenses = getLicenses();
