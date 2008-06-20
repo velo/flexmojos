@@ -19,7 +19,7 @@
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
 						<artifactId>flex-compiler-oem</artifactId>
-						<version>3.0.0.477-hfcd</version>
+						<version>3.0.0.477-hfcd-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
 			</plugin>
