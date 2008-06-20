@@ -187,11 +187,6 @@
 				<version>${flex.sdk.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>mxmlc</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
 				<version>${dom4j.version}</version>
