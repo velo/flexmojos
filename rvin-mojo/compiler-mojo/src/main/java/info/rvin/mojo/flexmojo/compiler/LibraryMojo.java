@@ -32,7 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
 /**
  * Goal which compiles the Flex sources into a library for either Flex or AIR
  * depending.
- * 
+ *
  * @goal compile-swc
  * @requiresDependencyResolution
  * @phase compile
@@ -43,7 +43,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	 * Enable or disable the computation of a digest for the created swf
 	 * library. This is equivalent to using the
 	 * <code>compiler.computDigest</code> in the compc compiler.
-	 * 
+	 *
 	 * @parameter default-value="true"
 	 */
 	private boolean computeDigest;
@@ -51,7 +51,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is the equilvalent of the <code>include-classes</code> option of the
 	 * compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeClasses;
@@ -59,7 +59,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-file</code> option of the compc
 	 * compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File[] includeFiles;
@@ -67,7 +67,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-namespaces</code> option of the
 	 * compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeNamespaces;
@@ -75,7 +75,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is equilvalent to the <code>include-resource-bundles</code> option
 	 * of the compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private String[] includeResourceBundles;
@@ -88,30 +88,30 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/**
 	 * This is the equilvalent of the <code>include-sources</code> option of the
 	 * compc compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File[] includeSources;
 
 	/**
 	 * Sets the RSL output directory.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private File directory;
 
-	/**
+	/*
 	 * TODO how to set this on flex-compiler-oem
-	 * 
+	 *
 	 * -include-lookup-only
-	 */
 	private boolean includeLookupOnly;
+	 */
 
 	/**
 	 * Adds a CSS stylesheet to this <code>Library</code> object. This is
 	 * equilvalent to the <code>include-stylesheet</code> option of the compc
 	 * compiler.
-	 * 
+	 *
 	 * @parameter
 	 */
 	private Stylesheet[] includeStylesheet;
