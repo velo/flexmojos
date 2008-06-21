@@ -525,12 +525,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 */
 	private int defaultSizeHeight;
 
-	/**
+	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
 	 * -dump-config <filename>
-	 */
 	private String dumpConfig;
+	 */
 
 	/**
 	 * Sets a list of definitions to omit from linking when building an
@@ -600,19 +600,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 */
 	private boolean useResourceBundleMetadata;
 
-	/**
+	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
 	 * -resource-bundle-list <filename>
-	 */
 	private String resourceBundleList;
+	 */
 
-	/**
+	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
 	 * -static-link-runtime-shared-libraries
-	 */
 	private boolean staticLinkRuntimeSharedLibraries;
+	 */
 
 	/**
 	 * Verifies the RSL loaded has the same digest as the RSL specified when the
@@ -738,7 +738,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			policyFileUrls = new String[] { "" };
 		}
 
-/* TODO problems running HFC with metadata
 		if (metadata == null) {
 			metadata = new Metadata();
 			if (project.getDevelopers() != null
@@ -765,7 +764,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				metadata.addTitle(locales[0], project.getName());
 			}
 		}
-*/
 
 		if (licenses == null) {
 			licenses = getLicenses();
@@ -774,9 +772,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration = builder.getDefaultConfiguration();
 		configure();
 
-		compilationData = new File(build.getDirectory(), project
-				.getArtifactId()
-				+ "-" + project.getVersion() + ".incr");
+		compilationData = new File(build.getDirectory(), build.getFinalName()
+				+ ".incr");
 	}
 
 	private Map<String, String> getLicenses() throws MojoExecutionException {
@@ -827,22 +824,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		builder.setConfiguration(configuration);
 
-		getLog().info(
-				"Flex compiler configurations:"
-						+ configuration.toString().replace("--", "\n-"));
-
-		// if (incremental && compilationData.exists()) {
-		// builder.load(loadCompilationData());
-		// }
 		build(builder);
-		// if (incremental) {
-		// if (compilationData.exists()) {
-		// compilationData.delete();
-		// compilationData.createNewFile();
-		// }
-		//
-		// builder.save(saveCompilationData());
-		// }
 	}
 
 	/**
@@ -1119,8 +1101,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		for (Artifact artifact : rsls) {
 			String scope = artifact.getScope();
 			File artifactFile = getArtifactFile(artifact, scope, build);
-			String artifactPath = artifactFile
-					.getAbsolutePath();
+			String artifactPath = artifactFile.getAbsolutePath();
 			String extension;
 			if ("caching".equals(scope)) {
 				extension = "swz";
@@ -1156,7 +1137,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 			rslArtifacts.removeAll(ordered);
 			if (original == rslArtifacts.size()) {
-				throw new MojoExecutionException("Unable to resolve " + rslArtifacts);
+				throw new MojoExecutionException("Unable to resolve "
+						+ rslArtifacts);
 			}
 		}
 
@@ -1554,7 +1536,22 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	protected void build(E builder) throws MojoExecutionException {
 		long bytes;
 		try {
+			getLog().info(
+					"Flex compiler configurations:"
+							+ configuration.toString().replace("--", "\n-"));
+
+			if (incremental && compilationData.exists()) {
+				builder.load(loadCompilationData());
+			}
 			bytes = builder.build(incremental);
+			if (incremental) {
+				if (compilationData.exists()) {
+					compilationData.delete();
+					compilationData.createNewFile();
+				}
+
+				builder.save(saveCompilationData());
+			}
 		} catch (IOException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		} catch (Exception e) {
