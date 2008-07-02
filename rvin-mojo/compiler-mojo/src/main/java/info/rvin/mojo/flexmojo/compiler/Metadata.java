@@ -1,5 +1,6 @@
 package info.rvin.mojo.flexmojo.compiler;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class Metadata {
 	/**
 	 * The creation date to store in the SWF metadata
 	 */
-	private String date;
+	private Date date;
 
 	/**
 	 * The default description to store in the SWF metadata
@@ -63,11 +64,11 @@ public class Metadata {
 		this.creator = creator;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 

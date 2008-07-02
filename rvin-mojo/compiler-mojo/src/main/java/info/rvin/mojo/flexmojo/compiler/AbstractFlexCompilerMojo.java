@@ -757,7 +757,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 					break;
 				}
 			}
-			metadata.setDate(DateFormat.getDateInstance().format(new Date()));
+			metadata.setDate(new Date());
 			if (locales != null) {
 				metadata.setLanguage(locales[0]);
 				metadata.addDescription(locales[0], project.getDescription());
