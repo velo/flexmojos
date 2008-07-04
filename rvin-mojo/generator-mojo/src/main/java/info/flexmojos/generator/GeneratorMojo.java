@@ -35,14 +35,11 @@ import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.granite.generator.GenerationListener;
 import org.granite.generator.Generator;
 import org.granite.generator.as3.As3TemplatesType;
-import org.granite.generator.as3.As3TypeFactory;
 import org.granite.generator.as3.DefaultAs3TypeFactory;
 import org.granite.generator.as3.JavaAs3GenerationConfiguration;
 import org.granite.generator.as3.JavaFileGenerationUnit;
-import org.granite.generator.as3.PackageTranslator;
 
 /**
  * Goal which touches a timestamp file.
@@ -192,34 +189,33 @@ public class GeneratorMojo extends AbstractMojo {
 	}
 
 	private Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator() {
-		
+
 		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(getLog());
-		
-		JavaAs3GenerationConfiguration configuration = 
+
+		JavaAs3GenerationConfiguration configuration =
 			new JavaAs3GenerationConfiguration(
-				listener, 
+				listener,
 				new DefaultAs3TypeFactory(),
-				outputDirectory.getPath(), 
-				null, 
-				uid, 
+				outputDirectory.getPath(),
 				null,
-				get0(entityTemplate), 
+				uid,
+				null,
 				get0(entityTemplate),
-				get0(interfaceTemplate), 
+				get0(entityTemplate),
+				get0(interfaceTemplate),
 				get1(interfaceTemplate),
-				get0(beanTemplate), 
+				get0(beanTemplate),
 				get1(beanTemplate),
-				get0(enumTemplate), 
+				get0(enumTemplate),
 				false);
-		
+
 		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(configuration);
-		
+
 		return new Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration>(controller, listener);
-		
-		
+
+
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<String> getClasses(List<File> jarDependencies)
 			throws IOException {
 		List<String> classes = new ArrayList<String>();
@@ -275,14 +271,14 @@ public class GeneratorMojo extends AbstractMojo {
 		}
 
 	}
-	
+
 	private String get0(String[] a) {
-		return a == null ? null: (a.length < 1 ? null: a[0]); 
+		return a == null ? null: (a.length < 1 ? null: a[0]);
 	}
-	
+
 	private String get1(String[] a) {
-		return a == null ? null: (a.length < 2 ? null: a[1]); 
+		return a == null ? null: (a.length < 2 ? null: a[1]);
 	}
-	
+
 
 }
