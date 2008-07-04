@@ -50,7 +50,15 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 	/**
 	 * This is the equilvalent of the <code>include-classes</code> option of the
-	 * compc compiler.
+	 * compc compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeClasses&gt;
+	 *   &lt;class&gt;AClass&lt;/class&gt;
+	 *   &lt;class&gt;BClass&lt;/class&gt;
+	 * &lt;/includeClasses&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -58,7 +66,14 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 	/**
 	 * This is equilvalent to the <code>include-file</code> option of the compc
-	 * compiler.
+	 * compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeFiles&gt;
+	 *   &lt;file&gt;${baseDir}/anyFile.txt&lt;/file&gt;
+	 * &lt;/includeFiles&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -66,7 +81,14 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 	/**
 	 * This is equilvalent to the <code>include-namespaces</code> option of the
-	 * compc compiler.
+	 * compc compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeNamespaces&gt;
+	 *   &lt;namespace&gt;http://www.adobe.com/2006/mxml&lt;/namespace&gt;
+	 * &lt;/includeNamespaces&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -74,20 +96,36 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 	/**
 	 * This is equilvalent to the <code>include-resource-bundles</code> option
-	 * of the compc compiler.
+	 * of the compc compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeResourceBundles&gt;
+	 *   &lt;bundle&gt;SharedResources&lt;/bundle&gt;
+	 *   &lt;bundle&gt;collections&lt;/bundle&gt;
+	 *   &lt;bundle&gt;containers&lt;/bundle&gt;
+	 * &lt;/includeResourceBundles&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
 	private String[] includeResourceBundles;
 
 	/**
-	 * @parameter
+	 * @parameter TODO check if is used/useful
 	 */
 	private MavenArtifact[] includeResourceBundlesArtifact;
 
 	/**
 	 * This is the equilvalent of the <code>include-sources</code> option of the
-	 * compc compiler.
+	 * compc compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeSources&gt;
+	 *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
+	 * &lt;/includeSources&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -103,14 +141,23 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
-	 * -include-lookup-only
-	private boolean includeLookupOnly;
+	 * -include-lookup-only private boolean includeLookupOnly;
 	 */
 
 	/**
 	 * Adds a CSS stylesheet to this <code>Library</code> object. This is
 	 * equilvalent to the <code>include-stylesheet</code> option of the compc
-	 * compiler.
+	 * compiler.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includeStylesheet&gt;
+	 *   &lt;stylesheet&gt;
+	 *     &lt;name&gt;style1&lt;/name&gt;
+	 *     &lt;path&gt;${baseDir}/src/main/flex/style1.css&lt;/path&gt;
+	 *   &lt;/stylesheet&gt;
+	 * &lt;/includeStylesheet&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */

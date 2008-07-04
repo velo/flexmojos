@@ -50,7 +50,14 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 	/**
 	 * The list of modules files to be compiled. The path must be relative with
-	 * source folder
+	 * source folder.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;moduleFiles&gt;
+	 *   &lt;module&gt;com/acme/AModule.mxml&lt;/module&gt;
+	 * &lt;/moduleFiles&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
