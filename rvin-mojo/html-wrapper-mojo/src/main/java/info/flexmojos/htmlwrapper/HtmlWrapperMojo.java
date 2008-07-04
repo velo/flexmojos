@@ -48,34 +48,48 @@ public class HtmlWrapperMojo extends AbstractMojo {
 
 	/**
 	 * The template URI.
+	 *
 	 * <p>
-	 * This mojos embed the following URIs:
+	 * You can point to a zip file, a folder or use one of the following embed
+	 * templates:
+	 *
 	 * <ul>
-	 * class:client-side-detection
+	 * embed:client-side-detection
 	 * </ul>
 	 * <ul>
-	 * class:client-side-detection-with-history
+	 * embed:client-side-detection-with-history
 	 * </ul>
 	 * <ul>
-	 * class:express-installation
+	 * embed:express-installation
 	 * </ul>
 	 * <ul>
-	 * class:express-installation-with-history
+	 * embed:express-installation-with-history
 	 * </ul>
 	 * <ul>
-	 * class:no-player-detection
+	 * embed:no-player-detection
 	 * </ul>
 	 * <ul>
-	 * class:no-player-detection-with-history
+	 * embed:no-player-detection-with-history
 	 * </ul>
 	 *
-	 * To point to file system you must use a URI like this:
-	 * file:/myTemplateFolder/template.zip
+	 * To point to a zip file you must use a URI like this:
+	 *
+	 * <pre>
+	 * zip:/myTemplateFolder/template.zip
+	 * zip:c:/myTemplateFolder/template.zip
+	 * </pre>
+	 *
+	 * To point to a folder use a URI like this:
+	 *
+	 * <pre>
+	 * folder:/myTemplateFolder/
+	 * folder:c:/myTemplateFolder/
+	 * </pre>
 	 * <p>
 	 * This mojo will look for <tt>index.template.html</tt> for replace
 	 * parameters
 	 *
-	 * @parameter default-value="class:client-side-detection-with-history.zip"
+	 * @parameter default-value="embed:client-side-detection-with-history"
 	 */
 	private String templateURI;
 
@@ -129,14 +143,6 @@ public class HtmlWrapperMojo extends AbstractMojo {
 	private Map<String, String> parameters;
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		try {
-			getLog().error(
-					getClass().getResource(
-							"/client-side-detection-with-history.zip").toURI()
-							.toString());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 		init();
 
 		File templateFolder = extractTemplate();
@@ -187,25 +193,72 @@ public class HtmlWrapperMojo extends AbstractMojo {
 
 	private File extractTemplate() throws MojoExecutionException {
 		getLog().info("Extracting template");
-		File template = new File(build.getOutputDirectory(), "template.zip");
-		URL url;
+		File outputDir = new File(build.getOutputDirectory(), "html-template");
+		outputDir.mkdirs();
+
+		URI uri;
 		try {
-			URI uri = new URI(templateURI);
-			url = getUrl(uri);
-		} catch (Exception e) {
+			uri = new URI(templateURI);
+		} catch (URISyntaxException e) {
 			throw new MojoExecutionException("Invalid template URI.", e);
 		}
 
+		String scheme = uri.getScheme();
+		if ("embed".equals(scheme)) {
+			copyEmbedTemplate(uri.getSchemeSpecificPart(), outputDir);
+		} else if ("zip".equals(scheme)) {
+			copyZipTemplate(uri.getSchemeSpecificPart(), outputDir);
+		} else if ("folder".equals(scheme)) {
+			copyFolderTemplate(uri.getSchemeSpecificPart(), outputDir);
+		} else {
+			throw new MojoExecutionException("Invalid URI scheme: " + scheme);
+		}
+
+		return outputDir;
+	}
+
+	private void copyFolderTemplate(String path, File outputDir)
+			throws MojoExecutionException {
+		File source = new File(path);
+		if (!source.exists() || !source.isDirectory()) {
+			throw new MojoExecutionException("Template folder doesn't exists. "
+					+ source);
+		}
+
+		try {
+			FileUtils.copyDirectory(source, outputDir);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Unable to copy template to: "
+					+ outputDir, e);
+		}
+	}
+
+	private void copyZipTemplate(String path, File outputDir)
+			throws MojoExecutionException {
+		File source = new File(path);
+		if (!source.exists() || !source.isFile()) {
+			throw new MojoExecutionException("Zip template doesn't exists. "
+					+ source);
+		}
+
+		extractZipTemplate(outputDir, source);
+	}
+
+	private void copyEmbedTemplate(String path, File outputDir)
+			throws MojoExecutionException {
+		URL url = getClass().getResource("/" + path + ".zip");
+		File template = new File(build.getOutputDirectory(), "template.zip");
 		try {
 			FileUtils.copyURLToFile(url, template);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Unable to copy template to: "
 					+ template, e);
 		}
+		extractZipTemplate(outputDir, template);
+	}
 
-		File outputDir = new File(build.getOutputDirectory(), "html-template");
-		outputDir.mkdirs();
-
+	private void extractZipTemplate(File outputDir, File template)
+			throws MojoExecutionException {
 		try {
 			ZipExtractor ze = new ZipExtractor(template);
 			ze.extract(outputDir);
@@ -213,33 +266,6 @@ public class HtmlWrapperMojo extends AbstractMojo {
 			throw new MojoExecutionException(
 					"An error happens when trying to extract html-template.", e);
 		}
-
-		return outputDir;
-	}
-
-	/**
-	 *
-	 * Based on URIUtil from Gas3 Franck WOLFF
-	 *
-	 * @throws IOException
-	 *
-	 */
-	private URL getUrl(URI uri) throws IOException {
-		URL url;
-		String scheme = uri.getScheme();
-		if ("class".equals(scheme)) {
-			url = Thread.currentThread().getContextClassLoader().getResource(
-					uri.getSchemeSpecificPart());
-			if (url == null)
-				throw new IOException("Resource not found exception: " + uri);
-		} else
-		// scheme.length() == 1 -> assume drive letter.
-		if (scheme == null || scheme.length() <= 1)
-			url = new URL(uri.toString());
-		else
-			url = uri.toURL();
-
-		return url;
 	}
 
 	private void init() {
