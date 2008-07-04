@@ -71,7 +71,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Sets the locales that the compiler uses to replace <code>{locale}</code>
 	 * tokens that appear in some configuration values. This is equivalent to
 	 * using the <code>compiler.locale</code> option of the mxmlc or compc
-	 * compilers.
+	 * compilers. <BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;locales&gt;
+	 *    &lt;locale&gt;en_US&lt;/locale&gt;
+	 *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+	 *    &lt;locale&gt;es_ES&lt;/locale&gt;
+	 * &lt;/locales&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -79,7 +88,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * List of path elements that form the roots of ActionScript class
-	 * hierarchies.
+	 * hierarchies.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;sourcePaths&gt;
+	 *    &lt;path&gt;${baseDir}/src/main/flex&lt;/path&gt;
+	 * &lt;/sourcePaths&gt;
+	 * </pre>
+	 *
+	 * By default use Maven source and resources folders.
 	 *
 	 * @parameter
 	 */
@@ -143,6 +161,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * --compiler.warn-xml-class-has-changed
 	 * </pre>
 	 *
+	 * <BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;warnigs&gt;
+	 *   &lt;arrayTostringChanges&gt;true&lt;/arrayTostringChanges&gt;
+	 *   &lt;assignmentWithinConditional&gt;false&lt;/assignmentWithinConditional&gt;
+	 * &lt;/warnigs&gt;
+	 * </pre>
+	 *
 	 * @see Warning
 	 */
 	private Warning warnigs;
@@ -173,7 +201,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * Specify a URI to associate with a manifest of components for use as MXML
-	 * elements.
+	 * elements.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;namespaces&gt;
+	 *   &lt;namespace&gt;
+	 *     &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
+	 *     &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
+	 *   &lt;/namespace&gt;
+	 * &lt;/namespaces&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -198,7 +236,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean incremental;
 
 	/**
-	 * Keep the following AS3 metadata in the bytecodes.
+	 * Keep the following AS3 metadata in the bytecodes.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;keepAs3Metadatas&gt;
+	 *   &lt;metadata&gt;Bindable&lt;/metadata&gt;
+	 *   &lt;metadata&gt;Events&lt;/metadata&gt;
+	 * &lt;/keepAs3Metadatas&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -243,7 +289,24 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Local Fonts Snapshot File containing cached system font licensing
 	 * information produced via
 	 * <code>java -cp mxmlc.jar flex2.tools.FontSnapshot (fontpath)</code>. Will
-	 * default to winFonts.ser on Windows XP and macFonts.ser on Mac OS X.
+	 * default to winFonts.ser on Windows XP and macFonts.ser on Mac OS X.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;fonts&gt;
+	 *   &lt;advancedAntiAliasing&gt;true&lt;/advancedAntiAliasing&gt;
+	 *   &lt;flashType&gt;true&lt;/flashType&gt;
+	 *   &lt;languages&gt;
+	 *     &lt;englishRange&gt;U+0020-U+007E&lt;/englishRange&gt;
+	 *   &lt;/languages&gt;
+	 *   &lt;localFontsSnapshot&gt;${baseDir}/src/main/resources/fonts.ser&lt;/localFontsSnapshot&gt;
+	 *   &lt;managers&gt;
+	 *     &lt;manager&gt;flash.fonts.BatikFontManager&lt;/manager&gt;
+	 *   &lt;/managers&gt;
+	 *   &lt;maxCachedFonts&gt;20&lt;/maxCachedFonts&gt;
+	 *   &lt;maxGlyphsPerFace&gt;1000&lt;/maxGlyphsPerFace&gt;
+	 * &lt;/fonts&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -257,7 +320,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private boolean useNetwork;
 
 	/**
-	 * licenses: specifies a list of product and serial number pairs.
+	 * licenses: specifies a list of product and serial number pairs.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;licenses&gt;
+	 *   &lt;flexbuilder3&gt;xxxx-xxxx-xxxx-xxxx&lt;/flexbuilder3&gt;
+	 * &lt;/licenses&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -265,7 +335,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 	/**
 	 * defines: specifies a list of define directive key and value pairs. For
-	 * example, CONFIG::debugging
+	 * example, CONFIG::debugging<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;defines&gt;
+	 *   &lt;SOMETHING::aNumber&gt;2.2&lt;/SOMETHING::aNumber&gt;
+	 *   &lt;SOMETHING::aString&gt;&quot;text&quot;&lt;/SOMETHING::aString&gt;
+	 * &lt;/defines&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -296,7 +374,23 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Sets a list of artifacts to omit from linking when building an
 	 * application. This is equivalent to using the <code>load-externs</code>
-	 * option of the mxmlc or compc compilers.
+	 * option of the mxmlc or compc compilers.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;loadExterns&gt;
+	 *   &lt;loadExtern&gt;
+	 *     &lt;groupId&gt;com.acme&lt;/groupId&gt;
+	 *     &lt;artifactId&gt;flexmodule&lt;/artifactId&gt;
+	 *     &lt;version&gt;1.0.0&lt;/version&gt;
+	 *   &lt;/loadExtern&gt;
+	 *   &lt;loadExtern&gt;
+	 *     &lt;groupId&gt;org.tabajara&lt;/groupId&gt;
+	 *     &lt;artifactId&gt;flexmodule&lt;/artifactId&gt;
+	 *     &lt;version&gt;1.0.0&lt;/version&gt;
+	 *   &lt;/loadExtern&gt;
+	 * &lt;/loadExterns&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -342,7 +436,27 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	private String rawMetadata;
 
 	/**
-	 * SWF metadata useless there is no API to read it.
+	 * SWF metadata useless there is no API to read it.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;metadata&gt;
+	 *   &lt;contributor&gt;buddy&lt;/contributor&gt;
+	 *   &lt;creator&gt;me&lt;/creator&gt;
+	 *   &lt;date&gt;01/01/01&lt;/date&gt;
+	 *   &lt;descriptions&gt;
+	 *     &lt;en_US&gt;Simple description&lt;/en_US&gt;
+	 *   &lt;/descriptions&gt;
+	 *   &lt;language&gt;en_US&lt;/language&gt;
+	 *   &lt;publishers&gt;
+	 *     &lt;publisher&gt;publisher1&lt;/publisher&gt;
+	 *     &lt;publisher&gt;publisher2&lt;/publisher&gt;
+	 *   &lt;/publishers&gt;
+	 *   &lt;titles&gt;
+	 *     &lt;en_US&gt;Project title&lt;/en_US&gt;
+	 *   &lt;/titles&gt;
+	 * &lt;/metadata&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -363,7 +477,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * {extension}			- replace by library extension swf or swz
 	 * </pre>
 	 *
-	 * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}"
+	 * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;rslUrls&gt;
+	 *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{version}.{extension}&lt;/url&gt;
+	 * &lt;/rslUrls&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -383,6 +504,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * {artifactId}			- replace by library artifactId
 	 * {version}			- replace by library version
 	 * {extension}			- replace by library extension swf or swz
+	 * </pre>
+	 *
+	 * <BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;policyFileUrls&gt;
+	 *   &lt;url&gt;/{contextRoot}/rsl/policy-{artifactId}-{version}.xml&lt;/url&gt;
+	 * &lt;/policyFileUrls&gt;
 	 * </pre>
 	 *
 	 * @parameter
@@ -431,7 +561,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * <code>compiler.mxmlc.compatibility-version</code> option of the compc
 	 * compiler. Must be in the form <major>.<minor>.<revision>
 	 *
-	 * Valid values: <tt>2.0.0</tt> and <tt>2.0.1</tt>
+	 * Valid values: <tt>2.0.0</tt>, <tt>2.0.1</tt> and <tt>3.0.0</tt>
 	 *
 	 * @see http
 	 *      ://livedocs.adobe.com/flex/3/html/help.html?content=versioning_4.
@@ -527,8 +657,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
-	 * -dump-config <filename>
-	private String dumpConfig;
+	 * -dump-config <filename> private String dumpConfig;
 	 */
 
 	/**
@@ -537,7 +666,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * of the mxmlc and compc compilers.
 	 *
 	 * An array of definitions (for example, classes, functions, variables, or
-	 * namespaces).
+	 * namespaces).<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;externs&gt;
+	 *   &lt;extern&gt;com.acme.AClass&lt;/extern&gt;
+	 * &lt;/externs&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -546,7 +682,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Sets a SWF frame label with a sequence of class names that are linked
 	 * onto the frame. This is equivalent to using the <code>frames.frame</code>
-	 * option of the mxmlc or compc compilers.
+	 * option of the mxmlc or compc compilers.<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;frames&gt;
+	 *   &lt;frame&gt;
+	 *     &lt;label&gt;frame1&lt;/label&gt;
+	 *     &lt;classNames&gt;
+	 *       &lt;className&gt;com.acme.AClass&lt;/className&gt;
+	 *     &lt;/classNames&gt;
+	 *   &lt;/frame&gt;
+	 * &lt;/frames&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -558,7 +706,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * of the mxmlc or compc compilers.
 	 *
 	 * An array of definitions (for example, classes, functions, variables, or
-	 * namespaces).
+	 * namespaces).<BR>
+	 * Usage:
+	 *
+	 * <pre>
+	 * &lt;includes&gt;
+	 *   &lt;include&gt;com.acme.AClass&lt;/include&gt;
+	 * &lt;/includes&gt;
+	 * </pre>
 	 *
 	 * @parameter
 	 */
@@ -602,15 +757,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
-	 * -resource-bundle-list <filename>
-	private String resourceBundleList;
+	 * -resource-bundle-list <filename> private String resourceBundleList;
 	 */
 
 	/*
 	 * TODO how to set this on flex-compiler-oem
 	 *
-	 * -static-link-runtime-shared-libraries
-	private boolean staticLinkRuntimeSharedLibraries;
+	 * -static-link-runtime-shared-libraries private boolean
+	 * staticLinkRuntimeSharedLibraries;
 	 */
 
 	/**
