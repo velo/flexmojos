@@ -33,7 +33,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.graniteds</groupId>
-			<artifactId>generator</artifactId>
+			<artifactId>granite-generator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
