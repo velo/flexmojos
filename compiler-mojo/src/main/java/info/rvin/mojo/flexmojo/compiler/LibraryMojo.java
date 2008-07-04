@@ -108,7 +108,7 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 	 *
 	 * @parameter
 	 */
-	private File[] includeSources;
+	protected File[] includeSources;
 
 	/**
 	 * Sets the RSL output directory.
