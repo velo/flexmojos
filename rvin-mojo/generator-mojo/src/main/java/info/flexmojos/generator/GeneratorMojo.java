@@ -37,9 +37,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.granite.generator.GenerationListener;
 import org.granite.generator.Generator;
+import org.granite.generator.as3.As3TemplatesType;
 import org.granite.generator.as3.As3TypeFactory;
 import org.granite.generator.as3.DefaultAs3TypeFactory;
+import org.granite.generator.as3.JavaAs3GenerationConfiguration;
 import org.granite.generator.as3.JavaFileGenerationUnit;
+import org.granite.generator.as3.PackageTranslator;
 
 /**
  * Goal which touches a timestamp file.
@@ -146,7 +149,7 @@ public class GeneratorMojo extends AbstractMojo {
 			throw new MojoExecutionException("Unable to get dependency URL", e);
 		}
 
-		Generator<Class<?>, JavaFileGenerationUnit> generator = getGenerator();
+		Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator();
 
 		int count = 0;
 		for (String className : classes) {
@@ -188,33 +191,32 @@ public class GeneratorMojo extends AbstractMojo {
 		return jarDependencies;
 	}
 
-	private Generator<Class<?>, JavaFileGenerationUnit> getGenerator() {
-		As3TypeFactory as3TypeFactory = new DefaultAs3TypeFactory();
-
-		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(
-				as3TypeFactory);
-		controller.setStyle(style);
-		controller.setBeanTemplateUris(beanTemplate);
-		controller.setEntityTemplateUris(entityTemplate);
-		controller.setEnumTemplateUris(enumTemplate);
-		controller.setInterfaceTemplateUris(interfaceTemplate);
-		controller.setOutputDirectory(outputDirectory);
-		controller.setUid(uid);
-
-		// new JavaAs3Controller(
-		// new GenLogger(getLog()), as3TypeFactory, outputdir
-		// .getAbsolutePath(), uid, translators, null, null, null,
-		// null, null, null, null, false);
-
-		GenerationListener<JavaFileGenerationUnit> listener = new GenerationListener<JavaFileGenerationUnit>() {
-			public void generating(JavaFileGenerationUnit unit) {
-				getLog().info("  Generating: " + unit.getOutput());
-			}
-		};
-
-		Generator<Class<?>, JavaFileGenerationUnit> generator = new Generator<Class<?>, JavaFileGenerationUnit>(
-				controller, listener);
-		return generator;
+	private Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator() {
+		
+		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(getLog());
+		
+		JavaAs3GenerationConfiguration configuration = 
+			new JavaAs3GenerationConfiguration(
+				listener, 
+				new DefaultAs3TypeFactory(),
+				outputDirectory.getPath(), 
+				null, 
+				uid, 
+				null,
+				get0(entityTemplate), 
+				get0(entityTemplate),
+				get0(interfaceTemplate), 
+				get1(interfaceTemplate),
+				get0(beanTemplate), 
+				get1(beanTemplate),
+				get0(enumTemplate), 
+				false);
+		
+		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(configuration);
+		
+		return new Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration>(controller, listener);
+		
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -265,7 +267,7 @@ public class GeneratorMojo extends AbstractMojo {
 
 	private void setUp() throws MojoExecutionException {
 		if (includeClasses == null) {
-			includeClasses = new String[] { "*.class" };
+			includeClasses = new String[] { "*" };
 		}
 
 		if (!outputDirectory.exists()) {
@@ -273,5 +275,14 @@ public class GeneratorMojo extends AbstractMojo {
 		}
 
 	}
+	
+	private String get0(String[] a) {
+		return a == null ? null: (a.length < 1 ? null: a[0]); 
+	}
+	
+	private String get1(String[] a) {
+		return a == null ? null: (a.length < 2 ? null: a[1]); 
+	}
+	
 
 }
