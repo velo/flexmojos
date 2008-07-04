@@ -248,6 +248,18 @@ public class AsDocMojo extends AbstractMojo {
 	 */
 	protected File[] sourcePaths;
 
+	/**
+	 * Sets the compiler when it runs on a server without a display. This is
+	 * equivalent to using the <code>compiler.headless-server</code> option of
+	 * the mxmlc or compc compilers.
+	 *
+	 * that value determines if the compiler is running on a server without a
+	 * display.
+	 *
+	 * @parameter default-value="false"
+	 */
+	private boolean headlessServer;
+
 	@SuppressWarnings("unchecked")
 	protected void setUp() throws MojoExecutionException, MojoFailureException {
 		if (sourcePaths == null) {
@@ -395,6 +407,10 @@ public class AsDocMojo extends AbstractMojo {
 		args.add("-exclude-dependencies=" + excludeDependencies);
 		args.add("-compiler.fonts.local-fonts-snapshot="
 				+ fontsSnapshot.getAbsolutePath());
+		if (headlessServer)
+		{
+			args.add("-compiler.headless-server=true");
+		}
 		args.add("-load-config=" + configFile.getAbsolutePath());
 		args.add("-output=" + output.getAbsolutePath());
 
