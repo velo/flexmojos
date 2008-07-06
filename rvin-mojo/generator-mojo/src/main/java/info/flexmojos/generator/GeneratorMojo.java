@@ -102,6 +102,11 @@ public class GeneratorMojo extends AbstractMojo {
 	/**
 	 * @parameter
 	 */
+	private File baseOutputDirectory;
+
+	/**
+	 * @parameter
+	 */
 	private String uid = "uid";
 
 	/**
@@ -206,7 +211,7 @@ public class GeneratorMojo extends AbstractMojo {
 
 		JavaAs3GenerationConfiguration configuration = new JavaAs3GenerationConfiguration(
 				listener, new DefaultAs3TypeFactory(), outputDirectory
-						.getPath(), null, uid, null, get0(entityTemplate),
+						.getPath(), baseOutputDirectory.getPath(), uid, null, get0(entityTemplate),
 				get1(entityTemplate), get0(interfaceTemplate),
 				get1(interfaceTemplate), get0(beanTemplate),
 				get1(beanTemplate), get0(enumTemplate), false);
@@ -272,6 +277,12 @@ public class GeneratorMojo extends AbstractMojo {
 
 		if (!outputDirectory.exists()) {
 			outputDirectory.mkdirs();
+		}
+
+		if(baseOutputDirectory == null) {
+			baseOutputDirectory = outputDirectory;
+		} else if (!baseOutputDirectory.exists()) {
+			baseOutputDirectory.mkdirs();
 		}
 
 	}
