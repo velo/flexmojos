@@ -94,7 +94,8 @@ public class GeneratorMojo extends AbstractMojo {
 	private String style;
 
 	/**
-	 * @parameter expression="${project.build.directory}/generated-sources/flex-mojos"
+	 * @parameter
+	 *            default-value="${project.build.directory}/generated-sources/flex-mojos"
 	 */
 	private File outputDirectory;
 
@@ -123,6 +124,11 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	private String[] enumTemplate;
 
+	/**
+	 * @parameter default-value="false"
+	 */
+	private boolean useTransitiveDependencies;
+
 	public void execute() throws MojoExecutionException {
 		setUp();
 
@@ -146,7 +152,7 @@ public class GeneratorMojo extends AbstractMojo {
 			throw new MojoExecutionException("Unable to get dependency URL", e);
 		}
 
-		Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator();
+		Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator();
 
 		int count = 0;
 		for (String className : classes) {
@@ -174,7 +180,12 @@ public class GeneratorMojo extends AbstractMojo {
 	@SuppressWarnings("unchecked")
 	private List<File> getJarDependencies() {
 		List<File> jarDependencies = new ArrayList<File>();
-		Set<Artifact> artifacts = project.getDependencyArtifacts();
+		final Collection<Artifact> artifacts;
+		if( useTransitiveDependencies ) {
+			artifacts = project.getArtifacts();
+		} else {
+			artifacts = project.getDependencyArtifacts();
+		}
 		for (Artifact artifact : artifacts) {
 			if ("jar".equals(artifact.getType())) {
 				File file = artifact.getFile();
@@ -188,31 +199,23 @@ public class GeneratorMojo extends AbstractMojo {
 		return jarDependencies;
 	}
 
-	private Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator() {
+	private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator() {
 
-		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(getLog());
+		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(
+				getLog());
 
-		JavaAs3GenerationConfiguration configuration =
-			new JavaAs3GenerationConfiguration(
-				listener,
-				new DefaultAs3TypeFactory(),
-				outputDirectory.getPath(),
-				null,
-				uid,
-				null,
-				get0(entityTemplate),
-				get0(entityTemplate),
-				get0(interfaceTemplate),
-				get1(interfaceTemplate),
-				get0(beanTemplate),
-				get1(beanTemplate),
-				get0(enumTemplate),
-				false);
+		JavaAs3GenerationConfiguration configuration = new JavaAs3GenerationConfiguration(
+				listener, new DefaultAs3TypeFactory(), outputDirectory
+						.getPath(), null, uid, null, get0(entityTemplate),
+				get1(entityTemplate), get0(interfaceTemplate),
+				get1(interfaceTemplate), get0(beanTemplate),
+				get1(beanTemplate), get0(enumTemplate), false);
 
-		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(configuration);
+		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(
+				configuration);
 
-		return new Generator<Class<?>,	JavaFileGenerationUnit,	As3TemplatesType, JavaAs3GenerationConfiguration>(controller, listener);
-
+		return new Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration>(
+				controller, listener);
 
 	}
 
@@ -232,7 +235,7 @@ public class GeneratorMojo extends AbstractMojo {
 
 				String className = jarEntry.getName();
 
-				if(jarEntry.isDirectory() || !className.endsWith(".class")) {
+				if (jarEntry.isDirectory() || !className.endsWith(".class")) {
 					continue;
 				}
 
@@ -255,7 +258,8 @@ public class GeneratorMojo extends AbstractMojo {
 		}
 
 		for (String wildCard : wildCards) {
-			return FilenameUtils.wildcardMatch(className, wildCard);
+			if (FilenameUtils.wildcardMatch(className, wildCard))
+				return true;
 		}
 
 		return false;
@@ -273,12 +277,11 @@ public class GeneratorMojo extends AbstractMojo {
 	}
 
 	private String get0(String[] a) {
-		return a == null ? null: (a.length < 1 ? null: a[0]);
+		return a == null ? null : (a.length < 1 ? null : a[0]);
 	}
 
 	private String get1(String[] a) {
-		return a == null ? null: (a.length < 2 ? null: a[1]);
+		return a == null ? null : (a.length < 2 ? null : a[1]);
 	}
-
 
 }
