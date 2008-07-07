@@ -3,7 +3,7 @@
 
 	<groupId>info.flex-mojos</groupId>
 	<artifactId>mojo</artifactId>
-	<version>2.0-alpha2</version>
+	<version>2.0-alpha3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos</name>
@@ -112,8 +112,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/mojo-2.0-alpha2</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/mojo-2.0-alpha2</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk/rvin-mojo/</developerConnection>
 	</scm>
 
 	<distributionManagement>
