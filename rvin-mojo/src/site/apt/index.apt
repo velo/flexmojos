@@ -11,33 +11,47 @@ Flex-Mojos
 
   Flex-Mojos is a collection of maven-plugins created to make it possible
   to use Apache Maven to use to manage Adobe Flex plugins.
-  
+
 * Maven-Plugins
 
   * {{{flex-compiler-mojo/index.html}flex-compiler-mojo}}
-  
+
   The Flex Compiler plugin compiles all ActionScript sources. It can compile
   the source into both 'swc' or 'swf' files. The plugin supports the following
   packaging: swc, swf, aswc, aswf.
 
   * {{{encryptor-mojo/index.html}encryptor-mojo}}
-  
+
   The encryptor plugin can encrypt an swf files.
-  
+
   * {{{asdoc/index.html}asdoc}}
-  
+
   The ASDoc plugin generates ActionScript documention just like <javadoc>.
-  
+
   * {{{source-mojo/index.html}source-mojo}}
-  
+
   The Source plugin can create a <jar> package of all Adobe Flex sources
   in your source directories.
-  
+
+  * {{{generator-mojo/index.html}generator-mojo}}
+
+  The Generator plugin can be used to generate AS3 files from Java class/jars.
+  It uses granite gas3 generator engine to do that.
+
+  * {{{optimizer-mojo/index.html}optimizer-mojo}}
+
+  The Optimizer plugin generate optimized SWF files for runtime shared libraries
+  to any Flex Library (SWC)
+
+  * {{{html-wrapper-mojo/index.html}html-wrapper-mojo}}
+
+  Used to create HTML wrapper to Flex Applications (SWF).
+
 * Other libraries
 
   * {{{utils/index.html}utils}}
-  
+
   The utils library contains common functionality used by the Flex-Mojo
   plugins.
-  
+
   TODO: Add super poms?
