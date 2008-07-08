@@ -20,9 +20,9 @@ Flex-Mojos
   the source into both 'swc' or 'swf' files. The plugin supports the following
   packaging: swc, swf, aswc, aswf.
 
-  * {{{encryptor-mojo/index.html}encryptor-mojo}}
+  * {{{encrypter-mojo/index.html}encrypter-mojo}}
 
-  The encryptor plugin can encrypt an swf files.
+  The encrypter plugin can encrypt an swf files.
 
   * {{{asdoc/index.html}asdoc}}
 
