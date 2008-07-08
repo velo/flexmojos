@@ -11,14 +11,14 @@ import org.apache.maven.plugin.logging.Log;
 import org.granite.generator.as3.As3Type;
 import org.granite.generator.as3.DefaultAs3TypeFactory;
 
-public class FlexMojoAs3TypeFactory extends DefaultAs3TypeFactory {
+public class Gas3TypeFactory extends DefaultAs3TypeFactory {
 
 	private String[] typeMappings;
 	private Log log;
 	private final Pattern PATTERN = Pattern
 			.compile("\\s*([^\\s]+)\\s+([^\\s]+)+\\s*");
 
-	public FlexMojoAs3TypeFactory(ClassLoader loader, String[] typeMappings,
+	public Gas3TypeFactory(ClassLoader loader, String[] typeMappings,
 			Log log) throws MojoExecutionException {
 		super();
 		this.typeMappings = typeMappings;

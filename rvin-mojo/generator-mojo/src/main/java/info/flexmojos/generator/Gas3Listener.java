@@ -9,14 +9,14 @@ import org.granite.generator.as3.JavaFileGenerationUnit;
  * @author Juraj Burian
  *
  */
-public class FlexMojosGenerationListener implements GenerationListener<JavaFileGenerationUnit>{
+public class Gas3Listener implements GenerationListener<JavaFileGenerationUnit>{
 
 	private final Log log;
-	
+
 	/**
 	 * @param log
 	 */
-	public FlexMojosGenerationListener(final Log log) {
+	public Gas3Listener(final Log log) {
 		this.log = log;
 	}
 
