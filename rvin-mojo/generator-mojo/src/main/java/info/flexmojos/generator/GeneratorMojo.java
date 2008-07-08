@@ -34,6 +34,8 @@ import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.granite.generator.GenerationController;
+import org.granite.generator.GenerationListener;
 import org.granite.generator.Generator;
 import org.granite.generator.as3.As3TemplatesType;
 import org.granite.generator.as3.JavaAs3GenerationConfiguration;
@@ -210,18 +212,18 @@ public class GeneratorMojo extends AbstractMojo {
 	private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator(
 			ClassLoader loader) throws MojoExecutionException {
 
-		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(
+		GenerationListener<JavaFileGenerationUnit> listener = new Gas3Listener(
 				getLog());
 
 		JavaAs3GenerationConfiguration configuration = new JavaAs3GenerationConfiguration(
-				listener, new FlexMojoAs3TypeFactory(loader, typeMappings,
-						getLog()), outputDirectory.getPath(),
-				baseOutputDirectory.getPath(), uid, null, get0(entityTemplate),
-				get1(entityTemplate), get0(interfaceTemplate),
-				get1(interfaceTemplate), get0(beanTemplate),
-				get1(beanTemplate), get0(enumTemplate), false);
+				listener, new Gas3TypeFactory(loader, typeMappings, getLog()),
+				outputDirectory.getPath(), baseOutputDirectory.getPath(), uid,
+				null, get0(entityTemplate), get1(entityTemplate),
+				get0(interfaceTemplate), get1(interfaceTemplate),
+				get0(beanTemplate), get1(beanTemplate), get0(enumTemplate),
+				false);
 
-		FlexmojosAs3Controller controller = new FlexmojosAs3Controller(
+		GenerationController<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> controller = new Gas3Controller(
 				configuration);
 
 		return new Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration>(
