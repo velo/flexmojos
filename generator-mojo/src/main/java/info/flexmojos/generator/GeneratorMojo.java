@@ -42,7 +42,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -54,7 +53,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.granite.generator.Generator;
 import org.granite.generator.as3.As3TemplatesType;
-import org.granite.generator.as3.DefaultAs3TypeFactory;
 import org.granite.generator.as3.JavaAs3GenerationConfiguration;
 import org.granite.generator.as3.JavaFileGenerationUnit;
 
@@ -151,6 +149,11 @@ public class GeneratorMojo extends AbstractMojo {
 	 */
 	private boolean useTransitiveDependencies;
 
+	/**
+	 * @parameter
+	 */
+	private String[] typeMappings;
+
 	public void execute() throws MojoExecutionException {
 		setUp();
 
@@ -174,7 +177,7 @@ public class GeneratorMojo extends AbstractMojo {
 			throw new MojoExecutionException("Unable to get dependency URL", e);
 		}
 
-		Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator();
+		Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator(loader);
 
 		int count = 0;
 		for (String className : classes) {
@@ -203,7 +206,7 @@ public class GeneratorMojo extends AbstractMojo {
 	private List<File> getJarDependencies() {
 		List<File> jarDependencies = new ArrayList<File>();
 		final Collection<Artifact> artifacts;
-		if( useTransitiveDependencies ) {
+		if (useTransitiveDependencies) {
 			artifacts = project.getArtifacts();
 		} else {
 			artifacts = project.getDependencyArtifacts();
@@ -221,14 +224,16 @@ public class GeneratorMojo extends AbstractMojo {
 		return jarDependencies;
 	}
 
-	private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator() {
+	private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator(
+			ClassLoader loader) throws MojoExecutionException {
 
 		FlexMojosGenerationListener listener = new FlexMojosGenerationListener(
 				getLog());
 
 		JavaAs3GenerationConfiguration configuration = new JavaAs3GenerationConfiguration(
-				listener, new DefaultAs3TypeFactory(), outputDirectory
-						.getPath(), baseOutputDirectory.getPath(), uid, null, get0(entityTemplate),
+				listener, new FlexMojoAs3TypeFactory(loader, typeMappings,
+						getLog()), outputDirectory.getPath(),
+				baseOutputDirectory.getPath(), uid, null, get0(entityTemplate),
 				get1(entityTemplate), get0(interfaceTemplate),
 				get1(interfaceTemplate), get0(beanTemplate),
 				get1(beanTemplate), get0(enumTemplate), false);
@@ -296,7 +301,7 @@ public class GeneratorMojo extends AbstractMojo {
 			outputDirectory.mkdirs();
 		}
 
-		if(baseOutputDirectory == null) {
+		if (baseOutputDirectory == null) {
 			baseOutputDirectory = outputDirectory;
 		} else if (!baseOutputDirectory.exists()) {
 			baseOutputDirectory.mkdirs();
