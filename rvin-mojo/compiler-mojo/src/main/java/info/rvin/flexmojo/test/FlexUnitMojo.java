@@ -23,11 +23,11 @@ import org.dom4j.io.XMLWriter;
 /**
  * Goal to run FlexUnit tests. Based on:
  * http://weblogs.macromedia.com/pmartin/archives/2007/09/flexunit_for_an_2.cfm
- * 
+ *
  * @goal test-run
  * @requiresDependencyResolution
  * @phase test
- * 
+ *
  */
 public class FlexUnitMojo extends AbstractIrvinMojo {
 
@@ -45,7 +45,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	/**
 	 * Socket connect port for flex/java communication
-	 * 
+	 *
 	 * @parameter default-value="3539"
 	 */
 	private int testPort;
@@ -57,7 +57,12 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	/**
 	 * @parameter default-value="false" expression="${maven.test.skip}"
 	 */
-	private boolean skipTests;
+	private boolean skip;
+
+	/**
+	 * @parameter default-value="false" expression="${skipTests}"
+	 */
+	private boolean skipTest;
 
 	/**
 	 * Place where all test reports are saved
@@ -68,8 +73,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		setUp();
 
-		if (skipTests) {
-			getLog().warn("Skipping test phase.");
+		if (skip || skipTest) {
+			getLog().info("Skipping test phase.");
 		} else if (swf == null || !swf.exists()) {
 			getLog().warn("Skipping test run. Runner not found: " + swf);
 			// TODO need to check problems on MAC OS
@@ -251,7 +256,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	/**
 	 * Write a test report to disk.
-	 * 
+	 *
 	 * @param report
 	 *            the report to write.
 	 * @throws MojoExecutionException
@@ -324,7 +329,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 
 	/**
 	 * Failure handling. Write ant property for use later in build script.
-	 * 
+	 *
 	 * @throws MojoExecutionException
 	 */
 	private void handleFailures() throws MojoExecutionException {
