@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+
+	<mx:Script>
+		<![CDATA[
+
+			import info.flexmojos.it.AClass;
+
+			/**
+			 * AClass
+			 */
+			public var aVar:AClass;
+
+		]]>
+	</mx:Script>
+
+	<mx:Label text="Hello World" />
+</mx:Application>
