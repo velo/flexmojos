@@ -2,6 +2,7 @@ package info.rvin.flexmojos.asdoc;
 
 import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.tools.ASDoc;
+import info.rvin.flexmojos.utilities.CompileConfigurationLoader;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
@@ -398,6 +400,7 @@ public class AsDocMojo extends AbstractMojo {
 		addLibraries(args);
 		addCompatibility(args);
 		addPackageDescriptions(args);
+		addDefines(args);
 		addExcludeClasses(args);
 		addFooter(args);
 		args.add("-templates-path=" + templatesPath.getAbsolutePath());
@@ -496,6 +499,19 @@ public class AsDocMojo extends AbstractMojo {
 			args.add(pack);
 			args.add(packageDescriptions.get(pack));
 		}
+	}
+
+	private void addDefines(List<String> args) {
+		//Read defines from flex-compiler
+		Xpp3Dom defines = CompileConfigurationLoader.getCompilerPluginConfiguration(project, "defines");
+		if (defines == null || defines.getChildren() == null || defines.getChildren().length == 0) {
+			return;
+		}
+
+		for (Xpp3Dom define : defines.getChildren()) {
+			args.add("-compiler.define+="+define.getName()+","+define.getValue());
+		}
+
 	}
 
 	private void addCompatibility(List<String> args) {

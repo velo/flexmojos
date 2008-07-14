@@ -11,15 +11,21 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 /**
  * TODO delete when this issue is done
  * http://jira.codehaus.org/browse/MECLIPSE-417
- * 
+ *
  * @author velo
  */
 public class CompileConfigurationLoader {
 
-	@SuppressWarnings("unchecked")
 	public static String getCompilerPluginSetting(MavenProject project,
 			String optionName) {
-		String value = findCompilerPluginSettingInPlugins(project.getModel()
+		Xpp3Dom value = getCompilerPluginConfiguration(project, optionName);
+		return value.getValue();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Xpp3Dom getCompilerPluginConfiguration(MavenProject project,
+			String optionName) {
+		Xpp3Dom value = findCompilerPluginSettingInPlugins(project.getModel()
 				.getBuild().getPlugins(), optionName);
 		if (value == null
 				&& project.getModel().getBuild().getPluginManagement() != null) {
@@ -31,15 +37,14 @@ public class CompileConfigurationLoader {
 
 	/**
 	 * Returns a compiler plugin settings from a list of plugins .
-	 * 
+	 *
 	 * @param project
 	 *            maven project
 	 * @return option value (may be null)
 	 */
 	@SuppressWarnings("unchecked")
-	private static String findCompilerPluginSettingInPlugins(
+	private static Xpp3Dom findCompilerPluginSettingInPlugins(
 			List<Plugin> plugins, String optionName) {
-		String value = null;
 
 		for (Iterator<Plugin> it = plugins.iterator(); it.hasNext();) {
 			Plugin plugin = (Plugin) it.next();
@@ -47,9 +52,10 @@ public class CompileConfigurationLoader {
 			if (plugin.getArtifactId().equals("flex-compiler-mojo")) {
 				Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
+				Xpp3Dom value = null;
 				// this is the default setting
 				if (o != null && o.getChild(optionName) != null) {
-					value = o.getChild(optionName).getValue();
+					value = o.getChild(optionName);
 				}
 
 				List<PluginExecution> executions = plugin.getExecutions();
@@ -62,11 +68,13 @@ public class CompileConfigurationLoader {
 					o = (Xpp3Dom) execution.getConfiguration();
 
 					if (o != null && o.getChild(optionName) != null) {
-						value = o.getChild(optionName).getValue();
+						value = o.getChild(optionName);
 					}
 				}
+
+				return value;
 			}
 		}
-		return value;
+		return null;
 	}
 }
