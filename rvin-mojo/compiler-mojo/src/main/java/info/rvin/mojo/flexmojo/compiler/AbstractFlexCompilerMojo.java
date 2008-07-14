@@ -414,7 +414,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 *
 	 * @parameter
 	 */
-	private String output;
+	protected String output;
 
 	/**
 	 * specifies the version of the player the application is targeting.
@@ -836,16 +836,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 					paths.add(localeResourcePath);
 				}
 				sourcePaths = paths.toArray(new File[paths.size()]);
-			}
-		}
-
-		if (outputFile == null) {
-			if (output == null) {
-				outputFile = new File(build.getDirectory(), build
-						.getFinalName()
-						+ "." + project.getPackaging());
-			} else {
-				outputFile = new File(build.getDirectory(), output);
 			}
 		}
 

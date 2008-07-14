@@ -174,6 +174,16 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 
 		super.setUp();
 
+		if (outputFile == null) {
+			if (output == null) {
+				outputFile = new File(build.getDirectory(), build
+						.getFinalName()
+						+ ".swc");
+			} else {
+				outputFile = new File(build.getDirectory(), output);
+			}
+		}
+
 		builder.setOutput(outputFile);
 
 		if (checkNullOrEmpty(includeClasses) && checkNullOrEmpty(includeFiles)
