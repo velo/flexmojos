@@ -140,9 +140,18 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 		super.setUp();
 
+		if (outputFile == null) {
+			if (output == null) {
+				outputFile = new File(build.getDirectory(), build
+						.getFinalName()
+						+ ".swf");
+			} else {
+				outputFile = new File(build.getDirectory(), output);
+			}
+		}
+
 		builder.setOutput(outputFile);
 	}
-
 
 	@Override
 	protected void tearDown() throws MojoExecutionException,
@@ -154,7 +163,8 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 			for (File module : modules) {
 				getLog().info("Compiling module " + module);
 				String moduleName = module.getName();
-				moduleName = moduleName.substring(0, moduleName.lastIndexOf('.'));
+				moduleName = moduleName.substring(0, moduleName
+						.lastIndexOf('.'));
 
 				Application moduleBuilder;
 				try {
@@ -172,8 +182,8 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 				build(moduleBuilder);
 
-				projectHelper
-						.attachArtifact(project, "swf", moduleName, outputModule);
+				projectHelper.attachArtifact(project, "swf", moduleName,
+						outputModule);
 
 			}
 		}
@@ -190,7 +200,9 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 		/*
 		 * mxmlc -locale=en_US -source-path=locale/{locale}
-		 * -include-resource-bundles=FlightReservation2,SharedResources,collections,containers,controls,core,effects,formatters,skins,styles
+		 * -include-resource-bundles
+		 * =FlightReservation2,SharedResources,collections
+		 * ,containers,controls,core,effects,formatters,skins,styles
 		 * -output=src/Resources_en_US.swf
 		 */
 
