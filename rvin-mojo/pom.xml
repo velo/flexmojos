@@ -316,12 +316,12 @@
 
 	<modules>
 		<module>utils</module>
+		<module>optimizer-mojo</module>
 		<module>compiler-mojo</module>
 		<module>encrypter-mojo</module>
 		<module>asdoc-mojo</module>
 		<module>source-mojo</module>
 		<module>generator-mojo</module>
-		<module>optimizer-mojo</module>
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
 
