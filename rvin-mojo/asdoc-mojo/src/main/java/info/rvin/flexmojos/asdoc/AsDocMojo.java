@@ -424,8 +424,7 @@ public class AsDocMojo extends AbstractMojo {
 		args.add("-exclude-dependencies=" + excludeDependencies);
 		args.add("-compiler.fonts.local-fonts-snapshot="
 				+ fontsSnapshot.getAbsolutePath());
-		if (headlessServer)
-		{
+		if (headlessServer) {
 			args.add("-compiler.headless-server=true");
 		}
 		args.add("-load-config=" + configFile.getAbsolutePath());
@@ -510,8 +509,9 @@ public class AsDocMojo extends AbstractMojo {
 		}
 
 		for (String pack : packageDescriptions.keySet()) {
-			args.add("-packages.package " + pack + " "
-					+ packageDescriptions.get(pack));
+			args.add("-packages.package");
+			args.add(pack);
+			args.add(packageDescriptions.get(pack));
 		}
 	}
 
