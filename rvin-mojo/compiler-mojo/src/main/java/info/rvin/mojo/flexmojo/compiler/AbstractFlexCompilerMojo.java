@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.AgeFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Contributor;
@@ -805,6 +809,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Generated link report file
 	 */
 	protected File linkReportFile;
+
+	/**
+	 * Quick compile mode. When true, flex-mojos will check if the last artifact
+	 * available at maven repository is newer then sources. If so, will not
+	 * recompile.
+	 *
+	 * @parameter default-value="false" expression="${quick.compile}"
+	 */
+	private boolean quick;
 
 	/**
 	 * Construct instance
@@ -1677,6 +1690,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	}
 
 	protected void build(E builder) throws MojoExecutionException {
+		if (!isCompilationRequired()) {
+			return;
+		}
+
 		long bytes;
 		try {
 			getLog().info(
@@ -1703,6 +1720,56 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		if (bytes == 0) {
 			throw new MojoExecutionException("Error compiling!");
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean isCompilationRequired() throws MojoExecutionException {
+		if (!quick) {
+			// not running at quick mode
+			return true;
+		}
+
+		Artifact artifact = artifactFactory.createArtifact(
+				project.getGroupId(), project.getArtifactId(), project
+						.getVersion(), null, project.getPackaging());
+		resolveArtifact(artifact, resolver, localRepository, remoteRepositories);
+
+		File artifactFile = artifact.getFile();
+		if (artifactFile == null || !artifactFile.exists()) {
+			// Recompile, file doesn't exists
+			getLog().warn("Can't find any older instaled version.");
+			return true;
+		}
+		try {
+			FileUtils.copyFile(artifactFile, outputFile);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Unable to copy instaled version to target folder.", e);
+		}
+		long lastCompiledArtifact = artifactFile.lastModified();
+
+		Set<Artifact> dependencies = getDependencyArtifacts();
+		for (Artifact dependency : dependencies) {
+			if (FileUtils.isFileNewer(dependency.getFile(),
+					lastCompiledArtifact)) {
+				// a dependency is newer, recompile
+				getLog().warn("Found a updated dependency: " + dependency);
+				return true;
+			}
+		}
+
+		for (File sourcePath : sourcePaths) {
+			Collection<File> files = FileUtils.listFiles(sourcePath,
+					new AgeFileFilter(lastCompiledArtifact, false), null);
+
+			// If has any newer file
+			if (files.size() > 0) {
+				getLog().warn("Found some updated files.");
+				return true;
+			}
+		}
+
+		// nothing new was found.
+		return false;
 	}
 
 }
