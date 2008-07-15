@@ -37,6 +37,7 @@ public class MavenUtils {
 	private static final String MAC_OS = "mac os x";
 	private static final String MAC_OS_DARWIN = "darwin";
 	private static final String LINUX_OS = "linux";
+	private static final String VISTA = "vista";
 
 	private MavenUtils() {
 	}
@@ -387,35 +388,44 @@ public class MavenUtils {
 		}
 		return value;
 	}
-	
+
 	public static String osString() {
 		return System.getProperty("os.name").toLowerCase();
 	}
-	
+
 	/**
 	 * Return a boolean to show if we are running on Windows.
-	 * 
+	 *
 	 * @return true if we are running on Windows.
 	 */
 	public static boolean isWindows() {
 		return osString().startsWith(WINDOWS_OS);
 	}
-	
+
 	/**
 	 * Return a boolean to show if we are running on Linux.
-	 * 
+	 *
 	 * @return true if we are running on Linux.
 	 */
 	public static boolean isLinux() {
 		return osString().startsWith(LINUX_OS);
 	}
-	
+
 	/**
 	 * Return a boolean to show if we are running on Mac OS X.
-	 * 
+	 *
 	 * @return true if we are running on Mac OS X.
 	 */
 	public static boolean isMac() {
 		return osString().startsWith(MAC_OS) || osString().startsWith(MAC_OS_DARWIN);
+	}
+
+	/**
+	 * Return a boolean to show if we are running on Windows Vista.
+	 *
+	 * @return true if we are running on Windows Vista.
+	 */
+	public static boolean isWindowsVista() {
+		return osString().startsWith(WINDOWS_OS) && osString().contains(VISTA);
 	}
 }
