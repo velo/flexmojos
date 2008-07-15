@@ -170,6 +170,9 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 		}
 	}
 
+	/*
+	 * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html#140756
+	 */
 	private String getFPTrustFolder() throws MojoExecutionException {
 		if (MavenUtils.isWindows()) {
 			if (MavenUtils.isWindowsVista()) {
