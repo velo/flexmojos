@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="onApplicationComplete()">
+
+	<mx:Script>
+		<![CDATA[
+
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+
+			private function onApplicationComplete():void {
+				var httpService:HTTPService = new HTTPService();
+				httpService.url = "source.xml";
+				httpService.addEventListener(FaultEvent.FAULT, onFaultHttpService);
+				httpService.addEventListener(ResultEvent.RESULT, onResultHttpService);
+				httpService.send();
+			}
+
+			private function onFaultHttpService(e:FaultEvent):void {
+				Alert.show(e.fault.toString());
+			}
+
+			private function onResultHttpService(e:ResultEvent):void {
+				Alert.show(e.result.toString());
+			}
+
+		]]>
+	</mx:Script>
+
+</mx:Application>
