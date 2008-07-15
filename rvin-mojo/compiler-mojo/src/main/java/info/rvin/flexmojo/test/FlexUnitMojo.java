@@ -69,6 +69,12 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	 */
 	private File reportPath;
 
+	/**
+	 * @parameter default-value="false"
+	 *            expression="${maven.test.failure.ignore}"
+	 */
+	private boolean testFailureIgnore;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		setUp();
@@ -327,17 +333,6 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 		return msg.toString();
 	}
 
-	/**
-	 * Failure handling. Write ant property for use later in build script.
-	 *
-	 * @throws MojoExecutionException
-	 */
-	private void handleFailures() throws MojoExecutionException {
-		if (failures) {
-			throw new MojoExecutionException("Some tests fail");
-		}
-	}
-
 	public void log(final String message) {
 		System.out.println(message);
 	}
@@ -371,10 +366,23 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	protected void tearDown() throws MojoExecutionException,
 			MojoFailureException {
 
-		if (executionError != null) {
-			throw executionError;
+		if (!testFailureIgnore) {
+			if (executionError != null) {
+				throw executionError;
+			}
+
+			if (failures) {
+				throw new MojoExecutionException("Some tests fail");
+			}
+		} else {
+			if (executionError != null) {
+				getLog().error(executionError.getMessage(), executionError);
+			}
+
+			if (failures) {
+				getLog().error("Some tests fail");
+			}
 		}
 
-		handleFailures();
 	}
 }
