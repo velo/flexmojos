@@ -14,10 +14,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.util.Base64;
 
 /**
  * Goal which encrypt swf files.
- * 
+ *
  * @goal encrypt-swf
  * @phase package
  */
@@ -25,7 +26,7 @@ public class EncrypterMojo extends AbstractMojo {
 
 	/**
 	 * The maven project.
-	 * 
+	 *
 	 * @parameter expression="${project}"
 	 * @required
 	 * @readonly
@@ -44,7 +45,7 @@ public class EncrypterMojo extends AbstractMojo {
 
 	/**
 	 * Initialization vector
-	 * 
+	 *
 	 * @parameter expression="${encrypt.iv}"
 	 */
 	private String iv;
@@ -65,6 +66,16 @@ public class EncrypterMojo extends AbstractMojo {
 	}
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if(key == null) {
+			key = generateKey(project.getArtifact().toString());
+			getLog().warn("Attetion, no encryption key defined.  Generating one: " + key);
+		}
+
+		if(iv == null) {
+			iv = generateKey(project.getGroupId());
+			getLog().warn("Attetion, no initialization vector defined.  Generating one: " + iv);
+		}
+
 		List<Artifact> artifacts = getGeneratedSwf();
 
 		for (Artifact artifact : artifacts) {
@@ -75,6 +86,25 @@ public class EncrypterMojo extends AbstractMojo {
 			projectHelper.attachArtifact(project, "eswf", artifact
 					.getClassifier(), enc);
 		}
+	}
+
+	private String generateKey(String baseString) {
+		byte[] baseBytes = baseString.getBytes();
+		byte[] baseKey = Base64.encodeBase64(baseBytes);
+		String key = "";
+		for (byte b : baseKey) {
+			key += b;
+		}
+
+		while(key.length() < 32) {
+			key += key;
+		}
+
+		while(key.length() % 2 == 1 || key.length() > 32) {
+			key = key.substring(1);
+		}
+
+		return key;
 	}
 
 	private File getDestinationFile(Build build, Artifact artifact) {
@@ -90,7 +120,7 @@ public class EncrypterMojo extends AbstractMojo {
 	private void encrypt(Artifact artifact, File enc)
 			throws MojoExecutionException {
 		try {
-			AesEncrypter.encrypt(key, iv, artifact.getFile(), enc);
+			new AesEncrypter(getLog()).encrypt(key, iv, artifact.getFile(), enc);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Unable to encrypt artifact "
 					+ artifact, e);

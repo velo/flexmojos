@@ -10,6 +10,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 public class AesEncrypter {
 
@@ -20,6 +22,8 @@ public class AesEncrypter {
 	private int encryptionMode;
 	private String paddingMode;
 
+	private Log log;
+
 	static final int CBC_MODE = 0;
 	static final int ECB_MODE = 1;
 
@@ -27,7 +31,11 @@ public class AesEncrypter {
 	static final String ZERO_PADDING = "ZeroPadding";
 	static final String PKCS7_PADDING = "PKCS5Padding";
 
-	protected byte[] encrypt(byte[] content) {
+	public AesEncrypter(Log log) {
+		this.log = log;
+	}
+
+	protected byte[] encrypt(byte[] content) throws MojoExecutionException {
 
 		byte[] cipherText = null;
 		try {
@@ -36,24 +44,24 @@ public class AesEncrypter {
 			SecretKey secretKey = new SecretKeySpec(key, "AES");
 			Cipher aes = null;
 			if (encryptionMode == ECB_MODE) {
-				log("Cipher mode: " + "AES/ECB/" + paddingMode);
+				log.info("Cipher mode: " + "AES/ECB/" + paddingMode);
 				aes = Cipher.getInstance("AES/ECB/" + paddingMode);
 				aes.init(Cipher.ENCRYPT_MODE, secretKey);
 			} else {
-				log("Cipher mode: " + "AES/CBC/" + paddingMode);
+				log.info("Cipher mode: " + "AES/CBC/" + paddingMode);
 				aes = Cipher.getInstance("AES/CBC/" + paddingMode);
 				aes.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
 			}
 			cipherText = aes.doFinal(content);
 
 		} catch (Exception e) {
-			log("Error in encryption:", e);
+			throw new MojoExecutionException("Error in encryption:", e);
 		}
 		return cipherText;
 
 	}
 
-	protected byte[] decrypt(byte[] content) {
+	protected byte[] decrypt(byte[] content) throws MojoExecutionException {
 
 		byte[] plainText = null;
 		try {
@@ -71,14 +79,9 @@ public class AesEncrypter {
 			plainText = aes.doFinal(content);
 
 		} catch (Exception e) {
-			log("Error in decryption:", e);
+			throw new MojoExecutionException("Error in decryption:", e);
 		}
 		return plainText;
-	}
-
-	private static void log(String string, Object... o) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public static String bytes2Hex(byte[] bytes) {
@@ -93,12 +96,12 @@ public class AesEncrypter {
 		return b.toString();
 	}
 
-	public static byte[] hex2Bytes(String hex) {
+	public byte[] hex2Bytes(String hex) {
 		int len = hex.length();
 		if (len % 2 == 1)
 			return null;
 
-		log("Bytes:" + len);
+		log.info("Bytes:" + len);
 		byte[] b = new byte[len / 2];
 		for (int i = 0; i < len; i += 2) {
 			b[i >> 1] = (byte) Integer.parseInt(hex.substring(i, i + 2), 16);
@@ -107,14 +110,13 @@ public class AesEncrypter {
 		return b;
 	}
 
-	public static void encrypt(String key, String iv, File swf, File eswf)
-			throws IOException {
-		AesEncrypter aes = new AesEncrypter();
-		aes.key = AesEncrypter.hex2Bytes(key);
-		aes.iv = AesEncrypter.hex2Bytes(iv);
-		aes.encryptionMode = CBC_MODE;
-		aes.paddingMode = PKCS7_PADDING;
-		byte[] encrypted = aes.encrypt(FileUtils.readFileToByteArray(swf));
+	public void encrypt(String key, String iv, File swf, File eswf)
+			throws IOException, MojoExecutionException {
+		this.key = hex2Bytes(key);
+		this.iv = hex2Bytes(iv);
+		this.encryptionMode = CBC_MODE;
+		this.paddingMode = PKCS7_PADDING;
+		byte[] encrypted = this.encrypt(FileUtils.readFileToByteArray(swf));
 		FileUtils.writeByteArrayToFile(eswf, encrypted);
 	}
 
