@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<componentPackage>
+    <component id="BitmapGraphic" class="flex.graphics.BitmapGraphic"/>
+    <component id="CubicBezierSegment" class="flex.graphics.CubicBezierSegment"/>
+    <component id="Ellipse" class="flex.graphics.Ellipse"/>
+    <component id="Graphic" class="flex.graphics.Graphic"/>
+    <component id="Group" class="flex.core.Group"/>
+    <component id="Line" class="flex.graphics.Line"/>
+    <component id="LineSegment" class="flex.graphics.LineSegment"/>
+    <component id="Matrix" class="flash.geom.Matrix" lookupOnly="true"/>
+    <component id="MoveSegment" class="flex.graphics.MoveSegment"/>
+    <component id="Path" class="flex.graphics.Path"/>
+    <component id="QuadraticBezierSegment" class="flex.graphics.QuadraticBezierSegment"/>
+    <component id="Rect" class="flex.graphics.Rect"/>
+    <component id="TextGraphic" class="flex.graphics.TextGraphic"/>
+	<component id="Transform" class="flex.geom.Transform"/>
+
+    <component id="BitmapFill" class="mx.graphics.BitmapFill"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient"/>
+    <component id="RadialGradientStroke" class="mx.graphics.RadialGradientStroke"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor"/>
+    <component id="SolidColorStroke" class="mx.graphics.SolidColorStroke"/>
+    <component id="Stroke" class="mx.graphics.Stroke"/>
+
+    <component id="a" class="text.model.LinkElement"/>
+    <component id="br" class="text.model.BRElement"/>
+    <component id="CharacterAttributes" class="text.model.CharacterAttributes"/>
+    <component id="ContainerAttributes" class="text.model.ContainerAttributes"/>
+    <component id="div" class="text.model.Div"/>
+    <component id="img" class="text.model.Image"/>
+    <component id="p" class="text.model.Paragraph"/>
+    <component id="ParagraphAttributes" class="text.model.ParagraphAttributes"/>
+    <component id="span" class="text.model.Span"/>
+    <component id="tab" class="text.model.TabElement"/>
+    <component id="TextFlow" class="text.model.TextFlow"/>
+
+</componentPackage>
