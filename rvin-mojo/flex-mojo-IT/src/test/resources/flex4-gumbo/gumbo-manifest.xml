@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<componentPackage>
+
+    <!-- core -->
+	<component id="Application" class="flex.core.Application" />
+    <component id="MXMLComponent" class="flex.core.MXMLComponent"/>
+    <component id="Skin" class="flex.core.Skin" />
+    <component id="SkinnableComponent" class="flex.core.SkinnableComponent" />
+
+    <!-- component base classes -->
+    <component id="ItemsComponent" class="flex.component.ItemsComponent" />
+    <component id="Range" class="flex.component.Range" />
+    <component id="ScrollBar" class="flex.component.ScrollBar" />
+    <component id="Selector" class="flex.component.Selector"/>
+
+    <!-- components -->
+    <component id="Button" class="flex.component.Button" />
+    <component id="CheckBox" class="flex.component.CheckBox" />
+    <component id="DefaultItemRenderer" class="flex.skin.DefaultItemRenderer"/>
+    <component id="HScrollBar" class="flex.component.HScrollBar" />
+    <component id="ItemRenderer" class="flex.component.ItemRenderer" />
+    <component id="List" class="flex.component.List" />
+    <component id="Panel" class="flex.component.Panel" />
+    <component id="RadioButton" class="flex.component.RadioButton" />
+    <component id="Spinner" class="flex.component.Spinner"/>
+    <component id="TextArea" class="flex.component.TextArea" />
+    <component id="TextInput" class="flex.component.TextInput" />
+    <component id="TextView" class="flex.component.TextView"/>
+    <component id="ToggleButton" class="flex.component.ToggleButton" />
+    <component id="VScrollBar" class="flex.component.VScrollBar" />
+
+    <!-- states -->
+    <component id="AddItems" class="flex.states.AddItems" />
+    <component id="RemoveItems" class="flex.states.RemoveItems" />
+
+    <!-- flex4 graphics -->
+    <component id="BitmapGraphic" class="flex.graphics.BitmapGraphic"/>
+    <component id="CloseSegment" class="flex.graphics.CloseSegment"/>
+    <component id="CubicBezierSegment" class="flex.graphics.CubicBezierSegment"/>
+    <component id="Ellipse" class="flex.graphics.Ellipse"/>
+    <component id="Graphic" class="flex.graphics.Graphic"/>
+    <component id="Group" class="flex.core.Group"/>
+    <component id="Line" class="flex.graphics.Line"/>
+    <component id="LineSegment" class="flex.graphics.LineSegment"/>
+    <component id="MoveSegment" class="flex.graphics.MoveSegment"/>
+    <component id="Path" class="flex.graphics.Path"/>
+    <component id="QuadraticBezierSegment" class="flex.graphics.QuadraticBezierSegment"/>
+    <component id="Rect" class="flex.graphics.Rect"/>
+    <component id="TextBox" class="flex.graphics.TextBox"/>
+    <component id="TextGraphic" class="flex.graphics.TextGraphic"/>
+
+    <!-- flex3 graphics -->
+    <component id="BitmapFill" class="mx.graphics.BitmapFill"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient"/>
+    <component id="RadialGradientStroke" class="mx.graphics.RadialGradientStroke"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor"/>
+    <component id="SolidColorStroke" class="mx.graphics.SolidColorStroke"/>
+    <component id="Stroke" class="mx.graphics.Stroke"/>
+
+    <!-- effects -->
+    <component id="AddAction" class="flex.effects.AddAction"/>
+    <component id="AnimateProperties" class="flex.effects.AnimateProperties"/>
+    <component id="Fade" class="flex.effects.Fade"/>
+    <component id="PropertyValuesHolder" class="flex.effects.PropertyValuesHolder"/>
+    <component id="RemoveAction" class="flex.effects.RemoveAction"/>
+
+</componentPackage>

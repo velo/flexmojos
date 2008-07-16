@@ -1,0 +1,16 @@
+<Application xmlns="http://ns.adobe.com/mxml/2009" backgroundColor="red">
+
+    <Group id="holder">
+        <Rect left="20" top="20" width="100" height="100">
+            <stroke>
+                <SolidColorStroke color="0x00FF00" />
+            </stroke>
+            <fill>
+                <SolidColor color="0x09BDFC" />
+            </fill>
+        </Rect>
+    </Group>
+
+    <Button left="20" bottom="5" label="Hello World" />
+
+</Application>

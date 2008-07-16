@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="BitmapGraphic" class="flex.graphics.BitmapGraphic"/>
+    <component id="CubicBezierSegment" class="flex.graphics.CubicBezierSegment"/>
+    <component id="Ellipse" class="flex.graphics.Ellipse"/>
+    <component id="Graphic" class="flex.graphics.Graphic"/>
+    <component id="Group" class="flex.core.Group"/>
+    <component id="Line" class="flex.graphics.Line"/>
+    <component id="LineSegment" class="flex.graphics.LineSegment"/>
+    <component id="Matrix" class="flash.geom.Matrix" lookupOnly="true"/>
+    <component id="MoveSegment" class="flex.graphics.MoveSegment"/>
+    <component id="Path" class="flex.graphics.Path"/>
+    <component id="QuadraticBezierSegment" class="flex.graphics.QuadraticBezierSegment"/>
+    <component id="Rect" class="flex.graphics.Rect"/>
+    <component id="TextGraphic" class="flex.graphics.TextGraphic"/>
+	<component id="Transform" class="flex.geom.Transform"/>
+
+    <component id="BitmapFill" class="mx.graphics.BitmapFill"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient"/>
+    <component id="RadialGradientStroke" class="mx.graphics.RadialGradientStroke"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor"/>
+    <component id="SolidColorStroke" class="mx.graphics.SolidColorStroke"/>
+    <component id="Stroke" class="mx.graphics.Stroke"/>
+
+    <component id="a" class="text.model.LinkElement"/>
+    <component id="br" class="text.model.BRElement"/>
+    <component id="CharacterAttributes" class="text.model.CharacterAttributes"/>
+    <component id="ContainerAttributes" class="text.model.ContainerAttributes"/>
+    <component id="div" class="text.model.Div"/>
+    <component id="img" class="text.model.Image"/>
+    <component id="p" class="text.model.Paragraph"/>
+    <component id="ParagraphAttributes" class="text.model.ParagraphAttributes"/>
+    <component id="span" class="text.model.Span"/>
+    <component id="tab" class="text.model.TabElement"/>
+    <component id="TextFlow" class="text.model.TextFlow"/>
+
+</componentPackage>

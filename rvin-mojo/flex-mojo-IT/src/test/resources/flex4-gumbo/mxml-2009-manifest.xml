@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+
+    MXML 2009
+
+    The MXML 2009 Language Namespace contains a list of tags (and attributes)
+    that are special cased by the compiler. These tags do not map to classes
+    so they do not appear in this manifest. These language tags include:
+    <Binding>, <Component>, <Declarations>, <Definition>, <Library>,
+    <Metadata>, <Model>, <Private>, <Reparent>, <Script>, and <Style>.
+
+    As a convenience, Flex 4 components are also mapped into the language
+    namespace to reduce the number of namespaces present in a typical MXML
+    2009 document.
+
+-->
+<componentPackage>
+
+    <!-- Special Components -->
+    <component id="State" class="mx.states.State"/>
+
+    <!-- AS3 Builtins -->
+    <component id="Array" class="Array" lookupOnly="true"/>
+    <component id="Boolean" class="Boolean" lookupOnly="true"/>
+    <component id="Class" class="Class" lookupOnly="true"/>
+    <component id="Date" class="Date" lookupOnly="true"/>
+    <component id="Function" class="Function" lookupOnly="true"/>
+    <component id="int" class="int" lookupOnly="true"/>
+    <component id="Number" class="Number" lookupOnly="true"/>
+    <component id="Object" class="Object" lookupOnly="true"/>
+    <component id="String" class="String" lookupOnly="true"/>
+    <component id="uint" class="uint" lookupOnly="true"/>
+    <component id="Array" class="Array" lookupOnly="true"/>
+    <component id="XML" class="XML" lookupOnly="true"/>
+    <component id="XMLList" class="XMLList" lookupOnly="true"/>
+
+    <!-- 
+        As a convenience, also merge Flex 4 components into the MXML 2009
+        language namespace.
+    -->
+
+    <!-- Flex4 Framework -->
+    <component id="AddItems" class="flex.states.AddItems"/>
+	<component id="Application" class="flex.core.Application" />
+    <component id="BitmapGraphic" class="flex.graphics.BitmapGraphic"/>
+    <component id="Button" class="flex.component.Button"/>
+    <component id="CheckBox" class="flex.component.CheckBox"/>
+    <component id="CloseSegment" class="flex.graphics.CloseSegment"/>
+    <component id="CubicBezierSegment" class="flex.graphics.CubicBezierSegment"/>
+    <component id="DefaultItemRenderer" class="flex.skin.DefaultItemRenderer"/>
+    <component id="Ellipse" class="flex.graphics.Ellipse"/>
+    <component id="Graphic" class="flex.graphics.Graphic"/>
+    <component id="Group" class="flex.core.Group"/>
+    <component id="HScrollBar" class="flex.component.HScrollBar"/>
+    <component id="ItemRenderer" class="flex.component.ItemRenderer"/>
+    <component id="ItemsComponent" class="flex.component.ItemsComponent"/>
+    <component id="Line" class="flex.graphics.Line"/>
+    <component id="LineSegment" class="flex.graphics.LineSegment"/>
+    <component id="List" class="flex.component.List"/>
+    <component id="MoveSegment" class="flex.graphics.MoveSegment"/>
+    <component id="MXMLComponent" class="flex.core.MXMLComponent"/>
+    <component id="Panel" class="flex.component.Panel"/>
+    <component id="Path" class="flex.graphics.Path"/>
+    <component id="QuadraticBezierSegment" class="flex.graphics.QuadraticBezierSegment"/>
+    <component id="RadioButton" class="flex.component.RadioButton"/>
+    <component id="Range" class="flex.component.Range"/>
+    <component id="Rect" class="flex.graphics.Rect"/>
+    <component id="RemoveItems" class="flex.states.RemoveItems"/>
+    <component id="ScrollBar" class="flex.component.ScrollBar"/>
+    <component id="Selector" class="flex.component.Selector"/>
+    <component id="Skin" class="flex.core.Skin"/>
+    <component id="SkinnableComponent" class="flex.core.SkinnableComponent"/>
+    <component id="Spinner" class="flex.component.Spinner"/>
+    <component id="TextArea" class="flex.component.TextArea"/>
+    <component id="TextBox" class="flex.graphics.TextBox"/>
+    <component id="TextGraphic" class="flex.graphics.TextGraphic"/>
+    <component id="TextInput" class="flex.component.TextInput"/>
+    <component id="TextView" class="flex.component.TextView"/>
+    <component id="Transform" class="flex.geom.Transform"/>
+    <component id="ToggleButton" class="flex.component.ToggleButton"/>
+    <component id="VScrollBar" class="flex.component.VScrollBar"/>
+    <component id="AddAction" class="flex.effects.AddAction"/>
+    <component id="AnimateProperties" class="flex.effects.AnimateProperties"/>
+    <component id="Fade" class="flex.effects.Fade"/>
+    <component id="PropertyValuesHolder" class="flex.effects.PropertyValuesHolder"/>
+    <component id="RemoveAction" class="flex.effects.RemoveAction"/>
+
+    <!-- New Text Framework -->
+    <component id="br" class="text.model.BRElement"/>
+    <component id="CharacterAttributes" class="text.model.CharacterAttributes"/>
+    <component id="ContainerAttributes" class="text.model.ContainerAttributes"/>
+    <component id="div" class="text.model.Div"/>
+    <component id="img" class="text.model.Image"/>
+    <component id="a" class="text.model.LinkElement"/>
+    <component id="p" class="text.model.Paragraph"/>
+    <component id="ParagraphAttributes" class="text.model.ParagraphAttributes"/>
+    <component id="span" class="text.model.Span"/>
+    <component id="tab" class="text.model.TabElement"/>
+    <component id="TextFlow" class="text.model.TextFlow"/>
+
+    <!-- flex3 graphics -->
+    <component id="BitmapFill" class="mx.graphics.BitmapFill"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient"/>
+    <component id="RadialGradientStroke" class="mx.graphics.RadialGradientStroke"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor"/>
+    <component id="SolidColorStroke" class="mx.graphics.SolidColorStroke"/>
+    <component id="Stroke" class="mx.graphics.Stroke"/>
+
+</componentPackage>
