@@ -20,9 +20,9 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-                                <configuration>
-                                    <sourceFile>ComplexStyles.css</sourceFile>
-                                </configuration>
+				<configuration>
+					<sourceFile>ComplexStyles.css</sourceFile>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
