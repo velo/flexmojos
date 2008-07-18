@@ -23,7 +23,7 @@
 						<param>${project.build.sourceDirectory}</param>
 					</includeSources>
 					<locales>
-						<param>en_US</param>
+						<locale>en_US</locale>
 					</locales>
 				</configuration>
 			</plugin>
