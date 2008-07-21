@@ -36,6 +36,9 @@ public class CompileConfigurationLoader {
 	public static String getCompilerPluginSetting(MavenProject project,
 			String optionName) {
 		Xpp3Dom value = getCompilerPluginConfiguration(project, optionName);
+		if (value == null) {
+			return null;
+		}
 		return value.getValue();
 	}
 
