@@ -1,12 +1,9 @@
 package info.rvin.flexmojos.asdoc;
 
-import flex2.compiler.util.ThreadLocalToolkit;
-import flex2.tools.ASDoc;
 import info.rvin.flexmojos.utilities.CompileConfigurationLoader;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +26,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import eu.cedarsoft.utils.ZipExtractor;
+import flex2.compiler.util.ThreadLocalToolkit;
+import flex2.tools.ASDoc;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
@@ -339,22 +340,22 @@ public class AsDocMojo extends AbstractMojo {
 	private File generateDefaultTemplate() throws MojoExecutionException {
 		File templates = new File(build.getDirectory(), "templates");
 		templates.mkdirs();
-		try {
-			for (Artifact artifact : pluginArtifacts) {
-				if ("template".equals(artifact.getClassifier())) {
-					UnzipUtils.unzip(new FileInputStream(artifact.getFile()),
-							templates);
-					return templates;
+		for (Artifact artifact : pluginArtifacts) {
+			if ("template".equals(artifact.getClassifier())) {
+				try {
+					ZipExtractor ze = new ZipExtractor(artifact.getFile());
+					ze.extract(templates);
+				} catch (IOException e) {
+					throw new MojoExecutionException(
+							"An error happens when trying to extract AsDoc Template.",
+							e);
 				}
+				makeHelperExecutable(templates);
+				return templates;
 			}
-
-			throw new MojoExecutionException(
-					"Unable to generate default template.");
-		} catch (IOException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} finally {
-			makeHelperExecutable(templates);
 		}
+
+		throw new MojoExecutionException("Unable to generate default template.");
 	}
 
 	private void makeHelperExecutable(File templates)
@@ -502,14 +503,17 @@ public class AsDocMojo extends AbstractMojo {
 	}
 
 	private void addDefines(List<String> args) {
-		//Read defines from flex-compiler
-		Xpp3Dom defines = CompileConfigurationLoader.getCompilerPluginConfiguration(project, "defines");
-		if (defines == null || defines.getChildren() == null || defines.getChildren().length == 0) {
+		// Read defines from flex-compiler
+		Xpp3Dom defines = CompileConfigurationLoader
+				.getCompilerPluginConfiguration(project, "defines");
+		if (defines == null || defines.getChildren() == null
+				|| defines.getChildren().length == 0) {
 			return;
 		}
 
 		for (Xpp3Dom define : defines.getChildren()) {
-			args.add("-compiler.define+="+define.getName()+","+define.getValue());
+			args.add("-compiler.define+=" + define.getName() + ","
+					+ define.getValue());
 		}
 
 	}
