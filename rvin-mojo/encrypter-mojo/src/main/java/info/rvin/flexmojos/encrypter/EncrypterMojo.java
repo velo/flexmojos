@@ -19,6 +19,8 @@ import org.codehaus.plexus.util.Base64;
 /**
  * Goal which encrypt swf files.
  *
+ * Based on http://blogs.soph-ware.com/?p=14
+ *
  * @goal encrypt-swf
  * @phase package
  */
