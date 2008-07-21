@@ -59,5 +59,9 @@
 			<groupId>org.apache.maven.reporting</groupId>
 			<artifactId>maven-reporting-impl</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>eu.cedarsoft.utils</groupId>
+			<artifactId>zip</artifactId>
+		</dependency>
 	</dependencies>
 </project>
