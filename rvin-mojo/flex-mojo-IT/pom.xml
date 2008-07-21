@@ -15,9 +15,75 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<extensions>true</extensions>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>emma4it</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>asdoc-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>encrypter-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>flex-compiler-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>generator-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>html-wrapper-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>optimizer-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>source-mojo</artifactId>
+							<version>${pom.version}</version>
+							<type>maven-plugin</type>
+						</artifactItem>
+						<artifactItem>
+							<groupId>${pom.groupId}</groupId>
+							<artifactId>util</artifactId>
+							<version>${pom.version}</version>
+							<type>jar</type>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+				<executions>
+					<execution>
+						<id>instrument-plugins</id>
+						<goals>
+							<goal>instrument</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>merge-coverage-result</id>
+						<goals>
+							<goal>merge</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -41,24 +107,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
-			<artifactId>maven-verifier</artifactId>
-			<version>1.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.maven.its</groupId>
 			<artifactId>maven-integration-test-helper</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<!-- TODO: not transitive in tests artifact, so must be left in main scope
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>info.flex-mojos</groupId>
-			<artifactId>flex-super-pom</artifactId>
-			<version>2.0-SNAPSHOT</version>
-			<scope>test</scope>
-			<type>pom</type>
+			-->
 		</dependency>
 	</dependencies>
-
 </project>
