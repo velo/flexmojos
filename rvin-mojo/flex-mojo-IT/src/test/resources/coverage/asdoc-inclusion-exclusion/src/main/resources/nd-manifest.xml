@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="Vermelho" class="info.flexmojos.it.Vermelho"/>
+	<component id="Verde" class="info.flexmojos.it.Verde"/>
+</componentPackage>
