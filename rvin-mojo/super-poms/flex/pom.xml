@@ -19,9 +19,6 @@
 				<artifactId>flex-compiler-mojo</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<includeSources>
-						<param>${project.build.sourceDirectory}</param>
-					</includeSources>
 					<locales>
 						<locale>en_US</locale>
 					</locales>
