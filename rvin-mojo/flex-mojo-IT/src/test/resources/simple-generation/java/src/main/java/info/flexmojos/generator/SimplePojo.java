@@ -2,12 +2,13 @@ package info.flexmojos.generator;
 
 import java.util.List;
 
-public class SimplePojo {
+public class SimplePojo /*FIXME some problem on GAS3
+						implements SimpleInterface */{
 
 	private String name;
-	
+
 	private Double value;
-	
+
 	private List nicknames;
 
 	public String getName() {
@@ -33,5 +34,5 @@ public class SimplePojo {
 	public void setNicknames(List nicknames) {
 		this.nicknames = nicknames;
 	}
-	
+
 }
