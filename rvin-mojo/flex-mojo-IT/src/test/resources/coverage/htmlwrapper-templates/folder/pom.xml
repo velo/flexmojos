@@ -19,7 +19,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<templateURI>folder:src/main/resources/template</templateURI>
+					<templateURI>folder:${basedir}/src/main/resources/template</templateURI>
 				</configuration>
 			</plugin>
 		</plugins>
