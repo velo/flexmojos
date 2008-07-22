@@ -61,41 +61,6 @@ public class AesEncrypter {
 
 	}
 
-	protected byte[] decrypt(byte[] content) throws MojoExecutionException {
-
-		byte[] plainText = null;
-		try {
-
-			IvParameterSpec ivSpec = new IvParameterSpec(iv);
-			SecretKey secretKey = new SecretKeySpec(key, "AES");
-			Cipher aes = null;
-			if (encryptionMode == ECB_MODE) {
-				aes = Cipher.getInstance("AES/ECB/" + paddingMode);
-				aes.init(Cipher.DECRYPT_MODE, secretKey);
-			} else {
-				aes = Cipher.getInstance("AES/CBC/" + paddingMode);
-				aes.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
-			}
-			plainText = aes.doFinal(content);
-
-		} catch (Exception e) {
-			throw new MojoExecutionException("Error in decryption:", e);
-		}
-		return plainText;
-	}
-
-	public static String bytes2Hex(byte[] bytes) {
-
-		if (bytes == null)
-			return null;
-
-		StringBuffer b = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++) {
-			b.append(String.format("%1$02x", bytes[i]));
-		}
-		return b.toString();
-	}
-
 	public byte[] hex2Bytes(String hex) {
 		int len = hex.length();
 		if (len % 2 == 1)
