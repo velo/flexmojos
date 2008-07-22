@@ -335,6 +335,7 @@ public class AsDocMojo extends AbstractMojo {
 		if (templatesPath == null) {
 			templatesPath = generateDefaultTemplate();
 		}
+
 	}
 
 	private File generateDefaultTemplate() throws MojoExecutionException {
@@ -386,12 +387,6 @@ public class AsDocMojo extends AbstractMojo {
 	}
 
 	protected void run() throws MojoExecutionException, MojoFailureException {
-
-		if (docSources == null || docSources.length == 0) {
-			getLog().warn("No source folder found!");
-			return;
-		}
-
 		List<String> args = new ArrayList<String>();
 
 		addDocSources(args);
@@ -434,6 +429,20 @@ public class AsDocMojo extends AbstractMojo {
 			return;
 		}
 
+//		-compiler.namespaces.namespace <uri> <manifest>
+//	    alias -namespace
+//	    Specify a URI to associate with a manifest of components for use as
+//	    MXML elements (repeatable)
+
+		for (Namespace namespace : docNamespaces) {
+			args.add("-compiler.namespaces.namespace");
+			args.add(namespace.getUri());
+			args.add(namespace.getManifest().getAbsolutePath());
+		}
+
+//		-doc-namespaces [uri] [...]
+//		               	    alias -dn
+//		               	     (repeatable)
 		StringBuilder sb = new StringBuilder();
 		for (Namespace namespace : docNamespaces) {
 			if (sb.length() == 0) {
