@@ -29,12 +29,6 @@ public class Namespace {
 		super();
 	}
 
-	public Namespace(String uri, File manifest) {
-		super();
-		this.uri = uri;
-		this.manifest = manifest;
-	}
-
 	public String getUri() {
 		return uri;
 	}
