@@ -1,6 +1,7 @@
 package info.flexmojos.htmlwrapper;
 
 import info.rvin.flexmojos.utilities.CompileConfigurationLoader;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -198,6 +199,10 @@ public class HtmlWrapperMojo extends AbstractMojo {
 
 		URI uri;
 		try {
+			if(MavenUtils.isWindows()) {
+				//Shake bars to avoid URI syntax problems
+				templateURI = templateURI.replace('\\', '/');
+			}
 			uri = new URI(templateURI);
 		} catch (URISyntaxException e) {
 			throw new MojoExecutionException("Invalid template URI.", e);
