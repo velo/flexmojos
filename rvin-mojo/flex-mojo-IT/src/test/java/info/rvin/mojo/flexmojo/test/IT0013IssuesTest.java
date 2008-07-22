@@ -22,11 +22,8 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 				"1.0-SNAPSHOT", "swf", "install");
 	}
 
-	public void testIssue8_1() throws Exception {
+	public void testIssue8() throws Exception {
 		standardIssueTester("issue-0008-1");
-	}
-
-	public void testIssue8_2() throws Exception {
 		standardIssueTester("issue-0008-2");
 	}
 
@@ -82,8 +79,13 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public void testIssue27() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0027");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0027",
-				"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+		try {
+			customTester(testDir, "info.rvin.itest.issues", "issue-0027",
+					"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+			fail("No source code.  Should throw an error!");
+		} catch (Exception e) {
+			// expected exception
+		}
 	}
 
 	public void testIssue29() throws Exception {
@@ -136,6 +138,22 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 
 	public void testIssue61() throws Exception {
 		standardIssueTester("issue-0061");
+	}
+
+	public void testIssue66() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
+		"/issues/issue-0066");
+		standardIssueTester("issue-0066");
+
+		//Issue 62 test
+		File another = new File(testDir, "flex/src/main/flex/info/flexmojos/generator/AnotherPojo.as");
+		assertFalse(another.exists());
+
+		//Issue 65 test
+		File pojo = new File(testDir, "flex/src/main/flex/info/flexmojos/generator/SimplePojo.as");
+		assertTrue(pojo.exists());
+		File base = new File(testDir, "flex/target/generated-sources/flex-mojos/info/flexmojos/generator/SimplePojoBase.as");
+		assertTrue(base.exists());
 	}
 
 	public void testIssue67() throws Exception {

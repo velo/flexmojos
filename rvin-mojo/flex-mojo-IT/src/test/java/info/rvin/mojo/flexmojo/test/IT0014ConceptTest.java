@@ -98,6 +98,14 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 		standardConceptTester("simple-generation");
 	}
 
+	public void testSources() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(
+				MavenVerifierHelper.class, "/sources");
+		standardConceptTester("sources");
+		File sources = new File(testDir, "target/sources-1.0-SNAPSHOT-sources.jar");
+		assertTrue("Source file was not generated.", sources.exists());
+	}
+
 	public void testUpdateSDK() throws Exception {
 		standardConceptTester("updated-sdk");
 	}
