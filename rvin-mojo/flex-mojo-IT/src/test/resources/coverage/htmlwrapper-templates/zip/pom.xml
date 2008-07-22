@@ -19,7 +19,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<templateURI>zip:src/main/resources/template.zip</templateURI>
+					<templateURI>zip:${basedir}/src/main/resources/template.zip</templateURI>
 				</configuration>
 			</plugin>
 		</plugins>
