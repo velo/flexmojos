@@ -19,6 +19,15 @@
 		<testSourceDirectory>tests</testSourceDirectory>
 	</build>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>asdoc-mojo</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<dependencies>
 		<dependency>
 			<groupId>flexunit</groupId>
