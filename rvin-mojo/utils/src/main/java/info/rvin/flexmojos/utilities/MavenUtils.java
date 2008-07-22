@@ -5,7 +5,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -13,17 +12,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Utility class to help get information from Maven objects like files, source
@@ -117,9 +112,7 @@ public class MavenUtils {
 					.resolveTransitively(project.getDependencyArtifacts(),
 							project.getArtifact(), remoteRepositories,
 							localRepository, artifactMetadataSource);
-		} catch (ArtifactResolutionException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ArtifactNotFoundException e) {
+		} catch (AbstractArtifactResolutionException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
 		Set<Artifact> result = arr.getArtifacts();
@@ -184,9 +177,7 @@ public class MavenUtils {
 			List remoteRepositories) throws MojoExecutionException {
 		try {
 			resolver.resolve(artifact, remoteRepositories, localRepository);
-		} catch (ArtifactResolutionException e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (ArtifactNotFoundException e) {
+		} catch (AbstractArtifactResolutionException e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
 	}
@@ -322,71 +313,6 @@ public class MavenUtils {
 					+ path);
 		}
 		return localePath;
-	}
-
-	/**
-	 * Extract an plugin setting property from pom.xml
-	 *
-	 * @param project
-	 *            Maven project
-	 * @param optionName
-	 *            Name of option to lookup
-	 * @return Value of optionName
-	 */
-	@SuppressWarnings("unchecked")
-	public static String getCompilerPluginSetting(MavenProject project,
-			String optionName) {
-		String value = findCompilerPluginSettingInPlugins(project.getModel()
-				.getBuild().getPlugins(), optionName);
-		if (value == null
-				&& project.getModel().getBuild().getPluginManagement() != null) {
-			value = findCompilerPluginSettingInPlugins(project.getModel()
-					.getBuild().getPluginManagement().getPlugins(), optionName);
-		}
-		return value;
-	}
-
-	/**
-	 * Returns a compiler plugin settings from a list of plugins .
-	 *
-	 * @param plugins
-	 *            List of plugins
-	 * @param optionName
-	 *            Name of option to lookup
-	 * @return option value (may be null)
-	 */
-	@SuppressWarnings("unchecked")
-	private static String findCompilerPluginSettingInPlugins(
-			List<Plugin> plugins, String optionName) {
-		String value = null;
-
-		for (Iterator<Plugin> it = plugins.iterator(); it.hasNext();) {
-			Plugin plugin = (Plugin) it.next();
-
-			if (plugin.getArtifactId().equals("flex-compiler-mojo")) {
-				Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
-
-				// this is the default setting
-				if (o != null && o.getChild(optionName) != null) {
-					value = o.getChild(optionName).getValue();
-				}
-
-				List<PluginExecution> executions = plugin.getExecutions();
-
-				// a different source/target version can be configured for test
-				// sources compilation
-				for (Iterator<PluginExecution> iter = executions.iterator(); iter
-						.hasNext();) {
-					PluginExecution execution = (PluginExecution) iter.next();
-					o = (Xpp3Dom) execution.getConfiguration();
-
-					if (o != null && o.getChild(optionName) != null) {
-						value = o.getChild(optionName).getValue();
-					}
-				}
-			}
-		}
-		return value;
 	}
 
 	public static String osString() {
