@@ -21,7 +21,7 @@ public class Gas3Listener implements GenerationListener<JavaFileGenerationUnit>{
 	}
 
 	public void error(String message) {
-		log.error(message);
+		error(message, null);
 	}
 
 	public void error(String message, Exception e) {
@@ -29,11 +29,11 @@ public class Gas3Listener implements GenerationListener<JavaFileGenerationUnit>{
 	}
 
 	public void generating(JavaFileGenerationUnit unit) {
-		log.info("  Generating: " + unit.getOutput());
+		info("  Generating: " + unit.getOutput());
 	}
 
 	public void info(String message) {
-		log.info(message);
+		info(message, null);
 	}
 
 	public void info(String message, Exception e) {
@@ -41,7 +41,7 @@ public class Gas3Listener implements GenerationListener<JavaFileGenerationUnit>{
 	}
 
 	public void warn(String message) {
-		log.warn(message);
+		warn(message, null);
 	}
 
 	public void warn(String message, Exception e) {
