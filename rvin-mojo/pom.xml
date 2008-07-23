@@ -142,6 +142,7 @@
 			<archive>http://groups.google.com/group/flex-mojos/</archive>
 		</mailingList>
 	</mailingLists>
+	<!-- Not required on releases
 	<dependencies>
 		<dependency>
 			<groupId>emma</groupId>
@@ -150,6 +151,7 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
+	 -->
 
 	<reporting>
 		<plugins>
