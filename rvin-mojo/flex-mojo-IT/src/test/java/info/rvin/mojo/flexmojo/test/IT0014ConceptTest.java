@@ -14,8 +14,7 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 			throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(
 				MavenVerifierHelper.class, "/" + conceptName);
-		customTester(testDir, "info.rvin.itest", conceptName, "1.0-SNAPSHOT",
-				"swf", "install");
+		customTester(testDir, "install");
 	}
 
 	// TODO still need air tests
@@ -69,7 +68,8 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 		File testDir = ResourceExtractor.simpleExtractResources(
 				MavenVerifierHelper.class, "/html-template-application");
 		standardConceptTester("html-template-application");
-		File template = new File(testDir, "target/html-template-application-1.0-SNAPSHOT.html");
+		File template = new File(testDir,
+				"target/html-template-application-1.0-SNAPSHOT.html");
 		assertTrue("Html Wrapper was not generated.", template.exists());
 	}
 
@@ -102,7 +102,8 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 		File testDir = ResourceExtractor.simpleExtractResources(
 				MavenVerifierHelper.class, "/sources");
 		standardConceptTester("sources");
-		File sources = new File(testDir, "target/sources-1.0-SNAPSHOT-sources.jar");
+		File sources = new File(testDir,
+				"target/sources-1.0-SNAPSHOT-sources.jar");
 		assertTrue("Source file was not generated.", sources.exists());
 	}
 
@@ -114,5 +115,24 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 	// public void versioning() throws Exception {
 	// standardConceptTester("versioning");
 	// }
+
+	public void testQuick() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(
+				MavenVerifierHelper.class, "/simple-flex-application");
+		customTester(testDir, "install");
+		customTester(testDir, "install", "-Dquick.compile=true");
+	}
+
+	public void testIncremental() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(
+				MavenVerifierHelper.class, "/simple-flex-application");
+		customTester(testDir, "install", "-Dincremental=true");
+	}
+
+	public void testRuntimeLocalization() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(
+				MavenVerifierHelper.class, "/l10n-swf/FlightReservation2");
+		customTester(testDir, "install");
+	}
 
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>2.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>info.rvin.itest.coverage</groupId>
+	<artifactId>compilation-options</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>swf</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<configuration>
+					<configurationReport>true</configurationReport>
+					<warnings>
+						<arrayTostringChanges>true</arrayTostringChanges>
+						<assignmentWithinConditional>false</assignmentWithinConditional>
+						<badArrayCast>false</badArrayCast>
+						<badBooleanAssignment>false</badBooleanAssignment>
+						<badDateCast>false</badDateCast>
+						<badEs3TypeMethod>false</badEs3TypeMethod>
+						<badEs3TypeProp>false</badEs3TypeProp>
+						<badNanComparison>false</badNanComparison>
+						<badNullAssignment>false</badNullAssignment>
+						<badNullComparison>false</badNullComparison>
+						<badUndefinedComparison>false</badUndefinedComparison>
+						<binding>false</binding>
+						<booleanConstructorWithNoArgs>true</booleanConstructorWithNoArgs>
+						<changesInResolve>true</changesInResolve>
+						<classIsSealed>false</classIsSealed>
+						<constNotInitialized>false</constNotInitialized>
+						<constructorReturnsValue>true</constructorReturnsValue>
+						<deprecatedEventHandlerError>true</deprecatedEventHandlerError>
+						<deprecatedFunctionError>false</deprecatedFunctionError>
+						<deprecatedPropertyError>false</deprecatedPropertyError>
+						<duplicateArgumentNames>false</duplicateArgumentNames>
+						<duplicateVariableDef>false</duplicateVariableDef>
+						<forVarInChanges>true</forVarInChanges>
+						<importHidesClass>false</importHidesClass>
+						<instanceOfChanges>false</instanceOfChanges>
+						<internalError>false</internalError>
+						<levelNotSupported>false</levelNotSupported>
+						<missingNamespaceDecl>false</missingNamespaceDecl>
+						<negativeUintLiteral>false</negativeUintLiteral>
+						<noConstructor>true</noConstructor>
+						<noExplicitSuperCallInConstructor>true</noExplicitSuperCallInConstructor>
+						<noTypeDecl>false</noTypeDecl>
+						<numberFromStringChanges>true</numberFromStringChanges>
+						<scopingChangeInThis>true</scopingChangeInThis>
+						<slowTextFieldAddition>false</slowTextFieldAddition>
+						<unlikelyFunctionValue>false</unlikelyFunctionValue>
+						<unusedTypeSelector>false</unusedTypeSelector>
+						<xmlClassHasChanged>true</xmlClassHasChanged>
+						<deprecation>false</deprecation>
+						<shadowedDeviceFont>false</shadowedDeviceFont>
+					</warnings>
+					<fonts>
+						<advancedAntiAliasing>true</advancedAntiAliasing>
+						<flashType>true</flashType>
+						<languages>
+							<englishRange>U+0020-U+007E</englishRange>
+						</languages>
+						<localFontsSnapshot>${basedir}/src/main/resources/fonts.ser</localFontsSnapshot>
+						<managers>
+							<manager>flash.fonts.BatikFontManager</manager>
+						</managers>
+						<maxCachedFonts>20</maxCachedFonts>
+						<maxGlyphsPerFace>1000</maxGlyphsPerFace>
+					</fonts>
+					<rawMetadata>
+						<![CDATA[
+							<metadata>
+								<title>Adobe Flex 2 Application</title>
+								<description>http://www.adobe.com/flex</description>
+								<publisher>unknown</publisher>
+								<creator>unknown</creator>
+								<language>EN</language>
+							</metadata>
+						]]>
+					</rawMetadata>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
