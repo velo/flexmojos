@@ -137,12 +137,13 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 		}
 
 		try {
-			//Load maven.cfg
+			// Load maven.cfg
 			FileReader input = new FileReader(mavenCfg);
 			String cfg = IOUtils.toString(input);
 			input.close();
 
-			String buildFolder = build.getDirectory();
+			String buildFolder = build.getTestOutputDirectory()
+					+ "/TestRunner.swf";
 			if (cfg.contains(buildFolder)) {
 				getLog().info("Already trust on " + buildFolder);
 				return;
@@ -157,7 +158,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			// add builder folder
 			cfg = cfg + buildFolder + '\n';
 
-			//Save maven.cfg
+			// Save maven.cfg
 			FileWriter output = new FileWriter(mavenCfg);
 			IOUtils.write(cfg, output);
 			output.flush();
@@ -171,7 +172,8 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 	}
 
 	/*
-	 * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html#140756
+	 * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html
+	 * #140756
 	 */
 	private String getFPTrustFolder() throws MojoExecutionException {
 		if (MavenUtils.isWindows()) {

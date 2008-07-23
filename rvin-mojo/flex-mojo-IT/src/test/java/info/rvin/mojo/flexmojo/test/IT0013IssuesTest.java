@@ -179,6 +179,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0069");
+		File swf = new File(testDir, "target/test-classes/TestRunner.swf");
 
 		assertTrue("Flex-mojos should generate maven.cfg: "
 				+ mavenCfg.getAbsolutePath(), mavenCfg.exists());
@@ -186,7 +187,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 		String cfg = IOUtil.toString(new FileReader(mavenCfg));
 
 		assertTrue("Flex-mojos should write trust localtion", cfg
-				.contains(testDir.getAbsolutePath()));
+				.contains(swf.getAbsolutePath()));
 	}
 
 	public void testIssue70() throws Exception {
