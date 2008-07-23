@@ -142,8 +142,7 @@ public class FlexUnitMojo extends AbstractIrvinMojo {
 			String cfg = IOUtils.toString(input);
 			input.close();
 
-			String buildFolder = build.getTestOutputDirectory()
-					+ "/TestRunner.swf";
+			String buildFolder = new File(build.getTestOutputDirectory(), "/TestRunner.swf").getAbsolutePath();
 			if (cfg.contains(buildFolder)) {
 				getLog().info("Already trust on " + buildFolder);
 				return;
