@@ -129,6 +129,12 @@ public class IT0014ConceptTest extends AbstractMavenIntegrationTestCase {
 		customTester(testDir, "install", "-Dincremental=true");
 	}
 
+	public void testCompiledLocalization() throws Exception {
+		File testDir = ResourceExtractor.simpleExtractResources(
+				MavenVerifierHelper.class, "/l10n-swf/FlightReservation1");
+		customTester(testDir, "install");
+	}
+
 	public void testRuntimeLocalization() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(
 				MavenVerifierHelper.class, "/l10n-swf/FlightReservation2");
