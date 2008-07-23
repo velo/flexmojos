@@ -11,11 +11,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +29,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -175,8 +175,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * </pre>
 	 *
 	 * @see Warning
+	 * @parameter
 	 */
-	private Warning warnigs;
+	private Warning warnings;
 
 	/**
 	 * Turn on generation of debuggable SWFs. False by default for mxmlc, but
@@ -234,7 +235,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * compiles only the parts of the object that have changed since the last
 	 * compilation.
 	 *
-	 * @parameter default-value="false"
+	 * @parameter default-value="false" expression="${incremental}"
 	 */
 	private boolean incremental;
 
@@ -370,7 +371,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	/**
 	 * Writes the configuration report to a file after the build.
 	 *
-	 * @parameter default-value="false"
+	 * @parameter default-value="false" expression="${configurationReport}"
 	 */
 	private boolean configurationReport;
 
@@ -986,30 +987,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * Writes compilation data to a file to support incremental compilation
 	 *
 	 * @return OutputStream with compilation data
-	 * @throws MojoExecutionException
+	 * @throws FileNotFoundException
 	 */
-	private OutputStream saveCompilationData() throws MojoExecutionException {
-		try {
-			return new BufferedOutputStream(new FileOutputStream(
-					compilationData));
-		} catch (FileNotFoundException e) {
-			throw new MojoExecutionException("Can't save compilation data.");
-		}
+	private OutputStream saveCompilationData() throws FileNotFoundException {
+		return new BufferedOutputStream(new FileOutputStream(compilationData));
 	}
 
 	/**
 	 * Loads compilation data to support incremental compilation
 	 *
 	 * @return InputStream of compilation data
-	 * @throws MojoExecutionException
+	 * @throws FileNotFoundException
 	 */
-	private InputStream loadCompilationData() throws MojoExecutionException {
-		try {
-			return new BufferedInputStream(new FileInputStream(compilationData));
-		} catch (FileNotFoundException e) {
-			throw new MojoExecutionException(
-					"Previows compilation data not found.");
-		}
+	private InputStream loadCompilationData() throws FileNotFoundException {
+		return new BufferedInputStream(new FileInputStream(compilationData));
 	}
 
 	/**
@@ -1095,7 +1086,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 
 		configuration.optimize(optimize);
-		if (this.warnigs != null) {
+		if (this.warnings != null) {
 			configureWarnings(configuration);
 		}
 
@@ -1524,94 +1515,94 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 */
 	private void configureWarnings(Configuration cfg) {
 		cfg.showActionScriptWarnings(showWarnings);
-		cfg.showBindingWarnings(warnigs.getBinding());
-		cfg.showDeprecationWarnings(warnigs.getDeprecation());
-		cfg.showShadowedDeviceFontWarnings(warnigs.getShadowedDeviceFont());
-		cfg.showUnusedTypeSelectorWarnings(warnigs.getUnusedTypeSelector());
+		cfg.showBindingWarnings(warnings.getBinding());
+		cfg.showDeprecationWarnings(warnings.getDeprecation());
+		cfg.showShadowedDeviceFontWarnings(warnings.getShadowedDeviceFont());
+		cfg.showUnusedTypeSelectorWarnings(warnings.getUnusedTypeSelector());
 		cfg.checkActionScriptWarning(Configuration.WARN_ARRAY_TOSTRING_CHANGES,
-				warnigs.getArrayTostringChanges());
+				warnings.getArrayTostringChanges());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_ASSIGNMENT_WITHIN_CONDITIONAL, warnigs
+				Configuration.WARN_ASSIGNMENT_WITHIN_CONDITIONAL, warnings
 						.getAssignmentWithinConditional());
-		cfg.checkActionScriptWarning(Configuration.WARN_BAD_ARRAY_CAST, warnigs
+		cfg.checkActionScriptWarning(Configuration.WARN_BAD_ARRAY_CAST, warnings
 				.getBadArrayCast());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_BOOLEAN_ASSIGNMENT,
-				warnigs.getBadBooleanAssignment());
-		cfg.checkActionScriptWarning(Configuration.WARN_BAD_DATE_CAST, warnigs
+				warnings.getBadBooleanAssignment());
+		cfg.checkActionScriptWarning(Configuration.WARN_BAD_DATE_CAST, warnings
 				.getBadDateCast());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_ES3_TYPE_METHOD,
-				warnigs.getBadEs3TypeMethod());
+				warnings.getBadEs3TypeMethod());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_ES3_TYPE_PROP,
-				warnigs.getBadEs3TypeProp());
+				warnings.getBadEs3TypeProp());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_NAN_COMPARISON,
-				warnigs.getBadNanComparison());
+				warnings.getBadNanComparison());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_NULL_ASSIGNMENT,
-				warnigs.getBadNullAssignment());
+				warnings.getBadNullAssignment());
 		cfg.checkActionScriptWarning(Configuration.WARN_BAD_NULL_COMPARISON,
-				warnigs.getBadNullComparison());
+				warnings.getBadNullComparison());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_BAD_UNDEFINED_COMPARISON, warnigs
+				Configuration.WARN_BAD_UNDEFINED_COMPARISON, warnings
 						.getBadUndefinedComparison());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_BOOLEAN_CONSTRUCTOR_WITH_NO_ARGS, warnigs
+				Configuration.WARN_BOOLEAN_CONSTRUCTOR_WITH_NO_ARGS, warnings
 						.getBooleanConstructorWithNoArgs());
 		cfg.checkActionScriptWarning(Configuration.WARN_CHANGES_IN_RESOLVE,
-				warnigs.getChangesInResolve());
+				warnings.getChangesInResolve());
 		cfg.checkActionScriptWarning(Configuration.WARN_CLASS_IS_SEALED,
-				warnigs.getClassIsSealed());
+				warnings.getClassIsSealed());
 		cfg.checkActionScriptWarning(Configuration.WARN_CONST_NOT_INITIALIZED,
-				warnigs.getConstNotInitialized());
+				warnings.getConstNotInitialized());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_CONSTRUCTOR_RETURNS_VALUE, warnigs
+				Configuration.WARN_CONSTRUCTOR_RETURNS_VALUE, warnings
 						.getConstructorReturnsValue());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_DEPRECATED_EVENT_HANDLER_ERROR, warnigs
+				Configuration.WARN_DEPRECATED_EVENT_HANDLER_ERROR, warnings
 						.getDeprecatedEventHandlerError());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_DEPRECATED_FUNCTION_ERROR, warnigs
+				Configuration.WARN_DEPRECATED_FUNCTION_ERROR, warnings
 						.getDeprecatedFunctionError());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_DEPRECATED_PROPERTY_ERROR, warnigs
+				Configuration.WARN_DEPRECATED_PROPERTY_ERROR, warnings
 						.getDeprecatedPropertyError());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_DUPLICATE_ARGUMENT_NAMES, warnigs
+				Configuration.WARN_DUPLICATE_ARGUMENT_NAMES, warnings
 						.getDuplicateArgumentNames());
 		cfg.checkActionScriptWarning(Configuration.WARN_DUPLICATE_VARIABLE_DEF,
-				warnigs.getDuplicateVariableDef());
+				warnings.getDuplicateVariableDef());
 		cfg.checkActionScriptWarning(Configuration.WARN_FOR_VAR_IN_CHANGES,
-				warnigs.getForVarInChanges());
+				warnings.getForVarInChanges());
 		cfg.checkActionScriptWarning(Configuration.WARN_IMPORT_HIDES_CLASS,
-				warnigs.getImportHidesClass());
+				warnings.getImportHidesClass());
 		cfg.checkActionScriptWarning(Configuration.WARN_INSTANCEOF_CHANGES,
-				warnigs.getInstanceOfChanges());
-		cfg.checkActionScriptWarning(Configuration.WARN_INTERNAL_ERROR, warnigs
+				warnings.getInstanceOfChanges());
+		cfg.checkActionScriptWarning(Configuration.WARN_INTERNAL_ERROR, warnings
 				.getInternalError());
 		cfg.checkActionScriptWarning(Configuration.WARN_LEVEL_NOT_SUPPORTED,
-				warnigs.getLevelNotSupported());
+				warnings.getLevelNotSupported());
 		cfg.checkActionScriptWarning(Configuration.WARN_MISSING_NAMESPACE_DECL,
-				warnigs.getMissingNamespaceDecl());
+				warnings.getMissingNamespaceDecl());
 		cfg.checkActionScriptWarning(Configuration.WARN_NEGATIVE_UINT_LITERAL,
-				warnigs.getNegativeUintLiteral());
-		cfg.checkActionScriptWarning(Configuration.WARN_NO_CONSTRUCTOR, warnigs
+				warnings.getNegativeUintLiteral());
+		cfg.checkActionScriptWarning(Configuration.WARN_NO_CONSTRUCTOR, warnings
 				.getNoConstructor());
 		cfg.checkActionScriptWarning(
 				Configuration.WARN_NO_EXPLICIT_SUPER_CALL_IN_CONSTRUCTOR,
-				warnigs.getNoExplicitSuperCallInConstructor());
-		cfg.checkActionScriptWarning(Configuration.WARN_NO_TYPE_DECL, warnigs
+				warnings.getNoExplicitSuperCallInConstructor());
+		cfg.checkActionScriptWarning(Configuration.WARN_NO_TYPE_DECL, warnings
 				.getNoTypeDecl());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_NUMBER_FROM_STRING_CHANGES, warnigs
+				Configuration.WARN_NUMBER_FROM_STRING_CHANGES, warnings
 						.getNumberFromStringChanges());
 		cfg.checkActionScriptWarning(Configuration.WARN_SCOPING_CHANGE_IN_THIS,
-				warnigs.getScopingChangeInThis());
+				warnings.getScopingChangeInThis());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_SLOW_TEXTFIELD_ADDITION, warnigs
+				Configuration.WARN_SLOW_TEXTFIELD_ADDITION, warnings
 						.getSlowTextFieldAddition());
 		cfg.checkActionScriptWarning(
-				Configuration.WARN_UNLIKELY_FUNCTION_VALUE, warnigs
+				Configuration.WARN_UNLIKELY_FUNCTION_VALUE, warnings
 						.getUnlikelyFunctionValue());
 		cfg.checkActionScriptWarning(Configuration.WARN_XML_CLASS_HAS_CHANGED,
-				warnigs.getXmlClassHasChanged());
+				warnings.getXmlClassHasChanged());
 	}
 
 	/**
@@ -1658,9 +1649,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				.getArtifactId()
 				+ "-" + project.getVersion() + "-" + type + "-report.xml");
 
-		Writer writer = null;
 		try {
-			writer = new FileWriter(fileReport);
+			StringWriter writer = new StringWriter();
 			if ("link".equals(type)) {
 				report.writeLinkReport(writer);
 				linkReportFile = fileReport;
@@ -1668,20 +1658,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 				report.writeConfigurationReport(writer);
 			}
 
+			FileUtils.writeStringToFile(fileReport, writer.toString());
+
 			getLog().info("Written " + type + " report to " + fileReport);
 		} catch (IOException e) {
 			throw new MojoExecutionException(
 					"An error has ocurried while recording " + type + "-report",
 					e);
-		} finally {
-			try {
-				if (null != writer) {
-					writer.flush();
-					writer.close();
-				}
-			} catch (IOException e) {
-				getLog().error("Error while closing writer", e);
-			}
 		}
 
 		projectHelper.attachArtifact(project, "xml", type + "-report",
@@ -1694,10 +1677,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		}
 
 		long bytes;
+		getLog().info(
+				"Flex compiler configurations:"
+						+ configuration.toString().replace("--", "\n-"));
 		try {
-			getLog().info(
-					"Flex compiler configurations:"
-							+ configuration.toString().replace("--", "\n-"));
 
 			if (incremental && compilationData.exists()) {
 				builder.load(loadCompilationData());
@@ -1731,7 +1714,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		Artifact artifact = artifactFactory.createArtifact(
 				project.getGroupId(), project.getArtifactId(), project
 						.getVersion(), null, project.getPackaging());
-		resolveArtifact(artifact, resolver, localRepository, remoteRepositories);
+		try {
+			resolver.resolve(artifact, remoteRepositories, localRepository);
+		} catch (AbstractArtifactResolutionException e) {
+			//Not available at repository
+			return true;
+		}
 
 		File artifactFile = artifact.getFile();
 		if (artifactFile == null || !artifactFile.exists()) {
@@ -1742,7 +1730,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		try {
 			FileUtils.copyFile(artifactFile, outputFile);
 		} catch (IOException e) {
-			throw new MojoExecutionException("Unable to copy instaled version to target folder.", e);
+			throw new MojoExecutionException(
+					"Unable to copy instaled version to target folder.", e);
 		}
 		long lastCompiledArtifact = artifactFile.lastModified();
 
