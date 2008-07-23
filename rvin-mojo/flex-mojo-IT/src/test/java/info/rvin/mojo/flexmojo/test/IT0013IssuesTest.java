@@ -22,8 +22,6 @@ import info.flexmojos.it.MavenVerifierHelper;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.maven.integrationtests.AbstractMavenIntegrationTestCase;
 import org.apache.maven.it.VerificationException;
@@ -35,8 +33,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public static void standardIssueTester(String issueNumber) throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(
 				MavenVerifierHelper.class, "/issues/" + issueNumber);
-		customTester(testDir, "info.rvin.itest.issues", issueNumber,
-				"1.0-SNAPSHOT", "swf", "install");
+		customTester(testDir, "install");
 	}
 
 	public void testIssue8() throws Exception {
@@ -51,8 +48,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public void testIssue13() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0013");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0013",
-				"1.0-SNAPSHOT", "swf", "install");
+		customTester(testDir, "install");
 
 		File reportDir = new File(testDir, "target/surefire-reports");
 		assertEquals(2, reportDir.listFiles().length);
@@ -72,8 +68,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0015");
 		try {
-			customTester(testDir, "info.rvin.itest.issues", "issue-0015",
-					"1.0-SNAPSHOT", "swf", "install");
+			customTester(testDir, "install");
 			fail("testing error unit, must fail!");
 		} catch (Exception e) {
 			// expected exception
@@ -86,8 +81,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public void testIssue17() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0017");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0017",
-				"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+		customTester(testDir, "asdoc:asdoc");
 
 		File asdoc = new File(testDir, "target/asdoc");
 		assertTrue("asdoc directory must exist", asdoc.isDirectory());
@@ -97,8 +91,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0027");
 		try {
-			customTester(testDir, "info.rvin.itest.issues", "issue-0027",
-					"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+			customTester(testDir, "asdoc:asdoc");
 			fail("No source code.  Should throw an error!");
 		} catch (Exception e) {
 			// expected exception
@@ -131,8 +124,7 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0044");
 		try {
-			customTester(testDir, "info.rvin.itest.issues", "issue-0044",
-					"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+			customTester(testDir, "asdoc:asdoc");
 			fail("testing error unit, must fail!");
 		} catch (Exception e) {
 			// expected exception
@@ -142,15 +134,9 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public void testIssue53() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0014");
-		List<String> args = new ArrayList<String>();
-		args.add("-Dmaven.test.skip=true");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0014",
-				"1.0-SNAPSHOT", "swf", "install", args);
+		customTester(testDir, "install", "-Dmaven.test.skip=true");
 
-		args = new ArrayList<String>();
-		args.add("-DskipTests=true");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0014",
-				"1.0-SNAPSHOT", "swf", "install", args);
+		customTester(testDir, "install", "-DskipTests=true");
 	}
 
 	public void testIssue61() throws Exception {
@@ -176,15 +162,13 @@ public class IT0013IssuesTest extends AbstractMavenIntegrationTestCase {
 	public void testIssue67() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0067");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0067",
-				"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+		customTester(testDir, "asdoc:asdoc");
 	}
 
 	public void testIssue68() throws Exception {
 		File testDir = ResourceExtractor.simpleExtractResources(getClass(),
 				"/issues/issue-0068");
-		customTester(testDir, "info.rvin.itest.issues", "issue-0068",
-				"1.0-SNAPSHOT", "swf", "asdoc:asdoc");
+		customTester(testDir, "asdoc:asdoc");
 	}
 
 	public void testIssue69() throws Exception {
