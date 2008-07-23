@@ -1743,11 +1743,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		List<File> paths = new ArrayList<File>(Arrays
 				.asList(sourcePaths));
-		//resourceBundlePath is unresolved
-		paths.remove(new File(resourceBundlePath));
-		//resolving it
-		for (String locale : locales) {
-			paths.add(MavenUtils.getLocaleResourcePath(resourceBundlePath, locale));
+		if(mergeResourceBundle != null && mergeResourceBundle) {
+			//resourceBundlePath is unresolved
+			paths.remove(new File(resourceBundlePath));
+			//resolving it
+			for (String locale : locales) {
+				paths.add(MavenUtils.getLocaleResourcePath(resourceBundlePath, locale));
+			}
 		}
 
 		for (File sourcePath : paths) {
