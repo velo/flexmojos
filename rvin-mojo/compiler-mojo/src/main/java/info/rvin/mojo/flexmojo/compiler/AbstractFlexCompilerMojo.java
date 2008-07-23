@@ -843,11 +843,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			if (mergeResourceBundle != null && mergeResourceBundle) {
 				List<File> paths = new ArrayList<File>(Arrays
 						.asList(sourcePaths));
-				for (String locale : locales) {
-					File localeResourcePath = MavenUtils.getLocaleResourcePath(
-							resourceBundlePath, locale);
-					paths.add(localeResourcePath);
-				}
+				paths.add(new File(resourceBundlePath));
 				sourcePaths = paths.toArray(new File[paths.size()]);
 			}
 		}
@@ -1745,7 +1741,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 			}
 		}
 
-		for (File sourcePath : sourcePaths) {
+		List<File> paths = new ArrayList<File>(Arrays
+				.asList(sourcePaths));
+		//resourceBundlePath is unresolved
+		paths.remove(new File(resourceBundlePath));
+		//resolving it
+		for (String locale : locales) {
+			paths.add(MavenUtils.getLocaleResourcePath(resourceBundlePath, locale));
+		}
+
+		for (File sourcePath : paths) {
 			Collection<File> files = FileUtils.listFiles(sourcePath,
 					new AgeFileFilter(lastCompiledArtifact, false), null);
 
