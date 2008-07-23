@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>mojo</artifactId>
-        <version>2.0-alpha3</version>
+        <version>2.0-alpha4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>flex-compiler-mojo</artifactId>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>util</artifactId>
-            <version>2.0-alpha3</version>
+            <version>2.0-alpha4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex</groupId>
