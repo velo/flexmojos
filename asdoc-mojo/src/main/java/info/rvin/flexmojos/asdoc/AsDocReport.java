@@ -19,7 +19,6 @@ package info.rvin.flexmojos.asdoc;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
@@ -28,7 +27,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Generates documentation for the <code>ActionScript code</code> in the
