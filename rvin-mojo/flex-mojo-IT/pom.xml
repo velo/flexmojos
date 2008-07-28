@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>mojo</artifactId>
-		<version>2.0-alpha3-SNAPSHOT</version>
+		<version>2.0-alpha4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>flex-mojos-IT</artifactId>
 	<packaging>jar</packaging>
 	<name>Flex Mojos Integration Tests</name>
 
-	<build>
+	<reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven</groupId>
@@ -70,23 +70,9 @@
 						</artifactItem>
 					</artifactItems>
 				</configuration>
-				<executions>
-					<execution>
-						<id>instrument-plugins</id>
-						<goals>
-							<goal>instrument</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>merge-coverage-result</id>
-						<goals>
-							<goal>merge</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</reporting>
 
 	<!-- TODO: remove when snapshots are released -->
 	<repositories>
