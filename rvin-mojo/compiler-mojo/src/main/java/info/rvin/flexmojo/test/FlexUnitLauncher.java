@@ -8,7 +8,7 @@ import info.rvin.flexmojos.utilities.MavenUtils;
  */
 public class FlexUnitLauncher {
 	private static final String WINDOWS_CMD = "rundll32 url.dll,FileProtocolHandler ";
-	private static final String MAC_CMD = "open ";
+	private static final String MAC_CMD = "open -g ";
 	private static final String UNIX_CMD = "gflashplayer ";
 
 	/**
