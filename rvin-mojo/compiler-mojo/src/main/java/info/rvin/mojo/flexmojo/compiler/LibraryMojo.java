@@ -315,8 +315,8 @@ public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
 		}
 		configuration.addLibraryPath(getResourcesBundles());
 
-		File output = new File(build.getDirectory(), project.getArtifactId()
-				+ "-" + project.getVersion() + "-" + locale + ".swc");
+		File output = new File(build.getDirectory(), build.getFinalName()
+				 + "-" + locale + ".swc");
 
 		localized.setOutput(output);
 
