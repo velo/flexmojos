@@ -178,8 +178,8 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 
 		// Dont break this method in parts, is a work around
 
-		File output = new File(build.getDirectory(), project.getArtifactId()
-				+ "-" + project.getVersion() + "-" + locale + ".swf");
+		File output = new File(build.getDirectory(), build.getFinalName()
+				 + "-" + locale + ".swf");
 
 		/*
 		 * mxmlc -locale=en_US -source-path=locale/{locale}
