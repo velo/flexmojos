@@ -38,7 +38,7 @@
 						<class>info.flexmojos.it.Vermelho</class>
 					</excludeClasses>
 					<headlessServer>true</headlessServer>
-					<footer>Something to be show on footer</footer>
+					<footer>Something to be show, on footer</footer>
 			   </configuration>
 		   </plugin>
 	   </plugins>
