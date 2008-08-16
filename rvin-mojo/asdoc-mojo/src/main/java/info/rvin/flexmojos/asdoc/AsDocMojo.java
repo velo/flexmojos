@@ -495,7 +495,8 @@ public class AsDocMojo extends AbstractMojo {
 
 	private void addFooter(List<String> args) {
 		if (footer != null) {
-			args.add("-footer=" + footer);
+			args.add("-footer");
+			args.add(footer);
 		}
 	}
 
