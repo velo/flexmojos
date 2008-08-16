@@ -38,6 +38,7 @@
 						<class>info.flexmojos.it.Vermelho</class>
 					</excludeClasses>
 					<headlessServer>true</headlessServer>
+					<!-- footer with comma, issue 82 -->
 					<footer>Something to be show, on footer</footer>
 			   </configuration>
 		   </plugin>
