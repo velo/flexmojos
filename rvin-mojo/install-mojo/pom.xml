@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>mojo</artifactId>
+		<groupId>info.flex-mojos</groupId>
+		<version>2.0-alpha4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>install-mojo</artifactId>
+
+	<packaging>maven-plugin</packaging>
+
+	<name>Installer Maven Mojo</name>
+	<description>This mojo does install/deploy flex-sdk into maven repository</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+		</dependency>
+	</dependencies>
+</project>
