@@ -148,7 +148,7 @@ public abstract class AbstractInstallMojo
         installResourceBundleArtifacts( swcArtifacts );
         installRslArtifacts();
 
-        Collection<Artifact> flexArtifacts = filter( swcArtifacts, null, new String[] { "air*" } );
+        Collection<Artifact> flexArtifacts = filter( swcArtifacts, null, new String[] { "air*", "servicemonitor" } );
         Artifact flexSdk =
             artifactFactory.createArtifact( FRAMEWORK_GROUP_ID, "flex-framework", version, "compile", "pom" );
         generatePom( flexSdk, flexArtifacts );

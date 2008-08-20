@@ -138,21 +138,16 @@ public class MavenUtils {
 	 */
 	public static File getArtifactFile(Artifact a, Build build)
 			throws MojoExecutionException {
-		if (a.getGroupId().equals("com.adobe.flex.sdk")
-				&& a.getArtifactId().equals("playerglobal")) {
-			File dest = new File(build.getOutputDirectory(), "libraries/"+ a.getArtifactId() + ".swc");
-			if (!dest.exists()) {
-				try {
-					FileUtils.copyFile(a.getFile(), dest);
-					dest.deleteOnExit();
-				} catch (IOException e) {
-					throw new MojoExecutionException(e.getMessage(), e);
-				}
+		File dest = new File(build.getOutputDirectory(), "libraries/"+ a.getArtifactId() + ".swc");
+		if (!dest.exists()) {
+			try {
+				FileUtils.copyFile(a.getFile(), dest);
+				dest.deleteOnExit();
+			} catch (IOException e) {
+				throw new MojoExecutionException(e.getMessage(), e);
 			}
-			return dest;
-		} else {
-			return a.getFile();
 		}
+		return dest;
 	}
 
 	/**

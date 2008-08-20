@@ -215,7 +215,7 @@ public class TestCompilerMojo extends ApplicationMojo {
 		super.configure();
 
 		// Remove all libraries
-		configuration.setExternalLibraryPath(null);
+		configuration.setExternalLibraryPath(getPlayerglobal());
 		configuration.setIncludes(null);
 		configuration.setRuntimeSharedLibraries(null);
 
