@@ -1029,7 +1029,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.setLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getDependenciesPath("merged"));
 		if (mergeResourceBundle == null || mergeResourceBundle) {
-			configuration.addLibraryPath(getResourcesBundles(locales));
+			configuration.addLibraryPath(getResourcesBundles());
 		}
 
 		resolveRuntimeLibraries();
@@ -1248,7 +1248,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.enableDigestVerification(verifyDigests);
 	}
 
-	private File[] getPlayerglobal() throws MojoExecutionException {
+	protected File[] getPlayerglobal() throws MojoExecutionException {
         Set<Artifact> dependencies = getDependencyArtifacts();
         for ( Artifact artifact : dependencies )
         {
@@ -1426,7 +1426,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @return Array of resource bundle files
 	 * @throws MojoExecutionException
 	 */
-	protected File[] getResourcesBundles(String...locales) throws MojoExecutionException {
+	protected File[] getResourcesBundles() throws MojoExecutionException {
 		List<File> resouceBundles = new ArrayList<File>();
 
 		for (Artifact artifact : getDependencyArtifacts()) {
