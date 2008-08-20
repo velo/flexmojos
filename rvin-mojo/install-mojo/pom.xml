@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mojo</artifactId>
 		<groupId>info.flex-mojos</groupId>
+		<artifactId>mojo</artifactId>
 		<version>2.0-alpha4-SNAPSHOT</version>
 	</parent>
 
@@ -30,4 +30,5 @@
 			<artifactId>maven-project</artifactId>
 		</dependency>
 	</dependencies>
+
 </project>
