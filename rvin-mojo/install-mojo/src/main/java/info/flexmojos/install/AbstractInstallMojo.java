@@ -1,6 +1,7 @@
 package info.flexmojos.install;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -246,7 +247,13 @@ public abstract class AbstractInstallMojo
         // create resource-bundle beacon
         installResourceBundleBeacon( swcLocalesFolder, swcArtifacts );
 
-        File[] locales = swcLocalesFolder.listFiles();
+        File[] locales = swcLocalesFolder.listFiles(new FileFilter()
+        {
+            public boolean accept( File pathname )
+            {
+                return pathname.isDirectory();
+            }
+        });
         for ( File localeFolder : locales )
         {
             Collection<File> localeSwcs = listFiles( localeFolder, SWCS, true );
