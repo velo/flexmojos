@@ -60,49 +60,10 @@
 	<dependencies>
 		 <!-- Flex SDK dependencies -->
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>playerglobal</artifactId>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
 			<version>3.0.0.477</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>flex</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>en_US</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>rpc</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>rpc</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>en_US</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>utilities</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
+			<type>pom</type>
 		</dependency>
 
 		<!-- FlexUnit dependencies -->

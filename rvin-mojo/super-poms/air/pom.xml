@@ -19,17 +19,14 @@
 				<artifactId>flex-compiler-mojo</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<includeSources>
-						<param>${project.build.sourceDirectory}</param>
-					</includeSources>
 					<locales>
-						<param>en_US</param>
+						<locale>en_US</locale>
 					</locales>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc</artifactId>
+				<artifactId>asdoc-mojo</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -63,68 +60,10 @@
 	<dependencies>
 		 <!-- Air SDK dependencies -->
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>airglobal</artifactId>
+			<groupId>com.adobe.flex.framework</groupId>
+            <artifactId>air-framework</artifactId>
 			<version>3.0.0.477</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>flex</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>en_US</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>rpc</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>rpc</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>en_US</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>utilities</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>airframework</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>airframework</artifactId>
-			<version>3.0.0.477</version>
-            <type>resource-bundle</type>
-            <classifier>en_US</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>servicemonitor</artifactId>
-			<version>3.0.0.477</version>
-			<type>swc</type>
+			<type>pom</type>
 		</dependency>
 
 		<!-- FlexUnit dependencies -->

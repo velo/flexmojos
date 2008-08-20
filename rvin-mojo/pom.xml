@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -193,8 +194,9 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.adobe.flex</groupId>
-				<artifactId>flex-compiler-oem</artifactId>
+				<artifactId>compiler</artifactId>
 				<version>${flex.sdk.version}</version>
+				<type>pom</type>
 			</dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
@@ -217,28 +219,11 @@
 				<version>${maven.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>adt</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
 				<version>${testng.version}</version>
 				<scope>test</scope>
 				<classifier>jdk15</classifier>
-			</dependency>
-			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>asdoc</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>asdoc</artifactId>
-				<version>${flex.sdk.version}</version>
-				<classifier>template</classifier>
-				<type>zip</type>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -284,16 +269,6 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>optimizer</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.adobe.flex</groupId>
-				<artifactId>digest</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>eu.cedarsoft.utils</groupId>
 				<artifactId>zip</artifactId>
 				<version>1.1</version>
@@ -327,10 +302,11 @@
 		<module>generator-mojo</module>
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
+	    <module>install-mojo</module>
 
 		<!-- cant release
 		<module>flex-mojo-IT</module>
 		 -->
-	</modules>
+  </modules>
 
 </project>

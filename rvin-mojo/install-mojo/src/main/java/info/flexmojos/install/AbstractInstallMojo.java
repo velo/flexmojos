@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.model.Dependency;
@@ -20,6 +19,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+
+import eu.cedarsoft.utils.ZipCreator;
 
 public abstract class AbstractInstallMojo
     extends AbstractMojo
@@ -79,6 +80,11 @@ public abstract class AbstractInstallMojo
      */
     private String version;
 
+    /**
+     * @parameter expression="${default.player.version}" default-value="9"
+     */
+    private String defaultPlayerVersion;
+
     public AbstractInstallMojo()
     {
         super();
@@ -94,6 +100,20 @@ public abstract class AbstractInstallMojo
     {
         String artifactName = getArtifactName( file );
         String type = getExtension( file );
+        String version = this.version;
+        // special rule on playerglobal
+        if ( "swc".equals( type ) && "playerglobal".equals( artifactName ) )
+        {
+            String parentName = file.getParentFile().getName();
+            if ( "player".equals( parentName ) )
+            {
+                version = "9-" + version;
+            }
+            else
+            {
+                version = parentName + "-" + version;
+            }
+        }
         Artifact artifact = artifactFactory.createArtifact( groupId, artifactName, version, "compile", type );
         return artifact;
     }
@@ -109,9 +129,19 @@ public abstract class AbstractInstallMojo
         for ( File swc : swcs )
         {
             Artifact artifact = createArtifact( swc, FRAMEWORK_GROUP_ID );
-            swcArtifacts.add( artifact );
+            if ( "playerglobal".equals( artifact.getArtifactId() ) )
+            {
+                if ( artifact.getVersion().startsWith( defaultPlayerVersion ) )
+                {
+                    swcArtifacts.add( artifact );
+                }
+            }
+            else
+            {
+                swcArtifacts.add( artifact );
+            }
             installArtifact( swc, artifact );
-            Artifact pomArtifact = createPomArtifact( swc, FRAMEWORK_GROUP_ID );
+            Artifact pomArtifact = createPomArtifact( artifact );
             generatePom( pomArtifact );
         }
 
@@ -191,7 +221,7 @@ public abstract class AbstractInstallMojo
             Artifact artifact = createArtifact( jar, COMPILER_GROUP_ID );
             javaArtifacts.add( artifact );
             installArtifact( jar, artifact );
-            Artifact pomArtifact = createPomArtifact( jar, COMPILER_GROUP_ID );
+            Artifact pomArtifact = createPomArtifact( artifact );
             generatePom( pomArtifact );
         }
 
@@ -199,12 +229,12 @@ public abstract class AbstractInstallMojo
         generatePom( flexSdkLibs, javaArtifacts );
     }
 
-    private Artifact createPomArtifact( File file, String groupId )
+    private Artifact createPomArtifact( Artifact artifact )
     {
-        String artifactName = getArtifactName( file );
-        String type = "pom";
-        Artifact artifact = artifactFactory.createArtifact( groupId, artifactName, version, "compile", type );
-        return artifact;
+        Artifact pomArtifact =
+            artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                                            "compile", "pom" );
+        return pomArtifact;
     }
 
     private void installResourceBundleArtifacts( Collection<Artifact> swcArtifacts )
@@ -246,16 +276,8 @@ public abstract class AbstractInstallMojo
         {
             Artifact artifact =
                 artifactFactory.createArtifactWithClassifier( FRAMEWORK_GROUP_ID, swcName, version, "rb.swc", "" );
-            File tempFile;
-            try
-            {
-                tempFile = File.createTempFile( swcName, ".swc" );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error beacon locale SWC " + e.getMessage(), e );
-            }
-            tempFile.deleteOnExit();
+
+            File tempFile = createTempFile( swcName, ".swc" );
             installArtifact( tempFile, artifact );
             flexArtifacts.add( artifact );
         }
@@ -265,22 +287,21 @@ public abstract class AbstractInstallMojo
         throws MojoExecutionException
     {
         File rslsFolder = new File( sdkFolder, "frameworks/rsls" );
-        if ( rslsFolder.exists() )
-        {
-            getLog().info( "Installing flex-sdk rsls" );
-            Collection<File> rsls = listFiles( rslsFolder, RSLS, true );
-            for ( File rsl : rsls )
-            {
-                String artifactName = getResourceName( rsl );
-                String type = getExtension( rsl );
-                Artifact artifact =
-                    artifactFactory.createArtifactWithClassifier( FRAMEWORK_GROUP_ID, artifactName, version, type, "" );
-                installArtifact( rsl, artifact );
-            }
-        }
-        else
+        if ( !rslsFolder.exists() )
         {
             getLog().warn( "Rsls folder not found: " + rslsFolder );
+            return;
+        }
+
+        getLog().info( "Installing flex-sdk rsls" );
+        Collection<File> rsls = listFiles( rslsFolder, RSLS, true );
+        for ( File rsl : rsls )
+        {
+            String artifactName = getResourceName( rsl );
+            String type = getExtension( rsl );
+            Artifact artifact =
+                artifactFactory.createArtifactWithClassifier( FRAMEWORK_GROUP_ID, artifactName, version, type, "" );
+            installArtifact( rsl, artifact );
         }
     }
 
@@ -305,12 +326,46 @@ public abstract class AbstractInstallMojo
     }
 
     private void installAsdocTemplateArtifact()
+        throws MojoExecutionException
     {
-        // <groupId>com.adobe.flex</groupId>
-        // <artifactId>asdoc</artifactId>
-        // <classifier>template</classifier>
-        // <type>zip</type>
-        // TODO
+
+        File asdocTemplate = new File( sdkFolder, "asdoc/templates" );
+        if ( !asdocTemplate.exists() )
+        {
+            throw new MojoExecutionException( "Asdoc template folder not fould: " + asdocTemplate.getAbsolutePath() );
+        }
+
+        File zipFile = createTempFile( "asdoc-template", ".zip" );
+
+        ZipCreator zipper = new ZipCreator( zipFile );
+        try
+        {
+            zipper.zip( asdocTemplate );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating asdoc-template", e );
+        }
+
+        Artifact artifact =
+            artifactFactory.createArtifactWithClassifier( COMPILER_GROUP_ID, "asdoc", version, "zip", "template" );
+        installArtifact( zipFile, artifact );
+
+    }
+
+    private File createTempFile( String prefix, String suffix )
+        throws MojoExecutionException
+    {
+        try
+        {
+            File zipFile = File.createTempFile( prefix, suffix );
+            zipFile.deleteOnExit();
+            return zipFile;
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to create temporary file" );
+        }
     }
 
     private void generatePom( Artifact artifact )
@@ -342,8 +397,7 @@ public abstract class AbstractInstallMojo
 
         try
         {
-            File tempFile = File.createTempFile( artifact.getArtifactId(), ".pom" );
-            tempFile.deleteOnExit();
+            File tempFile = createTempFile( artifact.getArtifactId(), ".pom" );
 
             FileWriter fw = new FileWriter( tempFile );
             tempFile.deleteOnExit();
