@@ -136,12 +136,11 @@ public class MavenUtils {
 	 *             [build-dir]/libraries/[scope] directory
 	 *
 	 */
-	public static File getArtifactFile(Artifact a, String scope, Build build)
+	public static File getArtifactFile(Artifact a, Build build)
 			throws MojoExecutionException {
 		if (a.getGroupId().equals("com.adobe.flex.sdk")
 				&& a.getArtifactId().equals("playerglobal")) {
-			File dest = new File(build.getOutputDirectory(), "libraries/" + scope
-					+ "/" + a.getArtifactId() + ".swc");
+			File dest = new File(build.getOutputDirectory(), "libraries/"+ a.getArtifactId() + ".swc");
 			if (!dest.exists()) {
 				try {
 					FileUtils.copyFile(a.getFile(), dest);

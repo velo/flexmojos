@@ -9,7 +9,7 @@
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
 				<type>resource-bundle</type>
-				<extension>swc</extension>
+				<extension>rb.swc</extension>
 			</configuration>
 		</component>
 

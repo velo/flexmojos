@@ -1,6 +1,5 @@
 package info.rvin.mojo.flexmojo.compiler;
 
-import static info.rvin.flexmojos.utilities.MavenUtils.getArtifactFile;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
@@ -1006,13 +1005,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 */
 	protected void configure() throws MojoExecutionException {
 		configuration.setExternalLibraryPath(getDependenciesPath("external"));
+		configuration.addExternalLibraryPath(getPlayerglobal());
 
 		configuration.includeLibraries(getDependenciesPath("internal"));
 
 		configuration.setLibraryPath(getDependenciesPath("compile"));
 		configuration.addLibraryPath(getDependenciesPath("merged"));
 		if (mergeResourceBundle == null || mergeResourceBundle) {
-			configuration.addLibraryPath(getResourcesBundles());
+			configuration.addLibraryPath(getResourcesBundles(locales));
 		}
 
 		resolveRuntimeLibraries();
@@ -1231,7 +1231,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.enableDigestVerification(verifyDigests);
 	}
 
-	/**
+	private File[] getPlayerglobal() throws MojoExecutionException {
+        Set<Artifact> dependencies = getDependencyArtifacts();
+        for ( Artifact artifact : dependencies )
+        {
+            if ( "playerglobal".equals( artifact.getArtifactId() ) )
+            {
+                return new File[]{MavenUtils.getArtifactFile( artifact,  build )};
+            }
+        }
+
+        throw new MojoExecutionException("Player global dependency not found.");
+	}
+
+    /**
 	 * Resolves all runtime libraries, that includes RSL and framework CACHING
 	 *
 	 * @throws MojoExecutionException
@@ -1242,7 +1255,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		for (Artifact artifact : rsls) {
 			String scope = artifact.getScope();
-			File artifactFile = getArtifactFile(artifact, scope, build);
+			File artifactFile = artifact.getFile();
 			String artifactPath = artifactFile.getAbsolutePath();
 			String extension;
 			if ("caching".equals(scope)) {
@@ -1396,12 +1409,26 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 * @return Array of resource bundle files
 	 * @throws MojoExecutionException
 	 */
-	protected File[] getResourcesBundles() throws MojoExecutionException {
+	protected File[] getResourcesBundles(String...locales) throws MojoExecutionException {
 		List<File> resouceBundles = new ArrayList<File>();
+
 		for (Artifact artifact : getDependencyArtifacts()) {
-			if ("resource-bundle".equals(artifact.getType())) {
-				resouceBundles.add(artifact.getFile());
+			if (!"rb.swc".equals(artifact.getType())) 
+			{
+			    continue;
 			}
+			
+			//resouceBundles.add(artifact.getFile());
+		    for ( String locale : locales )
+            {
+		        Artifact localeArtifact = artifactFactory.createArtifactWithClassifier(
+		                                                           artifact.getGroupId(), artifact.getArtifactId(), artifact
+		                                                           .getVersion(), artifact.getType(), locale);
+		        
+		        resolveArtifact( localeArtifact, resolver, localRepository, resouceBundles );
+		        resouceBundles.add( localeArtifact.getFile() );
+            }
+		    
 		}
 		return resouceBundles.toArray(new File[resouceBundles.size()]);
 	}
@@ -1421,11 +1448,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		List<File> files = new ArrayList<File>();
 		for (Artifact a : getDependencyArtifacts(scope)) {
+		    if("playerglobal".equals( a.getArtifactId() )) {
+		        continue;
+		    }
 			// https://bugs.adobe.com/jira/browse/SDK-15073
 			// Workaround begin
-			files.add(MavenUtils.getArtifactFile(a, scope, build));
+		    // files.add(MavenUtils.getArtifactFile(a, scope, build));
 			// Workaround end
-			// files.add(a.getFile());
+			 files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);
 	}
