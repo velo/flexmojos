@@ -33,21 +33,4 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>ja_JP</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>rpc</artifactId>
-			<version>3.0.0.477</version>
-			<type>resource-bundle</type>
-			<classifier>ja_JP</classifier>
-		</dependency>
-	</dependencies>
-
 </project>

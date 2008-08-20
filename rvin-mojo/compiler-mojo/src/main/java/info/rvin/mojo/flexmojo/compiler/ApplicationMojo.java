@@ -198,6 +198,7 @@ public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
 		ArrayList<File> internal = new ArrayList<File>();
 		ArrayList<File> merged = new ArrayList<File>();
 
+		external.addAll(asList(getPlayerglobal()));
 		external.addAll(asList(getDependenciesPath("external")));
 		external.addAll(asList(getDependenciesPath("rsl")));
 

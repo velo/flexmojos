@@ -21,6 +21,9 @@
 				<extensions>true</extensions>
 				<configuration>
 					<targetPlayer>10.0.0</targetPlayer>
+					<locales>
+						<locale>en_US</locale>
+					</locales>
 					<namespaces>
 						<namespace>
 							<uri>library:adobe/flex/gumbo</uri>
@@ -47,8 +50,9 @@
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
-						<artifactId>flex-compiler-oem</artifactId>
+						<artifactId>compiler</artifactId>
 						<version>4.0.0.2480</version>
+						<type>pom</type>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -57,30 +61,16 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>4.0.0.2480</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
 			<artifactId>playerglobal</artifactId>
-			<version>4.0.0.2480</version>
+			<version>10-4.0.0.2480</version>
 			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>4.0.0.2480</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>flex4</artifactId>
-			<version>4.0.0.2480</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
-			<artifactId>framework</artifactId>
-			<version>4.0.0.2480</version>
-			<type>resource-bundle</type>
-			<classifier>en_US</classifier>
 		</dependency>
 	</dependencies>
 
