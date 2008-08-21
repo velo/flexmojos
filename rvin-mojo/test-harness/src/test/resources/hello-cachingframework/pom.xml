@@ -25,6 +25,7 @@
 						<rsl>{artifactId}-{version}.{extension}</rsl>
 					</rslUrls>
 					<targetPlayer>9.0.124</targetPlayer>
+                    <keepGeneratedActionscript>true</keepGeneratedActionscript>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -32,7 +33,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
+			<groupId>com.adobe.flex.framework</groupId>
 			<artifactId>framework</artifactId>
 			<version>3.0.0.477</version>
 			<type>swc</type>
