@@ -1005,7 +1005,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 	 */
 	protected void configure() throws MojoExecutionException {
 		configuration.setExternalLibraryPath(getDependenciesPath("external"));
-		configuration.addExternalLibraryPath(getPlayerglobal());
+		configuration.addExternalLibraryPath(getGlobalDependency());
 
 		configuration.includeLibraries(getDependenciesPath("internal"));
 
@@ -1231,17 +1231,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 		configuration.enableDigestVerification(verifyDigests);
 	}
 
-	protected File[] getPlayerglobal() throws MojoExecutionException {
+	protected File[] getGlobalDependency() throws MojoExecutionException {
         Set<Artifact> dependencies = getDependencyArtifacts();
         for ( Artifact artifact : dependencies )
         {
-            if ( "playerglobal".equals( artifact.getArtifactId() ) )
+            if ( "playerglobal".equals( artifact.getArtifactId() ) || //
+                            "airglobal".equals( artifact.getArtifactId() ) )
             {
                 return new File[]{MavenUtils.getArtifactFile( artifact,  build )};
             }
         }
 
-        throw new MojoExecutionException("Player global dependency not found.");
+        throw new MojoExecutionException("Player/Air Global dependency not found.");
 	}
 
     /**
@@ -1448,13 +1449,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder> extends
 
 		List<File> files = new ArrayList<File>();
 		for (Artifact a : getDependencyArtifacts(scope)) {
-		    if("playerglobal".equals( a.getArtifactId() )) {
+		    if("playerglobal".equals( a.getArtifactId()) ||//
+                     "airglobal".equals( a.getArtifactId())) {
 		        continue;
 		    }
-			// https://bugs.adobe.com/jira/browse/SDK-15073
-			// Workaround begin
-		    // files.add(MavenUtils.getArtifactFile(a, scope, build));
-			// Workaround end
 			 files.add(a.getFile());
 		}
 		return files.toArray(new File[files.size()]);

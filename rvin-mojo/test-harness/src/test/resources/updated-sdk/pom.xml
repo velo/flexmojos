@@ -23,13 +23,23 @@
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
-						<artifactId>flex-compiler-oem</artifactId>
+						<artifactId>compiler</artifactId>
 						<version>3.0.1.1092</version>
+						<type>pom</type>
 					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>3.0.1.1092</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
 
 	<repositories>
 		<repository>
