@@ -22,10 +22,9 @@
 	<properties>
 		<commons_io.version>1.4</commons_io.version>
 		<dom4j.version>1.6.1</dom4j.version>
-		<flex.sdk.version>3.0.0.477</flex.sdk.version>
+		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
 		<jaxen.version>1.1-beta-6</jaxen.version>
 		<maven.version>2.0.7</maven.version>
-		<testng.version>5.7</testng.version>
 	</properties>
 
 	<build>
@@ -217,13 +216,6 @@
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-project</artifactId>
 				<version>${maven.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.testng</groupId>
-				<artifactId>testng</artifactId>
-				<version>${testng.version}</version>
-				<scope>test</scope>
-				<classifier>jdk15</classifier>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>
