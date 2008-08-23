@@ -247,13 +247,13 @@ public abstract class AbstractInstallMojo
         // create resource-bundle beacon
         installResourceBundleBeacon( swcLocalesFolder, swcArtifacts );
 
-        File[] locales = swcLocalesFolder.listFiles(new FileFilter()
+        File[] locales = swcLocalesFolder.listFiles( new FileFilter()
         {
             public boolean accept( File pathname )
             {
                 return pathname.isDirectory();
             }
-        });
+        } );
         for ( File localeFolder : locales )
         {
             Collection<File> localeSwcs = listFiles( localeFolder, SWCS, true );

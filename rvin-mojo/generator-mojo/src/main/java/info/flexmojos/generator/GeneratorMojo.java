@@ -43,263 +43,300 @@ import org.granite.generator.as3.JavaFileGenerationUnit;
 
 /**
  * Goal which touches a timestamp file.
- *
+ * 
  * @goal generate
  * @phase generate-sources
  * @requiresDependencyResolution
  */
-public class GeneratorMojo extends AbstractMojo {
+public class GeneratorMojo
+    extends AbstractMojo
+{
 
-	/**
-	 * The maven project.
-	 *
-	 * @parameter expression="${project}"
-	 * @required
-	 * @readonly
-	 */
-	protected MavenProject project;
+    /**
+     * The maven project.
+     * 
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
 
-	/**
-	 * File to generate as3 file.
-	 *
-	 * If not defined assumes all classes must be included
-	 *
-	 * @parameter
-	 */
-	private String[] includeClasses;
+    /**
+     * File to generate as3 file. If not defined assumes all classes must be included
+     * 
+     * @parameter
+     */
+    private String[] includeClasses;
 
-	/**
-	 * File to exclude from as3 generation.
-	 *
-	 * If not defined, assumes no exclusions
-	 *
-	 * @parameter
-	 */
-	private String[] excludeClasses;
+    /**
+     * File to exclude from as3 generation. If not defined, assumes no exclusions
+     * 
+     * @parameter
+     */
+    private String[] excludeClasses;
 
-	/**
-	 * @parameter expression="${project.build}"
-	 * @required
-	 * @readonly
-	 */
-	protected Build build;
+    /**
+     * @parameter expression="${project.build}"
+     * @required
+     * @readonly
+     */
+    protected Build build;
 
-	/**
-	 * Defines the default as3 generation style to use.
-	 *
-	 * Valid values: <tt>granite-gas3</tt>
-	 *
-	 * @parameter default-value="granite-gas3"
-	 */
-	private String style;
+    /**
+     * Defines the default as3 generation style to use. Valid values: <tt>granite-gas3</tt>
+     * 
+     * @parameter default-value="granite-gas3"
+     */
+    private String style;
 
-	/**
-	 * @parameter
-	 *            default-value="${project.build.directory}/generated-sources/flex-mojos"
-	 */
-	private File outputDirectory;
+    /**
+     * @parameter default-value="${project.build.directory}/generated-sources/flex-mojos"
+     */
+    private File outputDirectory;
 
-	/**
-	 * @parameter
-	 */
-	private File baseOutputDirectory;
+    /**
+     * @parameter
+     */
+    private File baseOutputDirectory;
 
-	/**
-	 * @parameter
-	 */
-	private String uid = "uid";
+    /**
+     * @parameter
+     */
+    private String uid = "uid";
 
-	/**
-	 * @parameter
-	 */
-	private String[] entityTemplate;
+    /**
+     * @parameter
+     */
+    private String[] entityTemplate;
 
-	/**
-	 * @parameter
-	 */
-	private String[] interfaceTemplate;
+    /**
+     * @parameter
+     */
+    private String[] interfaceTemplate;
 
-	/**
-	 * @parameter
-	 */
-	private String[] beanTemplate;
+    /**
+     * @parameter
+     */
+    private String[] beanTemplate;
 
-	/**
-	 * @parameter
-	 */
-	private String[] enumTemplate;
+    /**
+     * @parameter
+     */
+    private String[] enumTemplate;
 
-	/**
-	 * @parameter default-value="false"
-	 */
-	private boolean useTransitiveDependencies;
+    /**
+     * @parameter default-value="false"
+     */
+    private boolean useTransitiveDependencies;
 
-	/**
-	 * @parameter
-	 */
-	private String[] typeMappings;
+    /**
+     * @parameter
+     */
+    private String[] typeMappings;
 
-	public void execute() throws MojoExecutionException {
-		setUp();
+    public void execute()
+        throws MojoExecutionException
+    {
+        setUp();
 
-		List<File> jarDependencies = getJarDependencies();
-		if (jarDependencies.isEmpty()) {
-			getLog().warn("No jar dependencies found.");
-			return;
-		}
+        List<File> jarDependencies = getJarDependencies();
+        if ( jarDependencies.isEmpty() )
+        {
+            getLog().warn( "No jar dependencies found." );
+            return;
+        }
 
-		Collection<String> classes;
-		try {
-			classes = getClasses(jarDependencies);
-		} catch (IOException e) {
-			throw new MojoExecutionException("Error on classes resolve", e);
-		}
+        Collection<String> classes;
+        try
+        {
+            classes = getClasses( jarDependencies );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error on classes resolve", e );
+        }
 
-		URLClassLoader loader;
-		try {
-			loader = URLClassLoader.newInstance(getUrls(jarDependencies));
-		} catch (MalformedURLException e) {
-			throw new MojoExecutionException("Unable to get dependency URL", e);
-		}
+        URLClassLoader loader;
+        try
+        {
+            loader = URLClassLoader.newInstance( getUrls( jarDependencies ) );
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new MojoExecutionException( "Unable to get dependency URL", e );
+        }
 
-		Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> generator = getGenerator(loader);
+        Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> generator =
+            getGenerator( loader );
 
-		int count = 0;
-		for (String className : classes) {
-			Class<?> clazz = null;
-			try {
-				clazz = loader.loadClass(className);
-				count += generator.generate(clazz);
-			} catch (Exception e) {
-				getLog().warn(
-						"Could not generate AS3 beans for: '" + clazz + "'", e);
-			}
-		}
-		getLog().info(count + " files generated.");
-	}
+        int count = 0;
+        for ( String className : classes )
+        {
+            Class<?> clazz = null;
+            try
+            {
+                clazz = loader.loadClass( className );
+                count += generator.generate( clazz );
+            }
+            catch ( Exception e )
+            {
+                getLog().warn( "Could not generate AS3 beans for: '" + clazz + "'", e );
+            }
+        }
+        getLog().info( count + " files generated." );
+    }
 
-	private URL[] getUrls(List<File> jarDependencies)
-			throws MalformedURLException {
-		URL[] urls = new URL[jarDependencies.size()];
-		for (int i = 0; i < jarDependencies.size(); i++) {
-			urls[i] = jarDependencies.get(i).toURL();
-		}
-		return urls;
-	}
+    private URL[] getUrls( List<File> jarDependencies )
+        throws MalformedURLException
+    {
+        URL[] urls = new URL[jarDependencies.size()];
+        for ( int i = 0; i < jarDependencies.size(); i++ )
+        {
+            urls[i] = jarDependencies.get( i ).toURL();
+        }
+        return urls;
+    }
 
-	@SuppressWarnings("unchecked")
-	private List<File> getJarDependencies() {
-		List<File> jarDependencies = new ArrayList<File>();
-		final Collection<Artifact> artifacts;
-		if (useTransitiveDependencies) {
-			artifacts = project.getArtifacts();
-		} else {
-			artifacts = project.getDependencyArtifacts();
-		}
-		for (Artifact artifact : artifacts) {
-			if ("jar".equals(artifact.getType())) {
-				File file = artifact.getFile();
-				if (file != null && file.exists()) {
-					jarDependencies.add(file);
-				} else {
-					getLog().warn("Dependency file not found: " + artifact);
-				}
-			}
-		}
-		return jarDependencies;
-	}
+    @SuppressWarnings( "unchecked" )
+    private List<File> getJarDependencies()
+    {
+        List<File> jarDependencies = new ArrayList<File>();
+        final Collection<Artifact> artifacts;
+        if ( useTransitiveDependencies )
+        {
+            artifacts = project.getArtifacts();
+        }
+        else
+        {
+            artifacts = project.getDependencyArtifacts();
+        }
+        for ( Artifact artifact : artifacts )
+        {
+            if ( "jar".equals( artifact.getType() ) )
+            {
+                File file = artifact.getFile();
+                if ( file != null && file.exists() )
+                {
+                    jarDependencies.add( file );
+                }
+                else
+                {
+                    getLog().warn( "Dependency file not found: " + artifact );
+                }
+            }
+        }
+        return jarDependencies;
+    }
 
-	private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator(
-			ClassLoader loader) throws MojoExecutionException {
+    private Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> getGenerator(
+                                                                                                                        ClassLoader loader )
+        throws MojoExecutionException
+    {
 
-		GenerationListener<JavaFileGenerationUnit> listener = new Gas3Listener(
-				getLog());
+        GenerationListener<JavaFileGenerationUnit> listener = new Gas3Listener( getLog() );
 
-		JavaAs3GenerationConfiguration configuration = new JavaAs3GenerationConfiguration(
-				listener, new Gas3TypeFactory(loader, typeMappings, getLog()),
-				outputDirectory.getPath(), baseOutputDirectory.getPath(), uid,
-				null, get0(entityTemplate), get1(entityTemplate),
-				get0(interfaceTemplate), get1(interfaceTemplate),
-				get0(beanTemplate), get1(beanTemplate), get0(enumTemplate),
-				false);
+        JavaAs3GenerationConfiguration configuration =
+            new JavaAs3GenerationConfiguration( listener, new Gas3TypeFactory( loader, typeMappings, getLog() ),
+                                                outputDirectory.getPath(), baseOutputDirectory.getPath(), uid, null,
+                                                get0( entityTemplate ), get1( entityTemplate ),
+                                                get0( interfaceTemplate ), get1( interfaceTemplate ),
+                                                get0( beanTemplate ), get1( beanTemplate ), get0( enumTemplate ), false );
 
-		GenerationController<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> controller = new Gas3Controller(
-				configuration);
+        GenerationController<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration> controller =
+            new Gas3Controller( configuration );
 
-		return new Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration>(
-				controller, listener);
+        return new Generator<Class<?>, JavaFileGenerationUnit, As3TemplatesType, JavaAs3GenerationConfiguration>(
+                                                                                                                  controller,
+                                                                                                                  listener );
 
-	}
+    }
 
-	private List<String> getClasses(List<File> jarDependencies)
-			throws IOException {
-		List<String> classes = new ArrayList<String>();
-		for (File file : jarDependencies) {
-			JarInputStream jar = new JarInputStream(new FileInputStream(file));
+    private List<String> getClasses( List<File> jarDependencies )
+        throws IOException
+    {
+        List<String> classes = new ArrayList<String>();
+        for ( File file : jarDependencies )
+        {
+            JarInputStream jar = new JarInputStream( new FileInputStream( file ) );
 
-			JarEntry jarEntry;
-			while (true) {
-				jarEntry = jar.getNextJarEntry();
+            JarEntry jarEntry;
+            while ( true )
+            {
+                jarEntry = jar.getNextJarEntry();
 
-				if (jarEntry == null) {
-					break;
-				}
+                if ( jarEntry == null )
+                {
+                    break;
+                }
 
-				String className = jarEntry.getName();
+                String className = jarEntry.getName();
 
-				if (jarEntry.isDirectory() || !className.endsWith(".class")) {
-					continue;
-				}
+                if ( jarEntry.isDirectory() || !className.endsWith( ".class" ) )
+                {
+                    continue;
+                }
 
-				className = className.replace('/', '.');
-				className = className.substring(0, className.length() - 6);
+                className = className.replace( '/', '.' );
+                className = className.substring( 0, className.length() - 6 );
 
-				if (matchWildCard(className, includeClasses)
-						&& !matchWildCard(className, excludeClasses)) {
-					classes.add(className);
-				}
-			}
-		}
+                if ( matchWildCard( className, includeClasses ) && !matchWildCard( className, excludeClasses ) )
+                {
+                    classes.add( className );
+                }
+            }
+        }
 
-		return classes;
-	}
+        return classes;
+    }
 
-	private boolean matchWildCard(String className, String[] wildCards) {
-		if (wildCards == null) {
-			return false;
-		}
+    private boolean matchWildCard( String className, String[] wildCards )
+    {
+        if ( wildCards == null )
+        {
+            return false;
+        }
 
-		for (String wildCard : wildCards) {
-			if (FilenameUtils.wildcardMatch(className, wildCard))
-				return true;
-		}
+        for ( String wildCard : wildCards )
+        {
+            if ( FilenameUtils.wildcardMatch( className, wildCard ) )
+                return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private void setUp() throws MojoExecutionException {
-		if (includeClasses == null) {
-			includeClasses = new String[] { "*" };
-		}
+    private void setUp()
+        throws MojoExecutionException
+    {
+        if ( includeClasses == null )
+        {
+            includeClasses = new String[] { "*" };
+        }
 
-		if (!outputDirectory.exists()) {
-			outputDirectory.mkdirs();
-		}
+        if ( !outputDirectory.exists() )
+        {
+            outputDirectory.mkdirs();
+        }
 
-		if (baseOutputDirectory == null) {
-			baseOutputDirectory = outputDirectory;
-		} else if (!baseOutputDirectory.exists()) {
-			baseOutputDirectory.mkdirs();
-		}
+        if ( baseOutputDirectory == null )
+        {
+            baseOutputDirectory = outputDirectory;
+        }
+        else if ( !baseOutputDirectory.exists() )
+        {
+            baseOutputDirectory.mkdirs();
+        }
 
-	}
+    }
 
-	private String get0(String[] a) {
-		return a == null ? null : (a.length < 1 ? null : a[0]);
-	}
+    private String get0( String[] a )
+    {
+        return a == null ? null : ( a.length < 1 ? null : a[0] );
+    }
 
-	private String get1(String[] a) {
-		return a == null ? null : (a.length < 2 ? null : a[1]);
-	}
+    private String get1( String[] a )
+    {
+        return a == null ? null : ( a.length < 2 ? null : a[1] );
+    }
 
 }

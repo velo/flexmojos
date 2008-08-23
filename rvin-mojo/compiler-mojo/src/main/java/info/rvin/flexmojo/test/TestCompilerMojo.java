@@ -27,213 +27,238 @@ import org.apache.maven.plugin.MojoFailureException;
  * @requiresDependencyResolution
  * @phase test
  */
-public class TestCompilerMojo extends ApplicationMojo {
+public class TestCompilerMojo
+    extends ApplicationMojo
+{
 
-	/**
-	 * Set this to 'true' to bypass unit tests entirely. Its use is NOT
-	 * RECOMMENDED, but quite convenient on occasion.
-	 * 
-	 * @parameter expression="${maven.test.skip}"
-	 */
-	private boolean skipTests;
+    /**
+     * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * 
+     * @parameter expression="${maven.test.skip}"
+     */
+    private boolean skipTests;
 
-	/**
-	 * @parameter
-	 */
-	private File testRunnerTemplate;
+    /**
+     * @parameter
+     */
+    private File testRunnerTemplate;
 
-	/**
-	 * File to be tested.
-	 * 
-	 * If not defined assumes Test*.as and *Test.as
-	 * 
-	 * @parameter
-	 */
-	private String[] includeTestFiles;
+    /**
+     * File to be tested. If not defined assumes Test*.as and *Test.as
+     * 
+     * @parameter
+     */
+    private String[] includeTestFiles;
 
-	/**
-	 * Files to exclude from testing.
-	 * 
-	 * If not defined, assumes no exclusions
-	 * 
-	 * @parameter
-	 */
-	private String[] excludeTestFiles;
-	
-	private List<String> testClasses;
+    /**
+     * Files to exclude from testing. If not defined, assumes no exclusions
+     * 
+     * @parameter
+     */
+    private String[] excludeTestFiles;
 
-	private File testFolder;
+    private List<String> testClasses;
 
-	/**
-	 * Socket connect port for flex/java communication
-	 * 
-	 * @parameter default-value="3539"
-	 */
-	private int testPort;
+    private File testFolder;
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		testFolder = new File(build.getTestSourceDirectory());
-		
-		if (skipTests) {
-			getLog().warn("Skipping test phase.");
-			return;
-		} else if (!testFolder.exists()) {
-			getLog().warn("Test folder not found" + testFolder);
-			return;
-		}
-		
-		setUp();
-		
-		if (testClasses == null || testClasses.isEmpty()) {
-			getLog().warn("No test classes found for pattern: " + includeTestFiles);
-		} else {
-			run();
-			tearDown();
-		}
-	}
-	
-	@Override
-	public void setUp() throws MojoExecutionException, MojoFailureException {
-		isSetProjectFile = false;
-		
-		if (includeTestFiles == null) {
-			includeTestFiles = new String[] { "Test*.as", "*Test.as" };
-		}
+    /**
+     * Socket connect port for flex/java communication
+     * 
+     * @parameter default-value="3539"
+     */
+    private int testPort;
 
-		File outputFolder = new File(build.getTestOutputDirectory());
-		if (!outputFolder.exists()) {
-			outputFolder.mkdirs();
-		}
+    @Override
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        testFolder = new File( build.getTestSourceDirectory() );
 
-		testClasses = getTestClasses();
+        if ( skipTests )
+        {
+            getLog().warn( "Skipping test phase." );
+            return;
+        }
+        else if ( !testFolder.exists() )
+        {
+            getLog().warn( "Test folder not found" + testFolder );
+            return;
+        }
 
-		File testSourceFile;
-		try {
-			testSourceFile = generateTester(testClasses);
-		} catch (Exception e) {
-			throw new MojoExecutionException(
-					"Unable to generate tester class.", e);
-		}
+        setUp();
 
-		sourceFile = null;
-		source = testSourceFile;
+        if ( testClasses == null || testClasses.isEmpty() )
+        {
+            getLog().warn( "No test classes found for pattern: " + includeTestFiles );
+        }
+        else
+        {
+            run();
+            tearDown();
+        }
+    }
 
-		outputFile = new File(build.getTestOutputDirectory(), "TestRunner.swf");
+    @Override
+    public void setUp()
+        throws MojoExecutionException, MojoFailureException
+    {
+        isSetProjectFile = false;
 
-		super.setUp();
-	}
+        if ( includeTestFiles == null )
+        {
+            includeTestFiles = new String[] { "Test*.as", "*Test.as" };
+        }
 
-	@SuppressWarnings("unchecked")
-	private List<String> getTestClasses() {
-		Collection<File> testFiles = FileUtils.listFiles(testFolder,
-				new WildcardFileFilter(includeTestFiles),
-				DirectoryFileFilter.DIRECTORY);
+        File outputFolder = new File( build.getTestOutputDirectory() );
+        if ( !outputFolder.exists() )
+        {
+            outputFolder.mkdirs();
+        }
 
-		if (excludeTestFiles != null && excludeTestFiles.length > 0) {
-			getLog().debug("excludeTestFiles: "+Arrays.asList(excludeTestFiles));
-			Collection<File> excludedTestFiles = FileUtils.listFiles(testFolder,
-				new WildcardFileFilter(excludeTestFiles),
-				DirectoryFileFilter.DIRECTORY);
-			testFiles.removeAll(excludedTestFiles);
-		}
+        testClasses = getTestClasses();
 
-		List<String> testClasses = new ArrayList<String>();
+        File testSourceFile;
+        try
+        {
+            testSourceFile = generateTester( testClasses );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to generate tester class.", e );
+        }
 
-		int trimPoint = testFolder.getAbsolutePath().length() + 1;
+        sourceFile = null;
+        source = testSourceFile;
 
-		for (File testFile : testFiles) {
-			String testClass = testFile.getAbsolutePath();
-			int endPoint = testClass.lastIndexOf('.');
-			testClass = testClass.substring(trimPoint, endPoint);
-			testClass = testClass.replace('/', '.'); // Unix OS
-			testClass = testClass.replace('\\', '.'); // Windows OS
-			testClasses.add(testClass);
-		}
-		getLog().debug("testClasses: "+testClasses);
-		return testClasses;
-	}
+        outputFile = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
 
-	private File generateTester(List<String> testClasses) throws Exception {
-		// can't use velocity, got:
-		// java.io.InvalidClassException:
-		// org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for
-		// deserialization
+        super.setUp();
+    }
 
-		StringBuilder imports = new StringBuilder();
+    @SuppressWarnings( "unchecked" )
+    private List<String> getTestClasses()
+    {
+        Collection<File> testFiles =
+            FileUtils.listFiles( testFolder, new WildcardFileFilter( includeTestFiles ), DirectoryFileFilter.DIRECTORY );
 
-		for (String testClass : testClasses) {
-			imports.append("import ");
-			imports.append(testClass);
-			imports.append(";");
-			imports.append('\n');
-		}
+        if ( excludeTestFiles != null && excludeTestFiles.length > 0 )
+        {
+            getLog().debug( "excludeTestFiles: " + Arrays.asList( excludeTestFiles ) );
+            Collection<File> excludedTestFiles =
+                FileUtils.listFiles( testFolder, new WildcardFileFilter( excludeTestFiles ),
+                                     DirectoryFileFilter.DIRECTORY );
+            testFiles.removeAll( excludedTestFiles );
+        }
 
-		StringBuilder classes = new StringBuilder();
+        List<String> testClasses = new ArrayList<String>();
 
-		for (String testClass : testClasses) {
-			testClass = testClass.substring(testClass.lastIndexOf('.') + 1);
-			classes.append("testSuite.addTest( new TestSuite(");
-			classes.append(testClass);
-			classes.append(") );");
-			classes.append('\n');
-		}
+        int trimPoint = testFolder.getAbsolutePath().length() + 1;
 
-		InputStream templateSource = getTemplate();
-		String sourceString = IOUtils.toString(templateSource);
-		sourceString = sourceString.replace("$imports", imports);
-		sourceString = sourceString.replace("$testClasses", classes);
-		sourceString = sourceString.replace("$port", String.valueOf(testPort));
-		File testSourceFile = new File(build.getTestOutputDirectory(),
-				"TestRunner.mxml");
-		FileWriter fileWriter = new FileWriter(testSourceFile);
-		IOUtils.write(sourceString, fileWriter);
-		fileWriter.flush();
-		fileWriter.close();
-		return testSourceFile;
-	}
+        for ( File testFile : testFiles )
+        {
+            String testClass = testFile.getAbsolutePath();
+            int endPoint = testClass.lastIndexOf( '.' );
+            testClass = testClass.substring( trimPoint, endPoint );
+            testClass = testClass.replace( '/', '.' ); // Unix OS
+            testClass = testClass.replace( '\\', '.' ); // Windows OS
+            testClasses.add( testClass );
+        }
+        getLog().debug( "testClasses: " + testClasses );
+        return testClasses;
+    }
 
-	private InputStream getTemplate() throws MojoExecutionException {
-		if (testRunnerTemplate == null) {
-			return getClass().getResourceAsStream("/test/TestRunner.vm");
-		} else if (!testRunnerTemplate.exists()) {
-			throw new MojoExecutionException("Template file not found: "
-					+ testRunnerTemplate);
-		} else {
-			try {
-				return new FileInputStream(testRunnerTemplate);
-			} catch (FileNotFoundException e) {
-				// Never should happen
-				throw new MojoExecutionException("Error reading template file",
-						e);
-			}
-		}
-	}
+    private File generateTester( List<String> testClasses )
+        throws Exception
+    {
+        // can't use velocity, got:
+        // java.io.InvalidClassException:
+        // org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for
+        // deserialization
 
-	@Override
-	protected void configure() throws MojoExecutionException {
-		super.configure();
+        StringBuilder imports = new StringBuilder();
 
-		// Remove all libraries
-		configuration.setExternalLibraryPath(getGlobalDependency());
-		configuration.setIncludes(null);
-		configuration.setRuntimeSharedLibraries(null);
+        for ( String testClass : testClasses )
+        {
+            imports.append( "import " );
+            imports.append( testClass );
+            imports.append( ";" );
+            imports.append( '\n' );
+        }
 
-		// Set all dependencies as merged
-		configuration.setLibraryPath(getDependenciesPath("compile"));
-		configuration.addLibraryPath(getDependenciesPath("merged"));
-		configuration.addLibraryPath(getDependenciesPath("external"));
-		configuration.addLibraryPath(getResourcesBundles());
-		configuration.addLibraryPath(getDependenciesPath("internal"));
-		configuration.addLibraryPath(getDependenciesPath("rsl"));
-		// and add test libraries
-		configuration.addLibraryPath(getDependenciesPath("test"));
+        StringBuilder classes = new StringBuilder();
 
-		configuration.addSourcePath(new File[] { new File(build
-				.getTestOutputDirectory()) });
-		configuration.addSourcePath(MavenUtils.getTestSourcePaths(build));
-		configuration.allowSourcePathOverlap(true);
+        for ( String testClass : testClasses )
+        {
+            testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
+            classes.append( "testSuite.addTest( new TestSuite(" );
+            classes.append( testClass );
+            classes.append( ") );" );
+            classes.append( '\n' );
+        }
 
-	}
+        InputStream templateSource = getTemplate();
+        String sourceString = IOUtils.toString( templateSource );
+        sourceString = sourceString.replace( "$imports", imports );
+        sourceString = sourceString.replace( "$testClasses", classes );
+        sourceString = sourceString.replace( "$port", String.valueOf( testPort ) );
+        File testSourceFile = new File( build.getTestOutputDirectory(), "TestRunner.mxml" );
+        FileWriter fileWriter = new FileWriter( testSourceFile );
+        IOUtils.write( sourceString, fileWriter );
+        fileWriter.flush();
+        fileWriter.close();
+        return testSourceFile;
+    }
+
+    private InputStream getTemplate()
+        throws MojoExecutionException
+    {
+        if ( testRunnerTemplate == null )
+        {
+            return getClass().getResourceAsStream( "/test/TestRunner.vm" );
+        }
+        else if ( !testRunnerTemplate.exists() )
+        {
+            throw new MojoExecutionException( "Template file not found: " + testRunnerTemplate );
+        }
+        else
+        {
+            try
+            {
+                return new FileInputStream( testRunnerTemplate );
+            }
+            catch ( FileNotFoundException e )
+            {
+                // Never should happen
+                throw new MojoExecutionException( "Error reading template file", e );
+            }
+        }
+    }
+
+    @Override
+    protected void configure()
+        throws MojoExecutionException
+    {
+        super.configure();
+
+        // Remove all libraries
+        configuration.setExternalLibraryPath( getGlobalDependency() );
+        configuration.setIncludes( null );
+        configuration.setRuntimeSharedLibraries( null );
+
+        // Set all dependencies as merged
+        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
+        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
+        configuration.addLibraryPath( getDependenciesPath( "external" ) );
+        configuration.addLibraryPath( getResourcesBundles() );
+        configuration.addLibraryPath( getDependenciesPath( "internal" ) );
+        configuration.addLibraryPath( getDependenciesPath( "rsl" ) );
+        // and add test libraries
+        configuration.addLibraryPath( getDependenciesPath( "test" ) );
+
+        configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
+        configuration.addSourcePath( MavenUtils.getTestSourcePaths( build ) );
+        configuration.allowSourcePathOverlap( true );
+
+    }
 
 }
