@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>mojo</artifactId>
+        <version>2.0-alpha5-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>flexcover-mojo</artifactId>
+
+	<packaging>maven-plugin</packaging>
+	<version>1.0-alpha1-SNAPSHOT</version>
+
+	<name>FlexCover Maven Mojo</name>
+	<description>
+		With this maven plugin Flex3/AS3 sources can be compiled into
+		a SWC or SWF package.
+	</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.ops4j</groupId>
+				<artifactId>maven-inherit-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>inherit</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  	<pluginRepositories>
+		<pluginRepository>
+			<id>ops4j.releases</id>
+			<url>http://repository.ops4j.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>util</artifactId>
+            <version>2.0-alpha5-SNAPSHOT</version>
+		</dependency>
+        <dependency>
+            <groupId>com.adobe.flex</groupId>
+            <artifactId>compiler</artifactId>
+            <type>pom</type>
+        </dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+		<!--
+		<dependency>
+			<groupId>com.allurent.coverage.flex</groupId>
+			<artifactId>swfdump</artifactId>
+			<version>3.0.1.1092</version>
+		</dependency>
+		<dependency>
+			<groupId>com.allurent.coverage.flex</groupId>
+			<artifactId>swfutils</artifactId>
+			<version>3.0.1.1092</version>
+		</dependency>
+	  -->
+	  <dependency>
+	      <groupId>info.flex-mojos</groupId>
+	      <artifactId>flex-compiler-mojo</artifactId>
+	      <version>2.0-alpha5-SNAPSHOT</version>
+    </dependency>
+		<dependency>
+			<groupId>org.apache.maven.reporting</groupId>
+			<artifactId>maven-reporting-impl</artifactId>
+		</dependency>
+  </dependencies>
+</project>

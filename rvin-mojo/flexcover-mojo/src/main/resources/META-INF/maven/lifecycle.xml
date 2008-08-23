@@ -1,0 +1,26 @@
+<lifecycles>
+  <lifecycle>
+    <id>flexcover</id>
+    <phases>
+      <phase>
+        <id>process-classes</id>
+        <executions>
+          <execution>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </phase>
+      <phase>
+        <id>test</id>
+        <configuration>
+          <classesDirectory>${project.build.directory}/generated-classes/flexcover</classesDirectory>
+          <testFailureIgnore>true</testFailureIgnore>
+          <forkMode>once</forkMode>
+        </configuration>
+      </phase>
+    </phases>
+  </lifecycle>
+</lifecycles>
+
