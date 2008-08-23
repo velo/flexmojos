@@ -2,29 +2,35 @@ package info.rvin.mojo.flexmojo.compiler;
 
 import java.io.File;
 
-public class Namespace {
+public class Namespace
+{
 
-	private String uri;
+    private String uri;
 
-	private File manifest;
+    private File manifest;
 
-	public Namespace() {
-		super();
-	}
+    public Namespace()
+    {
+        super();
+    }
 
-	public String getUri() {
-		return uri;
-	}
+    public String getUri()
+    {
+        return uri;
+    }
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
+    public void setUri( String uri )
+    {
+        this.uri = uri;
+    }
 
-	public File getManifest() {
-		return manifest;
-	}
+    public File getManifest()
+    {
+        return manifest;
+    }
 
-	public void setManifest(File manifest) {
-		this.manifest = manifest;
-	}
+    public void setManifest( File manifest )
+    {
+        this.manifest = manifest;
+    }
 }

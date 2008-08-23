@@ -21,17 +21,16 @@ public class SDKDeployMojo
 {
 
     /**
-     * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml
-     * In most cases, this parameter will be required for authentication.
-     *
+     * Server Id to map on the &lt;id&gt; under &lt;server&gt; section of settings.xml In most cases, this parameter
+     * will be required for authentication.
+     * 
      * @parameter expression="${repositoryId}" default-value="remote-repository"
      * @required
      */
     private String repositoryId;
 
     /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for 
-     * a Maven 1.x-style repository layout.
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
      * 
      * @parameter expression="${repositoryLayout}" default-value="default"
      * @required
@@ -40,16 +39,15 @@ public class SDKDeployMojo
 
     /**
      * Map that contains the layouts
-     *
+     * 
      * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     private Map repositoryLayouts;
 
     /**
-     * URL where the artifact will be deployed. <br/>
-     * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
-     *
+     * URL where the artifact will be deployed. <br/> ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
+     * 
      * @parameter expression="${url}"
      * @required
      */
@@ -57,11 +55,11 @@ public class SDKDeployMojo
 
     /**
      * Whether to deploy snapshots with a unique version or not.
-     *
+     * 
      * @parameter expression="${uniqueVersion}" default-value="true"
      */
     private boolean uniqueVersion;
-    
+
     /**
      * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
      * @required
@@ -83,15 +81,13 @@ public class SDKDeployMojo
      */
     private ArtifactRepositoryFactory repositoryFactory;
 
-
     @Override
     public void installArtifact( File file, Artifact artifact )
     {
         ArtifactRepositoryLayout layout;
 
-        layout = ( ArtifactRepositoryLayout ) repositoryLayouts.get( repositoryLayout );
+        layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
 
-        
         ArtifactRepository deploymentRepository =
             repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
 

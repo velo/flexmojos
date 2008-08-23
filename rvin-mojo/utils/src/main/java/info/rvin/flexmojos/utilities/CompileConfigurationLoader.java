@@ -9,75 +9,79 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
- * TODO delete when this issue is done
- * http://jira.codehaus.org/browse/MECLIPSE-417
- *
+ * TODO delete when this issue is done http://jira.codehaus.org/browse/MECLIPSE-417
+ * 
  * @author velo
  */
-public class CompileConfigurationLoader {
+public class CompileConfigurationLoader
+{
 
-	public static String getCompilerPluginSetting(MavenProject project,
-			String optionName) {
-		Xpp3Dom value = getCompilerPluginConfiguration(project, optionName);
-		if (value == null) {
-			return null;
-		}
-		return value.getValue();
-	}
+    public static String getCompilerPluginSetting( MavenProject project, String optionName )
+    {
+        Xpp3Dom value = getCompilerPluginConfiguration( project, optionName );
+        if ( value == null )
+        {
+            return null;
+        }
+        return value.getValue();
+    }
 
-	@SuppressWarnings("unchecked")
-	public static Xpp3Dom getCompilerPluginConfiguration(MavenProject project,
-			String optionName) {
-		Xpp3Dom value = findCompilerPluginSettingInPlugins(project.getModel()
-				.getBuild().getPlugins(), optionName);
-		if (value == null
-				&& project.getModel().getBuild().getPluginManagement() != null) {
-			value = findCompilerPluginSettingInPlugins(project.getModel()
-					.getBuild().getPluginManagement().getPlugins(), optionName);
-		}
-		return value;
-	}
+    @SuppressWarnings( "unchecked" )
+    public static Xpp3Dom getCompilerPluginConfiguration( MavenProject project, String optionName )
+    {
+        Xpp3Dom value = findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPlugins(), optionName );
+        if ( value == null && project.getModel().getBuild().getPluginManagement() != null )
+        {
+            value =
+                findCompilerPluginSettingInPlugins( project.getModel().getBuild().getPluginManagement().getPlugins(),
+                                                    optionName );
+        }
+        return value;
+    }
 
-	/**
-	 * Returns a compiler plugin settings from a list of plugins .
-	 *
-	 * @param project
-	 *            maven project
-	 * @return option value (may be null)
-	 */
-	@SuppressWarnings("unchecked")
-	private static Xpp3Dom findCompilerPluginSettingInPlugins(
-			List<Plugin> plugins, String optionName) {
+    /**
+     * Returns a compiler plugin settings from a list of plugins .
+     * 
+     * @param project maven project
+     * @return option value (may be null)
+     */
+    @SuppressWarnings( "unchecked" )
+    private static Xpp3Dom findCompilerPluginSettingInPlugins( List<Plugin> plugins, String optionName )
+    {
 
-		for (Iterator<Plugin> it = plugins.iterator(); it.hasNext();) {
-			Plugin plugin = (Plugin) it.next();
+        for ( Iterator<Plugin> it = plugins.iterator(); it.hasNext(); )
+        {
+            Plugin plugin = (Plugin) it.next();
 
-			if (plugin.getArtifactId().equals("flex-compiler-mojo")) {
-				Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
+            if ( plugin.getArtifactId().equals( "flex-compiler-mojo" ) )
+            {
+                Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 
-				Xpp3Dom value = null;
-				// this is the default setting
-				if (o != null && o.getChild(optionName) != null) {
-					value = o.getChild(optionName);
-				}
+                Xpp3Dom value = null;
+                // this is the default setting
+                if ( o != null && o.getChild( optionName ) != null )
+                {
+                    value = o.getChild( optionName );
+                }
 
-				List<PluginExecution> executions = plugin.getExecutions();
+                List<PluginExecution> executions = plugin.getExecutions();
 
-				// a different source/target version can be configured for test
-				// sources compilation
-				for (Iterator<PluginExecution> iter = executions.iterator(); iter
-						.hasNext();) {
-					PluginExecution execution = (PluginExecution) iter.next();
-					o = (Xpp3Dom) execution.getConfiguration();
+                // a different source/target version can be configured for test
+                // sources compilation
+                for ( Iterator<PluginExecution> iter = executions.iterator(); iter.hasNext(); )
+                {
+                    PluginExecution execution = (PluginExecution) iter.next();
+                    o = (Xpp3Dom) execution.getConfiguration();
 
-					if (o != null && o.getChild(optionName) != null) {
-						value = o.getChild(optionName);
-					}
-				}
+                    if ( o != null && o.getChild( optionName ) != null )
+                    {
+                        value = o.getChild( optionName );
+                    }
+                }
 
-				return value;
-			}
-		}
-		return null;
-	}
+                return value;
+            }
+        }
+        return null;
+    }
 }

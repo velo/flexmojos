@@ -30,300 +30,318 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Goal which compiles the Flex sources into a library for either Flex or AIR
- * depending.
- *
+ * Goal which compiles the Flex sources into a library for either Flex or AIR depending.
+ * 
  * @goal compile-swc
  * @requiresDependencyResolution
  * @phase compile
  */
-public class LibraryMojo extends AbstractFlexCompilerMojo<Library> {
+public class LibraryMojo
+    extends AbstractFlexCompilerMojo<Library>
+{
 
-	/**
-	 * Enable or disable the computation of a digest for the created swf
-	 * library. This is equivalent to using the
-	 * <code>compiler.computDigest</code> in the compc compiler.
-	 *
-	 * @parameter default-value="true"
-	 */
-	private boolean computeDigest;
+    /**
+     * Enable or disable the computation of a digest for the created swf library. This is equivalent to using the
+     * <code>compiler.computDigest</code> in the compc compiler.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean computeDigest;
 
-	/**
-	 * This is the equilvalent of the <code>include-classes</code> option of the
-	 * compc compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeClasses&gt;
-	 *   &lt;class&gt;AClass&lt;/class&gt;
-	 *   &lt;class&gt;BClass&lt;/class&gt;
-	 * &lt;/includeClasses&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private String[] includeClasses;
+    /**
+     * This is the equilvalent of the <code>include-classes</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeClasses&gt;
+     *   &lt;class&gt;AClass&lt;/class&gt;
+     *   &lt;class&gt;BClass&lt;/class&gt;
+     * &lt;/includeClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] includeClasses;
 
-	/**
-	 * This is equilvalent to the <code>include-file</code> option of the compc
-	 * compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeFiles&gt;
-	 *   &lt;file&gt;${baseDir}/anyFile.txt&lt;/file&gt;
-	 * &lt;/includeFiles&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private File[] includeFiles;
+    /**
+     * This is equilvalent to the <code>include-file</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeFiles&gt;
+     *   &lt;file&gt;${baseDir}/anyFile.txt&lt;/file&gt;
+     * &lt;/includeFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] includeFiles;
 
-	/**
-	 * This is equilvalent to the <code>include-namespaces</code> option of the
-	 * compc compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeNamespaces&gt;
-	 *   &lt;namespace&gt;http://www.adobe.com/2006/mxml&lt;/namespace&gt;
-	 * &lt;/includeNamespaces&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private String[] includeNamespaces;
+    /**
+     * This is equilvalent to the <code>include-namespaces</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeNamespaces&gt;
+     *   &lt;namespace&gt;http://www.adobe.com/2006/mxml&lt;/namespace&gt;
+     * &lt;/includeNamespaces&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] includeNamespaces;
 
-	/**
-	 * This is equilvalent to the <code>include-resource-bundles</code> option
-	 * of the compc compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeResourceBundles&gt;
-	 *   &lt;bundle&gt;SharedResources&lt;/bundle&gt;
-	 *   &lt;bundle&gt;collections&lt;/bundle&gt;
-	 *   &lt;bundle&gt;containers&lt;/bundle&gt;
-	 * &lt;/includeResourceBundles&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private String[] includeResourceBundles;
+    /**
+     * This is equilvalent to the <code>include-resource-bundles</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;bundle&gt;SharedResources&lt;/bundle&gt;
+     *   &lt;bundle&gt;collections&lt;/bundle&gt;
+     *   &lt;bundle&gt;containers&lt;/bundle&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] includeResourceBundles;
 
-	/**
-	 * @parameter TODO check if is used/useful
-	 */
-	private MavenArtifact[] includeResourceBundlesArtifact;
+    /**
+     * @parameter TODO check if is used/useful
+     */
+    private MavenArtifact[] includeResourceBundlesArtifact;
 
-	/**
-	 * This is the equilvalent of the <code>include-sources</code> option of the
-	 * compc compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeSources&gt;
-	 *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
-	 * &lt;/includeSources&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	protected File[] includeSources;
+    /**
+     * This is the equilvalent of the <code>include-sources</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeSources&gt;
+     *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
+     * &lt;/includeSources&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected File[] includeSources;
 
-	/**
-	 * Sets the RSL output directory.
-	 *
-	 * @parameter
-	 */
-	private File directory;
+    /**
+     * Sets the RSL output directory.
+     * 
+     * @parameter
+     */
+    private File directory;
 
-	/*
-	 * TODO how to set this on flex-compiler-oem
-	 *
-	 * -include-lookup-only private boolean includeLookupOnly;
-	 */
+    /*
+     * TODO how to set this on flex-compiler-oem -include-lookup-only private boolean includeLookupOnly;
+     */
 
-	/**
-	 * Adds a CSS stylesheet to this <code>Library</code> object. This is
-	 * equilvalent to the <code>include-stylesheet</code> option of the compc
-	 * compiler.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;includeStylesheet&gt;
-	 *   &lt;stylesheet&gt;
-	 *     &lt;name&gt;style1&lt;/name&gt;
-	 *     &lt;path&gt;${baseDir}/src/main/flex/style1.css&lt;/path&gt;
-	 *   &lt;/stylesheet&gt;
-	 * &lt;/includeStylesheet&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private Stylesheet[] includeStylesheet;
+    /**
+     * Adds a CSS stylesheet to this <code>Library</code> object. This is equilvalent to the
+     * <code>include-stylesheet</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeStylesheet&gt;
+     *   &lt;stylesheet&gt;
+     *     &lt;name&gt;style1&lt;/name&gt;
+     *     &lt;path&gt;${baseDir}/src/main/flex/style1.css&lt;/path&gt;
+     *   &lt;/stylesheet&gt;
+     * &lt;/includeStylesheet&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Stylesheet[] includeStylesheet;
 
-	@Override
-	public void setUp() throws MojoExecutionException, MojoFailureException {
-		// need to initialize builder before go super
-		builder = new Library();
+    @Override
+    public void setUp()
+        throws MojoExecutionException, MojoFailureException
+    {
+        // need to initialize builder before go super
+        builder = new Library();
 
-		if (directory != null) {
-			builder.setDirectory(directory);
-		}
+        if ( directory != null )
+        {
+            builder.setDirectory( directory );
+        }
 
-		super.setUp();
+        super.setUp();
 
-		if (outputFile == null) {
-			if (output == null) {
-				outputFile = new File(build.getDirectory(), build
-						.getFinalName()
-						+ ".swc");
-			} else {
-				outputFile = new File(build.getDirectory(), output);
-			}
-		}
+        if ( outputFile == null )
+        {
+            if ( output == null )
+            {
+                outputFile = new File( build.getDirectory(), build.getFinalName() + ".swc" );
+            }
+            else
+            {
+                outputFile = new File( build.getDirectory(), output );
+            }
+        }
 
-		builder.setOutput(outputFile);
+        builder.setOutput( outputFile );
 
-		if (checkNullOrEmpty(includeClasses) && checkNullOrEmpty(includeFiles)
-				&& checkNullOrEmpty(includeNamespaces)
-				&& checkNullOrEmpty(includeResourceBundles)
-				&& checkNullOrEmpty(includeResourceBundlesArtifact)
-				&& checkNullOrEmpty(includeSources)
-				&& checkNullOrEmpty(includeStylesheet)) {
-			getLog().warn(
-					"Nothing expecified to include.  Assuming source folders.");
-			includeSources = sourcePaths.clone();
-		}
+        if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
+            && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeResourceBundles )
+            && checkNullOrEmpty( includeResourceBundlesArtifact ) && checkNullOrEmpty( includeSources )
+            && checkNullOrEmpty( includeStylesheet ) )
+        {
+            getLog().warn( "Nothing expecified to include.  Assuming source folders." );
+            includeSources = sourcePaths.clone();
+        }
 
-		if (!checkNullOrEmpty(includeClasses)) {
-			for (String asClass : includeClasses) {
-				builder.addComponent(asClass);
-			}
-		}
+        if ( !checkNullOrEmpty( includeClasses ) )
+        {
+            for ( String asClass : includeClasses )
+            {
+                builder.addComponent( asClass );
+            }
+        }
 
-		if (!checkNullOrEmpty(includeFiles)) {
-			for (File file : includeFiles) {
-				if (file == null) {
-					throw new MojoFailureException("Cannot include a null file");
-				}
-				if (!file.exists()) {
-					throw new MojoFailureException("File " + file.getName()
-							+ " not found");
-				}
-				builder.addArchiveFile(file.getName(), file);
-			}
-		}
+        if ( !checkNullOrEmpty( includeFiles ) )
+        {
+            for ( File file : includeFiles )
+            {
+                if ( file == null )
+                {
+                    throw new MojoFailureException( "Cannot include a null file" );
+                }
+                if ( !file.exists() )
+                {
+                    throw new MojoFailureException( "File " + file.getName() + " not found" );
+                }
+                builder.addArchiveFile( file.getName(), file );
+            }
+        }
 
-		if (!checkNullOrEmpty(includeNamespaces)) {
-			for (String uri : includeNamespaces) {
-				try {
-					builder.addComponent(new URI(uri));
-				} catch (URISyntaxException e) {
-					throw new MojoExecutionException("Invalid URI " + uri, e);
-				}
-			}
-		}
+        if ( !checkNullOrEmpty( includeNamespaces ) )
+        {
+            for ( String uri : includeNamespaces )
+            {
+                try
+                {
+                    builder.addComponent( new URI( uri ) );
+                }
+                catch ( URISyntaxException e )
+                {
+                    throw new MojoExecutionException( "Invalid URI " + uri, e );
+                }
+            }
+        }
 
-		if (!checkNullOrEmpty(includeResourceBundles)) {
-			for (String rb : includeResourceBundles) {
-				builder.addResourceBundle(rb);
-			}
-		}
+        if ( !checkNullOrEmpty( includeResourceBundles ) )
+        {
+            for ( String rb : includeResourceBundles )
+            {
+                builder.addResourceBundle( rb );
+            }
+        }
 
-		if (!checkNullOrEmpty(includeResourceBundlesArtifact)) {
-			for (MavenArtifact mvnArtifact : includeResourceBundlesArtifact) {
-				Artifact artifact = artifactFactory
-						.createArtifactWithClassifier(mvnArtifact.getGroupId(),
-								mvnArtifact.getArtifactId(), mvnArtifact
-										.getVersion(), "properties",
-								"resource-bundle");
-				resolveArtifact(artifact, resolver, localRepository,
-						remoteRepositories);
-				String bundleFile;
-				try {
-					bundleFile = FileUtils.readFileToString(artifact.getFile());
-				} catch (IOException e) {
-					throw new MojoExecutionException(
-							"Ocorreu um erro ao ler o artefato " + artifact, e);
-				}
-				String[] bundles = bundleFile.split(" ");
-				for (String bundle : bundles) {
-					builder.addResourceBundle(bundle);
-				}
-			}
-		}
+        if ( !checkNullOrEmpty( includeResourceBundlesArtifact ) )
+        {
+            for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
+            {
+                Artifact artifact =
+                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
+                                                                  mvnArtifact.getArtifactId(),
+                                                                  mvnArtifact.getVersion(), "properties",
+                                                                  "resource-bundle" );
+                resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
+                String bundleFile;
+                try
+                {
+                    bundleFile = FileUtils.readFileToString( artifact.getFile() );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
+                }
+                String[] bundles = bundleFile.split( " " );
+                for ( String bundle : bundles )
+                {
+                    builder.addResourceBundle( bundle );
+                }
+            }
+        }
 
-		if (!checkNullOrEmpty(includeSources)) {
-			for (File file : includeSources) {
-				if (file == null) {
-					throw new MojoFailureException("Cannot include a null file");
-				}
-				if (!file.exists()) {
-					throw new MojoFailureException("File " + file.getName()
-							+ " not found");
-				}
-				builder.addComponent(file);
-			}
-		}
+        if ( !checkNullOrEmpty( includeSources ) )
+        {
+            for ( File file : includeSources )
+            {
+                if ( file == null )
+                {
+                    throw new MojoFailureException( "Cannot include a null file" );
+                }
+                if ( !file.exists() )
+                {
+                    throw new MojoFailureException( "File " + file.getName() + " not found" );
+                }
+                builder.addComponent( file );
+            }
+        }
 
-		if (!checkNullOrEmpty(includeStylesheet)) {
-			for (Stylesheet sheet : includeStylesheet) {
-				if (!sheet.getPath().exists()) {
-					throw new MojoExecutionException("Stylesheet not found: "
-							+ sheet.getPath());
-				}
-				builder.addStyleSheet(sheet.getName(), sheet.getPath());
-			}
-		}
+        if ( !checkNullOrEmpty( includeStylesheet ) )
+        {
+            for ( Stylesheet sheet : includeStylesheet )
+            {
+                if ( !sheet.getPath().exists() )
+                {
+                    throw new MojoExecutionException( "Stylesheet not found: " + sheet.getPath() );
+                }
+                builder.addStyleSheet( sheet.getName(), sheet.getPath() );
+            }
+        }
 
-		configuration.enableDigestComputation(computeDigest);
+        configuration.enableDigestComputation( computeDigest );
 
-		builder.addArchiveFile("maven/" + project.getGroupId() + "/"
-				+ project.getArtifactId() + "/pom.xml", new File(project
-				.getBasedir(), "pom.xml"));
-	}
+        builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
+                                new File( project.getBasedir(), "pom.xml" ) );
+    }
 
-	private boolean checkNullOrEmpty(Object[] array) {
-		if (array == null) {
-			return true;
-		}
+    private boolean checkNullOrEmpty( Object[] array )
+    {
+        if ( array == null )
+        {
+            return true;
+        }
 
-		if (array.length == 0) {
-			return false;
-		}
+        if ( array.length == 0 )
+        {
+            return false;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	protected void writeResourceBundle(String[] bundles, String locale,
-			File localePath) throws MojoExecutionException {
-		getLog().info("Generating resource-bundle for " + locale);
+    @Override
+    protected void writeResourceBundle( String[] bundles, String locale, File localePath )
+        throws MojoExecutionException
+    {
+        getLog().info( "Generating resource-bundle for " + locale );
 
-		Library localized = new Library();
-		localized.setConfiguration(configuration);
+        Library localized = new Library();
+        localized.setConfiguration( configuration );
 
-		localized.setLogger(new CompileLogger(getLog()));
+        localized.setLogger( new CompileLogger( getLog() ) );
 
-		configuration.addLibraryPath(new File[] { outputFile });
-		configuration.setLocale(new String[] { locale });
-		configuration.setSourcePath(new File[] { localePath });
-		for (String bundle : bundles) {
-			localized.addResourceBundle(bundle);
-		}
-		configuration.addLibraryPath(getResourcesBundles());
+        configuration.addLibraryPath( new File[] { outputFile } );
+        configuration.setLocale( new String[] { locale } );
+        configuration.setSourcePath( new File[] { localePath } );
+        for ( String bundle : bundles )
+        {
+            localized.addResourceBundle( bundle );
+        }
+        configuration.addLibraryPath( getResourcesBundles() );
 
-		File output = new File(build.getDirectory(), build.getFinalName()
-				 + "-" + locale + ".swc");
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".swc" );
 
-		localized.setOutput(output);
+        localized.setOutput( output );
 
-		build(localized);
+        build( localized );
 
-		projectHelper
-				.attachArtifact(project, "resource-bundle", locale, output);
-	}
+        projectHelper.attachArtifact( project, "resource-bundle", locale, output );
+    }
 
 }

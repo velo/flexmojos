@@ -32,212 +32,227 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * Goal which compiles the Flex sources into an application for either Flex or
- * AIR depending on the package type.
- *
+ * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
+ * 
  * @goal compile-swf
  * @requiresDependencyResolution
  * @phase compile
  */
-public class ApplicationMojo extends AbstractFlexCompilerMojo<Application> {
+public class ApplicationMojo
+    extends AbstractFlexCompilerMojo<Application>
+{
 
-	/**
-	 * The file to be compiled. The path must be relative with source folder
-	 *
-	 * @parameter
-	 */
-	protected String sourceFile;
+    /**
+     * The file to be compiled. The path must be relative with source folder
+     * 
+     * @parameter
+     */
+    protected String sourceFile;
 
-	/**
-	 * The list of modules files to be compiled. The path must be relative with
-	 * source folder.<BR>
-	 * Usage:
-	 *
-	 * <pre>
-	 * &lt;moduleFiles&gt;
-	 *   &lt;module&gt;com/acme/AModule.mxml&lt;/module&gt;
-	 * &lt;/moduleFiles&gt;
-	 * </pre>
-	 *
-	 * @parameter
-	 */
-	private String[] moduleFiles;
+    /**
+     * The list of modules files to be compiled. The path must be relative with source folder.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;moduleFiles&gt;
+     *   &lt;module&gt;com/acme/AModule.mxml&lt;/module&gt;
+     * &lt;/moduleFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] moduleFiles;
 
-	private List<File> modules;
+    private List<File> modules;
 
-	/**
-	 * When true, tells flex-mojos to use link reports/load externs on modules
-	 * compilation
-	 *
-	 * @parameter default-value="true"
-	 */
-	private boolean loadExternsOnModules;
+    /**
+     * When true, tells flex-mojos to use link reports/load externs on modules compilation
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean loadExternsOnModules;
 
-	/**
-	 * The file to be compiled
-	 */
-	protected File source;
+    /**
+     * The file to be compiled
+     */
+    protected File source;
 
-	@Override
-	public void setUp() throws MojoExecutionException, MojoFailureException {
-		File sourceDirectory = new File(build.getSourceDirectory());
-		if (!sourceDirectory.exists()) {
-			throw new MojoExecutionException(
-					"Unable to found sourceDirectory: " + sourceDirectory);
-		}
+    @Override
+    public void setUp()
+        throws MojoExecutionException, MojoFailureException
+    {
+        File sourceDirectory = new File( build.getSourceDirectory() );
+        if ( !sourceDirectory.exists() )
+        {
+            throw new MojoExecutionException( "Unable to found sourceDirectory: " + sourceDirectory );
+        }
 
-		if (source == null) {
-			source = resolveSourceFile(project, sourceFile);
-		}
+        if ( source == null )
+        {
+            source = resolveSourceFile( project, sourceFile );
+        }
 
-		if (source == null) {
-			throw new MojoExecutionException(
-					"Source file not expecified and no default found!");
-		}
-		if (!source.exists()) {
-			throw new MojoFailureException("Unable to find " + sourceFile);
-		}
+        if ( source == null )
+        {
+            throw new MojoExecutionException( "Source file not expecified and no default found!" );
+        }
+        if ( !source.exists() )
+        {
+            throw new MojoFailureException( "Unable to find " + sourceFile );
+        }
 
-		// need to initialize builder before go super
-		try {
-			builder = new Application(source);
-		} catch (FileNotFoundException e) {
-			throw new MojoFailureException("Unable to find " + source);
-		}
+        // need to initialize builder before go super
+        try
+        {
+            builder = new Application( source );
+        }
+        catch ( FileNotFoundException e )
+        {
+            throw new MojoFailureException( "Unable to find " + source );
+        }
 
-		if (moduleFiles != null) {
-			modules = new ArrayList<File>();
-			for (String modulePath : moduleFiles) {
-				File module = new File(sourceDirectory, modulePath);
-				if (!module.exists()) {
-					throw new MojoExecutionException("Module " + module
-							+ " not found.");
-				}
-				modules.add(module);
-			}
+        if ( moduleFiles != null )
+        {
+            modules = new ArrayList<File>();
+            for ( String modulePath : moduleFiles )
+            {
+                File module = new File( sourceDirectory, modulePath );
+                if ( !module.exists() )
+                {
+                    throw new MojoExecutionException( "Module " + module + " not found." );
+                }
+                modules.add( module );
+            }
 
-			if (loadExternsOnModules) {
-				super.linkReport = true;
-			}
-		}
+            if ( loadExternsOnModules )
+            {
+                super.linkReport = true;
+            }
+        }
 
-		super.setUp();
+        super.setUp();
 
-		if (outputFile == null) {
-			if (output == null) {
-				outputFile = new File(build.getDirectory(), build
-						.getFinalName()
-						+ ".swf");
-			} else {
-				outputFile = new File(build.getDirectory(), output);
-			}
-		}
+        if ( outputFile == null )
+        {
+            if ( output == null )
+            {
+                outputFile = new File( build.getDirectory(), build.getFinalName() + ".swf" );
+            }
+            else
+            {
+                outputFile = new File( build.getDirectory(), output );
+            }
+        }
 
-		builder.setOutput(outputFile);
-	}
+        builder.setOutput( outputFile );
+    }
 
-	@Override
-	protected void tearDown() throws MojoExecutionException,
-			MojoFailureException {
-		super.tearDown();
+    @Override
+    protected void tearDown()
+        throws MojoExecutionException, MojoFailureException
+    {
+        super.tearDown();
 
-		if (modules != null) {
-			configuration.addExterns(new File[] { linkReportFile });
-			for (File module : modules) {
-				getLog().info("Compiling module " + module);
-				String moduleName = module.getName();
-				moduleName = moduleName.substring(0, moduleName
-						.lastIndexOf('.'));
+        if ( modules != null )
+        {
+            configuration.addExterns( new File[] { linkReportFile } );
+            for ( File module : modules )
+            {
+                getLog().info( "Compiling module " + module );
+                String moduleName = module.getName();
+                moduleName = moduleName.substring( 0, moduleName.lastIndexOf( '.' ) );
 
-				Application moduleBuilder;
-				try {
-					moduleBuilder = new Application(module);
-				} catch (FileNotFoundException e) {
-					throw new MojoFailureException("Unable to find " + module);
-				}
+                Application moduleBuilder;
+                try
+                {
+                    moduleBuilder = new Application( module );
+                }
+                catch ( FileNotFoundException e )
+                {
+                    throw new MojoFailureException( "Unable to find " + module );
+                }
 
-				moduleBuilder.setConfiguration(configuration);
-				moduleBuilder.setLogger(new CompileLogger(getLog()));
-				File outputModule = new File(build.getDirectory(), build
-						.getFinalName()
-						+ "-" + moduleName + "." + project.getPackaging());
-				moduleBuilder.setOutput(outputModule);
+                moduleBuilder.setConfiguration( configuration );
+                moduleBuilder.setLogger( new CompileLogger( getLog() ) );
+                File outputModule =
+                    new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "."
+                        + project.getPackaging() );
+                moduleBuilder.setOutput( outputModule );
 
-				build(moduleBuilder);
+                build( moduleBuilder );
 
-				projectHelper.attachArtifact(project, "swf", moduleName,
-						outputModule);
+                projectHelper.attachArtifact( project, "swf", moduleName, outputModule );
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	protected void writeResourceBundle(String[] bundles, String locale,
-			File localePath) throws MojoExecutionException {
+    @Override
+    protected void writeResourceBundle( String[] bundles, String locale, File localePath )
+        throws MojoExecutionException
+    {
 
-		// Dont break this method in parts, is a work around
+        // Dont break this method in parts, is a work around
 
-		File output = new File(build.getDirectory(), build.getFinalName()
-				 + "-" + locale + ".swf");
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".swf" );
 
-		/*
-		 * mxmlc -locale=en_US -source-path=locale/{locale}
-		 * -include-resource-bundles
-		 * =FlightReservation2,SharedResources,collections
-		 * ,containers,controls,core,effects,formatters,skins,styles
-		 * -output=src/Resources_en_US.swf
-		 */
+        /*
+         * mxmlc -locale=en_US -source-path=locale/{locale} -include-resource-bundles
+         * =FlightReservation2,SharedResources,collections ,containers,controls,core,effects,formatters,skins,styles
+         * -output=src/Resources_en_US.swf
+         */
 
-		String bundlesString = Arrays.toString(bundles) //
-				.replace("[", "") // remove start [
-				.replace("]", "") // remove end ]
-				.replace(", ", ","); // remove spaces
+        String bundlesString = Arrays.toString( bundles ) //
+        .replace( "[", "" ) // remove start [
+        .replace( "]", "" ) // remove end ]
+        .replace( ", ", "," ); // remove spaces
 
-		ArrayList<File> external = new ArrayList<File>();
-		ArrayList<File> internal = new ArrayList<File>();
-		ArrayList<File> merged = new ArrayList<File>();
+        ArrayList<File> external = new ArrayList<File>();
+        ArrayList<File> internal = new ArrayList<File>();
+        ArrayList<File> merged = new ArrayList<File>();
 
-		external.addAll(asList(getGlobalDependency()));
-		external.addAll(asList(getDependenciesPath("external")));
-		external.addAll(asList(getDependenciesPath("rsl")));
+        external.addAll( asList( getGlobalDependency() ) );
+        external.addAll( asList( getDependenciesPath( "external" ) ) );
+        external.addAll( asList( getDependenciesPath( "rsl" ) ) );
 
-		internal.addAll(asList(getDependenciesPath("internal")));
+        internal.addAll( asList( getDependenciesPath( "internal" ) ) );
 
-		merged.addAll(asList(getDependenciesPath("compile")));
-		merged.addAll(asList(getDependenciesPath("merged")));
-		merged.addAll(asList(getResourcesBundles()));
+        merged.addAll( asList( getDependenciesPath( "compile" ) ) );
+        merged.addAll( asList( getDependenciesPath( "merged" ) ) );
+        merged.addAll( asList( getResourcesBundles() ) );
 
-		Set<String> args = new HashSet<String>();
-		// args.addAll(Arrays.asList(configs));
-		args.add("-locale=" + locale);
-		args.add("-source-path=" + localePath.getAbsolutePath());
-		args.add("-include-resource-bundles=" + bundlesString);
-		args.add("-output=" + output.getAbsolutePath());
-		args.add("-compiler.fonts.local-fonts-snapshot="
-				+ getFontsSnapshot().getAbsolutePath());
-		args.add("-load-config=" + configFile.getAbsolutePath());
-		args.add("-external-library-path=" + toString(external));
-		args.add("-include-libraries=" + toString(internal));
-		args.add("-library-path=" + toString(merged));
+        Set<String> args = new HashSet<String>();
+        // args.addAll(Arrays.asList(configs));
+        args.add( "-locale=" + locale );
+        args.add( "-source-path=" + localePath.getAbsolutePath() );
+        args.add( "-include-resource-bundles=" + bundlesString );
+        args.add( "-output=" + output.getAbsolutePath() );
+        args.add( "-compiler.fonts.local-fonts-snapshot=" + getFontsSnapshot().getAbsolutePath() );
+        args.add( "-load-config=" + configFile.getAbsolutePath() );
+        args.add( "-external-library-path=" + toString( external ) );
+        args.add( "-include-libraries=" + toString( internal ) );
+        args.add( "-library-path=" + toString( merged ) );
 
-		// Just a work around
-		// TODO https://bugs.adobe.com/jira/browse/SDK-15139
-		flex2.tools.Compiler.mxmlc(args.toArray(new String[args.size()]));
+        // Just a work around
+        // TODO https://bugs.adobe.com/jira/browse/SDK-15139
+        flex2.tools.Compiler.mxmlc( args.toArray( new String[args.size()] ) );
 
-		projectHelper.attachArtifact(project, "swf", locale, output);
-	}
+        projectHelper.attachArtifact( project, "swf", locale, output );
+    }
 
-	private String toString(List<File> libs) {
-		StringBuilder sb = new StringBuilder();
-		for (File lib : libs) {
-			if (sb.length() != 0) {
-				sb.append(',');
-			}
+    private String toString( List<File> libs )
+    {
+        StringBuilder sb = new StringBuilder();
+        for ( File lib : libs )
+        {
+            if ( sb.length() != 0 )
+            {
+                sb.append( ',' );
+            }
 
-			sb.append(lib.getAbsolutePath());
-		}
-		return sb.toString();
-	}
+            sb.append( lib.getAbsolutePath() );
+        }
+        return sb.toString();
+    }
 
 }
