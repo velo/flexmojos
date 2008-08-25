@@ -284,7 +284,15 @@ public abstract class AbstractInstallMojo
             Artifact artifact =
                 artifactFactory.createArtifactWithClassifier( FRAMEWORK_GROUP_ID, swcName, version, "rb.swc", "" );
 
-            File tempFile = createTempFile( swcName, ".swc" );
+            File tempFile = createTempFile( swcName, "rb.swc" );
+            try
+            {
+                FileUtils.copyURLToFile( getClass().getResource( "/rb.swc" ), tempFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to create beacon resource bundle. " + artifact, e );
+            }
             installArtifact( tempFile, artifact );
             flexArtifacts.add( artifact );
         }
