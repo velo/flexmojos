@@ -21,14 +21,11 @@
 	        <plugin>
 	            <groupId>info.flex-mojos</groupId>
 	            <artifactId>flex-compiler-mojo</artifactId>
-	            <version>2.0-alpha5-SNAPSHOT</version>
 	            <extensions>true</extensions>
 	        </plugin>
 	        <plugin>
 	            <groupId>info.flex-mojos</groupId>
 	            <artifactId>flexcover-mojo</artifactId>
-	            <version>1.0-alpha1-SNAPSHOT</version>
-	            <extensions>true</extensions>
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>

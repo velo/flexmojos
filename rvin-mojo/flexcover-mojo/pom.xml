@@ -11,7 +11,6 @@
 	<artifactId>flexcover-mojo</artifactId>
 
 	<packaging>maven-plugin</packaging>
-	<version>1.0-alpha1-SNAPSHOT</version>
 
 	<name>FlexCover Maven Mojo</name>
 	<description>
@@ -59,7 +58,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>util</artifactId>
-            <version>2.0-alpha5-SNAPSHOT</version>
+            <version>${pom.version}</version>
 		</dependency>
         <dependency>
             <groupId>com.adobe.flex</groupId>
@@ -100,10 +99,11 @@
 		</dependency>
 	  -->
 	  <dependency>
-	      <groupId>info.flex-mojos</groupId>
-	      <artifactId>flex-compiler-mojo</artifactId>
-	      <version>2.0-alpha5-SNAPSHOT</version>
-    </dependency>
+            <groupId>${project.groupId}</groupId>
+	        <artifactId>flex-compiler-mojo</artifactId>
+            <version>${pom.version}</version>
+            <type>maven-plugin</type>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.maven.reporting</groupId>
 			<artifactId>maven-reporting-impl</artifactId>
