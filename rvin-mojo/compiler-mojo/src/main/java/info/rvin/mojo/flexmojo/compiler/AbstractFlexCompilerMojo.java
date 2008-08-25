@@ -1416,7 +1416,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected File[] getResourcesBundles()
         throws MojoExecutionException
     {
-        List<File> resouceBundles = new ArrayList<File>();
+        List<File> resourceBundles = new ArrayList<File>();
 
         for ( Artifact artifact : getDependencyArtifacts() )
         {
@@ -1432,12 +1432,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                     artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
                                                                   artifact.getVersion(), artifact.getType(), locale );
 
-                resolveArtifact( localeArtifact, resolver, localRepository, resouceBundles );
-                resouceBundles.add( localeArtifact.getFile() );
+                resolveArtifact( localeArtifact, resolver, localRepository, remoteRepositories );
+                resourceBundles.add( localeArtifact.getFile() );
             }
 
         }
-        return resouceBundles.toArray( new File[resouceBundles.size()] );
+        return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
     /**
