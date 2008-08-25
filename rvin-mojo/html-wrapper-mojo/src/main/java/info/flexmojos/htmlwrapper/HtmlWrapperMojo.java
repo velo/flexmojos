@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -249,7 +250,8 @@ public class HtmlWrapperMojo
 
         try
         {
-            FileUtils.copyDirectory( source, outputDir );
+            FileUtils.copyDirectory( source, outputDir,
+                                     FileFilterUtils.makeSVNAware( FileFilterUtils.makeCVSAware( null ) ) );
         }
         catch ( IOException e )
         {
