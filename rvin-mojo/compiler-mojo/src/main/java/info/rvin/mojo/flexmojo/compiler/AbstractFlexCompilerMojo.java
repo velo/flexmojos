@@ -1416,6 +1416,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected File[] getResourcesBundles()
         throws MojoExecutionException
     {
+        if ( locales == null )
+        {
+            return new File[0];
+        }
+
         List<File> resourceBundles = new ArrayList<File>();
 
         for ( Artifact artifact : getDependencyArtifacts() )
