@@ -197,6 +197,13 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
+	            <groupId>com.adobe.flex.compiler</groupId>
+	            <artifactId>asdoc</artifactId>
+				<version>${flex.sdk.version}</version>
+	            <type>zip</type>
+	            <classifier>template</classifier>
+			</dependency>
+			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
 				<version>${dom4j.version}</version>
