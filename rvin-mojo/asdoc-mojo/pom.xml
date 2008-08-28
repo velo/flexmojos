@@ -34,16 +34,15 @@
 			<version>2.0-alpha5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>compiler</artifactId>
-            <type>pom</type>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>compiler</artifactId>
+			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>com.adobe.flex.compiler</groupId>
 			<artifactId>asdoc</artifactId>
-			<version>3.0.0.477</version>
-            <type>zip</type>
-            <classifier>template</classifier>
+			<type>zip</type>
+			<classifier>template</classifier>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
