@@ -736,6 +736,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean quick;
 
     /**
+     * When enabled flex-mojos will add a custom path resolver to flex compiler. This allow flex-mojos to resolve Embed
+     * assets located at src/main/resources. This is a workaround and it is described at
+     * http://bugs.adobe.com/jira/browse/SDK-15466
+     * 
+     * @parameter default-value="true" expression="${enableMavenResourcesResolver}"
+     */
+    private boolean enableMavenResourcesResolver;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -860,6 +869,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configure();
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
+
+        if ( enableMavenResourcesResolver )
+        {
+            builder.setPathResolver( new MavenPathResolver( build.getResources() ) );
+        }
     }
 
     private Map<String, String> getLicenses()
