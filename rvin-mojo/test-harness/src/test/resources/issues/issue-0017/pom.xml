@@ -22,7 +22,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc</artifactId>
+				<artifactId>asdoc-mojo</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>
