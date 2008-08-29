@@ -1,75 +1,73 @@
 package info.rvin.mojo.flexmojo.test;
 
-import static info.flexmojos.it.MavenVerifierHelper.customTester;
-import info.flexmojos.it.MavenVerifierHelper;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+import info.flexmojos.tests.AbstractFlexMojosTests;
 
 import java.io.File;
 import java.io.FileReader;
 
-import org.apache.maven.integrationtests.AbstractMavenIntegrationTestCase;
-import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.util.ResourceExtractor;
+import org.apache.maven.plugin.PluginExecutionException;
 import org.codehaus.plexus.util.IOUtil;
+import org.junit.Test;
 
 public class IT0013IssuesTest
-    extends AbstractMavenIntegrationTestCase
+    extends AbstractFlexMojosTests
 {
 
-    public static void standardIssueTester( String issueNumber )
+    public void testIssue( String issueNumber )
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( MavenVerifierHelper.class, "/issues/" + issueNumber );
-        customTester( testDir, "install" );
+        File testDir = getProject( "/issues/" + issueNumber );
+        test( testDir, "install" );
     }
 
-    public void testIssue8()
+    @Test
+    public void issue8()
         throws Exception
     {
-        standardIssueTester( "issue-0008-1" );
-        standardIssueTester( "issue-0008-2" );
+        testIssue( "issue-0008-1" );
+        testIssue( "issue-0008-2" );
     }
 
-    public void testIssue11()
+    @Test
+    public void issue11()
         throws Exception
     {
-        standardIssueTester( "issue-0011" );
+        testIssue( "issue-0011" );
     }
 
-    public void testIssue13()
+    @Test
+    public void issue13()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0013" );
-        customTester( testDir, "install" );
+        File testDir = getProject( "/issues/issue-0013" );
+        test( testDir, "install" );
 
         File reportDir = new File( testDir, "target/surefire-reports" );
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    public void testIssue14()
+    @Test( expected = PluginExecutionException.class )
+    public void issue14()
         throws Exception
     {
-        try
-        {
-            standardIssueTester( "issue-0014" );
-            fail( "This test must throw errors" );
-        }
-        catch ( VerificationException e )
-        {
-            // expected exception
-            // System.out.println("Got required Fail =D");
-        }
+        testIssue( "issue-0014" );
     }
 
-    public void testIssue15()
+    @Test
+    public void issue15()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0015" );
+        File testDir = getProject( "/issues/issue-0015" );
         try
         {
-            customTester( testDir, "install" );
-            fail( "testing error unit, must fail!" );
+            test( testDir, "install" );
+            fail( "ing error unit, must fail!" );
         }
-        catch ( Exception e )
+        catch ( PluginExecutionException e )
         {
             // expected exception
         }
@@ -78,94 +76,87 @@ public class IT0013IssuesTest
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    public void testIssue17()
+    @Test
+    public void issue17()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0017" );
-        customTester( testDir, "asdoc:asdoc" );
+        File testDir = getProject( "/issues/issue-0017" );
+        test( testDir, "site" );
 
         File asdoc = new File( testDir, "target/asdoc" );
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
-    public void testIssue27()
+    @Test( expected = PluginExecutionException.class )
+    public void issue27()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0027" );
-        try
-        {
-            customTester( testDir, "asdoc:asdoc" );
-            fail( "No source code.  Should throw an error!" );
-        }
-        catch ( Exception e )
-        {
-            // expected exception
-        }
+        File testDir = getProject( "/issues/issue-0027" );
+        test( testDir, "asdoc:asdoc" );
     }
 
-    public void testIssue29()
+    @Test
+    public void issue29()
         throws Exception
     {
-        standardIssueTester( "issue-0029" );
+        testIssue( "issue-0029" );
     }
 
-    public void testIssue32()
+    @Test
+    public void issue32()
         throws Exception
     {
-        standardIssueTester( "issue-0032" );
+        testIssue( "issue-0032" );
     }
 
-    public void testIssue39()
+    @Test
+    public void issue39()
         throws Exception
     {
-        standardIssueTester( "issue-0039" );
+        testIssue( "issue-0039" );
     }
 
     // A wierd but on this tests
-    // public void testIssue43() throws Exception {
+    // @Test public void issue43() throws Exception {
     // File testDir = ResourceExtractor.simpleExtractResources(getClass(),
     // "/issues/issue-0014");
     // List<String> args = new ArrayList<String>();
     // args.add("-Dmaven.test.failure.ignore=true");
-    // customTester(testDir, "info.rvin.itest.issues", "issue-0014",
+    // test(testDir, "info.rvin.itest.issues", "issue-0014",
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
 
-    public void testIssue44()
+    @Test( expected = PluginExecutionException.class )
+    public void issue44()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0044" );
-        try
-        {
-            customTester( testDir, "asdoc:asdoc" );
-            fail( "testing error unit, must fail!" );
-        }
-        catch ( Exception e )
-        {
-            // expected exception
-        }
+        File testDir = getProject( "/issues/issue-0044" );
+        test( testDir, "asdoc:asdoc" );
     }
 
-    public void testIssue53()
+    @Test
+    public void issue53()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0014" );
-        customTester( testDir, "install", "-Dmaven.test.skip=true" );
+        File testDir = getProject( "/issues/issue-0014" );
+        test( testDir, "install", "-Dmaven.test.skip=true" );
 
-        customTester( testDir, "install", "-DskipTests=true" );
+        test( testDir, "install", "-DskipTests=true" );
     }
 
-    public void testIssue61()
+    @Test
+    public void issue61()
         throws Exception
     {
-        standardIssueTester( "issue-0061" );
+        testIssue( "issue-0061" );
     }
 
-    public void testIssue66()
+    @Test
+    public void issue66()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0066" );
-        standardIssueTester( "issue-0066" );
+        File testDir = getProject( "/issues/issue-0066" );
+        testIssue( "issue-0066" );
 
         // Issue 62 test
         File another = new File( testDir, "flex/src/main/flex/info/flexmojos/generator/AnotherPojo.as" );
@@ -179,21 +170,24 @@ public class IT0013IssuesTest
         assertTrue( base.exists() );
     }
 
-    public void testIssue67()
+    @Test
+    public void issue67()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0067" );
-        customTester( testDir, "asdoc:asdoc" );
+        File testDir = getProject( "/issues/issue-0067" );
+        test( testDir, "asdoc:asdoc" );
     }
 
-    public void testIssue68()
+    @Test
+    public void issue68()
         throws Exception
     {
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0068" );
-        customTester( testDir, "asdoc:asdoc" );
+        File testDir = getProject( "/issues/issue-0068" );
+        test( testDir, "asdoc:asdoc" );
     }
 
-    public void testIssue69()
+    @Test
+    public void issue69()
         throws Exception
     {
         final String[] trusts =
@@ -219,9 +213,9 @@ public class IT0013IssuesTest
             }
         }
 
-        standardIssueTester( "issue-0069" );
+        testIssue( "issue-0069" );
 
-        File testDir = ResourceExtractor.simpleExtractResources( getClass(), "/issues/issue-0069" );
+        File testDir = getProject( "/issues/issue-0069" );
         File swf = new File( testDir, "target/test-classes/TestRunner.swf" );
 
         assertTrue( "Flex-mojos should generate maven.cfg: " + mavenCfg.getAbsolutePath(), mavenCfg.exists() );
@@ -231,10 +225,11 @@ public class IT0013IssuesTest
         assertTrue( "Flex-mojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
     }
 
-    public void testIssue70()
+    @Test
+    public void issue70()
         throws Exception
     {
-        standardIssueTester( "issue-0070" );
+        testIssue( "issue-0070" );
     }
 
 }

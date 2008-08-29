@@ -141,16 +141,6 @@
 			<archive>http://groups.google.com/group/flex-mojos/</archive>
 		</mailingList>
 	</mailingLists>
-	<!-- Not required on releases
-	<dependencies>
-		<dependency>
-			<groupId>emma</groupId>
-			<artifactId>emma</artifactId>
-			<version>2.0.5312</version>
-			<scope>runtime</scope>
-		</dependency>
-	</dependencies>
-	 -->
 
 	<reporting>
 		<plugins>
@@ -301,10 +291,6 @@
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
 	    <module>install-mojo</module>
-
-		<!-- cant release
-		<module>flex-mojo-IT</module>
-		 -->
   </modules>
 
 </project>

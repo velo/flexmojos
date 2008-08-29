@@ -2,18 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
+	<!-- 
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>mojo</artifactId>
 		<version>2.0-alpha4-SNAPSHOT</version>
 	</parent>
+	 -->
 
-	<artifactId>flex-mojos-IT</artifactId>
+	<groupId>info.flex-mojos</groupId>
+	<artifactId>test-harness</artifactId>
+	<version>2.0-alpha5-SNAPSHOT</version>
+	
 	<packaging>jar</packaging>
 	<name>Flex Mojos Integration Tests</name>
 
 	<build>
 		<plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+            </plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
@@ -28,6 +54,13 @@
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+				    <argLine>-Xmx1024m -XX:MaxPermSize=256M</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -106,20 +139,24 @@
 			<snapshots></snapshots>
 		</repository>
 	</repositories>
+	
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-embedder</artifactId>
+			<version>3.0-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.its</groupId>
-			<artifactId>maven-integration-test-helper</artifactId>
-			<version>2.1-SNAPSHOT</version>
-			<!-- TODO: not transitive in tests artifact, so must be left in main scope
-			<scope>test</scope>
-			-->
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>emma</groupId>
+            <artifactId>emma</artifactId>
+            <version>2.0.5312</version>
+            <scope>runtime</scope>
+        </dependency>
 	</dependencies>
+
 </project>
