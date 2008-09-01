@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+                creationComplete="onCreationComplete()">
+<!--can't use velocity, got:
+java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for deserialization-->
+    <mx:Script>
+        <![CDATA[
+
+            import flexunit.junit.JUnitTestRunner;
+            import flexunit.framework.TestSuite;
+            import com.allurent.coverage.runtime.CoverageManager;
+$imports
+
+            [Bindable]
+            private var runner : JUnitTestRunner;
+
+            private function onCreationComplete() : void {
+                status.text = "Please wait running test suite...";
+                runner = new JUnitTestRunner();
+                runner.port = $port;
+                runner.run( createSuite(), onTestComplete );
+            }
+
+            private function onTestComplete() : void {
+                status.text = "Finished running test suite.";
+                CoverageManager.exit();
+                fscommand( "quit" );
+            }
+
+            private function createSuite() : TestSuite {
+                var testSuite : TestSuite = new TestSuite();
+$testClasses
+                return testSuite;
+            }
+
+        ]]>
+    </mx:Script>
+
+    <mx:Label id="status" />
+
+</mx:Application>
