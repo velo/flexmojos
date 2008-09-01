@@ -16,7 +16,8 @@ package info.rvin.flexmojo.flexcover;
  * limitations under the License.
  */
 
-import info.rvin.mojo.flexmojo.compiler.ApplicationMojo;
+import info.rvin.flexmojo.test.TestCompilerMojo;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,14 +30,14 @@ import org.apache.maven.plugin.MojoFailureException;
  * Goal which instruments a Flex project with FlexCover metadata
  *
  * @extendsPlugin flex-compiler-mojo
- * @extendsGoal compile-swf
+ * @extendsGoal test-compile
  * @goal instrument
  * @phase process-test-classes
  * @requiresDependencyResolution
  * @requiresProject
  */
 public class FlexCoverMojo
-    extends ApplicationMojo
+    extends TestCompilerMojo
 {
     /**
      * Location of the file.
@@ -48,7 +49,8 @@ public class FlexCoverMojo
     
 
     public void setUp() throws MojoExecutionException, MojoFailureException {
-    	build.setSourceDirectory("src/test/flex");
+//    	build.setSourceDirectory("src/test/flex");
+        build.setTestOutputDirectory( "target/flexcover-classes/" );
     	build.setOutputDirectory("target/flexcover/");
 //    	List<File> paths = Arrays.asList(sourcePaths);
 //    	paths.add(new File("src/main/flex"));
@@ -59,45 +61,12 @@ public class FlexCoverMojo
 
 
 
-	public void execute1()
+    @Override
+    protected void configure()
         throws MojoExecutionException
     {
-//    	super.execute();
-    	getLog().info("FlexCoverMojo execute");
-    	
-        File f = outputDirectory;
+        super.configure();
 
-        if ( !f.exists() )
-        {
-            f.mkdirs();
-        }
-
-        File touch = new File( f, "touch.txt" );
-
-        FileWriter w = null;
-        try
-        {
-            w = new FileWriter( touch );
-
-            w.write( "touch.txt" );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error creating file " + touch, e );
-        }
-        finally
-        {
-            if ( w != null )
-            {
-                try
-                {
-                    w.close();
-                }
-                catch ( IOException e )
-                {
-                    // ignore
-                }
-            }
-        }
+//        configuration.;
     }
 }
