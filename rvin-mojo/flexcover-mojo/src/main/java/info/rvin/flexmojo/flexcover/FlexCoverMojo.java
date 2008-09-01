@@ -1,72 +1,68 @@
 package info.rvin.flexmojo.flexcover;
 
-/*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import info.rvin.flexmojo.test.TestCompilerMojo;
-import info.rvin.flexmojos.utilities.MavenUtils;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+
+import info.rvin.flexmojo.test.FlexUnitMojo;
 
 /**
- * Goal which instruments a Flex project with FlexCover metadata
+ * Goal which runs a Flex project against the FlexCover CoverageViewer
  *
  * @extendsPlugin flex-compiler-mojo
- * @extendsGoal test-compile
- * @goal instrument
- * @phase process-test-classes
+ * @extendsGoal test-run
+ * @goal flexcover-run
+ * @phase test
  * @requiresDependencyResolution
  * @requiresProject
  */
 public class FlexCoverMojo
-    extends TestCompilerMojo
+    extends FlexUnitMojo
 {
+
     /**
-     * Location of the file.
-     * @parameter expression="${project.build.directory}/flexcover"
+     * Full path to CoverageViewer application, should end with CoverageViewer.exe on Windows
+     * or CoverageViewer.app/Contents/MacOS/CoverageViewer on Mac or
+     * ?? on Linux
+     *
+     * @parameter
      * @required
      */
-    private File outputDirectory;
-    
-    
-
-    public void setUp() throws MojoExecutionException, MojoFailureException {
-//    	build.setSourceDirectory("src/test/flex");
-        build.setTestOutputDirectory( "target/flexcover-classes/" );
-    	build.setOutputDirectory("target/flexcover/");
-//    	List<File> paths = Arrays.asList(sourcePaths);
-//    	paths.add(new File("src/main/flex"));
-//    	sourcePaths = (File[]) paths.toArray();
-//    	sourceFile = "TestHarness.mxml";
-    	super.setUp();
-	}
-
-
+    private String coverageViewerPath;
 
     @Override
-    protected void configure()
-        throws MojoExecutionException
+    protected void run()
+        throws MojoExecutionException, MojoFailureException
     {
-        super.configure();
-
-//        configuration.;
+        // start CoverageViewer air app
+        Commandline cl = new Commandline( coverageViewerPath );
+        String outputPath = new File(build.getTestOutputDirectory()).getAbsolutePath();
+        cl.addArguments( new String[] {"-output", outputPath+File.separator+"flexcover-results.cvr", outputPath+File.separator+"TestRunner.cvm"} );
+        getLog().info( "launching CoverageViewer: "+cl.toString());
+        Process p = null;
+        try
+        {
+            p = cl.execute();
+//            CommandLineUtils.executeCommandLine( cl , new CommandLineUtils.StringStreamConsumer(),  new CommandLineUtils.StringStreamConsumer() );
+        }
+        catch ( CommandLineException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        swf = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
+        
+        super.run();
+        
+        if (p != null)
+        {
+            p.destroy();
+        }
     }
+    
 }
