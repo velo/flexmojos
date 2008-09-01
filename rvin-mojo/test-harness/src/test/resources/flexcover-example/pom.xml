@@ -37,6 +37,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
+					<coverageViewerPath>/Users/logan/projects/Tools/CoverageViewer.app/Contents/MacOS/CoverageViewer</coverageViewerPath>
 					<locales>
 						<locale>en_US</locale>
 					</locales>
