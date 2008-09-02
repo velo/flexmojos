@@ -47,9 +47,15 @@ public class FlexCoverMojo
         try
         {
             p = cl.execute();
+            Thread.sleep( 3000 );
 //            CommandLineUtils.executeCommandLine( cl , new CommandLineUtils.StringStreamConsumer(),  new CommandLineUtils.StringStreamConsumer() );
         }
         catch ( CommandLineException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( InterruptedException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
