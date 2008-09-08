@@ -95,6 +95,31 @@ public class MavenUtils
     }
 
     /**
+     * Resolve a resource file in a maven project resources folders
+     * 
+     * @param project maven project
+     * @param resourceFile sugested name on pom
+     * @return source file or null if source not found
+     */
+    @SuppressWarnings( "unchecked" )
+    public static File resolveResourceFile( MavenProject project, String resourceFile )
+    {
+
+        File[] resoucesFolders = getFiles( project.getBasedir().getAbsolutePath(), project.getBuild().getResources() );
+
+        for ( File resourceFolder : resoucesFolders )
+        {
+            File resource = new File( resourceFolder, resourceFile );
+            if ( resource.exists() )
+            {
+                return resource;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get dependency artifacts for a project using the local and remote repositories to resolve the artifacts
      * 
      * @param project maven project
