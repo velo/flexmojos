@@ -1,0 +1,32 @@
+<settings xmlns="http://maven.apache.org/settings/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/setrings/1.0.0 
+          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <mirrors>
+    <mirror>
+      <id>local-repo</id>
+      <mirrorOf>*</mirrorOf>
+      <url>file://${maven.repo.local}</url>
+    </mirror>
+  </mirrors>
+
+	<profiles>
+		<profile>
+			<id>flex-mojos-it</id>
+			<repositories>
+				<repository>
+					<id>local-repo</id>
+					<url>file://${maven.repo.local}</url>
+                    <snapshots> <enabled>true</enabled> </snapshots>
+                    <releases> <enabled>true</enabled> </releases>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
+
+	<activeProfiles>
+		<activeProfile>flex-mojos-it</activeProfile>
+	</activeProfiles>
+
+</settings>
