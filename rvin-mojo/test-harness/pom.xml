@@ -1,45 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<!-- 
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>mojo</artifactId>
-		<version>2.0-alpha4-SNAPSHOT</version>
+		<version>2.0M6-SNAPSHOT</version>
 	</parent>
-	 -->
 
-	<groupId>info.flex-mojos</groupId>
 	<artifactId>test-harness</artifactId>
-	<version>2.0-alpha5-SNAPSHOT</version>
-	
-	<packaging>jar</packaging>
+
 	<name>Flex Mojos Integration Tests</name>
 
+	<properties>
+		<fake-maven>${project.build.directory}/apache-maven-2.0.9</fake-maven>
+		<fake-repo>${project.build.directory}/local-repository</fake-repo>
+		<sources>${project.build.directory}/sources</sources>
+
+		<asdoc-mojo>${offline-repo}/info/flex-mojos/asdoc-mojo/${pom.version}/asdoc-mojo-${pom.version}.jar</asdoc-mojo>
+		<flex-compiler-mojo>${offline-repo}/info/flex-mojos/flex-compiler-mojo/${pom.version}/flex-compiler-mojo-${pom.version}.jar</flex-compiler-mojo>
+		<encrypter-mojo>${offline-repo}/info/flex-mojos/encrypter-mojo/${pom.version}/encrypter-mojo-${pom.version}.jar</encrypter-mojo>
+		<html-wrapper-mojo>${offline-repo}/info/flex-mojos/html-wrapper-mojo/${pom.version}/html-wrapper-mojo-${pom.version}.jar</html-wrapper-mojo>
+		<install-mojo>${offline-repo}/info/flex-mojos/install-mojo/${pom.version}/install-mojo-${pom.version}.jar</install-mojo>
+		<optimizer-mojo>${offline-repo}/info/flex-mojos/optimizer-mojo/${pom.version}/optimizer-mojo-${pom.version}.jar</optimizer-mojo>
+		<source-mojo>${offline-repo}/info/flex-mojos/source-mojo/${pom.version}/source-mojo-${pom.version}.jar</source-mojo>
+	</properties>
+
 	<build>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>baseTest.properties</exclude>
+					<exclude>settings.xml</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>baseTest.properties</include>
+					<include>settings.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
+
 		<plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-            </plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
@@ -57,11 +66,61 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.3</version>
-				<configuration>
-				    <argLine>-Xmx1024m -XX:MaxPermSize=256M</argLine>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>extract-maven</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeTypes>tar.gz</includeTypes>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-emma</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>emma</includeArtifactIds>
+							<outputDirectory>${fake-maven}/lib</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-repo</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>install-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${fake-repo}</outputDirectory>
+							<useRepositoryLayout>true</useRepositoryLayout>
+							<generateRepositoryMetadatas>true</generateRepositoryMetadatas>
+							<silent>true</silent>
+							<copyPom>true</copyPom>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-sources</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+						    <classifier>sources</classifier>
+						    <excludeTransitive>true</excludeTransitive>
+							<outputDirectory>${sources}</outputDirectory>
+							<useRepositoryLayout>true</useRepositoryLayout>
+							<silent>true</silent>
+							<copyPom>true</copyPom>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -73,56 +132,15 @@
 				<artifactId>emma4it-maven-plugin</artifactId>
 				<version>1.0</version>
 				<configuration>
-					<artifactItems>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>asdoc-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>encrypter-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>flex-compiler-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>generator-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>html-wrapper-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>optimizer-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>source-mojo</artifactId>
-							<version>${pom.version}</version>
-							<type>maven-plugin</type>
-						</artifactItem>
-						<artifactItem>
-							<groupId>${pom.groupId}</groupId>
-							<artifactId>util</artifactId>
-							<version>${pom.version}</version>
-							<type>jar</type>
-						</artifactItem>
-					</artifactItems>
+					<jarFiles>
+						<jarFile>${asdoc-mojo}</jarFile>
+						<jarFile>${flex-compiler-mojo}</jarFile>
+						<jarFile>${encrypter-mojo}</jarFile>
+						<jarFile>${html-wrapper-mojo}</jarFile>
+						<jarFile>${install-mojo}</jarFile>
+						<jarFile>${optimizer-mojo}</jarFile>
+						<jarFile>${source-mojo}</jarFile>
+					</jarFiles>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -139,24 +157,77 @@
 			<snapshots></snapshots>
 		</repository>
 	</repositories>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-embedder</artifactId>
-			<version>3.0-SNAPSHOT</version>
+			<artifactId>apache-maven</artifactId>
+			<version>2.0.9</version>
+			<type>tar.gz</type>
+			<classifier>bin</classifier>
 		</dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-        </dependency>
-        <dependency>
-            <groupId>emma</groupId>
-            <artifactId>emma</artifactId>
-            <version>2.0.5312</version>
-            <scope>runtime</scope>
-        </dependency>
+
+		<dependency>
+			<groupId>emma</groupId>
+			<artifactId>emma</artifactId>
+			<version>2.0.5312</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven.shared</groupId>
+			<artifactId>maven-verifier</artifactId>
+			<version>1.2-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>asdoc-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>flex-compiler-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>encrypter-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>html-wrapper-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>install-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>optimizer-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>source-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+
 	</dependencies>
 
 </project>

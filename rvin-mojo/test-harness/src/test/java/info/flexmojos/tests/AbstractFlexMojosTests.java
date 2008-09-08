@@ -1,95 +1,67 @@
 package info.flexmojos.tests;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Properties;
 
 import junit.framework.Assert;
 
-import org.apache.maven.embedder.Configuration;
-import org.apache.maven.embedder.ConfigurationValidationResult;
-import org.apache.maven.embedder.ContainerCustomizer;
-import org.apache.maven.embedder.DefaultConfiguration;
-import org.apache.maven.embedder.MavenEmbedder;
-import org.apache.maven.embedder.MavenEmbedderException;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionResult;
-import org.codehaus.plexus.PlexusContainer;
+import org.apache.maven.it.Verifier;
 import org.junit.BeforeClass;
 
 public class AbstractFlexMojosTests
 {
 
-    private static final ClassLoader CLASS_LOADER;
-    static
-    {
-        CLASS_LOADER = new URLClassLoader( new URL[0], ClassLoader.getSystemClassLoader() );
-        // CLASS_LOADER = ClassLoader.getSystemClassLoader();
-    }
-
     protected static File rootFolder;
+
+    private static Properties props;
 
     @BeforeClass
     public static void initFolders()
-        throws MavenEmbedderException
+        throws IOException
     {
         URL rootUrl = AbstractFlexMojosTests.class.getResource( "/" );
         rootFolder = new File( rootUrl.getFile() );
+
+        props = new Properties();
+        ClassLoader cl = AbstractFlexMojosTests.class.getClassLoader();
+        InputStream is = cl.getResourceAsStream( "baseTest.properties" );
+        if ( is != null )
+        {
+            try
+            {
+                props.load( is );
+            }
+            finally
+            {
+                is.close();
+            }
+        }
+    }
+
+    private static synchronized String getProperty( String key )
+        throws IOException
+    {
+        return props.getProperty( key );
     }
 
     protected static void test( File projectDirectory, String goal, String... args )
         throws Exception
     {
-        ClassLoader orig = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Configuration configuration = new DefaultConfiguration();
-            configuration.setUserSettingsFile( MavenEmbedder.DEFAULT_USER_SETTINGS_FILE );
-            configuration.setConfigurationCustomizer( new ContainerCustomizer()
-            {
-                public void customize( PlexusContainer arg0 )
-                {
-                }
-            } );
-            // configuration.setGlobalSettingsFile( MavenEmbedder.DEFAULT_GLOBAL_SETTINGS_FILE );
-            configuration.setClassLoader( CLASS_LOADER );
-            // ClassLoader classLoader = MavenEmbedder.class.getClassLoader();
-            // configuration.setClassLoader( classLoader );
+        System.setProperty( "maven.home", getProperty( "fake-maven" ) );
 
-            ConfigurationValidationResult validationResult = MavenEmbedder.validateConfiguration( configuration );
-
-            if ( validationResult.isValid() )
-            {
-                List<String> goals = Arrays.asList( new String[] { "clean", goal } );
-
-                MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-                request.setPom( new File( projectDirectory, "pom.xml" ) );
-                request.setBaseDirectory( projectDirectory );
-                request.setGoals( goals );
-                request.setUpdateSnapshots( false );
-                request.setUseReactor( false );
-
-                MavenEmbedder embedder = new MavenEmbedder( configuration );
-                MavenExecutionResult result = embedder.execute( request );
-                if ( result.hasExceptions() )
-                {
-                    Exception exception = (Exception) result.getExceptions().get( 0 );
-                    throw (Exception) exception.getCause();
-                }
-            }
-            else
-            {
-                Assert.fail( "Invalid configuration!" + configuration.toString() );
-            }
-
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( orig );
-        }
+        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+        verifier.resetStreams();
+        // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
+        verifier.getCliOptions().add( "-o" );
+        verifier.getCliOptions().addAll( Arrays.asList( args ) );
+        verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
+        verifier.setLocalRepo( getProperty( "fake-repo" ) );
+        verifier.executeGoal( goal );
+        verifier.verifyErrorFreeLog();
     }
 
     protected File getProject( String projectName )

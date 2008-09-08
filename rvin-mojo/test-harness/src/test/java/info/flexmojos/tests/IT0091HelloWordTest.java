@@ -1,9 +1,5 @@
 package info.flexmojos.tests;
 
-import static junit.framework.Assert.assertTrue;
-
-import java.io.File;
-
 import org.junit.Test;
 
 public class IT0091HelloWordTest
@@ -18,7 +14,7 @@ public class IT0091HelloWordTest
 //
 //        File asdoc = new File( testDir, "target/asdoc" );
 //        assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
-        test(getProject("simple-flex-application"), "install");
+        test(getProject("hello-world-no-inherit"), "install");
     }
 
 }

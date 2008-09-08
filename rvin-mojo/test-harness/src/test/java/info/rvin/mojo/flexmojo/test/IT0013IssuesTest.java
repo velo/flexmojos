@@ -9,7 +9,7 @@ import info.flexmojos.tests.AbstractFlexMojosTests;
 import java.io.File;
 import java.io.FileReader;
 
-import org.apache.maven.plugin.PluginExecutionException;
+import org.apache.maven.it.VerificationException;
 import org.codehaus.plexus.util.IOUtil;
 import org.junit.Test;
 
@@ -50,7 +50,7 @@ public class IT0013IssuesTest
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    @Test( expected = PluginExecutionException.class )
+    @Test( expected = VerificationException.class )
     public void issue14()
         throws Exception
     {
@@ -67,7 +67,7 @@ public class IT0013IssuesTest
             test( testDir, "install" );
             fail( "ing error unit, must fail!" );
         }
-        catch ( PluginExecutionException e )
+        catch ( VerificationException e )
         {
             // expected exception
         }
@@ -87,7 +87,7 @@ public class IT0013IssuesTest
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
-    @Test( expected = PluginExecutionException.class )
+    @Test( expected = VerificationException.class )
     public void issue27()
         throws Exception
     {
@@ -126,7 +126,7 @@ public class IT0013IssuesTest
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
 
-    @Test( expected = PluginExecutionException.class )
+    @Test( expected = VerificationException.class )
     public void issue44()
         throws Exception
     {
@@ -232,4 +232,12 @@ public class IT0013IssuesTest
         testIssue( "issue-0070" );
     }
 
+    @Test
+    public void issue103()
+    throws Exception
+    {
+        testIssue( "issue-0103/project" );
+        //TODO check SWC content
+    }
+    
 }
