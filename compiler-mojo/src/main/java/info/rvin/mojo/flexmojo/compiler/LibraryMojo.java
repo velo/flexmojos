@@ -35,6 +35,8 @@ package info.rvin.mojo.flexmojo.compiler;
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
+import info.flexmojos.utilities.PathUtil;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +94,7 @@ public class LibraryMojo
      * 
      * @parameter
      */
-    private File[] includeFiles;
+    private String[] includeFiles;
 
     /**
      * This is equilvalent to the <code>include-namespaces</code> option of the compc compiler.<BR>
@@ -219,17 +221,35 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeFiles ) )
         {
-            for ( File file : includeFiles )
+            for ( String includeFile : includeFiles )
             {
-                if ( file == null )
+                if ( includeFile == null )
                 {
                     throw new MojoFailureException( "Cannot include a null file" );
                 }
+
+                File file = new File( includeFile );
+
                 if ( !file.exists() )
                 {
-                    throw new MojoFailureException( "File " + file.getName() + " not found" );
+                    file = MavenUtils.resolveResourceFile( project, includeFile );
                 }
-                builder.addArchiveFile( file.getName(), file );
+
+                if ( file == null || !file.exists() )
+                {
+                    throw new MojoFailureException( "File " + includeFile + " not found" );
+                }
+
+                File folder = getResourceFolder( file );
+
+                // If the resource is external to project add on root
+                String relativePath = PathUtil.getRelativePath( folder, file );
+                if ( relativePath.startsWith( ".." ) )
+                {
+                    relativePath = file.getName();
+                }
+
+                builder.addArchiveFile( relativePath, file );
             }
         }
 
@@ -315,6 +335,19 @@ public class LibraryMojo
 
         builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
                                 new File( project.getBasedir(), "pom.xml" ) );
+    }
+
+    private File getResourceFolder( File file )
+    {
+        String absolutePath = file.getAbsolutePath();
+        for ( File sourcePath : sourcePaths )
+        {
+            if ( absolutePath.startsWith( sourcePath.getAbsolutePath() ) )
+            {
+                return sourcePath;
+            }
+        }
+        return project.getBasedir();
     }
 
     private boolean checkNullOrEmpty( Object[] array )
