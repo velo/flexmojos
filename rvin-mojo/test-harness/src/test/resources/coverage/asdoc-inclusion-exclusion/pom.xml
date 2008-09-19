@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>2.0-SNAPSHOT</version>
+		<version>${flex-mojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest.coverage</groupId>
