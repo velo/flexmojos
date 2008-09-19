@@ -35,7 +35,6 @@
 				<filtering>false</filtering>
 				<excludes>
 					<exclude>baseTest.properties</exclude>
-					<exclude>settings.xml</exclude>
 				</excludes>
 			</testResource>
 			<testResource>
@@ -43,7 +42,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>baseTest.properties</include>
-					<include>settings.xml</include>
 				</includes>
 			</testResource>
 		</testResources>
@@ -57,8 +55,8 @@
 							<directory>${basedir}/src/test/resources</directory>
 							<includes>
 								<!-- Clean executions data -->
-								<include>**/coverage.ec</include>
-								<include>**/target</include>
+								<include>projects/**/coverage.ec</include>
+								<include>projects/**/target</include>
 							</includes>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
@@ -95,7 +93,7 @@
 						<id>copy-repo</id>
 						<phase>generate-test-resources</phase>
 						<goals>
-							<goal>install-dependencies</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${fake-repo}</outputDirectory>
@@ -178,12 +176,15 @@
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
-			<artifactId>maven-verifier</artifactId>
-			<version>1.2-SNAPSHOT</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+	    <dependency>
+	        <groupId>org.apache.maven.shared</groupId>
+	        <artifactId>maven-verifier</artifactId>
+	        <version>1.2-SNAPSHOT</version>
+	    </dependency>
 
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
@@ -226,6 +227,18 @@
 			<artifactId>source-mojo</artifactId>
 			<version>${pom.version}</version>
 			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>flex-super-pom</artifactId>
+			<version>${pom.version}</version>
+			<type>pom</type>
 		</dependency>
 
 	</dependencies>
