@@ -14,7 +14,12 @@ public class IT0091HelloWordTest
 //
 //        File asdoc = new File( testDir, "target/asdoc" );
 //        assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
-        test(getProject("hello-world-no-inherit"), "install");
+        test(getProject("intro/hello-world"), "install");
+    }
+    @Test
+    public void helloWordNoInherit()
+    throws Exception  {
+        test(getProject("intro/hello-world-no-inherit"), "install");
     }
 
 }
