@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>${flex-mojos.version}</version>
+		<version>%{flex-mojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest.issues</groupId>
@@ -23,7 +23,6 @@
 				        <includeFile>${basedir}/src/main/resources/resourceRoot.txt</includeFile>
 				        <includeFile>aFolder/onFolder.txt</includeFile>
 				        <includeFile>atBase.txt</includeFile>
-				        <includeFile>${basedir}/../outsideResource.txt</includeFile>
 				    </includeFiles>
 				</configuration>
 			</plugin>

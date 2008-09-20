@@ -83,7 +83,7 @@ public class IT0013IssuesTest
         File testDir = getProject( "/issues/issue-0017" );
         test( testDir, "site" );
 
-        File asdoc = new File( testDir, "target/asdoc" );
+        File asdoc = new File( testDir, "target/site/asdoc" );
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 

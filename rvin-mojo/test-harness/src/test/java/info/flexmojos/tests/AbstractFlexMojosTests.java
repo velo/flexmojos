@@ -43,8 +43,8 @@ public class AbstractFlexMojosTests
             }
         }
 
-        projectsSource = new File( "projects" );
-        projectsWorkdir = new File( "target/projects" );
+        projectsSource = new File( getProperty( "projects-source" ) );
+        projectsWorkdir = new File( getProperty( "projects-target" ) );
     }
 
     private static synchronized String getProperty( String key )
