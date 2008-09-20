@@ -60,10 +60,23 @@
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-public</id>
+			<url>http://repository.sonatype.org/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<developers>
 		<developer>
@@ -292,8 +305,8 @@
 		<module>archetypes</module>
 	    <module>install-mojo</module>
 
-	    <module>super-poms/air</module>
-	    <module>super-poms/flex</module>
+	    <!-- <module>super-poms/air</module>
+	    <module>super-poms/flex</module> -->
 
 	    <module>test-harness</module>
   </modules>
