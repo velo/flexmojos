@@ -34,34 +34,28 @@
 				<directory>src/test/resources</directory>
 				<filtering>false</filtering>
 				<excludes>
-					<exclude>baseTest.properties</exclude>
+					<exclude>**/*.properties</exclude>
 				</excludes>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>baseTest.properties</include>
-				</includes>
 			</testResource>
 		</testResources>
 
-		<plugins>
+	    <plugins>
 			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${basedir}/src/test/resources</directory>
-							<includes>
-								<!-- Clean executions data -->
-								<include>projects/**/coverage.ec</include>
-								<include>projects/**/target</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-					</filesets>
-				</configuration>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>maven-properties-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>filter-file</goal>
+						</goals>
+						<configuration>
+							<in>src/test/resources/baseTest.properties</in>
+							<outDir>${build.testOutputDirectory}/</outDir>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -144,23 +138,11 @@
 		</plugins>
 	</reporting>
 
-	<!-- TODO: remove when snapshots are released -->
-	<repositories>
-		<repository>
-			<id>apache.snapshots</id>
-			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots></snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>apache-maven</artifactId>
-			<version>2.0.9</version>
+			<version>2.0.9</version> <!-- TODO need to use ${maven.version} -->
 			<type>tar.gz</type>
 			<classifier>bin</classifier>
 		</dependency>
@@ -237,6 +219,12 @@
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
 			<artifactId>flex-super-pom</artifactId>
+			<version>${pom.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>air-super-pom</artifactId>
 			<version>${pom.version}</version>
 			<type>pom</type>
 		</dependency>

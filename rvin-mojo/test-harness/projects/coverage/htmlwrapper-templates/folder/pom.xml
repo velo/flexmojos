@@ -11,6 +11,7 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>html-wrapper-mojo</artifactId>
+				<version>%{flex-mojos.version}</version>
 				<executions>
 					<execution>
 						<goals>

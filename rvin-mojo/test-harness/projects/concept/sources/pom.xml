@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>${flex-mojos.version}</version>
+		<version>%{flex-mojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
@@ -19,6 +19,7 @@
 				<plugin>
 					<groupId>info.flex-mojos</groupId>
 					<artifactId>source-mojo</artifactId>
+					<version>%{flex-mojos.version}</version>
 					<extensions>true</extensions>
 					<executions>
 					   <execution>

@@ -291,6 +291,11 @@
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
 	    <module>install-mojo</module>
+
+	    <module>super-poms/air</module>
+	    <module>super-poms/flex</module>
+
+	    <module>test-harness</module>
   </modules>
 
 </project>
