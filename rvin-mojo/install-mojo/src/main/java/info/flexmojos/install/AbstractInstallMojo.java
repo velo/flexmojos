@@ -54,9 +54,6 @@ public abstract class AbstractInstallMojo
     /**
      * Flex SDK version. Recommend pattern:
      * <ul>
-     * Append -MPL suffix on MPL sdks
-     * </ul>
-     * <ul>
      * Append -FB3 suffix on Flexbuilder sdks
      * </ul>
      * <ul>
@@ -68,9 +65,6 @@ public abstract class AbstractInstallMojo
      * 3.0.0.477
      * </ul>
      * <ul>
-     * 3.0.0.477-MPL
-     * </ul>
-     * <ul>
      * 3.0.0.477-FB3
      * </ul>
      * <ul>
@@ -80,6 +74,11 @@ public abstract class AbstractInstallMojo
      * @parameter expression="${version}"
      */
     private String version;
+
+    /**
+     * @parameter expression="${overwriteLibFolder}"
+     */
+    private File overwriteLibFolder;
 
     /**
      * @parameter expression="${default.player.version}" default-value="9"
@@ -209,7 +208,16 @@ public abstract class AbstractInstallMojo
         getLog().info( "Installing flex compiler jars" );
         Set<Artifact> javaArtifacts = new HashSet<Artifact>();
 
-        File libFolder = new File( sdkFolder, "lib" );
+        File libFolder;
+        if ( overwriteLibFolder == null )
+        {
+            libFolder = new File( sdkFolder, "lib" );
+        }
+        else
+        {
+            libFolder = overwriteLibFolder;
+        }
+
         if ( !libFolder.exists() )
         {
             throw new MojoExecutionException( "Java lib folder not fould: " + libFolder.getAbsolutePath() );
