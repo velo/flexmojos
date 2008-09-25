@@ -1,7 +1,9 @@
 package info.flexmojos.install;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,9 +11,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.model.Dependency;
@@ -343,8 +349,45 @@ public abstract class AbstractInstallMojo
 
         installCompilerArtifacts();
         installAsdocTemplateArtifact();
+        installConfigFiles();
 
         installFlexFrameworkArtifacts();
+
+    }
+
+    private void installConfigFiles()
+        throws MojoExecutionException
+    {
+
+        File frameworks = new File( sdkFolder, "frameworks" );
+        Collection<File> files = listFiles( frameworks, new String[] { "xml", "ser" }, false );
+
+        File zipFile = createTempFile( "config-files", ".zip" );
+
+        try
+        {
+            ZipOutputStream outStream =
+                new ZipOutputStream( new BufferedOutputStream( new FileOutputStream( zipFile ) ) );
+
+            for ( File file : files )
+            {
+                ZipEntry entry = new ZipEntry( file.getName() );
+                outStream.putNextEntry( entry );
+                byte[] content = FileUtils.readFileToByteArray( file );
+                IOUtils.write( content, outStream );
+                outStream.flush();
+            }
+
+            outStream.close();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to create configuration file", e );
+        }
+
+        Artifact artifact =
+            artifactFactory.createArtifactWithClassifier( COMPILER_GROUP_ID, "framework", version, "zip", "configs" );
+        installArtifact( zipFile, artifact );
 
     }
 
