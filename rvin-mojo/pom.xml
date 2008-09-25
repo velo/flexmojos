@@ -24,6 +24,10 @@
 		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
 		<jaxen.version>1.1-beta-6</jaxen.version>
 		<maven.version>2.0.7</maven.version>
+
+        <!-- distribution -->
+		<deploy.repository.id>maven.flex-mojos.info</deploy.repository.id>
+		<deploy.repository.url>scp://repository.flex-mojos.info/www/flex-mojos/repository</deploy.repository.url>
 	</properties>
 
 	<build>
@@ -61,6 +65,74 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 			</plugin>
+			
+			<!-- Work around to get super poms installed automatically -->
+			<plugin>
+				<artifactId>maven-install-plugin</artifactId>
+				<executions>
+				    <execution>
+				        <id>air-super-pom</id>
+				        <phase>install</phase>
+				        <goals>
+				            <goal>install-file</goal>
+				        </goals>
+				        <configuration>
+				            <file>${basedir}/super-poms/air/pom.xml</file>
+						    <groupId>info.flex-mojos</groupId>
+						    <artifactId>air-super-pom</artifactId>
+						    <version>${pom.version}</version>
+						    <packaging>pom</packaging>
+				        </configuration>
+				    </execution>
+				    <execution>
+				        <id>flex-super-pom</id>
+				        <phase>install</phase>
+				        <goals>
+				            <goal>install-file</goal>
+				        </goals>
+				        <configuration>
+				            <file>${basedir}/super-poms/flex/pom.xml</file>
+						    <groupId>info.flex-mojos</groupId>
+						    <artifactId>flex-super-pom</artifactId>
+						    <version>${pom.version}</version>
+						    <packaging>pom</packaging>
+				        </configuration>
+				    </execution>
+				</executions>
+			</plugin>
+
+            <!-- Work around to get super poms deployed automatically -->
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>air-super-pom</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${basedir}/super-poms/air/pom.xml</file>
+                            <pomFile>${basedir}/super-poms/air/pom.xml</pomFile>
+                            <repositoryId>${deploy.repository.id}</repositoryId>
+                            <url>${deploy.repository.url}</url>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>flex-super-pom</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${basedir}/super-poms/flex/pom.xml</file>
+                            <pomFile>${basedir}/super-poms/flex/pom.xml</pomFile>
+                            <repositoryId>${deploy.repository.id}</repositoryId>
+				            <url>${deploy.repository.url}</url>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -142,9 +214,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>maven.flex-mojos.info</id>
+			<id>${deploy.repository.id}</id>
 			<name>Flex-Mojos Release Repository</name>
-			<url>scp://repository.flex-mojos.info/www/flex-mojos/repository</url>
+			<url>${deploy.repository.url}</url>
 		</repository>
 		<snapshotRepository>
 			<id>maven.flex-mojos.info</id>
