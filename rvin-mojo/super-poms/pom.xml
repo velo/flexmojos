@@ -1,0 +1,108 @@
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>mojo</artifactId>
+		<version>2.0M6-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>super-poms</artifactId>
+
+	<packaging>pom</packaging>
+	<name>Super poms installer</name>
+	<description>Work around to get super poms installed/deployed automatically</description>
+
+	<build>
+		<plugins>
+			<!-- Work around to get super poms installed automatically -->
+			<plugin>
+				<artifactId>maven-install-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>air-super-pom</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${basedir}/air/pom.xml</file>
+							<groupId>info.flex-mojos</groupId>
+							<artifactId>air-super-pom</artifactId>
+							<version>${pom.version}</version>
+							<packaging>pom</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>flex-super-pom</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${basedir}/flex/pom.xml</file>
+							<groupId>info.flex-mojos</groupId>
+							<artifactId>flex-super-pom</artifactId>
+							<version>${pom.version}</version>
+							<packaging>pom</packaging>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Work around to get super poms deployed automatically -->
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>air-super-pom</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy-file</goal>
+						</goals>
+						<configuration>
+							<file>${basedir}/air/pom.xml</file>
+							<pomFile>${basedir}/air/pom.xml</pomFile>
+							<repositoryId>${deploy.repository.id}</repositoryId>
+							<url>${deploy.repository.url}</url>
+						</configuration>
+					</execution>
+					<execution>
+						<id>flex-super-pom</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy-file</goal>
+						</goals>
+						<configuration>
+							<file>${basedir}/flex/pom.xml</file>
+							<pomFile>${basedir}/flex/pom.xml</pomFile>
+							<repositoryId>${deploy.repository.id}</repositoryId>
+							<url>${deploy.repository.url}</url>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
