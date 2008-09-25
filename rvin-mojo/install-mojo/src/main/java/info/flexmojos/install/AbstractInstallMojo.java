@@ -105,7 +105,7 @@ public abstract class AbstractInstallMojo
         if ( "swc".equals( type ) && "playerglobal".equals( artifactName ) )
         {
             String parentName = file.getParentFile().getName();
-            if ( "player".equals( parentName ) )
+            if ( "player".equals( parentName ) || "libs".equals( parentName ) )
             {
                 version = "9-" + version;
             }
