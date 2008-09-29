@@ -35,6 +35,7 @@ package info.rvin.mojo.flexmojo.compiler;
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
+import info.flexmojos.compatibilitykit.FlexCompatibility;
 import info.flexmojos.utilities.PathUtil;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
@@ -319,6 +320,24 @@ public class LibraryMojo
             }
         }
 
+        includeStylesheet();
+
+        computeDigest();
+
+        builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
+                                new File( project.getBasedir(), "pom.xml" ) );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void computeDigest()
+    {
+        configuration.enableDigestComputation( computeDigest );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void includeStylesheet()
+        throws MojoExecutionException
+    {
         if ( !checkNullOrEmpty( includeStylesheet ) )
         {
             for ( Stylesheet sheet : includeStylesheet )
@@ -330,11 +349,6 @@ public class LibraryMojo
                 builder.addStyleSheet( sheet.getName(), sheet.getPath() );
             }
         }
-
-        configuration.enableDigestComputation( computeDigest );
-
-        builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
-                                new File( project.getBasedir(), "pom.xml" ) );
     }
 
     private File getResourceFolder( File file )
@@ -377,7 +391,8 @@ public class LibraryMojo
         localized.setLogger( new CompileLogger( getLog() ) );
 
         configuration.addLibraryPath( new File[] { outputFile } );
-        configuration.setLocale( new String[] { locale } );
+        setLocales( new String[] { locale } );
+
         configuration.setSourcePath( new File[] { localePath } );
         for ( String bundle : bundles )
         {

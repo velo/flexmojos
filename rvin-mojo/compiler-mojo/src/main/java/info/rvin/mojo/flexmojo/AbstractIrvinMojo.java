@@ -101,6 +101,11 @@ public abstract class AbstractIrvinMojo
     protected List remoteRepositories;
 
     /**
+     * @parameter expression="${plugin.artifacts}"
+     */
+    protected List<Artifact> pluginArtifacts;
+
+    /**
      * Construct Mojo instance
      */
     public AbstractIrvinMojo()
