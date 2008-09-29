@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -153,6 +152,7 @@ public abstract class AbstractInstallMojo
 
         installResourceBundleArtifacts( swcArtifacts );
         installRslArtifacts();
+        installConfigFiles( swcArtifacts );
 
         Collection<Artifact> flexArtifacts = filter( swcArtifacts, null, new String[] { "air*", "servicemonitor" } );
         Artifact flexSdk =
@@ -349,13 +349,12 @@ public abstract class AbstractInstallMojo
 
         installCompilerArtifacts();
         installAsdocTemplateArtifact();
-        installConfigFiles();
 
         installFlexFrameworkArtifacts();
 
     }
 
-    private void installConfigFiles()
+    private void installConfigFiles( Collection<Artifact> swcArtifacts )
         throws MojoExecutionException
     {
 
@@ -386,9 +385,10 @@ public abstract class AbstractInstallMojo
         }
 
         Artifact artifact =
-            artifactFactory.createArtifactWithClassifier( COMPILER_GROUP_ID, "framework", version, "zip", "configs" );
+            artifactFactory.createArtifactWithClassifier( FRAMEWORK_GROUP_ID, "framework", version, "zip", "configs" );
         installArtifact( zipFile, artifact );
 
+        swcArtifacts.add( artifact );
     }
 
     private void installAsdocTemplateArtifact()
@@ -458,6 +458,7 @@ public abstract class AbstractInstallMojo
             dep.setArtifactId( artifactDependency.getArtifactId() );
             dep.setVersion( artifactDependency.getVersion() );
             dep.setType( artifactDependency.getType() );
+            dep.setClassifier( artifactDependency.getClassifier() );
             model.addDependency( dep );
         }
 

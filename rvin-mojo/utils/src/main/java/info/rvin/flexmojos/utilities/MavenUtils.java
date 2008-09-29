@@ -5,7 +5,10 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -19,6 +22,12 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
+
+import eu.cedarsoft.utils.ZipExtractor;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -384,8 +393,8 @@ public class MavenUtils
         return osString().startsWith( WINDOWS_OS ) && osString().contains( VISTA );
     }
 
-    public static Artifact searchFor( List<Artifact> artifacts, String groupId, String artifactId, String version,
-                                      String type, String classifier )
+    public static Artifact searchFor( Collection<Artifact> artifacts, String groupId, String artifactId,
+                                      String version, String type, String classifier )
     {
         for ( Artifact artifact : artifacts )
         {
@@ -409,5 +418,55 @@ public class MavenUtils
         }
 
         return str1.equals( str2 );
+    }
+
+    public static Map<String, File> getManifests( File configZip, Build build )
+        throws MojoExecutionException
+    {
+        File outputFolder = new File( build.getOutputDirectory(), "configs" );
+        outputFolder.mkdirs();
+
+        ZipExtractor ze;
+        try
+        {
+            ze = new ZipExtractor( configZip );
+            ze.extract( outputFolder );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to extract configurations", e );
+        }
+
+        Map<String, File> manifests = new LinkedHashMap<String, File>();
+        File configFile = new File( outputFolder, "flex-config.xml" );
+        if ( !configFile.isFile() )
+        {
+            return manifests;
+        }
+
+        SAXReader reader = new SAXReader();
+        Document document;
+        try
+        {
+            document = reader.read( configFile );
+        }
+        catch ( DocumentException e )
+        {
+            throw new MojoExecutionException( "Unable to parse config file " + configFile.getAbsolutePath(), e );
+        }
+        List<Node> list = document.selectNodes( "//compiler/namespaces/namespace" );
+
+        for ( Node node : list )
+        {
+            String uri = node.valueOf( "//uri" );
+            File manifest = new File( outputFolder, node.valueOf( "//manifest" ) );
+            if ( !manifest.exists() )
+            {
+                throw new MojoExecutionException( "Manifest " + uri + " not found " + manifest.getAbsolutePath() );
+            }
+            manifests.put( uri, manifest );
+        }
+
+        return manifests;
     }
 }
