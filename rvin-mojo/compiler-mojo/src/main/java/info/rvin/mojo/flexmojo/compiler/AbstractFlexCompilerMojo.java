@@ -1,6 +1,8 @@
 package info.rvin.mojo.flexmojo.compiler;
 
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
+import info.flexmojos.compatibilitykit.FlexCompatibility;
+import info.flexmojos.compatibilitykit.FlexMojo;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -43,6 +46,7 @@ import flex2.tools.oem.Report;
 
 public abstract class AbstractFlexCompilerMojo<E extends Builder>
     extends AbstractIrvinMojo
+    implements FlexMojo
 {
 
     private static final String COMPATIBILITY_2_0_0 = "2.0.0";
@@ -870,9 +874,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
+        updatePathResolver();
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @FlexCompatibility( minVersion = "3" )
+    private void updatePathResolver()
+    {
         if ( enableMavenResourcesResolver )
         {
-            builder.setPathResolver( new MavenPathResolver( build.getResources() ) );
+            // builder.setPathResolver( new MavenPathResolver( build.getResources() ) );
         }
     }
 
@@ -993,8 +1004,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         // Fonts
         if ( fonts != null )
         {
-            configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
-            configuration.enableFlashType( fonts.isFlashType() );
+            configureFontsAntiAliasing();
+            enableFlashType();
             configuration.setFontManagers( fonts.getManagers() );
             configuration.setMaximumCachedFonts( fonts.getMaxCachedFonts() );
             configuration.setMaximumGlyphsPerFace( fonts.getMaxGlyphsPerFace() );
@@ -1025,25 +1036,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
         }
 
-        if ( defines != null )
-        {
-            for ( String defineName : defines.keySet() )
-            {
-                String value = defines.get( defineName );
-                getLog().info( "define " + defineName + " = " + value );
-                configuration.addDefineDirective( defineName, value );
-            }
-        }
+        addDefines();
 
         // When using the resource-bundle-list option, you must also set the
         // value of the locale option to an empty string.
         if ( mergeResourceBundle == null || mergeResourceBundle )
         {
-            configuration.setLocale( locales );
+            setLocales( locales );
         }
         else
         {
-            configuration.setLocale( new String[0] );
+            setLocales( new String[0] );
         }
 
         if ( namespaces != null )
@@ -1129,59 +1132,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
         }
 
-        if ( compatibilityVersion != null )
-        {
-            if ( !COMPATIBILITY_2_0_0.equals( compatibilityVersion )
-                && !COMPATIBILITY_2_0_1.equals( compatibilityVersion )
-                && !COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
-            {
-                throw new MojoExecutionException( "Invalid compatibility version " + compatibilityVersion );
-            }
-            else if ( COMPATIBILITY_2_0_0.equals( compatibilityVersion ) )
-            {
-                configuration.setCompatibilityVersion( 2, 0, 0 );
-            }
-            else if ( COMPATIBILITY_2_0_1.equals( compatibilityVersion ) )
-            {
-                configuration.setCompatibilityVersion( 2, 0, 1 );
-            }
-            else if ( COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
-            {
-                configuration.setCompatibilityVersion( 3, 0, 0 );
-            }
-            else
-            {
-                throw new IllegalStateException( "Should never reach this" );
-            }
-        }
+        setCompatibilityMode();
 
         configuration.setActionScriptFileEncoding( encoding );
 
-        if ( targetPlayer != null )
-        {
-            String[] nodes = targetPlayer.split( "\\." );
-            if ( nodes.length != 3 )
-            {
-                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-            }
-            int[] versions = new int[nodes.length];
-            for ( int i = 0; i < nodes.length; i++ )
-            {
-                try
-                {
-                    versions[i] = Integer.parseInt( nodes[i] );
-                }
-                catch ( NumberFormatException e )
-                {
-                    throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-                }
-            }
-            if ( versions[0] < 9 )
-            {
-                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-            }
-            configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
-        }
+        setTargetPlayer();
 
         if ( defaultsCss != null )
             configuration.setDefaultCSS( defaultsCss );
@@ -1218,7 +1173,130 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
 
+        verifyDigests();
+    }
+
+    @SuppressWarnings( "deprecation" )
+    @FlexCompatibility( maxVersion = "2" )
+    private void enableFlashType()
+    {
+        configuration.enableFlashType( fonts.isFlashType() );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void verifyDigests()
+    {
         configuration.enableDigestVerification( verifyDigests );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void setTargetPlayer()
+        throws MojoExecutionException
+    {
+        if ( targetPlayer != null )
+        {
+            String[] nodes = targetPlayer.split( "\\." );
+            if ( nodes.length != 3 )
+            {
+                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+            }
+            int[] versions = new int[nodes.length];
+            for ( int i = 0; i < nodes.length; i++ )
+            {
+                try
+                {
+                    versions[i] = Integer.parseInt( nodes[i] );
+                }
+                catch ( NumberFormatException e )
+                {
+                    throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+                }
+            }
+            if ( versions[0] < 9 )
+            {
+                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+            }
+            configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
+        }
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void setCompatibilityMode()
+        throws MojoExecutionException
+    {
+        if ( compatibilityVersion != null )
+        {
+            if ( !COMPATIBILITY_2_0_0.equals( compatibilityVersion )
+                && !COMPATIBILITY_2_0_1.equals( compatibilityVersion )
+                && !COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
+            {
+                throw new MojoExecutionException( "Invalid compatibility version " + compatibilityVersion );
+            }
+            else if ( COMPATIBILITY_2_0_0.equals( compatibilityVersion ) )
+            {
+                configuration.setCompatibilityVersion( 2, 0, 0 );
+            }
+            else if ( COMPATIBILITY_2_0_1.equals( compatibilityVersion ) )
+            {
+                configuration.setCompatibilityVersion( 2, 0, 1 );
+            }
+            else if ( COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
+            {
+                configuration.setCompatibilityVersion( 3, 0, 0 );
+            }
+            else
+            {
+                throw new IllegalStateException( "Should never reach this" );
+            }
+        }
+    }
+
+    protected void setLocales( String[] locales )
+        throws MojoExecutionException
+    {
+        setLocales2( locales );
+        setLocales3( locales );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void setLocales3( String[] locales )
+    {
+        configuration.setLocale( locales );
+    }
+
+    @SuppressWarnings( "deprecation" )
+    @FlexCompatibility( maxVersion = "2" )
+    private void setLocales2( String[] locales )
+        throws MojoExecutionException
+    {
+        if ( locales.length == 1 )
+        {
+            configuration.setLocale( new Locale( locales[0] ) );
+        }
+        else if ( locales.length != 0 )
+        {
+            throw new MojoExecutionException( "Only one locale is allowed" );
+        }
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void addDefines()
+    {
+        if ( defines != null )
+        {
+            for ( String defineName : defines.keySet() )
+            {
+                String value = defines.get( defineName );
+                getLog().info( "define " + defineName + " = " + value );
+                configuration.addDefineDirective( defineName, value );
+            }
+        }
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void configureFontsAntiAliasing()
+    {
+        configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
     }
 
     protected File[] getGlobalDependency()
@@ -1571,7 +1649,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         cfg.showActionScriptWarnings( showWarnings );
         cfg.showBindingWarnings( warnings.getBinding() );
         cfg.showDeprecationWarnings( warnings.getDeprecation() );
-        cfg.showShadowedDeviceFontWarnings( warnings.getShadowedDeviceFont() );
         cfg.showUnusedTypeSelectorWarnings( warnings.getUnusedTypeSelector() );
         cfg.checkActionScriptWarning( Configuration.WARN_ARRAY_TOSTRING_CHANGES, warnings.getArrayTostringChanges() );
         cfg.checkActionScriptWarning( Configuration.WARN_ASSIGNMENT_WITHIN_CONDITIONAL,
@@ -1617,6 +1694,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         cfg.checkActionScriptWarning( Configuration.WARN_SLOW_TEXTFIELD_ADDITION, warnings.getSlowTextFieldAddition() );
         cfg.checkActionScriptWarning( Configuration.WARN_UNLIKELY_FUNCTION_VALUE, warnings.getUnlikelyFunctionValue() );
         cfg.checkActionScriptWarning( Configuration.WARN_XML_CLASS_HAS_CHANGED, warnings.getXmlClassHasChanged() );
+
+        configureWarnings3( cfg );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void configureWarnings3( Configuration cfg )
+    {
+        cfg.showShadowedDeviceFontWarnings( warnings.getShadowedDeviceFont() );
     }
 
     /**
@@ -1805,6 +1890,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // nothing new was found.
         return false;
+    }
+
+    public String getFDKVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
     }
 
 }

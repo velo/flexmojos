@@ -383,4 +383,31 @@ public class MavenUtils
     {
         return osString().startsWith( WINDOWS_OS ) && osString().contains( VISTA );
     }
+
+    public static Artifact searchFor( List<Artifact> artifacts, String groupId, String artifactId, String version,
+                                      String type, String classifier )
+    {
+        for ( Artifact artifact : artifacts )
+        {
+            if ( equals( artifact.getGroupId(), groupId ) && equals( artifact.getArtifactId(), artifactId )
+                && equals( artifact.getVersion(), version ) && equals( artifact.getType(), type )
+                && equals( artifact.getClassifier(), classifier ) )
+            {
+                return artifact;
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean equals( String str1, String str2 )
+    {
+        // If is null is not relevant
+        if ( str1 == null || str2 == null )
+        {
+            return true;
+        }
+
+        return str1.equals( str2 );
+    }
 }
