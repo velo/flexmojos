@@ -5,23 +5,20 @@ import java.io.File;
 public class Namespace
 {
 
-    private String uri;
-
     private File manifest;
+
+    private String uri;
 
     public Namespace()
     {
         super();
     }
 
-    public String getUri()
+    public Namespace( String uri, File manifest )
     {
-        return uri;
-    }
-
-    public void setUri( String uri )
-    {
+        super();
         this.uri = uri;
+        this.manifest = manifest;
     }
 
     public File getManifest()
@@ -29,8 +26,18 @@ public class Namespace
         return manifest;
     }
 
+    public String getUri()
+    {
+        return uri;
+    }
+
     public void setManifest( File manifest )
     {
         this.manifest = manifest;
+    }
+
+    public void setUri( String uri )
+    {
+        this.uri = uri;
     }
 }
