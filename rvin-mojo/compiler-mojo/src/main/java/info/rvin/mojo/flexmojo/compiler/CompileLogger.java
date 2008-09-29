@@ -47,6 +47,10 @@ public class CompileLogger
         {
             log.warn( getMessage( msg, source ) );
         }
+        else
+        {
+            log.debug( getMessage( msg, source ) );
+        }
     }
 
     private String getMessage( Message msg, String source )
