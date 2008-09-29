@@ -32,7 +32,7 @@ public class AsDocReport
     /**
      * The name of the destination directory.
      * 
-     * @parameter expression="${destDir}" default-value="asdocs"
+     * @parameter expression="${destDir}" default-value="asdoc"
      */
     private String destDir;
 
