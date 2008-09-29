@@ -22,11 +22,22 @@
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
-						<artifactId>flex-compiler-oem</artifactId>
+						<artifactId>compiler</artifactId>
 						<version>2.0.1.155542</version>
+						<type>pom</type>
 					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>2.0.1.155542</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+
 </project>

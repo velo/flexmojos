@@ -20,6 +20,8 @@ import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
 import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
 
+import info.flexmojos.compatibilitykit.FlexCompatibility;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -233,11 +235,25 @@ public class ApplicationMojo
         args.add( "-include-libraries=" + toString( internal ) );
         args.add( "-library-path=" + toString( merged ) );
 
+        forkMxmlc( args );
+        runMxmlc( args );
+
+        projectHelper.attachArtifact( project, "swf", locale, output );
+    }
+
+    @FlexCompatibility( maxVersion = "2" )
+    private void forkMxmlc( Set<String> args )
+        throws MojoExecutionException
+    {
+        throw new MojoExecutionException( "Not implemented yet" );
+    }
+
+    @FlexCompatibility( minVersion = "3" )
+    private void runMxmlc( Set<String> args )
+    {
         // Just a work around
         // TODO https://bugs.adobe.com/jira/browse/SDK-15139
         flex2.tools.Compiler.mxmlc( args.toArray( new String[args.size()] ) );
-
-        projectHelper.attachArtifact( project, "swf", locale, output );
     }
 
     private String toString( List<File> libs )
