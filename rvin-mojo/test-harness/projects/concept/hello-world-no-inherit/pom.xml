@@ -16,7 +16,7 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-                <version>2.0M6-SNAPSHOT</version>
+                <version>%{flex-mojos.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<locales>
