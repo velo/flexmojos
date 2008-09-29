@@ -234,10 +234,17 @@ public class IT0013IssuesTest
 
     @Test
     public void issue103()
-    throws Exception
+        throws Exception
     {
         testIssue( "issue-0103/project" );
-        //TODO check SWC content
+        // TODO check SWC content
     }
-    
+
+    @Test
+    public void issue105()
+        throws Exception
+    {
+        testIssue( "issue-0105" );
+    }
+
 }
