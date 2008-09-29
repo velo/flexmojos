@@ -338,11 +338,10 @@
 	    <module>archetypes</module>
 	    <module>install-mojo</module>
 	    <module>super-poms</module>
-<!-- 
-	    <module>super-poms/air</module>
-	    <module>super-poms/flex</module>
- -->
+<!--
+Tests can't be released due to some snapshot dependencies
 	    <module>test-harness</module>
+ -->
   </modules>
 
 </project>
