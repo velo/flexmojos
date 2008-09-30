@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Metadata>
+   [ResourceBundle("MyLibrary")]
+  </mx:Metadata>
+  <mx:Label text="{resourceManager.getString('MyLibrary', 'TEXT')}"/>
+</mx:Canvas>
