@@ -20,7 +20,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
+		            <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
 					<compile>info.flex-mojos:flex-compiler-mojo:compile-swc</compile>
+		            <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
 					<test-compile>info.flex-mojos:flex-compiler-mojo:test-compile</test-compile>
 					<test>info.flex-mojos:flex-compiler-mojo:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
@@ -34,7 +36,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
+		            <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
 					<compile>info.flex-mojos:flex-compiler-mojo:compile-swf</compile>
+		            <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
 					<test-compile>info.flex-mojos:flex-compiler-mojo:test-compile</test-compile>
 					<test>info.flex-mojos:flex-compiler-mojo:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
