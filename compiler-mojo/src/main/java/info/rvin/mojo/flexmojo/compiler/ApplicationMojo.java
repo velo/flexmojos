@@ -238,7 +238,7 @@ public class ApplicationMojo
 
         merged.addAll( asList( getDependenciesPath( "compile" ) ) );
         merged.addAll( asList( getDependenciesPath( "merged" ) ) );
-        merged.addAll( asList( getResourcesBundles() ) );
+        merged.addAll( asList( getResourcesBundles(locale) ) );
 
         Set<String> args = new HashSet<String>();
         // args.addAll(Arrays.asList(configs));
@@ -252,6 +252,7 @@ public class ApplicationMojo
         args.add( "-include-libraries=" + toString( internal ) );
         args.add( "-library-path=" + toString( merged ) );
 
+        getLog().debug( "writeResourceBundle calling mxmlc with args: " + args.toString() );
         forkMxmlc( args );
         runMxmlc( args );
 
