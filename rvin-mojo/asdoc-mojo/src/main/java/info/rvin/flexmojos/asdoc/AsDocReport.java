@@ -53,7 +53,7 @@ public class AsDocReport
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files.
      * 
-     * @parameter expression="${project.reporting.outputDirectory}/asdocs"
+     * @parameter expression="${project.reporting.outputDirectory}/asdoc"
      * @required
      */
     protected File reportOutputDirectory;
