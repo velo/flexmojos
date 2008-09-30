@@ -295,7 +295,7 @@ public class LibraryMojo
                 {
                     throw new MojoFailureException( "Cannot include a null file" );
                 }
-                if ( !file.exists() )
+                if ( !file.getName().contains( "{locale}" ) && !file.exists() )
                 {
                     throw new MojoFailureException( "File " + file.getName() + " not found" );
                 }
@@ -370,6 +370,7 @@ public class LibraryMojo
 
         Library localized = new Library();
         localized.setConfiguration( configuration );
+        configuration.setLibraryPath( new File[0] );
 
         localized.setLogger( new CompileLogger( getLog() ) );
 
@@ -381,9 +382,9 @@ public class LibraryMojo
         {
             localized.addResourceBundle( bundle );
         }
-        configuration.addLibraryPath( getResourcesBundles() );
+        configuration.addLibraryPath( getResourcesBundles(locale) );
 
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".swc" );
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".rb.swc" );
 
         localized.setOutput( output );
 
