@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+  xmlns:i18n="i18n.*"
+  layout="absolute"
+  creationComplete="handleCreationComplete();">
+  <mx:Metadata>
+    [ResourceBundle("resources")]
+  </mx:Metadata>
+  <mx:Script>
+    <![CDATA[
+      import mx.events.ItemClickEvent;
+      private const da_DK:String = "da_DK";
+      private const de_DE:String = "de_DE";
+      private const en_US:String = "en_US";
+      private const es_ES:String = "es_ES";
+      private const fi_FI:String = "fi_FI";
+      private const fr_FR:String = "fr_FR";
+      private const it_IT:String = "it_IT";
+      private const ko_KR:String = "ko_KR";
+      private const nb_NO:String = "nb_NO";
+      private const nl_NL:String = "nl_NL";
+      private const pt_BR:String = "pt_BR";
+      private const sv_SE:String = "sv_SE";
+      private const zh_CN:String = "zh_CN";
+      private const zh_TW:String = "zh_TW";
+      private function handleCreationComplete():void
+      {
+        languageType.selection = english;
+      }
+      private function handleLanguageTypeClick(event:ItemClickEvent):void
+      {
+        var rbg:RadioButtonGroup = event.currentTarget as RadioButtonGroup;
+        switch (rbg.selectedValue)
+        {
+          case da_DK:
+          case de_DE:
+          case en_US:
+          case es_ES:
+          case fi_FI:
+          case fr_FR:
+          case it_IT:
+          case ko_KR:
+          case nb_NO:
+          case nl_NL:
+          case pt_BR:
+          case sv_SE:
+          case zh_CN:
+          case zh_TW:
+            resourceManager.localeChain = [rbg.selectedValue];
+            break;
+          default:
+            break;
+        }
+      }
+    ]]>
+  </mx:Script>
+  <mx:Panel title="Localized Flex Library" layout="absolute"
+      horizontalCenter="0" verticalCenter="0" backgroundColor="#FFFFFF" backgroundAlpha="0.75">
+    <mx:VBox left="10" right="10" top="10" bottom="10">
+      <mx:VBox>
+        <mx:RadioButtonGroup id="languageType" itemClick="handleLanguageTypeClick(event);"/>
+        <mx:RadioButton id="danish" value="da_DK" label="{resourceManager.getString('resources', 'DANISH')}" groupName="languageType"/>
+        <mx:RadioButton id="german" value="de_DE" label="{resourceManager.getString('resources', 'GERMAN')}" groupName="languageType"/>
+        <mx:RadioButton id="english" value="en_US" label="{resourceManager.getString('resources', 'ENGLISH')}" groupName="languageType"/>
+        <mx:RadioButton id="spanish" value="es_ES" label="{resourceManager.getString('resources', 'SPANISH')}" groupName="languageType"/>
+        <mx:RadioButton id="finnish" value="fi_FI" label="{resourceManager.getString('resources', 'FINNISH')}" groupName="languageType"/>
+        <mx:RadioButton id="french" value="fr_FR" label="{resourceManager.getString('resources', 'FRENCH')}" groupName="languageType"/>
+        <mx:RadioButton id="italian" value="it_IT" label="{resourceManager.getString('resources', 'ITALIAN')}" groupName="languageType"/>
+        <mx:RadioButton id="korean" value="ko_KR" label="{resourceManager.getString('resources', 'KOREAN')}" groupName="languageType"/>
+        <mx:RadioButton id="norwegian" value="nb_NO" label="{resourceManager.getString('resources', 'NORWEGIAN')}" groupName="languageType"/>
+        <mx:RadioButton id="dutch" value="nl_NL" label="{resourceManager.getString('resources', 'DUTCH')}" groupName="languageType"/>
+        <mx:RadioButton id="portuguese" value="pt_BR" label="{resourceManager.getString('resources', 'PORTUGUESE')}" groupName="languageType"/>
+        <mx:RadioButton id="swedish" value="sv_SE" label="{resourceManager.getString('resources', 'SWEDISH')}" groupName="languageType"/>
+        <mx:RadioButton id="simplified_chinese" value="zh_CN" label="{resourceManager.getString('resources', 'SIMPLIFIED_CHINESE')}" groupName="languageType"/>
+        <mx:RadioButton id="traditional_chinese" value="zh_TW" label="{resourceManager.getString('resources', 'TRADITIONAL_CHINESE')}" groupName="languageType"/>
+      </mx:VBox>
+      <mx:HRule width="100%"/>
+      <i18n:MyComponent/>
+    </mx:VBox>
+  </mx:Panel>
+</mx:Application>
