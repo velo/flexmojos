@@ -242,7 +242,7 @@ public class TestCompilerMojo
 
         // Remove all libraries
         configuration.setExternalLibraryPath( getGlobalDependency() );
-        configuration.setIncludes( null );
+        configuration.includeLibraries( null );
         configuration.setRuntimeSharedLibraries( null );
 
         // Set all dependencies as merged
@@ -250,15 +250,25 @@ public class TestCompilerMojo
         configuration.addLibraryPath( getDependenciesPath( "merged" ) );
         configuration.addLibraryPath( getDependenciesPath( "external" ) );
         configuration.addLibraryPath( getResourcesBundles() );
-        configuration.addLibraryPath( getDependenciesPath( "internal" ) );
         configuration.addLibraryPath( getDependenciesPath( "rsl" ) );
+
         // and add test libraries
-        configuration.addLibraryPath( getDependenciesPath( "test" ) );
+        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
 
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
         configuration.addSourcePath( MavenUtils.getTestSourcePaths( build ) );
         configuration.allowSourcePathOverlap( true );
 
+    }
+
+    private File[] merge( File[]... filesSets )
+    {
+        List<File> files = new ArrayList<File>();
+        for ( File[] fileSet : filesSets )
+        {
+            files.addAll( Arrays.asList( fileSet ) );
+        }
+        return files.toArray( new File[0] );
     }
 
 }
