@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.maven.artifact.Artifact;
@@ -1431,7 +1432,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 ArtifactResolutionResult arr =
                     resolver.resolveTransitively( pomArtifacts, pomArtifact, remoteRepositories, localRepository,
                                                   artifactMetadataSource );
-                List<Artifact> artifactDependencies = new ArrayList( arr.getArtifacts() );
+                List<Artifact> artifactDependencies = new ArrayList<Artifact>( arr.getArtifacts() );
                 artifactDependencies = removeNonRSLDependencies( rslArtifacts, artifactDependencies );
                 dependencies.put( pomArtifact, artifactDependencies );
             }
@@ -1533,12 +1534,25 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     /**
-     * Get resource bundles
+     * Get all resource bundles
      * 
      * @return Array of resource bundle files
      * @throws MojoExecutionException
      */
     protected File[] getResourcesBundles()
+        throws MojoExecutionException
+    {
+        return getResourcesBundles( null );
+    }
+
+    /**
+     * Get resource bundles for the given locale
+     * @param locale the locale for which you want bundles, null for all locales
+     * 
+     * @return Array of resource bundle files
+     * @throws MojoExecutionException
+     */
+    protected File[] getResourcesBundles(String locale)
         throws MojoExecutionException
     {
         if ( locales == null )
@@ -1556,17 +1570,21 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
 
             // resouceBundles.add(artifact.getFile());
-            for ( String locale : locales )
+            for ( String mylocale : locales )
             {
-                Artifact localeArtifact =
-                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                  artifact.getVersion(), artifact.getType(), locale );
-
-                resolveArtifact( localeArtifact, resolver, localRepository, remoteRepositories );
-                resourceBundles.add( localeArtifact.getFile() );
+                if (locale == null || mylocale.equals( locale ))
+                {
+                    Artifact localeArtifact =
+                        artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                      artifact.getVersion(), artifact.getType(), mylocale );
+    
+                    resolveArtifact( localeArtifact, resolver, localRepository, remoteRepositories );
+                    resourceBundles.add( localeArtifact.getFile() );
+                }
             }
 
         }
+        getLog().debug( "getResourcesBundles("+locale+") returning resourceBundles: "+resourceBundles );
         return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
@@ -1646,6 +1664,21 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             getLog().warn( "Resource-bundle generation fail: No resource-bundle found." );
             return;
         }
+        
+        // install resource bundle beacon
+        try
+        {
+            File tempFile = File.createTempFile( build.getFinalName(), ".rb.swc" );
+            tempFile.deleteOnExit();
+            FileUtils.copyURLToFile( getClass().getResource( "/rb.swc" ), tempFile );
+            getLog().info( "Installing resource bundle beacon: " + tempFile );
+            projectHelper.attachArtifact( project, "resource-bundle", tempFile );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to create beacon resource bundle. " + build.getFinalName()+".rb.swc", e );
+        }
+        
 
         for ( String locale : locales )
         {
