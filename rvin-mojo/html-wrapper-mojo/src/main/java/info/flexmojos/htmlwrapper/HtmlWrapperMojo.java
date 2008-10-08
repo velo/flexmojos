@@ -7,11 +7,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.maven.model.Build;
@@ -94,9 +94,9 @@ public class HtmlWrapperMojo
      * 
      * <pre>
      *  &lt;parameters&gt;
-     *  	&lt;swf&gt;${build.finalName}&lt;/swf&gt;
-     *  	&lt;width&gt;100%&lt;/width&gt;
-     *  	&lt;height&gt;100%&lt;/height&gt;
+     *      &lt;swf&gt;${build.finalName}&lt;/swf&gt;
+     *      &lt;width&gt;100%&lt;/width&gt;
+     *      &lt;height&gt;100%&lt;/height&gt;
      *  &lt;/parameters&gt;
      * </pre>
      * 
@@ -211,9 +211,10 @@ public class HtmlWrapperMojo
                 // Shake bars to avoid URI syntax problems
                 templateURI = templateURI.replace( '\\', '/' );
             }
+            templateURI = URIUtil.encodePath( templateURI );
             uri = new URI( templateURI );
         }
-        catch ( URISyntaxException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Invalid template URI.", e );
         }
