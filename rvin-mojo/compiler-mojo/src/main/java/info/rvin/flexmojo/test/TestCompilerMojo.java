@@ -84,7 +84,7 @@ public class TestCompilerMojo
             getLog().warn( "Test folder not found" + testFolder );
             return;
         }
-
+        
         setUp();
 
         if ( testClasses == null || testClasses.isEmpty() )
@@ -103,6 +103,7 @@ public class TestCompilerMojo
         throws MojoExecutionException, MojoFailureException
     {
         isSetProjectFile = false;
+        linkReport = false;
 
         if ( includeTestFiles == null )
         {
