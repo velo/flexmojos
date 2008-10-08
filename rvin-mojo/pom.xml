@@ -80,6 +80,16 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>sonatype-public</id>
+			<url>http://repository.sonatype.org/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -340,8 +350,8 @@
 	    <module>super-poms</module>
 <!--
 Tests can't be released due to some snapshot dependencies
-	    <module>test-harness</module>
  -->
+	    <module>test-harness</module>
   </modules>
 
 </project>
