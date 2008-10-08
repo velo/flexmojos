@@ -875,16 +875,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
-        updatePathResolver();
+        setMavenPathResolver();
     }
 
     @SuppressWarnings( "unchecked" )
     @FlexCompatibility( minVersion = "3" )
-    private void updatePathResolver()
+    private void setMavenPathResolver()
     {
         if ( enableMavenResourcesResolver )
         {
-            // builder.setPathResolver( new MavenPathResolver( build.getResources() ) );
+            builder.setPathResolver( new MavenPathResolver( build.getResources() ) );
         }
     }
 
