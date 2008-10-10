@@ -68,7 +68,7 @@ public class TestLibraryCompilerMojo
 
         outputFile = new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
 
-        includeSources = MavenUtils.getTestSourcePaths( build );
+        includeSources = MavenUtils.getTestSourcePaths( project, build );
 
         super.setUp();
     }
@@ -82,7 +82,7 @@ public class TestLibraryCompilerMojo
         // add test libraries
         configuration.addLibraryPath( getDependenciesPath( "test" ) );
 
-        configuration.addSourcePath( MavenUtils.getTestSourcePaths( build ) );
+        configuration.addSourcePath( MavenUtils.getTestSourcePaths( project, build ) );
     }
 
     @Override
