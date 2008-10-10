@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,8 @@ public class MavenUtils
     public static File resolveResourceFile( MavenProject project, String resourceFile )
     {
 
-        File[] resoucesFolders = getFiles( project.getBasedir().getAbsolutePath(), project.getBuild().getResources() );
+        File[] resoucesFolders =
+            getFiles( project.getBasedir().getAbsolutePath(), project.getBuild().getResources(), Collections.EMPTY_LIST );
 
         for ( File resourceFolder : resoucesFolders )
         {
@@ -222,9 +224,9 @@ public class MavenUtils
      * @return Array of source paths for all resources in the source directory
      */
     @SuppressWarnings( "unchecked" )
-    public static File[] getSourcePaths( Build build )
+    public static File[] getSourcePaths( MavenProject project, Build build )
     {
-        return getFiles( build.getSourceDirectory(), build.getResources() );
+        return getFiles( build.getSourceDirectory(), build.getResources(), project.getCompileSourceRoots() );
     }
 
     /**
@@ -234,21 +236,23 @@ public class MavenUtils
      * @return Array of test-source paths for all resources in the test-source directory
      */
     @SuppressWarnings( "unchecked" )
-    public static File[] getTestSourcePaths( Build build )
+    public static File[] getTestSourcePaths( MavenProject project, Build build )
     {
-        return getFiles( build.getTestSourceDirectory(), build.getTestResources() );
+        return getFiles( build.getTestSourceDirectory(), build.getTestResources(), project.getTestCompileSourceRoots() );
     }
 
     /**
      * Get array of Files for all resources in the resources list.
      * 
+     * @param project
      * @param sourceDirectory path to source directory
      * @param resources List of Resources
+     * @param compilePaths
      * @return Array of Files for given source directory and resources
      */
-    private static File[] getFiles( String sourceDirectory, List<Resource> resources )
+    private static File[] getFiles( String sourceDirectory, List<Resource> resources, List<String> compilePaths )
     {
-        List<File> files = new ArrayList<File>();
+        Set<File> files = new HashSet<File>();
 
         File source = new File( sourceDirectory );
         if ( source.exists() )
@@ -262,6 +266,15 @@ public class MavenUtils
             if ( resourceFile.exists() )
             {
                 files.add( resourceFile );
+            }
+        }
+
+        for ( String path : compilePaths )
+        {
+            File filePath = new File( path );
+            if ( filePath.exists() )
+            {
+                files.add( filePath );
             }
         }
 
@@ -420,6 +433,7 @@ public class MavenUtils
         return str1.equals( str2 );
     }
 
+    @SuppressWarnings("unchecked")
     public static Map<String, File> getManifests( File configZip, Build build )
         throws MojoExecutionException
     {

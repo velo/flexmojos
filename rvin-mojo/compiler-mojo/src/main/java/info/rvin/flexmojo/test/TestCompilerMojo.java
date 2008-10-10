@@ -257,8 +257,9 @@ public class TestCompilerMojo
         // and add test libraries
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
 
+        //test launcher is at testOutputDirectory
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
-        configuration.addSourcePath( MavenUtils.getTestSourcePaths( build ) );
+        configuration.addSourcePath( MavenUtils.getTestSourcePaths( project, build ) );
         configuration.allowSourcePathOverlap( true );
 
     }

@@ -771,7 +771,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( sourcePaths == null )
         {
-            sourcePaths = MavenUtils.getSourcePaths( build );
+            sourcePaths = MavenUtils.getSourcePaths( project, build );
             if ( mergeResourceBundle != null && mergeResourceBundle )
             {
                 List<File> paths = new ArrayList<File>( Arrays.asList( sourcePaths ) );
