@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.maven.artifact.Artifact;
@@ -388,7 +387,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * @parameter
      */
-    private MavenArtifact[] loadExterns;
+    protected MavenArtifact[] loadExterns;
 
     /**
      * Load a file containing configuration options If not defined, by default will search for one on resources folder.
