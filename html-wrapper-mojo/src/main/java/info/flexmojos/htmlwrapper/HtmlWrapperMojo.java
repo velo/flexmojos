@@ -151,18 +151,31 @@ public class HtmlWrapperMojo
      */
     private Map<String, String> parameters;
 
+    /**
+     * output Directory to store final html
+     * 
+     * @parameter default-value="${project.build.directory}"
+     */
+    private File outputDirectory;
+
+    /**
+     * final name of html file
+     * 
+     * @parameter default-value="${project.build.finalName}"
+     */
+    private String htmlName;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         init();
 
         File templateFolder = extractTemplate();
-        File targetFolder = new File( build.getDirectory() );
-        copyTemplates( templateFolder, targetFolder );
-        copyIndex( templateFolder, targetFolder );
+        copyTemplates( templateFolder );
+        copyIndex( templateFolder );
     }
 
-    private void copyIndex( File templateFolder, File targetFolder )
+    private void copyIndex( File templateFolder )
         throws MojoExecutionException
     {
         File indexTemplate = new File( templateFolder, "index.template.html" );
@@ -182,7 +195,7 @@ public class HtmlWrapperMojo
             template = template.replace( "${" + key + "}", value );
         }
 
-        File index = new File( targetFolder, build.getFinalName() + ".html" );
+        File index = new File( outputDirectory, htmlName + ".html" );
 
         try
         {
@@ -194,12 +207,12 @@ public class HtmlWrapperMojo
         }
     }
 
-    private void copyTemplates( File templateFolder, File targetFolder )
+    private void copyTemplates( File templateFolder )
         throws MojoExecutionException
     {
         try
         {
-            FileUtils.copyDirectory( templateFolder, targetFolder, new FileFilter()
+            FileUtils.copyDirectory( templateFolder, outputDirectory, new FileFilter()
             {
                 public boolean accept( File pathname )
                 {
