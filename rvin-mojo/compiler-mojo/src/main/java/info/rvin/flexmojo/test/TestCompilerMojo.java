@@ -121,6 +121,7 @@ public class TestCompilerMojo
     {
         isSetProjectFile = false;
         linkReport = false;
+        loadExterns = null;
 
         if ( includeTestFiles == null )
         {
