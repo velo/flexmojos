@@ -240,12 +240,12 @@ public class AsDocMojo
     {
         if ( sourcePaths == null )
         {
-            sourcePaths = MavenUtils.getSourcePaths( build );
+            sourcePaths = MavenUtils.getSourcePaths( project, build );
         }
         if ( docSources == null && docClasses == null && docNamespaces == null )
         {
-            getLog().warn( "Nothing expecified to include.  Assuming source folders." );
-            docSources = MavenUtils.getSourcePaths( build );
+            getLog().warn( "Nothing expecified to include.  Assuming source paths." );
+            docSources = sourcePaths;
         }
 
         libraries = new ArrayList<File>();
