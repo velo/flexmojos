@@ -17,7 +17,6 @@
  */
 package info.rvin.flexmojo.test;
 
-import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.compiler.ApplicationMojo;
 
 import java.io.File;
@@ -81,7 +80,7 @@ public class TestCompilerMojo
     /**
      * Socket connect port for flex/java communication
      * 
-     * @parameter default-value="3539"
+     * @parameter default-value="13539"
      */
     private int testPort;
 
@@ -101,7 +100,7 @@ public class TestCompilerMojo
             getLog().warn( "Test folder not found" + testFolder );
             return;
         }
-        
+
         setUp();
 
         if ( testClasses == null || testClasses.isEmpty() )
@@ -274,9 +273,9 @@ public class TestCompilerMojo
         // and add test libraries
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
 
-        //test launcher is at testOutputDirectory
+        // test launcher is at testOutputDirectory
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
-        configuration.addSourcePath( MavenUtils.getTestSourcePaths( project, build ) );
+        configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
         configuration.allowSourcePathOverlap( true );
 
     }
