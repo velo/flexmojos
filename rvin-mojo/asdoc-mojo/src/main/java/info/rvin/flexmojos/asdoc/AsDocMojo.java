@@ -240,7 +240,17 @@ public class AsDocMojo
     {
         if ( sourcePaths == null )
         {
-            sourcePaths = MavenUtils.getSourcePaths( project, build );
+            List<String> sourceRoots = project.getCompileSourceRoots();
+            List<File> sources = new ArrayList<File>();
+            for ( String sourceRoot : sourceRoots )
+            {
+                File source = new File( sourceRoot );
+                if ( source.exists() )
+                {
+                    sources.add( source );
+                }
+            }
+            sourcePaths = sources.toArray( new File[sources.size()] );
         }
         if ( docSources == null && docClasses == null && docNamespaces == null )
         {
