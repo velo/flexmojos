@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>2.0M7-SNAPSHOT</version>
+		<version>%{flex-mojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
@@ -25,7 +25,6 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-				<version>2.0M7-SNAPSHOT</version>
 				<configuration>
 					<mergeResourceBundle>false</mergeResourceBundle>
 					<locales>
