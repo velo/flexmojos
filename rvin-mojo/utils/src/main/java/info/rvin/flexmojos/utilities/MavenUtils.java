@@ -5,8 +5,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +35,7 @@ import eu.cedarsoft.utils.ZipExtractor;
  */
 public class MavenUtils
 {
+
     private static final String WINDOWS_OS = "windows";
 
     private static final String MAC_OS = "mac os x";
