@@ -8,8 +8,6 @@ public class SimplePojo {
 
 	private Double value;
 
-	private Map nicknames;
-
 	public String getName() {
 		return name;
 	}
@@ -24,14 +22,6 @@ public class SimplePojo {
 
 	public void setValue(Double value) {
 		this.value = value;
-	}
-
-	public Map getNicknames() {
-		return nicknames;
-	}
-
-	public void setNicknames(Map nicknames) {
-		this.nicknames = nicknames;
 	}
 
 }
