@@ -58,50 +58,56 @@ public class MavenUtils
      * @param sourceFile sugested name on pom
      * @return source file or null if source not found
      */
+    @SuppressWarnings( "unchecked" )
     public static File resolveSourceFile( MavenProject project, String sourceFile )
     {
-
-        File sourceDirectory = new File( project.getBuild().getSourceDirectory() );
-
-        if ( sourceFile != null )
+        List<String> sourceRoots = project.getCompileSourceRoots();
+        for ( String sourceRoot : sourceRoots )
         {
-            return new File( sourceDirectory, sourceFile );
-        }
-        else
-        {
-            File[] files = sourceDirectory.listFiles( new FileFilter()
-            {
-                public boolean accept( File pathname )
-                {
-                    return pathname.isFile()
-                        && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) );
-                }
-            } );
+            File sourceDirectory = new File( sourceRoot );
 
-            if ( files.length == 1 )
+            if ( sourceFile != null )
             {
-                return files[0];
+                return new File( sourceDirectory, sourceFile );
             }
-            if ( files.length > 1 )
+            else
             {
-                for ( File file : files )
+                File[] files = sourceDirectory.listFiles( new FileFilter()
                 {
-                    if ( file.getName().equalsIgnoreCase( "Main.mxml" ) || file.getName().equalsIgnoreCase( "Main.as" ) )
+                    public boolean accept( File pathname )
                     {
-                        return file;
+                        return pathname.isFile()
+                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) );
+                    }
+                } );
+
+                if ( files.length == 1 )
+                {
+                    return files[0];
+                }
+                if ( files.length > 1 )
+                {
+                    for ( File file : files )
+                    {
+                        if ( file.getName().equalsIgnoreCase( "Main.mxml" )
+                            || file.getName().equalsIgnoreCase( "Main.as" ) )
+                        {
+                            return file;
+                        }
+                    }
+                    for ( File file : files )
+                    {
+                        if ( file.getName().equalsIgnoreCase( "Index.mxml" )
+                            || file.getName().equalsIgnoreCase( "Index.as" ) )
+                        {
+                            return file;
+                        }
                     }
                 }
-                for ( File file : files )
-                {
-                    if ( file.getName().equalsIgnoreCase( "Index.mxml" )
-                        || file.getName().equalsIgnoreCase( "Index.as" ) )
-                    {
-                        return file;
-                    }
-                }
             }
-            return null;
+
         }
+        return null;
     }
 
     /**
@@ -115,12 +121,11 @@ public class MavenUtils
     public static File resolveResourceFile( MavenProject project, String resourceFile )
     {
 
-        File[] resoucesFolders =
-            getFiles( project.getBasedir().getAbsolutePath(), project.getBuild().getResources(), Collections.EMPTY_LIST );
+        List<Resource> resources = project.getBuild().getResources();
 
-        for ( File resourceFolder : resoucesFolders )
+        for ( Resource resourceFolder : resources )
         {
-            File resource = new File( resourceFolder, resourceFile );
+            File resource = new File( resourceFolder.getDirectory(), resourceFile );
             if ( resource.exists() )
             {
                 return resource;
@@ -218,71 +223,6 @@ public class MavenUtils
     }
 
     /**
-     * Get the source paths for all resources in the source directory.
-     * 
-     * @param build Build for this to get all source paths
-     * @return Array of source paths for all resources in the source directory
-     */
-    @SuppressWarnings( "unchecked" )
-    public static File[] getSourcePaths( MavenProject project, Build build )
-    {
-        return getFiles( build.getSourceDirectory(), build.getResources(), project.getCompileSourceRoots() );
-    }
-
-    /**
-     * Get the test-source paths for all resources in the test-source directory.
-     * 
-     * @param build Build for this to get all test-source paths
-     * @return Array of test-source paths for all resources in the test-source directory
-     */
-    @SuppressWarnings( "unchecked" )
-    public static File[] getTestSourcePaths( MavenProject project, Build build )
-    {
-        return getFiles( build.getTestSourceDirectory(), build.getTestResources(), project.getTestCompileSourceRoots() );
-    }
-
-    /**
-     * Get array of Files for all resources in the resources list.
-     * 
-     * @param project
-     * @param sourceDirectory path to source directory
-     * @param resources List of Resources
-     * @param compilePaths
-     * @return Array of Files for given source directory and resources
-     */
-    private static File[] getFiles( String sourceDirectory, List<Resource> resources, List<String> compilePaths )
-    {
-        Set<File> files = new HashSet<File>();
-
-        File source = new File( sourceDirectory );
-        if ( source.exists() )
-        {
-            files.add( source );
-        }
-
-        for ( Resource resource : resources )
-        {
-            File resourceFile = new File( resource.getDirectory() );
-            if ( resourceFile.exists() )
-            {
-                files.add( resourceFile );
-            }
-        }
-
-        for ( String path : compilePaths )
-        {
-            File filePath = new File( path );
-            if ( filePath.exists() )
-            {
-                files.add( filePath );
-            }
-        }
-
-        return files.toArray( new File[files.size()] );
-
-    }
-
-    /**
      * Returns file reference to config.xml file. Copies the config file to the build directory.
      * 
      * @param build Build for which to get the config.xml file
@@ -311,8 +251,7 @@ public class MavenUtils
      * 
      * @param build Build for which to get the fonts file
      * @return file reference to fonts file
-     * @throws MojoExecutionException thrown if the config file could not be copied to the build directory TODO
-     *             Implement for linux?
+     * @throws MojoExecutionException thrown if the config file could not be copied to the build directory
      */
     public static File getFontsFile( Build build )
         throws MojoExecutionException
@@ -433,8 +372,8 @@ public class MavenUtils
         return str1.equals( str2 );
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, File> getManifests( File configZip, Build build )
+    @SuppressWarnings( "unchecked" )
+    public static Map<String, File> getFDKNamespaces( File configZip, Build build )
         throws MojoExecutionException
     {
         File outputFolder = new File( build.getOutputDirectory(), "configs" );
@@ -451,11 +390,11 @@ public class MavenUtils
             throw new MojoExecutionException( "Unable to extract configurations", e );
         }
 
-        Map<String, File> manifests = new LinkedHashMap<String, File>();
+        Map<String, File> namespace = new LinkedHashMap<String, File>();
         File configFile = new File( outputFolder, "flex-config.xml" );
         if ( !configFile.isFile() )
         {
-            return manifests;
+            return namespace;
         }
 
         SAXReader reader = new SAXReader();
@@ -476,11 +415,11 @@ public class MavenUtils
             File manifest = new File( outputFolder, node.valueOf( "//manifest" ) );
             if ( !manifest.exists() )
             {
-                throw new MojoExecutionException( "Manifest " + uri + " not found " + manifest.getAbsolutePath() );
+                throw new MojoExecutionException( "Namespace " + uri + " not found " + manifest.getAbsolutePath() );
             }
-            manifests.put( uri, manifest );
+            namespace.put( uri, manifest );
         }
 
-        return manifests;
+        return namespace;
     }
 }

@@ -1,6 +1,5 @@
 package info.rvin.flexmojo.test;
 
-import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.compiler.LibraryMojo;
 
 import java.io.File;
@@ -51,7 +50,7 @@ public class TestLibraryCompilerMojo
 
         outputFile = new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
 
-        includeSources = MavenUtils.getTestSourcePaths( project, build );
+        includeSources = getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] );
 
         super.setUp();
     }
@@ -65,7 +64,7 @@ public class TestLibraryCompilerMojo
         // add test libraries
         configuration.addLibraryPath( getDependenciesPath( "test" ) );
 
-        configuration.addSourcePath( MavenUtils.getTestSourcePaths( project, build ) );
+        configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
     }
 
     @Override

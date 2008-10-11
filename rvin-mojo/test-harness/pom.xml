@@ -187,6 +187,12 @@
 		</dependency>
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
+			<artifactId>generator-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
 			<artifactId>html-wrapper-mojo</artifactId>
 			<version>${pom.version}</version>
 			<type>maven-plugin</type>
