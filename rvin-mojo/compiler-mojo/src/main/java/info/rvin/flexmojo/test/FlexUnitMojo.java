@@ -1,12 +1,9 @@
 package info.rvin.flexmojo.test;
 
-import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,7 +12,6 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.text.MessageFormat;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.dom4j.Document;
@@ -57,7 +53,7 @@ public class FlexUnitMojo
     /**
      * Socket connect port for flex/java communication
      * 
-     * @parameter default-value="3539"
+     * @parameter default-value="13539"
      */
     private int testPort;
 
@@ -86,11 +82,6 @@ public class FlexUnitMojo
      * @parameter default-value="false" expression="${maven.test.failure.ignore}"
      */
     private boolean testFailureIgnore;
-
-    /**
-     * @parameter default-value="false" expression="${updateSecuritySandbox}"
-     */
-    private boolean updateSecuritySandbox;
 
     @Override
     public void execute()
@@ -126,105 +117,8 @@ public class FlexUnitMojo
         swf = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
         reportPath = new File( build.getDirectory(), "surefire-reports" );
         reportPath.mkdirs();
-
-        if ( updateSecuritySandbox )
-        {
-            updateSecuritySandbox();
-        }
     }
 
-    private void updateSecuritySandbox()
-        throws MojoExecutionException
-    {
-        File userHome = new File( System.getProperty( "user.home" ) );
-
-        File fpTrustFolder = new File( userHome, getFPTrustFolder() );
-
-        if ( !fpTrustFolder.exists() || !fpTrustFolder.isDirectory() )
-        {
-            throw new MojoExecutionException( "Unable find Flash Player trust folder " + fpTrustFolder );
-        }
-
-        File mavenCfg = new File( fpTrustFolder, "maven.cfg" );
-        if ( !mavenCfg.exists() )
-        {
-            try
-            {
-                mavenCfg.createNewFile();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to create FlashPayerTrust file: "
-                    + mavenCfg.getAbsolutePath(), e );
-            }
-        }
-
-        try
-        {
-            // Load maven.cfg
-            FileReader input = new FileReader( mavenCfg );
-            String cfg = IOUtils.toString( input );
-            input.close();
-
-            String buildFolder = new File( build.getTestOutputDirectory(), "/TestRunner.swf" ).getAbsolutePath();
-            if ( cfg.contains( buildFolder ) )
-            {
-                getLog().info( "Already trust on " + buildFolder );
-                return;
-            }
-            else
-            {
-                getLog().info( "Updating Flash Payer Trust directory" );
-            }
-
-            if ( !cfg.endsWith( "\n" ) )
-            {
-                cfg = cfg + '\n';
-            }
-
-            // add builder folder
-            cfg = cfg + buildFolder + '\n';
-
-            // Save maven.cfg
-            FileWriter output = new FileWriter( mavenCfg );
-            IOUtils.write( cfg, output );
-            output.flush();
-            output.close();
-
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to edit FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
-        }
-    }
-
-    /*
-     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html #140756
-     */
-    private String getFPTrustFolder()
-        throws MojoExecutionException
-    {
-        if ( MavenUtils.isWindows() )
-        {
-            if ( MavenUtils.isWindowsVista() )
-            {
-                return "AppData/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-            }
-            return "Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-        }
-
-        if ( MavenUtils.isLinux() )
-        {
-            return ".macromedia/Flash_Player/#Security/FlashPlayerTrust";
-        }
-
-        if ( MavenUtils.isMac() )
-        {
-            return "Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-        }
-
-        throw new MojoExecutionException( "Unable to resolve current OS: " + MavenUtils.osString() );
-    }
 
     /**
      * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.

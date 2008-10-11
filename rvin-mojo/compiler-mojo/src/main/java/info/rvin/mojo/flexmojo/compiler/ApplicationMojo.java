@@ -21,15 +21,20 @@ import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
 
 import info.flexmojos.compatibilitykit.FlexCompatibility;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -78,6 +83,15 @@ public class ApplicationMojo
      * The file to be compiled
      */
     protected File source;
+
+    /**
+     * When true, flex-mojos will register register every compiled SWF files as trusted. These SWF files are assigned to
+     * the local-trusted sandbox. They can interact with any other SWF files, and they can load data from anywhere,
+     * remote or local. On false nothing is done, so if the file is already trusted it will still as it is.
+     * 
+     * @parameter default-value="true" expression="${updateSecuritySandbox}"
+     */
+    private boolean updateSecuritySandbox;
 
     @Override
     public void setUp()
@@ -155,6 +169,11 @@ public class ApplicationMojo
     {
         super.tearDown();
 
+        if ( updateSecuritySandbox )
+        {
+            updateSecuritySandbox();
+        }
+
         if ( modules != null )
         {
             configuration.addExterns( new File[] { linkReportFile } );
@@ -221,7 +240,7 @@ public class ApplicationMojo
 
         merged.addAll( asList( getDependenciesPath( "compile" ) ) );
         merged.addAll( asList( getDependenciesPath( "merged" ) ) );
-        merged.addAll( asList( getResourcesBundles(locale) ) );
+        merged.addAll( asList( getResourcesBundles( locale ) ) );
 
         Set<String> args = new HashSet<String>();
         // args.addAll(Arrays.asList(configs));
@@ -270,6 +289,99 @@ public class ApplicationMojo
             sb.append( lib.getAbsolutePath() );
         }
         return sb.toString();
+    }
+
+    private void updateSecuritySandbox()
+        throws MojoExecutionException
+    {
+        File userHome = new File( System.getProperty( "user.home" ) );
+
+        File fpTrustFolder = new File( userHome, getFPTrustFolder() );
+
+        if ( !fpTrustFolder.exists() )
+        {
+            fpTrustFolder.mkdirs();
+        }
+
+        File mavenCfg = new File( fpTrustFolder, "maven.cfg" );
+        if ( !mavenCfg.exists() )
+        {
+            try
+            {
+                mavenCfg.createNewFile();
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to create FlashPayerTrust file: "
+                    + mavenCfg.getAbsolutePath(), e );
+            }
+        }
+
+        try
+        {
+            // Load maven.cfg
+            FileReader input = new FileReader( mavenCfg );
+            String cfg = IOUtils.toString( input );
+            input.close();
+
+            String buildFolder = new File( build.getTestOutputDirectory(), "/TestRunner.swf" ).getAbsolutePath();
+            if ( cfg.contains( buildFolder ) )
+            {
+                getLog().info( "Already trust on " + buildFolder );
+                return;
+            }
+            else
+            {
+                getLog().info( "Updating Flash Payer Trust directory" );
+            }
+
+            if ( !cfg.endsWith( "\n" ) )
+            {
+                cfg = cfg + '\n';
+            }
+
+            // add builder folder
+            cfg = cfg + buildFolder + '\n';
+
+            // Save maven.cfg
+            FileWriter output = new FileWriter( mavenCfg );
+            IOUtils.write( cfg, output );
+            output.flush();
+            output.close();
+
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to edit FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
+        }
+    }
+
+    /*
+     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html #140756
+     */
+    private String getFPTrustFolder()
+        throws MojoExecutionException
+    {
+        if ( MavenUtils.isWindows() )
+        {
+            if ( MavenUtils.isWindowsVista() )
+            {
+                return "AppData/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+            }
+            return "Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+        }
+
+        if ( MavenUtils.isLinux() )
+        {
+            return ".macromedia/Flash_Player/#Security/FlashPlayerTrust";
+        }
+
+        if ( MavenUtils.isMac() )
+        {
+            return "Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+        }
+
+        throw new MojoExecutionException( "Unable to resolve current OS: " + MavenUtils.osString() );
     }
 
 }
