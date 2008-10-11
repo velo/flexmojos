@@ -788,13 +788,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( sourcePaths == null )
         {
-            sourcePaths = MavenUtils.getSourcePaths( project, build );
+            List<String> sourceRoots = project.getCompileSourceRoots();
+            List<File> sources = getValidSourceRoots( sourceRoots );
             if ( mergeResourceBundle != null && mergeResourceBundle )
             {
-                List<File> paths = new ArrayList<File>( Arrays.asList( sourcePaths ) );
-                paths.add( new File( resourceBundlePath ) );
-                sourcePaths = paths.toArray( new File[paths.size()] );
+                sources.add( new File( resourceBundlePath ) );
             }
+            sourcePaths = sources.toArray( new File[sources.size()] );
         }
 
         if ( configFile == null )
@@ -892,6 +892,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
         setMavenPathResolver();
+    }
+
+    protected List<File> getValidSourceRoots( List<?> sourceRoots )
+    {
+        List<File> sources = new ArrayList<File>();
+        for ( Object sourceRoot : sourceRoots )
+        {
+            File source = new File( sourceRoot.toString() );
+            if ( source.exists() )
+            {
+                sources.add( source );
+            }
+        }
+        return sources;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -1209,7 +1223,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         File configZip = configArtifact.getFile();
-        Map<String, File> configNamespaces = MavenUtils.getManifests( configZip, build );
+        Map<String, File> configNamespaces = MavenUtils.getFDKNamespaces( configZip, build );
 
         List<Namespace> namespaces = new ArrayList<Namespace>();
         if ( this.namespaces != null )
@@ -1563,12 +1577,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     /**
      * Get resource bundles for the given locale
-     * @param locale the locale for which you want bundles, null for all locales
      * 
+     * @param locale the locale for which you want bundles, null for all locales
      * @return Array of resource bundle files
      * @throws MojoExecutionException
      */
-    protected File[] getResourcesBundles(String locale)
+    protected File[] getResourcesBundles( String locale )
         throws MojoExecutionException
     {
         if ( locales == null )
@@ -1588,19 +1602,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             // resouceBundles.add(artifact.getFile());
             for ( String mylocale : locales )
             {
-                if (locale == null || mylocale.equals( locale ))
+                if ( locale == null || mylocale.equals( locale ) )
                 {
                     Artifact localeArtifact =
                         artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                      artifact.getVersion(), artifact.getType(), mylocale );
-    
+                                                                      artifact.getVersion(), artifact.getType(),
+                                                                      mylocale );
+
                     resolveArtifact( localeArtifact, resolver, localRepository, remoteRepositories );
                     resourceBundles.add( localeArtifact.getFile() );
                 }
             }
 
         }
-        getLog().debug( "getResourcesBundles("+locale+") returning resourceBundles: "+resourceBundles );
+        getLog().debug( "getResourcesBundles(" + locale + ") returning resourceBundles: " + resourceBundles );
         return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
@@ -1680,7 +1695,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             getLog().warn( "Resource-bundle generation fail: No resource-bundle found." );
             return;
         }
-        
+
         // install resource bundle beacon
         try
         {
@@ -1692,9 +1707,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Failed to create beacon resource bundle. " + build.getFinalName()+".rb.swc", e );
+            throw new MojoExecutionException( "Failed to create beacon resource bundle. " + build.getFinalName()
+                + ".rb.swc", e );
         }
-        
 
         for ( String locale : locales )
         {

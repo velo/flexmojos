@@ -339,9 +339,14 @@ public class GeneratorMojo
         {
             baseOutputDirectory = outputDirectory;
         }
-        else if ( !baseOutputDirectory.exists() )
+        else
         {
-            baseOutputDirectory.mkdirs();
+            project.addCompileSourceRoot( baseOutputDirectory.getAbsolutePath() );
+
+            if ( !baseOutputDirectory.exists() )
+            {
+                baseOutputDirectory.mkdirs();
+            }
         }
 
     }
