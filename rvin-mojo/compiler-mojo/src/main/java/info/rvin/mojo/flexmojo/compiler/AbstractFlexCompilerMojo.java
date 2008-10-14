@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
@@ -1958,7 +1959,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         for ( File sourcePath : paths )
         {
             Collection<File> files =
-                FileUtils.listFiles( sourcePath, new AgeFileFilter( lastCompiledArtifact, false ), null );
+                FileUtils.listFiles( sourcePath, new AgeFileFilter( lastCompiledArtifact, false ), TrueFileFilter.INSTANCE );
 
             // If has any newer file
             if ( files.size() > 0 )
