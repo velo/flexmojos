@@ -241,26 +241,28 @@ public class TestCompilerMojo
     {
         super.configure();
 
-        // Remove all libraries
-        configuration.setExternalLibraryPath( getGlobalDependency() );
-        configuration.includeLibraries( null );
-        configuration.setRuntimeSharedLibraries( null );
-
-        // Set all dependencies as merged
-        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
-        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        configuration.addLibraryPath( getDependenciesPath( "external" ) );
-        configuration.addLibraryPath( getResourcesBundles() );
-        configuration.addLibraryPath( getDependenciesPath( "rsl" ) );
-
-        // and add test libraries
-        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
-
         // test launcher is at testOutputDirectory
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
         configuration.allowSourcePathOverlap( true );
 
+    }
+
+    @Override
+    protected void resolveDependencies()
+        throws MojoExecutionException
+    {
+        configuration.setExternalLibraryPath( getGlobalDependency() );
+
+        // Set all dependencies as merged
+        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
+        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
+        configuration.addLibraryPath( getResourcesBundles() );
+
+        // and add test libraries
+        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
+                                               getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
+                                               getDependenciesPath( "external" ) ) );
     }
 
     private File[] merge( File[]... filesSets )
