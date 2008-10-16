@@ -994,21 +994,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected void configure()
         throws MojoExecutionException
     {
-        configuration.setExternalLibraryPath( getDependenciesPath( "external" ) );
-        configuration.addExternalLibraryPath( getGlobalDependency() );
-
-        configuration.includeLibraries( getDependenciesPath( "internal" ) );
-
-        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
-        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        if ( mergeResourceBundle == null || mergeResourceBundle )
-        {
-            configuration.addLibraryPath( getResourcesBundles() );
-        }
-
-        resolveRuntimeLibraries();
-
-        configuration.setTheme( getDependenciesPath( "theme" ) );
+        resolveDependencies();
 
         configuration.enableAccessibility( accessible );
         configuration.allowSourcePathOverlap( allowSourcePathOverlap );
@@ -1190,6 +1176,26 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
 
         verifyDigests();
+    }
+
+    protected void resolveDependencies()
+        throws MojoExecutionException
+    {
+        configuration.setExternalLibraryPath( getGlobalDependency() );
+        configuration.addExternalLibraryPath( getDependenciesPath( "external" ) );
+
+        configuration.includeLibraries( getDependenciesPath( "internal" ) );
+
+        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
+        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
+        if ( mergeResourceBundle == null || mergeResourceBundle )
+        {
+            configuration.addLibraryPath( getResourcesBundles() );
+        }
+
+        resolveRuntimeLibraries();
+
+        configuration.setTheme( getDependenciesPath( "theme" ) );
     }
 
     private void addFdkNamespaces()
@@ -1959,7 +1965,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         for ( File sourcePath : paths )
         {
             Collection<File> files =
-                FileUtils.listFiles( sourcePath, new AgeFileFilter( lastCompiledArtifact, false ), TrueFileFilter.INSTANCE );
+                FileUtils.listFiles( sourcePath, new AgeFileFilter( lastCompiledArtifact, false ),
+                                     TrueFileFilter.INSTANCE );
 
             // If has any newer file
             if ( files.size() > 0 )
