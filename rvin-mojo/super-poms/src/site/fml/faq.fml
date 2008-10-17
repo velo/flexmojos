@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+	<part id="General">
+		<faq id="temp">
+			<question>Temp question?</question>
+			<answer>
+			<p>
+				TODO: Add questions/answers to FAQ
+			</p>
+			</answer>
+		</faq>
+	</part>
+</faqs>
