@@ -88,7 +88,7 @@ public class TestCompilerMojo
 
         if ( testClasses == null || testClasses.isEmpty() )
         {
-            getLog().warn( "No test classes found for pattern: " + includeTestFiles );
+            getLog().warn( "No test classes found for pattern: " + Arrays.toString( includeTestFiles ) );
         }
         else
         {
