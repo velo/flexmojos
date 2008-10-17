@@ -14,7 +14,25 @@
 	<description>Work around to get super poms installed/deployed automatically</description>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
 			<!-- Work around to get super poms installed automatically -->
 			<plugin>
 				<artifactId>maven-install-plugin</artifactId>
@@ -26,7 +44,7 @@
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
-							<file>${basedir}/air/pom.xml</file>
+							<file>${project.build.outputDirectory}/air.pom</file>
 							<groupId>info.flex-mojos</groupId>
 							<artifactId>air-super-pom</artifactId>
 							<version>${pom.version}</version>
@@ -40,7 +58,7 @@
 							<goal>install-file</goal>
 						</goals>
 						<configuration>
-							<file>${basedir}/flex/pom.xml</file>
+							<file>${project.build.outputDirectory}/flex.pom</file>
 							<groupId>info.flex-mojos</groupId>
 							<artifactId>flex-super-pom</artifactId>
 							<version>${pom.version}</version>
@@ -61,8 +79,8 @@
 							<goal>deploy-file</goal>
 						</goals>
 						<configuration>
-							<file>${basedir}/air/pom.xml</file>
-							<pomFile>${basedir}/air/pom.xml</pomFile>
+							<file>${project.build.outputDirectory}/air.pom</file>
+							<pomFile>${project.build.outputDirectory}/air.pom</pomFile>
 							<repositoryId>${deploy.repository.id}</repositoryId>
 							<url>${deploy.repository.url}</url>
 						</configuration>
@@ -74,8 +92,8 @@
 							<goal>deploy-file</goal>
 						</goals>
 						<configuration>
-							<file>${basedir}/flex/pom.xml</file>
-							<pomFile>${basedir}/flex/pom.xml</pomFile>
+							<file>${project.build.outputDirectory}/flex.pom</file>
+							<pomFile>${project.build.outputDirectory}/flex.pom</pomFile>
 							<repositoryId>${deploy.repository.id}</repositoryId>
 							<url>${deploy.repository.url}</url>
 						</configuration>
