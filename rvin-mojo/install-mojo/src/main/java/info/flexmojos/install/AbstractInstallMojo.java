@@ -17,6 +17,10 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.model.Dependency;
@@ -130,7 +134,10 @@ public abstract class AbstractInstallMojo
         Collection<Artifact> swcArtifacts = new ArrayList<Artifact>();
 
         File swcLibFolder = new File( sdkFolder, "frameworks/libs" );
-        Collection<File> swcs = listFiles( swcLibFolder, SWCS, true );
+
+        // shouldn't include '2.0.1.automation_swcs' folder see issue 108 for details
+        IOFileFilter dirFilter = new NotFileFilter( new NameFileFilter( "2.0.1.automation_swcs" ) );
+        Collection<File> swcs = listFiles( swcLibFolder, new SuffixFileFilter( SWCS ), dirFilter );
         for ( File swc : swcs )
         {
             Artifact artifact = createArtifact( swc, FRAMEWORK_GROUP_ID );
@@ -285,6 +292,10 @@ public abstract class AbstractInstallMojo
     private void installResourceBundleBeacon( File swcLocalesFolder, Collection<Artifact> flexArtifacts )
         throws MojoExecutionException
     {
+        if ( !swcLocalesFolder.exists() )
+        {
+            throw new MojoExecutionException( "Locales folder doesn't exists" );
+        }
         Collection<File> localizedSwcs = listFiles( swcLocalesFolder, SWCS, true );
         Set<String> localizedSwcsNames = new HashSet<String>();
         for ( File localizedSwc : localizedSwcs )
@@ -360,6 +371,11 @@ public abstract class AbstractInstallMojo
 
         File frameworks = new File( sdkFolder, "frameworks" );
         Collection<File> files = listFiles( frameworks, new String[] { "xml", "ser" }, false );
+        // nothing to be zipped
+        if ( files.isEmpty() )
+        {
+            return;
+        }
 
         File zipFile = createTempFile( "config-files", ".zip" );
 
@@ -499,6 +515,13 @@ public abstract class AbstractInstallMojo
         String artifactName = getArtifactName( file );
         artifactName = artifactName.substring( 0, artifactName.lastIndexOf( '_' ) );
         return artifactName;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Collection<File> listFiles( File directory, IOFileFilter fileFilter, IOFileFilter dirFilter )
+    {
+        // Just a facade to avoid unchecked warnings
+        return FileUtils.listFiles( directory, fileFilter, dirFilter );
     }
 
     @SuppressWarnings( "unchecked" )
