@@ -36,7 +36,6 @@ package info.rvin.mojo.flexmojo.compiler;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
 import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
-
 import info.flexmojos.compatibilitykit.FlexCompatibility;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
@@ -341,15 +340,15 @@ public class ApplicationMojo
             String cfg = IOUtils.toString( input );
             input.close();
 
-            String buildFolder = new File( build.getTestOutputDirectory(), "/TestRunner.swf" ).getAbsolutePath();
-            if ( cfg.contains( buildFolder ) )
+            String trustedFile = outputFile.getAbsolutePath();
+            if ( cfg.contains( trustedFile ) )
             {
-                getLog().info( "Already trust on " + buildFolder );
+                getLog().info( "Already trust on " + trustedFile );
                 return;
             }
             else
             {
-                getLog().info( "Updating Flash Payer Trust directory" );
+                getLog().info( "Updating Flash Payer Trust directory " + trustedFile );
             }
 
             if ( !cfg.endsWith( "\n" ) )
@@ -358,7 +357,7 @@ public class ApplicationMojo
             }
 
             // add builder folder
-            cfg = cfg + buildFolder + '\n';
+            cfg = cfg + trustedFile + '\n';
 
             // Save maven.cfg
             FileWriter output = new FileWriter( mavenCfg );
