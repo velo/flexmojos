@@ -1,14 +1,20 @@
 package info.rvin.flexmojos.utilities;
 
+import info.flexmojos.utilities.ApplicationHandler;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -48,6 +54,29 @@ public class MavenUtils
 
     private MavenUtils()
     {
+    }
+
+    /**
+     * Parse an MXML file and returns true if the file is an application one
+     * 
+     * @param file the file to be parsed
+     * @return true if the file is an application one
+     */
+    public static boolean isApplicationFile( File file )
+    {
+        try
+        {
+            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces", true );
+            parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespace-prefixes", true );
+            ApplicationHandler h = new ApplicationHandler();
+            parser.parse( file, h );
+            return h.isApplicationFile();
+        }
+        catch ( Exception e )
+        {
+            return false;
+        }
     }
 
     /**
@@ -102,9 +131,22 @@ public class MavenUtils
                             return file;
                         }
                     }
+
+                    List<File> appFiles = new ArrayList<File>();
+                    for ( File file : files )
+                    {
+                        if ( file.getName().endsWith( ".mxml" ) && isApplicationFile( file ) )
+                        {
+                            appFiles.add( file );
+                        }
+                    }
+                    if ( appFiles.size() == 1 )
+                    {
+                        File file = appFiles.get( 0 );
+                        return file;
+                    }
                 }
             }
-
         }
         return null;
     }

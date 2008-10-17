@@ -104,6 +104,7 @@ public class ApplicationMojo
 
         if ( source == null )
         {
+            getLog().warn( "Source file was not defined, flex-mojos will guess one." );
             source = resolveSourceFile( project, sourceFile );
         }
 
