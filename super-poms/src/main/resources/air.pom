@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>info.flex-mojos</groupId>
+	<artifactId>air-super-pom</artifactId>
+	<version>${project.version}</version>
+
+	<name>Air Super Pom</name>
+
+	<packaging>pom</packaging>
+
+	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<version>${project.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<locales>
+						<locale>en_US</locale>
+					</locales>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>asdoc-mojo</artifactId>
+                <version>${project.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		 <!-- Air SDK dependencies -->
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+            <artifactId>air-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- FlexUnit dependencies -->
+		<dependency>
+				<groupId>flexunit</groupId>
+				<artifactId>flexunit</artifactId>
+				<version>0.85</version>
+				<type>swc</type>
+				<scope>test</scope>
+		</dependency>
+		<dependency>
+				<groupId>flexunit.junit</groupId>
+				<artifactId>flexunit-optional</artifactId>
+				<version>0.85</version>
+				<type>swc</type>
+				<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>
