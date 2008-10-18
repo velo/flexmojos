@@ -10,6 +10,12 @@ public class VersionUtils
             return new int[0];
         }
 
+        int endIndex = version.indexOf( '-' );
+        if ( endIndex != -1 )
+        {
+            version = version.substring( 0, endIndex );
+        }
+
         String[] versionsStr = version.split( "\\." );
         int[] versions = new int[versionsStr.length];
 
