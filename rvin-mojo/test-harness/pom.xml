@@ -18,13 +18,13 @@
 		<fake-repo>${project.build.directory}/local-repository</fake-repo>
 		<sources>${project.build.directory}/sources</sources>
 
-		<asdoc-mojo>${offline-repo}/info/flex-mojos/asdoc-mojo/${pom.version}/asdoc-mojo-${pom.version}.jar</asdoc-mojo>
-		<flex-compiler-mojo>${offline-repo}/info/flex-mojos/flex-compiler-mojo/${pom.version}/flex-compiler-mojo-${pom.version}.jar</flex-compiler-mojo>
-		<encrypter-mojo>${offline-repo}/info/flex-mojos/encrypter-mojo/${pom.version}/encrypter-mojo-${pom.version}.jar</encrypter-mojo>
-		<html-wrapper-mojo>${offline-repo}/info/flex-mojos/html-wrapper-mojo/${pom.version}/html-wrapper-mojo-${pom.version}.jar</html-wrapper-mojo>
-		<install-mojo>${offline-repo}/info/flex-mojos/install-mojo/${pom.version}/install-mojo-${pom.version}.jar</install-mojo>
-		<optimizer-mojo>${offline-repo}/info/flex-mojos/optimizer-mojo/${pom.version}/optimizer-mojo-${pom.version}.jar</optimizer-mojo>
-		<source-mojo>${offline-repo}/info/flex-mojos/source-mojo/${pom.version}/source-mojo-${pom.version}.jar</source-mojo>
+		<asdoc-mojo>${fake-repo}/info/flex-mojos/asdoc-mojo/${pom.version}/asdoc-mojo-${pom.version}.jar</asdoc-mojo>
+		<flex-compiler-mojo>${fake-repo}/info/flex-mojos/flex-compiler-mojo/${pom.version}/flex-compiler-mojo-${pom.version}.jar</flex-compiler-mojo>
+		<encrypter-mojo>${fake-repo}/info/flex-mojos/encrypter-mojo/${pom.version}/encrypter-mojo-${pom.version}.jar</encrypter-mojo>
+		<html-wrapper-mojo>${fake-repo}/info/flex-mojos/html-wrapper-mojo/${pom.version}/html-wrapper-mojo-${pom.version}.jar</html-wrapper-mojo>
+		<install-mojo>${fake-repo}/info/flex-mojos/install-mojo/${pom.version}/install-mojo-${pom.version}.jar</install-mojo>
+		<optimizer-mojo>${fake-repo}/info/flex-mojos/optimizer-mojo/${pom.version}/optimizer-mojo-${pom.version}.jar</optimizer-mojo>
+		<source-mojo>${fake-repo}/info/flex-mojos/source-mojo/${pom.version}/source-mojo-${pom.version}.jar</source-mojo>
 	</properties>
 
 	<build>
@@ -63,7 +63,7 @@
 				<executions>
 					<execution>
 						<id>extract-maven</id>
-						<phase>generate-test-resources</phase>
+						<phase>generate-resources</phase>
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
@@ -74,7 +74,7 @@
 					</execution>
 					<execution>
 						<id>copy-emma</id>
-						<phase>generate-test-resources</phase>
+						<phase>generate-resources</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -85,7 +85,7 @@
 					</execution>
 					<execution>
 						<id>copy-repo</id>
-						<phase>generate-test-resources</phase>
+						<phase>generate-resources</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -99,17 +99,16 @@
 					</execution>
 					<execution>
 						<id>copy-sources</id>
-						<phase>pre-site</phase>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
 						    <classifier>sources</classifier>
 						    <excludeTransitive>true</excludeTransitive>
 							<outputDirectory>${sources}</outputDirectory>
-							<useRepositoryLayout>true</useRepositoryLayout>
 							<silent>true</silent>
-							<copyPom>true</copyPom>
+							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
 						</configuration>
 					</execution>
 				</executions>
@@ -133,6 +132,10 @@
 						<jarFile>${optimizer-mojo}</jarFile>
 						<jarFile>${source-mojo}</jarFile>
 					</jarFiles>
+                    <searchPath>${project.build.directory}/projects</searchPath>
+                    <sourceFolders>
+	                    <sourceFolder>${sources}</sourceFolder>
+                    </sourceFolders>
 				</configuration>
 			</plugin>
 		</plugins>
