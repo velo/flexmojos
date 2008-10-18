@@ -12,6 +12,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.BeforeClass;
 
@@ -47,28 +48,36 @@ public class AbstractFlexMojosTests
         projectsWorkdir = new File( getProperty( "projects-target" ) );
     }
 
-    private static synchronized String getProperty( String key )
+    protected static synchronized String getProperty( String key )
         throws IOException
     {
         return props.getProperty( key );
     }
 
+    @SuppressWarnings( "unchecked" )
     protected static void test( File projectDirectory, String goal, String... args )
         throws Exception
+    {
+        Verifier verifier = getVerifier( projectDirectory );
+        verifier.getCliOptions().addAll( Arrays.asList( args ) );
+        verifier.executeGoal( goal );
+        verifier.verifyErrorFreeLog();
+    }
+
+    protected static Verifier getVerifier( File projectDirectory )
+        throws IOException, VerificationException
     {
         System.setProperty( "maven.home", getProperty( "fake-maven" ) );
 
         Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
-        verifier.getCliOptions().addAll( Arrays.asList( args ) );
-        verifier.getCliOptions().add( "-Dflex-mojos.version=" + getProperty( "version" ) );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
-        verifier.executeGoal( goal );
-        verifier.verifyErrorFreeLog();
+        return verifier;
     }
 
+    @SuppressWarnings( "unchecked" )
     protected File getProject( String projectName )
         throws IOException
     {
