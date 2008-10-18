@@ -18,22 +18,15 @@
 package info.rvin.mojo.flexmojo.test;
 
 import static junit.framework.Assert.assertTrue;
-import info.flexmojos.tests.AbstractFlexMojosTests;
+import info.flexmojos.tests.concept.AbstractConceptTest;
 
 import java.io.File;
 
 import org.junit.Test;
 
 public class IT0014ConceptTest
-    extends AbstractFlexMojosTests
+    extends AbstractConceptTest
 {
-
-    public void standardConceptTester( String conceptName )
-        throws Exception
-    {
-        File testDir = getProject( "/concept/" + conceptName );
-        test( testDir, "install" );
-    }
 
     // TODO still need air tests
 
@@ -83,11 +76,11 @@ public class IT0014ConceptTest
     public void testFlex3SDK()
         throws Exception
     {
-        //FIXME configure to download flex 3 sources
-//        File testDir = getProject( "/flex-sdk" );
-//        assertTrue( "Flex SDK source not found.  Download it from opensource.adobe.com",
-//                    new File( testDir, "framework" ).exists() );
-//        standardConceptTester( "flex-sdk" );
+        // FIXME configure to download flex 3 sources
+        // File testDir = getProject( "/flex-sdk" );
+        // assertTrue( "Flex SDK source not found.  Download it from opensource.adobe.com",
+        // new File( testDir, "framework" ).exists() );
+        // standardConceptTester( "flex-sdk" );
     }
 
     @Test
@@ -175,8 +168,8 @@ public class IT0014ConceptTest
     public void testUpdateSDK()
         throws Exception
     {
-        //Need to get issue 105 to get this working
-        //standardConceptTester( "updated-sdk" );
+        // Need to get issue 105 to get this working
+        // standardConceptTester( "updated-sdk" );
     }
 
     // Dont work because IT tests run under a non versioned folder
@@ -189,7 +182,7 @@ public class IT0014ConceptTest
         throws Exception
     {
         File testDir = getProject( "/concept/simple-flex-application" );
-        //FIXME need to check time
+        // FIXME need to check time
         test( testDir, "install" );
         test( testDir, "install", "-Dquick.compile=true" );
     }
