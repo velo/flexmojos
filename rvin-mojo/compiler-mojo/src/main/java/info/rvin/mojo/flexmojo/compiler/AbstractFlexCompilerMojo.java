@@ -241,8 +241,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * <pre>
      * &lt;keepAs3Metadatas&gt;
-     *   &lt;metadata&gt;Bindable&lt;/metadata&gt;
-     *   &lt;metadata&gt;Events&lt;/metadata&gt;
+     *   &lt;keepAs3Metadata&gt;Bindable&lt;/keepAs3Metadata&gt;
+     *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
      * &lt;/keepAs3Metadatas&gt;
      * </pre>
      * 
