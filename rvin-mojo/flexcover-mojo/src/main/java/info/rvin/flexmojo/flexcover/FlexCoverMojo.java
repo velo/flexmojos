@@ -78,7 +78,7 @@ public class FlexCoverMojo
             e.printStackTrace();
         }
         
-        swf = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
+        swf = new File( "target/flexcover-classes", "TestRunner.swf" );
         
         super.run();
         
