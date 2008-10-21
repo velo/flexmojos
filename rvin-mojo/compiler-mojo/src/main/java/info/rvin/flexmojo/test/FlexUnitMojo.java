@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -56,10 +57,18 @@ public class FlexUnitMojo
      * @parameter default-value="13539"
      */
     private int testPort;
+	
+    /**
+     * Can be of type <code>&lt;argument&gt;</code>
+     *
+     * @parameter
+     */
+    private List<String> flexUnitCommand;
+	
 
     private int socketTimeout = 60000; // milliseconds
 
-    private File swf;
+    protected File swf;
 
     private MojoExecutionException executionError; // BAD IDEA
 
@@ -421,6 +430,8 @@ public class FlexUnitMojo
     {
         // Start a thread that receives the FlexUnit results.
         receiveFlexUnitResults();
+
+        getLog().info("flexunit setup args: "+flexUnitCommand);
 
         // Start the browser and run the FlexUnit tests.
         final FlexUnitLauncher browser = new FlexUnitLauncher();
