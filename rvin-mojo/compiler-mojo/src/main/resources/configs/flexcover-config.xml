@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<flex-config > 
+<compiler> 
+    <!-- Turn on generation of coverage instrumentation. True by default, since it's -->
+    <!-- easiest for people to pick up coverage by simply selecting this SDK with its default config. -->
+    <coverage>true</coverage>
+</compiler> 
+</flex-config>
