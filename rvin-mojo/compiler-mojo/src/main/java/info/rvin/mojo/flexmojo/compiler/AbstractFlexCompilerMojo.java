@@ -3,6 +3,7 @@ package info.rvin.mojo.flexmojo.compiler;
 import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import info.flexmojos.compatibilitykit.FlexCompatibility;
 import info.flexmojos.compatibilitykit.FlexMojo;
+import info.flexmojos.utilities.Namespace;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
@@ -1050,12 +1051,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             setLocales( new String[0] );
         }
 
-        addFdkNamespaces();
+        // Add namespaces from FDK
+        List<Namespace> fdkNamespaces = MavenUtils.getFdkNamespaces( getDependencyArtifacts(), build );
+        if ( this.namespaces != null )
+        {
+            fdkNamespaces.addAll( Arrays.asList( this.namespaces ) );
+        }
+        this.namespaces = fdkNamespaces.toArray( new Namespace[0] );
+
         if ( namespaces != null )
         {
             for ( Namespace namespace : namespaces )
             {
-                configuration.setComponentManifest( namespace.getUri(), namespace.getManifest() );
+                File manifest = namespace.getManifest();
+                configuration.setComponentManifest( namespace.getUri(), manifest );
             }
         }
 
@@ -1196,38 +1205,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         resolveRuntimeLibraries();
 
         configuration.setTheme( getDependenciesPath( "theme" ) );
-    }
-
-    private void addFdkNamespaces()
-        throws MojoExecutionException
-    {
-        Artifact configArtifact =
-            MavenUtils.searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "framework", null, "zip",
-                                  "configs" );
-
-        if ( configArtifact == null )
-        {
-            getLog().warn(
-                           "com.adobe.flex.compiler::framework::zip::configs artifact not found.  No extra manifests added!" );
-            return;
-        }
-
-        File configZip = configArtifact.getFile();
-        Map<String, File> configNamespaces = MavenUtils.getFDKNamespaces( configZip, build );
-
-        List<Namespace> namespaces = new ArrayList<Namespace>();
-        if ( this.namespaces != null )
-        {
-            namespaces.addAll( Arrays.asList( this.namespaces ) );
-        }
-
-        Set<String> uris = configNamespaces.keySet();
-        for ( String uri : uris )
-        {
-            namespaces.add( new Namespace( uri, configNamespaces.get( uri ) ) );
-        }
-
-        this.namespaces = namespaces.toArray( new Namespace[0] );
     }
 
     @SuppressWarnings( "deprecation" )
