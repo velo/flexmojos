@@ -15,12 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package info.rvin.flexmojos.asdoc;
+package info.flexmojos.utilities;
 
 import java.io.File;
 
 public class Namespace
 {
+
+    public Namespace( String uri, File manifest )
+    {
+        super();
+        this.manifest = manifest;
+        this.uri = uri;
+    }
 
     private String uri;
 
