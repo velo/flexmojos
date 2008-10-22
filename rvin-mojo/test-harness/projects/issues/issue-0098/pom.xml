@@ -21,22 +21,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
 				<configuration>
@@ -50,18 +34,13 @@
 							<value>${anumber}</value>
 						</property>
 						<property>
-							<name>BUILD::buildNumber</name>
-							<value>${buildNumber}</value>
+							<name>SOMETHING::injectedNumber</name>
+							<value>${injectedNumber}</value>
 						</property>
 					</definesDeclaration>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
-	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/test-harness/projects/issues/issue-0098/</connection>
-		<developerConnection>scm:svn:http://svn.sonatype.org/flexmojos/trunk/rvin-mojo/test-harness/projects/issues/issue-0098/</developerConnection>
-	</scm>
 
 </project>
