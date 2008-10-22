@@ -342,8 +342,30 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * </pre>
      * 
      * @parameter
+     * @deprecated See definesDeclaration
      */
     private Map<String, String> defines;
+
+    /**
+     * defines: specifies a list of define directive key and value pairs. For example, CONFIG::debugging<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;definesDeclaration&gt;
+     *   &lt;define&gt;
+     *     &lt;name&gt;SOMETHING::aNumber&lt;/name&gt;
+     *     &lt;value&gt;2.2&lt;/value&gt;
+     *   &lt;/define&gt;
+     *   &lt;define&gt;
+     *     &lt;name&gt;SOMETHING::aString&lt;/name&gt;
+     *     &lt;value&gt;&quot;text&quot;&lt;/value&gt;
+     *   &lt;/define&gt;
+     * &lt;/definesDeclaration&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Properties definesDeclaration;
 
     /**
      * Sets the context root path so that the compiler can replace <code>{context.root}</code> tokens for service
@@ -1310,15 +1332,26 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
+    @SuppressWarnings( "deprecation" )
     @FlexCompatibility( minVersion = "3" )
     private void addDefines()
     {
         if ( defines != null )
         {
-            for ( String defineName : defines.keySet() )
+            if ( definesDeclaration == null )
             {
-                String value = defines.get( defineName );
-                getLog().info( "define " + defineName + " = " + value );
+                definesDeclaration = new Properties();
+            }
+            definesDeclaration.putAll( defines );
+        }
+
+        if ( definesDeclaration != null )
+        {
+            for ( Object definekey : definesDeclaration.keySet() )
+            {
+                String defineName = definekey.toString();
+                String value = definesDeclaration.getProperty( defineName );
+                getLog().debug( "define " + defineName + " = " + value );
                 configuration.addDefineDirective( defineName, value );
             }
         }
