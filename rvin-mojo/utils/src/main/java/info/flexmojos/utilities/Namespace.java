@@ -15,32 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package info.rvin.mojo.flexmojo.compiler;
+package info.flexmojos.utilities;
 
 import java.io.File;
 
 public class Namespace
 {
 
-    private File manifest;
+    public Namespace( String uri, File manifest )
+    {
+        super();
+        this.manifest = manifest;
+        this.uri = uri;
+    }
 
     private String uri;
+
+    private File manifest;
 
     public Namespace()
     {
         super();
-    }
-
-    public Namespace( String uri, File manifest )
-    {
-        super();
-        this.uri = uri;
-        this.manifest = manifest;
-    }
-
-    public File getManifest()
-    {
-        return manifest;
     }
 
     public String getUri()
@@ -48,13 +43,18 @@ public class Namespace
         return uri;
     }
 
-    public void setManifest( File manifest )
-    {
-        this.manifest = manifest;
-    }
-
     public void setUri( String uri )
     {
         this.uri = uri;
+    }
+
+    public File getManifest()
+    {
+        return manifest;
+    }
+
+    public void setManifest( File manifest )
+    {
+        this.manifest = manifest;
     }
 }
