@@ -1,6 +1,7 @@
 package info.rvin.flexmojos.utilities;
 
 import info.flexmojos.utilities.ApplicationHandler;
+import info.flexmojos.utilities.Namespace;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,10 +28,9 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
 
 import eu.cedarsoft.utils.ZipExtractor;
 
@@ -413,8 +413,7 @@ public class MavenUtils
         return str1.equals( str2 );
     }
 
-    @SuppressWarnings( "unchecked" )
-    public static Map<String, File> getFDKNamespaces( File configZip, Build build )
+    private static Map<String, File> getFDKNamespaces( File configZip, Build build )
         throws MojoExecutionException
     {
         File outputFolder = new File( build.getOutputDirectory(), "configs" );
@@ -431,36 +430,76 @@ public class MavenUtils
             throw new MojoExecutionException( "Unable to extract configurations", e );
         }
 
-        Map<String, File> namespace = new LinkedHashMap<String, File>();
         File configFile = new File( outputFolder, "flex-config.xml" );
         if ( !configFile.isFile() )
         {
-            return namespace;
+            return new HashMap<String, File>();
         }
-
-        SAXReader reader = new SAXReader();
         Document document;
         try
         {
-            document = reader.read( configFile );
+            SAXBuilder parser = new SAXBuilder();
+            document = parser.build( configFile );
         }
-        catch ( DocumentException e )
+        catch ( Exception e )
         {
-            throw new MojoExecutionException( "Unable to parse config file " + configFile.getAbsolutePath(), e );
+            throw new MojoExecutionException( "Error parsing config.xml", e );
         }
-        List<Node> list = document.selectNodes( "//compiler/namespaces/namespace" );
+        return readNamespaces( outputFolder, document );
+    }
 
-        for ( Node node : list )
+    @SuppressWarnings( "unchecked" )
+    static Map<String, File> readNamespaces( File outputFolder, Document document )
+    {
+        Map<String, File> namespaces = new HashMap<String, File>();
+
+        // "//compiler/namespaces/namespace"
+
+        Element node = document.getRootElement();
+        node = node.getChild( "compiler" );
+        if ( node == null )
         {
-            String uri = node.valueOf( "//uri" );
-            File manifest = new File( outputFolder, node.valueOf( "//manifest" ) );
-            if ( !manifest.exists() )
-            {
-                throw new MojoExecutionException( "Namespace " + uri + " not found " + manifest.getAbsolutePath() );
-            }
-            namespace.put( uri, manifest );
+            return namespaces;
+        }
+        node = node.getChild( "namespaces" );
+        if ( node == null )
+        {
+            return namespaces;
+        }
+        List<Element> namespacesNodes = node.getChildren();
+        for ( Element element : namespacesNodes )
+        {
+            Element uriNode = element.getChild( "uri" );
+            Element manifestNode = element.getChild( "manifest" );
+            String uri = uriNode.getValue();
+            File manifest = new File( outputFolder, manifestNode.getValue() );
+            namespaces.put( uri, manifest );
         }
 
-        return namespace;
+        return namespaces;
+    }
+
+    public static List<Namespace> getFdkNamespaces( Collection<Artifact> dependencies, Build build )
+        throws MojoExecutionException
+    {
+        Artifact configArtifact =
+            MavenUtils.searchFor( dependencies, "com.adobe.flex.framework", "framework", null, "zip", "configs" );
+
+        List<Namespace> namespaces = new ArrayList<Namespace>();
+        if ( configArtifact == null )
+        {
+            return namespaces;
+        }
+
+        File configZip = configArtifact.getFile();
+        Map<String, File> configNamespaces = MavenUtils.getFDKNamespaces( configZip, build );
+
+        Set<String> uris = configNamespaces.keySet();
+        for ( String uri : uris )
+        {
+            namespaces.add( new Namespace( uri, configNamespaces.get( uri ) ) );
+        }
+
+        return namespaces;
     }
 }

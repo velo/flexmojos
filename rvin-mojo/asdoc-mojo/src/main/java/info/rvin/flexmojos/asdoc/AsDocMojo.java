@@ -1,5 +1,6 @@
 package info.rvin.flexmojos.asdoc;
 
+import info.flexmojos.utilities.Namespace;
 import info.rvin.flexmojos.utilities.CompileConfigurationLoader;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -116,6 +118,23 @@ public class AsDocMojo
      * @parameter
      */
     private Namespace[] docNamespaces;
+
+    /**
+     * Specify a URI to associate with a manifest of components for use as MXML elements.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;namespaces&gt;
+     *   &lt;namespace&gt;
+     *     &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
+     *     &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
+     *   &lt;/namespace&gt;
+     * &lt;/namespaces&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Namespace[] namespaces;
 
     /**
      * A list of files that should be documented. If a directory name is in the list, it is recursively searched. This
@@ -234,6 +253,8 @@ public class AsDocMojo
      */
     private boolean headlessServer;
 
+    private Set<Artifact> dependencyArtifacts;
+
     @SuppressWarnings( "unchecked" )
     protected void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -259,8 +280,7 @@ public class AsDocMojo
         }
 
         libraries = new ArrayList<File>();
-        for ( Artifact artifact : MavenUtils.getDependencyArtifacts( project, resolver, localRepository,
-                                                                     remoteRepositories, artifactMetadataSource ) )
+        for ( Artifact artifact : getDependencyArtifacts() )
         {
             if ( "swc".equals( artifact.getType() ) )
             {
@@ -338,6 +358,12 @@ public class AsDocMojo
             templatesPath = generateDefaultTemplate();
         }
 
+        List<Namespace> fdkNamespaces = MavenUtils.getFdkNamespaces( getDependencyArtifacts(), build );
+        if ( this.namespaces != null )
+        {
+            fdkNamespaces.addAll( Arrays.asList( this.namespaces ) );
+        }
+        this.namespaces = fdkNamespaces.toArray( new Namespace[0] );
     }
 
     private File generateDefaultTemplate()
@@ -403,6 +429,7 @@ public class AsDocMojo
     {
         List<String> args = new ArrayList<String>();
 
+        addNamespaces( args );
         addDocSources( args );
         addDocClasses( args );
         addDocNamespaces( args );
@@ -648,6 +675,26 @@ public class AsDocMojo
         args.add( sb.toString() );
     }
 
+    private void addNamespaces( List<String> args )
+    {
+        if ( namespaces == null || namespaces.length == 0 )
+        {
+            return;
+        }
+
+        // -compiler.namespaces.namespace <uri> <manifest>
+        // alias -namespace
+        // Specify a URI to associate with a manifest of components for use as
+        // MXML elements (repeatable)
+
+        for ( Namespace namespace : namespaces )
+        {
+            args.add( "-compiler.namespaces.namespace" );
+            args.add( namespace.getUri() );
+            args.add( namespace.getManifest().getAbsolutePath() );
+        }
+    }
+
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
@@ -662,4 +709,21 @@ public class AsDocMojo
         tearDown();
     }
 
+    /**
+     * Returns Set of dependency artifacts which are resolved for the project.
+     * 
+     * @return Set of dependency artifacts.
+     * @throws MojoExecutionException
+     */
+    protected Set<Artifact> getDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        if ( dependencyArtifacts == null )
+        {
+            dependencyArtifacts =
+                MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                                   artifactMetadataSource );
+        }
+        return dependencyArtifacts;
+    }
 }
