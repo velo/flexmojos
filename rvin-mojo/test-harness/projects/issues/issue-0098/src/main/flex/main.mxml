@@ -6,6 +6,8 @@
 			public static const A_STRING:String = SOMETHING::aString;
 
 			public static const A_NUMBER:Number = SOMETHING::aNumber;
+
+			public static const INJECTED_NUMBER:Number = SOMETHING::injectedNumber;
 		]]>
 	</mx:Script>
 
