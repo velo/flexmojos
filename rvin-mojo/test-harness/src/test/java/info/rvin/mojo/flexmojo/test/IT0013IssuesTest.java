@@ -240,11 +240,4 @@ public class IT0013IssuesTest
         // TODO check SWC content
     }
 
-    @Test
-    public void issue105()
-        throws Exception
-    {
-        testIssue( "issue-0105" );
-    }
-
 }
