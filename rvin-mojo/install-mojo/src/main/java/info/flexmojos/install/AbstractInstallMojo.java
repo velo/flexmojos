@@ -31,6 +31,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import eu.cedarsoft.utils.ZipCreator;
+import eu.cedarsoft.utils.ZipExtractor;
 
 public abstract class AbstractInstallMojo
     extends AbstractMojo
@@ -353,9 +354,27 @@ public abstract class AbstractInstallMojo
             throw new MojoExecutionException( "Flex SDK folder not defined." );
         }
 
-        if ( !sdkFolder.exists() || !sdkFolder.isDirectory() )
+        if ( !sdkFolder.exists() )
         {
             throw new MojoExecutionException( "Flex SDK folder not found: " + sdkFolder.getAbsolutePath() );
+        }
+
+        if ( sdkFolder.getName().endsWith( ".zip" ) && sdkFolder.isFile() )
+        {
+            File folder = createTempFile( "flex-sdk", "fake" ).getParentFile();
+            File unpackZipFolder = new File( folder, "flex-sdk-" + version );
+            unpackZipFolder.mkdirs();
+            ZipExtractor ze;
+            try
+            {
+                ze = new ZipExtractor( sdkFolder );
+                ze.extract( unpackZipFolder );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to extract zipped SDK", e );
+            }
+            sdkFolder = unpackZipFolder;
         }
 
         installCompilerArtifacts();
