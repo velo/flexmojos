@@ -142,10 +142,10 @@ public class AsDocMojo
      * 
      * <pre>
      * &lt;namespaces&gt;
-     *   &lt;namespace&gt;
-     *     &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
-     *     &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
-     *   &lt;/namespace&gt;
+     *  &lt;namespace&gt;
+     *   &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
+     *   &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
+     *  &lt;/namespace&gt;
      * &lt;/namespaces&gt;
      * </pre>
      * 

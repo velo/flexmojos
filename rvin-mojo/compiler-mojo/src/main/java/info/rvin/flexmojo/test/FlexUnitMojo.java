@@ -74,14 +74,13 @@ public class FlexUnitMojo
      * @parameter default-value="13539"
      */
     private int testPort;
-	
+
     /**
      * Can be of type <code>&lt;argument&gt;</code>
-     *
+     * 
      * @parameter
      */
     private List<String> flexUnitCommand;
-	
 
     private int socketTimeout = 60000; // milliseconds
 
@@ -144,7 +143,6 @@ public class FlexUnitMojo
         reportPath = new File( build.getDirectory(), "surefire-reports" );
         reportPath.mkdirs();
     }
-
 
     /**
      * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
@@ -448,7 +446,7 @@ public class FlexUnitMojo
         // Start a thread that receives the FlexUnit results.
         receiveFlexUnitResults();
 
-        getLog().info("flexunit setup args: "+flexUnitCommand);
+        getLog().info( "flexunit setup args: " + flexUnitCommand );
 
         // Start the browser and run the FlexUnit tests.
         final FlexUnitLauncher browser = new FlexUnitLauncher();

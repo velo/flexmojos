@@ -399,7 +399,7 @@ public class LibraryMojo
         {
             localized.addResourceBundle( bundle );
         }
-        configuration.addLibraryPath( getResourcesBundles(locale) );
+        configuration.addLibraryPath( getResourcesBundles( locale ) );
 
         File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".rb.swc" );
 

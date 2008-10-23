@@ -19,7 +19,8 @@ package info.flexmojos.compatibilitykit;
 
 import org.apache.maven.plugin.Mojo;
 
-public interface FlexMojo extends Mojo
+public interface FlexMojo
+    extends Mojo
 {
 
     /**

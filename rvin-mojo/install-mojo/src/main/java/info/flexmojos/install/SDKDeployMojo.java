@@ -63,7 +63,8 @@ public class SDKDeployMojo
     private Map repositoryLayouts;
 
     /**
-     * URL where the artifact will be deployed. <br/> ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
+     * URL where the artifact will be deployed. <br/>
+     * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
      * 
      * @parameter expression="${url}"
      * @required
