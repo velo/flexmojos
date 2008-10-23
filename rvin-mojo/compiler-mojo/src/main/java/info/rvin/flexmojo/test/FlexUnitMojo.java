@@ -1,3 +1,21 @@
+/*
+ * Flex-mojos is a set of maven plugins to allow maven users to compile, optimize, test and ... Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Copyright (C) 2008 Marvin Herman Froeder
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package info.rvin.flexmojo.test;
 
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
@@ -57,14 +75,13 @@ public class FlexUnitMojo
      * @parameter default-value="13539"
      */
     private int testPort;
-	
+
     /**
      * Can be of type <code>&lt;argument&gt;</code>
-     *
+     * 
      * @parameter
      */
     private List<String> flexUnitCommand;
-	
 
     private int socketTimeout = 60000; // milliseconds
 
@@ -127,7 +144,6 @@ public class FlexUnitMojo
         reportPath = new File( build.getDirectory(), "surefire-reports" );
         reportPath.mkdirs();
     }
-
 
     /**
      * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
@@ -431,7 +447,7 @@ public class FlexUnitMojo
         // Start a thread that receives the FlexUnit results.
         receiveFlexUnitResults();
 
-        getLog().info("flexunit setup args: "+flexUnitCommand);
+        getLog().info( "flexunit setup args: " + flexUnitCommand );
 
         // Start the browser and run the FlexUnit tests.
         final FlexUnitLauncher browser = new FlexUnitLauncher();
