@@ -71,14 +71,16 @@ public class Gas3Listener
         log.warn( message, e );
     }
 
-    public void generating(Input<?> input, Output<?> output) {
+    public void generating( Input<?> input, Output<?> output )
+    {
         info( "  Generating: " + output.getDescription() );
-        
+
     }
 
-    public void skipping(Input<?> input, Output<?> output) {
+    public void skipping( Input<?> input, Output<?> output )
+    {
         info( "  Skipping: " + output.getDescription() );
-        
+
     }
 
 }
