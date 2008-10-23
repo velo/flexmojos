@@ -29,19 +29,23 @@ import org.granite.generator.as3.PackageTranslator;
 import org.granite.generator.as3.reflect.JavaInterface;
 import org.granite.generator.as3.reflect.JavaType;
 
-public class Gas3GroovyTransformer extends JavaAs3GroovyTransformer {
-    public Gas3GroovyTransformer(JavaAs3GroovyConfiguration config, Listener listener) {
-        super(config, listener);
+public class Gas3GroovyTransformer
+    extends JavaAs3GroovyTransformer
+{
+    public Gas3GroovyTransformer( JavaAs3GroovyConfiguration config, Listener listener )
+    {
+        super( config, listener );
     }
-    
+
     @Override
-    public boolean accept(Input<?> input)
+    public boolean accept( Input<?> input )
     {
         return true;
     }
 
     @Override
-    public As3Type getAs3Type(Class<?> clazz) {
+    public As3Type getAs3Type( Class<?> clazz )
+    {
         As3Type as3Type = super.getAs3Type( clazz );
         if ( getConfig().getTranslators().isEmpty() || clazz.getPackage() == null )
             return as3Type;
@@ -67,7 +71,8 @@ public class Gas3GroovyTransformer extends JavaAs3GroovyTransformer {
     }
 
     @Override
-    public JavaType getJavaTypeSuperclass(Class<?> clazz) {
+    public JavaType getJavaTypeSuperclass( Class<?> clazz )
+    {
         Class<?> superclass = clazz.getSuperclass();
         if ( superclass != null && superclass.getClassLoader() != null )
             return getJavaType( superclass );
@@ -75,7 +80,8 @@ public class Gas3GroovyTransformer extends JavaAs3GroovyTransformer {
     }
 
     @Override
-    public List<JavaInterface> getJavaTypeInterfaces(Class<?> clazz) {
+    public List<JavaInterface> getJavaTypeInterfaces( Class<?> clazz )
+    {
         List<JavaInterface> interfazes = new ArrayList<JavaInterface>();
         for ( Class<?> interfaze : clazz.getInterfaces() )
         {

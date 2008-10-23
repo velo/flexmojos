@@ -17,13 +17,12 @@
  */
 package info.rvin.flexmojo.test;
 
+import flash.util.StringUtils;
 import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
-import flash.util.StringUtils;
 
 /**
  * This class is used to launch the FlexUnit tests.
