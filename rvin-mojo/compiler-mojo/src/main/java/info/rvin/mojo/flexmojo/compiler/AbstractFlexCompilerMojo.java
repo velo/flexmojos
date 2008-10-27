@@ -53,12 +53,17 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
@@ -94,6 +99,25 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @parameter default-value="false"
      */
     private boolean accessible;
+
+    /**
+     * LW : needed for expression evaluation Note : needs at least maven 2.0.8 because of MNG-3062 The maven
+     * MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${mojoExecution}"
+     * @required
+     * @readonly
+     */
+    protected MojoExecution execution;
+
+    /**
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession context;
 
     /**
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
@@ -495,11 +519,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * loaded if the primary RSL fails to load. Accept some special tokens:
      * 
      * <pre>
-     * {contextRoot}		- replace by defined context root
-     * {groupId}			- replace by library groupId
-     * {artifactId}			- replace by library artifactId
-     * {version}			- replace by library version
-     * {extension}			- replace by library extension swf or swz
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
      * </pre>
      * 
      * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
@@ -521,11 +545,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * file is not required, then set it to an empty string. Accept some special tokens:
      * 
      * <pre>
-     * {contextRoot}		- replace by defined context root
-     * {groupId}			- replace by library groupId
-     * {artifactId}			- replace by library artifactId
-     * {version}			- replace by library version
-     * {extension}			- replace by library extension swf or swz
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
      * </pre>
      * 
      * <BR>
@@ -562,7 +586,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Define the base path to locate resouce bundle files Accept some special tokens:
      * 
      * <pre>
-     * {locale}		- replace by locale name
+     * {locale}     - replace by locale name
      * </pre>
      * 
      * @parameter default-value="${basedir}/src/main/locales/{locale}"
@@ -796,6 +820,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public AbstractFlexCompilerMojo()
     {
         super();
+        System.out.println( "created " );
     }
 
     /**
@@ -1353,7 +1378,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     @SuppressWarnings( "deprecation" )
     @FlexCompatibility( minVersion = "3" )
     private void addDefines()
+        throws MojoExecutionException
     {
+        ExpressionEvaluator expressionEvaluator =
+            new PluginParameterExpressionEvaluator( context, execution, null, null, project, project.getProperties() );
+
         if ( defines != null )
         {
             if ( definesDeclaration == null )
@@ -1369,6 +1398,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             {
                 String defineName = definekey.toString();
                 String value = definesDeclaration.getProperty( defineName );
+                if ( value.contains( "${" ) )
+                {
+                    // Fix bug in maven which doesn't always evaluate ${} constructions
+                    try
+                    {
+                        value = (String) expressionEvaluator.evaluate( value );
+                    }
+                    catch ( ExpressionEvaluationException e )
+                    {
+                        throw new MojoExecutionException( "Expression error in " + defineName, e );
+                    }
+                }
                 getLog().debug( "define " + defineName + " = " + value );
                 configuration.addDefineDirective( defineName, value );
             }
