@@ -54,7 +54,7 @@
 	<properties>
 		<commons_io.version>1.4</commons_io.version>
 		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
-		<maven.version>2.0.7</maven.version>
+		<maven.version>2.0.9</maven.version>
 
 		<!-- distribution -->
 		<deploy.repository.id>maven.flex-mojos.info</deploy.repository.id>
@@ -95,6 +95,25 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generated-helpmojo</id>
+						<goals>
+							<goal>helpmojo</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<parallel>true</parallel>
+					<threadCount>2</threadCount>
+				</configuration>
 			</plugin>
 
 		</plugins>
@@ -260,6 +279,11 @@
 				<version>${flex.sdk.version}</version>
 				<type>zip</type>
 				<classifier>template</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-core</artifactId>
+				<version>${maven.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven</groupId>
