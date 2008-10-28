@@ -20,7 +20,7 @@ package info.flexmojos.tests.issues;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class Issue0106Test
     extends AbstractIssueTest

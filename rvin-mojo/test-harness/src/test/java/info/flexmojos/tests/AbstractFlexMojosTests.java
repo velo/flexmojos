@@ -24,15 +24,16 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
-
-import junit.framework.Assert;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.junit.BeforeClass;
+import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeSuite;
 
 public class AbstractFlexMojosTests
 {
@@ -43,10 +44,18 @@ public class AbstractFlexMojosTests
 
     private static Properties props;
 
-    @BeforeClass
+    private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
+
+    private static final ReadWriteLock downloadArtifactsLock = new ReentrantReadWriteLock();
+
+    @BeforeSuite
     public static void initFolders()
         throws IOException
     {
+        if ( props != null )
+        {
+            return;
+        }
         props = new Properties();
         ClassLoader cl = AbstractFlexMojosTests.class.getClassLoader();
         InputStream is = cl.getResourceAsStream( "baseTest.properties" );
@@ -82,41 +91,75 @@ public class AbstractFlexMojosTests
         verifier.verifyErrorFreeLog();
     }
 
+    @SuppressWarnings( "unchecked" )
     protected static Verifier getVerifier( File projectDirectory )
         throws IOException, VerificationException
     {
         System.setProperty( "maven.home", getProperty( "fake-maven" ) );
 
+        if ( new File( projectDirectory, "pom.xml" ).exists() )
+        {
+            downloadArtifactsLock.writeLock().lock();
+            try
+            {
+                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+                verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
+                verifier.setLocalRepo( getProperty( "fake-repo" ) );
+                verifier.setAutoclean( false );
+                verifier.getCliOptions().add( "-npu" );
+                verifier.executeGoal( "dependency:resolve" );
+            }
+            catch ( Throwable t )
+            {
+                t.printStackTrace();
+                // this is not a real issue
+            }
+            finally
+            {
+                downloadArtifactsLock.writeLock().unlock();
+            }
+        }
+
         Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
+        verifier.getCliOptions().add( "-npu" );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
         return verifier;
     }
 
     @SuppressWarnings( "unchecked" )
-    protected File getProject( String projectName )
+    protected static File getProject( String projectName )
         throws IOException
     {
-        File projectFolder = new File( projectsSource, projectName );
-        Assert.assertTrue( "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
-                           projectFolder.isDirectory() );
-
-        File destDir = new File( projectsWorkdir, projectName );
-        FileUtils.copyDirectory( projectFolder, destDir );
-
-        // projects filtering
-        Collection<File> poms =
-            FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), DirectoryFileFilter.INSTANCE );
-        for ( File pom : poms )
+        copyProjectLock.writeLock().lock();
+        try
         {
-            String pomContent = FileUtils.readFileToString( pom );
-            pomContent = pomContent.replace( "%{flex-mojos.version}", getProperty( "version" ) );
-            FileUtils.writeStringToFile( pom, pomContent );
-        }
+            File projectFolder = new File( projectsSource, projectName );
+            AssertJUnit.assertTrue(
+                                    "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
+                                    projectFolder.isDirectory() );
 
-        return destDir;
+            File destDir = new File( projectsWorkdir, projectName );
+            FileUtils.copyDirectory( projectFolder, destDir );
+
+            // projects filtering
+            Collection<File> poms =
+                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), DirectoryFileFilter.INSTANCE );
+            for ( File pom : poms )
+            {
+                String pomContent = FileUtils.readFileToString( pom );
+                pomContent = pomContent.replace( "%{flex-mojos.version}", getProperty( "version" ) );
+                FileUtils.writeStringToFile( pom, pomContent );
+            }
+
+            return destDir;
+        }
+        finally
+        {
+            copyProjectLock.writeLock().unlock();
+        }
     }
 
 }

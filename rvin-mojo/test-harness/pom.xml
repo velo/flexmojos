@@ -37,7 +37,8 @@
 	<name>Flex Mojos Integration Tests</name>
 
 	<properties>
-		<fake-maven>${project.build.directory}/apache-maven-2.0.9</fake-maven>
+		<maven-version>${maven.version}</maven-version>
+		<fake-maven>${project.build.directory}/apache-maven-${maven-version}</fake-maven>
 		<fake-repo>${project.build.directory}/local-repository</fake-repo>
 		<sources>${project.build.directory}/sources</sources>
 
@@ -88,10 +89,18 @@
 						<id>extract-maven</id>
 						<phase>generate-resources</phase>
 						<goals>
-							<goal>unpack-dependencies</goal>
+							<goal>unpack</goal>
 						</goals>
 						<configuration>
-							<includeTypes>tar.gz</includeTypes>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.apache.maven</groupId>
+									<artifactId>apache-maven</artifactId>
+									<version>${maven.version}</version>
+									<type>tar.gz</type>
+									<classifier>bin</classifier>
+								</artifactItem>
+							</artifactItems>
 							<outputDirectory>${project.build.directory}</outputDirectory>
 						</configuration>
 					</execution>
@@ -165,24 +174,25 @@
 	</reporting>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>apache-maven</artifactId>
-			<version>2.0.9</version> <!-- TODO need to use ${maven.version} -->
-			<type>tar.gz</type>
-			<classifier>bin</classifier>
-		</dependency>
 
 		<dependency>
 			<groupId>emma</groupId>
 			<artifactId>emma</artifactId>
 			<version>2.0.5312</version>
 		</dependency>
-
+<!-- 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
+ -->		
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>5.8</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

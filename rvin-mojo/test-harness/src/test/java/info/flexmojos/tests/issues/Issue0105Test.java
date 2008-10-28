@@ -18,7 +18,7 @@
  */
 package info.flexmojos.tests.issues;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class Issue0105Test
     extends AbstractIssueTest

@@ -18,7 +18,7 @@
  */
 package info.flexmojos.tests;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class IT0091HelloWordTest
     extends AbstractFlexMojosTests
