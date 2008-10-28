@@ -18,13 +18,13 @@
  */
 package info.rvin.mojo.flexmojo.test;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 import info.flexmojos.tests.AbstractFlexMojosTests;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class IT0015CoverageTest
     extends AbstractFlexMojosTests

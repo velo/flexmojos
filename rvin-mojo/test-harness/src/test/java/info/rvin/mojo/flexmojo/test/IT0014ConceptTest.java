@@ -18,12 +18,12 @@
  */
 package info.rvin.mojo.flexmojo.test;
 
-import static junit.framework.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertTrue;
 import info.flexmojos.tests.concept.AbstractConceptTest;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class IT0014ConceptTest
     extends AbstractConceptTest

@@ -20,10 +20,9 @@ package info.flexmojos.tests.concept;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
 import org.apache.maven.it.Verifier;
-import org.junit.Test;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 public class InstallMojoTest
     extends AbstractConceptTest
@@ -48,26 +47,26 @@ public class InstallMojoTest
 
         // compiler stuff
         File compilerPom = new File( repoDir, "com/adobe/flex/compiler/1.0.0-fake/compiler-1.0.0-fake.pom" );
-        Assert.assertTrue( compilerPom.exists() );
+        AssertJUnit.assertTrue( compilerPom.exists() );
         File compilerLibrary =
             new File( repoDir, "com/adobe/flex/compiler/compiler-library/1.0.0-fake/compiler-library-1.0.0-fake.jar" );
-        Assert.assertTrue( compilerLibrary.exists() );
+        AssertJUnit.assertTrue( compilerLibrary.exists() );
 
         // framework stuff
         File flexFrameworkPom =
             new File( repoDir, "com/adobe/flex/framework/flex-framework/1.0.0-fake/flex-framework-1.0.0-fake.pom" );
-        Assert.assertTrue( flexFrameworkPom.exists() );
+        AssertJUnit.assertTrue( flexFrameworkPom.exists() );
         File airFrameworkPom =
             new File( repoDir, "com/adobe/flex/framework/air-framework/1.0.0-fake/air-framework-1.0.0-fake.pom" );
-        Assert.assertTrue( airFrameworkPom.exists() );
+        AssertJUnit.assertTrue( airFrameworkPom.exists() );
         File flexLibrary =
             new File( repoDir, "com/adobe/flex/framework/flex-library/1.0.0-fake/flex-library-1.0.0-fake.swc" );
-        Assert.assertTrue( flexLibrary.exists() );
+        AssertJUnit.assertTrue( flexLibrary.exists() );
         File flexLibraryBeaconLocale =
             new File( repoDir, "com/adobe/flex/framework/flex-library/1.0.0-fake/flex-library-1.0.0-fake.rb.swc" );
-        Assert.assertTrue( flexLibraryBeaconLocale.exists() );
+        AssertJUnit.assertTrue( flexLibraryBeaconLocale.exists() );
         File flexLibraryEnUsLocale =
             new File( repoDir, "com/adobe/flex/framework/flex-library/1.0.0-fake/flex-library-1.0.0-fake-en_US.rb.swc" );
-        Assert.assertTrue( flexLibraryEnUsLocale.exists() );
+        AssertJUnit.assertTrue( flexLibraryEnUsLocale.exists() );
     }
 }

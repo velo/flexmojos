@@ -18,18 +18,16 @@
  */
 package info.rvin.mojo.flexmojo.test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
 import info.flexmojos.tests.AbstractFlexMojosTests;
 
 import java.io.File;
-import java.io.FileReader;
 
 import org.apache.maven.it.VerificationException;
-import org.codehaus.plexus.util.IOUtil;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class IT0013IssuesTest
     extends AbstractFlexMojosTests
@@ -68,7 +66,7 @@ public class IT0013IssuesTest
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    @Test( expected = VerificationException.class )
+    @Test( expectedExceptions = { VerificationException.class } )
     public void issue14()
         throws Exception
     {
@@ -105,7 +103,7 @@ public class IT0013IssuesTest
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
-    @Test( expected = VerificationException.class )
+    @Test( expectedExceptions = { VerificationException.class } )
     public void issue27()
         throws Exception
     {
@@ -144,7 +142,7 @@ public class IT0013IssuesTest
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
 
-    @Test( expected = VerificationException.class )
+    @Test( expectedExceptions = { VerificationException.class } )
     public void issue44()
         throws Exception
     {
@@ -202,45 +200,6 @@ public class IT0013IssuesTest
     {
         File testDir = getProject( "/issues/issue-0068" );
         test( testDir, "asdoc:asdoc" );
-    }
-
-    @Test
-    public void issue69()
-        throws Exception
-    {
-        final String[] trusts =
-            new String[] { "AppData/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust",
-                "Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust",
-                ".macromedia/Flash_Player/#Security/FlashPlayerTrust",
-                "Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust" };
-
-        File userHome = new File( System.getProperty( "user.home" ) );
-
-        File mavenCfg = null;
-        for ( String folder : trusts )
-        {
-            File fpTrustFolder = new File( userHome, folder );
-            if ( fpTrustFolder.exists() && fpTrustFolder.isDirectory() )
-            {
-                mavenCfg = new File( fpTrustFolder, "maven.cfg" );
-                if ( mavenCfg.exists() )
-                {
-                    mavenCfg.delete();
-                }
-                break;
-            }
-        }
-
-        testIssue( "issue-0069" );
-
-        File testDir = getProject( "/issues/issue-0069" );
-        File swf = new File( testDir, "target/test-classes/TestRunner.swf" );
-
-        assertTrue( "Flex-mojos should generate maven.cfg: " + mavenCfg.getAbsolutePath(), mavenCfg.exists() );
-
-        String cfg = IOUtil.toString( new FileReader( mavenCfg ) );
-
-        assertTrue( "Flex-mojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
     }
 
     @Test
