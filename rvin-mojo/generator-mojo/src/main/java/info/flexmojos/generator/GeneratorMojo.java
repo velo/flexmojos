@@ -91,6 +91,13 @@ public class GeneratorMojo
     private String[] excludeClasses;
 
     /**
+     * File to include as output from as3 generation. If not defined, assumes all classes are included in the output
+     * 
+     * @parameter
+     */
+    private String[] outputClasses;
+
+    /**
      * @parameter expression="${project.build}"
      * @required
      * @readonly
@@ -137,6 +144,12 @@ public class GeneratorMojo
      */
     private boolean useTransitiveDependencies;
 
+    /**
+     * Controls whether or not enum classes are output to the baseOutputDirectory (true) or the outputDirectory (false)
+     * @parameter default-value="false"
+     */
+    private boolean outputEnumToBaseOutputDirectory;
+    
     /**
      * internal properties
      */
@@ -336,7 +349,7 @@ public class GeneratorMojo
     {
         this.listener = new Gas3Listener( getLog() );
         Generator generator = new Generator( this );
-        generator.add( new Gas3GroovyTransformer( this, this.listener ) );
+        generator.add( new Gas3GroovyTransformer( this, this.listener, outputClasses ) );
         return generator;
     }
 
@@ -440,6 +453,8 @@ public class GeneratorMojo
 
     public File getOutputDir( JavaAs3Input javaas3input )
     {
+        if ( outputEnumToBaseOutputDirectory && javaas3input.getType().isEnum() )
+            return baseOutputDirectory;
         return outputDirectory;
     }
 

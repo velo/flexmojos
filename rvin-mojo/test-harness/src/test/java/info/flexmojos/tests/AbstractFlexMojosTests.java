@@ -48,7 +48,7 @@ public class AbstractFlexMojosTests
 
     private static final ReadWriteLock downloadArtifactsLock = new ReentrantReadWriteLock();
 
-    @BeforeSuite
+    @BeforeSuite( alwaysRun = true )
     public static void initFolders()
         throws IOException
     {

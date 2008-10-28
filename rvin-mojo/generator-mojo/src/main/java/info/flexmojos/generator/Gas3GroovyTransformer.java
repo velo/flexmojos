@@ -18,78 +18,52 @@
  */
 package info.flexmojos.generator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import org.granite.generator.Input;
+import org.apache.commons.io.FilenameUtils;
 import org.granite.generator.Listener;
-import org.granite.generator.as3.As3Type;
 import org.granite.generator.as3.JavaAs3GroovyConfiguration;
 import org.granite.generator.as3.JavaAs3GroovyTransformer;
-import org.granite.generator.as3.PackageTranslator;
-import org.granite.generator.as3.reflect.JavaInterface;
-import org.granite.generator.as3.reflect.JavaType;
+import org.granite.generator.as3.JavaAs3Input;
+import org.granite.generator.as3.JavaAs3Output;
+import org.granite.generator.exception.TemplateUriException;
 
 public class Gas3GroovyTransformer
     extends JavaAs3GroovyTransformer
 {
-    public Gas3GroovyTransformer( JavaAs3GroovyConfiguration config, Listener listener )
+    private String[] outputClasses;
+
+    public Gas3GroovyTransformer( JavaAs3GroovyConfiguration config, Listener listener, String[] outputClasses )
     {
         super( config, listener );
+        this.outputClasses = outputClasses;
     }
 
     @Override
-    public boolean accept( Input<?> input )
+    protected JavaAs3Output[] getOutputs( JavaAs3Input input )
+        throws IOException, TemplateUriException
     {
-        return true;
-    }
-
-    @Override
-    public As3Type getAs3Type( Class<?> clazz )
-    {
-        As3Type as3Type = super.getAs3Type( clazz );
-        if ( getConfig().getTranslators().isEmpty() || clazz.getPackage() == null )
-            return as3Type;
-
-        PackageTranslator translator = null;
-
-        String packageName = clazz.getPackage().getName();
-        int weight = 0;
-        for ( PackageTranslator t : getConfig().getTranslators() )
+        if ( matchWildCard( input.getType().getName(), outputClasses ) )
         {
-            int w = t.match( packageName );
-            if ( w > weight )
-            {
-                weight = w;
-                translator = t;
-            }
+            return super.getOutputs( input );
         }
 
-        if ( translator != null )
-            as3Type = new As3Type( translator.translate( packageName ), as3Type.getName() );
-
-        return as3Type;
+        return new JavaAs3Output[0];
     }
 
-    @Override
-    public JavaType getJavaTypeSuperclass( Class<?> clazz )
+    private boolean matchWildCard( String className, String[] wildCards )
     {
-        Class<?> superclass = clazz.getSuperclass();
-        if ( superclass != null && superclass.getClassLoader() != null )
-            return getJavaType( superclass );
-        return null;
-    }
-
-    @Override
-    public List<JavaInterface> getJavaTypeInterfaces( Class<?> clazz )
-    {
-        List<JavaInterface> interfazes = new ArrayList<JavaInterface>();
-        for ( Class<?> interfaze : clazz.getInterfaces() )
+        if ( wildCards == null )
         {
-            if ( interfaze.getClassLoader() != null )
-                interfazes.add( (JavaInterface) getJavaType( interfaze ) );
+            return true;
         }
-        return interfazes;
-    }
 
+        for ( String wildCard : wildCards )
+        {
+            if ( FilenameUtils.wildcardMatch( className, wildCard ) )
+                return true;
+        }
+
+        return false;
+    }
 }
