@@ -112,7 +112,7 @@
 				<version>2.4.3</version>
 				<configuration>
 					<parallel>true</parallel>
-					<threadCount>2</threadCount>
+					<threadCount>6</threadCount>
 				</configuration>
 			</plugin>
 

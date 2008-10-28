@@ -160,14 +160,14 @@ public class IT0013IssuesTest
         test( testDir, "install", "-DskipTests=true" );
     }
 
-    @Test
+    @Test( groups = { "generator" } )
     public void issue61()
         throws Exception
     {
         testIssue( "issue-0061" );
     }
 
-    @Test
+    @Test( groups = { "generator" } )
     public void issue66()
         throws Exception
     {
