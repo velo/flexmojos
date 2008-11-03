@@ -18,6 +18,7 @@
  */
 package info.rvin.flexmojo.test;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.compiler.ApplicationMojo;
 
 import java.io.File;
@@ -89,6 +90,10 @@ public class TestCompilerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         testFolder = new File( build.getTestSourceDirectory() );
 
         if ( skipTests )

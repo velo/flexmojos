@@ -18,6 +18,8 @@
  */
 package info.flexmojos.generator;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -146,10 +148,11 @@ public class GeneratorMojo
 
     /**
      * Controls whether or not enum classes are output to the baseOutputDirectory (true) or the outputDirectory (false)
+     * 
      * @parameter default-value="false"
      */
     private boolean outputEnumToBaseOutputDirectory;
-    
+
     /**
      * internal properties
      */
@@ -176,6 +179,10 @@ public class GeneratorMojo
     public void execute()
         throws MojoExecutionException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         setUp();
 
         List<File> jarDependencies = getJarDependencies();

@@ -172,6 +172,9 @@ public abstract class AbstractIrvinMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
         setUp();
         run();
         tearDown();

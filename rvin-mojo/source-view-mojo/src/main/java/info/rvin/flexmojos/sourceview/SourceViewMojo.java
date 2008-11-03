@@ -1,5 +1,7 @@
 package info.rvin.flexmojos.sourceview;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -37,7 +39,11 @@ public class SourceViewMojo extends AbstractMojo {
 
 	@SuppressWarnings("unchecked")
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		File srcDir = new File(project.getBuild().getSourceDirectory());
+        getLog().info(
+                      "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                          + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
+        File srcDir = new File(project.getBuild().getSourceDirectory());
 		Collection<File> testFiles = FileUtils.listFiles(srcDir, new String[]{"as"}, true);
 		for (File file : testFiles) {
 			String fileContent;

@@ -24,6 +24,7 @@ HANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 package info.rvin.flexmojos.encrypter;
 
 import info.rvin.flexmojos.encrypter.encryptations.AesEncrypter;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +98,10 @@ public class EncrypterMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         if ( key == null )
         {
             key = generateKey( project.getArtifact().toString() );

@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
@@ -69,6 +70,21 @@ public class MavenUtils
     private static final String LINUX_OS = "linux";
 
     private static final String VISTA = "vista";
+
+    private static final Properties flexmojosProperties;
+
+    static
+    {
+        flexmojosProperties = new Properties();
+        try
+        {
+            flexmojosProperties.load( MavenUtils.class.getResourceAsStream( "/flexmojos.properties" ) );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Unable to load flexmojos.properties", e );
+        }
+    }
 
     private MavenUtils()
     {
@@ -520,4 +536,10 @@ public class MavenUtils
 
         return namespaces;
     }
+
+    public static String getFlexMojosVersion( )
+    {
+        return flexmojosProperties.getProperty( "version" );
+    }
+
 }

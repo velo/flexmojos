@@ -19,6 +19,8 @@ package info.rvin.flexmojo.flexcover;
  * under the License.
  */
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +46,7 @@ public class FlexCoverReportMojo
      * @parameter expression="${flexcover.report.format}"
      * @deprecated
      */
+    @Deprecated
     private String format;
 
     /**
@@ -131,6 +134,7 @@ public class FlexCoverReportMojo
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
      */
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory.getAbsolutePath();
@@ -139,6 +143,7 @@ public class FlexCoverReportMojo
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
      */
+    @Override
     protected MavenProject getProject()
     {
         return project;
@@ -147,6 +152,7 @@ public class FlexCoverReportMojo
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
      */
+    @Override
     protected Renderer getSiteRenderer()
     {
         return siteRenderer;
@@ -155,33 +161,39 @@ public class FlexCoverReportMojo
     /**
      * @see org.apache.maven.reporting.MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
      */
+    @Override
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         executeReport( locale );
     }
 
-//    private void executeReportTask( Task task, String format )
-//        throws MavenReportException
-//    {
-//        task.setOutputFormat( format );
-//
-//        // execute task
-//        try
-//        {
-//            task.execute();
-//        }
-//        catch ( MojoExecutionException e )
-//        {
-//            // throw new MavenReportException( "Error in FlexCover Report generation: " + e.getMessage(), e );
-//            // better don't break the build if report is not generated, also due to the sporadic MCOBERTURA-56
-//            getLog().error( "Error in FlexCover Report generation: " + e.getMessage(), e );
-//        }
-//    }
+    // private void executeReportTask( Task task, String format )
+    // throws MavenReportException
+    // {
+    // task.setOutputFormat( format );
+    //
+    // // execute task
+    // try
+    // {
+    // task.execute();
+    // }
+    // catch ( MojoExecutionException e )
+    // {
+    // // throw new MavenReportException( "Error in FlexCover Report generation: " + e.getMessage(), e );
+    // // better don't break the build if report is not generated, also due to the sporadic MCOBERTURA-56
+    // getLog().error( "Error in FlexCover Report generation: " + e.getMessage(), e );
+    // }
+    // }
 
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#executeReport(java.util.Locale)
      */
+    @Override
     protected void executeReport( Locale locale )
         throws MavenReportException
     {
@@ -190,28 +202,28 @@ public class FlexCoverReportMojo
             return;
         }
 
-//        ReportTask task = new ReportTask();
-//
-//        // task defaults
-//        task.setLog( getLog() );
-//        task.setPluginClasspathList( pluginClasspathList );
-//        task.setQuiet( quiet );
-//
-//        // task specifics
-//        task.setMaxmem( maxmem );
-//        task.setDataFile( dataFile );
-//        task.setOutputDirectory( outputDirectory );
-//        task.setCompileSourceRoots( getCompileSourceRoots() );
-//
-//        if ( format != null )
-//        {
-//            formats = new String[] { format };
-//        }
-//
-//        for ( int i = 0; i < formats.length; i++ )
-//        {
-//            executeReportTask( task, formats[i] );
-//        }
+        // ReportTask task = new ReportTask();
+        //
+        // // task defaults
+        // task.setLog( getLog() );
+        // task.setPluginClasspathList( pluginClasspathList );
+        // task.setQuiet( quiet );
+        //
+        // // task specifics
+        // task.setMaxmem( maxmem );
+        // task.setDataFile( dataFile );
+        // task.setOutputDirectory( outputDirectory );
+        // task.setCompileSourceRoots( getCompileSourceRoots() );
+        //
+        // if ( format != null )
+        // {
+        // formats = new String[] { format };
+        // }
+        //
+        // for ( int i = 0; i < formats.length; i++ )
+        // {
+        // executeReportTask( task, formats[i] );
+        // }
     }
 
     /**
@@ -222,11 +234,13 @@ public class FlexCoverReportMojo
         return "flexcover/index";
     }
 
+    @Override
     public boolean isExternalReport()
     {
         return true;
     }
 
+    @Override
     public boolean canGenerateReport()
     {
         /*
@@ -254,6 +268,7 @@ public class FlexCoverReportMojo
     /**
      * @see org.apache.maven.reporting.AbstractMavenReport#setReportOutputDirectory(java.io.File)
      */
+    @Override
     public void setReportOutputDirectory( File reportOutputDirectory )
     {
         if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( "flexcover" ) ) )

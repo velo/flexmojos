@@ -45,6 +45,7 @@ public class FlexCoverLibraryMojo
     
     
 
+    @Override
     public void setUp() throws MojoExecutionException, MojoFailureException {
 //    	build.setSourceDirectory("src/test/flex");
         build.setTestOutputDirectory( "target/flexcover-classes/" );
