@@ -23,7 +23,6 @@ public class MergedModulesTest
     extends AbstractConceptTest
 {
 
-    @SuppressWarnings( "unchecked" )
     @Test
     public void installFake()
         throws Exception
