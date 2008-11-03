@@ -17,6 +17,8 @@
  */
 package info.rvin.flexmojos.asdoc;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -86,6 +88,10 @@ public class AsDocReport
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         try
         {
             SiteRendererSink sink = siteRenderer.createSink( getReportOutputDirectory(), getOutputName() + ".html" );

@@ -17,6 +17,7 @@
  */
 package info.rvin.flexmojo.test;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.File;
@@ -112,6 +113,10 @@ public class FlexUnitMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         setUp();
 
         if ( skip || skipTest )
