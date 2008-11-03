@@ -110,10 +110,12 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.4.3</version>
+<!--
 				<configuration>
-					<parallel>true</parallel>
-					<threadCount>6</threadCount>
+					<parallel>false</parallel>
+					<threadCount>1</threadCount>
 				</configuration>
+-->
 			</plugin>
 
 		</plugins>
@@ -389,6 +391,11 @@
 				<artifactId>jdom</artifactId>
 				<version>1.1</version>
 			</dependency>
+			<dependency>
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>1.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -404,6 +411,7 @@
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
 		<module>install-mojo</module>
+		<module>flexcover-mojo</module>
 		<module>super-poms</module>
 		<!--
 Tests can't be released due to some snapshot dependencies
