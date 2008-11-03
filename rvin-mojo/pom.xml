@@ -415,8 +415,8 @@
 		<module>super-poms</module>
 		<!--
 Tests can't be released due to some snapshot dependencies
- -->
 		<module>test-harness</module>
+ -->
 	</modules>
 
 </project>
