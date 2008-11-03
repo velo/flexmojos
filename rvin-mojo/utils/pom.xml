@@ -37,6 +37,26 @@
 
 	<packaging>jar</packaging>
 	<name>Flex Mojos utilities</name>
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>flexmojos.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>flexmojos.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>

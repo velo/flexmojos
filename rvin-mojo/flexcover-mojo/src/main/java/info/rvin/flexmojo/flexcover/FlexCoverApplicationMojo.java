@@ -17,12 +17,7 @@ package info.rvin.flexmojo.flexcover;
  */
 
 import info.rvin.flexmojo.test.TestCompilerMojo;
-import info.rvin.flexmojos.utilities.MavenUtils;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -48,6 +43,7 @@ public class FlexCoverApplicationMojo
     
     
 
+    @Override
     public void setUp() throws MojoExecutionException, MojoFailureException {
 //    	build.setSourceDirectory("src/test/flex");
         build.setTestOutputDirectory( "target/flexcover-classes/" );

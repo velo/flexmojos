@@ -18,6 +18,13 @@
  */
 package info.flexmojos.optimizer;
 
+import eu.cedarsoft.utils.ZipExtractor;
+import flex2.compiler.swc.Digest;
+import flex2.compiler.swc.Swc;
+import flex2.compiler.swc.SwcCache;
+import flex2.compiler.swc.SwcGroup;
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,12 +39,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-
-import eu.cedarsoft.utils.ZipExtractor;
-import flex2.compiler.swc.Digest;
-import flex2.compiler.swc.Swc;
-import flex2.compiler.swc.SwcCache;
-import flex2.compiler.swc.SwcGroup;
 
 /**
  * Goal which optimize swc files.
@@ -73,6 +74,10 @@ public class OptimizerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         if ( !"swc".equals( project.getPackaging() ) )
         {
             getLog().warn( "Optimizer mojo can only be used on SWC projects." );
