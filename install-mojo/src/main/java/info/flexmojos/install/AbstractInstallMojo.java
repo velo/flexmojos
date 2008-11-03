@@ -17,6 +17,8 @@
  */
 package info.flexmojos.install;
 
+import info.rvin.flexmojos.utilities.MavenUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -366,6 +368,10 @@ public abstract class AbstractInstallMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().info(
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+
         if ( sdkFolder == null )
         {
             throw new MojoExecutionException( "Flex SDK folder not defined." );
