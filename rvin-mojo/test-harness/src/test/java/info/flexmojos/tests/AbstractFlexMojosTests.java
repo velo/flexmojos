@@ -126,6 +126,9 @@ public class AbstractFlexMojosTests
         verifier.getCliOptions().add( "-npu" );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
+        Properties sysProps = new Properties();
+        sysProps.setProperty( "MAVEN_OPTS", "-Xmx512m" );
+        verifier.setSystemProperties( sysProps );
         return verifier;
     }
 
