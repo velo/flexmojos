@@ -18,12 +18,12 @@
  */
 package info.rvin.flexmojos.utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.codehaus.plexus.util.StringInputStream;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class MavenUtilsTest
         throws Exception
     {
         SAXBuilder parser = new SAXBuilder();
-        Document document = parser.build( new StringInputStream( XML ) );
+        Document document = parser.build( new ByteArrayInputStream( XML.getBytes() ) );
 
         Map<String, File> namespaces = MavenUtils.readNamespaces( new File( "./" ), document );
         Assert.assertEquals( 1, namespaces.size() );
