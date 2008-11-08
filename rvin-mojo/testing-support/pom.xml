@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<name>Flex-mojos testing support</name>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>mojo</artifactId>
+		<version>2.0M9-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>testing-support</artifactId>
+
+	<packaging>swc</packaging>
+
+	<properties>
+		<baseSources>${project.build.directory}/generated-sources/flex-mojos</baseSources>
+		<sources>src/main/flex</sources>
+	</properties>
+
+	<build>
+		<sourceDirectory>${sources}</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>generator-mojo</artifactId>
+				<version>2.0M8</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<baseOutputDirectory>${baseSources}</baseOutputDirectory>
+							<outputDirectory>${sources}</outputDirectory>
+							<includeClasses>
+								<include>info.flexmojos.compile.test.report.*Report</include>
+							</includeClasses>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<version>2.0M9-SNAPSHOT</version>
+				<extensions>true</extensions>
+				<configuration>
+					<debug>true</debug>
+					<mergeResourceBundle>false</mergeResourceBundle>
+					<sourcePaths>
+						<path>${baseSources}</path>
+						<path>${sources}</path>
+					</sourcePaths>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>flex-compiler-mojo</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>playerglobal</artifactId>
+			<version>9-3.1.0.2710</version>
+			<type>swc</type>
+			<scope>external</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>framework</artifactId>
+			<version>3.1.0.2710</version>
+			<type>swc</type>
+			<scope>external</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>framework</artifactId>
+			<version>3.1.0.2710</version>
+			<type>rb.swc</type>
+		</dependency>
+
+		<!-- supported test apis -->
+		<dependency>
+			<groupId>flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>0.85</version>
+			<type>swc</type>
+			<scope>external</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.funit</groupId>
+			<artifactId>funit</artifactId>
+			<version>0.50.0245</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.digitalprimates</groupId>
+			<artifactId>fluint</artifactId>
+			<version>v1</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>
