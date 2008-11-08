@@ -90,7 +90,7 @@ public class TestCompilerMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         testFolder = new File( build.getTestSourceDirectory() );
@@ -213,9 +213,9 @@ public class TestCompilerMojo
         for ( String testClass : testClasses )
         {
             testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
-            classes.append( "testSuite.addTest( new TestSuite(" );
+            classes.append( "addTest( " );
             classes.append( testClass );
-            classes.append( ") );" );
+            classes.append( ");" );
             classes.append( '\n' );
         }
 
@@ -268,6 +268,7 @@ public class TestCompilerMojo
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
         configuration.allowSourcePathOverlap( true );
 
+        configuration.enableDebugging( true, super.debugPassword );
     }
 
     @Override
