@@ -92,13 +92,6 @@ public class IT0014ConceptTest
     }
 
     @Test
-    public void testFlexUnitExample()
-        throws Exception
-    {
-        standardConceptTester( "flexunit-example" );
-    }
-
-    @Test
     public void testHelloCaching()
         throws Exception
     {
