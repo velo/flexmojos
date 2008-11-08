@@ -179,7 +179,7 @@ public class GeneratorMojo
         throws MojoExecutionException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         setUp();
@@ -425,14 +425,20 @@ public class GeneratorMojo
         {
             outputDirectory.mkdirs();
         }
+        project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
 
         if ( baseOutputDirectory == null )
         {
             baseOutputDirectory = outputDirectory;
         }
-        else if ( !baseOutputDirectory.exists() )
+        else
         {
-            baseOutputDirectory.mkdirs();
+            project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
+
+            if ( !baseOutputDirectory.exists() )
+            {
+                baseOutputDirectory.mkdirs();
+            }
         }
 
     }
