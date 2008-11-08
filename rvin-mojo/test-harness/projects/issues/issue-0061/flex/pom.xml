@@ -51,6 +51,13 @@
 			<artifactId>issue-0061-java</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>0.85</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

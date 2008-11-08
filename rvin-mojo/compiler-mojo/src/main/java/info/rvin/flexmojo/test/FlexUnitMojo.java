@@ -18,11 +18,14 @@
  */
 package info.rvin.flexmojo.test;
 
+import info.flexmojos.compile.test.report.ErrorReport;
+import info.flexmojos.compile.test.report.TestCaseReport;
+import info.flexmojos.compile.test.report.TestMethodReport;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,11 +37,9 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Goal to run FlexUnit tests. Based on: http://weblogs.macromedia.com/pmartin/archives/2007/09/flexunit_for_an_2.cfm
@@ -53,7 +54,7 @@ public class FlexUnitMojo
 
     private static final String END_OF_TEST_RUN = "<endOfTestRun/>";
 
-    private static final String END_OF_TEST_SUITE = "</testsuite>";
+    private static final String END_OF_TEST_SUITE = "</testCaseReport>";
 
     private static final String END_OF_TEST_ACK = "<endOfTestRunAck/>";
 
@@ -67,8 +68,6 @@ public class FlexUnitMojo
     private boolean failures = false;
 
     private boolean complete;
-
-    private boolean verbose = true;
 
     /**
      * Socket connect port for flex/java communication
@@ -115,7 +114,7 @@ public class FlexUnitMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         setUp();
@@ -184,20 +183,26 @@ public class FlexUnitMojo
                         if ( chr == NULL_BYTE )
                         {
                             final String data = buffer.toString();
+                            getLog().debug( "Recivied data: " + data );
                             buffer = new StringBuffer();
 
                             if ( data.equals( POLICY_FILE_REQUEST ) )
                             {
+                                getLog().debug( "Send policy file" );
+
                                 sendPolicyFile();
                                 closeClientSocket();
                                 openClientSocket();
                             }
                             else if ( data.endsWith( END_OF_TEST_SUITE ) )
                             {
+                                getLog().debug( "End test suite" );
+
                                 saveTestReport( data );
                             }
                             else if ( data.equals( END_OF_TEST_RUN ) )
                             {
+                                getLog().debug( "End test run" );
                                 sendAcknowledgement();
                             }
                         }
@@ -206,6 +211,8 @@ public class FlexUnitMojo
                             buffer.append( chr );
                         }
                     }
+
+                    getLog().debug( "Socket buffer " + buffer );
                 }
                 catch ( MojoExecutionException be )
                 {
@@ -245,10 +252,7 @@ public class FlexUnitMojo
 
                 out.write( NULL_BYTE );
 
-                if ( verbose )
-                {
-                    log( "sent policy file" );
-                }
+                getLog().debug( "sent policy file" );
             }
 
             private void saveTestReport( final String report )
@@ -256,10 +260,7 @@ public class FlexUnitMojo
             {
                 writeTestReport( report );
 
-                if ( verbose )
-                {
-                    log( "end of test" );
-                }
+                getLog().debug( "end of test" );
             }
 
             private void sendAcknowledgement()
@@ -268,10 +269,7 @@ public class FlexUnitMojo
                 out.write( END_OF_TEST_ACK.getBytes() );
                 out.write( NULL_BYTE );
 
-                if ( verbose )
-                {
-                    log( "end of test run" );
-                }
+                getLog().debug( "end of test run" );
             }
 
             private void openServerSocket()
@@ -280,10 +278,7 @@ public class FlexUnitMojo
                 serverSocket = new ServerSocket( testPort );
                 serverSocket.setSoTimeout( socketTimeout );
 
-                if ( verbose )
-                {
-                    log( "opened server socket" );
-                }
+                getLog().debug( "opened server socket" );
             }
 
             private void closeServerSocket()
@@ -307,10 +302,7 @@ public class FlexUnitMojo
                 // This method blocks until a connection is made.
                 clientSocket = serverSocket.accept();
 
-                if ( verbose )
-                {
-                    log( "accepting data from client" );
-                }
+                getLog().debug( "accepting data from client" );
 
                 in = clientSocket.getInputStream();
                 out = clientSocket.getOutputStream();
@@ -365,47 +357,50 @@ public class FlexUnitMojo
     /**
      * Write a test report to disk.
      * 
-     * @param report the report to write.
+     * @param reportString the report to write.
      * @throws MojoExecutionException
      */
-    private void writeTestReport( final String report )
+    private void writeTestReport( final String reportString )
         throws MojoExecutionException
     {
         try
         {
+
+            XStream xs = new XStream();
+            xs.processAnnotations( TestCaseReport.class );
+            xs.processAnnotations( TestMethodReport.class );
+            xs.processAnnotations( ErrorReport.class );
+
             // Parse the report.
-            final Document document = DocumentHelper.parseText( report );
+            TestCaseReport report = (TestCaseReport) xs.fromXML( reportString );
 
             // Get the test attributes.
-            final Element root = document.getRootElement();
-            final String name = root.valueOf( "@name" );
-            final int numFailures = Integer.parseInt( root.valueOf( "@failures" ) );
-            final int numErrors = Integer.parseInt( root.valueOf( "@errors" ) );
+            final String name = report.getName();
+            final int numFailures = report.getFailures();
+            final int numErrors = report.getErrors();
             final int totalProblems = numFailures + numErrors;
 
-            if ( verbose )
-                log( "Running " + name );
-            if ( verbose )
-                log( formatLogReport( root ) );
+            getLog().debug( "Running " + name );
+            getLog().debug( reportString );
 
             // Get the output file name.
-            final File file = new File( reportPath, "TEST-" + name + ".xml" );
+            final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
+            FileWriter writer = new FileWriter( file );
+            xs.toXML( report, writer );
+            writer.flush();
+            writer.close();
 
             // Pretty print the document to disk.
-            final OutputFormat format = OutputFormat.createPrettyPrint();
-            final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
-            writer.write( document );
-            writer.close();
+            // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
+            // writer.write( document );
+            // writer.close();
 
             // First write the report, then fail the build if the test failed.
             if ( totalProblems > 0 )
             {
                 failures = true;
 
-                if ( verbose )
-                {
-                    log( "flexunit test " + name + " failed." );
-                }
+                getLog().debug( "flexunit test " + name + " failed." );
 
             }
 
@@ -438,11 +433,6 @@ public class FlexUnitMojo
         msg.append( " sec" );
 
         return msg.toString();
-    }
-
-    public void log( final String message )
-    {
-        System.out.println( message );
     }
 
     @Override

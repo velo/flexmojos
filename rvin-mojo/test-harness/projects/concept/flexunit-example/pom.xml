@@ -37,13 +37,6 @@
 			<type>swc</type>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>flexunit.junit</groupId>
-			<artifactId>flexunit-optional</artifactId>
-			<version>0.85</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>
