@@ -135,6 +135,14 @@
 			<scope>external</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.asunit</groupId>
+			<artifactId>asunit</artifactId>
+			<version>20071011</version>
+			<type>swc</type>
+			<scope>external</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>
