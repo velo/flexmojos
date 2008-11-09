@@ -23,18 +23,6 @@ package info.flexmojos.unitestingsupport.flexunit
 	import info.flexmojos.unitestingsupport.SocketReporter;
 	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 
-	/**
-	 * This class is intended as a test runner that mimics the JUnit task found
-	 * in Ant. It is also intended to be run from an Ant task - please see the
-	 * FlexUnitTask.
-	 * 
-	 * The output from the test run is an XML file per Test, which is formatted
-	 * as per the XML formatter in the JUnit task, this allows a report to
-	 * be generated using the JUnitReport task.
-	 * 
-	 * Communicate between this test runner and the controlling Ant task is done
-	 * using a XMLSocket.
-	 */
 	public class FlexUnitListener implements TestListener
 	{
 		
