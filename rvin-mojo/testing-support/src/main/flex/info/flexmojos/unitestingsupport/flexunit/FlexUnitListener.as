@@ -17,12 +17,11 @@
  */
 package info.flexmojos.unitestingsupport.flexunit
 {
-	import flash.utils.describeType;
-	
 	import flexunit.framework.*;
 	
 	import info.flexmojos.compile.test.report.ErrorReport;
 	import info.flexmojos.unitestingsupport.SocketReporter;
+	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 
 	/**
 	 * This class is intended as a test runner that mimics the JUnit task found
@@ -48,7 +47,10 @@ package info.flexmojos.unitestingsupport.flexunit
 			
 			for each (var test:Class in tests)
 			{
-				suite.addTestSuite(test);
+				if(test is Test)
+				{
+					suite.addTestSuite(test);
+				}
 			}
 	        
     	    suite.runWithResult( result );
@@ -82,7 +84,7 @@ package info.flexmojos.unitestingsupport.flexunit
 		public function addError( test : Test, error : Error ) : void
 		{
 			var failure:ErrorReport = new ErrorReport();
-			failure.type = getClassName(error);
+			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 
@@ -97,25 +99,12 @@ package info.flexmojos.unitestingsupport.flexunit
 		public function addFailure( test : Test, error : AssertionFailedError ) : void
 		{
 			var failure:ErrorReport = new ErrorReport();
-			failure.type = getClassName(error);
+			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 			
 			SocketReporter.addFailure(test.className, test[ "methodName" ], failure);
 		}
 
-		/**
-		 * Return the fully qualified class name for an Object.
-		 * @param obj the Object.
-		 * @return the class name.
-		 */
-		private static function getClassName( obj:Object ):String
-		{
-			var description:XML = describeType( obj );
-			var className:Object = description.@name;
-			
-			return className[ 0 ];
-		}
-		
 	}
 }
