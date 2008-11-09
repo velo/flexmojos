@@ -89,7 +89,7 @@ package info.flexmojos.unitestingsupport
 		 * currently executing Test.
 		 * @param Test the test.
 		 */
-		private static function getReport( testName:String ):TestCaseReport
+		public static function getReport( testName:String ):TestCaseReport
 		{
 			var reportObject:TestCaseReport;
 			

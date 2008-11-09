@@ -2,9 +2,8 @@ package info.flexmojos.unitestingsupport
 {
 	import flash.utils.getDefinitionByName;
 	
-	import funit.core.FUnitFramework;
-	
 	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
+	import info.flexmojos.unitestingsupport.funit.FUnitListener;
 	
 	import mx.core.Application;
 	import mx.events.FlexEvent;
@@ -33,13 +32,13 @@ package info.flexmojos.unitestingsupport
 			//flexunit supported
 			if(getDefinitionByName("flexunit.framework.Test"))
 			{
-				testsScheduledToRun = FlexUnitListener.run(tests);
+				testsScheduledToRun += FlexUnitListener.run(tests);
 			}
 
 			//funit supported			
 			if(getDefinitionByName("funit.core.FUnitFramework"))
 			{
-				
+				testsScheduledToRun += FUnitListener.run(tests);
 			}
 			
 			//fluint supported
