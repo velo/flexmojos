@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>%{flex-mojos.version}</version>
+	</parent>
+
+	<groupId>info.flex-mojos.itests</groupId>
+	<artifactId>asunit-example</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>swc</packaging>
+
+<!--
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<version>2.0M9-SNAPSHOT</version>
+				<configuration>
+					<includeTestFiles>
+						<include>*Tests.as</include>
+					</includeTestFiles>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+-->
+
+	<dependencies>
+		<dependency>
+			<groupId>com.asunit</groupId>
+			<artifactId>asunit</artifactId>
+			<version>20071011</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

@@ -20,6 +20,7 @@ package info.flexmojos.unitestingsupport
 {
 	import flash.utils.getDefinitionByName;
 	
+	import info.flexmojos.unitestingsupport.asunit.AsUnitListener;
 	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
 	import info.flexmojos.unitestingsupport.funit.FUnitListener;
 	
@@ -62,7 +63,14 @@ package info.flexmojos.unitestingsupport
 			//fluint supported
 			if(getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
 			{
-				
+				//too much complicated, didn't figure out how to run a test w/o UI
+				//testsScheduledToRun += FluintListener.run(tests);
+			}
+
+			//asunit supported
+			if(getDefinitionByName("asunit.framework.Test"))
+			{
+				testsScheduledToRun += AsUnitListener.run(tests);
 			}
 		}
 
