@@ -100,7 +100,7 @@
 			<artifactId>funit</artifactId>
 			<version>0.50.0245</version>
 			<type>swc</type>
-			<scope>test</scope>
+			<scope>external</scope>
 		</dependency>
 
 		<dependency>
@@ -108,7 +108,7 @@
 			<artifactId>fluint</artifactId>
 			<version>v1</version>
 			<type>swc</type>
-			<scope>test</scope>
+			<scope>external</scope>
 		</dependency>
 
 	</dependencies>
