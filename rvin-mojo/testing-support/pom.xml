@@ -126,6 +126,13 @@
 			<type>swc</type>
 			<scope>external</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.swirlyvision</groupId>
+			<artifactId>swirly-vision</artifactId>
+			<version>1.0</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>net.digitalprimates</groupId>
