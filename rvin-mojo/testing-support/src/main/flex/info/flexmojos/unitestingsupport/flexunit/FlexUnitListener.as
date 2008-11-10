@@ -35,7 +35,8 @@ package info.flexmojos.unitestingsupport.flexunit
 			
 			for each (var test:Class in tests)
 			{
-				if(test is Test)
+				var testCase:* = new test();
+				if(testCase is Test)
 				{
 					suite.addTestSuite(test);
 				}
