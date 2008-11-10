@@ -143,6 +143,14 @@
 			<scope>external</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>advancedflex</groupId>
+			<artifactId>debugger</artifactId>
+			<version>0.2alpha2</version>
+			<type>swc</type>
+			<scope>external</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

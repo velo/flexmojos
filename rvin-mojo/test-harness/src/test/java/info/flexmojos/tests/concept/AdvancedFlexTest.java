@@ -16,23 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package info.flexmojos.compile.test.report {
-	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
-	
+package info.flexmojos.tests.concept;
 
-    [Bindable]
-    [RemoteClass(alias="info.flexmojos.compile.test.report.ErrorReport")]
-    public class ErrorReport extends ErrorReportBase {
-    	
-    	public function ErrorReport(error:Error = null)
-    	{
-    		if(error != null)
-    		{
-    			this.type = ClassnameUtil.getClassName(error);
-    			this.message = error.message;
-    			this.stackTrace = error.getStackTrace();
-    		}
-    	}
-    	
+import org.testng.annotations.Test;
+
+public class AdvancedFlexTest
+    extends AbstractConceptTest
+{
+
+    @Test
+    public void testAsUnitExample()
+        throws Exception
+    {
+        standardConceptTester( "advancedflex-example" );
     }
+
 }

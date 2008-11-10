@@ -16,23 +16,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package info.flexmojos.compile.test.report {
-	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
+package info.flexmojos.unitestingsupport.advancedflex
+{
+	import advancedflex.debugger.aut.framework.*;
 	
+	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 
-    [Bindable]
-    [RemoteClass(alias="info.flexmojos.compile.test.report.ErrorReport")]
-    public class ErrorReport extends ErrorReportBase {
-    	
-    	public function ErrorReport(error:Error = null)
-    	{
-    		if(error != null)
-    		{
-    			this.type = ClassnameUtil.getClassName(error);
-    			this.message = error.message;
-    			this.stackTrace = error.getStackTrace();
-    		}
-    	}
-    	
-    }
+	public class AdvancedFlexListener 
+	{
+		
+		public static function run(tests:Array):int {
+
+			var suite:TestSuite = new TestSuite();
+			
+			var testsCount:int = 0;
+			
+			for each (var test:Class in tests)
+			{
+				var testCase:* = new test();
+				if(testCase is TestCase)
+				{
+					suite.addTest( testCase );
+					testsCount++;
+				}
+			}
+	        
+	        //suite will crash if launched without tests
+	        //http://code.google.com/p/advancedflex/issues/detail?id=1
+	        if(testsCount != 0) 
+	        {
+	    	    suite.startTest( new ProtectedConsole(ClassnameUtil.getClassName(test)) );
+	        }
+    	    
+    	    return testsCount;
+		}		
+
+	}
 }
