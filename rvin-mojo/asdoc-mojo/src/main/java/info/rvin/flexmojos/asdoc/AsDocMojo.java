@@ -191,7 +191,7 @@ public class AsDocMojo
      * An integer that changes the width of the left frameset of the documentation. You can change this size to
      * accommodate the length of your package names. The default value is 210 pixels.
      * 
-     * @parameter default-value="120"
+     * @parameter default-value="210"
      */
     private int leftFramesetWidth;
 
@@ -723,7 +723,7 @@ public class AsDocMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         setUp();
