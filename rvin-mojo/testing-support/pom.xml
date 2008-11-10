@@ -131,7 +131,7 @@
 			<artifactId>swirly-vision</artifactId>
 			<version>1.0</version>
 			<type>swc</type>
-			<scope>test</scope>
+			<scope>external</scope>
 		</dependency>
 
 		<dependency>
