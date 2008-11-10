@@ -22,12 +22,17 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
+import info.flexmojos.compile.test.report.TestCaseReport;
 import info.flexmojos.tests.AbstractFlexMojosTests;
+import info.rvin.flexmojo.test.util.XStreamFactory;
 
 import java.io.File;
+import java.io.FileReader;
 
 import org.apache.maven.it.VerificationException;
 import org.testng.annotations.Test;
+
+import com.thoughtworks.xstream.XStream;
 
 public class IT0013IssuesTest
     extends AbstractFlexMojosTests
@@ -81,7 +86,15 @@ public class IT0013IssuesTest
         }
 
         File reportDir = new File( testDir, "target/surefire-reports" );
-        assertEquals( 2, reportDir.listFiles().length );
+        assertEquals( 1, reportDir.listFiles().length );
+
+        XStream xs = XStreamFactory.getXStreamInstance();
+        File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
+        TestCaseReport report = (TestCaseReport) xs.fromXML( new FileReader( reportFile ) );
+
+        assertEquals( "com.adobe.example::TestCalculator", report.getName() );
+        assertEquals( 2, report.getTests() );
+        assertEquals( 1, report.getErrors() );
     }
 
     @Test

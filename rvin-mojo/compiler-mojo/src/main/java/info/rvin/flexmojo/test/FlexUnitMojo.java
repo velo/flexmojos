@@ -18,9 +18,8 @@
  */
 package info.rvin.flexmojo.test;
 
-import info.flexmojos.compile.test.report.ErrorReport;
 import info.flexmojos.compile.test.report.TestCaseReport;
-import info.flexmojos.compile.test.report.TestMethodReport;
+import info.rvin.flexmojo.test.util.XStreamFactory;
 import info.rvin.flexmojos.utilities.MavenUtils;
 import info.rvin.mojo.flexmojo.AbstractIrvinMojo;
 
@@ -366,10 +365,7 @@ public class FlexUnitMojo
         try
         {
 
-            XStream xs = new XStream();
-            xs.processAnnotations( TestCaseReport.class );
-            xs.processAnnotations( TestMethodReport.class );
-            xs.processAnnotations( ErrorReport.class );
+            XStream xs = XStreamFactory.getXStreamInstance();
 
             // Parse the report.
             TestCaseReport report = (TestCaseReport) xs.fromXML( reportString );
