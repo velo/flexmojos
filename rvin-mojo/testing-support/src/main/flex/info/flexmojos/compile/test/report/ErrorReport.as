@@ -17,10 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package info.flexmojos.compile.test.report {
+	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
+	
 
     [Bindable]
     [RemoteClass(alias="info.flexmojos.compile.test.report.ErrorReport")]
     public class ErrorReport extends ErrorReportBase {
+    	
+    	public function ErrorReport(error:Error = null)
+    	{
+    		if(error != null)
+    		{
+    			this.type = ClassnameUtil.getClassName(error);
+    			this.message = error.message;
+    			this.stackTrace = error.getStackTrace();
+    		}
+    	}
     	
     }
 }

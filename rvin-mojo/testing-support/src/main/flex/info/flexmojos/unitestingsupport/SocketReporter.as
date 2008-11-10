@@ -132,7 +132,7 @@ package info.flexmojos.unitestingsupport
 		 * Sends the results. This sends the reports back to the controlling Ant
 		 * task using an XMLSocket.
 		 */
-		public static function sendResults():void
+		private static function sendResults():void
 		{
 			// Open an XML socket.
 			socket = new XMLSocket();

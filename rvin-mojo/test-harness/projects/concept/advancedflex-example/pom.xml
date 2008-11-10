@@ -10,16 +10,16 @@
 	</parent>
 
 	<groupId>info.flex-mojos.itests</groupId>
-	<artifactId>asunit-example</artifactId>
+	<artifactId>advancedflex-example</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<packaging>swc</packaging>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.asunit</groupId>
-			<artifactId>asunit</artifactId>
-			<version>20071011</version>
+			<groupId>advancedflex</groupId>
+			<artifactId>debugger</artifactId>
+			<version>0.2alpha2</version>
 			<type>swc</type>
 			<scope>test</scope>
 		</dependency>

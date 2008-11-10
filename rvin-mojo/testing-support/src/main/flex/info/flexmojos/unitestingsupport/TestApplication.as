@@ -20,6 +20,7 @@ package info.flexmojos.unitestingsupport
 {
 	import flash.utils.getDefinitionByName;
 	
+	import info.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
 	import info.flexmojos.unitestingsupport.asunit.AsUnitListener;
 	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
 	import info.flexmojos.unitestingsupport.funit.FUnitListener;
@@ -71,6 +72,12 @@ package info.flexmojos.unitestingsupport
 			if(getDefinitionByName("asunit.framework.Test"))
 			{
 				testsScheduledToRun += AsUnitListener.run(tests);
+			}
+
+			//advancedflex supported
+			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
+			{
+				testsScheduledToRun += AdvancedFlexListener.run(tests);
 			}
 		}
 
