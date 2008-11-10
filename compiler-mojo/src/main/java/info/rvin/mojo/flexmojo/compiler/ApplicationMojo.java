@@ -109,6 +109,13 @@ public class ApplicationMojo
      */
     private boolean updateSecuritySandbox;
 
+    /**
+     * Turn on generation of debuggable SWFs. False by default for mxmlc, but true by default for compc.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean debug;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -399,6 +406,12 @@ public class ApplicationMojo
         }
 
         throw new MojoExecutionException( "Unable to resolve current OS: " + MavenUtils.osString() );
+    }
+
+    @Override
+    protected boolean isDebug()
+    {
+        return this.debug;
     }
 
 }
