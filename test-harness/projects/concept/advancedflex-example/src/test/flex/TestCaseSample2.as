@@ -15,23 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package info.flexmojos.compile.test.report {
-	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
-	
+package {
+ import advancedflex.debugger.aut.framework.TestCase;
+ import advancedflex.debugger.aut.framework.ns.*;
 
-    [Bindable]
-    [RemoteClass(alias="info.flexmojos.compile.test.report.ErrorReport")]
-    public class ErrorReport extends ErrorReportBase {
-    	
-    	public function ErrorReport(error:Error = null)
-    	{
-    		if(error != null)
-    		{
-    			this.type = ClassnameUtil.getClassName(error);
-    			this.message = error.message;
-    			this.stackTrace = error.getStackTrace();
-    		}
-    	}
-    	
-    }
+ public class TestCaseSample2 extends TestCase {
+  //test only.
+  test function cc():void {
+   console.print("aaa");
+  }
+  //test and check time if it is timeout.
+  time function dd():int {
+   console.print("bbb");
+   return 10;
+  }
+ }
 }
