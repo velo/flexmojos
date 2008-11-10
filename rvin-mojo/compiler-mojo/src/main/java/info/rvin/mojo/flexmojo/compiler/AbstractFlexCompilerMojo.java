@@ -224,13 +224,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private Warning warnings;
 
     /**
-     * Turn on generation of debuggable SWFs. False by default for mxmlc, but true by default for compc.
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean debug;
-
-    /**
      * A password that is embedded in the application
      * 
      * @parameter
@@ -1065,7 +1058,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.enableAccessibility( accessible );
         configuration.allowSourcePathOverlap( allowSourcePathOverlap );
         configuration.useActionScript3( as3 );
-        configuration.enableDebugging( debug, debugPassword );
+        configuration.enableDebugging( isDebug(), debugPassword );
         configuration.useECMAScript( es );
 
         // Fonts
@@ -1251,6 +1244,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         verifyDigests();
     }
+
+    /**
+     * @return if should be compiled as debug
+     */
+    protected abstract boolean isDebug();
 
     protected void resolveDependencies()
         throws MojoExecutionException

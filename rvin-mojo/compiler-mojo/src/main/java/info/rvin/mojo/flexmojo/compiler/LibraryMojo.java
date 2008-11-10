@@ -176,6 +176,13 @@ public class LibraryMojo
      */
     private Stylesheet[] includeStylesheet;
 
+    /**
+     * Turn on generation of debuggable SWFs. False by default for mxmlc, but true by default for compc.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean debug;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -409,6 +416,12 @@ public class LibraryMojo
         build( localized );
 
         projectHelper.attachArtifact( project, "resource-bundle", locale, output );
+    }
+
+    @Override
+    protected boolean isDebug()
+    {
+        return this.debug;
     }
 
 }
