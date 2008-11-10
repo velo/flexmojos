@@ -273,14 +273,6 @@
 			<version>${pom.version}</version>
 			<type>swc</type>
 		</dependency>
-		<dependency>
-			<groupId>flexunit</groupId>
-			<artifactId>flexunit</artifactId>
-			<version>0.85</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 
 </project>
