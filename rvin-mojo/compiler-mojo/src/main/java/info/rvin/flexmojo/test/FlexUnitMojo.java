@@ -36,7 +36,6 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.dom4j.Element;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -407,29 +406,29 @@ public class FlexUnitMojo
         }
     }
 
-    /**
-     * crafts a simple junit type log message.
-     */
-    private String formatLogReport( final Element root )
-    {
-        int numFailures = Integer.parseInt( root.valueOf( "@failures" ) );
-        int numErrors = Integer.parseInt( root.valueOf( "@errors" ) );
-        int numTests = Integer.parseInt( root.valueOf( "@tests" ) );
-        int time = Integer.parseInt( root.valueOf( "@time" ) );
-
-        final StringBuffer msg = new StringBuffer();
-        msg.append( "Tests run: " );
-        msg.append( numTests );
-        msg.append( ", Failures: " );
-        msg.append( numFailures );
-        msg.append( ", Errors: " );
-        msg.append( numErrors );
-        msg.append( ", Time Elapsed: " );
-        msg.append( time );
-        msg.append( " sec" );
-
-        return msg.toString();
-    }
+    // /**
+    // * crafts a simple junit type log message.
+    // */
+    // private String formatLogReport( final Element root )
+    // {
+    // int numFailures = Integer.parseInt( root.valueOf( "@failures" ) );
+    // int numErrors = Integer.parseInt( root.valueOf( "@errors" ) );
+    // int numTests = Integer.parseInt( root.valueOf( "@tests" ) );
+    // int time = Integer.parseInt( root.valueOf( "@time" ) );
+    //
+    // final StringBuffer msg = new StringBuffer();
+    // msg.append( "Tests run: " );
+    // msg.append( numTests );
+    // msg.append( ", Failures: " );
+    // msg.append( numFailures );
+    // msg.append( ", Errors: " );
+    // msg.append( numErrors );
+    // msg.append( ", Time Elapsed: " );
+    // msg.append( time );
+    // msg.append( " sec" );
+    //
+    // return msg.toString();
+    // }
 
     @Override
     protected void run()
