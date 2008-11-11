@@ -20,11 +20,6 @@
 				<artifactId>flex-compiler-mojo</artifactId>
 				<version>${project.version}</version>
 				<extensions>true</extensions>
-				<configuration>
-					<locales>
-						<locale>en_US</locale>
-					</locales>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
