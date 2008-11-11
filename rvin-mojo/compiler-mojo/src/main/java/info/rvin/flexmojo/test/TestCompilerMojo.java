@@ -281,7 +281,9 @@ public class TestCompilerMojo
         // Set all dependencies as merged
         configuration.setLibraryPath( getDependenciesPath( "compile" ) );
         configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        configuration.addLibraryPath( getResourcesBundles() );
+        configuration.addLibraryPath( merge( getResourcesBundles( getDefaultLocale() ),
+                                             getResourcesBundles( runtimeLocales ),
+                                             getResourcesBundles( compiledLocales ) ) );
 
         // and add test libraries
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),

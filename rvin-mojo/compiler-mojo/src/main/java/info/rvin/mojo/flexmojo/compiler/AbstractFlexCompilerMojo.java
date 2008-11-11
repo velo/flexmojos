@@ -133,6 +133,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * </pre>
      * 
      * @parameter
+     * @deprecated
      */
     protected String[] locales;
 
@@ -572,6 +573,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Application or Library files. If not defined no resourceBundle generation is done
      * 
      * @parameter
+     * @deprecated
      */
     private Boolean mergeResourceBundle;
 
@@ -808,6 +810,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean enableMavenResourcesResolver;
 
     /**
+     * @paremeter
+     */
+    protected String[] runtimeLocales;
+
+    /**
+     * @paremeter
+     */
+    protected String[] compiledLocales;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -824,6 +836,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
+
+        processLocales();
+
         /*
          * Can't automatic initialize, if (locales == null) { // TODO must generate based on system locale? locales =
          * new String[] { "en_US" }; }
@@ -833,7 +848,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             List<String> sourceRoots = project.getCompileSourceRoots();
             List<File> sources = getValidSourceRoots( sourceRoots );
-            if ( mergeResourceBundle != null && mergeResourceBundle )
+            // if ( mergeResourceBundle != null && mergeResourceBundle )
+            if ( compiledLocales != null )
             {
                 sources.add( new File( resourceBundlePath ) );
             }
@@ -916,12 +932,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 }
             }
             metadata.setDate( new Date() );
-            if ( locales != null )
-            {
-                metadata.setLanguage( locales[0] );
-                metadata.addDescription( locales[0], project.getDescription() );
-                metadata.addTitle( locales[0], project.getName() );
-            }
+            // FIXME what to do here?
+            // if ( locales != null )
+            // {
+            // metadata.setLanguage( locales[0] );
+            // metadata.addDescription( locales[0], project.getDescription() );
+            // metadata.addTitle( locales[0], project.getName() );
+            // }
         }
 
         if ( licenses == null )
@@ -929,12 +946,56 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             licenses = getLicenses();
         }
 
+        validateLocales( runtimeLocales );
+        validateLocales( compiledLocales );
+
         configuration = builder.getDefaultConfiguration();
         configure();
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
         setMavenPathResolver();
+    }
+
+    @SuppressWarnings( "deprecation" )
+    private void processLocales()
+    {
+        if ( this.locales != null )
+        {
+            if ( this.mergeResourceBundle == null )
+            {
+                getLog().warn( "Not defined if locales should be merged or not" );
+                return;
+            }
+
+            if ( this.mergeResourceBundle )
+            {
+                this.compiledLocales = locales;
+            }
+            else
+            {
+                this.runtimeLocales = locales;
+            }
+        }
+    }
+
+    private void validateLocales( String... locales )
+        throws MojoExecutionException
+    {
+        if ( locales == null )
+        {
+            return;
+        }
+
+        for ( String locale : locales )
+        {
+            File localeFolder = new File( resourceBundlePath.replace( "{locale}", locale ) );
+            if ( !localeFolder.isDirectory() )
+            {
+                throw new MojoExecutionException( "Unable to find locales folder for : " + locale + "\n"
+                    + localeFolder.getAbsolutePath() );
+            }
+        }
     }
 
     protected List<File> getValidSourceRoots( List<?> sourceRoots )
@@ -1100,9 +1161,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // When using the resource-bundle-list option, you must also set the
         // value of the locale option to an empty string.
-        if ( mergeResourceBundle == null || mergeResourceBundle )
+        if ( compiledLocales == null && runtimeLocales == null && isApplication() )
         {
-            setLocales( locales );
+            setLocales( getDefaultLocale() );
+        }
+        else if ( compiledLocales != null )
+        {
+            setLocales( compiledLocales );
         }
         else
         {
@@ -1245,6 +1310,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         verifyDigests();
     }
 
+    protected abstract String getDefaultLocale();
+
+    protected abstract boolean isApplication();
+
     /**
      * @return if should be compiled as debug
      */
@@ -1260,9 +1329,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         configuration.setLibraryPath( getDependenciesPath( "compile" ) );
         configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        if ( mergeResourceBundle == null || mergeResourceBundle )
+
+        if ( compiledLocales == null && runtimeLocales == null && isApplication() )
         {
-            configuration.addLibraryPath( getResourcesBundles() );
+            configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
+        }
+        else if ( compiledLocales != null )
+        {
+            configuration.addLibraryPath( getResourcesBundles( compiledLocales ) );
         }
 
         resolveRuntimeLibraries();
@@ -1345,7 +1419,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
-    protected void setLocales( String[] locales )
+    protected void setLocales( String... locales )
         throws MojoExecutionException
     {
         setLocales2( locales );
@@ -1621,58 +1695,44 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     /**
-     * Get all resource bundles
-     * 
-     * @return Array of resource bundle files
-     * @throws MojoExecutionException
-     */
-    protected File[] getResourcesBundles()
-        throws MojoExecutionException
-    {
-        return getResourcesBundles( null );
-    }
-
-    /**
      * Get resource bundles for the given locale
      * 
-     * @param locale the locale for which you want bundles, null for all locales
+     * @param requestedLocales the locale for which you want bundles, null for all locales
      * @return Array of resource bundle files
      * @throws MojoExecutionException
      */
-    protected File[] getResourcesBundles( String locale )
+    protected File[] getResourcesBundles( String... requestedLocales )
         throws MojoExecutionException
     {
-        if ( locales == null )
+        if ( requestedLocales == null )
         {
             return new File[0];
         }
 
         List<File> resourceBundles = new ArrayList<File>();
 
-        for ( Artifact artifact : getDependencyArtifacts() )
+        for ( Artifact resourceBundleBeacon : getDependencyArtifacts() )
         {
-            if ( !"rb.swc".equals( artifact.getType() ) )
+            if ( !"rb.swc".equals( resourceBundleBeacon.getType() ) )
             {
                 continue;
             }
 
             // resouceBundles.add(artifact.getFile());
-            for ( String mylocale : locales )
+            for ( String requestLocale : requestedLocales )
             {
-                if ( locale == null || mylocale.equals( locale ) )
-                {
-                    Artifact localeArtifact =
-                        artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                      artifact.getVersion(), artifact.getType(),
-                                                                      mylocale );
+                Artifact resolvedResourceBundle =
+                    artifactFactory.createArtifactWithClassifier( resourceBundleBeacon.getGroupId(),
+                                                                  resourceBundleBeacon.getArtifactId(),
+                                                                  resourceBundleBeacon.getVersion(),
+                                                                  resourceBundleBeacon.getType(), requestLocale );
 
-                    resolveArtifact( localeArtifact, resolver, localRepository, remoteRepositories );
-                    resourceBundles.add( localeArtifact.getFile() );
-                }
+                resolveArtifact( resolvedResourceBundle, resolver, localRepository, remoteRepositories );
+                resourceBundles.add( resolvedResourceBundle.getFile() );
             }
 
         }
-        getLog().debug( "getResourcesBundles(" + locale + ") returning resourceBundles: " + resourceBundles );
+        getLog().debug( "getResourcesBundles(" + requestedLocales + ") returning resourceBundles: " + resourceBundles );
         return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
@@ -1722,7 +1782,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             writeConfigurationReport( report );
         }
-        if ( mergeResourceBundle != null && !mergeResourceBundle )
+        if ( runtimeLocales != null )
         {
             writeResourceBundle( report );
         }
@@ -1739,11 +1799,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         throws MojoExecutionException
     {
         getLog().info( "Compiling resources bundles!" );
-        if ( locales == null || locales.length == 0 )
-        {
-            getLog().warn( "Resource-bundle generation fail: No locale defined." );
-            return;
-        }
 
         String[] bundles = report.getResourceBundleNames();
 
@@ -1768,7 +1823,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 + ".rb.swc", e );
         }
 
-        for ( String locale : locales )
+        for ( String locale : runtimeLocales )
         {
             getLog().info( "Generating resource-bundle for " + locale );
             File localePath = MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
@@ -2018,12 +2073,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         List<File> paths = new ArrayList<File>( Arrays.asList( sourcePaths ) );
-        if ( mergeResourceBundle != null && mergeResourceBundle )
+        if ( compiledLocales != null )
         {
             // resourceBundlePath is unresolved
             paths.remove( new File( resourceBundlePath ) );
             // resolving it
-            for ( String locale : locales )
+            for ( String locale : compiledLocales )
+            {
+                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
+            }
+        }
+        if ( runtimeLocales != null )
+        {
+            // resolving locale
+            for ( String locale : runtimeLocales )
             {
                 paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
             }

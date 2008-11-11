@@ -117,6 +117,13 @@ public class ApplicationMojo
      */
     private boolean debug;
 
+    /**
+     * Default locale for libraries. This is useful to non localized applications, just to define swc.rb locale
+     * 
+     * @parameter default-value="en_US"
+     */
+    private String defaultLocale;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -413,6 +420,18 @@ public class ApplicationMojo
     protected boolean isDebug()
     {
         return this.debug;
+    }
+
+    @Override
+    protected boolean isApplication()
+    {
+        return true;
+    }
+
+    @Override
+    protected String getDefaultLocale()
+    {
+        return this.defaultLocale;
     }
 
 }
