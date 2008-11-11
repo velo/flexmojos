@@ -423,4 +423,16 @@ public class LibraryMojo
         return this.debug;
     }
 
+    @Override
+    protected boolean isApplication()
+    {
+        return false;
+    }
+
+    @Override
+    protected String getDefaultLocale()
+    {
+        throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
+    }
+
 }
