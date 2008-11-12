@@ -38,15 +38,18 @@ import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
 import info.flexmojos.compatibilitykit.FlexCompatibility;
 import info.flexmojos.utilities.PathUtil;
-import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -96,7 +99,7 @@ public class LibraryMojo
      * 
      * @parameter
      */
-    private String[] includeFiles;
+    private File[] includeFiles;
 
     /**
      * This is equilvalent to the <code>include-namespaces</code> option of the compc compiler.<BR>
@@ -216,8 +219,9 @@ public class LibraryMojo
             && checkNullOrEmpty( includeResourceBundlesArtifact ) && checkNullOrEmpty( includeSources )
             && checkNullOrEmpty( includeStylesheet ) )
         {
-            getLog().warn( "Nothing expecified to include.  Assuming source folders." );
+            getLog().warn( "Nothing expecified to include.  Assuming source and resources folders." );
             includeSources = sourcePaths.clone();
+            includeFiles = listAllResources();
         }
 
         if ( !checkNullOrEmpty( includeClasses ) )
@@ -230,23 +234,11 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeFiles ) )
         {
-            for ( String includeFile : includeFiles )
+            for ( File file : includeFiles )
             {
-                if ( includeFile == null )
+                if ( file == null || !file.isFile() )
                 {
-                    throw new MojoFailureException( "Cannot include a null file" );
-                }
-
-                File file = new File( includeFile );
-
-                if ( !file.exists() )
-                {
-                    file = MavenUtils.resolveResourceFile( project, includeFile );
-                }
-
-                if ( file == null || !file.exists() )
-                {
-                    throw new MojoFailureException( "File " + includeFile + " not found" );
+                    throw new MojoFailureException( "File " + file + " not found" );
                 }
 
                 File folder = getResourceFolder( file );
@@ -258,7 +250,7 @@ public class LibraryMojo
                     relativePath = file.getName();
                 }
 
-                builder.addArchiveFile( relativePath, file );
+                builder.addArchiveFile( relativePath.replace( '\\', '/' ), file );
             }
         }
 
@@ -334,6 +326,27 @@ public class LibraryMojo
 
         builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
                                 new File( project.getBasedir(), "pom.xml" ) );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File[] listAllResources()
+    {
+        List<File> resources = new ArrayList<File>();
+
+        List<Resource> resourcesDirs = project.getResources();
+        for ( Resource resource : resourcesDirs )
+        {
+            File resourceDir = new File( resource.getDirectory() );
+            if ( !resourceDir.exists() )
+            {
+                continue;
+            }
+
+            Collection<File> files = FileUtils.listFiles( resourceDir, null, true );
+            resources.addAll( files );
+        }
+
+        return resources.toArray( new File[resources.size()] );
     }
 
     @FlexCompatibility( minVersion = "3" )
