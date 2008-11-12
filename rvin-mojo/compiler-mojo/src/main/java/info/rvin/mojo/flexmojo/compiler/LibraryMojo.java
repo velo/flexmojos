@@ -48,6 +48,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -342,7 +344,8 @@ public class LibraryMojo
                 continue;
             }
 
-            Collection<File> files = FileUtils.listFiles( resourceDir, null, true );
+            Collection<File> files =
+                FileUtils.listFiles( resourceDir, HiddenFileFilter.VISIBLE, TrueFileFilter.INSTANCE );
             resources.addAll( files );
         }
 
