@@ -445,7 +445,7 @@ public class FlexUnitMojo
         getLog().info( "flexunit setup args: " + flexUnitCommand );
 
         // Start the browser and run the FlexUnit tests.
-        final FlexUnitLauncher browser = new FlexUnitLauncher();
+        final FlexUnitLauncher browser = new FlexUnitLauncher(flexUnitCommand);
         try
         {
             browser.runTests( swf );
