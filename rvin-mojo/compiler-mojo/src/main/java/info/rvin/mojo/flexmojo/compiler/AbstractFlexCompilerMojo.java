@@ -839,11 +839,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         processLocales();
 
-        /*
-         * Can't automatic initialize, if (locales == null) { // TODO must generate based on system locale? locales =
-         * new String[] { "en_US" }; }
-         */
-
         if ( sourcePaths == null )
         {
             List<String> sourceRoots = project.getCompileSourceRoots();
