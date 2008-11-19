@@ -69,6 +69,8 @@ public class MavenUtils
 
     private static final String LINUX_OS = "linux";
 
+    private static final String SOLARIS_OS = "sunos";
+
     private static final String VISTA = "vista";
 
     private static final Properties flexmojosProperties;
@@ -405,6 +407,26 @@ public class MavenUtils
         return osString().startsWith( LINUX_OS );
     }
 
+    /**
+     * Return a boolean to show if we are running on Solaris.
+     * 
+     * @return true if we are running on Solaris.
+     */
+    public static boolean isSolaris()
+    {
+        return osString().startsWith( SOLARIS_OS );
+    }
+    
+    /**
+     * Return a boolean to show if we are running on a unix-based OS.
+     * 
+     * @return true if we are running on a unix-based OS.
+     */
+    public static boolean isUnixBased()
+    {
+        return isLinux() || isSolaris();
+    }
+    
     /**
      * Return a boolean to show if we are running on Mac OS X.
      * 
