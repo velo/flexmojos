@@ -18,13 +18,6 @@
  */
 package info.flexmojos.unitestingsupport
 {
-	import flash.utils.getDefinitionByName;
-	
-	import info.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
-	import info.flexmojos.unitestingsupport.asunit.AsUnitListener;
-	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
-	import info.flexmojos.unitestingsupport.funit.FUnitListener;
-	
 	import mx.core.Application;
 	import mx.events.FlexEvent;
 	
@@ -39,46 +32,14 @@ package info.flexmojos.unitestingsupport
 		
 		public function TestApplication()
 		{
-			tests = new Array();
+			this.tests = new Array();
 			
 			addEventListener(FlexEvent.CREATION_COMPLETE, runTests);
 		}
 		
-		private function runTests(e:*):void 
+		private function runTests(e:*):void
 		{
-			SocketReporter.totalTestCount = tests.length;
-			var testsScheduledToRun:int = 0;
-			
-			//flexunit supported
-			if(getDefinitionByName("flexunit.framework.Test"))
-			{
-				testsScheduledToRun += FlexUnitListener.run(tests);
-			}
-
-			//funit supported			
-			if(getDefinitionByName("funit.core.FUnitFramework"))
-			{
-				testsScheduledToRun += FUnitListener.run(tests);
-			}
-			
-			//fluint supported
-			if(getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
-			{
-				//too much complicated, didn't figure out how to run a test w/o UI
-				//testsScheduledToRun += FluintListener.run(tests);
-			}
-
-			//asunit supported
-			if(getDefinitionByName("asunit.framework.Test"))
-			{
-				testsScheduledToRun += AsUnitListener.run(tests);
-			}
-
-			//advancedflex supported
-			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
-			{
-				testsScheduledToRun += AdvancedFlexListener.run(tests);
-			}
+			SocketReporter.runTests(this.tests);
 		}
 
 		/**

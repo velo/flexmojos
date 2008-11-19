@@ -23,10 +23,15 @@ package info.flexmojos.unitestingsupport
 	import flash.net.XMLSocket;
 	import flash.system.fscommand;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 	
 	import info.flexmojos.compile.test.report.ErrorReport;
 	import info.flexmojos.compile.test.report.TestCaseReport;
 	import info.flexmojos.compile.test.report.TestMethodReport;
+	import info.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
+	import info.flexmojos.unitestingsupport.asunit.AsUnitListener;
+	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
+	import info.flexmojos.unitestingsupport.funit.FUnitListener;
 	
 	public class SocketReporter
 	{
@@ -191,6 +196,43 @@ package info.flexmojos.unitestingsupport
 			var pattern:RegExp = /::/;
 			
 			return className.replace( pattern, "." );
+		}
+
+		public static function runTests(tests:Array):void 
+		{
+			SocketReporter.totalTestCount = tests.length;
+			var testsScheduledToRun:int = 0;
+			
+			//flexunit supported
+			if(getDefinitionByName("flexunit.framework.Test"))
+			{
+				testsScheduledToRun += FlexUnitListener.run(tests);
+			}
+
+			//funit supported			
+			if(getDefinitionByName("funit.core.FUnitFramework"))
+			{
+				testsScheduledToRun += FUnitListener.run(tests);
+			}
+			
+			//fluint supported
+			if(getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
+			{
+				//too much complicated, didn't figure out how to run a test w/o UI
+				//testsScheduledToRun += FluintListener.run(tests);
+			}
+
+			//asunit supported
+			if(getDefinitionByName("asunit.framework.Test"))
+			{
+				testsScheduledToRun += AsUnitListener.run(tests);
+			}
+
+			//advancedflex supported
+			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
+			{
+				testsScheduledToRun += AdvancedFlexListener.run(tests);
+			}
 		}
 
 	}
