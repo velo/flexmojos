@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>%{flex-mojos.version}</version>
+	</parent>
+
+	<groupId>com.adobe.samples</groupId>
+	<artifactId>calculator-api</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<description>With non-localized libraries that have dependencies on localized libraries, you used to need to include the locales section. This will test if that is still required</description>
+
+	<packaging>swc</packaging>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>tests</testSourceDirectory>
+	    <plugins>
+	      <plugin>
+	        <groupId>info.flex-mojos</groupId>
+	        <artifactId>flex-compiler-mojo</artifactId>
+	        <extensions>true</extensions>
+	        <configuration>
+		      <mergeResourceBundle>false</mergeResourceBundle>
+				<locales>
+					<locale>en_US</locale>
+				</locales>
+			</configuration>
+		</plugin>
+	</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>asdoc-mojo</artifactId>
+				<version>%{flex-mojos.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>0.85</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>
