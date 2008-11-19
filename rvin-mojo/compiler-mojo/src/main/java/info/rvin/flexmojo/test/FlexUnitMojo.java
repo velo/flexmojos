@@ -75,14 +75,19 @@ public class FlexUnitMojo
     private int testPort;
 
     /**
+     * Socket timeout for flex/java communication in milliseconds
+     * 
+     * @parameter default-value="60000"
+     */
+    private int socketTimeout = 60000; // milliseconds
+
+    /**
      * Can be of type <code>&lt;argument&gt;</code>
      * 
      * @parameter
      */
     private List<String> flexUnitCommand;
-
-    private int socketTimeout = 60000; // milliseconds
-
+    
     protected File swf;
 
     private MojoExecutionException executionError; // BAD IDEA
