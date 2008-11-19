@@ -76,7 +76,7 @@ package info.flexmojos.compile.test.report {
 				<testsuite 
 					errors = { errors } 
 					failures = { failures }
-					name = { name }
+					name = { name.replace("::", ".") }
 					tests = { tests }
 					time = { time } />;
 
