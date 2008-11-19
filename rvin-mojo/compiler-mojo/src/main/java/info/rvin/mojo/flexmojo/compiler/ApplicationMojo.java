@@ -403,7 +403,7 @@ public class ApplicationMojo
             return "Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust";
         }
 
-        if ( MavenUtils.isLinux() )
+        if ( MavenUtils.isUnixBased() )
         {
             return ".macromedia/Flash_Player/#Security/FlashPlayerTrust";
         }
