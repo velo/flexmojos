@@ -38,6 +38,7 @@ import static info.rvin.flexmojos.utilities.MavenUtils.resolveArtifact;
 import flex2.tools.oem.Library;
 import info.flexmojos.compatibilitykit.FlexCompatibility;
 import info.flexmojos.utilities.PathUtil;
+import info.rvin.flexmojos.utilities.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,7 +102,7 @@ public class LibraryMojo
      * 
      * @parameter
      */
-    private File[] includeFiles;
+    private String[] includeFiles;
 
     /**
      * This is equilvalent to the <code>include-namespaces</code> option of the compc compiler.<BR>
@@ -236,11 +237,23 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeFiles ) )
         {
-            for ( File file : includeFiles )
+            for ( String includeFile : includeFiles )
             {
-                if ( file == null || !file.isFile() )
+                if ( includeFile == null )
                 {
-                    throw new MojoFailureException( "File " + file + " not found" );
+                    throw new MojoFailureException( "Cannot include a null file" );
+                }
+
+                File file = new File( includeFile );
+
+                if ( !file.exists() )
+                {
+                    file = MavenUtils.resolveResourceFile( project, includeFile );
+                }
+
+                if ( file == null || !file.exists() )
+                {
+                    throw new MojoFailureException( "File " + includeFile + " not found" );
                 }
 
                 File folder = getResourceFolder( file );
@@ -331,9 +344,9 @@ public class LibraryMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    private File[] listAllResources()
+    private String[] listAllResources()
     {
-        List<File> resources = new ArrayList<File>();
+        List<String> resources = new ArrayList<String>();
 
         List<Resource> resourcesDirs = project.getResources();
         for ( Resource resource : resourcesDirs )
@@ -346,10 +359,13 @@ public class LibraryMojo
 
             Collection<File> files =
                 FileUtils.listFiles( resourceDir, HiddenFileFilter.VISIBLE, TrueFileFilter.INSTANCE );
-            resources.addAll( files );
+            for ( File file : files )
+            {
+                resources.add( file.getAbsolutePath() );
+            }
         }
 
-        return resources.toArray( new File[resources.size()] );
+        return resources.toArray( new String[resources.size()] );
     }
 
     @FlexCompatibility( minVersion = "3" )
@@ -375,6 +391,7 @@ public class LibraryMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private File getResourceFolder( File file )
     {
         String absolutePath = file.getAbsolutePath();
@@ -383,6 +400,21 @@ public class LibraryMojo
             if ( absolutePath.startsWith( sourcePath.getAbsolutePath() ) )
             {
                 return sourcePath;
+            }
+        }
+        for ( String sourcePath : (List<String>) project.getCompileSourceRoots() )
+        {
+            if ( absolutePath.startsWith( sourcePath ) )
+            {
+                return new File( sourcePath );
+            }
+        }
+
+        for ( Resource resource : (List<Resource>) project.getResources() )
+        {
+            if ( absolutePath.startsWith( resource.getDirectory() ) )
+            {
+                return new File( resource.getDirectory() );
             }
         }
         return project.getBasedir();
