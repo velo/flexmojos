@@ -18,8 +18,9 @@
 package info.flexmojos.compile.test.report;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias( "testMethodReport" )
+@XStreamAlias( "testcase" )
 public class TestMethodReport
 {
 
@@ -27,8 +28,10 @@ public class TestMethodReport
 
     private ErrorReport failure;
 
+    @XStreamAsAttribute
     private String name;
 
+    @XStreamAsAttribute
     private double time;
 
     public ErrorReport getError()
