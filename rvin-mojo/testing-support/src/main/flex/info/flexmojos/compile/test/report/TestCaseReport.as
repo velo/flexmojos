@@ -18,13 +18,15 @@
  */
 package info.flexmojos.compile.test.report {
 
+	import mx.collections.ArrayCollection;
+	
     [Bindable]
     [RemoteClass(alias="info.flexmojos.compile.test.report.TestCaseReport")]
     public class TestCaseReport extends TestCaseReportBase {
 
 		public function TestCaseReport()
 		{
-			methods = new Array();
+			methods = new ArrayCollection();
 		}
 
 		/*
@@ -47,53 +49,42 @@ package info.flexmojos.compile.test.report {
 			method = new TestMethodReport(); 
 			method.name = methodName;
 			
-			methods.push(method);
+			methods.addItem(method);
 			
 			return method;
 		}
 
 		/*
-			<testCaseReport>
-			  <errors>2</errors>
-			  <failures>2</failures>
-			  <methods>
-			    <testMethodReport>
-			      <error>
-			        <message>message</message>
-			        <stackTrace>test</stackTrace>
-			        <type>my.error.1</type>
-			      </error>
-			      <failure>
-			        <message>message</message>
-			        <stackTrace>test</stackTrace>
-			        <type>my.error.1</type>
-			      </failure>
-			      <name>testMethod</name>
-			      <time>25.3</time>
-			    </testMethodReport>
-			  </methods>
-			  <name>info.flexmojos.Test1</name>
-			  <tests>10</tests>
-			  <time>323.5</time>
-			</testCaseReport>
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" skipped="0" tests="1" time="0.312" failures="0" name="com.Test">
+  <testcase classname="flex.Test" time="0.297" name="testExecute"/>
+  <testcase classname="flex.Test" time="0.297" name="testExecute"/>
+  <testcase time="3.125" name="removeAllSnapshots">
+    <failure message="All artifacts should be deleted by SnapshotRemoverTask." type="junit.framework.AssertionFailedError">
+    junit.framework.AssertionFailedError: All artifacts should be deleted by SnapshotRemoverTask. Found: [H:\home_hudson\.hudson\workspace\Nexus\jdk\1.6\label\windows\trunk\nexus\nexus-test-harness\nexus-test-harness-launcher\target\bundle\nexus-webapp-1.2.0-SNAPSHOT\runtime\work\storage\nexus-test-harness-snapshot-repo\nexus634\artifact\1.0-SNAPSHOT\artifact-1.0-20010101.184024-1.jar, H:\home_hudson\.hudson\workspace\Nexus\jdk\1.6\label\windows\trunk\nexus\nexus-test-harness\nexus-test-harness-launcher\target\bundle\nexus-webapp-1.2.0-SNAPSHOT\runtime\work\storage\nexus-test-harness-snapshot-repo\nexus634\artifact\1.0-SNAPSHOT\artifact-1.0-SNAPSHOT.jar]
+	at junit.framework.Assert.fail(Assert.java:47)
+	at junit.framework.Assert.assertTrue(Assert.java:20)
+	</failure>
+    <system-out>[INFO] Nexus configuration validated succesfully.
+	</system-out>
+  </testcase>
+</testsuite>
 		 */
 		public function toXml():XML {
 			
-			var methodsXml:XML = <methods></methods>;
+			var xml:XML =
+				<testsuite 
+					errors = { errors } 
+					failures = { failures }
+					name = { name }
+					tests = { tests }
+					time = { time } />;
+
 			for each (var methodReport:TestMethodReport in methods)
 			{
-				methodsXml = methodsXml.appendChild(methodReport.toXml());
+				xml = xml.appendChild(methodReport.toXml());
 			}
 			
-			var xml:XML =
-				<testCaseReport>
-					<errors> { errors } </errors>
-					<failures> { failures } </failures>
-					{ methodsXml }
-					<name> { name } </name>
-					<tests> { tests } </tests>
-					<time> { time } </time>
-				</testCaseReport>;
 				
 			return xml;
 		}

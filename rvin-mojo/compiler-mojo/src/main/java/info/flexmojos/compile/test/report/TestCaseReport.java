@@ -18,22 +18,32 @@
  */
 package info.flexmojos.compile.test.report;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.util.List;
 
-@XStreamAlias( "testCaseReport" )
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+@XStreamAlias( "testsuite" )
 public class TestCaseReport
 {
 
+    @XStreamAsAttribute
     private int errors;
 
+    @XStreamAsAttribute
     private int failures;
 
-    private TestMethodReport[] methods;
+    @XStreamImplicit( itemFieldName = "testcase" )
+    private List<TestMethodReport> methods;
 
+    @XStreamAsAttribute
     private String name;
 
+    @XStreamAsAttribute
     private int tests;
 
+    @XStreamAsAttribute
     private double time;
 
     public int getErrors()
@@ -46,7 +56,7 @@ public class TestCaseReport
         return failures;
     }
 
-    public TestMethodReport[] getMethods()
+    public List<TestMethodReport> getMethods()
     {
         return methods;
     }
@@ -76,7 +86,7 @@ public class TestCaseReport
         this.failures = failures;
     }
 
-    public void setMethods( TestMethodReport[] methods )
+    public void setMethods( List<TestMethodReport> methods )
     {
         this.methods = methods;
     }

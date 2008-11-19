@@ -18,12 +18,16 @@
  */
 package info.flexmojos.compile.test.report;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class ErrorReport
 {
+    @XStreamAsAttribute
     private String message;
 
     private String stackTrace;
 
+    @XStreamAsAttribute
     private String type;
 
     public String getMessage()
