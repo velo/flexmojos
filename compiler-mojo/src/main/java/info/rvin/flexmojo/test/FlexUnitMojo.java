@@ -51,7 +51,7 @@ public class FlexUnitMojo
 
     private static final String END_OF_TEST_RUN = "<endOfTestRun/>";
 
-    private static final String END_OF_TEST_SUITE = "</testCaseReport>";
+    private static final String END_OF_TEST_SUITE = "</testsuite>";
 
     private static final String END_OF_TEST_ACK = "<endOfTestRunAck/>";
 
@@ -394,7 +394,7 @@ public class FlexUnitMojo
             {
                 failures = true;
 
-                getLog().debug( "flexunit test " + name + " failed." );
+                getLog().info( "Unit test " + name + " failed." );
 
             }
 
