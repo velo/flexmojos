@@ -117,20 +117,25 @@ public class MavenUtils
      * Resolve a source file in a maven project
      * 
      * @param project maven project
-     * @param sourceFile sugested name on pom
+     * @param sourceFileName sugested name on pom
      * @return source file or null if source not found
      */
     @SuppressWarnings( "unchecked" )
-    public static File resolveSourceFile( MavenProject project, String sourceFile )
+    public static File resolveSourceFile( MavenProject project, String sourceFileName )
     {
         List<String> sourceRoots = project.getCompileSourceRoots();
         for ( String sourceRoot : sourceRoots )
         {
             File sourceDirectory = new File( sourceRoot );
 
-            if ( sourceFile != null )
+            if ( sourceFileName != null )
             {
-                return new File( sourceDirectory, sourceFile );
+                File sourceFile = new File( sourceDirectory, sourceFileName );
+                if ( !sourceFile.exists() )
+                {
+                    continue;
+                }
+                return sourceFile;
             }
             else
             {
@@ -537,7 +542,7 @@ public class MavenUtils
         return namespaces;
     }
 
-    public static String getFlexMojosVersion( )
+    public static String getFlexMojosVersion()
     {
         return flexmojosProperties.getProperty( "version" );
     }
