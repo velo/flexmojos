@@ -25,7 +25,6 @@
 						<rsl>{artifactId}-{version}.{extension}</rsl>
 					</rslUrls>
 					<targetPlayer>9.0.124</targetPlayer>
-                    <keepGeneratedActionscript>true</keepGeneratedActionscript>
 				</configuration>
 			</plugin>
 		</plugins>

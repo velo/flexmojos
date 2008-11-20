@@ -92,7 +92,7 @@ public class IT0013IssuesTest
         File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
         TestCaseReport report = (TestCaseReport) xs.fromXML( new FileReader( reportFile ) );
 
-        assertEquals( "com.adobe.example::TestCalculator", report.getName() );
+        assertEquals( "com.adobe.example.TestCalculator", report.getName() );
         assertEquals( 2, report.getTests() );
         assertEquals( 1, report.getErrors() );
     }
