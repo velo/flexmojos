@@ -52,7 +52,7 @@
 
 	<properties>
 		<commons_io.version>1.4</commons_io.version>
-		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
+		<flex.sdk.version>3.2.0.3958</flex.sdk.version>
 		<maven.version>2.0.9</maven.version>
 
 		<!-- distribution -->
@@ -429,8 +429,8 @@
 		<module>testing-support</module>
 		<!--
 Tests can't be released due to some snapshot dependencies
-		<module>test-harness</module>
  -->
+		<module>test-harness</module>
 	</modules>
 
 </project>
