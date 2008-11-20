@@ -28,7 +28,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -261,6 +263,9 @@ public class TestCompilerMojo
     protected void configure()
         throws MojoExecutionException
     {
+        compiledLocales = getLocales();
+        runtimeLocales = null;
+
         super.configure();
 
         // test launcher is at testOutputDirectory
@@ -288,6 +293,26 @@ public class TestCompilerMojo
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
                                                getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
                                                getDependenciesPath( "external" ) ) );
+    }
+
+    private String[] getLocales()
+    {
+        if ( runtimeLocales == null && compiledLocales == null )
+        {
+            return new String[] { getDefaultLocale() };
+        }
+        Set<String> locales = new LinkedHashSet<String>();
+
+        if ( runtimeLocales != null )
+        {
+            locales.addAll( Arrays.asList( runtimeLocales ) );
+        }
+        if ( compiledLocales != null )
+        {
+            locales.addAll( Arrays.asList( compiledLocales ) );
+        }
+
+        return locales.toArray( new String[0] );
     }
 
     private File[] merge( File[]... filesSets )
