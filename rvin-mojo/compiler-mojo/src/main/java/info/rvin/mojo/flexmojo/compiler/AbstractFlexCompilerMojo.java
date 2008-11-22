@@ -388,14 +388,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * <pre>
      * &lt;definesDeclaration&gt;
-     *   &lt;define&gt;
+     *   &lt;property&gt;
      *     &lt;name&gt;SOMETHING::aNumber&lt;/name&gt;
      *     &lt;value&gt;2.2&lt;/value&gt;
-     *   &lt;/define&gt;
-     *   &lt;define&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
      *     &lt;name&gt;SOMETHING::aString&lt;/name&gt;
      *     &lt;value&gt;&quot;text&quot;&lt;/value&gt;
-     *   &lt;/define&gt;
+     *   &lt;/property&gt;
      * &lt;/definesDeclaration&gt;
      * </pre>
      * 
@@ -810,12 +810,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean enableMavenResourcesResolver;
 
     /**
-     * @paremeter
+     * @parameter
      */
     protected String[] runtimeLocales;
 
     /**
-     * @paremeter
+     * @parameter
      */
     protected String[] compiledLocales;
 
@@ -825,7 +825,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public AbstractFlexCompilerMojo()
     {
         super();
-        System.out.println( "created " );
     }
 
     /**
