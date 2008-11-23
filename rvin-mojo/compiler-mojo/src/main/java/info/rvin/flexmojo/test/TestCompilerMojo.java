@@ -261,7 +261,7 @@ public class TestCompilerMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         compiledLocales = getLocales();
         runtimeLocales = null;
@@ -278,7 +278,7 @@ public class TestCompilerMojo
 
     @Override
     protected void resolveDependencies()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
 
@@ -293,6 +293,8 @@ public class TestCompilerMojo
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
                                                getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
                                                getDependenciesPath( "external" ) ) );
+
+        configuration.setTheme( getThemes() );
     }
 
     private String[] getLocales()
