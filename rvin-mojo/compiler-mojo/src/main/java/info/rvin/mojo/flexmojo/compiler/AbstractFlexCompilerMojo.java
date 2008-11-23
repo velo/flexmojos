@@ -810,11 +810,34 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean enableMavenResourcesResolver;
 
     /**
+     * Sets the locales that should be used to generate resource bundles. <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;runtimeLocales&gt;
+     *    &lt;locale&gt;en_US&lt;/locale&gt;
+     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+     *    &lt;locale&gt;es_ES&lt;/locale&gt;
+     * &lt;/runtimeLocales&gt;
+     * </pre>
+     * 
      * @parameter
      */
     protected String[] runtimeLocales;
 
     /**
+     * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
+     * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;compiledLocales&gt;
+     *    &lt;locale&gt;en_US&lt;/locale&gt;
+     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+     *    &lt;locale&gt;es_ES&lt;/locale&gt;
+     * &lt;/compiledLocales&gt;
+     * </pre>
+     * 
      * @parameter
      */
     protected String[] compiledLocales;
