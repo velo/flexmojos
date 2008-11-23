@@ -77,6 +77,7 @@ public abstract class AbstractInstallMojo
      * File location where targeted Flex SDK is located
      * 
      * @parameter expression="${flex.sdk.folder}"
+     * @required
      */
     private File sdkFolder;
 
@@ -101,6 +102,7 @@ public abstract class AbstractInstallMojo
      * </ul>
      * 
      * @parameter expression="${version}"
+     * @required
      */
     private String version;
 
