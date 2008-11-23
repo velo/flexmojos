@@ -843,6 +843,33 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected String[] compiledLocales;
 
     /**
+     * List of CSS or SWC files to apply as a theme. <>BR Usage:
+     * 
+     * <pre>
+     * &lt;themes&gt;
+     *    &lt;theme&gt;css/main.css&lt;/theme&gt;
+     * &lt;/themes&gt;
+     * </pre>
+     * 
+     * If you are using SWC theme should be better keep it's version controlled, so is advised to use a dependency with
+     * theme scope.<BR>
+     * Like this:
+     * 
+     * <pre>
+     * &lt;dependency&gt;
+     *   &lt;groupId&gt;com.acme&lt;/groupId&gt;
+     *   &lt;artifactId&gt;acme-theme&lt;/artifactId&gt;
+     *   &lt;type&gt;swc&lt;/type&gt;
+     *   &lt;scope&gt;theme&lt;/scope&gt;
+     *   &lt;version&gt;1.0&lt;/version&gt;
+     * &lt;/dependency&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] themes;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -1127,9 +1154,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Setup builder configuration
      * 
      * @throws MojoExecutionException
+     * @throws MojoFailureException
      */
     protected void configure()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         resolveDependencies();
 
@@ -1337,7 +1365,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected abstract boolean isDebug();
 
     protected void resolveDependencies()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
         configuration.addExternalLibraryPath( getDependenciesPath( "external" ) );
@@ -1358,7 +1386,31 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         resolveRuntimeLibraries();
 
-        configuration.setTheme( getDependenciesPath( "theme" ) );
+        configuration.setTheme( getThemes() );
+    }
+
+    protected File[] getThemes()
+        throws MojoExecutionException, MojoFailureException
+    {
+        List<File> themeFiles = new ArrayList<File>();
+
+        if ( this.themes != null )
+        {
+            for ( String theme : themes )
+            {
+                File themeFile = MavenUtils.resolveResourceFile( project, theme );
+                themeFiles.add( themeFile );
+            }
+        }
+
+        themeFiles.addAll( Arrays.asList( getDependenciesPath( "theme" ) ) );
+
+        if ( themeFiles.isEmpty() )
+        {
+            return null;
+        }
+
+        return themeFiles.toArray( new File[0] );
     }
 
     @SuppressWarnings( "deprecation" )
