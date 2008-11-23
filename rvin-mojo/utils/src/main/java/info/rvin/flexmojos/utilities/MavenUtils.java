@@ -45,6 +45,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -195,25 +196,39 @@ public class MavenUtils
      * Resolve a resource file in a maven project resources folders
      * 
      * @param project maven project
-     * @param resourceFile sugested name on pom
+     * @param fileName sugested name on pom
      * @return source file or null if source not found
+     * @throws MojoFailureException
      */
     @SuppressWarnings( "unchecked" )
-    public static File resolveResourceFile( MavenProject project, String resourceFile )
+    public static File resolveResourceFile( MavenProject project, String fileName )
+        throws MojoFailureException
     {
+
+        File file = new File( fileName );
+
+        if ( file.exists() )
+        {
+            return file;
+        }
+
+        if ( file.isAbsolute() )
+        {
+            throw new MojoFailureException( "File " + fileName + " not found" );
+        }
 
         List<Resource> resources = project.getBuild().getResources();
 
         for ( Resource resourceFolder : resources )
         {
-            File resource = new File( resourceFolder.getDirectory(), resourceFile );
+            File resource = new File( resourceFolder.getDirectory(), fileName );
             if ( resource.exists() )
             {
                 return resource;
             }
         }
 
-        return null;
+        throw new MojoFailureException( "File " + fileName + " not found" );
     }
 
     /**
@@ -415,7 +430,7 @@ public class MavenUtils
     {
         return osString().startsWith( SOLARIS_OS );
     }
-    
+
     /**
      * Return a boolean to show if we are running on a unix-based OS.
      * 
@@ -425,7 +440,7 @@ public class MavenUtils
     {
         return isLinux() || isSolaris();
     }
-    
+
     /**
      * Return a boolean to show if we are running on Mac OS X.
      * 
