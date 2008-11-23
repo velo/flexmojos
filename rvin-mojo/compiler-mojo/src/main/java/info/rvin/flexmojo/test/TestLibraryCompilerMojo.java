@@ -41,7 +41,7 @@ public class TestLibraryCompilerMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion( )
+                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         File testFolder = new File( build.getTestSourceDirectory() );
@@ -80,7 +80,7 @@ public class TestLibraryCompilerMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         super.configure();
 

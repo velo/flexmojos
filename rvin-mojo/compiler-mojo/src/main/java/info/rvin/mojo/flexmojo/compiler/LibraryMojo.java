@@ -253,17 +253,7 @@ public class LibraryMojo
                     throw new MojoFailureException( "Cannot include a null file" );
                 }
 
-                File file = new File( includeFile );
-
-                if ( !file.exists() )
-                {
-                    file = MavenUtils.resolveResourceFile( project, includeFile );
-                }
-
-                if ( file == null || !file.exists() )
-                {
-                    throw new MojoFailureException( "File " + includeFile + " not found" );
-                }
+                File file = MavenUtils.resolveResourceFile( project, includeFile );
 
                 File folder = getResourceFolder( file );
 
