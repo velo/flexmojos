@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.adobe.flex.framework</groupId>
 			<artifactId>framework</artifactId>
-			<version>3.1.0.2710</version>
+			<version>3.2.0.3958</version>
 			<type>swc</type>
 			<scope>caching</scope>
 		</dependency>
