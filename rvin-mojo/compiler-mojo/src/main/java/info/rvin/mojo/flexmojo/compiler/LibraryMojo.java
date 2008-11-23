@@ -495,17 +495,7 @@ public class LibraryMojo
 
         if ( compiledLocales != null )
         {
-            // resolving it
             for ( String locale : compiledLocales )
-            {
-                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
-            }
-        }
-
-        if ( runtimeLocales != null )
-        {
-            // resolving locale
-            for ( String locale : runtimeLocales )
             {
                 paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
             }
