@@ -189,6 +189,15 @@ public class LibraryMojo
      */
     private boolean debug;
 
+    /**
+     * By default, Maven generated archives include the META-INF/maven directory, which contains the pom.xml file used
+     * to build the archive. <BR>
+     * To disable the generation of these files, include the following configuration for your plugin
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean addMavenDescriptor;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -339,8 +348,12 @@ public class LibraryMojo
 
         computeDigest();
 
-        builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
-                                new File( project.getBasedir(), "pom.xml" ) );
+        if ( addMavenDescriptor )
+        {
+            builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
+                                    new File( project.getBasedir(), "pom.xml" ) );
+        }
+
     }
 
     @SuppressWarnings( "unchecked" )
