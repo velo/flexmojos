@@ -18,19 +18,32 @@
  */
 package info.flexmojos.tests.issues;
 
-import info.flexmojos.tests.AbstractFlexMojosTests;
+import org.testng.annotations.Test;
 
-import java.io.File;
-
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+public class Issue0076Test
+    extends AbstractIssueTest
 {
 
-    public void testIssue( String issueNumber, String... args )
+    @Test
+    public void notDeclared()
         throws Exception
     {
-        File testDir = getProject( "/issues/" + issueNumber );
-        test( testDir, "install", args );
+        // will not generate bundle and will not merge it
+        super.testIssue( "issue-0076" );
+    }
+
+    @Test
+    public void merged()
+        throws Exception
+    {
+        super.testIssue( "issue-0076", "-Pmerge-true" );
+    }
+
+    @Test
+    public void notMerged()
+        throws Exception
+    {
+        super.testIssue( "issue-0076", "-Pmerge-false" );
     }
 
 }
