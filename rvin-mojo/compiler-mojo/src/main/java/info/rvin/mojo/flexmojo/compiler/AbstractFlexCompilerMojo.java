@@ -895,7 +895,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             // if ( mergeResourceBundle != null && mergeResourceBundle )
             if ( compiledLocales != null )
             {
-                sources.add( new File( resourceBundlePath ) );
+                sources.addAll( getResourceBundlePath() );
             }
             sourcePaths = sources.toArray( new File[sources.size()] );
         }
@@ -1000,6 +1000,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         setMavenPathResolver();
     }
+
+    protected abstract List<File> getResourceBundlePath()
+        throws MojoExecutionException;
 
     @SuppressWarnings( "deprecation" )
     private void processLocales()

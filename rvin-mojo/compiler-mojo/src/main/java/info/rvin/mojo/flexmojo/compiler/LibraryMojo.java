@@ -487,4 +487,31 @@ public class LibraryMojo
         throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
     }
 
+    @Override
+    protected List<File> getResourceBundlePath()
+        throws MojoExecutionException
+    {
+        List<File> paths = new ArrayList<File>();
+
+        if ( compiledLocales != null )
+        {
+            // resolving it
+            for ( String locale : compiledLocales )
+            {
+                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
+            }
+        }
+
+        if ( runtimeLocales != null )
+        {
+            // resolving locale
+            for ( String locale : runtimeLocales )
+            {
+                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
+            }
+        }
+
+        return paths;
+    }
+
 }
