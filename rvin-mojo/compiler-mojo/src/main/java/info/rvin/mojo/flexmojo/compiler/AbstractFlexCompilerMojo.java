@@ -91,7 +91,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             new File( // Mac OSC
                       "/Library/Application Support/Adobe/Flex/license.properties" ),
             new File( // Linux
-                      "~/.adobe/Flex/license.properties" ) };
+                      System.getProperty( "user.home" ), ".adobe/Flex/license.properties" ) };
 
     /**
      * Turn on generation of accessible SWFs.
