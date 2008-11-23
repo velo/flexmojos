@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Main 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns="*"
+	layout="absolute"
+	creationComplete="startUp()"
+	>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+
+			import info.flexmojos.unitestingsupport.SocketReporter;
+		
+$imports
+
+			private var tests:Array;
+		
+			private function startUp():void {
+				SocketReporter.port = $port;
+
+				this.tests = new Array;
+
+$testClasses
+
+				SocketReporter.runTests(this.tests);
+			}
+
+			public function addTest( test:Class ) : void
+	    	{
+	    	    tests.push(test);
+			}
+			
+		]]>
+	</mx:Script>
+	
+</Main>
