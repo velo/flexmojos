@@ -42,7 +42,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Goal which instruments a Flex project with FlexCover metadata
- *
+ * 
  * @extendsPlugin flex-compiler-mojo
  * @extendsGoal test-compile
  * @goal instrument-swc
@@ -55,33 +55,24 @@ public class FlexCoverLibraryMojo
 {
     /**
      * Location of the file.
+     * 
      * @parameter expression="${project.build.directory}/flexcover"
      * @required
      */
     private File outputDirectory;
-    
-    
 
     @Override
-    public void setUp() throws MojoExecutionException, MojoFailureException {
-//    	build.setSourceDirectory("src/test/flex");
-        build.setTestOutputDirectory( "target/flexcover-classes/" );
-    	build.setOutputDirectory("target/flexcover/");
-//    	List<File> paths = Arrays.asList(sourcePaths);
-//    	paths.add(new File("src/main/flex"));
-//    	sourcePaths = (File[]) paths.toArray();
-//    	sourceFile = "TestHarness.mxml";
-    	super.setUp();
-	}
-
-
-
-    @Override
-    protected void configure()
-        throws MojoExecutionException
+    public void setUp()
+        throws MojoExecutionException, MojoFailureException
     {
-        super.configure();
-
-//        configuration.;
+        // build.setSourceDirectory("src/test/flex");
+        build.setTestOutputDirectory( "target/flexcover-classes/" );
+        build.setOutputDirectory( "target/flexcover/" );
+        // List<File> paths = Arrays.asList(sourcePaths);
+        // paths.add(new File("src/main/flex"));
+        // sourcePaths = (File[]) paths.toArray();
+        // sourceFile = "TestHarness.mxml";
+        super.setUp();
     }
+
 }
