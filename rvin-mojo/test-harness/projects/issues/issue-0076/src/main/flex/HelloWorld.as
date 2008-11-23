@@ -15,21 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package info.flexmojos.tests.issues;
-
-import info.flexmojos.tests.AbstractFlexMojosTests;
-
-import java.io.File;
-
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+package
 {
+	[ResourceBundle("data_model")]
+	public class HelloWorld
+	{
+		public function HelloWorld()
+		{
+			
+		}
 
-    public void testIssue( String issueNumber, String... args )
-        throws Exception
-    {
-        File testDir = getProject( "/issues/" + issueNumber );
-        test( testDir, "install", args );
-    }
-
+	}
 }
