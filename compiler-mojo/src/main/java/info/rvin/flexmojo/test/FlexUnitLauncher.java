@@ -24,6 +24,12 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
+
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+
 /**
  * This class is used to launch the FlexUnit tests.
  */
@@ -36,13 +42,14 @@ public class FlexUnitLauncher
     private static final String[] UNIX_CMD = new String[] { "xdg-open" };
 
     private String[] launcherCommand = new String[] {};
+    private Log log;
 
     public FlexUnitLauncher()
     {
         launcherCommand = getPlatformDefaultCommand();
     }
 
-    public FlexUnitLauncher( List<String> command )
+    public FlexUnitLauncher( List<String> command, Log logger )
     {
         if ( command != null )
         {
@@ -52,6 +59,7 @@ public class FlexUnitLauncher
         {
             launcherCommand = getPlatformDefaultCommand();
         }
+    	log = logger;
     }
 
     private String[] getPlatformDefaultCommand()
@@ -88,12 +96,34 @@ public class FlexUnitLauncher
     public void runTests( File swf )
         throws Exception
     {
-        System.err.println( "runtests: " + Arrays.asList( launcherCommand ) );
         if ( launcherCommand != null )
         {
             launcherCommand = StringUtils.concat( launcherCommand, new String[] { swf.getAbsolutePath() } );
-            System.err.println( "exec: " + Arrays.asList( launcherCommand ) );
-            Runtime.getRuntime().exec( launcherCommand );
+            log.debug( "exec: " + Arrays.asList( launcherCommand ) );
+            Commandline cl = new Commandline();
+            cl.setExecutable( launcherCommand[0] );
+            for ( int i = 1; i < launcherCommand.length; i++ )
+            {
+                cl.createArg().setValue( launcherCommand[i] );
+            }
+            StreamConsumer stdout = new StreamConsumer()
+            {
+                public void consumeLine( String line )
+                {
+                    log.debug( "[SYSOUT]: "+line );
+                }
+            };
+            
+            StreamConsumer stderr = new StreamConsumer()
+            {
+                public void consumeLine( String line )
+                {
+                    log.debug( "[SYSERR]: "+line );
+                }
+            };           
+            log.debug("commandline: "+cl);
+            int result = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+            log.debug("result: "+result);
         }
         else if ( MavenUtils.isWindows() )
         {
