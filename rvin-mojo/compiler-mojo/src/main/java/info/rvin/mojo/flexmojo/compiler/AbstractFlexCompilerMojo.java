@@ -1036,12 +1036,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         for ( String locale : locales )
         {
-            File localeFolder = new File( resourceBundlePath.replace( "{locale}", locale ) );
-            if ( !localeFolder.isDirectory() )
-            {
-                throw new MojoExecutionException( "Unable to find locales folder for : " + locale + "\n"
-                    + localeFolder.getAbsolutePath() );
-            }
+            MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
         }
     }
 
@@ -1207,8 +1202,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         addDefines();
 
-        // When using the resource-bundle-list option, you must also set the
-        // value of the locale option to an empty string.
         if ( compiledLocales == null && runtimeLocales == null && isApplication() )
         {
             setLocales( getDefaultLocale() );
@@ -1219,6 +1212,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         else
         {
+            // When using the resource-bundle-list option, you must also set the
+            // value of the locale option to an empty string.
             setLocales( new String[0] );
         }
 
