@@ -391,7 +391,8 @@ public class MavenUtils
         File localePath = new File( path );
         if ( !localePath.exists() )
         {
-            throw new MojoExecutionException( "Unable to find locales path: " + path );
+            throw new MojoExecutionException( "Unable to find locales folder for : " + locale + "\n"
+                + localePath.getAbsolutePath() + " does not exists." );
         }
         return localePath;
     }
