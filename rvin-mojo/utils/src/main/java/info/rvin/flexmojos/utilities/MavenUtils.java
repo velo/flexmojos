@@ -285,7 +285,6 @@ public class MavenUtils
             try
             {
                 FileUtils.copyFile( a.getFile(), dest );
-                dest.deleteOnExit();
             }
             catch ( IOException e )
             {
