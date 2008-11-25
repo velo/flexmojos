@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.resources.ResourceBundle;
+		]]>
+	</mx:Script>
+
+<mx:Metadata>
+	    [ResourceBundle("text")]
+</mx:Metadata>
+	
+	<mx:Label text="{resourceManager.getString('text', 'TITLE')}"/>
+</mx:Box>

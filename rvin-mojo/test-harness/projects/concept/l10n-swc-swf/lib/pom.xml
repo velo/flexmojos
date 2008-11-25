@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>%{flex-mojos.version}</version>
+	</parent>
+
+	<groupId>info.rvin.itest</groupId>
+	<artifactId>l10n-lib</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>swc</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>3.1.0.2710</version>
+						<type>pom</type>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<runtimeLocales>
+						<locale>en_US</locale>
+						<locale>ja_JP</locale>
+					</runtimeLocales>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>3.1.0.2710</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+
+</project>
