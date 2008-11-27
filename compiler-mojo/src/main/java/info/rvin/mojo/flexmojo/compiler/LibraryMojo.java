@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -231,7 +232,9 @@ public class LibraryMojo
             && checkNullOrEmpty( includeStylesheet ) )
         {
             getLog().warn( "Nothing expecified to include.  Assuming source and resources folders." );
-            includeSources = sourcePaths.clone();
+            List<File> sourcePaths = new ArrayList<File>( Arrays.asList( this.sourcePaths ) );
+            sourcePaths.remove( new File( resourceBundlePath ) );
+            includeSources = sourcePaths.toArray( new File[0] );
             includeFiles = listAllResources();
         }
 
@@ -484,23 +487,6 @@ public class LibraryMojo
     protected String getDefaultLocale()
     {
         throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
-    }
-
-    @Override
-    protected List<File> getResourceBundlePath()
-        throws MojoExecutionException
-    {
-        List<File> paths = new ArrayList<File>();
-
-        if ( compiledLocales != null )
-        {
-            for ( String locale : compiledLocales )
-            {
-                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
-            }
-        }
-
-        return paths;
     }
 
 }
