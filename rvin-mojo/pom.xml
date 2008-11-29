@@ -147,6 +147,16 @@
 
 	<pluginRepositories>
 		<pluginRepository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
 			<id>sonatype-public</id>
 			<url>http://repository.sonatype.org/content/groups/public/</url>
 			<releases>
