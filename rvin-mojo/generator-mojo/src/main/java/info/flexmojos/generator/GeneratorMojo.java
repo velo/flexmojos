@@ -35,10 +35,15 @@ import java.util.jar.JarInputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.classworlds.ClassWorld;
 import org.codehaus.classworlds.DuplicateRealmException;
@@ -176,6 +181,36 @@ public class GeneratorMojo
 
     private TemplateUri[] enumTemplateUris = null;
 
+    /**
+     * @component
+     */
+    protected ArtifactResolver resolver;
+
+    /**
+     * @component
+     */
+    protected ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * @component
+     */
+    protected MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Local repository to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${localRepository}"
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
+     * List of remote repositories to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    @SuppressWarnings( "unchecked" )
+    protected List remoteRepositories;
+
     public void execute()
         throws MojoExecutionException
     {
@@ -282,18 +317,26 @@ public class GeneratorMojo
         {
             artifacts = project.getDependencyArtifacts();
         }
+
         for ( Artifact artifact : artifacts )
         {
             if ( "jar".equals( artifact.getType() ) )
             {
+                try
+                {
+                    resolver.resolveAlways( artifact, remoteRepositories, localRepository );
+                }
+                catch ( AbstractArtifactResolutionException e )
+                {
+                    getLog().warn( "Dependency file not found: " + artifact );
+                    getLog().debug( e );
+                    continue;
+                }
+
                 File file = artifact.getFile();
                 if ( file != null && file.exists() )
                 {
                     jarDependencies.add( file );
-                }
-                else
-                {
-                    getLog().warn( "Dependency file not found: " + artifact );
                 }
             }
         }
