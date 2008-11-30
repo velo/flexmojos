@@ -48,6 +48,7 @@ package info.flexmojos.compile.test.report {
 			
 			method = new TestMethodReport(); 
 			method.name = methodName;
+			method.time = 0;
 			
 			methods.addItem(method);
 			
