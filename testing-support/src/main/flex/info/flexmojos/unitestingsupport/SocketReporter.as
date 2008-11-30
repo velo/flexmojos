@@ -64,7 +64,6 @@ package info.flexmojos.unitestingsupport
 			
 			// Add the error to the method.
 			var methodObject:TestMethodReport = report.getMethod( methodName );
-			
 			methodObject.error = error;
 		}
 
@@ -96,8 +95,11 @@ package info.flexmojos.unitestingsupport
 			methodObject.failure = failure;
 		}
 		
-		public static function testFinished(testName:String):void
+		public static function testFinished(testName:String, timeTaken:int = 0):void
 		{
+			var reportObject:TestCaseReport = reports[ testName ];
+			reportObject.time = timeTaken;
+
 			// If we have finished running all the tests send the results.
 			if ( ++numTestsRun == totalTestCount )
 			{
