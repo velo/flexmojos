@@ -16,15 +16,6 @@
 ~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ~~
 
- ------
- Introduction
- ------
- Joost den Boer
- ------
- 15 may 2008
- ------
-
-
 Flex-Mojos
 
   Flex-Mojos is a collection of maven-plugins created to make it possible
