@@ -38,5 +38,16 @@ package com.adobe.example
 			assertEquals( 8, result );
 		}
 
+		public function testMultiplyFail() : void
+		{
+			var result : Number = calculator.multiply( 2, 4 );
+			assertEquals( 10, result );
+		}
+
+		public function testError() : void
+		{
+			throw new Error("An error");
+		}
+
 	}
 }

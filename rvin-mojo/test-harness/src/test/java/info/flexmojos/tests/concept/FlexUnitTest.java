@@ -18,17 +18,48 @@
  */
 package info.flexmojos.tests.concept;
 
+import info.flexmojos.compile.test.report.TestCaseReport;
+import info.rvin.flexmojo.test.util.XStreamFactory;
+
+import java.io.File;
+import java.util.Arrays;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.maven.it.VerificationException;
+import org.junit.Assert;
 import org.testng.annotations.Test;
 
 public class FlexUnitTest
     extends AbstractConceptTest
 {
 
-    @Test
+    @Test( expectedExceptions = { VerificationException.class } )
     public void testFlexUnitExample()
         throws Exception
     {
-        standardConceptTester( "flexunit-example" );
+        File testDir = getProject( "/concept/flexunit-example/" );
+        try
+        {
+            test( testDir, "install" );
+        }
+        finally
+        {
+            File sureFireReports = new File( testDir, "target/surefire-reports" );
+            Assert.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
+
+            String[] reportFiles = sureFireReports.list();
+            Assert.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2, reportFiles.length );
+
+            File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
+            Assert.assertTrue( "Report was not created!", reportFile.isFile() );
+
+            String reportContent = FileUtils.readFileToString( reportFile );
+            TestCaseReport report = (TestCaseReport) XStreamFactory.getXStreamInstance().fromXML( reportContent );
+
+            Assert.assertEquals( 1, report.getErrors() );
+            Assert.assertEquals( 1, report.getFailures() );
+            Assert.assertEquals( 3, report.getTests() );
+        }
     }
 
 }
