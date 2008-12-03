@@ -49,7 +49,7 @@ package info.flexmojos.unitestingsupport
 
 		private static var reports:Dictionary = new Dictionary();
 
-		public static var totalTestCount : int;
+		public static var totalTestCount : int = 0;
 
     	private static var numTestsRun : int = 0;
 
@@ -202,19 +202,16 @@ package info.flexmojos.unitestingsupport
 
 		public static function runTests(tests:Array):void 
 		{
-			SocketReporter.totalTestCount = tests.length;
-			var testsScheduledToRun:int = 0;
-			
 			//flexunit supported
 			if(getDefinitionByName("flexunit.framework.Test"))
 			{
-				testsScheduledToRun += FlexUnitListener.run(tests);
+				totalTestCount += FlexUnitListener.run(tests);
 			}
 
 			//funit supported			
 			if(getDefinitionByName("funit.core.FUnitFramework"))
 			{
-				testsScheduledToRun += FUnitListener.run(tests);
+				totalTestCount += FUnitListener.run(tests);
 			}
 			
 			//fluint supported
@@ -227,13 +224,13 @@ package info.flexmojos.unitestingsupport
 			//asunit supported
 			if(getDefinitionByName("asunit.framework.Test"))
 			{
-				testsScheduledToRun += AsUnitListener.run(tests);
+				totalTestCount += AsUnitListener.run(tests);
 			}
 
 			//advancedflex supported
 			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
 			{
-				testsScheduledToRun += AdvancedFlexListener.run(tests);
+				totalTestCount += AdvancedFlexListener.run(tests);
 			}
 		}
 
