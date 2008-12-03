@@ -20,50 +20,22 @@ package com.adobe.example
 	import flexunit.framework.TestCase;
 	import com.adobe.example.Calculator;
 	
-	public class TestCalculator extends TestCase
+	public class TestCalculator2 extends TestCase
 	{
-		private var calculator : Calculator;
-		
-		/**
-		 * Constructor.
-		 * @param methodName the name of the individual test to run.
-		 */
-		public function TestCalculator( methodName : String = null )
+
+		public function testPass() : void
 		{
-			super( methodName );
-		}
-	
-		/**
-		 * @see flexunit.framework.TestCase#setUp().
-		 */
-		override public function setUp() : void
-		{
-			calculator = new Calculator();
-		}
-		
-		/**
-		 * @see flexunit.framework.TestCase#tearDown().
-		 */
-		override public function tearDown() : void
-		{
-			calculator = null;
+			assertEquals( 8, 8 );
 		}
 
-		public function testMultiplyPass() : void
+		public function testFail() : void
 		{
-			var result : Number = calculator.multiply( 2, 4 );
-			assertEquals( 8, result );
-		}
-
-		public function testMultiplyFail() : void
-		{
-			var result : Number = calculator.multiply( 2, 4 );
-			assertEquals( 10, result );
+			assertEquals( 10, 8 );
 		}
 
 		public function testError() : void
 		{
-			throw new Error("An error");
+			throw new Error("An second error");
 		}
 
 	}
