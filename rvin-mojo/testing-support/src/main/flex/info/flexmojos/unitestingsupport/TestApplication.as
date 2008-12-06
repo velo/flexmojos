@@ -25,8 +25,10 @@ package info.flexmojos.unitestingsupport
 		
 		private var tests:Array;
 		
+		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+		
 		public function set port(port:int):void {
-			SocketReporter.port = port;
+			socketReporter.port = port;
 		}
 		
 		public function TestApplication()
@@ -38,7 +40,7 @@ package info.flexmojos.unitestingsupport
 		
 		private function runTests(e:*):void
 		{
-			SocketReporter.runTests(this.tests);
+			socketReporter.runTests(this.tests);
 		}
 
 		/**

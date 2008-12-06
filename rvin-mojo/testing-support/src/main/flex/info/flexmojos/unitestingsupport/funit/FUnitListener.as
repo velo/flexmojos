@@ -34,6 +34,8 @@ package info.flexmojos.unitestingsupport.funit
 	public class FUnitListener implements ITestListener
 	{
 		
+		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+		
 		public static function run(tests:Array):int {
 			
 			var testCount:int = 0;
@@ -47,7 +49,7 @@ package info.flexmojos.unitestingsupport.funit
 					testCount += suite.testCount;
 					
 					var classname:String = ClassnameUtil.getClassName(test);
-					var testCaseReport:TestCaseReport = SocketReporter.getReport(classname);
+					var testCaseReport:TestCaseReport = socketReporter.getReport(classname);
 					
 					var listener:ITestListener = new FUnitListener(testCaseReport);
 					suite.run(listener);
@@ -98,7 +100,7 @@ package info.flexmojos.unitestingsupport.funit
 		public function testStarted( testName:TestName ) : void 
 		{
 			methodName = testName.name;
-			SocketReporter.addMethod( testCaseReport.name, methodName );
+			socketReporter.addMethod( testCaseReport.name, methodName );
 		}
 		
 		/**
@@ -108,7 +110,7 @@ package info.flexmojos.unitestingsupport.funit
 		{
 			if(result.isSuccess)
 			{
-				SocketReporter.testFinished(testCaseReport.name);
+				socketReporter.testFinished(testCaseReport.name);
 			}
 			else
 			{
@@ -118,7 +120,7 @@ package info.flexmojos.unitestingsupport.funit
 					failure.message = result.message;
 					failure.stackTrace = result.stackTrace;
 					
-					SocketReporter.addFailure(testCaseReport.name, methodName, failure);
+					socketReporter.addFailure(testCaseReport.name, methodName, failure);
 				}
 					
 				if(result.resultState == ResultState.Error) {
@@ -127,7 +129,7 @@ package info.flexmojos.unitestingsupport.funit
 					error.message = result.message;
 					error.stackTrace = result.stackTrace;
 					
-					SocketReporter.addError(testCaseReport.name, methodName, error);
+					socketReporter.addError(testCaseReport.name, methodName, error);
 				}
 					
 			}
@@ -159,7 +161,7 @@ package info.flexmojos.unitestingsupport.funit
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 
-			SocketReporter.addError(testCaseReport.name, methodName, failure);
+			socketReporter.addError(testCaseReport.name, methodName, failure);
 		}
 		
 		/**

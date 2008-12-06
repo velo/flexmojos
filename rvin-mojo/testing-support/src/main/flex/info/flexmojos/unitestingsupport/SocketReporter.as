@@ -32,32 +32,36 @@ package info.flexmojos.unitestingsupport
 	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
 	import info.flexmojos.unitestingsupport.funit.FUnitListener;
 	
+	import mx.binding.utils.BindingUtils;
+	
 	public class SocketReporter
 	{
 
-		private static const END_OF_TEST_RUN:String = "<endOfTestRun/>";
-		private static const END_OF_TEST_ACK:String ="<endOfTestRunAck/>";
+		private const END_OF_TEST_RUN:String = "<endOfTestRun/>";
+		private const END_OF_TEST_ACK:String ="<endOfTestRunAck/>";
 		
 		[Inspectable]
-		public static var port:uint = 1024;
+		public var port:uint = 1024;
 		
 		[Inspectable]
-		public static var server:String = "127.0.0.1";
+		public var server:String = "127.0.0.1";
 		
-    	private static var socket:XMLSocket;
+    	private var socket:XMLSocket;
 
-		private static var reports:Dictionary = new Dictionary();
+		private var reports:Dictionary = new Dictionary();
 
-		public static var totalTestCount : int = 0;
+		[Bindable]
+		public var totalTestCount : int = 0;
 
-    	private static var numTestsRun : int = 0;
+		[Bindable]
+    	public var numTestsRun : int = 0;
 
 		/**
 		 * Called when an error occurs.
 		 * @param test the Test that generated the error.
 		 * @param error the Error.
 		 */
-		public static function addError( testName:String, methodName:String, error:ErrorReport ):void {
+		public function addError( testName:String, methodName:String, error:ErrorReport ):void {
 			// Increment error count.
 			var report:TestCaseReport = getReport( testName );
 			report.errors++;
@@ -72,7 +76,7 @@ package info.flexmojos.unitestingsupport
 		 * model.
 		 * @param test the Test.
 		 */
-		public static function addMethod( testName:String, methodName:String ):void
+		public function addMethod( testName:String, methodName:String ):void
 		{
 			var reportObject:TestCaseReport = getReport( testName );
 			reportObject.getMethod(methodName);
@@ -84,7 +88,7 @@ package info.flexmojos.unitestingsupport
 		 * @param test the Test that generated the failure.
 		 * @param error the failure.
 		 */
-		public static function addFailure( testName:String, methodName:String, failure:ErrorReport ):void
+		public function addFailure( testName:String, methodName:String, failure:ErrorReport ):void
 		{
 			// Increment failure count.
 			var report:TestCaseReport = getReport( testName );
@@ -95,16 +99,13 @@ package info.flexmojos.unitestingsupport
 			methodObject.failure = failure;
 		}
 		
-		public static function testFinished(testName:String, timeTaken:int = 0):void
+		public function testFinished(testName:String, timeTaken:int = 0):void
 		{
 			var reportObject:TestCaseReport = reports[ testName ];
 			reportObject.time = timeTaken;
 
 			// If we have finished running all the tests send the results.
-			if ( ++numTestsRun == totalTestCount )
-			{
-				sendResults();
-   			}
+			++numTestsRun;
 		}
 		
 
@@ -113,7 +114,7 @@ package info.flexmojos.unitestingsupport
 		 * currently executing Test.
 		 * @param Test the test.
 		 */
-		public static function getReport( testName:String ):TestCaseReport
+		public function getReport( testName:String ):TestCaseReport
 		{
 			var reportObject:TestCaseReport;
 			
@@ -138,7 +139,7 @@ package info.flexmojos.unitestingsupport
 		 * Sends the results. This sends the reports back to the controlling Ant
 		 * task using an XMLSocket.
 		 */
-		private static function sendResults():void
+		private function sendResults():void
 		{
 			// Open an XML socket.
 			socket = new XMLSocket();
@@ -147,7 +148,7 @@ package info.flexmojos.unitestingsupport
    	   		socket.connect( server, port );
 		}
 		
-		private static function handleConnect( event:Event ):void
+		private function handleConnect( event:Event ):void
 		{
 			for ( var className:String in reports )
 			{
@@ -169,7 +170,7 @@ package info.flexmojos.unitestingsupport
 		 * Event listener to handle data received on the socket.
 		 * @param event the DataEvent.
 		 */
-		private static function dataHandler( event:DataEvent ):void
+		private function dataHandler( event:DataEvent ):void
 		{
 			var data:String = event.data;
 
@@ -183,7 +184,7 @@ package info.flexmojos.unitestingsupport
 		/**
 		 * Exit the test runner and close the player.
 		 */
-		private static function exit():void
+		private function exit():void
 		{
 			// Close the socket.
 			socket.close();
@@ -192,14 +193,14 @@ package info.flexmojos.unitestingsupport
 			fscommand( "quit" )
 		}
 
-		private static function formatQualifiedClassName( className:String ):String
+		private function formatQualifiedClassName( className:String ):String
 		{
 			var pattern:RegExp = /::/;
 			
 			return className.replace( pattern, "." );
 		}
 
-		public static function runTests(tests:Array):void 
+		public function runTests(tests:Array):void 
 		{
 			//flexunit supported
 			if(getDefinitionByName("flexunit.framework.Test"))
@@ -231,6 +232,27 @@ package info.flexmojos.unitestingsupport
 			{
 				totalTestCount += AdvancedFlexListener.run(tests);
 			}
+		}
+		
+		private static var instance:SocketReporter;
+		
+		public static function getInstance():SocketReporter {
+			if(instance == null) {
+				instance = new SocketReporter();
+				
+				var checkIsDone:Function = function (e:*):void {
+					if(instance.totalTestCount == 0) {
+						return;
+					}
+					if(instance.totalTestCount == instance.numTestsRun) {
+						instance.sendResults();
+					}
+				};
+				
+				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
+				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");
+			}
+			return instance;
 		}
 
 	}
