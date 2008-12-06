@@ -76,14 +76,13 @@ public class AbstractFlexMojosTests
     }
 
     protected static synchronized String getProperty( String key )
-        throws IOException
     {
         return props.getProperty( key );
     }
 
     @SuppressWarnings( "unchecked" )
     protected static void test( File projectDirectory, String goal, String... args )
-        throws Exception
+        throws VerificationException
     {
         Verifier verifier = getVerifier( projectDirectory );
         verifier.getCliOptions().addAll( Arrays.asList( args ) );
@@ -94,7 +93,7 @@ public class AbstractFlexMojosTests
 
     @SuppressWarnings( "unchecked" )
     protected static Verifier getVerifier( File projectDirectory )
-        throws IOException, VerificationException
+        throws VerificationException
     {
         System.setProperty( "maven.home", getProperty( "fake-maven" ) );
 

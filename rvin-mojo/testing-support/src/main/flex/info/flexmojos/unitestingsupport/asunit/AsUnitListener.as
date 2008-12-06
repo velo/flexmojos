@@ -28,6 +28,8 @@ package info.flexmojos.unitestingsupport.asunit
 	public class AsUnitListener implements TestListener
 	{
 		
+		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+		
 		public static function run(tests:Array):int {
 
 			var countTestCases:int;
@@ -66,7 +68,7 @@ package info.flexmojos.unitestingsupport.asunit
     	 */
     	public function startTest( test : Test ) : void
 		{
-			SocketReporter.addMethod( className, test.getCurrentMethod() );
+			socketReporter.addMethod( className, test.getCurrentMethod() );
 		}
 		
 		/**
@@ -75,7 +77,7 @@ package info.flexmojos.unitestingsupport.asunit
 		 */
 		public function endTest( test : Test ) : void
 		{	
-			SocketReporter.testFinished(className);
+			socketReporter.testFinished(className);
 		}
 	
 		/**
@@ -90,7 +92,7 @@ package info.flexmojos.unitestingsupport.asunit
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 
-			SocketReporter.addError(className, test.getCurrentMethod(), failure);
+			socketReporter.addError(className, test.getCurrentMethod(), failure);
 		}
 
 		/**
@@ -105,7 +107,7 @@ package info.flexmojos.unitestingsupport.asunit
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 			
-			SocketReporter.addFailure(className, test.getCurrentMethod(), failure);
+			socketReporter.addFailure(className, test.getCurrentMethod(), failure);
 		}
 
 	}

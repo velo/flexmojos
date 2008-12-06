@@ -38,9 +38,11 @@ package advancedflex.debugger.aut.framework
 		
 		private var error:ErrorReport;
 
+		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+		
 		public function ProtectedConsole(className:String)
 		{
-			test = SocketReporter.getReport(className);
+			test = socketReporter.getReport(className);
 		}
 
 		protected override function get out():IDataOutput {
@@ -51,11 +53,11 @@ package advancedflex.debugger.aut.framework
 		{
 			super.printMethodFooter(method, state);
 			if("Error" == state) {
-				SocketReporter.addError(test.name, method, error);
+				socketReporter.addError(test.name, method, error);
 			} else if("Failure" == state) {
-				SocketReporter.addFailure(test.name, method, error);
+				socketReporter.addFailure(test.name, method, error);
 			} else {
-				SocketReporter.addMethod(test.name, method);
+				socketReporter.addMethod(test.name, method);
 			}
 		}
 		
@@ -68,7 +70,7 @@ package advancedflex.debugger.aut.framework
 		override internal function printTestCaseFooter(testCase:TestCase, success:int, failure:int, error:int):void
 		{
 			super.printTestCaseFooter(testCase, success, failure, error);
-			SocketReporter.testFinished(test.name);
+			socketReporter.testFinished(test.name);
 		}
 
 	}

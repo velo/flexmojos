@@ -16,14 +16,16 @@ $imports
 
 			private var tests:Array;
 		
+			private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+		
 			private function startUp():void {
-				SocketReporter.port = $port;
+				socketReporter.port = $port;
 
 				this.tests = new Array;
 
 $testClasses
 
-				SocketReporter.runTests(this.tests);
+				socketReporter.runTests(this.tests);
 			}
 
 			public function addTest( test:Class ) : void
