@@ -21,7 +21,6 @@ package info.rvin.mojo.flexmojo.test;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.fail;
 import info.flexmojos.compile.test.report.TestCaseReport;
 import info.flexmojos.tests.AbstractFlexMojosTests;
 import info.rvin.flexmojo.test.util.XStreamFactory;
@@ -70,7 +69,7 @@ public class IT0013IssuesTest
         testIssue( "issue-0014" );
     }
 
-    @Test
+    @Test( expectedExceptions = { VerificationException.class } )
     public void issue15()
         throws Exception
     {
@@ -78,23 +77,21 @@ public class IT0013IssuesTest
         try
         {
             test( testDir, "install" );
-            fail( "ing error unit, must fail!" );
         }
-        catch ( VerificationException e )
+        finally
         {
-            // expected exception
+            File reportDir = new File( testDir, "target/surefire-reports" );
+            assertEquals( 1, reportDir.listFiles().length );
+
+            XStream xs = XStreamFactory.getXStreamInstance();
+            File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
+            TestCaseReport report = (TestCaseReport) xs.fromXML( new FileReader( reportFile ) );
+
+            assertEquals( "com.adobe.example.TestCalculator", report.getName() );
+            assertEquals( 2, report.getTests() );
+            assertEquals( 1, report.getErrors() );
         }
 
-        File reportDir = new File( testDir, "target/surefire-reports" );
-        assertEquals( 1, reportDir.listFiles().length );
-
-        XStream xs = XStreamFactory.getXStreamInstance();
-        File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
-        TestCaseReport report = (TestCaseReport) xs.fromXML( new FileReader( reportFile ) );
-
-        assertEquals( "com.adobe.example.TestCalculator", report.getName() );
-        assertEquals( 2, report.getTests() );
-        assertEquals( 1, report.getErrors() );
     }
 
     @Test
