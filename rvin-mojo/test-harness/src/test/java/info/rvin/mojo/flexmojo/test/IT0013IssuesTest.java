@@ -81,7 +81,7 @@ public class IT0013IssuesTest
         finally
         {
             File reportDir = new File( testDir, "target/surefire-reports" );
-            assertEquals( 1, reportDir.listFiles().length );
+            assertEquals( 2, reportDir.listFiles().length );
 
             XStream xs = XStreamFactory.getXStreamInstance();
             File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );

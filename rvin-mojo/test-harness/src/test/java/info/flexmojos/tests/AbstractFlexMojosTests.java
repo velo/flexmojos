@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -149,7 +149,7 @@ public class AbstractFlexMojosTests
 
             // projects filtering
             Collection<File> poms =
-                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), DirectoryFileFilter.INSTANCE );
+                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), HiddenFileFilter.VISIBLE );
             for ( File pom : poms )
             {
                 String pomContent = FileUtils.readFileToString( pom );
