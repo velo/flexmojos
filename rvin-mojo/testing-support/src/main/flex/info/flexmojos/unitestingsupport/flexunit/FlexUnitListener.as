@@ -26,6 +26,7 @@ package info.flexmojos.unitestingsupport.flexunit
 	public class FlexUnitListener implements TestListener
 	{
 		
+		private var socketReporter:SocketReporter = SocketReporter.getInstance();
 		
 		public static function run(tests:Array):int {
     		var result:TestResult = new TestResult();
@@ -53,7 +54,7 @@ package info.flexmojos.unitestingsupport.flexunit
     	 */
     	public function startTest( test : Test ) : void
 		{
-			SocketReporter.addMethod( test.className, test[ "methodName" ] );
+			socketReporter.addMethod( test.className, test[ "methodName" ] );
 		}
 		
 		/**
@@ -62,7 +63,7 @@ package info.flexmojos.unitestingsupport.flexunit
 		 */
 		public function endTest( test : Test ) : void
 		{	
-			SocketReporter.testFinished(test.className);
+			socketReporter.testFinished(test.className);
 		}
 	
 		/**
@@ -77,7 +78,7 @@ package info.flexmojos.unitestingsupport.flexunit
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 
-			SocketReporter.addError(test.className, test[ "methodName" ], failure);
+			socketReporter.addError(test.className, test[ "methodName" ], failure);
 		}
 
 		/**
@@ -92,7 +93,7 @@ package info.flexmojos.unitestingsupport.flexunit
 			failure.message = error.message;
 			failure.stackTrace = error.getStackTrace();
 			
-			SocketReporter.addFailure(test.className, test[ "methodName" ], failure);
+			socketReporter.addFailure(test.className, test[ "methodName" ], failure);
 		}
 
 	}
