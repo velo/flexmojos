@@ -21,6 +21,7 @@ package info.flexmojos.tests;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
@@ -29,11 +30,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 public class AbstractFlexMojosTests
 {
@@ -107,6 +110,8 @@ public class AbstractFlexMojosTests
                 verifier.setLocalRepo( getProperty( "fake-repo" ) );
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
+                verifier.getCliOptions().add( "-B" );
+                verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:resolve" );
             }
             catch ( Throwable t )
@@ -124,12 +129,43 @@ public class AbstractFlexMojosTests
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
+        verifier.getCliOptions().add( "-B" );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
         Properties sysProps = new Properties();
         sysProps.setProperty( "MAVEN_OPTS", "-Xmx512m" );
         verifier.setSystemProperties( sysProps );
+        verifier.setLogFileName( getTestName() + ".log" );
         return verifier;
+    }
+
+    private static String getTestName()
+    {
+        StackTraceElement[] stackTrace = new Exception().getStackTrace();
+        for ( StackTraceElement stack : stackTrace )
+        {
+            Class<?> testClass;
+            try
+            {
+                testClass = Class.forName( stack.getClassName() );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                // nvm, and should never happen
+                continue;
+            }
+            for ( Method method : testClass.getMethods() )
+            {
+                if ( method.getName().equals( stack.getMethodName() ) )
+                {
+                    if ( method.getAnnotation( Test.class ) != null )
+                    {
+                        return method.getName();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -145,11 +181,11 @@ public class AbstractFlexMojosTests
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName );
-            FileUtils.copyDirectory( projectFolder, destDir );
+            FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 
             // projects filtering
             Collection<File> poms =
-                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), HiddenFileFilter.VISIBLE );
+                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), TrueFileFilter.INSTANCE );
             for ( File pom : poms )
             {
                 String pomContent = FileUtils.readFileToString( pom );
