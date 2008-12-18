@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Flex-mojos is a set of maven plugins to allow maven users to compile,
+		optimize, test and ... Flex SWF, Flex SWC, Air SWF and Air SWC.
+		Copyright (C) 2008 Marvin Herman Froeder
+	-->
+	<!--
+		This program is free software; you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation; either version 2 of the License, or (at
+		your option) any later version.
+	-->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details.
+	-->
+	<!--
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>info.flex-mojos</groupId>
+	<artifactId>flex-mojos-parent</artifactId>
+	<version>2.0M11-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Flex Mojos Parent</name>
+	<url>http://docs.flex-mojos.info</url>
+	<organization>
+		<name>Flex-Mojos</name>
+		<url>http://www.flex-mojos.info</url>
+	</organization>
+	<inceptionYear>2008</inceptionYear>
+
+	<prerequisites>
+		<maven>${maven.version}</maven>
+	</prerequisites>
+
+	<licenses>
+		<license>
+			<name>GPL</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<properties>
+		<commons_io.version>1.4</commons_io.version>
+		<flex.sdk.version>3.2.0.3958</flex.sdk.version>
+		<maven.version>2.0.9</maven.version>
+
+		<!-- distribution -->
+		<deploy.repository.id>maven.flex-mojos.info</deploy.repository.id>
+		<deploy.repository.url>scp://repository.flex-mojos.info/www/flex-mojos/repository</deploy.repository.url>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>aspectj-maven-plugin</artifactId>
+					<version>1.0</version>
+					<configuration>
+						<complianceLevel>1.5</complianceLevel>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
+			<!--
+				<plugin> <artifactId>maven-plugin-plugin</artifactId> <executions>
+				<execution> <id>generated-helpmojo</id> <goals>
+				<goal>helpmojo</goal> </goals> </execution> </executions> </plugin>
+			-->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.3</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<developers>
+		<developer>
+			<id>velo.br</id>
+			<name>Marvin Herman Froeder</name>
+			<email>velo.br at gmail.com</email>
+			<roles>
+				<role>Author Developer</role>
+			</roles>
+			<timezone>-3</timezone>
+		</developer>
+		<developer>
+			<id>joost</id>
+			<name>Joost den Boer</name>
+			<email>jdboer at e-id.nl</email>
+			<url>http://joost.claroquesi.info</url>
+			<organization>E-id! Internet Strategies B.V.</organization>
+			<organizationUrl>http://www.e-id.nl</organizationUrl>
+			<roles>
+				<role>Developer Documentation</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>logan</id>
+			<name>Logan Allred</name>
+			<email>RedBugz at gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<url>http://code.google.com/p/flex-mojos/issues/list</url>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>${deploy.repository.id}</id>
+			<name>Flex-Mojos Release Repository</name>
+			<url>${deploy.repository.url}</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven.flex-mojos.info</id>
+			<name>Flex-Mojos Snapshot Repository</name>
+			<url>scp://snapshot.flex-mojos.info/www/flex-mojos/snapshot</url>
+		</snapshotRepository>
+		<site>
+			<id>maven.flex-mojos.info</id>
+			<name>Flex-Mojos Plugin Documentation Site</name>
+			<url>scp://docs.flex-mojos.info/www/flex-mojos/docs</url>
+		</site>
+	</distributionManagement>
+
+	<mailingLists>
+		<mailingList>
+			<name>Flex-mojos Google Group</name>
+			<subscribe>flex-mojos-subscribe@googlegroups.com</subscribe>
+			<unsubscribe>flex-mojos-unsubscribe@googlegroups.com</unsubscribe>
+			<post>flex-mojos@googlegroups.com</post>
+			<archive>http://groups.google.com/group/flex-mojos/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin
+				</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changelog-maven-plugin
+				</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.adobe.flex</groupId>
+				<artifactId>compiler</artifactId>
+				<version>${flex.sdk.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>com.adobe.flex.compiler</groupId>
+				<artifactId>xmlParserAPIs</artifactId>
+				<version>${flex.sdk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.adobe.flex.compiler</groupId>
+				<artifactId>asdoc</artifactId>
+				<version>${flex.sdk.version}</version>
+				<type>zip</type>
+				<classifier>template</classifier>
+			</dependency>
+			<dependency>
+				<groupId>com.adobe.flex.compiler</groupId>
+				<artifactId>adt</artifactId>
+				<version>${flex.sdk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-core</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-plugin-api</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-project</artifactId>
+				<version>${maven.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons_io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.reporting
+				</groupId>
+				<artifactId>maven-reporting-impl</artifactId>
+				<version>2.0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>plexus</groupId>
+				<artifactId>plexus-velocity</artifactId>
+				<version>1.1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.plexus</groupId>
+				<artifactId>plexus-utils</artifactId>
+				<version>1.5.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.4</version>
+				<type>maven-plugin</type>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.graniteds</groupId>
+				<artifactId>granite-generator</artifactId>
+				<version>1.1.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>ant</groupId>
+						<artifactId>ant</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>eu.cedarsoft.utils</groupId>
+				<artifactId>zip</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.0.4</version>
+				<type>maven-plugin</type>
+			</dependency>
+			<dependency>
+				<groupId>de.java2html</groupId>
+				<artifactId>java2html</artifactId>
+				<version>5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jdom</groupId>
+				<artifactId>jdom</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>5.8</version>
+				<classifier>jdk15</classifier>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>
