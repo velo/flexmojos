@@ -23,7 +23,7 @@ public class AsUnitTest
     extends AbstractConceptTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testAsUnitExample()
         throws Exception
     {
