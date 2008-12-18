@@ -23,7 +23,7 @@ public class MergedModulesTest
     extends AbstractConceptTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void installFake()
         throws Exception
     {
