@@ -26,7 +26,7 @@ public class Issue0106Test
     extends AbstractIssueTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue106()
         throws Exception
     {

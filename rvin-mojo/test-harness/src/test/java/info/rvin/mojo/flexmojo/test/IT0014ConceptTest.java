@@ -31,49 +31,49 @@ public class IT0014ConceptTest
 
     // TODO still need air tests
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSimpleAirApplication()
         throws Exception
     {
         standardConceptTester( "simple-air-application" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSimpleAirLibrary()
         throws Exception
     {
         standardConceptTester( "simple-air-library" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSimpleFlexApplication()
         throws Exception
     {
         standardConceptTester( "simple-flex-application" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSimpleFlexLibrary()
         throws Exception
     {
         standardConceptTester( "simple-flex-library" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testEncrypterMojo()
         throws Exception
     {
         standardConceptTester( "encrypt-test" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testFlashPlayer10()
         throws Exception
     {
         standardConceptTester( "flash-player-10" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testFlex3SDK()
         throws Exception
     {
@@ -84,21 +84,21 @@ public class IT0014ConceptTest
         // standardConceptTester( "flex-sdk" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testFlex4Gumbo()
         throws Exception
     {
         standardConceptTester( "flex4-gumbo" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testHelloCaching()
         throws Exception
     {
         standardConceptTester( "hello-cachingframework" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testHtmlTemplateApplication()
         throws Exception
     {
@@ -108,14 +108,14 @@ public class IT0014ConceptTest
         assertTrue( "Html Wrapper was not generated.", template.exists() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testMetadataTest()
         throws Exception
     {
         standardConceptTester( "metadata-test" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testOptimizedFlexLibrary()
         throws Exception
     {
@@ -123,32 +123,32 @@ public class IT0014ConceptTest
     }
 
     // TODO depends on have HFCD started
-    // @Test public void testRpcHfcdSdk() throws Exception {
+    // @Test(timeOut=120000) public void testRpcHfcdSdk() throws Exception {
     // standardConceptTester("rpc-hfcd-sdk");
     // }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testRuntimeCss()
         throws Exception
     {
         standardConceptTester( "runtime-css" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSimpleFlexModular()
         throws Exception
     {
         standardConceptTester( "simple-flex-modular" );
     }
 
-    @Test( groups = { "generator" } )
+    @Test( timeOut = 120000, groups = { "generator" } )
     public void testSimpleGeneration()
         throws Exception
     {
         standardConceptTester( "simple-generation" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSources()
         throws Exception
     {
@@ -158,7 +158,7 @@ public class IT0014ConceptTest
         assertTrue( "Source file was not generated.", sources.exists() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testUpdateSDK()
         throws Exception
     {
@@ -167,11 +167,11 @@ public class IT0014ConceptTest
     }
 
     // Dont work because IT tests run under a non versioned folder
-    // @Test public void versioning() throws Exception {
+    // @Test(timeOut=120000) public void versioning() throws Exception {
     // standardConceptTester("versioning");
     // }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testQuick()
         throws Exception
     {
@@ -181,7 +181,7 @@ public class IT0014ConceptTest
         test( testDir, "install", "-Dquick.compile=true" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testIncremental()
         throws Exception
     {
@@ -189,7 +189,7 @@ public class IT0014ConceptTest
         test( testDir, "install", "-Dincremental=true" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testCompiledLocalization()
         throws Exception
     {
@@ -197,7 +197,7 @@ public class IT0014ConceptTest
         test( testDir, "install" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testRuntimeLocalization()
         throws Exception
     {

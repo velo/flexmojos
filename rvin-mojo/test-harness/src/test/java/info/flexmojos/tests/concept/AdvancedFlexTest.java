@@ -24,7 +24,7 @@ public class AdvancedFlexTest
     extends AbstractConceptTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testAsUnitExample()
         throws Exception
     {

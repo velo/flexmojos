@@ -44,14 +44,14 @@ public class IT0013IssuesTest
         test( testDir, "install" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue11()
         throws Exception
     {
         testIssue( "issue-0011" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue13()
         throws Exception
     {
@@ -62,14 +62,14 @@ public class IT0013IssuesTest
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
     public void issue14()
         throws Exception
     {
         testIssue( "issue-0014" );
     }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
     public void issue15()
         throws Exception
     {
@@ -94,7 +94,7 @@ public class IT0013IssuesTest
 
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue17()
         throws Exception
     {
@@ -105,7 +105,7 @@ public class IT0013IssuesTest
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
     public void issue27()
         throws Exception
     {
@@ -113,21 +113,21 @@ public class IT0013IssuesTest
         test( testDir, "asdoc:asdoc" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue29()
         throws Exception
     {
         testIssue( "issue-0029" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue32()
         throws Exception
     {
         testIssue( "issue-0032" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue39()
         throws Exception
     {
@@ -135,7 +135,7 @@ public class IT0013IssuesTest
     }
 
     // A wierd but on this tests
-    // @Test public void issue43() throws Exception {
+    // @Test(timeOut=120000) public void issue43() throws Exception {
     // File testDir = ResourceExtractor.simpleExtractResources(getClass(),
     // "/issues/issue-0014");
     // List<String> args = new ArrayList<String>();
@@ -144,7 +144,7 @@ public class IT0013IssuesTest
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
     public void issue44()
         throws Exception
     {
@@ -152,7 +152,7 @@ public class IT0013IssuesTest
         test( testDir, "asdoc:asdoc" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue53()
         throws Exception
     {
@@ -162,14 +162,14 @@ public class IT0013IssuesTest
         test( testDir, "install", "-DskipTests=true" );
     }
 
-    @Test( groups = { "generator" } )
+    @Test( timeOut = 120000, groups = { "generator" } )
     public void issue61()
         throws Exception
     {
         testIssue( "issue-0061" );
     }
 
-    @Test( groups = { "generator" } )
+    @Test( timeOut = 120000, groups = { "generator" } )
     public void issue66()
         throws Exception
     {
@@ -188,7 +188,7 @@ public class IT0013IssuesTest
         assertTrue( base.exists() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue67()
         throws Exception
     {
@@ -196,7 +196,7 @@ public class IT0013IssuesTest
         test( testDir, "asdoc:asdoc" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue68()
         throws Exception
     {
@@ -204,14 +204,14 @@ public class IT0013IssuesTest
         test( testDir, "asdoc:asdoc" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue70()
         throws Exception
     {
         testIssue( "issue-0070" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue103()
         throws Exception
     {
