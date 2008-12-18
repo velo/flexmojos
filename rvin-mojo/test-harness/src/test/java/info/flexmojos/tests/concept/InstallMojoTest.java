@@ -29,7 +29,7 @@ public class InstallMojoTest
 {
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test( timeOut = 120000 )
     public void installFake()
         throws Exception
     {

@@ -33,7 +33,7 @@ public class FlexUnitTest
     extends AbstractConceptTest
 {
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
     public void testFlexUnitExample()
         throws Exception
     {

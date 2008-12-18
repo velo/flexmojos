@@ -24,7 +24,7 @@ public class IssueLocalizationTest
     extends AbstractIssueTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issueNonLocalized()
         throws Exception
     {

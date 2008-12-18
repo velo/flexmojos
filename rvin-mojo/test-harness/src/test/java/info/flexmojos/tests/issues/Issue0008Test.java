@@ -6,14 +6,14 @@ public class Issue0008Test
     extends AbstractIssueTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue8part1()
         throws Exception
     {
         testIssue( "issue-0008-1" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void issue8part2()
         throws Exception
     {

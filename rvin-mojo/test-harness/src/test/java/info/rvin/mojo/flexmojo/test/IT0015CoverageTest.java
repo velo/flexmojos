@@ -37,14 +37,14 @@ public class IT0015CoverageTest
         test( testDir, "install" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testSourceFileResolver()
         throws Exception
     {
         standardConceptTester( "source-file-resolver" );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testAsdocInclusionExclusion()
         throws Exception
     {
@@ -56,7 +56,7 @@ public class IT0015CoverageTest
         assertFalse( "Should not generate Amarelo.html.", amarelo.exists() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testFlexUnitReport()
         throws Exception
     {
@@ -66,7 +66,7 @@ public class IT0015CoverageTest
         assertTrue( asdoc.isDirectory() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testHtmlwrapperTemplates()
         throws Exception
     {
@@ -78,7 +78,7 @@ public class IT0015CoverageTest
         assertTrue( "Should generate htmlwrapper " + zip.getAbsolutePath(), zip.exists() );
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testDefines()
         throws Exception
     {
@@ -87,7 +87,7 @@ public class IT0015CoverageTest
 
     }
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testCompilationOptions()
         throws Exception
     {

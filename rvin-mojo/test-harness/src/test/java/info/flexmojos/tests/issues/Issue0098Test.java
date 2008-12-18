@@ -28,7 +28,7 @@ public class Issue0098Test
 {
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test( timeOut = 120000 )
     public void issue98()
         throws Exception
     {
