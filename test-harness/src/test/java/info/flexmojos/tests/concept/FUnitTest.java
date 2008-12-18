@@ -23,7 +23,7 @@ public class FUnitTest
     extends AbstractConceptTest
 {
 
-    @Test
+    @Test( timeOut = 120000 )
     public void testFUnitExample()
         throws Exception
     {
