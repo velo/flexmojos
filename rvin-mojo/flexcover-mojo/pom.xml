@@ -3,7 +3,7 @@
 
 	<parent>
 		<groupId>info.flex-mojos</groupId>
-		<artifactId>mojo</artifactId>
+		<artifactId>flex-mojos-parent</artifactId><relativePath>../flex-mojos-parent/pom.xml</relativePath>
         <version>2.0M11-SNAPSHOT</version>
 	</parent>
 
