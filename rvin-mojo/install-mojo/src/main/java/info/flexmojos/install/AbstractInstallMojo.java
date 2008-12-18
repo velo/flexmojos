@@ -408,6 +408,27 @@ public abstract class AbstractInstallMojo
 
         installFlexFrameworkArtifacts();
 
+        installBundle();
+
+    }
+
+    private void installBundle()
+        throws MojoExecutionException
+    {
+        File zipFile = createTempFile( "fdk-bundle-", "-" + version );
+        ZipCreator zc = new ZipCreator( zipFile );
+        try
+        {
+            zc.zip( sdkFolder );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to create fdk-bundle" );
+        }
+
+        Artifact artifact =
+            artifactFactory.createArtifactWithClassifier( ADOBE_GROUP_ID, "flex-sdk", version, "zip", "bundle" );
+        installArtifact( zipFile, artifact );
     }
 
     private void installConfigFiles( Collection<Artifact> swcArtifacts )
