@@ -5,7 +5,7 @@
         >
 
     <compiler 
-            additionalCompilerArguments="-locale en_US" 
+            additionalCompilerArguments="-locale $locales $!includes" 
             copyDependentFiles="true" 
             enableModuleDebug="true" 
             generateAccessible="false" 
@@ -15,7 +15,7 @@
             htmlPlayerVersion="9.0.28" 
             htmlPlayerVersionCheck="true" 
             outputFolderPath="bin-debug" 
-            sourceFolderPath="src/main/flex" 
+            sourceFolderPath="$mainSources" 
             strict="true" 
             useApolloConfig="false" 
             verifyDigests="true" 
@@ -34,7 +34,7 @@
 
         <libraryPath
                 defaultLinkType="1">
-    $dependencies.size()
+
 #foreach ($artifact in $dependencies)
             <libraryPathEntry 
                     kind="3" 
@@ -43,6 +43,28 @@
                     useDefaultLinkType="false"
                     />
 #end
+
+## workaround to get player global
+	      <libraryPathEntry kind="4" path="">
+	        <excludedEntries>
+	          <libraryPathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/locale/{locale}"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/rpc.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="4" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="true">
+	            <crossDomainRsls>
+	              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.1.0.2710.swz"/>
+	              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.1.0.2710.swf"/>
+	            </crossDomainRsls>
+	          </libraryPathEntry>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_flashflexkit.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/utilities.swc" useDefaultLinkType="false"/>
+	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
+	        </excludedEntries>
+	      </libraryPathEntry>
         </libraryPath>
 
         <sourceAttachmentPath/>
@@ -51,7 +73,7 @@
 
     <applications>
         <application 
-                path="swf.mxml"
+                path="$mainApplication"
                 />
     </applications>
 
