@@ -26,7 +26,9 @@ import info.rvin.flexmojos.utilities.MavenUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,11 +41,13 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.eclipse.EclipseConfigFile;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
@@ -56,6 +60,24 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 public class FlexbuilderMojo
     extends EclipsePlugin
 {
+
+    private static final String APPLICATION_NATURE = "com.adobe.flexbuilder.project.flexnature";
+
+    private static final String LIBRARY_NATURE = "com.adobe.flexbuilder.project.flexlibnature";
+
+    private static final String ACTIONSCRIPT_NATURE = "com.adobe.flexbuilder.project.actionscriptnature";
+
+    private static final String FLEXBUILDER_BUILD_COMMAND = "com.adobe.flexbuilder.project.flexbuilder";
+
+    // TODO get from M2EclipseMojo
+    protected static final String M2ECLIPSE_NATURE = "org.maven.ide.eclipse.maven2Nature";
+
+    protected static final String M2ECLIPSE_BUILD_COMMAND = "org.maven.ide.eclipse.maven2Builder";
+
+    /**
+     * @parameter default-value="true" expression="${enableM2e}"
+     */
+    private boolean enableM2e;
 
     private static final String SWC = "swc";
 
@@ -76,14 +98,19 @@ public class FlexbuilderMojo
 
         if ( SWF.equals( packaging ) )
         {
-            getProjectnatures().add( "com.adobe.flexbuilder.project.flexnature" );
-            getProjectnatures().add( "com.adobe.flexbuilder.project.actionscriptnature" );
+            getProjectnatures().add( APPLICATION_NATURE );
+            getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
 
         if ( SWC.equals( packaging ) )
         {
-            getProjectnatures().add( "com.adobe.flexbuilder.project.flexlibnature" );
-            getProjectnatures().add( "com.adobe.flexbuilder.project.actionscriptnature" );
+            getProjectnatures().add( LIBRARY_NATURE );
+            getProjectnatures().add( ACTIONSCRIPT_NATURE );
+        }
+
+        if ( enableM2e )
+        {
+            getProjectnatures().add( M2ECLIPSE_NATURE );
         }
     }
 
@@ -95,7 +122,12 @@ public class FlexbuilderMojo
 
         if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
         {
-            getBuildcommands().add( "com.adobe.flexbuilder.project.flexbuilder" );
+            getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
+        }
+
+        if ( enableM2e )
+        {
+            getBuildcommands().add( M2ECLIPSE_BUILD_COMMAND );
         }
     }
 
@@ -219,11 +251,13 @@ public class FlexbuilderMojo
 
     private String[] getLocales()
     {
-        String[] locales = CompileConfigurationLoader.getCompilerPluginSettings( project, "locales" );
+        String[] locales = new String[0];
+        String[] deprecatedLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "locales" );
         String[] runtimeLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "runtimeLocales" );
         String[] compiledLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "compiledLocales" );
         String defaultLocale = CompileConfigurationLoader.getCompilerPluginSetting( project, "defaultLocale" );
 
+        locales = (String[]) ArrayUtils.addAll( locales, deprecatedLocales );
         locales = (String[]) ArrayUtils.addAll( locales, runtimeLocales );
         locales = (String[]) ArrayUtils.addAll( locales, compiledLocales );
         if ( defaultLocale != null )
@@ -354,4 +388,37 @@ public class FlexbuilderMojo
 
     }
 
+    @Override
+    protected void setupExtras()
+        throws MojoExecutionException
+    {
+
+        EclipseConfigFile utfConfig = new EclipseConfigFile();
+        utfConfig.setName( ".settings/org.eclipse.core.resources.prefs" );
+        utfConfig.setContent( getSettingsContent() );
+
+        try
+        {
+            Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "additionalConfig", getClass() );
+            field.setAccessible( true );
+            EclipseConfigFile[] originalConfig = (EclipseConfigFile[]) field.get( this );
+            EclipseConfigFile[] configs = new EclipseConfigFile[] { utfConfig };
+
+            configs = (EclipseConfigFile[]) ArrayUtils.addAll( configs, originalConfig );
+            field.set( this, configs );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Error settings project to UTF-8", e );
+        }
+    }
+
+    private String getSettingsContent()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append( '#' ).append( new Date().toString() ).append( '\n' );
+        sb.append( "eclipse.preferences.version=1" ).append( '\n' );
+        sb.append( "encoding/<project>=UTF-8" ).append( '\n' );
+        return sb.toString();
+    }
 }
