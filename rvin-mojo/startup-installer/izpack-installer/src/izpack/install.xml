@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+	<info>
+		<appname>@{project.name}</appname>
+		<appversion>${project.version}</appversion>
+		<authors>
+			<author name="Marvin Herman Froeder" email="velo.br@gmail.com" />
+		</authors>
+		<url>http://blog.flex-mojos.info/</url>
+		<webdir>${web.dir}</webdir>
+	</info>
+
+	<guiprefs width="640" height="480" resizable="no" />
+
+	<locale>
+		<langpack iso3="eng" />
+	</locale>
+
+	<resources>
+		<res id="LicencePanel.licence" src="Licence.txt" />
+	</resources>
+
+	<panels>
+		<panel classname="DestinationPanel" />
+		<panel classname="HelloPanel" />
+		<panel classname="LicencePanel" />
+		<panel classname="JDKPathPanel" />
+		<!-- TODO custom maven and FDK destinations <panel classname="UserPathPanel" />-->
+		<panel classname="PacksPanel" />
+		<panel classname="SummaryPanel" />
+		<panel classname="InstallPanel" />
+		<panel classname="FinishPanel" />
+	</panels>
+
+	<variables>
+		<variable name="JDKPathPanel.minVersion" value="1.5.0" />
+		<variable name="JDKPathPanel.skipIfValid" value="yes" />
+	</variables>
+
+	<packs>
+		<pack name="maven" required="no">
+			<description>Maven Installation</description>
+			<file src="apache-maven-${maven.version}" targetdir="$INSTALL_PATH/maven" />
+		</pack>
+		<pack name="repository" required="no">
+			<description>Basic Maven Repository with flex-mojos artifacts
+			</description>
+			<file src="repo" targetdir="$INSTALL_PATH/repo" /><!-- $USER_HOME/.m2/repository -->
+		</pack>
+		<pack name="flex-sdk" required="no">
+			<description>Flex SDK used on Repository (useful to be sure if
+				flexbuilder is using the same SDK)</description>
+			<file src="flex-sdk" targetdir="$INSTALL_PATH/fdk" />
+		</pack>
+	</packs>
+
+</installation>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Flex-mojos is a set of maven plugins to allow maven users to compile,
+		optimize, test and ... Flex SWF, Flex SWC, Air SWF and Air SWC.
+		Copyright (C) 2008 Marvin Herman Froeder
+	-->
+	<!--
+		This program is free software; you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation; either version 2 of the License, or (at
+		your option) any later version.
+	-->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details.
+	-->
+	<!--
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-mojos-installer</artifactId>
+		<version>2.0M11-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>flex-mojos-installer-izpack</artifactId>
+
+	<packaging>jar</packaging>
+
+	<name>Flex-mojos izpack installer</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>izpack-install</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.source.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/izpack</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>izpack-resources</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/izpack</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>1.0-alpha-4</version>
+				<configuration>
+					<descriptor>${izpack.source.dir}/install.xml</descriptor>
+					<kind>web</kind>
+					<izpackBasedir>${izpack.dir}</izpackBasedir>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-maven</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.dir}</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<includeGroupIds>org.apache.maven</includeGroupIds>
+							<includeArtifactIds>apache-maven</includeArtifactIds>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-fdk</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.dir}/flex-sdk</outputDirectory>
+							<excludeTransitive>true</excludeTransitive>
+							<includeGroupIds>com.adobe.flex</includeGroupIds>
+							<includeArtifactIds>flex-sdk</includeArtifactIds>
+						</configuration>
+					</execution>
+					<execution>
+						<id>create-repository</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${izpack.dir}/repo</outputDirectory>
+							<excludeGroupIds>org.codehaus.izpack</excludeGroupIds>
+							<excludeTypes>zip</excludeTypes>
+							<useRepositoryLayout>true</useRepositoryLayout>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-panel</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>info.flex-mojos</groupId>
+									<artifactId>flex-mojos-installer-destination-panel</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<destFileName>DestinationPanel.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${izpack.dir}/bin/panels</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.izpack</groupId>
+			<artifactId>izpack-standalone-compiler</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>apache-maven</artifactId>
+			<version>${maven.version}</version>
+			<type>zip</type>
+			<classifier>bin</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>flex-sdk</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>zip</type>
+			<classifier>bundle</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>asdoc-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>flex-compiler-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>encrypter-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>generator-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>html-wrapper-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>install-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>optimizer-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>source-mojo</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<!--
+			<dependency> <groupId>info.flex-mojos</groupId>
+			<artifactId>flex-mojos-parent</artifactId>
+			<version>${flex-mojos.version}</version> <type>pom</type>
+			</dependency>
+		-->
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>flex-super-pom</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>air-super-pom</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>testing-support</artifactId>
+			<version>${flex-mojos.version}</version>
+			<type>swc</type>
+		</dependency>
+
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>flex-mojos-installer-destination-panel</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies></project>
+
