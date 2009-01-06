@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties version="1">
+  <includeClasses>
+#foreach ($flexClass in $flexClasses)
+    <classEntry path="$flexClass"/>
+#end 
+  </includeClasses>
+  <includeResources>
+#foreach ($include in $includeFiles)
+    <resourceEntry destPath="$include" sourcePath="$include"/>
+#end 
+  </includeResources>
+  <namespaceManifests/>
+</flexLibProperties>

@@ -102,4 +102,23 @@ public class CompileConfigurationLoader
         }
         return null;
     }
+
+    public static String[] getCompilerPluginSettings( MavenProject project, String optionName )
+    {
+        Xpp3Dom value = getCompilerPluginConfiguration( project, optionName );
+        if ( value == null )
+        {
+            return null;
+        }
+
+        Xpp3Dom[] children = value.getChildren();
+        String[] values = new String[children.length];
+        for ( int i = 0; i < children.length; i++ )
+        {
+            Xpp3Dom child = children[i];
+            values[i] = child.getValue();
+        }
+
+        return values;
+    }
 }
