@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Flex-mojos is a set of maven plugins to allow maven users to compile,
+		optimize, test and ... Flex SWF, Flex SWC, Air SWF and Air SWC.
+		Copyright (C) 2008 Marvin Herman Froeder
+	-->
+	<!--
+		This program is free software; you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation; either version 2 of the License, or (at
+		your option) any later version.
+	-->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details.
+	-->
+	<!--
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-mojos-parent</artifactId>
+		<version>2.0M11-SNAPSHOT</version>
+		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>flex-mojos-installer</artifactId>
+
+	<packaging>pom</packaging>
+
+	<name>Flex-mojos start-up kit</name>
+
+	<properties>
+		<web.dir>http://localhost:8500/flex-mojos</web.dir>
+		<izpack.dir>${project.build.directory}/izpack</izpack.dir>
+		<izpack.source.dir>${project.build.directory}/izpack-source</izpack.source.dir>
+		<flex-mojos.version>2.0M10</flex-mojos.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-standalone-compiler</artifactId>
+				<version>4.1.1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<modules>
+		<module>izpack-installer</module>
+		<module>flex-mojos-installer-destination-panel</module>
+	</modules></project>
+
