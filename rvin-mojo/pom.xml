@@ -72,7 +72,7 @@
 		<module>testing-support</module>
 		<module>source-mojo</module>
 		<module>flexcover-mojo</module>
-		<module>flex-builder-mojo</module>
+		<module>flexbuilder-mojo</module>
 		<!--
 Tests can't be released due to some snapshot dependencies
  -->
