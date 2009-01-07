@@ -42,12 +42,6 @@
             <plugin>
                 <groupId>info.flex-mojos</groupId>
                 <artifactId>flex-compiler-mojo</artifactId>
-                <configuration>
-                    <sourcePaths>
-                        <path>${project.build.sourceDirectory}</path>
-                        <path>${project.build.directory}/generated-sources/flex-mojos</path>
-                    </sourcePaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

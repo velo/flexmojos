@@ -20,14 +20,6 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>com.adobe.flex</groupId>
-						<artifactId>compiler</artifactId>
-						<version>3.1.0.2710</version>
-						<type>pom</type>
-					</dependency>
-				</dependencies>
 				<configuration>
 					<runtimeLocales>
 						<locale>en_US</locale>
@@ -37,14 +29,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>flex-framework</artifactId>
-			<version>3.1.0.2710</version>
-			<type>pom</type>
-		</dependency>
-	</dependencies>
 
 </project>
