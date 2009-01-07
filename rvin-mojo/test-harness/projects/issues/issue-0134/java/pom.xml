@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>info.rvin.itest.issues</groupId>
+		<artifactId>issue-0134</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>info.rvin.itest.issue-0134</groupId>
+	<artifactId>java</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+</project>
