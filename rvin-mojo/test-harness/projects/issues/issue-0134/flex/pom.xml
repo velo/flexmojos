@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-super-pom</artifactId>
+		<version>%{flex-mojos.version}</version>
+	</parent>
+	
+	<groupId>info.rvin.itest.issue-0134</groupId>
+	<artifactId>flex</artifactId>
+	<version>1.0-SNAPSHOT</version>
+    <packaging>swc</packaging>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/target/generated-resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>info.flex-mojos</groupId>
+                <artifactId>generator-mojo</artifactId>
+                <configuration>
+                    <includeClasses>
+                        <class>test.*</class>
+                    </includeClasses>
+                    <beanTemplate>
+                        <param>${basedir}/src/main/resources/beanBase.gsp</param>
+                        <param>${basedir}/src/main/resources/bean.gsp</param>
+                    </beanTemplate>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>info.flex-mojos</groupId>
+                <artifactId>flex-compiler-mojo</artifactId>
+                <configuration>
+                    <sourcePaths>
+                        <path>${project.build.sourceDirectory}</path>
+                        <path>${project.build.directory}/generated-sources/flex-mojos</path>
+                    </sourcePaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+	<groupId>info.rvin.itest.issue-0134</groupId>
+	<artifactId>java</artifactId>
+	<version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+</project>
