@@ -64,6 +64,20 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>super-pom-commons</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${project.build.outputDirectory}/common.pom</file>
+							<groupId>info.flex-mojos</groupId>
+							<artifactId>super-pom-commons</artifactId>
+							<version>${pom.version}</version>
+							<packaging>pom</packaging>
+						</configuration>
+					</execution>
+					<execution>
 						<id>air-super-pom</id>
 						<phase>install</phase>
 						<goals>
@@ -98,6 +112,19 @@
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<executions>
+					<execution>
+						<id>super-pom-commons</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy-file</goal>
+						</goals>
+						<configuration>
+							<file>${project.build.outputDirectory}/common.pom</file>
+							<pomFile>${project.build.outputDirectory}/common.pom</pomFile>
+							<repositoryId>${deploy.repository.id}</repositoryId>
+							<url>${deploy.repository.url}</url>
+						</configuration>
+					</execution>
 					<execution>
 						<id>air-super-pom</id>
 						<phase>deploy</phase>
