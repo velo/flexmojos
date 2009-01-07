@@ -9,7 +9,9 @@
 		<version>${project.version}</version>
 	</parent>
 
+	<groupId>info.flex-mojos</groupId>
 	<artifactId>air-super-pom</artifactId>
+	<version>${project.version}</version>
 
 	<name>Air Super Pom</name>
 
