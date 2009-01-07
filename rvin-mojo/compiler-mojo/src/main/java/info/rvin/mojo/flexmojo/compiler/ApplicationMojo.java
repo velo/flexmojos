@@ -38,7 +38,7 @@ import static info.rvin.flexmojos.utilities.MavenUtils.resolveSourceFile;
 import static java.util.Arrays.asList;
 import flex2.tools.oem.Application;
 import info.flexmojos.compatibilitykit.FlexCompatibility;
-import info.rvin.flexmojos.utilities.MavenUtils;
+import info.flexmojos.utilities.FlashPlayerUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -326,14 +326,8 @@ public class ApplicationMojo
     private void updateSecuritySandbox()
         throws MojoExecutionException
     {
-        File userHome = new File( System.getProperty( "user.home" ) );
 
-        File fpTrustFolder = new File( userHome, getFPTrustFolder() );
-
-        if ( !fpTrustFolder.exists() )
-        {
-            fpTrustFolder.mkdirs();
-        }
+        File fpTrustFolder = FlashPlayerUtils.getTrustDir();
 
         File mavenCfg = new File( fpTrustFolder, "maven.cfg" );
         if ( !mavenCfg.exists() )
@@ -386,34 +380,6 @@ public class ApplicationMojo
         {
             throw new MojoExecutionException( "Unable to edit FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
         }
-    }
-
-    /*
-     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html #140756
-     */
-    private String getFPTrustFolder()
-        throws MojoExecutionException
-    {
-        if ( MavenUtils.isWindows() )
-        {
-            if ( MavenUtils.isWindowsVista() )
-            {
-                return "AppData/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-            }
-            return "Application Data/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-        }
-
-        if ( MavenUtils.isUnixBased() )
-        {
-            return ".macromedia/Flash_Player/#Security/FlashPlayerTrust";
-        }
-
-        if ( MavenUtils.isMac() )
-        {
-            return "Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-        }
-
-        throw new MojoExecutionException( "Unable to resolve current OS: " + MavenUtils.osString() );
     }
 
     @Override
