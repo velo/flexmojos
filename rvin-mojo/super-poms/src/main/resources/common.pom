@@ -12,6 +12,23 @@
 	<build>
 		<sourceDirectory>src/main/flex</sourceDirectory>
 		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>asdoc-mojo</artifactId>
+				<version>${project.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flexbuilder-mojo</artifactId>
+				<version>${project.version}</version>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -28,7 +45,6 @@
 					<groupId>info.flex-mojos</groupId>
 					<artifactId>flex-compiler-mojo</artifactId>
 					<version>${project.version}</version>
-					<extensions>true</extensions>
 				</plugin>
 				<plugin>
 					<groupId>info.flex-mojos</groupId>
