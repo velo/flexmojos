@@ -489,12 +489,22 @@ public class GeneratorMojo
 
     private String get0( String[] a )
     {
-        return a == null ? null : ( a.length < 1 ? null : a[0] );
+
+        return this.get0Or1( a, 0 );
     }
 
     private String get1( String[] a )
     {
-        return a == null ? null : ( a.length < 2 ? null : a[1] );
+
+        return this.get0Or1( a, 1 );
+    }
+
+    private String get0Or1( String[] a, int index )
+    {
+
+        String s = a == null ? null : ( a.length < index + 1 ? null : a[index] );
+
+        return s == null ? null : new File( s ).toURI().toString();
     }
 
     public As3TypeFactory getAs3TypeFactory()
