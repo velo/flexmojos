@@ -269,6 +269,12 @@
 		</dependency>
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
+			<artifactId>super-pom-commons</artifactId>
+			<version>${pom.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
 			<artifactId>testing-support</artifactId>
 			<version>${pom.version}</version>
 			<type>swc</type>
