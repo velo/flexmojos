@@ -57,8 +57,8 @@
 		<maven.version>2.0.9</maven.version>
 
 		<!-- distribution -->
-		<deploy.repository.id>maven.flex-mojos.info</deploy.repository.id>
-		<deploy.repository.url>scp://repository.flex-mojos.info/www/flex-mojos/repository</deploy.repository.url>
+		<deploy.repository.id>forge-releases</deploy.repository.id>
+		<deploy.repository.url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots/</deploy.repository.url>
 	</properties>
 
 	<build>
@@ -170,20 +170,22 @@
 
 	<distributionManagement>
 		<repository>
-			<id>${deploy.repository.id}</id>
+			<id>forge-releases</id>
 			<name>Flex-Mojos Release Repository</name>
-			<url>${deploy.repository.url}</url>
+			<url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>maven.flex-mojos.info</id>
+			<id>forge-snapshots</id>
 			<name>Flex-Mojos Snapshot Repository</name>
-			<url>scp://snapshot.flex-mojos.info/www/flex-mojos/snapshot</url>
+			<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>
 		</snapshotRepository>
+		<!--
 		<site>
 			<id>maven.flex-mojos.info</id>
 			<name>Flex-Mojos Plugin Documentation Site</name>
 			<url>scp://docs.flex-mojos.info/www/flex-mojos/docs</url>
 		</site>
+		-->
 	</distributionManagement>
 
 	<mailingLists>

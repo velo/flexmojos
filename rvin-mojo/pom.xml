@@ -67,7 +67,7 @@
 		<module>html-wrapper-mojo</module>
 		<module>archetypes</module>
 		<module>install-mojo</module>
-		<module>air-mojo</module>
+		<!--<module>air-mojo</module>-->
 		<module>super-poms</module>
 		<module>testing-support</module>
 		<module>source-mojo</module>

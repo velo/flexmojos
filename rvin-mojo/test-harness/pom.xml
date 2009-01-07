@@ -251,6 +251,12 @@
 		</dependency>
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
+			<artifactId>flexbuilder-mojo</artifactId>
+			<version>${pom.version}</version>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
 			<artifactId>flex-mojos-parent</artifactId>
 			<version>${pom.version}</version>
 			<type>pom</type>

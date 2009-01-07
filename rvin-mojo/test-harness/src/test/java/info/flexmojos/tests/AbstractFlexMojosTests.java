@@ -191,6 +191,7 @@ public class AbstractFlexMojosTests
             {
                 String pomContent = FileUtils.readFileToString( pom );
                 pomContent = pomContent.replace( "%{flex-mojos.version}", getProperty( "version" ) );
+                pomContent = pomContent.replace( "%{flex.version}", getProperty( "flex-version" ) );
                 FileUtils.writeStringToFile( pom, pomContent );
             }
 
