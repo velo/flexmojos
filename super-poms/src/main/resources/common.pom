@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>info.flex-mojos</groupId>
+	<artifactId>super-pom-commons</artifactId>
+	<version>${project.version}</version>
+
+	<packaging>pom</packaging>
+
+	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>asdoc-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>air-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>flex-compiler-mojo</artifactId>
+					<version>${project.version}</version>
+					<extensions>true</extensions>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>flexbuilder-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>generator-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>html-wrapper-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>install-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>optimizer-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>info.flex-mojos</groupId>
+					<artifactId>source-mojo</artifactId>
+					<version>${project.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<!-- Flex-Mojos Unit testing support -->
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>testing-support</artifactId>
+			<version>${project.version}</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

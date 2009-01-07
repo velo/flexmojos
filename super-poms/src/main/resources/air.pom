@@ -3,57 +3,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>info.flex-mojos</groupId>
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>super-pom-commons</artifactId>
+		<version>${project.version}</version>
+	</parent>
+
 	<artifactId>air-super-pom</artifactId>
-	<version>${project.version}</version>
 
 	<name>Air Super Pom</name>
 
 	<packaging>pom</packaging>
-
-	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
-		<testSourceDirectory>src/test/flex</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<version>${project.version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc-mojo</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-		</plugins>
-	</build>
-
-	<repositories>
-		<repository>
-			<id>flex-mojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>flex-mojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<dependencies>
 		<!-- Air SDK dependencies -->
@@ -62,15 +22,6 @@
 			<artifactId>air-framework</artifactId>
 			<version>${flex.sdk.version}</version>
 			<type>pom</type>
-		</dependency>
-
-		<!-- Flex-Mojos Unit testing support -->
-		<dependency>
-			<groupId>info.flex-mojos</groupId>
-			<artifactId>testing-support</artifactId>
-			<version>${project.version}</version>
-			<type>swc</type>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
