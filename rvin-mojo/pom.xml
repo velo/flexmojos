@@ -43,6 +43,9 @@
 					<excludes>
 						<exclude>**/*.vm</exclude>
 					</excludes>
+					<excludes>
+						<exclude>**/izpack/*</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
