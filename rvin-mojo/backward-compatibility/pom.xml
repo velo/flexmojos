@@ -27,7 +27,7 @@
 
 	<parent>
 		<groupId>info.flex-mojos</groupId>
-		<version>2.0</version>
+		<version>3.0-SNAPSHOT</version>
 		<artifactId>flex-mojos-parent</artifactId>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
 	</parent>
