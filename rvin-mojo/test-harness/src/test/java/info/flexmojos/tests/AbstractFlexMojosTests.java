@@ -181,6 +181,7 @@ public class AbstractFlexMojosTests
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName );
+
             FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 
             // projects filtering
