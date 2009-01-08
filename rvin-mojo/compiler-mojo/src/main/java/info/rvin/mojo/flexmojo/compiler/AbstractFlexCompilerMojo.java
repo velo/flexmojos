@@ -1998,7 +1998,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void writeConfigurationReport( Report report )
         throws MojoExecutionException
     {
-
         writeReport( report, "config" );
     }
 
