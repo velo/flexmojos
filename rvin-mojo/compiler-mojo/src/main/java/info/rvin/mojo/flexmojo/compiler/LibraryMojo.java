@@ -198,6 +198,13 @@ public class LibraryMojo
      */
     private boolean addMavenDescriptor;
 
+    /**
+     * The filename of the SWF movie to create
+     * 
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}.swc"
+     */
+    private File output;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -212,19 +219,7 @@ public class LibraryMojo
 
         super.setUp();
 
-        if ( outputFile == null )
-        {
-            if ( output == null )
-            {
-                outputFile = new File( build.getDirectory(), build.getFinalName() + ".swc" );
-            }
-            else
-            {
-                outputFile = new File( build.getDirectory(), output );
-            }
-        }
-
-        builder.setOutput( outputFile );
+        builder.setOutput( getOutput() );
 
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
             && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeResourceBundles )
@@ -407,7 +402,16 @@ public class LibraryMojo
                 return sourcePath;
             }
         }
-        for ( String sourcePath : (List<String>) project.getCompileSourceRoots() )
+        List<String> sourceRoots;
+        if ( project.getExecutionProject() != null )
+        {
+            sourceRoots = project.getExecutionProject().getCompileSourceRoots();
+        }
+        else
+        {
+            sourceRoots = project.getCompileSourceRoots();
+        }
+        for ( String sourcePath : sourceRoots )
         {
             if ( absolutePath.startsWith( sourcePath ) )
             {
@@ -452,7 +456,7 @@ public class LibraryMojo
 
         localized.setLogger( new CompileLogger( getLog() ) );
 
-        configuration.addLibraryPath( new File[] { outputFile } );
+        configuration.addLibraryPath( new File[] { getOutput() } );
         setLocales( new String[] { locale } );
 
         configuration.setSourcePath( new File[] { localePath } );
@@ -487,6 +491,12 @@ public class LibraryMojo
     protected String getDefaultLocale()
     {
         throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
+    }
+
+    @Override
+    protected File getOutput()
+    {
+        return this.output;
     }
 
 }
