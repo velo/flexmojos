@@ -156,8 +156,6 @@ public class TestCompilerMojo
         sourceFile = null;
         source = testSourceFile;
 
-        outputFile = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
-
         super.setUp();
     }
 
@@ -328,4 +326,9 @@ public class TestCompilerMojo
         return files.toArray( new File[0] );
     }
 
+    @Override
+    protected File getOutput()
+    {
+        return new File( build.getTestOutputDirectory(), "TestRunner.swf" );
+    }
 }

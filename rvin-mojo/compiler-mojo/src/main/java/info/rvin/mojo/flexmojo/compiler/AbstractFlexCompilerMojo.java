@@ -459,13 +459,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected File configFile;
 
     /**
-     * The filename of the SWF movie to create
-     * 
-     * @parameter
-     */
-    protected String output;
-
-    /**
      * specifies the version of the player the application is targeting. Features requiring a later version will not be
      * compiled into the application. The minimum value supported is "9.0.0".
      * 
@@ -773,11 +766,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected E builder;
 
     /**
-     * Compiled file
-     */
-    protected File outputFile;
-
-    /**
      * Flex OEM compiler configurations
      */
     protected Configuration configuration;
@@ -890,7 +878,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( sourcePaths == null )
         {
-            List<String> sourceRoots = project.getCompileSourceRoots();
+            List<String> sourceRoots;
+            if ( project.getExecutionProject() != null )
+            {
+                sourceRoots = project.getExecutionProject().getCompileSourceRoots();
+            }
+            else
+            {
+                sourceRoots = project.getCompileSourceRoots();
+            }
             List<File> sources = getValidSourceRoots( sourceRoots );
             // if ( mergeResourceBundle != null && mergeResourceBundle )
             if ( compiledLocales != null )
@@ -999,6 +995,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
         setMavenPathResolver();
+
+        // compiler didn't create parent if it doesn't exists
+        getOutput().getParentFile().mkdirs();
     }
 
     @SuppressWarnings( "deprecation" )
@@ -1835,7 +1834,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     {
         if ( isSetProjectFile )
         {
-            project.getArtifact().setFile( outputFile );
+            project.getArtifact().setFile( getOutput() );
         }
         Report report = builder.getReport();
         if ( linkReport )
@@ -2117,7 +2116,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         try
         {
-            FileUtils.copyFile( artifactFile, outputFile );
+            FileUtils.copyFile( artifactFile, getOutput() );
         }
         catch ( IOException e )
         {
@@ -2180,4 +2179,5 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         return compiler.getVersion();
     }
 
+    protected abstract File getOutput();
 }

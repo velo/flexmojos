@@ -71,8 +71,6 @@ public class TestLibraryCompilerMojo
             outputFolder.mkdirs();
         }
 
-        outputFile = new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
-
         includeSources = getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] );
 
         super.setUp();
@@ -96,8 +94,13 @@ public class TestLibraryCompilerMojo
     {
         super.tearDown();
 
-        projectHelper.attachArtifact( project, "swc", "test", outputFile );
+        projectHelper.attachArtifact( project, "swc", "test", getOutput() );
+    }
 
+    @Override
+    protected File getOutput()
+    {
+        return new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
     }
 
 }
