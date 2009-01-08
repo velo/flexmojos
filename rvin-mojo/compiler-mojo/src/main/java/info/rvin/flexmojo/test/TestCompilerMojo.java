@@ -330,4 +330,11 @@ public class TestCompilerMojo
     {
         return new File( build.getTestOutputDirectory(), "TestRunner.swf" );
     }
+
+    @Override
+    protected void compileModules()
+        throws MojoFailureException, MojoExecutionException
+    {
+        // modules are ignored on unit tests
+    }
 }
