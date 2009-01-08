@@ -92,7 +92,7 @@ public class ApplicationMojo
     /**
      * When true, tells flex-mojos to use link reports/load externs on modules compilation
      * 
-     * @parameter default-value="true"
+     * @parameter default-value="true" expression="${loadExternsOnModules}"
      */
     private boolean loadExternsOnModules;
 
@@ -203,35 +203,44 @@ public class ApplicationMojo
 
         if ( modules != null )
         {
+            compileModules();
+        }
+    }
+
+    protected void compileModules()
+        throws MojoFailureException, MojoExecutionException
+    {
+        if ( loadExternsOnModules )
+        {
             configuration.addExterns( new File[] { linkReportFile } );
-            for ( File module : modules )
+        }
+
+        for ( File module : modules )
+        {
+            getLog().info( "Compiling module " + module );
+            String moduleName = module.getName();
+            moduleName = moduleName.substring( 0, moduleName.lastIndexOf( '.' ) );
+
+            Application moduleBuilder;
+            try
             {
-                getLog().info( "Compiling module " + module );
-                String moduleName = module.getName();
-                moduleName = moduleName.substring( 0, moduleName.lastIndexOf( '.' ) );
-
-                Application moduleBuilder;
-                try
-                {
-                    moduleBuilder = new Application( module );
-                }
-                catch ( FileNotFoundException e )
-                {
-                    throw new MojoFailureException( "Unable to find " + module );
-                }
-
-                moduleBuilder.setConfiguration( configuration );
-                moduleBuilder.setLogger( new CompileLogger( getLog() ) );
-                File outputModule =
-                    new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "."
-                        + project.getPackaging() );
-                moduleBuilder.setOutput( outputModule );
-
-                build( moduleBuilder );
-
-                projectHelper.attachArtifact( project, "swf", moduleName, outputModule );
-
+                moduleBuilder = new Application( module );
             }
+            catch ( FileNotFoundException e )
+            {
+                throw new MojoFailureException( "Unable to find " + module, e );
+            }
+
+            moduleBuilder.setConfiguration( configuration );
+            moduleBuilder.setLogger( new CompileLogger( getLog() ) );
+            File outputModule =
+                new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "." + project.getPackaging() );
+            moduleBuilder.setOutput( outputModule );
+
+            build( moduleBuilder );
+
+            projectHelper.attachArtifact( project, "swf", moduleName, outputModule );
+
         }
     }
 
