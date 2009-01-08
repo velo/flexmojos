@@ -58,7 +58,7 @@
 
 		<!-- distribution -->
 		<deploy.repository.id>forge-releases</deploy.repository.id>
-		<deploy.repository.url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots/</deploy.repository.url>
+		<deploy.repository.url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases/</deploy.repository.url>
 	</properties>
 
 	<build>
