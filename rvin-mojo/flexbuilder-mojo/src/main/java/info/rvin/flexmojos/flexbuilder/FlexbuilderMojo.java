@@ -54,7 +54,6 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @extendsPlugin eclipse
  * @extendsGoal eclipse
  * @goal flexbuilder
- * @phase package
  * @requiresDependencyResolution
  */
 public class FlexbuilderMojo
@@ -328,8 +327,28 @@ public class FlexbuilderMojo
     private List<String> getSourceRoots()
     {
         List<String> sources = new ArrayList<String>();
-        sources.addAll( project.getCompileSourceRoots() );
-        sources.addAll( project.getTestCompileSourceRoots() );
+        List<String> sourceRoots;
+        if ( project.getExecutionProject() != null )
+        {
+            sourceRoots = project.getExecutionProject().getCompileSourceRoots();
+        }
+        else
+        {
+            sourceRoots = project.getCompileSourceRoots();
+        }
+        sources.addAll( sourceRoots );
+
+        List<String> testRoots;
+        if ( project.getExecutionProject() != null )
+        {
+            testRoots = project.getExecutionProject().getTestCompileSourceRoots();
+        }
+        else
+        {
+            testRoots = project.getTestCompileSourceRoots();
+        }
+        sources.addAll( testRoots );
+
         for ( Resource resource : (List<Resource>) project.getBuild().getResources() )
         {
             sources.add( resource.getDirectory() );

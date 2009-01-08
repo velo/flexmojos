@@ -112,12 +112,12 @@ public class GeneratorMojo
     protected Build build;
 
     /**
-     * @parameter default-value="${project.build.directory}/generated-sources/flex-mojos"
+     * @parameter default-value="${project.build.sourceDirectory}"
      */
     private File outputDirectory;
 
     /**
-     * @parameter
+     * @parameter default-value="${project.build.directory}/generated-sources/flex-mojos"
      */
     private File baseOutputDirectory;
 
@@ -469,20 +469,21 @@ public class GeneratorMojo
         {
             outputDirectory.mkdirs();
         }
-        project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
 
-        if ( baseOutputDirectory == null )
+        String outputPath = outputDirectory.getAbsolutePath();
+        if ( !project.getCompileSourceRoots().contains( outputPath ) )
         {
-            baseOutputDirectory = outputDirectory;
+            project.addCompileSourceRoot( outputPath );
         }
-        else
-        {
-            project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
 
-            if ( !baseOutputDirectory.exists() )
-            {
-                baseOutputDirectory.mkdirs();
-            }
+        if ( !baseOutputDirectory.exists() )
+        {
+            baseOutputDirectory.mkdirs();
+        }
+        String baseOutputPath = baseOutputDirectory.getAbsolutePath();
+        if ( !project.getCompileSourceRoots().contains( baseOutputPath ) )
+        {
+            project.addCompileSourceRoot( baseOutputPath );
         }
 
     }
