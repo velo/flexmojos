@@ -124,6 +124,13 @@ public class ApplicationMojo
      */
     private String defaultLocale;
 
+    /**
+     * The filename of the SWF movie to create
+     * 
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}.swf"
+     */
+    protected File output;
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -180,19 +187,7 @@ public class ApplicationMojo
 
         super.setUp();
 
-        if ( outputFile == null )
-        {
-            if ( output == null )
-            {
-                outputFile = new File( build.getDirectory(), build.getFinalName() + ".swf" );
-            }
-            else
-            {
-                outputFile = new File( build.getDirectory(), output );
-            }
-        }
-
-        builder.setOutput( outputFile );
+        builder.setOutput( getOutput() );
     }
 
     @Override
@@ -350,7 +345,7 @@ public class ApplicationMojo
             String cfg = IOUtils.toString( input );
             input.close();
 
-            String trustedFile = outputFile.getAbsolutePath();
+            String trustedFile = getOutput().getAbsolutePath();
             if ( cfg.contains( trustedFile ) )
             {
                 getLog().info( "Already trust on " + trustedFile );
@@ -398,6 +393,12 @@ public class ApplicationMojo
     protected String getDefaultLocale()
     {
         return this.defaultLocale;
+    }
+
+    @Override
+    protected File getOutput()
+    {
+        return this.output;
     }
 
 }
