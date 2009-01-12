@@ -54,10 +54,6 @@
 		<commons_io.version>1.4</commons_io.version>
 		<flex.sdk.version>3.2.0.3958</flex.sdk.version>
 		<maven.version>2.0.9</maven.version>
-
-		<!-- distribution -->
-		<deploy.repository.id>forge-releases</deploy.repository.id>
-		<deploy.repository.url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots/</deploy.repository.url>
 	</properties>
 
 	<build>

@@ -21,9 +21,9 @@ package info.rvin.mojo.flexmojo.test;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
-import info.flexmojos.compile.test.report.TestCaseReport;
+import info.flexmojos.test.report.TestCaseReport;
+import info.flexmojos.test.util.XStreamFactory;
 import info.flexmojos.tests.AbstractFlexMojosTests;
-import info.rvin.flexmojo.test.util.XStreamFactory;
 
 import java.io.File;
 import java.io.FileReader;
