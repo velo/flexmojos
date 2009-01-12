@@ -19,7 +19,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<configuration>
 					<runtimeLocales>
 						<locale>en_US</locale>

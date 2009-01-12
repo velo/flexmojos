@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Copyright 2008 Marvin Herman Froeder 
+	-->
+	<!--
+		Licensed under the Apache License, Version 2.0 (the "License"); you
+		may not use this file except in compliance with the License. You may
+		obtain a copy of the License at
+	-->
+	<!--
+	     http://www.apache.org/licenses/LICENSE-2.0
+	-->
+	<!--
+		Unless required by applicable law or agreed to in writing, software
+		distributed under the License is distributed on an "AS IS" BASIS,
+		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+		implied. See the License for the specific language governing
+		permissions and limitations under the License. Licensed to the Apache
+		Software Foundation (ASF) under one or more
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-mojos-parent</artifactId>
+		<version>3.0-SNAPSHOT</version>
+		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>flex-maven-plugin</artifactId>
+
+	<packaging>maven-plugin</packaging>
+
+	<name>Flex Maven Plugin</name>
+	<description>
+		With this maven plugin Flex3/AS3 sources can be compiled into a SWC or SWF package.
+	</description>
+
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>flexmojos.properties</include>
+					<include>META-INF/plexus/components.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>flexmojos.properties</exclude>
+					<exclude>META-INF/plexus/components.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.ops4j</groupId>
+				<artifactId>maven-inherit-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>inherit</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>compiler</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+		</dependency>
+		<dependency> <!-- required by unit tests -->
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.graniteds</groupId>
+			<artifactId>granite-generator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-eclipse-plugin</artifactId>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.reporting</groupId>
+			<artifactId>maven-reporting-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-source-plugin</artifactId>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>de.java2html</groupId>
+			<artifactId>java2html</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.cedarsoft.utils</groupId>
+			<artifactId>zip</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.compiler</groupId>
+			<artifactId>asdoc</artifactId>
+			<type>zip</type>
+			<classifier>template</classifier>
+		</dependency>
+	</dependencies>
+
+
+</project>

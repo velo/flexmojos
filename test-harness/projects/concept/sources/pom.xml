@@ -18,7 +18,7 @@
 		<plugins>
 				<plugin>
 					<groupId>info.flex-mojos</groupId>
-					<artifactId>source-mojo</artifactId>
+					<artifactId>flex-maven-plugin</artifactId>
 					<version>%{flex-mojos.version}</version>
 					<extensions>true</extensions>
 					<executions>
