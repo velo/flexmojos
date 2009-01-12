@@ -104,7 +104,6 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>attach-artifact-maven-plugin</artifactId>
-				<version>1.0-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<goals><goal>attach-artifact</goal></goals>
