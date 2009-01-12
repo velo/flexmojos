@@ -19,7 +19,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>optimizer-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<executions>
 					<execution>

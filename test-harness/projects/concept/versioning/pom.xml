@@ -33,7 +33,7 @@
 			</plugin>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<configuration>
 					<defines>
 						<BUILD::mavenVersion>"${pom.version}"</BUILD::mavenVersion>

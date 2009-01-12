@@ -21,11 +21,11 @@
         <plugins>
             <plugin>
                 <groupId>info.flex-mojos</groupId>
-                <artifactId>generator-mojo</artifactId>
+                <artifactId>flex-maven-plugin</artifactId>
                 <configuration>
-                    <includeClasses>
+                    <includeJavaClasses>
                         <class>test.*</class>
-                    </includeClasses>
+                    </includeJavaClasses>
                     <beanTemplate>
                         <param>${basedir}/src/main/resources/beanBase.gsp</param>
                         <param>${basedir}/src/main/resources/bean.gsp</param>
@@ -39,18 +39,14 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>info.flex-mojos</groupId>
-                <artifactId>flex-compiler-mojo</artifactId>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
-	<groupId>info.rvin.itest.issue-0134</groupId>
-	<artifactId>java</artifactId>
-	<version>1.0-SNAPSHOT</version>
+			<groupId>info.rvin.itest.issue-0134</groupId>
+			<artifactId>java</artifactId>
+			<version>1.0-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>

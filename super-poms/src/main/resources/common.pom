@@ -40,70 +40,11 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<extensions>true</extensions>
 			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc-mojo</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flexbuilder-mojo</artifactId>
-				<version>${project.version}</version>
-			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>asdoc-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>air-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>flex-compiler-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>flexbuilder-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>generator-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>html-wrapper-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>install-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>optimizer-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>info.flex-mojos</groupId>
-					<artifactId>source-mojo</artifactId>
-					<version>${project.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<repositories>

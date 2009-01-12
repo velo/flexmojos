@@ -17,8 +17,9 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>generator-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
+				<extensions>true</extensions>
 				<executions>
 					<execution>
 						<goals>
@@ -26,11 +27,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>
