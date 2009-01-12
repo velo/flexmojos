@@ -36,7 +36,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>generator-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<executions>
 					<execution>
@@ -55,20 +55,15 @@
 						<mapping>java.util.Map Object</mapping>
 					</typeMappings>
 					<!-- issue 62 -->
-					<includeClasses>
+					<includeJavaClasses>
 					   <class>*DTO</class>
 					   <class>*Pojo</class>
-					</includeClasses>
-					<excludeClasses>
+					</includeJavaClasses>
+					<excludeJavaClasses>
 					   <class>Skip*</class>
 					   <class>*.Another*</class>
-					</excludeClasses>
+					</excludeJavaClasses>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<extensions>true</extensions>
 			</plugin>
 		</plugins>
 	</build>

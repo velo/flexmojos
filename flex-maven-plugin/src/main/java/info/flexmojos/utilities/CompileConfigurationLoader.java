@@ -70,7 +70,7 @@ public class CompileConfigurationLoader
         {
             Plugin plugin = (Plugin) it.next();
 
-            if ( plugin.getArtifactId().equals( "flex-mojos" ) || plugin.getArtifactId().equals( "flex-compiler-mojo" ) )
+            if ( plugin.getArtifactId().equals( "flex-maven-plugin" ) )
             {
                 Xpp3Dom o = (Xpp3Dom) plugin.getConfiguration();
 

@@ -26,6 +26,8 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -135,7 +137,11 @@ public class FlexbuilderMojo
         super.writeConfiguration( deps );
 
         String packaging = project.getPackaging();
-        writeAsProperties( packaging );
+
+        if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
+        {
+            writeAsProperties( packaging );
+        }
 
         if ( SWF.equals( packaging ) )
         {
@@ -285,6 +291,7 @@ public class FlexbuilderMojo
             context.put( "includes", "-include-sources " + getPlainSources() );
         }
         context.put( "sources", getRelativeSources() );
+        context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
 
@@ -305,10 +312,16 @@ public class FlexbuilderMojo
         return plain( sources );
     }
 
-    private List<String> getRelativeSources()
+    private Collection<String> getRelativeSources()
     {
-        List<String> sources = new ArrayList<String>();
-        List<String> sourceRoots = getSourceRoots();
+        String[] sourcePaths = CompileConfigurationLoader.getCompilerPluginSettings( project, "sourcePaths" );
+        if ( sourcePaths != null )
+        {
+            return Arrays.asList( sourcePaths );
+        }
+
+        Collection<String> sources = new HashSet<String>();
+        Collection<String> sourceRoots = getSourceRoots();
         for ( String sourceRoot : sourceRoots )
         {
             File source = new File( sourceRoot );
@@ -318,13 +331,27 @@ public class FlexbuilderMojo
                 sources.add( relative );
             }
         }
+
+        String merge = CompileConfigurationLoader.getCompilerPluginSetting( project, "mergeResourceBundle" );
+        if ( Boolean.valueOf( merge ) )
+        {
+            String resourceBundlePath =
+                CompileConfigurationLoader.getCompilerPluginSetting( project, "resourceBundlePath" );
+            if ( resourceBundlePath == null )
+            {
+                resourceBundlePath = "src/main/locales/{locale}";
+            }
+
+            sources.add( resourceBundlePath );
+        }
+
         return sources;
     }
 
     @SuppressWarnings( "unchecked" )
-    private List<String> getSourceRoots()
+    private Collection<String> getSourceRoots()
     {
-        List<String> sources = new ArrayList<String>();
+        Set<String> sources = new HashSet<String>();
         List<String> sourceRoots;
         if ( project.getExecutionProject() != null )
         {
@@ -355,6 +382,7 @@ public class FlexbuilderMojo
         {
             sources.add( resource.getDirectory() );
         }
+
         return sources;
     }
 
@@ -409,6 +437,13 @@ public class FlexbuilderMojo
     protected void setupExtras()
         throws MojoExecutionException
     {
+
+        String packaging = project.getPackaging();
+
+        if ( !SWF.equals( packaging ) && !SWC.equals( packaging ) )
+        {
+            return;
+        }
 
         EclipseConfigFile utfConfig = new EclipseConfigFile();
         utfConfig.setName( ".settings/org.eclipse.core.resources.prefs" );

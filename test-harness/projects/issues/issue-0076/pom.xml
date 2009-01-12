@@ -36,7 +36,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<configuration>
 					<locales>
 						<locale>en_US</locale>
@@ -54,7 +54,7 @@
 				<plugins>
 					<plugin>
 						<groupId>info.flex-mojos</groupId>
-						<artifactId>flex-compiler-mojo</artifactId>
+						<artifactId>flex-maven-plugin</artifactId>
 						<configuration>
 							<mergeResourceBundle>true</mergeResourceBundle>
 						</configuration>
@@ -69,7 +69,7 @@
 				<plugins>
 					<plugin>
 						<groupId>info.flex-mojos</groupId>
-						<artifactId>flex-compiler-mojo</artifactId>
+						<artifactId>flex-maven-plugin</artifactId>
 						<configuration>
 							<mergeResourceBundle>false</mergeResourceBundle>
 						</configuration>

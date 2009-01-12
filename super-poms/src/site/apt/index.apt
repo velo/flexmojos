@@ -16,15 +16,6 @@
 ~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ~~
 
- ------
- Introduction
- ------
- Joost den Boer
- ------
- 12 may 2008
- ------
-
-
 Flex Super Pom
 
   A maven project for a Adobe Flex application needs a lot of configuration

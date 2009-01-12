@@ -39,7 +39,7 @@ public class InstallMojoTest
         verifier.setAutoclean( false );
         verifier.getCliOptions().add( "-Dflex.sdk.folder=" + sdkDir.getAbsolutePath() );
         verifier.getCliOptions().add( "-Dversion=1.0.0-fake" );
-        verifier.executeGoal( "info.flex-mojos:install-mojo:" + getProperty( "version" ) + ":install-sdk" );
+        verifier.executeGoal( "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":install-sdk" );
         verifier.verifyErrorFreeLog();
 
         File repoDir = new File( getProperty( "fake-repo" ) );

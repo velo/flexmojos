@@ -39,12 +39,12 @@
 	    <plugins>
 	        <plugin>
 	            <groupId>info.flex-mojos</groupId>
-	            <artifactId>flex-compiler-mojo</artifactId>
+	            <artifactId>flex-maven-plugin</artifactId>
 	            <extensions>true</extensions>
 	        </plugin>
 	        <plugin>
 	            <groupId>info.flex-mojos</groupId>
-	            <artifactId>flexcover-mojo</artifactId>
+	            <artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<dependencies>
 					<dependency>
@@ -68,7 +68,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 			</plugin>
 	      	<plugin>
 				<groupId>info.flex-mojos</groupId>

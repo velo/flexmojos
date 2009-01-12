@@ -48,7 +48,7 @@ public class IT0015CoverageTest
         throws Exception
     {
         File testDir = getProject( "/coverage/asdoc-inclusion-exclusion" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
         File vermelho = new File( testDir, "target/asdoc/Vermelho.html" );
         assertFalse( "Should not generate Vermelho.html.", vermelho.exists() );
         File amarelo = new File( testDir, "target/asdoc/Amarelo.html" );

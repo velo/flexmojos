@@ -109,7 +109,7 @@ public class IT0013IssuesTest
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0027" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
     @Test( timeOut = 120000 )
@@ -148,7 +148,7 @@ public class IT0013IssuesTest
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0044" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
     @Test( timeOut = 120000 )
@@ -192,7 +192,7 @@ public class IT0013IssuesTest
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0067" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
     @Test( timeOut = 120000 )
@@ -200,7 +200,7 @@ public class IT0013IssuesTest
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0068" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
     @Test( timeOut = 120000 )

@@ -37,11 +37,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<configuration>
 					<packageDescriptions>
 						<info.flexmojos.it>package info description</info.flexmojos.it>
