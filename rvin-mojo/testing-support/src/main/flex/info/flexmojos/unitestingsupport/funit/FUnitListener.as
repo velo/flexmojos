@@ -26,8 +26,8 @@ package info.flexmojos.unitestingsupport.funit
 	import funit.core.TestSuite;
 	import funit.core.TestSuiteResult;
 	
-	import info.flexmojos.compile.test.report.ErrorReport;
-	import info.flexmojos.compile.test.report.TestCaseReport;
+	import info.flexmojos.test.report.ErrorReport;
+	import info.flexmojos.test.report.TestCaseReport;
 	import info.flexmojos.unitestingsupport.SocketReporter;
 	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 	

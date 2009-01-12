@@ -82,22 +82,9 @@
 
 	<modules>
 		<module>flex-mojos-parent</module>
-		<module>backward-compatibility</module>
-		<module>utils</module>
-		<module>optimizer-mojo</module>
-		<module>compiler-mojo</module>
-		<module>encrypter-mojo</module>
-		<module>asdoc-mojo</module>
-		<module>generator-mojo</module>
-		<module>html-wrapper-mojo</module>
-		<module>archetypes</module>
-		<module>install-mojo</module>
-		<!--<module>air-mojo</module>-->
+		<module>mojos</module>
 		<module>super-poms</module>
 		<module>testing-support</module>
-		<module>source-mojo</module>
-		<module>flexcover-mojo</module>
-		<module>flexbuilder-mojo</module>
 		<!--
 Tests can't be released due to some snapshot dependencies
  -->

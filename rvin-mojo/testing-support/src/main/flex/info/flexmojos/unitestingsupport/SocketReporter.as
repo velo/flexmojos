@@ -24,9 +24,9 @@ package info.flexmojos.unitestingsupport
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	
-	import info.flexmojos.compile.test.report.ErrorReport;
-	import info.flexmojos.compile.test.report.TestCaseReport;
-	import info.flexmojos.compile.test.report.TestMethodReport;
+	import info.flexmojos.test.report.ErrorReport;
+	import info.flexmojos.test.report.TestCaseReport;
+	import info.flexmojos.test.report.TestMethodReport;
 	import info.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
 	import info.flexmojos.unitestingsupport.asunit.AsUnitListener;
 	import info.flexmojos.unitestingsupport.flexunit.FlexUnitListener;

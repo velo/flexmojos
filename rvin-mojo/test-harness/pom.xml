@@ -59,7 +59,6 @@
 
 		<asdoc-mojo>${fake-repo}/info/flex-mojos/asdoc-mojo/${pom.version}/asdoc-mojo-${pom.version}.jar</asdoc-mojo>
 		<flex-compiler-mojo>${fake-repo}/info/flex-mojos/flex-compiler-mojo/${pom.version}/flex-compiler-mojo-${pom.version}.jar</flex-compiler-mojo>
-		<encrypter-mojo>${fake-repo}/info/flex-mojos/encrypter-mojo/${pom.version}/encrypter-mojo-${pom.version}.jar</encrypter-mojo>
 		<html-wrapper-mojo>${fake-repo}/info/flex-mojos/html-wrapper-mojo/${pom.version}/html-wrapper-mojo-${pom.version}.jar</html-wrapper-mojo>
 		<install-mojo>${fake-repo}/info/flex-mojos/install-mojo/${pom.version}/install-mojo-${pom.version}.jar</install-mojo>
 		<optimizer-mojo>${fake-repo}/info/flex-mojos/optimizer-mojo/${pom.version}/optimizer-mojo-${pom.version}.jar</optimizer-mojo>
@@ -173,7 +172,6 @@
 					<jarFiles>
 						<jarFile>${asdoc-mojo}</jarFile>
 						<jarFile>${flex-compiler-mojo}</jarFile>
-						<jarFile>${encrypter-mojo}</jarFile>
 						<jarFile>${html-wrapper-mojo}</jarFile>
 						<jarFile>${install-mojo}</jarFile>
 						<jarFile>${optimizer-mojo}</jarFile>
@@ -195,10 +193,6 @@
 			<artifactId>emma</artifactId>
 			<version>2.0.5312</version>
 		</dependency>
-		<!--
-			<dependency> <groupId>junit</groupId> <artifactId>junit</artifactId>
-			</dependency>
-		-->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
@@ -224,12 +218,6 @@
 		<dependency>
 			<groupId>info.flex-mojos</groupId>
 			<artifactId>flex-compiler-mojo</artifactId>
-			<version>${pom.version}</version>
-			<type>maven-plugin</type>
-		</dependency>
-		<dependency>
-			<groupId>info.flex-mojos</groupId>
-			<artifactId>encrypter-mojo</artifactId>
 			<version>${pom.version}</version>
 			<type>maven-plugin</type>
 		</dependency>

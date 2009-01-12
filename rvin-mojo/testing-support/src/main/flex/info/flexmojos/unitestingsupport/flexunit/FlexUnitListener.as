@@ -19,7 +19,7 @@ package info.flexmojos.unitestingsupport.flexunit
 {
 	import flexunit.framework.*;
 	
-	import info.flexmojos.compile.test.report.ErrorReport;
+	import info.flexmojos.test.report.ErrorReport;
 	import info.flexmojos.unitestingsupport.SocketReporter;
 	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 
