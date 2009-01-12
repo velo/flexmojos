@@ -16,15 +16,6 @@
 ~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ~~
 
- ------
- Introduction
- ------
- Joost den Boer
- ------
- 09 april 2008
- ------
-
-
 Flex compiler plugin
 
   The Flex Compiler Plugin is used to compile the sources of your flex project.

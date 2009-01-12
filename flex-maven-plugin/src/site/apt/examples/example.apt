@@ -16,14 +16,6 @@
 ~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ~~
 
- ------
- Introduction
- ------
- Joost den Boer
- ------
- 09 april 2008
- ------
-
 Change Compiler Configuration
  
   There seems to be a bug in the Adobe Flex Compiler for java. Changes directly

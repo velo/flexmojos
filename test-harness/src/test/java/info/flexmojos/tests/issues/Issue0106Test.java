@@ -30,7 +30,7 @@ public class Issue0106Test
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0106" );
-        test( testDir, "asdoc:asdoc" );
+        test( testDir, "info.flex-mojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
 }

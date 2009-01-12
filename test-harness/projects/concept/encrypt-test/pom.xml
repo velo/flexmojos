@@ -37,7 +37,7 @@
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<configuration>
 					<moduleFiles>
 						<module>module1/AnModule.mxml</module>
@@ -47,7 +47,7 @@
 			</plugin>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>encrypter-mojo</artifactId>
+				<artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<executions>
 					<execution>
