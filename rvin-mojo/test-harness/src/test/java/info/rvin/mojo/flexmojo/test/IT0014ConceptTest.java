@@ -59,13 +59,6 @@ public class IT0014ConceptTest
     }
 
     @Test( timeOut = 120000 )
-    public void testEncrypterMojo()
-        throws Exception
-    {
-        standardConceptTester( "encrypt-test" );
-    }
-
-    @Test( timeOut = 120000 )
     public void testFlashPlayer10()
         throws Exception
     {

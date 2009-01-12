@@ -52,46 +52,29 @@
 
 	<packaging>swc</packaging>
 
-	<properties>
-		<baseSources>${project.build.directory}/generated-sources/flex-mojos</baseSources>
-		<sources>src/main/flex</sources>
-	</properties>
-
 	<build>
-		<sourceDirectory>${sources}</sourceDirectory>
+		<sourceDirectory>src/main/flex</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
-				<artifactId>generator-mojo</artifactId>
-				<version>2.0M10</version>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<version>3.0-SNAPSHOT</version>
+				<extensions>true</extensions>
+				<configuration>
+					<debug>true</debug>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<baseOutputDirectory>${baseSources}</baseOutputDirectory>
-							<outputDirectory>${sources}</outputDirectory>
 							<includeClasses>
-								<include>info.flexmojos.compile.test.report.*Report</include>
+								<include>info.flexmojos.test.report.*Report</include>
 							</includeClasses>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>flex-compiler-mojo</artifactId>
-				<version>2.0M10</version>
-				<extensions>true</extensions>
-				<configuration>
-					<debug>true</debug>
-					<mergeResourceBundle>false</mergeResourceBundle>
-					<sourcePaths>
-						<path>${baseSources}</path>
-						<path>${sources}</path>
-					</sourcePaths>
-				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>

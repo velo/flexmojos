@@ -111,7 +111,7 @@ public class AbstractFlexMojosTests
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
-                verifier.executeGoal( "dependency:resolve" );
+                verifier.executeGoal( "dependency:go-offline" );
             }
             catch ( Throwable t )
             {
@@ -129,7 +129,7 @@ public class AbstractFlexMojosTests
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
         verifier.getCliOptions().add( "-B" );
-        verifier.getCliOptions().add( "-X" );
+        verifier.getCliOptions().add( "-e" );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
         Properties sysProps = new Properties();

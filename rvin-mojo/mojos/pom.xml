@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+	<!--
+		This program is free software; you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation; either version 2 of the License, or (at
+		your option) any later version.
+	-->
+	<!--
+		This program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details.
+	-->
+	<!--
+		You should have received a copy of the GNU General Public License
+		along with this program; if not, write to the Free Software
+		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+		02110-1301, USA.
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>info.flex-mojos</groupId>
+		<artifactId>flex-mojos-parent</artifactId>
+		<version>3.0-SNAPSHOT</version>
+		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>flex-compiler-mojo</artifactId>
+
+	<packaging>maven-plugin</packaging>
+
+	<name>Flex Compiler Maven Mojo</name>
+	<description>
+		With this maven plugin Flex3/AS3 sources can be compiled into a SWC or SWF package.
+	</description>
+
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>flexmojos.properties</include>
+					<include>META-INF/plexus/components.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>flexmojos.properties</exclude>
+					<exclude>META-INF/plexus/components.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.ops4j</groupId>
+				<artifactId>maven-inherit-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>inherit</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>attach-artifact-maven-plugin</artifactId>
+				<version>1.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<goals><goal>attach-artifact</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifacts>
+						<artifact>
+							<artifactId>asdoc-mojo</artifactId>
+							<goalPrefix>asdoc</goalPrefix>
+						</artifact>
+						<artifact>
+							<artifactId>flexcover-mojo</artifactId>
+						</artifact>
+						<artifact>
+							<artifactId>flexbuilder-mojo</artifactId>
+							<goalPrefix>flexbuilder</goalPrefix>
+						</artifact>
+						<artifact>
+							<artifactId>generator-mojo</artifactId>
+						</artifact>
+						<artifact>
+							<artifactId>html-wrapper-mojo</artifactId>
+						</artifact>
+						<artifact>
+							<artifactId>install-mojo</artifactId>
+						</artifact>
+						<artifact>
+							<artifactId>optimizer-mojo</artifactId>
+						</artifact>
+						<artifact>
+							<artifactId>source-mojo</artifactId>
+						</artifact>
+					</artifacts>
+					<defaultPomFile>${basedir}/pom.xml</defaultPomFile>
+					<defaultFile>${project.build.directory}/${project.build.finalName}.jar</defaultFile>
+					<updatePom>true</updatePom>
+					<updatePlugin>true</updatePlugin>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>compiler</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+		</dependency>
+		<dependency> <!-- required by unit tests -->
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.graniteds</groupId>
+			<artifactId>granite-generator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-eclipse-plugin</artifactId>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.reporting</groupId>
+			<artifactId>maven-reporting-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-source-plugin</artifactId>
+			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>de.java2html</groupId>
+			<artifactId>java2html</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.cedarsoft.utils</groupId>
+			<artifactId>zip</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.compiler</groupId>
+			<artifactId>asdoc</artifactId>
+			<type>zip</type>
+			<classifier>template</classifier>
+		</dependency>
+	</dependencies>
+
+
+</project>

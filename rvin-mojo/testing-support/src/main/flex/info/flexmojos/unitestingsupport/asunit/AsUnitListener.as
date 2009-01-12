@@ -20,7 +20,7 @@ package info.flexmojos.unitestingsupport.asunit
 	import asunit.errors.AssertionFailedError;
 	import asunit.framework.*;
 	
-	import info.flexmojos.compile.test.report.ErrorReport;
+	import info.flexmojos.test.report.ErrorReport;
 	import info.flexmojos.unitestingsupport.SocketReporter;
 	import info.flexmojos.unitestingsupport.util.ClassnameUtil;
 
