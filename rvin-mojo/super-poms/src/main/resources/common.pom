@@ -41,6 +41,7 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
+				<version>${project.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>

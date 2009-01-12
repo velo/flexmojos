@@ -24,7 +24,8 @@ public class IT0091HelloWordTest
     extends AbstractFlexMojosTests
 {
 
-    @Test( timeOut = 120000 )
+    @Test
+    // ( timeOut = 120000 )
     public void helloWordTest()
         throws Exception
     {
@@ -36,7 +37,8 @@ public class IT0091HelloWordTest
         test( getProject( "intro/hello-world" ), "install" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test
+    // ( timeOut = 120000 )
     public void helloWordNoInherit()
         throws Exception
     {
