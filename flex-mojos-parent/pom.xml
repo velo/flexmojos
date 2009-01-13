@@ -18,12 +18,13 @@
 		permissions and limitations under the License. Licensed to the Apache
 		Software Foundation (ASF) under one or more
 	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.flex-mojos</groupId>
 	<artifactId>flex-mojos-parent</artifactId>
-	<version>3.0-alpha2</version>
+	<version>3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos Parent</name>
@@ -160,8 +161,8 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha2</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha2</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
 	</scm>
 
 	<distributionManagement>
