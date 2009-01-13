@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>flex-mojos-installer</artifactId>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<version>2.0M11-SNAPSHOT</version>
 	</parent>
 

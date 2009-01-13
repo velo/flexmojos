@@ -13,7 +13,7 @@
 	<mx:Script>
 		<![CDATA[
 
-			import info.flexmojos.it.AClass;
+			import org.sonatype.flexmojos.it.AClass;
 
 			/**
 			 * AClass

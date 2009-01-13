@@ -13,9 +13,9 @@ package advancedflex.debugger.aut.framework
 	
 	import flash.utils.IDataOutput;
 	
-	import info.flexmojos.test.report.ErrorReport;
-	import info.flexmojos.test.report.TestCaseReport;
-	import info.flexmojos.unitestingsupport.SocketReporter;
+	import org.sonatype.flexmojos.test.report.ErrorReport;
+	import org.sonatype.flexmojos.test.report.TestCaseReport;
+	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 	
 	public class ProtectedConsole extends Console
 	{

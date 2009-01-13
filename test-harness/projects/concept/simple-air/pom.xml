@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>air-super-pom</artifactId>
 		<version>%{flex-mojos.version}</version>
 	</parent>

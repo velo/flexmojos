@@ -19,7 +19,7 @@
 		<![CDATA[
 			import mx.events.FlexEvent;
 
-			import info.flexmojos.unitestingsupport.SocketReporter;
+			import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 		
 $imports
 

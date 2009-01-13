@@ -9,6 +9,6 @@
 
 -->
 <componentPackage>
-	<component id="Azul" class="info.flexmojos.it.Azul"/>
-	<component id="Amarelo" class="info.flexmojos.it.Amarelo"/>
+	<component id="Azul" class="org.sonatype.flexmojos.it.Azul"/>
+	<component id="Amarelo" class="org.sonatype.flexmojos.it.Amarelo"/>
 </componentPackage>
