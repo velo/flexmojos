@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+                layout="vertical" width="488" height="384" creationComplete="getList()">
+
+    <mx:Form width="100%" height="100%" defaultButton="{saveButton}">
+        <mx:FormHeading label="Todo List" width="100%"/>
+        <mx:FormItem label="ID:" width="127">
+            <mx:TextInput width="100%" id="idText"
+                          text="{TodoItem(todoDatagrid.selectedItem).id}" editable="false" enabled="false"/>
+        </mx:FormItem>
+        <mx:FormItem label="Title:" width="345">
+            <mx:TextInput width="100%" id="titleText"
+                          text="{TodoItem(todoDatagrid.selectedItem).title}"/>
+        </mx:FormItem>
+        <mx:DataGrid id="todoDatagrid" width="100%" height="100%" dataProvider="{todoItems}">
+            <mx:columns>
+                <mx:DataGridColumn headerText="ID" dataField="id" width="30"/>
+                <mx:DataGridColumn headerText="Title" dataField="title"/>
+            </mx:columns>
+        </mx:DataGrid>
+    </mx:Form>
+
+    <mx:ControlBar horizontalAlign="center">
+        <mx:Button label="New" click="setDefault()"/>
+        <mx:Button label="Save" id="saveButton" click="save()"
+                   textAlign="center"/>
+        <mx:Button label="Delete" click="remove()"/>
+    </mx:ControlBar>
+
+    <mx:RemoteObject id="todoService" showBusyCursor="true"
+                     fault="onFault(event)" destination="todoService">
+        <mx:method name="save" result="onResultSave(event)" fault="onFault(event)"/>
+        <mx:method name="remove" result="onResultRemove(event)" fault="onFault(event)"/>
+        <mx:method name="getList" result="onResultGetList(event)" fault="onFault(event)"/>
+    </mx:RemoteObject>
+
+    <mx:Script>
+        <![CDATA[
+        import mx.collections.ArrayCollection;
+        import org.epseelon.samples.todolist.view.entity.TodoItem;
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.controls.Alert;
+
+        [Bindable]
+        private var todoItems:ArrayCollection;
+
+        private var todoItem:TodoItem;
+
+        public function save():void
+        {
+            this.todoItem = new TodoItem();
+            this.todoItem.id = new Number(idText.text);
+            this.todoItem.title = titleText.text;
+            todoService.save(todoItem);
+        }
+
+        public function onResultSave(event:ResultEvent):void
+        {
+            status = "Item was successfully saved with ID: " + TodoItem(event.result).id;
+            getList();
+        }
+
+        public function remove():void
+        {
+            if (todoDatagrid.selectedItem != null) {
+                todoItem = todoDatagrid.selectedItem as TodoItem;
+                todoService.remove(todoItem);
+            } else {
+                Alert.show("Select an item to delete");
+            }
+        }
+
+        public function onResultRemove(event:ResultEvent):void
+        {
+            status = "Deletion succeeded!";
+            getList();
+        }
+
+        public function getList():void
+        {
+            todoService.getList();
+        }
+
+        public function onResultGetList(event:ResultEvent):void
+        {
+            todoItems = event.result as ArrayCollection;
+        }
+
+        public function setDefault():void
+        {
+            idText.text = "";
+            titleText.text = "";
+        }
+
+
+        public function onFault(event:FaultEvent):void
+        {
+            Alert.show(event.fault.message);
+        }
+        ]]>
+    </mx:Script>
+</mx:TitleWindow>

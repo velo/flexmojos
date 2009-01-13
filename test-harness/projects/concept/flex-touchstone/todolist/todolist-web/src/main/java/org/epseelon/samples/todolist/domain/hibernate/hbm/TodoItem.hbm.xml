@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.epseelon.samples.todolist.domain.TodoItem" table="todoitem">
+        <id name="id" column="ID_TODOITEM" type="long">
+            <generator class="native"/>
+        </id>
+
+        <property name="title" column="TITLE" type="string" not-null="true" length="50"/>
+    </class>
+</hibernate-mapping>

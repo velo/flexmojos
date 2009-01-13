@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services-config>
+    <services>
+        <service-include file-path="remoting-config.xml"/>
+    </services>
+
+    <!-- Spring factory registration -->
+    <factories>
+        <factory id="spring"
+                 class="org.epseelon.samples.todolist.controller.SpringFactory"/>
+    </factories>
+
+    <channels>
+        <channel-definition id="channel-amf"
+                            class="mx.messaging.channels.AMFChannel">
+            <endpoint
+                    url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf"
+                    class="flex.messaging.endpoints.AMFEndpoint"/>
+            <properties>
+                <polling-enabled>false</polling-enabled>
+            </properties>
+        </channel-definition>
+    </channels>
+
+    <logging>
+        <target class="flex.messaging.log.ConsoleTarget"
+                level="Error">
+            <properties>
+                <prefix>[BlazeDS]</prefix>
+                <includeDate>true</includeDate>
+                <includeTime>false</includeTime>
+                <includeLevel>true</includeLevel>
+                <includeCategory>true</includeCategory>
+            </properties>
+            <filters>
+                <pattern>Endpoint.*</pattern>
+                <pattern>Service.*</pattern>
+                <pattern>Message.*</pattern>
+                <pattern>DataService.*</pattern>
+                <pattern>Configuration</pattern>
+            </filters>
+        </target>
+    </logging>
+
+    <system>
+        <redeploy>
+            <enabled>true</enabled>
+            <watch-interval>20</watch-interval>
+            <watch-file>
+                {context.root}/WEB-INF/flex/services-config.xml
+            </watch-file>
+            <watch-file>
+                {context.root}/WEB-INF/flex/remoting-config.xml
+            </watch-file>
+            <touch-file>{context.root}/WEB-INF/web.xml</touch-file>
+        </redeploy>
+    </system>
+</services-config>
