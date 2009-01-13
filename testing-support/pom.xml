@@ -54,6 +54,12 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<sourcePaths>
+						<path>target/generated-sources/flex-mojos</path>
+						<path>src/main/flex</path>
+					</sourcePaths>
+				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
