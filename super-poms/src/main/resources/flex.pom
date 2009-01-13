@@ -29,12 +29,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>super-pom-commons</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
-	<groupId>info.flex-mojos</groupId>
+	<groupId>org.sonatype.flexmojos</groupId>
 	<artifactId>flex-super-pom</artifactId>
 	<version>${project.version}</version>
 

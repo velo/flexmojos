@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
 		<version>%{flex-mojos.version}</version>
 	</parent>
@@ -38,12 +38,12 @@
 		<testSourceDirectory>tests</testSourceDirectory>
 	    <plugins>
 	        <plugin>
-	            <groupId>info.flex-mojos</groupId>
+	            <groupId>org.sonatype.flexmojos</groupId>
 	            <artifactId>flex-maven-plugin</artifactId>
 	            <extensions>true</extensions>
 	        </plugin>
 	        <plugin>
-	            <groupId>info.flex-mojos</groupId>
+	            <groupId>org.sonatype.flexmojos</groupId>
 	            <artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<dependencies>
@@ -67,11 +67,11 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<groupId>info.flex-mojos</groupId>
+				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
 			</plugin>
 	      	<plugin>
-				<groupId>info.flex-mojos</groupId>
+				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flexcover</artifactId>
 				<version>%{flex-mojos.version}</version>
 	      	</plugin>
