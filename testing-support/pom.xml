@@ -26,7 +26,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId>
-		<version>3.0-alpha2</version>
+		<version>3.0-SNAPSHOT</version>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
 	</parent>
 
@@ -40,7 +40,7 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
-				<version>3.0-alpha2</version>
+				<version>3.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
