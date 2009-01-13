@@ -22,7 +22,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>info.flex-mojos</groupId>
+	<groupId>org.sonatype.flexmojos</groupId>
 	<artifactId>flex-mojos-aggregator</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -88,11 +88,17 @@
 							<header>src/etc/header.txt</header>
 							<excludes>
 								<exclude>**/*.vm</exclude>
+								<exclude>**/*.zip</exclude>
+								<exclude>**/*.swc</exclude>
+								<exclude>**/*.swf</exclude>
+								<exclude>**/*.ser</exclude>
 								<exclude>**/izpack/*</exclude>
 							</excludes>
 							<mapping>
 								<mxml>XML_STYLE</mxml>
 								<as>JAVADOC_STYLE</as>
+								<aj>JAVADOC_STYLE</aj>
+								<pom>XML_STYLE</pom>
 							</mapping>
 							<aggregate>true</aggregate>
 						</configuration>

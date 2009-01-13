@@ -27,7 +27,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-mojos-installer</artifactId>
 		<version>2.0M11-SNAPSHOT</version>
 	</parent>
@@ -148,7 +148,7 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>info.flex-mojos</groupId>
+									<groupId>org.sonatype.flexmojos</groupId>
 									<artifactId>flex-mojos-installer-destination-panel</artifactId>
 									<version>${project.version}</version>
 									<type>jar</type>
@@ -186,80 +186,80 @@
 		</dependency>
 
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>asdoc-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>flex-compiler-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>encrypter-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>generator-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>html-wrapper-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>install-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>optimizer-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>source-mojo</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>maven-plugin</type>
 		</dependency>
 		<!--
-			<dependency> <groupId>info.flex-mojos</groupId>
+			<dependency> <groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>flex-mojos-parent</artifactId>
 			<version>${flex-mojos.version}</version> <type>pom</type>
 			</dependency>
 		-->
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>flex-super-pom</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>air-super-pom</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>testing-support</artifactId>
 			<version>${flex-mojos.version}</version>
 			<type>swc</type>
 		</dependency>
 
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>flex-mojos-installer-destination-panel</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
 		<version>%{flex-mojos.version}</version>
 	</parent>
 
-	<groupId>info.flex-mojos.itest</groupId>
+	<groupId>org.sonatype.flexmojos.itest</groupId>
 	<artifactId>simple-generation</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
@@ -16,7 +16,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>info.flex-mojos</groupId>
+				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
 				<version>%{flex-mojos.version}</version>
 				<executions>
@@ -28,7 +28,7 @@
 				</executions>
 			</plugin>
             <plugin>
-                <groupId>info.flex-mojos</groupId>
+                <groupId>org.sonatype.flexmojos</groupId>
                 <artifactId>flex-maven-plugin</artifactId>
                 <extensions>true</extensions>
             </plugin>
@@ -37,7 +37,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>info.flex-mojos.itest</groupId>
+			<groupId>org.sonatype.flexmojos.itest</groupId>
 			<artifactId>generator-jar</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>

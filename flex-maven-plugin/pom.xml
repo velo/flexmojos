@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId>
 		<version>3.0-SNAPSHOT</version>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
