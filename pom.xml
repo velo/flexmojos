@@ -83,8 +83,8 @@
 		<module>flex-mojos-parent</module>
 		<module>flex-maven-plugin</module>
 		<module>super-poms</module>
-		<!--
 		<module>testing-support</module>
+		<!--
 Tests can't be released due to some snapshot dependencies
  -->
 		<module>test-harness</module>
