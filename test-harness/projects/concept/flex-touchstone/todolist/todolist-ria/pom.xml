@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<project>
+    <parent>
+        <artifactId>todolist</artifactId>
+        <groupId>org.epseelon.samples</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.epseelon.samples</groupId>
+    <artifactId>todolist-ria</artifactId>
+    <packaging>swf</packaging>
+    <name>todolist-ria Maven Flex</name>
+    <version>1.0-SNAPSHOT</version>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>todolist-config</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>resources</classifier>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>flex</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>framework</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>framework</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>resource-bundle</type>
+            <classifier>en_US</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>rpc</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>rpc</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>resource-bundle</type>
+            <classifier>en_US</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.sdk</groupId>
+            <artifactId>utilities</artifactId>
+            <version>3.0.0.3.0.0.477</version>
+            <type>swc</type>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <defaultGoal>install</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${basedir}/target/generated-resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>info.rvin.mojo</groupId>
+                <artifactId>flex-compiler-mojo</artifactId>
+                <version>1.0-beta3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <locales>
+                        <param>en_US</param>
+                    </locales>
+                    <contextRoot>todolist-web</contextRoot>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-config</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+                            <includeArtifacIds>todolist-config</includeArtifacIds>
+                            <includeGroupIds>${project.groupId}</includeGroupIds>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

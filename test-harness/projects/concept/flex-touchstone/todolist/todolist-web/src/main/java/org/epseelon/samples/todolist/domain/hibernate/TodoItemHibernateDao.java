@@ -1,0 +1,49 @@
+/**
+ * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.epseelon.samples.todolist.domain.hibernate;
+
+import org.epseelon.samples.todolist.domain.TodoItem;
+import org.epseelon.samples.todolist.domain.TodoItemRepository;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import java.util.List;
+
+public class TodoItemHibernateDao extends HibernateDaoSupport implements TodoItemRepository {
+    public TodoItem save(TodoItem todoItem) {
+        getHibernateTemplate().saveOrUpdate(todoItem);
+        return todoItem;
+    }
+
+    public void remove(TodoItem todoItem) {
+        getHibernateTemplate().delete(todoItem);
+    }
+
+    public TodoItem findById(TodoItem todoItem) throws Exception {
+        long id = todoItem.getId();
+        todoItem = (TodoItem) getHibernateTemplate().get(TodoItem.class, todoItem.getId());
+
+        if (todoItem == null)
+            throw new Exception("Could not find an item with id " + id);
+        return todoItem;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<TodoItem> getList() {
+        return (List<TodoItem>) getHibernateTemplate().loadAll(TodoItem.class);
+    }
+}
