@@ -28,7 +28,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>info.flex-mojos</groupId>
+	<groupId>org.sonatype.flexmojos</groupId>
 	<artifactId>super-pom-commons</artifactId>
 	<version>${project.version}</version>
 
@@ -39,7 +39,7 @@
 		<testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>info.flex-mojos</groupId>
+				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<extensions>true</extensions>
@@ -76,7 +76,7 @@
 	<dependencies>
 		<!-- Flex-Mojos Unit testing support -->
 		<dependency>
-			<groupId>info.flex-mojos</groupId>
+			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>testing-support</artifactId>
 			<version>${project.version}</version>
 			<type>swc</type>

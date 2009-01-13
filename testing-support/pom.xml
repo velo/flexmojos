@@ -40,7 +40,7 @@
 	<name>Flex-mojos testing support</name>
 
 	<parent>
-		<groupId>info.flex-mojos</groupId>
+		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId>
 		<version>3.0-SNAPSHOT</version>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
@@ -54,7 +54,7 @@
 		<sourceDirectory>src/main/flex</sourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>info.flex-mojos</groupId>
+				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
 				<version>3.0-SNAPSHOT</version>
 				<extensions>true</extensions>
@@ -65,7 +65,7 @@
 						</goals>
 						<configuration>
 							<includeClasses>
-								<include>info.flexmojos.test.report.*Report</include>
+								<include>org.sonatype.flexmojos.test.report.*Report</include>
 							</includeClasses>
 						</configuration>
 					</execution>
