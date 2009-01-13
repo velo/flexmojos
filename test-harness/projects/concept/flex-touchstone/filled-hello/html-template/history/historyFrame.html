@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -18,6 +17,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-	<mx:Label text="@Resource(key='HI_MSG', bundle='hello')" />
-</mx:Application>
+<html>
+    <head>
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+        <META HTTP-EQUIV="Expires" CONTENT="-1"> 
+    </head>
+    <body>
+    <script>
+        function processUrl()
+        {
+
+            var pos = url.indexOf("?");
+            url = pos != -1 ? url.substr(pos + 1) : "";
+            if (!parent._ie_firstload) {
+                parent.BrowserHistory.setBrowserURL(url);
+                try {
+                    parent.BrowserHistory.browserURLChange(url);
+                } catch(e) { }
+            } else {
+                parent._ie_firstload = false;
+            }
+        }
+
+        var url = document.location.href;
+        processUrl();
+        document.write(encodeURIComponent(url));
+    </script>
+    Hidden frame for Browser History support.
+    </body>
+</html>
