@@ -18,7 +18,8 @@
 		permissions and limitations under the License. Licensed to the Apache
 		Software Foundation (ASF) under one or more
 	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>info.flex-mojos</groupId>
@@ -35,45 +36,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.google.code.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<configuration>
-					<header>src/etc/header.txt</header>
-					<excludes>
-						<exclude>**/*.vm</exclude>
-						<exclude>**/izpack/*</exclude>
-					</excludes>
-					<mapping>
-						<mxml>XML_STYLE</mxml>
-						<as>JAVADOC_STYLE</as>
-					</mapping>
-				</configuration>
-<!--
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
--->
-			</plugin>
-		</plugins>
-	</build>
-
-	<modules>
-		<module>flex-mojos-parent</module>
-		<module>flex-maven-plugin</module>
-		<module>super-poms</module>
-		<module>testing-support</module>
-		<!--
-Tests can't be released due to some snapshot dependencies
-		<module>test-harness</module>
- -->
-	</modules>
 
 	<scm>
 		<connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
@@ -91,10 +53,60 @@ Tests can't be released due to some snapshot dependencies
 			<name>Flex-Mojos Snapshot Repository</name>
 			<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>
 		</snapshotRepository>
-		<!--
-			<site> <id>maven.flex-mojos.info</id> <name>Flex-Mojos Plugin
-			Documentation Site</name>
-			<url>scp://docs.flex-mojos.info/www/flex-mojos/docs</url> </site>
-		-->
 	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>minimal</id>
+			<modules>
+				<module>flex-mojos-parent</module>
+				<module>flex-maven-plugin</module>
+				<module>super-poms</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>deploy</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+			<modules>
+				<module>flex-mojos-parent</module>
+				<module>flex-maven-plugin</module>
+				<module>super-poms</module>
+				<module>testing-support</module>
+				<module>test-harness</module>
+			</modules>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.google.code.maven-license-plugin</groupId>
+						<artifactId>maven-license-plugin</artifactId>
+						<configuration>
+							<header>src/etc/header.txt</header>
+							<excludes>
+								<exclude>**/*.vm</exclude>
+								<exclude>**/izpack/*</exclude>
+							</excludes>
+							<mapping>
+								<mxml>XML_STYLE</mxml>
+								<as>JAVADOC_STYLE</as>
+							</mapping>
+							<aggregate>true</aggregate>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
