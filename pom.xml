@@ -68,6 +68,7 @@
 						<as>JAVADOC_STYLE</as>
 					</mapping>
 				</configuration>
+<!--
 				<executions>
 					<execution>
 						<goals>
@@ -75,6 +76,7 @@
 						</goals>
 					</execution>
 				</executions>
+-->
 			</plugin>
 		</plugins>
 	</build>
