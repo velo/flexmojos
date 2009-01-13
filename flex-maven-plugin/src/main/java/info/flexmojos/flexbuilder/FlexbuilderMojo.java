@@ -305,34 +305,30 @@ public class FlexbuilderMojo
     private Collection<String> getRelativeSources()
     {
         String[] sourcePaths = CompileConfigurationLoader.getCompilerPluginSettings( project, "sourcePaths" );
+
+        Collection<String> sourceRoots;
         if ( sourcePaths != null )
         {
-            return Arrays.asList( sourcePaths );
+            sourceRoots = Arrays.asList( sourcePaths );
+        }
+        else
+        {
+            sourceRoots = getSourceRoots();
         }
 
         Collection<String> sources = new HashSet<String>();
-        Collection<String> sourceRoots = getSourceRoots();
         for ( String sourceRoot : sourceRoots )
         {
             File source = new File( sourceRoot );
-            if ( source.exists() )
+            if ( source.isAbsolute() )
             {
                 String relative = PathUtil.getRelativePath( project.getBasedir(), source );
-                sources.add( relative );
+                sources.add( relative.replace( '\\', '/' ) );
             }
-        }
-
-        String merge = CompileConfigurationLoader.getCompilerPluginSetting( project, "mergeResourceBundle" );
-        if ( Boolean.valueOf( merge ) )
-        {
-            String resourceBundlePath =
-                CompileConfigurationLoader.getCompilerPluginSetting( project, "resourceBundlePath" );
-            if ( resourceBundlePath == null )
+            else
             {
-                resourceBundlePath = "src/main/locales/{locale}";
+                sources.add( sourceRoot );
             }
-
-            sources.add( resourceBundlePath );
         }
 
         return sources;
@@ -371,6 +367,19 @@ public class FlexbuilderMojo
         for ( Resource resource : (List<Resource>) project.getBuild().getTestResources() )
         {
             sources.add( resource.getDirectory() );
+        }
+
+        String merge = CompileConfigurationLoader.getCompilerPluginSetting( project, "mergeResourceBundle" );
+        if ( Boolean.valueOf( merge ) )
+        {
+            String resourceBundlePath =
+                CompileConfigurationLoader.getCompilerPluginSetting( project, "resourceBundlePath" );
+            if ( resourceBundlePath == null )
+            {
+                resourceBundlePath = "src/main/locales/{locale}";
+            }
+
+            sources.add( resourceBundlePath );
         }
 
         return sources;
