@@ -30,8 +30,7 @@
 
     <destination id="todoService">
         <properties>
-            <factory>spring</factory>
-            <source>todoService</source>
+            <source>org.sonatype.flexmojos.todolist.business.TodoServiceImpl</source>
         </properties>
     </destination>
 </service>

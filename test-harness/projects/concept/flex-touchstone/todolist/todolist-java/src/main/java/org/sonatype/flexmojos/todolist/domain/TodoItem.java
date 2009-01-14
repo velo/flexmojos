@@ -12,25 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.epseelon.samples.todolist.domain;
+package org.sonatype.flexmojos.todolist.domain;
 
-public class TodoItem {
-    private long id;
+import java.io.Serializable;
+
+public class TodoItem
+    implements Serializable
+{
+    private static final long serialVersionUID = -2547786148798290707L;
+
+    private String id;
+
     private String title;
 
-    public long getId() {
+    public String getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId( String id )
+    {
         this.id = id;
     }
 
-    public String getTitle() {
+    public String getTitle()
+    {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle( String title )
+    {
         this.title = title;
     }
+
 }

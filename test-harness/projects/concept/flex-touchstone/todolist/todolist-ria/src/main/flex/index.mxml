@@ -17,7 +17,7 @@
 -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
                 layout="vertical" verticalAlign="middle" horizontalAlign="center"
-                xmlns:screen="org.epseelon.samples.todolist.view.screen.*">
+                xmlns:screen="org.sonatype.flexmojos.todolist.view.screen.*">
 
     <screen:TodoForm/>
 
