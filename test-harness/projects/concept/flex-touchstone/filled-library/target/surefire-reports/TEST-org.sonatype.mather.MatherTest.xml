@@ -1,0 +1,4 @@
+<testsuite errors="0" failures="0" name="org.sonatype.mather.MatherTest" tests="2" time="0.0">
+  <testcase name="testAddString" time="0.0"/>
+  <testcase name="testAdd" time="0.0"/>
+</testsuite>
