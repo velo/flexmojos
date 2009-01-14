@@ -20,15 +20,18 @@
                 xmlns:screen="org.sonatype.flexmojos.todolist.view.screen.*">
 
     <screen:TodoForm horizontalCenter="0" verticalCenter="0"/>
-    <mx:ComboBox id="locales" click="switchLocale()" dataProvider="{locales}" right="10" top="10"/>
+    <mx:ComboBox id="locales" valueCommit="switchLocale()" dataProvider="{availableLocales}" right="10" top="10"/>
     
     <mx:Script>
     	<![CDATA[
     	
-			private static const locales:Array = [ "en_US", "pt_BR" ];
+    		[Bindable]
+			private var availableLocales:Array = [ "en_US", "pt_BR" ];
     		
     		private function switchLocale():void {
-    			resourceManager.localeChain = [ locales[locales.selectedIndex] ];
+    			var i:int = locales.selectedIndex;
+    			var locale:String = availableLocales[i];
+    			resourceManager.localeChain = [ locale ];
     		}
     	]]>
     </mx:Script>
