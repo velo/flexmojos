@@ -92,7 +92,10 @@
 								<exclude>**/*.swc</exclude>
 								<exclude>**/*.swf</exclude>
 								<exclude>**/*.ser</exclude>
+								<exclude>**/*.ttf</exclude>
+								<exclude>**/*.gsp</exclude>
 								<exclude>**/izpack/*</exclude>
+								<exclude>**/super-poms/*.pom</exclude>
 							</excludes>
 							<mapping>
 								<mxml>XML_STYLE</mxml>
