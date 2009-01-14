@@ -166,14 +166,15 @@ public class IT0013IssuesTest
         testIssue( "issue-0066" );
 
         // Issue 62 test
-        File another = new File( testDir, "flex/src/main/flex/info/flexmojos/generator/AnotherPojo.as" );
+        File another = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/AnotherPojo.as" );
         assertFalse( another.exists() );
 
         // Issue 65 test
-        File pojo = new File( testDir, "flex/src/main/flex/info/flexmojos/generator/SimplePojo.as" );
+        File pojo = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/SimplePojo.as" );
         assertTrue( pojo.exists() );
         File base =
-            new File( testDir, "flex/target/generated-sources/flex-mojos/info/flexmojos/generator/SimplePojoBase.as" );
+            new File( testDir,
+                      "flex/target/generated-sources/flex-mojos/org/sonatype/flexmojos/generator/SimplePojoBase.as" );
         assertTrue( base.exists() );
     }
 
