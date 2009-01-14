@@ -82,6 +82,16 @@
 		</profile>
 
 		<profile>
+			<id>release</id>
+			<modules>
+				<module>flex-mojos-parent</module>
+				<module>flex-maven-plugin</module>
+				<module>super-poms</module>
+				<module>testing-support</module>
+			</modules>
+		</profile>
+
+		<profile>
 			<id>deploy</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
