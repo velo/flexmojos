@@ -15,18 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.epseelon.samples.todolist.business;
+package org.sonatype.flexmojos.todolist.business;
 
-import org.epseelon.samples.todolist.domain.TodoItem;
+import java.util.Collection;
 
-import java.util.List;
+import org.sonatype.flexmojos.todolist.domain.TodoItem;
 
-public interface TodoService {
-    void remove(TodoItem todoItem) throws Exception;
+public interface TodoService
+{
+    void remove( TodoItem todoItem )
+        throws Exception;
 
-    TodoItem save(TodoItem todoItem) throws Exception;
+    TodoItem save( TodoItem todoItem )
+        throws Exception;
 
-    TodoItem findById(TodoItem todoItem) throws Exception;
+    TodoItem findById( TodoItem todoItem )
+        throws Exception;
 
-    List<TodoItem> getList() throws Exception;
+    Collection<TodoItem> getList()
+        throws Exception;
 }

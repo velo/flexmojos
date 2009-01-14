@@ -19,43 +19,53 @@
 
 -->
 <services-config>
+
     <services>
-        <service-include file-path="remoting-config.xml"/>
+        <service-include file-path="remoting-config.xml" />
     </services>
 
-    <!-- Spring factory registration -->
-    <factories>
-        <factory id="spring"
-                 class="org.epseelon.samples.todolist.controller.SpringFactory"/>
-    </factories>
+    <security>
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="Tomcat"/>
+        <!-- Uncomment the correct app server
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss">
+		<login-command class="flex.messaging.security.JRunLoginCommand" server="JRun"/>        
+        <login-command class="flex.messaging.security.WeblogicLoginCommand" server="Weblogic"/>
+        <login-command class="flex.messaging.security.WebSphereLoginCommand" server="WebSphere"/>
+        -->
+
+        <!-- 
+        <security-constraint id="basic-read-access">
+            <auth-method>Basic</auth-method>
+            <roles>
+                <role>guests</role>
+                <role>accountants</role>
+                <role>employees</role>
+                <role>managers</role>
+            </roles>
+        </security-constraint>
+         -->
+    </security>
 
     <channels>
-        <channel-definition id="channel-amf"
-                            class="mx.messaging.channels.AMFChannel">
-            <endpoint
-                    url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf"
-                    class="flex.messaging.endpoints.AMFEndpoint"/>
-            <properties>
-                <polling-enabled>false</polling-enabled>
-            </properties>
+
+        <channel-definition id="channel-amf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf" class="flex.messaging.endpoints.AMFEndpoint"/>
         </channel-definition>
+
     </channels>
 
     <logging>
-        <target class="flex.messaging.log.ConsoleTarget"
-                level="Error">
+        <target class="flex.messaging.log.ConsoleTarget" level="Error">
             <properties>
-                <prefix>[BlazeDS]</prefix>
-                <includeDate>true</includeDate>
+                <prefix>[BlazeDS] </prefix>
+                <includeDate>false</includeDate>
                 <includeTime>false</includeTime>
-                <includeLevel>true</includeLevel>
-                <includeCategory>true</includeCategory>
+                <includeLevel>false</includeLevel>
+                <includeCategory>false</includeCategory>
             </properties>
             <filters>
                 <pattern>Endpoint.*</pattern>
                 <pattern>Service.*</pattern>
-                <pattern>Message.*</pattern>
-                <pattern>DataService.*</pattern>
                 <pattern>Configuration</pattern>
             </filters>
         </target>
@@ -63,15 +73,17 @@
 
     <system>
         <redeploy>
-            <enabled>true</enabled>
+            <enabled>false</enabled>
+            <!-- 
             <watch-interval>20</watch-interval>
-            <watch-file>
-                {context.root}/WEB-INF/flex/services-config.xml
-            </watch-file>
-            <watch-file>
-                {context.root}/WEB-INF/flex/remoting-config.xml
-            </watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/services-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/proxy-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/remoting-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/messaging-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/data-management-config.xml</watch-file>
             <touch-file>{context.root}/WEB-INF/web.xml</touch-file>
+             -->
         </redeploy>
     </system>
+
 </services-config>

@@ -41,7 +41,6 @@
 			</resource>
 			<resource>
 				<directory>${basedir}/target/generated-resources</directory>
-				<filtering>true</filtering>
 			</resource>
 		</resources>
 
@@ -53,6 +52,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<contextRoot>todolist-web</contextRoot>
+					<debug>true</debug>
 				</configuration>
 				<executions>
 					<execution>
@@ -61,8 +61,12 @@
 						</goals>
 						<configuration>
 							<includeClasses>
-								<includeClass>org.sonatype.todolist.domain.*</includeClass>
+								<includeClass>*TodoItem</includeClass>
 							</includeClasses>
+							<beanTemplate>
+								<template>src/main/resources/template/beanBase.gsp</template>
+								<template>src/main/resources/template/bean.gsp</template>
+							</beanTemplate>
 						</configuration>
 					</execution>
 				</executions>
