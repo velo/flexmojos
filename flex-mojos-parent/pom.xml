@@ -39,7 +39,7 @@
 
 	<groupId>org.sonatype.flexmojos</groupId>
 	<artifactId>flex-mojos-parent</artifactId>
-	<version>3.0-SNAPSHOT</version>
+	<version>3.0-alpha3</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos Parent</name>
@@ -176,8 +176,8 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha3</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha3</developerConnection>
 	</scm>
 
 	<distributionManagement>
