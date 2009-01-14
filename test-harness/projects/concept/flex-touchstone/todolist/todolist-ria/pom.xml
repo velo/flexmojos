@@ -64,8 +64,8 @@
 								<includeClass>*TodoItem</includeClass>
 							</includeClasses>
 							<beanTemplate>
-								<template>src/main/resources/template/beanBase.gsp</template>
-								<template>src/main/resources/template/bean.gsp</template>
+								<template>${basedir}/src/main/resources/template/beanBase.gsp</template>
+								<template>${basedir}/src/main/resources/template/bean.gsp</template>
 							</beanTemplate>
 						</configuration>
 					</execution>
