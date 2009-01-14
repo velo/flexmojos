@@ -40,6 +40,7 @@
         <module>todolist-web</module>
         <module>todolist-config</module>
         <module>todolist-java</module>
+        <module>todolist-lib</module>
     </modules>
 
     <build>
