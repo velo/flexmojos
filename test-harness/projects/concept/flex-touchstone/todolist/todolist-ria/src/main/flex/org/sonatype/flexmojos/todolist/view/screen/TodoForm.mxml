@@ -19,37 +19,34 @@
 				preinitialize="init()" creationComplete="getList()"
                 layout="vertical" width="488" height="384" >
 
+	<mx:Metadata>
+		[ResourceBundle("todolist")]
+	</mx:Metadata>
+
     <mx:Form width="100%" height="100%" defaultButton="{saveButton}">
-        <mx:FormHeading label="Todo List" width="100%"/>
-        <mx:FormItem label="ID:" width="127">
+        <mx:FormHeading label="{resourceManager.getString(BUNDLE, 'LIST')}" width="100%"/>
+        <mx:FormItem label="{resourceManager.getString(BUNDLE, 'ID')}:" width="127">
             <mx:TextInput width="100%" id="idText"
                           text="{TodoItem(todoDatagrid.selectedItem).id}" editable="false" enabled="false"/>
         </mx:FormItem>
-        <mx:FormItem label="Title:" width="345">
+        <mx:FormItem label="{resourceManager.getString(BUNDLE, 'TITLE')}:" width="345">
             <mx:TextInput width="100%" id="titleText"
                           text="{TodoItem(todoDatagrid.selectedItem).title}"/>
         </mx:FormItem>
         <mx:DataGrid id="todoDatagrid" width="100%" height="100%" dataProvider="{todoItems}">
             <mx:columns>
-                <mx:DataGridColumn headerText="ID" dataField="id" width="100"/>
-                <mx:DataGridColumn headerText="Title" dataField="title"/>
+                <mx:DataGridColumn headerText="{resourceManager.getString(BUNDLE, 'ID')}" dataField="id" width="100"/>
+                <mx:DataGridColumn headerText="{resourceManager.getString(BUNDLE, 'TITLE')}" dataField="title"/>
             </mx:columns>
         </mx:DataGrid>
     </mx:Form>
 
     <mx:ControlBar horizontalAlign="center">
-        <mx:Button label="New" click="setDefault()"/>
-        <mx:Button label="Save" id="saveButton" click="save()"
+        <mx:Button label="{resourceManager.getString(BUNDLE, 'NEW')}" click="setDefault()"/>
+        <mx:Button label="{resourceManager.getString(BUNDLE, 'SAVE')}" id="saveButton" click="save()"
                    textAlign="center"/>
-        <mx:Button label="Delete" click="remove()"/>
+        <mx:Button label="{resourceManager.getString(BUNDLE, 'DELETE')}" click="remove()"/>
     </mx:ControlBar>
-
-    <mx:RemoteObject id="todoService" showBusyCursor="true"
-                     fault="onFault(event)" destination="todoService">
-        <mx:method name="save" result="onResultSave(event)" fault="onFault(event)"/>
-        <mx:method name="remove" result="onResultRemove(event)" fault="onFault(event)"/>
-        <mx:method name="getList" result="onResultGetList(event)" fault="onFault(event)"/>
-    </mx:RemoteObject>
 
     <mx:Script>
         <![CDATA[
@@ -62,6 +59,7 @@
 	        import mx.rpc.Responder;
 	        import mx.controls.Alert;
 	        
+	        private static const BUNDLE:String = "todolist";
 	        
 	        private var service:ITodoService;
 	
@@ -93,7 +91,7 @@
 	
 	        public function onResultSave(event:ResultEvent):void
 	        {
-	            status = "Item was successfully saved with ID: " + TodoItem(event.result).id;
+	            status = resourceManager.getString(BUNDLE, 'MSG_SAVE', [ TodoItem(event.result).id ]);
 	            getList();
 	        }
 	
@@ -103,13 +101,13 @@
 	                var todoItem:TodoItem = todoDatagrid.selectedItem as TodoItem;
 	                service.remove(todoItem).addResponder(new mx.rpc.Responder(onResultRemove, onFault));
 	            } else {
-	                Alert.show("Select an item to delete");
+	                Alert.show(resourceManager.getString(BUNDLE, 'MSG_SELECT'));
 	            }
 	        }
 	
 	        public function onResultRemove(event:ResultEvent):void
 	        {
-	            status = "Deletion succeeded!";
+	            status = resourceManager.getString(BUNDLE, 'MSG_DEL');
 	            getList();
 	        }
 	
@@ -122,7 +120,7 @@
 	
 	        public function onFault(event:FaultEvent):void
 	        {
-	            Alert.show(event.fault.message);
+	            Alert.show(resourceManager.getString(BUNDLE, 'MSG_ERROR') + event.fault.message);
 	        }
         ]]>
     </mx:Script>

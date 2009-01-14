@@ -16,9 +16,22 @@
 
 -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-                layout="vertical" verticalAlign="middle" horizontalAlign="center"
+                layout="absolute" verticalAlign="middle" horizontalAlign="center"
                 xmlns:screen="org.sonatype.flexmojos.todolist.view.screen.*">
 
-    <screen:TodoForm/>
+    <screen:TodoForm horizontalCenter="0" verticalCenter="0"/>
+    <mx:ComboBox id="locales" click="switchLocale()" dataProvider="{locales}" right="10" top="10"/>
+    
+    <mx:Script>
+    	<![CDATA[
+    	
+			private static const locales:Array = [ "en_US", "pt_BR" ];
+    		
+    		private function switchLocale():void {
+    			resourceManager.localeChain = [ locales[locales.selectedIndex] ];
+    		}
+    	]]>
+    </mx:Script>
+    	
 
 </mx:Application>

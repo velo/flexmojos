@@ -34,23 +34,11 @@
 				<configuration>
 					<contextRoot>todolist-web</contextRoot>
 					<debug>true</debug>
+					<compiledLocales>
+						<locale>en_US</locale>
+						<locale>pt_BR</locale>
+					</compiledLocales>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<includeClasses>
-								<includeClass>*TodoItem</includeClass>
-							</includeClasses>
-							<beanTemplate>
-								<template>${basedir}/src/main/resources/template/beanBase.gsp</template>
-								<template>${basedir}/src/main/resources/template/bean.gsp</template>
-							</beanTemplate>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
@@ -87,9 +75,9 @@
 		
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>todolist-java</artifactId>
+			<artifactId>todolist-lib</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
+			<type>swc</type>
 		</dependency>
 
 		<dependency>
