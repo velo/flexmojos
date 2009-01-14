@@ -36,11 +36,11 @@
         </dependency>
     </dependencies>
     <modules>
-        <module>todolist-ria</module>
-        <module>todolist-web</module>
         <module>todolist-config</module>
         <module>todolist-java</module>
         <module>todolist-lib</module>
+        <module>todolist-ria</module>
+        <module>todolist-web</module>
     </modules>
 
     <build>
