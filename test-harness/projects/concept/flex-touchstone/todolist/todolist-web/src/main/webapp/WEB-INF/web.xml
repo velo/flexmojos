@@ -23,27 +23,6 @@
 
     <display-name>Todo List</display-name>
 
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-    <listener>
-        <listener-class>
-            org.springframework.web.context.request.RequestContextListener
-        </listener-class>
-    </listener>
-
-    <context-param>
-        <param-name>flex.class.path</param-name>
-        <param-value>/WEB-INF/flex/hotfixes</param-value>
-    </context-param>
-
     <!-- MessageBroker Servlet -->
     <servlet>
         <servlet-name>MessageBrokerServlet</servlet-name>
