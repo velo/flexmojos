@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.flexbuilder;
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -140,10 +139,6 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             writeFlexLibProperties();
-        }
-        else
-        {
-            throw new MojoExecutionException( "Unexpected packaging " + packaging );
         }
 
     }
