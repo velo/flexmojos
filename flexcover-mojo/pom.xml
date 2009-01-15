@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId><relativePath>../flex-mojos-parent/pom.xml</relativePath>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0</version>
 	</parent>
 
 	<artifactId>flexcover-mojo</artifactId>
