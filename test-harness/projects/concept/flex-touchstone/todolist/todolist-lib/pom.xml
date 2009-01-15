@@ -54,8 +54,8 @@
 								<includeClass>*TodoItem</includeClass>
 							</includeJavaClasses>
 							<beanTemplate>
-								<template>${basedir}/src/main/resources/template/beanBase.gsp</template>
-								<template>${basedir}/src/main/resources/template/bean.gsp</template>
+								<template>${basedir}/src/main/template/beanBase.gsp</template>
+								<template>${basedir}/src/main/template/bean.gsp</template>
 							</beanTemplate>
 						</configuration>
 					</execution>
@@ -78,5 +78,6 @@
 			<version>3.2.0.3958</version>
 			<type>pom</type>
 		</dependency>
+
 	</dependencies>
 </project>
