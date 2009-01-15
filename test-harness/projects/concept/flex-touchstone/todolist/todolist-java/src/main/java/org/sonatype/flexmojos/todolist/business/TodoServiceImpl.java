@@ -31,7 +31,10 @@ public class TodoServiceImpl
     public TodoItem save( TodoItem item )
         throws Exception
     {
-        item.setId( Long.toHexString( System.nanoTime() ) );
+        if ( item.getId() == null || item.getId().length() == 0 )
+        {
+            item.setId( Long.toHexString( System.nanoTime() ) );
+        }
         items.put( item.getId(), item );
         return item;
     }
