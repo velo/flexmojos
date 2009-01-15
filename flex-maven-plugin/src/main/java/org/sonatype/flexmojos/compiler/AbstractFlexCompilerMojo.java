@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -1916,6 +1915,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      */
     private void configureWarnings( Configuration cfg )
     {
+        if ( !showWarnings )
+        {
+            cfg.showActionScriptWarnings( showWarnings );
+            return;
+        }
         cfg.showActionScriptWarnings( showWarnings );
         cfg.showBindingWarnings( warnings.getBinding() );
         cfg.showDeprecationWarnings( warnings.getDeprecation() );

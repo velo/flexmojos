@@ -45,7 +45,6 @@ import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
-import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
 
@@ -72,11 +71,6 @@ public class FlexbuilderMojo
 
     protected static final String M2ECLIPSE_BUILD_COMMAND = "org.maven.ide.eclipse.maven2Builder";
 
-    /**
-     * @parameter default-value="true" expression="${enableM2e}"
-     */
-    private boolean enableM2e;
-
     private static final String SWC = "swc";
 
     private static final String SWF = "swf";
@@ -84,9 +78,197 @@ public class FlexbuilderMojo
     private static final String RB_SWC = "rb.swc";
 
     /**
+     * @parameter default-value="true" expression="${enableM2e}"
+     */
+    private boolean enableM2e;
+
+    /**
+     * @parameter default-value="false" expression="${generateHtmlWrapper}"
+     */
+    private boolean generateHtmlWrapper;
+
+    /**
+     * @parameter default-value="9.0.0"
+     */
+    private String targetPlayer;
+
+    /**
+     * Turn on generation of accessible SWFs.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean accessible;
+
+    /**
+     * Run the AS3 compiler in strict error checking mode.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean strict;
+
+    /**
+     * Verifies the RSL loaded has the same digest as the RSL specified when the application was compiled. This is
+     * equivalent to using the <code>verify-digests</code> option in the mxmlc compiler.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean verifyDigests;
+
+    /**
+     * Run the AS3 compiler in a mode that detects legal but potentially incorrect code
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean showWarnings;
+
+    /**
+     * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
+     * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;locales&gt;
+     *    &lt;locale&gt;en_US&lt;/locale&gt;
+     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+     *    &lt;locale&gt;es_ES&lt;/locale&gt;
+     * &lt;/locales&gt;
+     * </pre>
+     * 
+     * @parameter
+     * @deprecated
+     */
+    protected String[] locales;
+
+    /**
+     * When true resources are compiled into Application or Library. When false resources are compiled into separated
+     * Application or Library files. If not defined no resourceBundle generation is done
+     * 
+     * @parameter
+     * @deprecated
+     */
+    private Boolean mergeResourceBundle;
+
+    /**
+     * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
+     * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;compiledLocales&gt;
+     *    &lt;locale&gt;en_US&lt;/locale&gt;
+     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+     *    &lt;locale&gt;es_ES&lt;/locale&gt;
+     * &lt;/compiledLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] compiledLocales;
+
+    /**
+     * Default locale for libraries. This is useful to non localized applications, just to define swc.rb locale
+     * 
+     * @parameter default-value="en_US"
+     */
+    private String defaultLocale;
+
+    /**
+     * This is the equilvalent of the <code>include-sources</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeSources&gt;
+     *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
+     * &lt;/includeSources&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected File[] includeSources;
+
+    /**
+     * List of path elements that form the roots of ActionScript class hierarchies.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;sourcePaths&gt;
+     *    &lt;path&gt;${baseDir}/src/main/flex&lt;/path&gt;
+     * &lt;/sourcePaths&gt;
+     * </pre>
+     * 
+     * By default use Maven source and resources folders.
+     * 
+     * @parameter
+     */
+    protected File[] sourcePaths;
+
+    /**
+     * The file to be compiled. The path must be relative with source folder
+     * 
+     * @parameter
+     */
+    protected String sourceFile;
+
+    /**
+     * Define the base path to locate resouce bundle files Accept some special tokens:
+     * 
+     * <pre>
+     * {locale}     - replace by locale name
+     * </pre>
+     * 
+     * @parameter default-value="${basedir}/src/main/locales/{locale}"
+     */
+    protected String resourceBundlePath;
+
+    /**
      * @component
      */
     private VelocityComponent velocityComponent;
+
+    @Override
+    public boolean setup()
+        throws MojoExecutionException
+    {
+        String packaging = project.getPackaging();
+        if ( !( SWF.equals( packaging ) || SWC.equals( packaging ) ) )
+        {
+            return false;
+        }
+
+        File classpathEntries = new File( project.getBasedir(), ".classpath" );
+        if ( classpathEntries.exists() )
+        {
+            // java nature breaks flex nature.
+            classpathEntries.delete();
+            new File( project.getBasedir(), ".project" ).delete();
+        }
+
+        return super.setup();
+    }
+
+    @Override
+    public void writeConfiguration( IdeDependency[] deps )
+        throws MojoExecutionException
+    {
+        super.writeConfiguration( deps );
+
+        String packaging = project.getPackaging();
+
+        if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
+        {
+            writeAsProperties( packaging );
+        }
+
+        if ( SWF.equals( packaging ) )
+        {
+            writeFlexProperties();
+        }
+        else if ( SWC.equals( packaging ) )
+        {
+            writeFlexLibProperties();
+        }
+
+    }
 
     @SuppressWarnings( "unchecked" )
     @Override
@@ -127,30 +309,6 @@ public class FlexbuilderMojo
         {
             getBuildcommands().add( M2ECLIPSE_BUILD_COMMAND );
         }
-    }
-
-    @Override
-    public void writeConfiguration( IdeDependency[] deps )
-        throws MojoExecutionException
-    {
-        super.writeConfiguration( deps );
-
-        String packaging = project.getPackaging();
-
-        if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
-        {
-            writeAsProperties( packaging );
-        }
-
-        if ( SWF.equals( packaging ) )
-        {
-            writeFlexProperties();
-        }
-        else if ( SWC.equals( packaging ) )
-        {
-            writeFlexLibProperties();
-        }
-
     }
 
     private void writeFlexLibProperties()
@@ -211,7 +369,7 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         List<Artifact> extraRbs = new ArrayList<Artifact>();
-        String[] locales = getLocales();
+        Collection<String> locales = getLocales();
 
         for ( Iterator<Artifact> it = dependencies.iterator(); it.hasNext(); )
         {
@@ -247,22 +405,22 @@ public class FlexbuilderMojo
         return extraRbs;
     }
 
-    private String[] getLocales()
+    private Collection<String> getLocales()
     {
-        String[] locales = new String[0];
-        String[] deprecatedLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "locales" );
-        String[] runtimeLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "runtimeLocales" );
-        String[] compiledLocales = CompileConfigurationLoader.getCompilerPluginSettings( project, "compiledLocales" );
-        String defaultLocale = CompileConfigurationLoader.getCompilerPluginSetting( project, "defaultLocale" );
-
-        locales = (String[]) ArrayUtils.addAll( locales, deprecatedLocales );
-        locales = (String[]) ArrayUtils.addAll( locales, runtimeLocales );
-        locales = (String[]) ArrayUtils.addAll( locales, compiledLocales );
-        if ( defaultLocale != null )
+        Set<String> localesList = new HashSet<String>();
+        if ( locales != null )
         {
-            locales = (String[]) ArrayUtils.add( locales, defaultLocale );
+            localesList.addAll( Arrays.asList( locales ) );
         }
-        return locales;
+        if ( compiledLocales != null )
+        {
+            localesList.addAll( Arrays.asList( compiledLocales ) );
+        }
+        if ( localesList.isEmpty() )
+        {
+            localesList.add( defaultLocale );
+        }
+        return localesList;
     }
 
     private void writeAsProperties( String packaging )
@@ -272,22 +430,42 @@ public class FlexbuilderMojo
         context.put( "dependencies", getDependencyArtifacts() );
         context.put( "locales", getPlainLocales() );
         context.put( "mainSources", getMainSources() );
+        context.put( "targetPlayer", targetPlayer );
+        context.put( "accessible", accessible );
+        context.put( "strict", strict );
+        context.put( "useApolloConfig", useApolloConfig() );
+        context.put( "verifyDigests", verifyDigests );
+        context.put( "showWarnings", showWarnings );
+
         if ( SWF.equals( packaging ) )
         {
-            File sourceFile =
-                MavenUtils.resolveSourceFile( project,
-                                              CompileConfigurationLoader.getCompilerPluginSetting( project,
-                                                                                                   "sourceFile" ) );
+            File sourceFile = MavenUtils.resolveSourceFile( project, this.sourceFile );
             context.put( "mainApplication", sourceFile.getName() );
+            context.put( "generateHtmlWrapper", generateHtmlWrapper );
         }
         else if ( SWC.equals( packaging ) )
         {
             context.put( "mainApplication", project.getArtifactId() + ".as" );
             context.put( "includes", "-include-sources " + getPlainSources() );
+            context.put( "generateHtmlWrapper", false );
         }
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
+    }
+
+    private boolean useApolloConfig()
+        throws MojoExecutionException
+    {
+        Set<Artifact> deps = getDependencyArtifacts();
+        for ( Artifact artifact : deps )
+        {
+            if ( "airglobal".equals( artifact.getArtifactId() ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getMainSources()
@@ -299,27 +477,22 @@ public class FlexbuilderMojo
 
     private String getPlainSources()
     {
-        String[] sources = CompileConfigurationLoader.getCompilerPluginSettings( project, "includeSources" );
-        if ( sources == null )
+        if ( includeSources == null )
         {
-            sources = new String[] { project.getBuild().getSourceDirectory() };
+            return plain( getSourceRoots() );
+        }
+
+        Collection<String> sources = new ArrayList<String>();
+        for ( File source : includeSources )
+        {
+            sources.add( PathUtil.getRelativePath( project.getBasedir(), source ) );
         }
         return plain( sources );
     }
 
     private Collection<String> getRelativeSources()
     {
-        String[] sourcePaths = CompileConfigurationLoader.getCompilerPluginSettings( project, "sourcePaths" );
-
-        Collection<String> sourceRoots;
-        if ( sourcePaths != null )
-        {
-            sourceRoots = Arrays.asList( sourcePaths );
-        }
-        else
-        {
-            sourceRoots = getSourceRoots();
-        }
+        Collection<String> sourceRoots = getSourceRoots();
 
         Collection<String> sources = new HashSet<String>();
         for ( String sourceRoot : sourceRoots )
@@ -339,9 +512,24 @@ public class FlexbuilderMojo
         return sources;
     }
 
+    private Collection<String> getAbsolutePaths( File[] sourcePaths )
+    {
+        Collection<String> paths = new HashSet<String>();
+        for ( File file : sourcePaths )
+        {
+            paths.add( file.getAbsolutePath() );
+        }
+        return paths;
+    }
+
     @SuppressWarnings( "unchecked" )
     private Collection<String> getSourceRoots()
     {
+        if ( sourcePaths != null )
+        {
+            return getAbsolutePaths( sourcePaths );
+        }
+
         Set<String> sources = new HashSet<String>();
         List<String> sourceRoots;
         if ( project.getExecutionProject() != null )
@@ -374,16 +562,17 @@ public class FlexbuilderMojo
             sources.add( resource.getDirectory() );
         }
 
-        String merge = CompileConfigurationLoader.getCompilerPluginSetting( project, "mergeResourceBundle" );
-        if ( Boolean.valueOf( merge ) )
+        for ( Iterator<String> iterator = sources.iterator(); iterator.hasNext(); )
         {
-            String resourceBundlePath =
-                CompileConfigurationLoader.getCompilerPluginSetting( project, "resourceBundlePath" );
-            if ( resourceBundlePath == null )
+            String path = iterator.next();
+            if ( !new File( path ).exists() )
             {
-                resourceBundlePath = "src/main/locales/{locale}";
+                iterator.remove();
             }
+        }
 
+        if ( Boolean.TRUE.equals( mergeResourceBundle ) || compiledLocales != null )
+        {
             sources.add( resourceBundlePath );
         }
 
@@ -392,12 +581,12 @@ public class FlexbuilderMojo
 
     private String getPlainLocales()
     {
-        String[] locales = getLocales();
+        Collection<String> locales = getLocales();
         String buf = plain( locales );
         return buf;
     }
 
-    private String plain( String[] locales )
+    private String plain( Collection<String> locales )
     {
         StringBuilder buf = new StringBuilder();
         for ( String locale : locales )
