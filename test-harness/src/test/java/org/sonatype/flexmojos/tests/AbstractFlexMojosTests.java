@@ -73,7 +73,7 @@ public class AbstractFlexMojosTests
     }
 
     @SuppressWarnings( "unchecked" )
-    protected static void test( File projectDirectory, String goal, String... args )
+    protected static Verifier test( File projectDirectory, String goal, String... args )
         throws VerificationException
     {
         Verifier verifier = getVerifier( projectDirectory );
@@ -81,6 +81,7 @@ public class AbstractFlexMojosTests
         verifier.executeGoal( goal );
         // TODO there are some errors logged, but they are not my concern
         // verifier.verifyErrorFreeLog();
+        return verifier;
     }
 
     @SuppressWarnings( "unchecked" )

@@ -8,7 +8,6 @@
 package org.sonatype.flexmojos.test;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
@@ -156,26 +155,6 @@ public class IT0013IssuesTest
         throws Exception
     {
         testIssue( "issue-0061" );
-    }
-
-    @Test( timeOut = 120000, groups = { "generator" } )
-    public void issue66()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0066" );
-        testIssue( "issue-0066" );
-
-        // Issue 62 test
-        File another = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/AnotherPojo.as" );
-        assertFalse( another.exists() );
-
-        // Issue 65 test
-        File pojo = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/SimplePojo.as" );
-        assertTrue( pojo.exists() );
-        File base =
-            new File( testDir,
-                      "flex/target/generated-sources/flex-mojos/org/sonatype/flexmojos/generator/SimplePojoBase.as" );
-        assertTrue( base.exists() );
     }
 
     @Test( timeOut = 120000 )
