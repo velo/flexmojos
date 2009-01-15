@@ -92,6 +92,7 @@
 	        public function onResultSave(event:ResultEvent):void
 	        {
 	            status = resourceManager.getString(BUNDLE, 'MSG_SAVE', [ TodoItem(event.result).id ]);
+	            setDefault();
 	            getList();
 	        }
 	
