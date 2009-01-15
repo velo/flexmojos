@@ -422,7 +422,7 @@ public abstract class AbstractInstallMojo
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to create fdk-bundle" );
+            throw new MojoExecutionException( "Unable to create fdk-bundle", e );
         }
 
         Artifact artifact =
