@@ -36,12 +36,14 @@
                 defaultLinkType="1">
 
 #foreach ($artifact in $dependencies)
+			<!-- artifact: $artifact -->
             <libraryPathEntry 
                     kind="3" 
                     linkType="1" 
-                    path="$artifact.getFile().getAbsolutePath()" 
+                    path="$artifact.getFile()" 
                     useDefaultLinkType="false"
                     />
+
 #end
 
 ## workaround to get player global

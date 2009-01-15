@@ -22,14 +22,13 @@ import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseConfigFile;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.IOUtil;
@@ -77,6 +76,7 @@ public class FlexbuilderMojo
      */
     private boolean generateHtmlWrapper;
 
+    /* start duplicated */
     /**
      * @parameter default-value="9.0.0"
      */
@@ -210,6 +210,8 @@ public class FlexbuilderMojo
      */
     protected String resourceBundlePath;
 
+    /* end duplicated */
+
     /**
      * @component
      */
@@ -246,7 +248,7 @@ public class FlexbuilderMojo
 
         if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
         {
-            writeAsProperties( packaging );
+            writeAsProperties( packaging, deps );
         }
 
         if ( SWF.equals( packaging ) )
@@ -331,39 +333,44 @@ public class FlexbuilderMojo
      */
     protected ArtifactResolver resolver;
 
-    @SuppressWarnings( "unchecked" )
-    protected Set<Artifact> getDependencyArtifacts()
+    protected Collection<IdeDependency> getDependencies( IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
-        ArtifactResolutionResult arr;
-        try
+        List<IdeDependency> dependencies = new ArrayList<IdeDependency>( Arrays.asList( ideDependencies ) );
+        List<IdeDependency> extraRbs = resolveResourceBundles( dependencies );
+        for ( IdeDependency ideDependency : dependencies )
         {
-            arr =
-                resolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
-                                              remoteRepositories, localRepository, artifactMetadataSource );
+            if ( ideDependency.isReferencedProject() )
+            {
+                String template = IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE; // TODO
+                                                                          // http://jira.codehaus.org/browse/MECLIPSE-519
+                String projectName = IdeUtils.getProjectName( template, ideDependency );
+                // /todolist-lib/bin-debug/todolist-lib.swc
+                ideDependency.setFile( new File( "/" + projectName + "/bin-debug/" + projectName + ".swc" ) );
+            }
+            else
+            {
+                // resolve files
+                ideDependency.setFile( ideDependency.getFile().getAbsoluteFile() );
+            }
         }
-        catch ( AbstractArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        List<Artifact> dependencies = new ArrayList<Artifact>( arr.getArtifacts() );
-        List<Artifact> extraRbs = resolveResourceBundles( dependencies );
 
-        Set<Artifact> result = new HashSet<Artifact>();
+        Set<IdeDependency> result = new HashSet<IdeDependency>();
         result.addAll( dependencies );
         result.addAll( extraRbs );
         return result;
     }
 
-    private List<Artifact> resolveResourceBundles( List<Artifact> dependencies )
+    private List<IdeDependency> resolveResourceBundles( List<IdeDependency> dependencies )
         throws MojoExecutionException
     {
-        List<Artifact> extraRbs = new ArrayList<Artifact>();
         Collection<String> locales = getLocales();
 
-        for ( Iterator<Artifact> it = dependencies.iterator(); it.hasNext(); )
+        List<IdeDependency> extraRbs = new ArrayList<IdeDependency>();
+
+        for ( Iterator<IdeDependency> it = dependencies.iterator(); it.hasNext(); )
         {
-            Artifact dependency = it.next();
+            IdeDependency dependency = it.next();
             if ( "playerglobal".equals( dependency.getArtifactId() ) || "airglobal".equals( dependency.getArtifactId() ) )
             {
                 it.remove();
@@ -376,14 +383,19 @@ public class FlexbuilderMojo
             {
                 for ( String locale : locales )
                 {
-                    Artifact resolvedResourceBundle =
+                    Artifact art =
                         artifactFactory.createArtifactWithClassifier( dependency.getGroupId(),
                                                                       dependency.getArtifactId(),
                                                                       dependency.getVersion(), dependency.getType(),
                                                                       locale );
 
-                    MavenUtils.resolveArtifact( resolvedResourceBundle, resolver, localRepository, remoteRepositories );
-                    extraRbs.add( resolvedResourceBundle );
+                    MavenUtils.resolveArtifact( art, resolver, localRepository, remoteRepositories );
+
+                    IdeDependency dep =
+                        new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
+                                           art.getClassifier(), false, Artifact.SCOPE_TEST.equals( art.getScope() ),
+                                           false, false, false, art.getFile(), art.getType(), false, null, 1 );
+                    extraRbs.add( dep );
                 }
                 it.remove();
             }
@@ -413,17 +425,17 @@ public class FlexbuilderMojo
         return localesList;
     }
 
-    private void writeAsProperties( String packaging )
+    private void writeAsProperties( String packaging, IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
-        context.put( "dependencies", getDependencyArtifacts() );
+        context.put( "dependencies", getDependencies( ideDependencies ) );
         context.put( "locales", getPlainLocales() );
         context.put( "mainSources", getMainSources() );
         context.put( "targetPlayer", targetPlayer );
         context.put( "accessible", accessible );
         context.put( "strict", strict );
-        context.put( "useApolloConfig", useApolloConfig() );
+        context.put( "useApolloConfig", useApolloConfig( ideDependencies ) );
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
 
@@ -444,13 +456,13 @@ public class FlexbuilderMojo
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
 
-    private boolean useApolloConfig()
+    private boolean useApolloConfig( IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
-        Set<Artifact> deps = getDependencyArtifacts();
-        for ( Artifact artifact : deps )
+        Collection<IdeDependency> deps = getDependencies( ideDependencies );
+        for ( IdeDependency dep : deps )
         {
-            if ( "airglobal".equals( artifact.getArtifactId() ) )
+            if ( "airglobal".equals( dep.getArtifactId() ) )
             {
                 return true;
             }
