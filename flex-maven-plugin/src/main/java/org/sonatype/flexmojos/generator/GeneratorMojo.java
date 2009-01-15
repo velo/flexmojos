@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.generator;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,6 +75,7 @@ public class GeneratorMojo
      * File to generate as3 file. If not defined assumes all classes must be included
      * 
      * @parameter
+     * @deprecated
      */
     private String[] includeClasses;
 
@@ -83,8 +83,23 @@ public class GeneratorMojo
      * File to exclude from as3 generation. If not defined, assumes no exclusions
      * 
      * @parameter
+     * @deprecated
      */
     private String[] excludeClasses;
+
+    /**
+     * File to generate as3 file. If not defined assumes all classes must be included
+     * 
+     * @parameter
+     */
+    private String[] includeJavaClasses;
+
+    /**
+     * File to exclude from as3 generation. If not defined, assumes no exclusions
+     * 
+     * @parameter
+     */
+    private String[] excludeJavaClasses;
 
     /**
      * File to include as output from as3 generation. If not defined, assumes all classes are included in the output
@@ -420,7 +435,7 @@ public class GeneratorMojo
                 className = className.replace( '/', '.' );
                 className = className.substring( 0, className.length() - 6 );
 
-                if ( matchWildCard( className, includeClasses ) && !matchWildCard( className, excludeClasses ) )
+                if ( matchWildCard( className, includeJavaClasses ) && !matchWildCard( className, excludeJavaClasses ) )
                 {
                     classes.put( className, file );
                 }
@@ -449,9 +464,21 @@ public class GeneratorMojo
     private void setUp()
         throws MojoExecutionException
     {
-        if ( includeClasses == null )
+        if ( includeJavaClasses == null )
         {
-            includeClasses = new String[] { "*" };
+            if ( includeClasses != null )
+            {
+                includeJavaClasses = includeClasses;
+            }
+            else
+            {
+                includeJavaClasses = new String[] { "*" };
+            }
+        }
+
+        if ( excludeJavaClasses == null )
+        {
+            excludeJavaClasses = excludeClasses;
         }
 
         if ( !outputDirectory.exists() )
