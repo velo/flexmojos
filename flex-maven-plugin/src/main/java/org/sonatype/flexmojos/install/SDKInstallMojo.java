@@ -17,12 +17,12 @@
  */
 package org.sonatype.flexmojos.install;
 
-import java.io.File;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
 
 /**
  * @goal install-sdk
@@ -32,27 +32,44 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
  */
 public class SDKInstallMojo
     extends AbstractInstallMojo
+    implements Contextualizable
 {
 
     /**
-     * @component
+     * @parameter default-value="${localRepository}"
      */
-    private ArtifactInstaller installer;
+    private Object localRepository;
 
-    /**
-     * @parameter expression="${localRepository}"
-     */
-    private ArtifactRepository localRepository;
+    private Context context;
 
-    public void installArtifact( File file, Artifact artifact )
+    @Override
+    protected FlexSDKPublisher getPublisher()
+        throws MojoExecutionException
     {
+        context.put( "localRepository", localRepository );
+
+        FlexSDKPublisher publisher;
         try
         {
-            installer.install( file, artifact, localRepository ); // to install
+            PlexusContainer plexusContainer = (PlexusContainer) context.get( "plexus" );
+            publisher =
+                (FlexSDKPublisher) plexusContainer.lookup(
+                                                           "org.sonatype.flexmojos.components.publisher.FlexSDKPublisher",
+                                                           "install" );
         }
-        catch ( ArtifactInstallationException e )
+        catch ( Exception e )
         {
-            getLog().error( "Unable to install artifact: " + file.getAbsolutePath(), e );
+            throw new MojoExecutionException(
+                                              "Unable to look for :org.sonatype.flexmojos.components.publisher.FlexSDKPublisher",
+                                              e );
         }
+        return publisher;
     }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        this.context = context;
+    }
+
 }
