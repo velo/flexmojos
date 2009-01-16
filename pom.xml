@@ -109,13 +109,12 @@
 								<exclude>**/*.ttf</exclude>
 								<exclude>**/*.gsp</exclude>
 								<exclude>**/izpack/*</exclude>
-								<exclude>**/super-poms/*.pom</exclude>
+								<exclude>**/*.pom</exclude>
 							</excludes>
 							<mapping>
 								<mxml>XML_STYLE</mxml>
 								<as>JAVADOC_STYLE</as>
 								<aj>JAVADOC_STYLE</aj>
-								<pom>XML_STYLE</pom>
 							</mapping>
 							<aggregate>true</aggregate>
 						</configuration>
