@@ -61,6 +61,7 @@
 			<id>minimal</id>
 			<modules>
 				<module>flex-mojos-parent</module>
+				<module>components</module>
 				<module>flex-maven-plugin</module>
 				<module>super-poms</module>
 			</modules>
@@ -70,6 +71,7 @@
 			<id>release</id>
 			<modules>
 				<module>flex-mojos-parent</module>
+				<module>components</module>
 				<module>flex-maven-plugin</module>
 				<module>super-poms</module>
 				<module>testing-support</module>
@@ -84,6 +86,7 @@
 
 			<modules>
 				<module>flex-mojos-parent</module>
+				<module>components</module>
 				<module>flex-maven-plugin</module>
 				<module>super-poms</module>
 				<module>testing-support</module>
