@@ -52,6 +52,14 @@
 					<exclude>**/*.properties</exclude>
 				</excludes>
 			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>settings.xml</include>
+				</includes>
+				<targetPath>${fake-maven}/conf</targetPath>
+			</testResource>
 		</testResources>
 
 		<plugins>
@@ -74,7 +82,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.1-SNAPSHOT</version>
+				<version>2.1-SONATYPE-709464</version>
 				<executions>
 					<execution>
 						<id>extract-maven</id>
@@ -193,6 +201,18 @@
 			<version>${pom.version}</version>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+			<groupId>org.sonatype.flexmojos</groupId>
+			<artifactId>flexmojos-components</artifactId>
+			<version>${pom.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.sonatype.flexmojos.components</groupId>
+			<artifactId>flex-sdk-publisher</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>flex-super-pom</artifactId>
