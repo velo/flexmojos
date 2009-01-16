@@ -37,6 +37,7 @@
 					<!-- end deprecated -->
 					<resourceBundlePath>src/main/locales/{locale}</resourceBundlePath>
 				</configuration>
+			<!--
 				<executions>
 					<execution>
 						<goals>
@@ -47,6 +48,7 @@
 						</configuration>
 					</execution>
 				</executions>
+			-->
 			</plugin>
 		</plugins>
 	</build>
