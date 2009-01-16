@@ -59,12 +59,6 @@ public abstract class AbstractFlexSDKPublisher
 
     private static final Random RANDOM = new Random();
 
-    public static final String ADOBE_GROUP_ID = "com.adobe.flex";
-
-    public static final String COMPILER_GROUP_ID = ADOBE_GROUP_ID + ".compiler";
-
-    public static final String FRAMEWORK_GROUP_ID = ADOBE_GROUP_ID + ".framework";
-
     public static final String[] JARS = new String[] { "jar" };
 
     public static final String[] RSLS = new String[] { "swf", "swz" };
@@ -385,7 +379,7 @@ public abstract class AbstractFlexSDKPublisher
         Artifact pomArtifact =
             artifactFactory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
                                             "compile", "pom" );
-        File pomFile = generatePom( pomArtifact );
+        File pomFile = generatePom( artifact );
         pomArtifact.setFile( pomFile );
         pomArtifact.setResolved( true );
         return pomArtifact;

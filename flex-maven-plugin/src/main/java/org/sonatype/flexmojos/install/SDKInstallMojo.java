@@ -18,10 +18,6 @@
 package org.sonatype.flexmojos.install;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
 
 /**
@@ -32,15 +28,12 @@ import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
  */
 public class SDKInstallMojo
     extends AbstractInstallMojo
-    implements Contextualizable
 {
 
     /**
-     * @parameter default-value="${localRepository}"
+     * @component role="org.sonatype.flexmojos.components.publisher.FlexSDKPublisher" roleHint="install"
      */
-    private Object localRepository;
-
-    private Context context;
+    private FlexSDKPublisher publisher;
 
     @Override
     protected FlexSDKPublisher getPublisher()
@@ -48,28 +41,7 @@ public class SDKInstallMojo
     {
         context.put( "localRepository", localRepository );
 
-        FlexSDKPublisher publisher;
-        try
-        {
-            PlexusContainer plexusContainer = (PlexusContainer) context.get( "plexus" );
-            publisher =
-                (FlexSDKPublisher) plexusContainer.lookup(
-                                                           "org.sonatype.flexmojos.components.publisher.FlexSDKPublisher",
-                                                           "install" );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException(
-                                              "Unable to look for :org.sonatype.flexmojos.components.publisher.FlexSDKPublisher",
-                                              e );
-        }
         return publisher;
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        this.context = context;
     }
 
 }
