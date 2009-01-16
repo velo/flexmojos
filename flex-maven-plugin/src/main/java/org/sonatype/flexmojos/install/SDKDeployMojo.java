@@ -7,15 +7,14 @@
  */
 package org.sonatype.flexmojos.install;
 
-import java.io.File;
 import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
-import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
 
 /**
  * @goal deploy-sdk
@@ -89,24 +88,38 @@ public class SDKDeployMojo
      */
     private ArtifactRepositoryFactory repositoryFactory;
 
-    @Override
-    public void installArtifact( File file, Artifact artifact )
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
-        ArtifactRepositoryLayout layout;
+        // TODO Auto-generated method stub
 
-        layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
-
-        ArtifactRepository deploymentRepository =
-            repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
-
-        try
-        {
-            deployer.deploy( file, artifact, deploymentRepository, localRepository );
-        }
-        catch ( ArtifactDeploymentException e )
-        {
-            getLog().error( "Unable to install artifact: " + file.getAbsolutePath(), e );
-        }
     }
+
+    @Override
+    protected FlexSDKPublisher getPublisher()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    // @Override
+    // public void installArtifact( File file, Artifact artifact )
+    // {
+    // ArtifactRepositoryLayout layout;
+    //
+    // layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
+    //
+    // ArtifactRepository deploymentRepository =
+    // repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
+    //
+    // try
+    // {
+    // deployer.deploy( file, artifact, deploymentRepository, localRepository );
+    // }
+    // catch ( ArtifactDeploymentException e )
+    // {
+    // getLog().error( "Unable to install artifact: " + file.getAbsolutePath(), e );
+    // }
+    // }
 
 }
