@@ -17,13 +17,6 @@
  */
 package org.sonatype.flexmojos.install;
 
-import java.util.Map;
-
-import org.apache.maven.artifact.deployer.ArtifactDeployer;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
 
 /**
@@ -54,14 +47,6 @@ public class SDKDeployMojo
     private String repositoryLayout;
 
     /**
-     * Map that contains the layouts
-     * 
-     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
-     */
-    @SuppressWarnings( "unchecked" )
-    private Map repositoryLayouts;
-
-    /**
      * URL where the artifact will be deployed. <br/>
      * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
      * 
@@ -78,58 +63,20 @@ public class SDKDeployMojo
     private boolean uniqueVersion;
 
     /**
-     * @parameter expression="${component.org.apache.maven.artifact.deployer.ArtifactDeployer}"
-     * @required
-     * @readonly
+     * @component role="org.sonatype.flexmojos.components.publisher.FlexSDKPublisher" roleHint="deploy"
      */
-    private ArtifactDeployer deployer;
-
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    private ArtifactRepositoryFactory repositoryFactory;
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        // TODO Auto-generated method stub
-
-    }
+    private FlexSDKPublisher publisher;
 
     @Override
     protected FlexSDKPublisher getPublisher()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        context.put( "repositoryId", repositoryId );
+        context.put( "repositoryLayout", repositoryLayout );
+        context.put( "url", url );
+        context.put( "uniqueVersion", uniqueVersion );
+        context.put( "localRepository", localRepository );
 
-    // @Override
-    // public void installArtifact( File file, Artifact artifact )
-    // {
-    // ArtifactRepositoryLayout layout;
-    //
-    // layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
-    //
-    // ArtifactRepository deploymentRepository =
-    // repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
-    //
-    // try
-    // {
-    // deployer.deploy( file, artifact, deploymentRepository, localRepository );
-    // }
-    // catch ( ArtifactDeploymentException e )
-    // {
-    // getLog().error( "Unable to install artifact: " + file.getAbsolutePath(), e );
-    // }
-    // }
+        return publisher;
+    }
 
 }

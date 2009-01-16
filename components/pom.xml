@@ -41,7 +41,10 @@
 	</parent>
 
 	<artifactId>flexmojos-components</artifactId>
-	<packaging>pom</packaging><!--
+	<packaging>pom</packaging>
+	
+	<name>Flex-mojos components</name>
+	<!--
 
 	<build>
 		<plugins>
