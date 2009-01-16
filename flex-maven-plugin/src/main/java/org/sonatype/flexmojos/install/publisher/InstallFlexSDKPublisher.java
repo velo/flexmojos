@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.install;
+package org.sonatype.flexmojos.install.publisher;
 
 import java.io.File;
 

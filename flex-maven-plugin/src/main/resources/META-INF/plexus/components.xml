@@ -57,16 +57,41 @@
 		<component>
 			<role>org.sonatype.flexmojos.components.publisher.FlexSDKPublisher</role>
 			<role-hint>install</role-hint>
-			<implementation>org.sonatype.flexmojos.install.InstallFlexSDKPublisher</implementation>
+			<implementation>org.sonatype.flexmojos.install.publisher.InstallFlexSDKPublisher</implementation>
 			<isolated-realm>false</isolated-realm>
 			<requirements>
+				<requirement>
+					<role>org.apache.maven.artifact.factory.ArtifactFactory</role>
+					<field-name>artifactFactory</field-name>
+				</requirement>
 				<requirement>
 					<role>org.apache.maven.artifact.installer.ArtifactInstaller</role>
 					<field-name>installer</field-name>
 				</requirement>
+			</requirements>
+		</component>
+
+		<component>
+			<role>org.sonatype.flexmojos.components.publisher.FlexSDKPublisher</role>
+			<role-hint>deploy</role-hint>
+			<implementation>org.sonatype.flexmojos.install.publisher.DeployFlexSDKPublisher</implementation>
+			<isolated-realm>false</isolated-realm>
+			<requirements>
 				<requirement>
 					<role>org.apache.maven.artifact.factory.ArtifactFactory</role>
 					<field-name>artifactFactory</field-name>
+				</requirement>
+				<requirement>
+					<role>org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout</role>
+					<field-name>repositoryLayouts</field-name>
+				</requirement>
+				<requirement>
+					<role>org.apache.maven.artifact.repository.ArtifactRepositoryFactory</role>
+					<field-name>repositoryFactory</field-name>
+				</requirement>
+				<requirement>
+					<role>org.apache.maven.artifact.deployer.ArtifactDeployer</role>
+					<field-name>deployer</field-name>
 				</requirement>
 			</requirements>
 		</component>
