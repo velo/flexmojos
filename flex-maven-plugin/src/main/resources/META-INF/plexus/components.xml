@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
+	<!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
 
 <component-set>
 	<components>
@@ -39,9 +39,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-		            <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
 					<compile>org.sonatype.flexmojos:flex-maven-plugin:compile-swc</compile>
-		            <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
 					<test-compile>org.sonatype.flexmojos:flex-maven-plugin:test-compile</test-compile>
 					<test>org.sonatype.flexmojos:flex-maven-plugin:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
@@ -55,9 +55,9 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-		            <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
 					<compile>org.sonatype.flexmojos:flex-maven-plugin:compile-swf</compile>
-		            <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
 					<test-compile>org.sonatype.flexmojos:flex-maven-plugin:test-compile</test-compile>
 					<test>org.sonatype.flexmojos:flex-maven-plugin:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
@@ -65,6 +65,24 @@
 				</phases>
 			</configuration>
 		</component>
+
+		<component>
+			<role>org.sonatype.flexmojos.components.publisher.FlexSDKPublisher</role>
+			<role-hint>install</role-hint>
+			<implementation>org.sonatype.flexmojos.install.InstallFlexSDKPublisher</implementation>
+			<isolated-realm>false</isolated-realm>
+			<requirements>
+				<requirement>
+					<role>org.apache.maven.artifact.installer.ArtifactInstaller</role>
+					<field-name>installer</field-name>
+				</requirement>
+				<requirement>
+					<role>org.apache.maven.artifact.factory.ArtifactFactory</role>
+					<field-name>artifactFactory</field-name>
+				</requirement>
+			</requirements>
+		</component>
+
 
 	</components>
 </component-set>
