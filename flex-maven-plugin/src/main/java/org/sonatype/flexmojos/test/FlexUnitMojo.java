@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.test;
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.util.XStreamFactory;
@@ -111,6 +111,14 @@ public class FlexUnitMojo
      */
     private boolean testFailureIgnore;
 
+    private int numTests;
+
+    private int numFailures;
+
+    private int numErrors;
+
+    private int time;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -185,7 +193,7 @@ public class FlexUnitMojo
                         if ( chr == NULL_BYTE )
                         {
                             final String data = buffer.toString();
-                            getLog().debug( "Recivied data: " + data );
+                            // getLog().debug( "Recivied data: " + data );
                             buffer = new StringBuffer();
 
                             if ( data.equals( POLICY_FILE_REQUEST ) )
@@ -365,49 +373,55 @@ public class FlexUnitMojo
     private void writeTestReport( final String reportString )
         throws MojoExecutionException
     {
+
+        XStream xs = XStreamFactory.getXStreamInstance();
+
+        // Parse the report.
+        TestCaseReport report = (TestCaseReport) xs.fromXML( reportString );
+
+        // Get the test attributes.
+        final String name = report.getName();
+        final int numFailures = report.getFailures();
+        final int numErrors = report.getErrors();
+        final int totalProblems = numFailures + numErrors;
+
+        getLog().debug( "Running " + name );
+        getLog().debug( reportString );
+
+        // Get the output file name.
+        final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
+
+        FileWriter writer = null;
         try
         {
-
-            XStream xs = XStreamFactory.getXStreamInstance();
-
-            // Parse the report.
-            TestCaseReport report = (TestCaseReport) xs.fromXML( reportString );
-
-            // Get the test attributes.
-            final String name = report.getName();
-            final int numFailures = report.getFailures();
-            final int numErrors = report.getErrors();
-            final int totalProblems = numFailures + numErrors;
-
-            getLog().debug( "Running " + name );
-            getLog().debug( reportString );
-
-            // Get the output file name.
-            final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
-            FileWriter writer = new FileWriter( file );
+            writer = new FileWriter( file );
             xs.toXML( report, writer );
             writer.flush();
-            writer.close();
-
-            // Pretty print the document to disk.
-            // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
-            // writer.write( document );
-            // writer.close();
-
-            // First write the report, then fail the build if the test failed.
-            if ( totalProblems > 0 )
-            {
-                failures = true;
-
-                getLog().info( "Unit test " + name + " failed." );
-
-            }
-
         }
         catch ( Exception e )
         {
+            IOUtil.close( writer );
             throw new MojoExecutionException( "error writing report to disk", e );
         }
+
+        // Pretty print the document to disk.
+        // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
+        // writer.write( document );
+        // writer.close();
+
+        // First write the report, then fail the build if the test failed.
+        if ( totalProblems > 0 )
+        {
+            failures = true;
+
+            getLog().warn( "Unit test " + name + " failed." );
+
+        }
+
+        this.numTests += report.getTests();
+        this.numErrors += report.getErrors();
+        this.numFailures += report.getFailures();
+
     }
 
     // /**
@@ -469,10 +483,17 @@ public class FlexUnitMojo
 
     }
 
+    private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
+
     @Override
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
+
+        getLog().info( "------------------------------------------------------------------------" );
+        getLog().info(
+                       MessageFormat.format( TEST_INFO, new Object[] { new Integer( numTests ),
+                           new Integer( numErrors ), new Integer( numFailures ), new Integer( time ) } ) );
 
         if ( !testFailureIgnore )
         {

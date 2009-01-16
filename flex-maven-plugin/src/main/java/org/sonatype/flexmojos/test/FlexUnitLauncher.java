@@ -17,8 +17,6 @@
  */
 package org.sonatype.flexmojos.test;
 
-import flash.util.StringUtils;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +26,8 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.flexmojos.utilities.MavenUtils;
+
+import flash.util.StringUtils;
 
 /**
  * This class is used to launch the FlexUnit tests.
@@ -104,7 +104,7 @@ public class FlexUnitLauncher
             cl.setExecutable( launcherCommand[0] );
             for ( int i = 1; i < launcherCommand.length; i++ )
             {
-                cl.createArg().setValue( launcherCommand[i] );
+                cl.createArgument().setValue( launcherCommand[i] );
             }
             StreamConsumer stdout = new StreamConsumer()
             {
