@@ -40,10 +40,10 @@
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>flexmojos-components</artifactId>
+	<artifactId>flex-mojos-sandbox</artifactId>
 	<packaging>pom</packaging>
 	
-	<name>Flex-mojos components</name>
+	<name>Flex-mojos Sandbox</name>
 	<!--
 
 	<build>
