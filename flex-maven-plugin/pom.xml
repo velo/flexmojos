@@ -184,7 +184,7 @@
 			<classifier>template</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.sonatype.flexmojos.components</groupId>
+			<groupId>org.sonatype.flexmojos.sandbox</groupId>
 			<artifactId>flex-sdk-publisher</artifactId>
 			<version>${project.version}</version>
 		</dependency>
