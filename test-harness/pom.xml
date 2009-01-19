@@ -203,12 +203,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>flexmojos-components</artifactId>
+			<artifactId>flex-mojos-sandbox</artifactId>
 			<version>${pom.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>org.sonatype.flexmojos.components</groupId>
+			<groupId>org.sonatype.flexmojos.sandbox</groupId>
 			<artifactId>flex-sdk-publisher</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
