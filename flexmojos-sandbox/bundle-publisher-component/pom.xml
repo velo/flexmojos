@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.sonatype.flexmojos.sandbox</groupId>
+	<artifactId>bundle-publisher-component</artifactId>
+	<version>3.0-SNAPSHOT</version>
+
+	<name>Flex-mojos sandbox - Bundle publisher</name>
+
+	<build>
+		<plugins>
+		<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+			<plugin>
+				<groupId>org.codehaus.plexus</groupId>
+				<artifactId>plexus-component-metadata</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.mercury</groupId>
+			<artifactId>mercury-plexus</artifactId>
+			<version>1.0.0-alpha-2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>3.0-alpha-1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-mercury</artifactId>
+			<version>3.0-alpha-1</version>
+			<scope>runtime</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component-set>
+  <components>
+    <component>
+      <role>org.sonatype.flexmojos.sandbox.bundlepublisher.BundlePublisher</role>
+      <role-hint>default</role-hint>
+      <implementation>org.sonatype.flexmojos.sandbox.bundlepublisher.DefaultBundlePublisher</implementation>
+      <isolated-realm>false</isolated-realm>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.mercury.plexus.PlexusMercury</role>
+          <role-hint>default</role-hint>
+          <field-name>mercury</field-name>
+        </requirement>
+      </requirements>
+    </component>
+  </components>
+</component-set>
