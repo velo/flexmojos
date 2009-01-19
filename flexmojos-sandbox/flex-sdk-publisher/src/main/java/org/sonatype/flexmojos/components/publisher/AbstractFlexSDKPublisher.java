@@ -527,7 +527,6 @@ public abstract class AbstractFlexSDKPublisher
             File tempFile = createTempFile( artifact.getArtifactId(), ".pom" );
 
             FileWriter fw = new FileWriter( tempFile );
-            tempFile.deleteOnExit();
             new MavenXpp3Writer().write( fw, model );
             fw.flush();
             fw.close();
