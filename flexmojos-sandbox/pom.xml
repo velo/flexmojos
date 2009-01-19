@@ -28,8 +28,8 @@
 	<packaging>pom</packaging>
 	
 	<name>Flex-mojos Sandbox</name>
-	<!--
 
+	<!--
 	<build>
 		<plugins>
 			<plugin>
@@ -45,9 +45,20 @@
 			</plugin>
 		</plugins>
 	</build>
+	-->
 
-	--><modules>
+	<modules>
 		<module>flex-sdk-publisher</module>
+		<module>bundle-publisher-component</module>
 	</modules>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.maven.mercury</groupId>
+				<artifactId>mercury-plexus</artifactId>
+				<version>1.0.0-alpha-2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
