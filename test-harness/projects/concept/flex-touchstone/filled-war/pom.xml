@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
+	<artifactId>filled-war</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>war</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin
+				</artifactId>
+				<executions>
+					<execution>
+						<id>copy-swf</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+							<includeTypes>swf</includeTypes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
+			<artifactId>filled-hello-world</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>swf</type>
+		</dependency>
+	</dependencies>
+
+</project>
