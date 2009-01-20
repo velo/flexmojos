@@ -32,7 +32,8 @@ public class BundlePublisherTest
         LocalRepositoryM2 repo = mercury.constructLocalRepositoryM2( "test", repoDir, null, null, null, null );
 
         BundlePublisher publisher = (BundlePublisher) lookup( BundlePublisher.ROLE );
-        publisher.publish( new File( root, "bundle.zip" ), new File( root, "descriptor.xml" ), repo );
+        publisher.publish( new File( root, "bundle.zip" ), new FileInputStream( new File( root, "descriptor.xml" ) ),
+                           repo );
 
         assertExits( new File( repoDir, "org/sonatype/test/deeper/1.0.1/deeper-1.0.1.pom" ) );
         assertExits( new File( repoDir, "org/sonatype/test/deeper/1.0.1/deeper-1.0.1.jar" ) );

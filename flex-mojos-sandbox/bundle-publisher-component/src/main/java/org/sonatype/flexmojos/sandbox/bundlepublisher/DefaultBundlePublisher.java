@@ -48,8 +48,8 @@ public class DefaultBundlePublisher
 
     private final List<File> temporaryFiles = new ArrayList<File>();
 
-    public void publish( File sourceFile, File bundleDescriptor, Repository repository )
-        throws PublishException, RepositoryException
+    public void publish( File sourceFile, InputStream bundleDescriptor, Repository repository )
+        throws PublishingException, RepositoryException
     {
         validate( sourceFile, bundleDescriptor );
 
@@ -60,7 +60,7 @@ public class DefaultBundlePublisher
         }
         catch ( Exception e )
         {
-            throw new PublishException( "Unable to parse descriptor file", e );
+            throw new PublishingException( "Unable to parse descriptor file", e );
         }
 
         Collection<org.apache.maven.mercury.artifact.Artifact> artifacts =
@@ -98,7 +98,7 @@ public class DefaultBundlePublisher
         }
         catch ( IOException e )
         {
-            throw new PublishException( "Unable to open souce file", e );
+            throw new PublishingException( "Unable to open souce file", e );
         }
         finally
         {
@@ -141,7 +141,7 @@ public class DefaultBundlePublisher
     }
 
     private byte[] toBlob( Model pom )
-        throws PublishException
+        throws PublishingException
     {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter( output );
@@ -151,7 +151,7 @@ public class DefaultBundlePublisher
         }
         catch ( IOException e )
         {
-            throw new PublishException( "Unable to convert pom into a byte array", e );
+            throw new PublishingException( "Unable to convert pom into a byte array", e );
         }
         IOUtil.close( writer );
         IOUtil.close( output );
@@ -230,7 +230,7 @@ public class DefaultBundlePublisher
     }
 
     private Model createMavenModel( BundleDescriptor descriptor, Artifact artifact )
-        throws PublishException
+        throws PublishingException
     {
         String groupId = descriptor.getDefaults().getGroupId();
         String artifactId = artifact.getArtifactId();
@@ -277,39 +277,39 @@ public class DefaultBundlePublisher
     }
 
     private void validate( BundleDescriptor descriptor, ZipFile zip )
-        throws PublishException
+        throws PublishingException
     {
         getLogger().debug( "Validating descriptor" );
 
         if ( descriptor.getDefaults() == null )
         {
-            throw new PublishException( "Invalid descriptor: Defaults is not defined!" );
+            throw new PublishingException( "Invalid descriptor: Defaults is not defined!" );
         }
         if ( descriptor.getDefaults().getGroupId() == null )
         {
-            throw new PublishException( "Invalid descriptor: Default groupId is not defined!" );
+            throw new PublishingException( "Invalid descriptor: Default groupId is not defined!" );
         }
         if ( descriptor.getDefaults().getVersion() == null )
         {
-            throw new PublishException( "Invalid descriptor: Default version is not defined!" );
+            throw new PublishingException( "Invalid descriptor: Default version is not defined!" );
         }
 
         if ( descriptor.getArtifacts().isEmpty() )
         {
-            throw new PublishException( "Invalid descriptor: No artifacts defined!" );
+            throw new PublishingException( "Invalid descriptor: No artifacts defined!" );
         }
 
         for ( Artifact artifact : descriptor.getArtifacts() )
         {
             if ( artifact.getArtifactId() == null )
             {
-                throw new PublishException( "Invalid descriptor: Artifact ID not defined!" );
+                throw new PublishingException( "Invalid descriptor: Artifact ID not defined!" );
             }
             if ( artifact.getLocation() == null )
             {
                 if ( !"pom".equals( artifact.getType() ) )
                 {
-                    throw new PublishException( "Invalid descriptor: Artifact location not defined!" );
+                    throw new PublishingException( "Invalid descriptor: Artifact location not defined!" );
                 }
 
             }
@@ -318,34 +318,30 @@ public class DefaultBundlePublisher
                 ZipEntry entry = zip.getEntry( artifact.getLocation() );
                 if ( entry == null )
                 {
-                    throw new PublishException( "Artifact not found on sourceFile: " + artifact.getLocation() );
+                    throw new PublishingException( "Artifact not found on sourceFile: " + artifact.getLocation() );
                 }
             }
 
         }
     }
 
-    private void validate( File sourceFile, File bundleDescriptor )
-        throws PublishException
+    private void validate( File sourceFile, InputStream bundleDescriptor )
+        throws PublishingException
     {
         getLogger().debug( "Validating inputs" );
         if ( sourceFile == null )
         {
-            throw new PublishException( "Source file not defined. Please define a valid source file!" );
+            throw new PublishingException( "Source file not defined. Please define a valid source file!" );
         }
 
         if ( !sourceFile.exists() )
         {
-            throw new PublishException( "Unable to find source file: " + sourceFile.getAbsolutePath() );
+            throw new PublishingException( "Unable to find source file: " + sourceFile.getAbsolutePath() );
         }
 
         if ( bundleDescriptor == null )
         {
-            throw new PublishException( "Bundle descriptor not defined. Please define a valid bundle descriptor!" );
-        }
-        if ( !bundleDescriptor.exists() )
-        {
-            throw new PublishException( "Unable to find bunde descriptor: " + bundleDescriptor.getAbsolutePath() );
+            throw new PublishingException( "Bundle descriptor not defined. Please define a valid bundle descriptor!" );
         }
     }
 
