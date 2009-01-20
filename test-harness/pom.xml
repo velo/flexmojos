@@ -219,7 +219,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>flexmojos-sandbox/artifactId>
+			<artifactId>flexmojos-sandbox</artifactId>
 			<version>${pom.version}</version>
 			<type>pom</type>
 		</dependency>
