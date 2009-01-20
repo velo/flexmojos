@@ -22,6 +22,7 @@
 					<sourcePaths>
 						<sourcePath>${project.build.sourceDirectory}</sourcePath>
 					</sourcePaths>
+					<sourceFile>main.mxml</sourceFile>
 				</configuration>
 			</plugin>
 		</plugins>
