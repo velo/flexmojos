@@ -24,6 +24,25 @@
 
 	<name>Flex-mojos Sandbox</name>
 
+	<distributionManagement>
+		<repository>
+			<id>forge-releases</id>
+			<name>Flex-Mojos Release Repository</name>
+			<!--
+				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases</url>
+			-->
+			<url>${flexReleaseUrl}</url>
+		</repository>
+		<snapshotRepository>
+			<id>forge-snapshots</id>
+			<name>Flex-Mojos Snapshot Repository</name>
+			<!--
+				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>
+			-->
+			<url>${flexSnapshotUrl}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
