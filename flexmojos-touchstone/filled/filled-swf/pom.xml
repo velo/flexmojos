@@ -21,34 +21,8 @@
 				<configuration>
 					<sourcePaths>
 						<sourcePath>${project.build.sourceDirectory}</sourcePath>
-						<sourcePath>src/main/locales/{locale}</sourcePath> <!-- flex compiler replaces {locale} by en_US -->
 					</sourcePaths>
-					<!-- start deprecated, but it is what intuit uses -->
-					<mergeResourceBundle>true</mergeResourceBundle>
-					<locales>
-						<locale>en_US</locale>
-					</locales>
-					<!--
-						same as: 
-						<compiledLocales> 
-							<locale>en_US</locale>
-						</compiledLocales>
-					-->
-					<!-- end deprecated -->
-					<resourceBundlePath>src/main/locales/{locale}</resourceBundlePath>
 				</configuration>
-			<!--
-				<executions>
-					<execution>
-						<goals>
-							<goal>wrapper</goal>
-						</goals>
-						<configuration>
-							<templateURI>folder:${basedir}/html-template</templateURI>
-						</configuration>
-					</execution>
-				</executions>
-			-->
 			</plugin>
 		</plugins>
 	</build>
