@@ -17,7 +17,13 @@
  */
 package org.sonatype.flexmojos.install;
 
-import org.sonatype.flexmojos.components.publisher.FlexSDKPublisher;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.apache.maven.mercury.repository.api.Repository;
+import org.apache.maven.mercury.repository.api.RepositoryException;
+import org.apache.maven.mercury.repository.remote.m2.RemoteRepositoryM2;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @goal deploy-sdk
@@ -39,14 +45,6 @@ public class SDKDeployMojo
     private String repositoryId;
 
     /**
-     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
-     * 
-     * @parameter expression="${repositoryLayout}" default-value="default"
-     * @required
-     */
-    private String repositoryLayout;
-
-    /**
      * URL where the artifact will be deployed. <br/>
      * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
      * 
@@ -55,28 +53,23 @@ public class SDKDeployMojo
      */
     private String url;
 
-    /**
-     * Whether to deploy snapshots with a unique version or not.
-     * 
-     * @parameter expression="${uniqueVersion}" default-value="true"
-     */
-    private boolean uniqueVersion;
-
-    /**
-     * @component role="org.sonatype.flexmojos.components.publisher.FlexSDKPublisher" roleHint="deploy"
-     */
-    private FlexSDKPublisher publisher;
-
     @Override
-    protected FlexSDKPublisher getPublisher()
+    protected Repository getRepository()
+        throws RepositoryException, MojoExecutionException
     {
-        context.put( "repositoryId", repositoryId );
-        context.put( "repositoryLayout", repositoryLayout );
-        context.put( "url", url );
-        context.put( "uniqueVersion", uniqueVersion );
-        context.put( "localRepository", localRepository );
-
-        return publisher;
+        URL serverUrl;
+        try
+        {
+            serverUrl = new URL( url );
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new MojoExecutionException( "Invalid Url: " + url, e );
+        }
+        RemoteRepositoryM2 repo =
+            mercury.constructRemoteRepositoryM2( repositoryId, serverUrl, null, null, null, null, null, null, null,
+                                                 null, null );
+        return repo;
     }
 
 }
