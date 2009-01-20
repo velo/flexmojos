@@ -19,11 +19,15 @@ package org.sonatype.flexmojos.install;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.mercury.repository.api.Repository;
 import org.apache.maven.mercury.repository.api.RepositoryException;
 import org.apache.maven.mercury.repository.remote.m2.RemoteRepositoryM2;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Server;
 
 /**
  * @goal deploy-sdk
@@ -66,10 +70,31 @@ public class SDKDeployMojo
         {
             throw new MojoExecutionException( "Invalid Url: " + url, e );
         }
+
+        Server server = session.getSettings().getServer( repositoryId );
+        String username = null;
+        String userpassword = null;
+        if ( server != null )
+        {
+            username = server.getUsername();
+            userpassword = server.getPassword();
+        }
+
         RemoteRepositoryM2 repo =
-            mercury.constructRemoteRepositoryM2( repositoryId, serverUrl, null, null, null, null, null, null, null,
-                                                 null, null );
+            mercury.constructRemoteRepositoryM2( repositoryId, serverUrl, username, userpassword, null, null, null,
+                                                 null, null, null, null );
         return repo;
     }
+
+    // ----------------------------------------------------------------
+    /** @parameter expression="${session}" */
+    private MavenSession session;
+
+    /**
+     * Remote repositories declared in the project pom
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    protected List<ArtifactRepository> remoteRepositories;
 
 }
