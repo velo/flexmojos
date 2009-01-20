@@ -27,7 +27,7 @@
     <display-name>Filled war</display-name>
 
     <welcome-file-list>
-        <welcome-file>filled-hello-world-1.0-SNAPSHOT.swf</welcome-file>
+        <welcome-file>flex-module-1.0-SNAPSHOT.swf</welcome-file>
     </welcome-file-list>
 
 </web-app>
