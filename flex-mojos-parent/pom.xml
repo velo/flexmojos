@@ -397,12 +397,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-utils</artifactId>
-				<version>1.1</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-cli</artifactId>
 				<version>1.0-alpha-8</version>
 				<scope>provided</scope>
@@ -410,13 +404,13 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-container-default</artifactId>
-				<version>1.0-alpha-9-stable-1</version>
+				<version>1.0-beta-3.0.1</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-annotations</artifactId>
-				<version>1.0-alpha-8</version>
+				<version>1.0-beta-3.0.1</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>
