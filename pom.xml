@@ -65,6 +65,9 @@
 				<module>flex-maven-plugin</module>
 				<module>super-poms</module>
 			</modules>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
 		</profile>
 
 		<profile>
