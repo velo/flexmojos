@@ -23,6 +23,9 @@
 					<sourcePaths>
 						<sourcePath>${project.build.sourceDirectory}</sourcePath>
 					</sourcePaths>
+					<includeSources>
+						<includeSource>${project.build.sourceDirectory}</includeSource>
+					</includeSources>
 				</configuration>
 			</plugin>
 		</plugins>
