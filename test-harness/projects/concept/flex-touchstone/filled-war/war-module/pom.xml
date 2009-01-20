@@ -21,41 +21,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.sonatype.flexmojos.filled-war</groupId>
-	<artifactId>filled-war</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<parent>
+		<groupId>org.sonatype.flexmojos.filled-war</groupId>
+		<artifactId>filled-war</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
 
-	<packaging>pom</packaging>
+	<artifactId>war-module</artifactId>
 
-	<modules>
-		<module>flex-module</module>
-		<module>war-module</module>
-	</modules>
+	<packaging>war</packaging>
 
-	<repositories>
-		<repository>
-			<id>r.s.o</id>
-			<url>http://repository.sonatype.org/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin
+				</artifactId>
+				<executions>
+					<execution>
+						<id>copy-swf</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+							<includeTypes>swf</includeTypes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>r.s.o</id>
-			<url>http://repository.sonatype.org/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>flex-module</artifactId>
+			<version>${project.version}</version>
+			<type>swf</type>
+		</dependency>
+	</dependencies>
 
 </project>
