@@ -40,7 +40,7 @@ public class BundleDescriptor
 
     private Defaults defaults;
 
-    private List<Artifact> artifacts;
+    private List<BundleArtifact> artifacts;
 
     private BundleDescriptor( Xpp3Dom dom )
     {
@@ -89,7 +89,7 @@ public class BundleDescriptor
         return defaults;
     }
 
-    public List<Artifact> getArtifacts()
+    public List<BundleArtifact> getArtifacts()
     {
         if ( artifacts == null )
         {
@@ -100,10 +100,10 @@ public class BundleDescriptor
             }
             else
             {
-                artifacts = new ArrayList<Artifact>();
+                artifacts = new ArrayList<BundleArtifact>();
                 for ( Xpp3Dom artifactDom : dom.getChildren( "artifact" ) )
                 {
-                    artifacts.add( new Artifact( artifactDom ) );
+                    artifacts.add( new BundleArtifact( artifactDom ) );
                 }
             }
         }

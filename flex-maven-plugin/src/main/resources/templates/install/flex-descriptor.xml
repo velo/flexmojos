@@ -40,7 +40,7 @@
 
 	<defaults>
 		<groupId>com.adobe.flex.framework</groupId>
-		<version>3.2.0.3958</version>
+		<version>3.2.0</version>
 	</defaults>
 
 	<artifacts>
@@ -49,32 +49,32 @@
 			<type>pom</type>
 			<dependencies>
 				<dependency>
-					<dependencyId>flex</dependencyId>
+					<artifactId>flex</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>framework</dependencyId>
+					<artifactId>framework</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>rpc</dependencyId>
+					<artifactId>rpc</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>utilities</dependencyId>
+					<artifactId>utilities</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>playerglobal</dependencyId>
-					<version>9-${version}</version>
+					<artifactId>playerglobal</artifactId>
+					<version>9-3.2.0</version>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>framework</dependencyId>
+					<artifactId>framework</artifactId>
 					<type>rb.swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>rpc</dependencyId>
+					<artifactId>rpc</artifactId>
 					<type>rb.swc</type>
 				</dependency>
 			</dependencies>
@@ -84,51 +84,51 @@
 			<type>pom</type>
 			<dependencies>
 				<dependency>
-					<dependencyId>flex</dependencyId>
+					<artifactId>flex</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>framework</dependencyId>
+					<artifactId>framework</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>rpc</dependencyId>
+					<artifactId>rpc</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>utilities</dependencyId>
+					<artifactId>utilities</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>airframework</dependencyId>
+					<artifactId>airframework</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>airglobal</dependencyId>
+					<artifactId>airglobal</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>applicationupdater</dependencyId>
+					<artifactId>applicationupdater</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>applicationupdater_ui</dependencyId>
+					<artifactId>applicationupdater_ui</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>servicemonitor</dependencyId>
+					<artifactId>servicemonitor</artifactId>
 					<type>swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>airframework</dependencyId>
+					<artifactId>airframework</artifactId>
 					<type>rb.swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>framework</dependencyId>
+					<artifactId>framework</artifactId>
 					<type>rb.swc</type>
 				</dependency>
 				<dependency>
-					<dependencyId>rpc</dependencyId>
+					<artifactId>rpc</artifactId>
 					<type>rb.swc</type>
 				</dependency>
 			</dependencies>
@@ -141,7 +141,7 @@
 		<artifact>
 			<artifactId>framework</artifactId>
 			<type>swc</type>
-			<location>frameworks/libs/framework .swc</location>
+			<location>frameworks/libs/framework.swc</location>
 		</artifact>
 		<artifact>
 			<artifactId>rpc</artifactId>
@@ -155,13 +155,13 @@
 		</artifact>
 		<artifact>
 			<artifactId>playerglobal</artifactId>
-			<version>9-${version}</version>
+			<version>9-3.2.0</version>
 			<type>swc</type>
 			<location>frameworks/libs/player/9/playerglobal.swc</location>
 		</artifact>
 		<artifact>
 			<artifactId>playerglobal</artifactId>
-			<version>10-${version}</version>
+			<version>10-3.2.0</version>
 			<type>swc</type>
 			<location>frameworks/libs/player/10/playerglobal.swc</location>
 		</artifact>

@@ -22,9 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.apache.maven.mercury.plexus.PlexusMercury;
-import org.apache.maven.mercury.repository.api.Repository;
-import org.apache.maven.mercury.repository.api.RepositoryException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -40,11 +37,6 @@ public abstract class AbstractInstallMojo
      * @component
      */
     private BundlePublisher publisher;
-
-    /**
-     * @component
-     */
-    protected PlexusMercury mercury;
 
     /**
      * File location where targeted Flex SDK is located
@@ -74,19 +66,15 @@ public abstract class AbstractInstallMojo
         try
         {
             in = new FileInputStream( sdkDescriptor );
-            publisher.publish( this.sdkBundle, in, getRepository() );
+            proceed( publisher, sdkBundle, in );
         }
         catch ( PublishingException e )
         {
-            throw new MojoFailureException( "Unable to install flex SDK", e );
+            throw new MojoFailureException( "Unable to install flex SDK: " + e.getMessage(), e );
         }
         catch ( FileNotFoundException e )
         {
             throw new MojoFailureException( "Flex SDK descriptor not found", e );
-        }
-        catch ( RepositoryException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
         }
         finally
         {
@@ -94,7 +82,7 @@ public abstract class AbstractInstallMojo
         }
     }
 
-    protected abstract Repository getRepository()
-        throws RepositoryException, MojoExecutionException;
+    protected abstract void proceed( BundlePublisher publisher, File sdkBundle, InputStream sdkDescriptor )
+        throws PublishingException;
 
 }

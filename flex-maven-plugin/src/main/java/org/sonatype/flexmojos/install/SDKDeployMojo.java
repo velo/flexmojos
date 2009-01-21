@@ -17,17 +17,15 @@
  */
 package org.sonatype.flexmojos.install;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.mercury.repository.api.Repository;
-import org.apache.maven.mercury.repository.api.RepositoryException;
-import org.apache.maven.mercury.repository.remote.m2.RemoteRepositoryM2;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.settings.Server;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.sonatype.flexmojos.sandbox.bundlepublisher.BundlePublisher;
+import org.sonatype.flexmojos.sandbox.bundlepublisher.PublishingException;
 
 /**
  * @goal deploy-sdk
@@ -49,6 +47,24 @@ public class SDKDeployMojo
     private String repositoryId;
 
     /**
+     * The type of remote repository layout to deploy to. Try <i>legacy</i> for a Maven 1.x-style repository layout.
+     * 
+     * @parameter expression="${repositoryLayout}" default-value="default"
+     * @required
+     */
+    private String repositoryLayout;
+
+    /**
+     * Map that contains the layouts
+     * 
+     * @component role="org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout"
+     * @required
+     * @readonly
+     */
+    @SuppressWarnings( "unchecked" )
+    private Map repositoryLayouts;
+
+    /**
      * URL where the artifact will be deployed. <br/>
      * ie ( file://C:\m2-repo or scp://host.com/path/to/repo )
      * 
@@ -57,44 +73,36 @@ public class SDKDeployMojo
      */
     private String url;
 
-    @Override
-    protected Repository getRepository()
-        throws RepositoryException, MojoExecutionException
-    {
-        URL serverUrl;
-        try
-        {
-            serverUrl = new URL( url );
-        }
-        catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "Invalid Url: " + url, e );
-        }
-
-        Server server = session.getSettings().getServer( repositoryId );
-        String username = null;
-        String userpassword = null;
-        if ( server != null )
-        {
-            username = server.getUsername();
-            userpassword = server.getPassword();
-        }
-
-        RemoteRepositoryM2 repo =
-            mercury.constructRemoteRepositoryM2( repositoryId, serverUrl, username, userpassword, null, null, null,
-                                                 null, null, null, null );
-        return repo;
-    }
-
-    // ----------------------------------------------------------------
-    /** @parameter expression="${session}" */
-    private MavenSession session;
+    /**
+     * Whether to deploy snapshots with a unique version or not.
+     * 
+     * @parameter expression="${uniqueVersion}" default-value="true"
+     */
+    private boolean uniqueVersion;
 
     /**
-     * Remote repositories declared in the project pom
-     * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
      */
-    protected List<ArtifactRepository> remoteRepositories;
+    private ArtifactRepository localRepository;
 
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactRepositoryFactory repositoryFactory;
+
+    @Override
+    protected void proceed( BundlePublisher publisher, File sdkBundle, InputStream sdkDescriptor )
+        throws PublishingException
+    {
+        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) repositoryLayouts.get( repositoryLayout );
+
+        ArtifactRepository deploymentRepository =
+            repositoryFactory.createDeploymentArtifactRepository( repositoryId, url, layout, uniqueVersion );
+
+        publisher.deploy( sdkBundle, sdkDescriptor, deploymentRepository, localRepository );
+    }
 }

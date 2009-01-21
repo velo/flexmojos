@@ -18,11 +18,11 @@
 package org.sonatype.flexmojos.install;
 
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.mercury.repository.api.Repository;
-import org.apache.maven.mercury.repository.api.RepositoryException;
-import org.apache.maven.mercury.repository.local.m2.LocalRepositoryM2;
+import org.sonatype.flexmojos.sandbox.bundlepublisher.BundlePublisher;
+import org.sonatype.flexmojos.sandbox.bundlepublisher.PublishingException;
 
 /**
  * @goal install-sdk
@@ -39,16 +39,12 @@ public class SDKInstallMojo
      * @required
      * @readonly
      */
-    protected ArtifactRepository localRepository;
+    private ArtifactRepository localRepository;
 
     @Override
-    protected Repository getRepository()
-        throws RepositoryException
+    protected void proceed( BundlePublisher publisher, File sdkBundle, InputStream sdkDescriptor )
+        throws PublishingException
     {
-        LocalRepositoryM2 repo =
-            mercury.constructLocalRepositoryM2( localRepository.getId(), new File( localRepository.getBasedir() ),
-                                                null, null, null, null );
-        return repo;
+        publisher.install( sdkBundle, sdkDescriptor, localRepository );
     }
-
 }
