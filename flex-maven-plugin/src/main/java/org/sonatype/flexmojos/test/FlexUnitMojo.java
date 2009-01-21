@@ -49,6 +49,8 @@ public class FlexUnitMojo
     extends AbstractIrvinMojo
 {
 
+    private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
+
     private static final String END_OF_TEST_RUN = "<endOfTestRun/>";
 
     private static final String END_OF_TEST_SUITE = "</testsuite>";
@@ -482,8 +484,6 @@ public class FlexUnitMojo
         }
 
     }
-
-    private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
 
     @Override
     protected void tearDown()
