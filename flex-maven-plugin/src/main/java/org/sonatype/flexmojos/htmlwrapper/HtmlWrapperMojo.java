@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.htmlwrapper;
 
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -92,7 +91,7 @@ public class HtmlWrapperMojo
      * <p>
      * This mojo will look for <tt>index.template.html</tt> for replace parameters
      * 
-     * @parameter default-value="embed:client-side-detection-with-history"
+     * @parameter default-value="embed:express-installation-with-history"
      */
     private String templateURI;
 
