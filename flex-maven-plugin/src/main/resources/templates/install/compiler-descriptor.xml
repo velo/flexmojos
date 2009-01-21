@@ -18,109 +18,116 @@
 			directory, you agree to the terms and conditions of the applicable end user license agreement.
 		</license>
 	</organization>
-	
+
 	<defaults>
 		<groupId>com.adobe.flex.compiler</groupId>
-		<version>3.2.0.3958</version>
+		<version>3.2.0</version>
 	</defaults>
-	
+
 	<artifacts>
 		<artifact>
-			<artifactId>grouper</artifactId>
+			<groupId>com.adobe.flex</groupId>
+			<artifactId>compiler</artifactId>
 			<type>pom</type>
 			<dependencies>
 				<dependency>
-					<dependencyId>asc</dependencyId>
+					<artifactId>asc</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>asdoc</dependencyId>
+					<artifactId>asdoc</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-awt-util</dependencyId>
+					<artifactId>batik-awt-util</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-bridge</dependencyId>
+					<artifactId>batik-bridge</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-css</dependencyId>
+					<artifactId>batik-css</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-dom</dependencyId>
+					<artifactId>batik-dom</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-ext</dependencyId>
+					<artifactId>batik-ext</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-gvt</dependencyId>
+					<artifactId>batik-gvt</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-parser</dependencyId>
+					<artifactId>batik-parser</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-script</dependencyId>
+					<artifactId>batik-script</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-svg-dom</dependencyId>
+					<artifactId>batik-svg-dom</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-svggen</dependencyId>
+					<artifactId>batik-svggen</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-transcoder</dependencyId>
+					<artifactId>batik-transcoder</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-util</dependencyId>
+					<artifactId>batik-util</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>batik-xml</dependencyId>
+					<artifactId>batik-xml</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>commons-collections</dependencyId>
+					<artifactId>commons-collections</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>commons-discovery</dependencyId>
+					<artifactId>commons-discovery</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>commons-logging</dependencyId>
+					<artifactId>commons-logging</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>compc</dependencyId>
+					<artifactId>compc</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>copylocale</dependencyId>
+					<artifactId>copylocale</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>digest</dependencyId>
+					<artifactId>digest</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>fcsh</dependencyId>
+					<artifactId>fcsh</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>fdb</dependencyId>
+					<artifactId>fdb</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>flex-compiler-oem</dependencyId>
+					<artifactId>flex-compiler-oem</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>flex-messaging-common</dependencyId>
+					<artifactId>flex-messaging-common</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>mm-velocity</dependencyId>
+					<artifactId>mm-velocity</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>mxmlc</dependencyId>
+					<artifactId>mxmlc</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>optimizer</dependencyId>
+					<artifactId>optimizer</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>swfutils</dependencyId>
+					<artifactId>swfutils</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>xalan</dependencyId>
+					<artifactId>xalan</artifactId>
 				</dependency>
 				<dependency>
-					<dependencyId>xercesImpl</dependencyId>
+					<artifactId>xercesImpl</artifactId>
+				</dependency>
+				<dependency>
+					<artifactId>xercesPatch</artifactId>
+				</dependency>
+				<dependency>
+					<artifactId>xmlParserAPIs</artifactId>
 				</dependency>
 			</dependencies>
 		</artifact>
@@ -247,6 +254,14 @@
 		<artifact>
 			<artifactId>xercesImpl</artifactId>
 			<location>lib/xercesImpl.jar</location>
+		</artifact>
+		<artifact>
+			<artifactId>xercesPatch</artifactId>
+			<location>lib/xercesPatch.jar</location>
+		</artifact>
+		<artifact>
+			<artifactId>xmlParserAPIs</artifactId>
+			<location>lib/xmlParserAPIs.jar</location>
 		</artifact>
 	</artifacts>
 </mapping>

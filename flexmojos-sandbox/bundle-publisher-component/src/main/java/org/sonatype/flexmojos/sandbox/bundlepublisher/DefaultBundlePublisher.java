@@ -1,12 +1,10 @@
 package org.sonatype.flexmojos.sandbox.bundlepublisher;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,11 +12,13 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.maven.mercury.artifact.ArtifactBasicMetadata;
-import org.apache.maven.mercury.artifact.DefaultArtifact;
-import org.apache.maven.mercury.plexus.PlexusMercury;
-import org.apache.maven.mercury.repository.api.Repository;
-import org.apache.maven.mercury.repository.api.RepositoryException;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.deployer.ArtifactDeployer;
+import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.installer.ArtifactInstallationException;
+import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
@@ -29,8 +29,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.sonatype.flexmojos.sandbox.bundlepublisher.model.Artifact;
 import org.sonatype.flexmojos.sandbox.bundlepublisher.model.ArtifactDependency;
+import org.sonatype.flexmojos.sandbox.bundlepublisher.model.BundleArtifact;
 import org.sonatype.flexmojos.sandbox.bundlepublisher.model.BundleDescriptor;
 
 @Component( role = BundlePublisher.class )
@@ -44,12 +44,64 @@ public class DefaultBundlePublisher
     private static final Random RANDOM = new Random();
 
     @Requirement
-    private PlexusMercury mercury;
+    private ArtifactFactory artifactFactory;
+
+    @Requirement
+    private ArtifactDeployer deployer;
+
+    @Requirement
+    private ArtifactInstaller installer;
 
     private final List<File> temporaryFiles = new ArrayList<File>();
 
-    public void publish( File sourceFile, InputStream bundleDescriptor, Repository repository )
-        throws PublishingException, RepositoryException
+    public void deploy( File sourceFile, InputStream bundleDescriptor, ArtifactRepository deploymentRepository,
+                        ArtifactRepository localRepository )
+        throws PublishingException
+    {
+        Collection<Artifact> artifacts = preparePublish( sourceFile, bundleDescriptor );
+
+        try
+        {
+            for ( Artifact artifact : artifacts )
+            {
+                deployer.deploy( artifact.getFile(), artifact, deploymentRepository, localRepository );
+            }
+        }
+        catch ( ArtifactDeploymentException e )
+        {
+            throw new PublishingException( "Unable to deploy artifact: " + e.getMessage(), e );
+        }
+        finally
+        {
+            killTemporaryFiles();
+        }
+    }
+
+    public void install( File sourceFile, InputStream bundleDescriptor, ArtifactRepository localRepository )
+        throws PublishingException
+    {
+        Collection<Artifact> artifacts = preparePublish( sourceFile, bundleDescriptor );
+
+        try
+        {
+            for ( Artifact artifact : artifacts )
+            {
+                installer.install( artifact.getFile(), artifact, localRepository ); // to install
+            }
+        }
+        catch ( ArtifactInstallationException e )
+        {
+            throw new PublishingException( "Unable to install artifact: " + e.getMessage(), e );
+        }
+        finally
+        {
+            killTemporaryFiles();
+        }
+
+    }
+
+    private Collection<Artifact> preparePublish( File sourceFile, InputStream bundleDescriptor )
+        throws PublishingException
     {
         validate( sourceFile, bundleDescriptor );
 
@@ -63,8 +115,7 @@ public class DefaultBundlePublisher
             throw new PublishingException( "Unable to parse descriptor file", e );
         }
 
-        Collection<org.apache.maven.mercury.artifact.Artifact> artifacts =
-            new ArrayList<org.apache.maven.mercury.artifact.Artifact>();
+        Collection<Artifact> artifacts = new ArrayList<Artifact>();
 
         ZipFile zip = null;
         try
@@ -72,28 +123,35 @@ public class DefaultBundlePublisher
             zip = new ZipFile( sourceFile );
             validate( descriptor, zip );
 
-            for ( Artifact artifact : descriptor.getArtifacts() )
+            File file;
+            for ( BundleArtifact artifact : descriptor.getArtifacts() )
             {
                 getLogger().debug( "Importing artifact " + artifact.getArtifactId() );
 
-                Model pom = createMavenModel( descriptor, artifact );
-                DefaultArtifact mercuryArtifact = createMercuryArtifact( descriptor, artifact );
-                mercuryArtifact.setPomBlob( toBlob( pom ) );
+                Artifact mavenArtifact = createMavenArtifact( descriptor, artifact );
 
-                String location = artifact.getLocation();
-                File file;
-                if ( location != null )
+                if ( "pom".equals( mavenArtifact.getType() ) )
                 {
-                    file = getArtifactFile( zip, location, mercuryArtifact );
+                    Model pom = createMavenModel( descriptor, artifact );
+                    file = toFile( pom );
                 }
                 else
                 {
-                    file = toFile( pom );
+                    String location = artifact.getLocation();
+                    file = getArtifactFile( zip, location, mavenArtifact );
+
+                    if ( artifact.getClassifier() == null )
+                    {
+                        Model pom = createMavenModel( descriptor, artifact );
+                        Artifact pomArtifact = createMavenArtifact( descriptor, artifact, "pom" );
+                        pomArtifact.setFile( toFile( pom ) );
+                        artifacts.add( pomArtifact );
+                    }
                 }
 
-                mercuryArtifact.setFile( file );
+                mavenArtifact.setFile( file );
 
-                artifacts.add( mercuryArtifact );
+                artifacts.add( mavenArtifact );
             }
         }
         catch ( IOException e )
@@ -115,9 +173,7 @@ public class DefaultBundlePublisher
             }
         }
 
-        this.mercury.write( repository, artifacts );
-
-        killTemporaryFiles();
+        return artifacts;
     }
 
     private File toFile( Model pom )
@@ -140,26 +196,7 @@ public class DefaultBundlePublisher
         }
     }
 
-    private byte[] toBlob( Model pom )
-        throws PublishingException
-    {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        OutputStreamWriter writer = new OutputStreamWriter( output );
-        try
-        {
-            new MavenXpp3Writer().write( writer, pom );
-        }
-        catch ( IOException e )
-        {
-            throw new PublishingException( "Unable to convert pom into a byte array", e );
-        }
-        IOUtil.close( writer );
-        IOUtil.close( output );
-
-        return output.toByteArray();
-    }
-
-    private File getArtifactFile( ZipFile zip, String location, DefaultArtifact mercuryArtifact )
+    private File getArtifactFile( ZipFile zip, String location, Artifact mavenArtifact )
         throws IOException
     {
         ZipEntry entry = zip.getEntry( location );
@@ -200,44 +237,35 @@ public class DefaultBundlePublisher
         }
     }
 
-    private DefaultArtifact createMercuryArtifact( BundleDescriptor descriptor, Artifact artifact )
+    private Artifact createMavenArtifact( BundleDescriptor descriptor, BundleArtifact artifact )
     {
-        String groupId = descriptor.getDefaults().getGroupId();
-        String artifactId = artifact.getArtifactId();
-        String version = descriptor.getDefaults().getVersion();
         String type = artifact.getType() != null ? artifact.getType() : "jar";
-
-        DefaultArtifact mercuryArtifact =
-            new DefaultArtifact( groupId, artifactId, version, type, null, false, null, null );
-
-        mercuryArtifact.setDependencies( new ArrayList<ArtifactBasicMetadata>() );
-        for ( ArtifactDependency dependency : artifact.getDependencies() )
-        {
-            String depGroupId = dependency.getGroupId() != null ? dependency.getGroupId() : groupId;
-            String depVersion = dependency.getVersion() != null ? dependency.getVersion() : version;
-            String depType = dependency.getType() != null ? dependency.getType() : "jar";
-
-            ArtifactBasicMetadata dep = new ArtifactBasicMetadata();
-            dep.setGroupId( depGroupId );
-            dep.setArtifactId( dependency.getArtifactId() );
-            dep.setClassifier( dependency.getClassifier() );
-            dep.setType( depType );
-            dep.setVersion( depVersion );
-
-            mercuryArtifact.getDependencies().add( dep );
-        }
-        return mercuryArtifact;
+        return createMavenArtifact( descriptor, artifact, type );
     }
 
-    private Model createMavenModel( BundleDescriptor descriptor, Artifact artifact )
+    private Artifact createMavenArtifact( BundleDescriptor descriptor, BundleArtifact artifact, String type )
+    {
+        String groupId = artifact.getGroupId() != null ? artifact.getGroupId() : descriptor.getDefaults().getGroupId();
+        String artifactId = artifact.getArtifactId();
+        String version = artifact.getVersion() != null ? artifact.getVersion() : descriptor.getDefaults().getVersion();
+        String classifier = artifact.getClassifier();
+
+        Artifact mavenArtifact =
+            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+
+        return mavenArtifact;
+    }
+
+    private Model createMavenModel( BundleDescriptor descriptor, BundleArtifact artifact )
         throws PublishingException
     {
-        String groupId = descriptor.getDefaults().getGroupId();
+        String groupId = artifact.getGroupId() != null ? artifact.getGroupId() : descriptor.getDefaults().getGroupId();
         String artifactId = artifact.getArtifactId();
-        String version = descriptor.getDefaults().getVersion();
+        String version = artifact.getVersion() != null ? artifact.getVersion() : descriptor.getDefaults().getVersion();
         String type = artifact.getType() != null ? artifact.getType() : "jar";
 
         Model pom = new Model();
+        pom.setModelVersion( "4.0.0" );
         pom.setGroupId( groupId );
         pom.setArtifactId( artifactId );
         pom.setVersion( version );
@@ -299,9 +327,10 @@ public class DefaultBundlePublisher
             throw new PublishingException( "Invalid descriptor: No artifacts defined!" );
         }
 
-        for ( Artifact artifact : descriptor.getArtifacts() )
+        for ( BundleArtifact artifact : descriptor.getArtifacts() )
         {
-            if ( artifact.getArtifactId() == null )
+            String artifactId = artifact.getArtifactId();
+            if ( artifactId == null )
             {
                 throw new PublishingException( "Invalid descriptor: Artifact ID not defined!" );
             }
@@ -309,7 +338,8 @@ public class DefaultBundlePublisher
             {
                 if ( !"pom".equals( artifact.getType() ) )
                 {
-                    throw new PublishingException( "Invalid descriptor: Artifact location not defined!" );
+                    throw new PublishingException( "Invalid descriptor: Artifact location not defined for: "
+                        + artifactId );
                 }
 
             }
@@ -318,7 +348,18 @@ public class DefaultBundlePublisher
                 ZipEntry entry = zip.getEntry( artifact.getLocation() );
                 if ( entry == null )
                 {
-                    throw new PublishingException( "Artifact not found on sourceFile: " + artifact.getLocation() );
+                    throw new PublishingException( "Artifact for '" + artifactId + "' not found on sourceFile: "
+                        + artifact.getLocation() );
+                }
+            }
+
+            List<ArtifactDependency> dependencies = artifact.getDependencies();
+            for ( ArtifactDependency dependency : dependencies )
+            {
+                if ( dependency.getArtifactId() == null )
+                {
+                    throw new PublishingException( "Invalid descriptor: Dependency artifactId not defined! Artifact "
+                        + artifactId );
                 }
             }
 

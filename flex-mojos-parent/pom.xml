@@ -403,15 +403,13 @@
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-container-default</artifactId>
-				<version>1.0-beta-3.0.1</version>
-				<scope>provided</scope>
+				<artifactId>plexus-component-annotations</artifactId>
+				<version>1.0-alpha-8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
-				<artifactId>plexus-component-annotations</artifactId>
-				<version>1.0-beta-3.0.1</version>
-				<scope>provided</scope>
+				<artifactId>plexus-container-default</artifactId>
+				<version>1.0-alpha-8</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
