@@ -36,7 +36,7 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId>
-		<version>3.0-alpha7</version>
+		<version>3.0-SNAPSHOT</version>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
 	</parent>
 
