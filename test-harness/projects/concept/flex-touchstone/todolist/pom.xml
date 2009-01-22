@@ -50,32 +50,6 @@
     </pluginManagement>
   </build>
 
-  <repositories>
-    <repository>
-      <id>sonatype-public-repository</id>
-      <url>http://repository.sonatype.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>sonatype-public-repository</id>
-      <url>http://repository.sonatype.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
   <modules>
     <module>todolist-config</module>
     <module>todolist-java</module>
