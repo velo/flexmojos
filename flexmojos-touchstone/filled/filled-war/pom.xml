@@ -40,21 +40,11 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flex-maven-plugin</artifactId>
         <version>3.0-SNAPSHOT</version>
-      </plugin>
-      <!--
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-swf</id>
-            <phase>process-classes</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>copy-flex-resources</goal>
             </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-              <includeTypes>swf</includeTypes>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -62,7 +52,6 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
       </plugin>
-      -->
     </plugins>
   </build>
 
