@@ -17,36 +17,25 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 
+import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
-public class Issue0066Test
-    extends AbstractIssueTest
+public class Issue0017Test
+    extends AbstractFlexMojosTests
 {
-
-    @Test( timeOut = 120000, groups = { "generator" } )
-    public void issue66()
+    @Test( timeOut = 120000 )
+    public void issue17()
         throws Exception
     {
-        File testDir = getProject( "/issues/issue-0066" );
-        test( testDir, "install" );
+        File testDir = getProject( "/issues/issue-0017" );
+        test( testDir, "site", "-o" );
 
-        // Issue 62 test
-        // is excluded!
-        File another = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/AnotherPojo.as" );
-        assertFalse( "File not found " + another, another.isFile() );
-
-        // Issue 65 test
-        File pojo = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/SimplePojo.as" );
-        assertTrue( "File not found " + pojo, pojo.isFile() );
-        File base =
-            new File( testDir,
-                      "flex/target/generated-sources/flex-mojos/org/sonatype/flexmojos/generator/SimplePojoBase.as" );
-        assertTrue( "File not found " + base, base.isFile() );
+        File asdoc = new File( testDir, "target/site/asdoc" );
+        assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
 }
