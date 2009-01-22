@@ -168,7 +168,8 @@
 	</developers>
 
 	<issueManagement>
-		<url>http://code.google.com/p/flex-mojos/issues/list</url>
+		<system>jira</system>
+		<url>https://issues.sonatype.org/browse/FLEXMOJOS</url>
 	</issueManagement>
 
 	<scm>
