@@ -29,7 +29,6 @@
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flex-maven-plugin</artifactId>
-				<version>3.0-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration>
 					<contextRoot>todolist-web</contextRoot>
