@@ -21,7 +21,7 @@
 
 	<defaults>
 		<groupId>com.adobe.flex.framework</groupId>
-		<version>3.2.0</version>
+		<version>3.2.0.3958</version>
 	</defaults>
 
 	<artifacts>
@@ -47,7 +47,7 @@
 				</dependency>
 				<dependency>
 					<artifactId>playerglobal</artifactId>
-					<version>9-3.2.0</version>
+					<version>9-3.2.0.3958</version>
 					<type>swc</type>
 				</dependency>
 				<dependency>
@@ -136,13 +136,13 @@
 		</artifact>
 		<artifact>
 			<artifactId>playerglobal</artifactId>
-			<version>9-3.2.0</version>
+			<version>9-3.2.0.3958</version>
 			<type>swc</type>
 			<location>frameworks/libs/player/9/playerglobal.swc</location>
 		</artifact>
 		<artifact>
 			<artifactId>playerglobal</artifactId>
-			<version>10-3.2.0</version>
+			<version>10-3.2.0.3958</version>
 			<type>swc</type>
 			<location>frameworks/libs/player/10/playerglobal.swc</location>
 		</artifact>
