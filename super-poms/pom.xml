@@ -42,7 +42,7 @@
 	<parent>
 		<groupId>info.flex-mojos</groupId>
 		<artifactId>flex-mojos-parent</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>2.0.3</version>
 		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
 	</parent>
 
@@ -74,94 +74,33 @@
 
 			<!-- Work around to get super poms installed automatically -->
 			<plugin>
-				<artifactId>maven-install-plugin</artifactId>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>attach-artifact-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>super-pom-commons</id>
-						<phase>install</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>install-file</goal>
+							<goal>attach-artifact</goal>
 						</goals>
 						<configuration>
-							<file>${project.build.outputDirectory}/common.pom</file>
-							<groupId>info.flex-mojos</groupId>
-							<artifactId>super-pom-commons</artifactId>
-							<version>${pom.version}</version>
-							<packaging>pom</packaging>
-						</configuration>
-					</execution>
-					<execution>
-						<id>air-super-pom</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.outputDirectory}/air.pom</file>
-							<groupId>info.flex-mojos</groupId>
-							<artifactId>air-super-pom</artifactId>
-							<version>${pom.version}</version>
-							<packaging>pom</packaging>
-						</configuration>
-					</execution>
-					<execution>
-						<id>flex-super-pom</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.outputDirectory}/flex.pom</file>
-							<groupId>info.flex-mojos</groupId>
-							<artifactId>flex-super-pom</artifactId>
-							<version>${pom.version}</version>
-							<packaging>pom</packaging>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- Work around to get super poms deployed automatically -->
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>super-pom-commons</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.outputDirectory}/common.pom</file>
-							<pomFile>${project.build.outputDirectory}/common.pom</pomFile>
-							<repositoryId>${deploy.repository.id}</repositoryId>
-							<url>${deploy.repository.url}</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>air-super-pom</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.outputDirectory}/air.pom</file>
-							<pomFile>${project.build.outputDirectory}/air.pom</pomFile>
-							<repositoryId>${deploy.repository.id}</repositoryId>
-							<url>${deploy.repository.url}</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>flex-super-pom</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.outputDirectory}/flex.pom</file>
-							<pomFile>${project.build.outputDirectory}/flex.pom</pomFile>
-							<repositoryId>${deploy.repository.id}</repositoryId>
-							<url>${deploy.repository.url}</url>
+							<artifacts>
+								<artifact>
+									<file>${project.build.outputDirectory}/common.pom</file>
+									<artifactId>super-pom-commons</artifactId>
+									<type>pom</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.outputDirectory}/air.pom</file>
+									<artifactId>air-super-pom</artifactId>
+									<type>pom</type>
+								</artifact>
+								<artifact>
+									<file>${project.build.outputDirectory}/flex.pom</file>
+									<artifactId>flex-super-pom</artifactId>
+									<type>pom</type>
+								</artifact>
+							</artifacts>
+							<updatePom>false</updatePom>
 						</configuration>
 					</execution>
 				</executions>
