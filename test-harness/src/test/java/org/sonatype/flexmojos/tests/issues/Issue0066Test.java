@@ -14,6 +14,7 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
@@ -32,8 +33,9 @@ public class Issue0066Test
         test( testDir, "install" );
 
         // Issue 62 test
+        // is excluded!
         File another = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/AnotherPojo.as" );
-        assertTrue( "File not found " + another, another.isFile() );
+        assertFalse( "File not found " + another, another.isFile() );
 
         // Issue 65 test
         File pojo = new File( testDir, "flex/src/main/flex/org/sonatype/flexmojos/generator/SimplePojo.as" );

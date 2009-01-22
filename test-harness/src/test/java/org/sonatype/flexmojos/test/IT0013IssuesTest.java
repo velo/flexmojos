@@ -8,7 +8,6 @@
 package org.sonatype.flexmojos.test;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 import java.io.FileReader;
@@ -80,17 +79,6 @@ public class IT0013IssuesTest
             assertEquals( 1, report.getErrors() );
         }
 
-    }
-
-    @Test( timeOut = 120000 )
-    public void issue17()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0017" );
-        test( testDir, "site" );
-
-        File asdoc = new File( testDir, "target/site/asdoc" );
-        assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
     }
 
     @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )

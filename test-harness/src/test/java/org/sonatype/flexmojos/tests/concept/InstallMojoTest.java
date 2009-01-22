@@ -74,17 +74,54 @@ public class InstallMojoTest
         AssertJUnit.assertTrue( flexLibraryEnUsLocale.exists() );
     }
 
-    @SuppressWarnings( "unchecked" )
+    @Test( timeOut = 120000 )
+    public void accidentalOverwriteProtection()
+        throws Exception
+    {
+        File frameworkDescriptor = new File( testDir, "flex-descriptor.xml" );
+
+        try
+        {
+            installSDK( frameworkDescriptor );
+        }
+        catch ( VerificationException e )
+        {
+            // can happen
+        }
+
+        Verifier verifier = getInstallVerifier( frameworkDescriptor );
+        try
+        {
+            verifier.executeGoal( "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" )
+                + ":install-sdk" );
+            verifier.verifyErrorFreeLog();
+            AssertJUnit.fail( "Install mojo fail to prevent FDK get overwrote!" );
+        }
+        catch ( VerificationException e )
+        {
+            // must happen
+        }
+        verifier.verifyTextInLog( "never overwrite Flex SDK" );
+    }
+
     private void installSDK( File descriptor )
         throws IOException, VerificationException
+    {
+        Verifier verifier = getInstallVerifier( descriptor );
+        verifier.executeGoal( "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":install-sdk" );
+        verifier.verifyErrorFreeLog();
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Verifier getInstallVerifier( File descriptor )
+        throws VerificationException
     {
         File sdkBundle = new File( testDir, "flex-sdk-" + getProperty( "flex-version" ) + "-bundle.zip" );
         Verifier verifier = getVerifier( testDir );
         verifier.setAutoclean( false );
         verifier.getCliOptions().add( "-Dflex.sdk.bundle=" + sdkBundle.getAbsolutePath() );
         verifier.getCliOptions().add( "-Dflex.sdk.descriptor=" + descriptor.getAbsolutePath() );
-        verifier.executeGoal( "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":install-sdk" );
-        verifier.verifyErrorFreeLog();
+        return verifier;
     }
 
 }
