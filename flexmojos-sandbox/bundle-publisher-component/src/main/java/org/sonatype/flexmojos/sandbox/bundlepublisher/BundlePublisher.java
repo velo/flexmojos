@@ -17,4 +17,7 @@ public interface BundlePublisher
                  ArtifactRepository localRepository )
         throws PublishingException;
 
+    void validate( File sourceFile, InputStream bundleDescriptor )
+        throws PublishingException;
+
 }
