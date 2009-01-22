@@ -71,18 +71,11 @@ public class SDKDeployMojo
     private boolean uniqueVersion;
 
     /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
      * @component
      * @required
      * @readonly
      */
-    private ArtifactRepositoryFactory repositoryFactory;
+    protected ArtifactRepositoryFactory repositoryFactory;
 
     @Override
     protected void proceed( BundlePublisher publisher, File sdkBundle, InputStream sdkDescriptor )

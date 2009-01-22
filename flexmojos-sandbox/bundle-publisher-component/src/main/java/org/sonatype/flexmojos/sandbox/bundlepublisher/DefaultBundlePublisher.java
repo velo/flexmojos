@@ -366,7 +366,7 @@ public class DefaultBundlePublisher
         }
     }
 
-    private void validate( File sourceFile, InputStream bundleDescriptor )
+    public void validate( File sourceFile, InputStream bundleDescriptor )
         throws PublishingException
     {
         getLogger().debug( "Validating inputs" );
