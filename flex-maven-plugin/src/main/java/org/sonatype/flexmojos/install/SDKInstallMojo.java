@@ -20,7 +20,6 @@ package org.sonatype.flexmojos.install;
 import java.io.File;
 import java.io.InputStream;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.sonatype.flexmojos.sandbox.bundlepublisher.BundlePublisher;
 import org.sonatype.flexmojos.sandbox.bundlepublisher.PublishingException;
 
@@ -33,13 +32,6 @@ import org.sonatype.flexmojos.sandbox.bundlepublisher.PublishingException;
 public class SDKInstallMojo
     extends AbstractInstallMojo
 {
-
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
 
     @Override
     protected void proceed( BundlePublisher publisher, File sdkBundle, InputStream sdkDescriptor )
