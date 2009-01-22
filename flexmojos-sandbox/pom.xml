@@ -29,7 +29,6 @@
 	</parent>
 
 	<modules>
-		<module>flex-sdk-publisher</module>
 		<module>bundle-publisher-component</module>
 	</modules>
 
