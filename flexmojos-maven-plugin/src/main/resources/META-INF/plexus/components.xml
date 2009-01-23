@@ -40,10 +40,10 @@
 			<configuration>
 				<phases>
 					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-					<compile>org.sonatype.flexmojos:flex-maven-plugin:compile-swc</compile>
+					<compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swc</compile>
 					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-					<test-compile>org.sonatype.flexmojos:flex-maven-plugin:test-compile</test-compile>
-					<test>org.sonatype.flexmojos:flex-maven-plugin:test-run</test>
+					<test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
+					<test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
@@ -56,10 +56,10 @@
 			<configuration>
 				<phases>
 					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-					<compile>org.sonatype.flexmojos:flex-maven-plugin:compile-swf</compile>
+					<compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swf</compile>
 					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-					<test-compile>org.sonatype.flexmojos:flex-maven-plugin:test-compile</test-compile>
-					<test>org.sonatype.flexmojos:flex-maven-plugin:test-run</test>
+					<test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
+					<test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>

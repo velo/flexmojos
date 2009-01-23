@@ -255,26 +255,26 @@
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.flexmojos.sandbox</groupId>
-      <artifactId>flex-sdk-publisher</artifactId>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-bundle-publisher-component</artifactId>
       <version>${pom.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flex-super-pom</artifactId>
+      <artifactId>flexmojos-flex-super-pom</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>air-super-pom</artifactId>
+      <artifactId>flexmojos-air-super-pom</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>super-pom-commons</artifactId>
+      <artifactId>flexmojos-super-pom-commons</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
     </dependency>
@@ -283,6 +283,12 @@
       <artifactId>flexmojos-unittest-support</artifactId>
       <version>${pom.version}</version>
       <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-testing</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
     </dependency>
   </dependencies>
 

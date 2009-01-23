@@ -25,12 +25,11 @@ public class Issue0106Test
     extends AbstractIssueTest
 {
 
-    @Test( timeOut = 120000 )
-    public void issue106()
+    @Test( oid issue106()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0106" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
 }

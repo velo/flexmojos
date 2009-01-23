@@ -255,13 +255,13 @@
 		-->
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>flex-super-pom</artifactId>
+			<artifactId>flexmojos-flex-super-pom</artifactId>
 			<version>${flexmojos.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>air-super-pom</artifactId>
+			<artifactId>flexmojos-air-super-pom</artifactId>
 			<version>${flexmojos.version}</version>
 			<type>pom</type>
 		</dependency>

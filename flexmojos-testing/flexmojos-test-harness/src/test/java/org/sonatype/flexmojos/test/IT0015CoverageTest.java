@@ -36,28 +36,26 @@ public class IT0015CoverageTest
         test( testDir, "install" );
     }
 
-    @Test( timeOut = 120000 )
-    public void testSourceFileResolver()
+    @Test( oid testSourceFileResolver()
         throws Exception
     {
         standardConceptTester( "source-file-resolver" );
     }
 
-    @Test( timeOut = 120000 )
-    public void testAsdocInclusionExclusion()
+    @Test(  )
+    public vlusionExclusion()
         throws Exception
     {
         File testDir = getProject( "/coverage/asdoc-inclusion-exclusion" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
         File vermelho = new File( testDir, "target/asdoc/Vermelho.html" );
         assertFalse( "Should not generate Vermelho.html.", vermelho.exists() );
         File amarelo = new File( testDir, "target/asdoc/Amarelo.html" );
         assertFalse( "Should not generate Amarelo.html.", amarelo.exists() );
     }
 
-    @Test( timeOut = 120000 )
-    public void testFlexUnitReport()
-        throws Exception
+    @Test(  )
+    public void testFlexUnit  throws Exception
     {
         File testDir = getProject( "/concept/flexunit-example" );
         test( testDir, "site:site" );
@@ -65,9 +63,9 @@ public class IT0015CoverageTest
         assertTrue( asdoc.isDirectory() );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void testHtmlwrapperTemplates()
-        throws Exception
+xception
     {
         File testDir = getProject( "/coverage/htmlwrapper-templates" );
         test( testDir, "package" );
@@ -77,20 +75,19 @@ public class IT0015CoverageTest
         assertTrue( "Should generate htmlwrapper " + zip.getAbsolutePath(), zip.exists() );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void testDefines()
         throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0068" );
+    testDir = getProject( "/issues/issue-0068" );
         test( testDir, "install" );
 
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void testCompilationOptions()
         throws Exception
     {
-        standardConceptTester( "compilation-options" );
+ onceptTester( "compilation-options" );
     }
 
 }
