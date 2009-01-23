@@ -121,7 +121,7 @@ public class GeneratorMojo
     private File outputDirectory;
 
     /**
-     * @parameter default-value="${project.build.directory}/generated-sources/flex-mojos"
+     * @parameter default-value="${project.build.directory}/generated-sources/flexmojos"
      */
     private File baseOutputDirectory;
 
@@ -219,7 +219,7 @@ public class GeneratorMojo
         throws MojoExecutionException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                       "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         setUp();
@@ -247,7 +247,7 @@ public class GeneratorMojo
 
             // use the existing ContextClassLoader in a realm of the classloading space
             ClassRealm realm =
-                world.newRealm( "plugin.flex-mojos.generator", Thread.currentThread().getContextClassLoader() );
+                world.newRealm( "plugin.flexmojos.generator", Thread.currentThread().getContextClassLoader() );
 
             // create another realm for just the dependency jars and make
             // sure it is in a child-parent relationship with the current ContextClassLoader

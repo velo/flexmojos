@@ -173,7 +173,7 @@ public class FlexCoverReportMojo
         throws MavenReportException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                       "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         executeReport( locale );

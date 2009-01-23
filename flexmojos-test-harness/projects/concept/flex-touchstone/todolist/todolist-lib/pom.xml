@@ -17,7 +17,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
 					<contextRoot>todolist-web</contextRoot>

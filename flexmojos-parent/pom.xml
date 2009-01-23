@@ -18,15 +18,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sonatype.flexmojos</groupId>
-	<artifactId>flex-mojos-parent</artifactId>
+	<artifactId>flexmojos-parent</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos Parent</name>
-	<url>http://docs.flex-mojos.info</url>
+	<url>http://docs.flexmojos.info</url>
 	<organization>
-		<name>Flex-Mojos</name>
-		<url>http://www.flex-mojos.info</url>
+		<name>flexmojos</name>
+		<url>http://www.flexmojos.info</url>
 	</organization>
 	<inceptionYear>2008</inceptionYear>
 
@@ -164,7 +164,7 @@
 	<distributionManagement>
 		<repository>
 			<id>forge-releases</id>
-			<name>Flex-Mojos Release Repository</name>
+			<name>flexmojos Release Repository</name>
 			<!--
 				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases</url>
 			-->
@@ -172,7 +172,7 @@
 		</repository>
 		<snapshotRepository>
 			<id>forge-snapshots</id>
-			<name>Flex-Mojos Snapshot Repository</name>
+			<name>flexmojos Snapshot Repository</name>
 			<!--
 				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>
 			-->
@@ -182,11 +182,11 @@
 
 	<mailingLists>
 		<mailingList>
-			<name>Flex-mojos Google Group</name>
-			<subscribe>flex-mojos-subscribe@googlegroups.com</subscribe>
-			<unsubscribe>flex-mojos-unsubscribe@googlegroups.com</unsubscribe>
-			<post>flex-mojos@googlegroups.com</post>
-			<archive>http://groups.google.com/group/flex-mojos/</archive>
+			<name>flexmojos Google Group</name>
+			<subscribe>flexmojos-subscribe@googlegroups.com</subscribe>
+			<unsubscribe>flexmojos-unsubscribe@googlegroups.com</unsubscribe>
+			<post>flexmojos@googlegroups.com</post>
+			<archive>http://groups.google.com/group/flexmojos/</archive>
 		</mailingList>
 	</mailingLists>
 

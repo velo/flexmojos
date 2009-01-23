@@ -40,11 +40,11 @@ public class Issue0069Test
         File testDir = getProject( "/issues/issue-0069" );
         File swf = new File( testDir, "target/test-classes/TestRunner.swf" );
 
-        assertTrue( "Flex-mojos should generate maven.cfg: " + mavenCfg.getAbsolutePath(), mavenCfg.exists() );
+        assertTrue( "flexmojos should generate maven.cfg: " + mavenCfg.getAbsolutePath(), mavenCfg.exists() );
 
         String cfg = IOUtil.toString( new FileReader( mavenCfg ) );
 
-        assertTrue( "Flex-mojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
+        assertTrue( "flexmojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
     }
 
 }

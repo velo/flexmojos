@@ -49,7 +49,7 @@
 
 	<repositories>
 		<repository>
-			<id>flex-mojos-repository</id>
+			<id>flexmojos-repository</id>
 			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>
@@ -62,7 +62,7 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>flex-mojos-repository</id>
+			<id>flexmojos-repository</id>
 			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>
@@ -74,7 +74,7 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<!-- Flex-Mojos Unit testing support -->
+		<!-- flexmojos Unit testing support -->
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
 			<artifactId>testing-support</artifactId>

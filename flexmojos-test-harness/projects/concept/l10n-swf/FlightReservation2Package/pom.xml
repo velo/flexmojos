@@ -11,8 +11,8 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
-				<version>%{flex-mojos.version}</version>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>%{flexmojos.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>

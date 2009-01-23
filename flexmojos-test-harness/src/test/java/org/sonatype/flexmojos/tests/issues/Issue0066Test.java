@@ -42,7 +42,7 @@ public class Issue0066Test
         assertTrue( "File not found " + pojo, pojo.isFile() );
         File base =
             new File( testDir,
-                      "flex/target/generated-sources/flex-mojos/org/sonatype/flexmojos/generator/SimplePojoBase.as" );
+                      "flex/target/generated-sources/flexmojos/org/sonatype/flexmojos/generator/SimplePojoBase.as" );
         assertTrue( "File not found " + base, base.isFile() );
     }
 

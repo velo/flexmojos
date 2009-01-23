@@ -45,7 +45,7 @@ public class SourceViewMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                       "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         File srcDir = new File( project.getBuild().getSourceDirectory() );

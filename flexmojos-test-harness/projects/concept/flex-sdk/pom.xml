@@ -12,7 +12,7 @@
 
 	<repositories>
 		<repository>
-			<id>flex-mojos-repository</id>
+			<id>flexmojos-repository</id>
 			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>

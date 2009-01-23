@@ -17,8 +17,8 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
-				<version>%{flex-mojos.version}</version>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>%{flexmojos.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<targetPlayer>10.0.0</targetPlayer>
@@ -77,7 +77,7 @@
 
 	<repositories>
 		<repository>
-			<id>flex-mojos-repository</id>
+			<id>flexmojos-repository</id>
 			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>

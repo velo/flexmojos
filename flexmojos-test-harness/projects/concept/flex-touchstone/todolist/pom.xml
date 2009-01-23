@@ -25,7 +25,7 @@
         </plugin>
         <plugin>
           <groupId>org.sonatype.flexmojos</groupId>
-          <artifactId>flex-maven-plugin</artifactId>
+          <artifactId>flexmojos-maven-plugin</artifactId>
         </plugin>
       </plugins>
     </pluginManagement>

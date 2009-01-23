@@ -29,7 +29,7 @@ public class TestLibraryCompilerMojo
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
-                       "Flex-mojos " + MavenUtils.getFlexMojosVersion()
+                       "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         File testFolder = new File( build.getTestSourceDirectory() );
