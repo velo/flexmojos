@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>%{flex-mojos.version}</version>
+		<version>%{flexmojos.version}</version>
 	</parent>
 
 	<groupId>org.sonatype.flexmojos.itest.issues</groupId>
@@ -17,8 +17,8 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
-				<version>%{flex-mojos.version}</version>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>%{flexmojos.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -30,7 +30,7 @@
 					<!-- issue 63 -->
 					<useTransitiveDependencies>true</useTransitiveDependencies>
 					<!-- issue 65 -->
-					<baseOutputDirectory>${project.build.directory}/generated-sources/flex-mojos</baseOutputDirectory>
+					<baseOutputDirectory>${project.build.directory}/generated-sources/flexmojos</baseOutputDirectory>
 					<outputDirectory>${project.build.sourceDirectory}</outputDirectory>
 					<typeMappings>
 						<mapping>java.util.Map Object</mapping>

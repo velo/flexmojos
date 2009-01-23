@@ -13,7 +13,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
 				<extensions>true</extensions>
 				<dependencies>
 					<dependency>
@@ -28,7 +28,7 @@
 
 	<repositories>
 		<repository>
-			<id>flex-mojos-repository</id>
+			<id>flexmojos-repository</id>
 			<url>http://svn.sonatype.org/flexmojos/repository/</url>
 			<releases>
 				<enabled>true</enabled>

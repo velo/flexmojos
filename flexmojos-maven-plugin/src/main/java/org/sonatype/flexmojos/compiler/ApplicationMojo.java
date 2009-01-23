@@ -80,7 +80,7 @@ public class ApplicationMojo
     private List<File> modules;
 
     /**
-     * When true, tells flex-mojos to use link reports/load externs on modules compilation
+     * When true, tells flexmojos to use link reports/load externs on modules compilation
      * 
      * @parameter default-value="true" expression="${loadExternsOnModules}"
      */
@@ -92,7 +92,7 @@ public class ApplicationMojo
     protected File source;
 
     /**
-     * When true, flex-mojos will register register every compiled SWF files as trusted. These SWF files are assigned to
+     * When true, flexmojos will register register every compiled SWF files as trusted. These SWF files are assigned to
      * the local-trusted sandbox. They can interact with any other SWF files, and they can load data from anywhere,
      * remote or local. On false nothing is done, so if the file is already trusted it will still as it is.
      * 
@@ -133,7 +133,7 @@ public class ApplicationMojo
 
         if ( source == null )
         {
-            getLog().warn( "Source file was not defined, flex-mojos will guess one." );
+            getLog().warn( "Source file was not defined, flexmojos will guess one." );
             source = MavenUtils.resolveSourceFile( project, sourceFile );
         }
 

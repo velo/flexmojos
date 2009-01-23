@@ -8,7 +8,7 @@
 		<authors>
 			<author name="Marvin Herman Froeder" email="velo.br@gmail.com" />
 		</authors>
-		<url>http://blog.flex-mojos.info/</url>
+		<url>http://blog.flexmojos.info/</url>
 		<webdir>${web.dir}</webdir>
 	</info>
 
@@ -45,7 +45,7 @@
 			<file src="apache-maven-${maven.version}" targetdir="$INSTALL_PATH/maven" />
 		</pack>
 		<pack name="repository" required="no">
-			<description>Basic Maven Repository with flex-mojos artifacts
+			<description>Basic Maven Repository with flexmojos artifacts
 			</description>
 			<file src="repo" targetdir="$INSTALL_PATH/repo" /><!-- $USER_HOME/.m2/repository -->
 		</pack>

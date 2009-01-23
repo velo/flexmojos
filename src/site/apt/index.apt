@@ -37,9 +37,9 @@
  ------
 
 
-Flex-Mojos
+flexmojos
 
-  Flex-Mojos is a collection of maven-plugins created to make it possible
+  flexmojos is a collection of maven-plugins created to make it possible
   to use Apache Maven to use to manage Adobe Flex plugins.
 
 * Maven-Plugins

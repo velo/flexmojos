@@ -49,9 +49,9 @@ Flex Super Pom
   
   * Adds FlexBuilder plugin plus configuration needed for an Flex project in FlexBuilder
   
-  * Adds Flex-Mojos repository
+  * Adds flexmojos repository
   
-  * Adds Flex-Mojos Plugins repository
+  * Adds flexmojos Plugins repository
 
   * Adds required dependencies for an Flex project
 

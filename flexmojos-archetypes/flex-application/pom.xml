@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<!--
-		Flex-mojos is a set of maven plugins to allow maven users to compile,
+		flexmojos is a set of maven plugins to allow maven users to compile,
 		optimize, test and ... Flex SWF, Flex SWC, Air SWF and Air SWC.
 		Copyright (C) 2008 Marvin Herman Froeder
 	-->
