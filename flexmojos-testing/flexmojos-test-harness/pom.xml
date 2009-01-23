@@ -21,16 +21,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-parent</artifactId>
+    <artifactId>flexmojos-testing</artifactId>
     <version>3.0-SNAPSHOT</version>
-    <relativePath>../flexmojos-parent/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>test-harness</artifactId>
 
-  <name>Flex Mojos Integration Tests</name>
+  <name>Flexmojos Integration Tests</name>
 
   <properties>
     <maven-version>${maven.version}</maven-version>
@@ -263,7 +264,7 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>testing-support</artifactId>
+      <artifactId>flexmojos-testing-support</artifactId>
       <version>${pom.version}</version>
       <type>swc</type>
     </dependency>

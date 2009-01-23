@@ -77,7 +77,7 @@
 		<!-- flexmojos Unit testing support -->
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>testing-support</artifactId>
+			<artifactId>flexmojos-testing-support</artifactId>
 			<version>${project.version}</version>
 			<type>swc</type>
 			<scope>test</scope>
