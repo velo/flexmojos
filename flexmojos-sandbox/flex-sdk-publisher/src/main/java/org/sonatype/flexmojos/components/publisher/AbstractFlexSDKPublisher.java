@@ -509,7 +509,7 @@ public abstract class AbstractFlexSDKPublisher
         model.setArtifactId( artifact.getArtifactId() );
         model.setVersion( artifact.getVersion() );
         model.setPackaging( artifact.getType() );
-        model.setDescription( "POM was created from flex-mojos:install-sdk" );
+        model.setDescription( "POM was created from flexmojos:install-sdk" );
 
         for ( Artifact artifactDependency : artifacts )
         {

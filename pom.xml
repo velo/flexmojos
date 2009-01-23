@@ -38,7 +38,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sonatype.flexmojos</groupId>
-	<artifactId>flex-mojos-aggregator</artifactId>
+	<artifactId>flexmojos-aggregator</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -60,13 +60,13 @@
 	<distributionManagement>
 		<repository>
 			<id>forge-releases</id>
-			<name>Flex-Mojos Release Repository</name>
+			<name>flexmojos Release Repository</name>
 			<!--<url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases</url>-->
 			<url>${flexReleaseUrl}</url>
 		</repository>
 		<snapshotRepository>
 			<id>forge-snapshots</id>
-			<name>Flex-Mojos Snapshot Repository</name>
+			<name>flexmojos Snapshot Repository</name>
 			<!--<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>-->
 			<url>${flexSnapshotUrl}</url>
 		</snapshotRepository>
@@ -76,10 +76,10 @@
 		<profile>
 			<id>minimal</id>
 			<modules>
-				<module>flex-mojos-parent</module>
+				<module>flexmojos-parent</module>
 				<module>flexmojos-sandbox</module>
-				<module>flex-maven-plugin</module>
-				<module>super-poms</module>
+				<module>flexmojos-maven-plugin</module>
+				<module>flexmojos-super-poms</module>
 			</modules>
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
@@ -89,11 +89,11 @@
 		<profile>
 			<id>release</id>
 			<modules>
-				<module>flex-mojos-parent</module>
+				<module>flexmojos-parent</module>
 				<module>flexmojos-sandbox</module>
-				<module>flex-maven-plugin</module>
-				<module>super-poms</module>
-				<module>testing-support</module>
+				<module>flexmojos-maven-plugin</module>
+				<module>flexmojos-super-poms</module>
+				<module>flexmojos-testunit-support</module>
 			</modules>
 		</profile>
 
@@ -104,12 +104,12 @@
 			</activation>
 
 			<modules>
-				<module>flex-mojos-parent</module>
+				<module>flexmojos-parent</module>
 				<module>flexmojos-sandbox</module>
-				<module>flex-maven-plugin</module>
-				<module>super-poms</module>
-				<module>testing-support</module>
-				<module>test-harness</module>
+				<module>flexmojos-maven-plugin</module>
+				<module>flexmojos-super-poms</module>
+				<module>flexmojos-testunit-support</module>
+				<module>flexmojos-test-harness</module>
 			</modules>
 
 			<build>

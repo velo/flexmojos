@@ -26,7 +26,7 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>%{flex-mojos.version}</version>
+		<version>%{flexmojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest.issues</groupId>

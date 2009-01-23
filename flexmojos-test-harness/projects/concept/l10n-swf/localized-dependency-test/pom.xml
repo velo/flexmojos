@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>%{flex-mojos.version}</version>
+		<version>%{flexmojos.version}</version>
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
@@ -43,7 +43,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
 				<configuration>
 					<mergeResourceBundle>false</mergeResourceBundle>
 					<locales>

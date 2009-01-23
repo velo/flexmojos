@@ -21,13 +21,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>flex-mojos-installer</artifactId>
+		<artifactId>flexmojos-installer</artifactId>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<version>2.0M11-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>flex-mojos-installer-destination-panel</artifactId>
-	<name>Flex-mojos izpack Destination panel</name>
+	<artifactId>flexmojos-installer-destination-panel</artifactId>
+	<name>flexmojos izpack Destination panel</name>
 
 	<dependencies>
 		<dependency>

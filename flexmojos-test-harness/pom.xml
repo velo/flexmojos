@@ -39,9 +39,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flex-mojos-parent</artifactId>
+    <artifactId>flexmojos-parent</artifactId>
     <version>3.0-SNAPSHOT</version>
-    <relativePath>../flex-mojos-parent/pom.xml</relativePath>
+    <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>test-harness</artifactId>
@@ -54,7 +54,7 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flex-maven-plugin>${fake-repo}/info/flex-mojos/flex-maven-plugin/${pom.version}/flex-maven-plugin-${pom.version}.jar</flex-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/info/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -201,7 +201,7 @@
         <version>1.0</version>
         <configuration>
           <jarFiles>
-            <jarFile>${flex-maven-plugin}</jarFile>
+            <jarFile>${flexmojos-maven-plugin}</jarFile>
           </jarFiles>
           <searchPath>${project.build.directory}/projects</searchPath>
           <sourceFolders>
@@ -237,13 +237,13 @@
 
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flex-maven-plugin</artifactId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
       <version>${pom.version}</version>
       <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flex-mojos-parent</artifactId>
+      <artifactId>flexmojos-parent</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
     </dependency>
