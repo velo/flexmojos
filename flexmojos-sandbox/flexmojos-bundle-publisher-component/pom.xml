@@ -26,8 +26,8 @@
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.sonatype.flexmojos.sandbox</groupId>
-	<artifactId>bundle-publisher-component</artifactId>
+	<groupId>org.sonatype.flexmojos</groupId>
+	<artifactId>flexmojos-bundle-publisher-component</artifactId>
 
 	<name>flexmojos sandbox - Bundle publisher</name>
 
