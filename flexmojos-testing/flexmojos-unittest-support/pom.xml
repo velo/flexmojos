@@ -25,11 +25,11 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>flexmojos-testing-support</artifactId>
+  <artifactId>flexmojos-unittest-support</artifactId>
 
   <packaging>swc</packaging>
 
-  <name>Flexmojos Testing support</name>
+  <name>Flexmojos Unit Test support</name>
 
   <build>
     <sourceDirectory>src/main/flex</sourceDirectory>
