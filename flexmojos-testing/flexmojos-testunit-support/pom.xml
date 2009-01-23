@@ -18,153 +18,150 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-	<!--
+  <!--
 		Licensed under the Apache License, Version 2.0 (the "License"); you
 		may not use this file except in compliance with the License. You may
 		obtain a copy of the License at
 	-->
-	<!--
+  <!--
 	     http://www.apache.org/licenses/LICENSE-2.0
 	-->
-	<!--
-		Unless required by applicable law or agreed to in writing, software
-		distributed under the License is distributed on an "AS IS" BASIS,
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-		implied. See the License for the specific language governing
-		permissions and limitations under the License. Licensed to the Apache
-		Software Foundation (ASF) under one or more
-	-->
+  <!--
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License. Licensed to the Apache Software Foundation (ASF) under one or more
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<name>flexmojos testing support</name>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flexmojos-parent</artifactId>
-		<version>3.0-SNAPSHOT</version>
-		<relativePath>../flexmojos-parent/pom.xml</relativePath>
-	</parent>
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-testing</artifactId>
+    <version>3.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-	<artifactId>testing-support</artifactId>
+  <artifactId>flexmojos-testing-support</artifactId>
 
-	<packaging>swc</packaging>
+  <packaging>swc</packaging>
 
-	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>3.0-SNAPSHOT</version>
-				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<includeClasses>
-								<include>org.sonatype.flexmojos.test.report.*Report</include>
-							</includeClasses>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<sourcePaths>
-						<path>target/generated-sources/flexmojos</path>
-						<path>src/main/flex</path>
-					</sourcePaths>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.adobe.flex</groupId>
-						<artifactId>compiler</artifactId>
-						<version>${flex.sdk.version}</version>
-						<type>pom</type>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
+  <name>Flexmojos Testing support</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>flexmojos-maven-plugin</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
+  <build>
+    <sourceDirectory>src/main/flex</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>3.0-SNAPSHOT</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <includeClasses>
+                <include>org.sonatype.flexmojos.test.report.*Report</include>
+              </includeClasses>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <sourcePaths>
+            <path>target/generated-sources/flexmojos</path>
+            <path>src/main/flex</path>
+          </sourcePaths>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.adobe.flex</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
 
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>playerglobal</artifactId>
-			<version>9-${flex.sdk.version}</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>framework</artifactId>
-			<version>${flex.sdk.version}</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>framework</artifactId>
-			<version>${flex.sdk.version}</version>
-			<type>rb.swc</type>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-		<!-- supported test apis -->
-		<dependency>
-			<groupId>com.adobe.flexunit</groupId>
-			<artifactId>flexunit</artifactId>
-			<version>0.85</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>playerglobal</artifactId>
+      <version>9-${flex.sdk.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>framework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>framework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>rb.swc</type>
+    </dependency>
 
-		<dependency>
-			<groupId>org.funit</groupId>
-			<artifactId>funit</artifactId>
-			<version>0.50.0245</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.swirlyvision</groupId>
-			<artifactId>swirly-vision</artifactId>
-			<version>1.0</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
+    <!-- supported test apis -->
+    <dependency>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>0.85</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>net.digitalprimates</groupId>
-			<artifactId>fluint</artifactId>
-			<version>v1</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.funit</groupId>
+      <artifactId>funit</artifactId>
+      <version>0.50.0245</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.swirlyvision</groupId>
+      <artifactId>swirly-vision</artifactId>
+      <version>1.0</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.asunit</groupId>
-			<artifactId>asunit</artifactId>
-			<version>20071011</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
+    <dependency>
+      <groupId>net.digitalprimates</groupId>
+      <artifactId>fluint</artifactId>
+      <version>v1</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>advancedflex</groupId>
-			<artifactId>debugger</artifactId>
-			<version>0.2alpha2</version>
-			<type>swc</type>
-			<scope>external</scope>
-		</dependency>
+    <dependency>
+      <groupId>com.asunit</groupId>
+      <artifactId>asunit</artifactId>
+      <version>20071011</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
 
-	</dependencies>
+    <dependency>
+      <groupId>advancedflex</groupId>
+      <artifactId>debugger</artifactId>
+      <version>0.2alpha2</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+
+  </dependencies>
 
 </project>
