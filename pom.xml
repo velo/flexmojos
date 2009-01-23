@@ -39,7 +39,7 @@
 
 	<groupId>org.sonatype.flexmojos</groupId>
 	<artifactId>flex-mojos-aggregator</artifactId>
-	<version>3.0-SNAPSHOT</version>
+	<version>3.0-alpha8</version>
 	<packaging>pom</packaging>
 
 	<name>Flex Mojos Aggregator</name>
@@ -53,8 +53,8 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+		<connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha8</connection>
+		<developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flex-mojos-3.0-alpha8</developerConnection>
 	</scm>
 
 	<distributionManagement>
