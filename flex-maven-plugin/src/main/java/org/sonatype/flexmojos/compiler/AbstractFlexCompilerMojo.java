@@ -47,6 +47,8 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
+import org.sonatype.flexmojos.common.FlexExtension;
+import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -58,8 +60,11 @@ import flex2.tools.oem.Report;
 
 public abstract class AbstractFlexCompilerMojo<E extends Builder>
     extends AbstractIrvinMojo
-    implements FlexMojo
+    implements FlexMojo, FlexScopes, FlexExtension
 {
+
+    public static final String[] DEFAULT_RSL_URLS =
+        new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
     private static final String COMPATIBILITY_2_0_0 = "2.0.0";
 
@@ -928,7 +933,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( rslUrls == null )
         {
-            rslUrls = new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
+            rslUrls = DEFAULT_RSL_URLS;
         }
 
         if ( policyFileUrls == null )
@@ -1349,12 +1354,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         throws MojoExecutionException, MojoFailureException
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
-        configuration.addExternalLibraryPath( getDependenciesPath( "external" ) );
+        configuration.addExternalLibraryPath( getDependenciesPath( EXTERNAL ) );
 
-        configuration.includeLibraries( getDependenciesPath( "internal" ) );
+        configuration.includeLibraries( getDependenciesPath( INTERNAL ) );
 
-        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
-        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
+        configuration.setLibraryPath( getDependenciesPath( Artifact.SCOPE_COMPILE ) );
+        configuration.addLibraryPath( getDependenciesPath( MERGED ) );
 
         if ( compiledLocales == null && runtimeLocales == null && isApplication() )
         {
@@ -1568,7 +1573,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void resolveRuntimeLibraries()
         throws MojoExecutionException
     {
-        List<Artifact> rsls = getDependencyArtifacts( "rsl", "caching" );
+        List<Artifact> rsls = getDependencyArtifacts( RSL, CACHING );
         rslsSort( rsls );
 
         for ( Artifact artifact : rsls )
@@ -1577,13 +1582,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             File artifactFile = artifact.getFile();
             String artifactPath = artifactFile.getAbsolutePath();
             String extension;
-            if ( "caching".equals( scope ) )
+            if ( CACHING.equals( scope ) )
             {
-                extension = "swz";
+                extension = SWZ;
             }
             else
             {
-                extension = "swf";
+                extension = SWF;
             }
             String[] rslUrls = getRslUrls( artifact, extension );
             String[] rslPolicyFileUrls = getRslPolicyFileUrls( artifact );
@@ -1763,7 +1768,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         for ( Artifact resourceBundleBeacon : getDependencyArtifacts() )
         {
-            if ( !"rb.swc".equals( resourceBundleBeacon.getType() ) )
+            if ( !RB_SWC.equals( resourceBundleBeacon.getType() ) )
             {
                 continue;
             }
