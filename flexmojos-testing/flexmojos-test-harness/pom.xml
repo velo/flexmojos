@@ -264,7 +264,7 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-testing-support</artifactId>
+      <artifactId>flexmojos-unittest-support</artifactId>
       <version>${pom.version}</version>
       <type>swc</type>
     </dependency>
