@@ -24,7 +24,6 @@ package org.sonatype.flexmojos.compiler;
  */
 
 import static java.util.Arrays.asList;
-import flex2.tools.oem.Application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,6 +42,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
 import org.sonatype.flexmojos.utilities.MavenUtils;
+
+import flex2.tools.oem.Application;
 
 /**
  * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
@@ -228,7 +229,7 @@ public class ApplicationMojo
 
             build( moduleBuilder );
 
-            projectHelper.attachArtifact( project, "swf", moduleName, outputModule );
+            projectHelper.attachArtifact( project, SWF, moduleName, outputModule );
 
         }
     }
@@ -240,7 +241,7 @@ public class ApplicationMojo
 
         // Dont break this method in parts, is a work around
 
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".swf" );
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + SWF );
 
         /*
          * mxmlc -locale=en_US -source-path=locale/{locale} -include-resource-bundles

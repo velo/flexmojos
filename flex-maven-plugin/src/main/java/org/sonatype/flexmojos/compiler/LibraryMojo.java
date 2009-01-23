@@ -7,8 +7,6 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-import flex2.tools.oem.Library;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +26,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
+
+import flex2.tools.oem.Library;
 
 /**
  * Goal which compiles the Flex sources into a library for either Flex or AIR depending.
@@ -439,7 +439,7 @@ public class LibraryMojo
         }
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + ".rb.swc" );
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + RB_SWC );
 
         localized.setOutput( output );
 
