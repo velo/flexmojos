@@ -27,7 +27,7 @@
   <artifactId>flexmojos-super-poms</artifactId>
 
   <packaging>pom</packaging>
-  <name>Flexmojos Super-poms</name>
+  <name>Flexmojos Super poms</name>
   <description>Work around to get super poms installed/deployed automatically</description>
 
   <build>
@@ -64,21 +64,21 @@
               <artifacts>
                 <artifact>
                   <file>${project.build.outputDirectory}/common.pom</file>
-                  <artifactId>super-pom-commons</artifactId>
+                  <artifactId>flexmojos-super-pom-commons</artifactId>
                   <type>pom</type>
                 </artifact>
                 <artifact>
                   <file>${project.build.outputDirectory}/air.pom</file>
-                  <artifactId>air-super-pom</artifactId>
+                  <artifactId>flexmojos-air-super-pom</artifactId>
                   <type>pom</type>
                 </artifact>
                 <artifact>
                   <file>${project.build.outputDirectory}/flex.pom</file>
-                  <artifactId>flex-super-pom</artifactId>
+                  <artifactId>flexmojos-flex-super-pom</artifactId>
                   <type>pom</type>
                 </artifact>
               </artifacts>
-              <updatePom>false</updatePom>
+              <updatePom>true</updatePom>
             </configuration>
           </execution>
         </executions>
