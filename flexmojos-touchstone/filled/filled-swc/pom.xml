@@ -78,7 +78,7 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>testing-support</artifactId>
+      <artifactId>flexmojos-testing-support</artifactId>
       <version>3.0-SNAPSHOT</version>
       <type>swc</type>
       <scope>test</scope>
