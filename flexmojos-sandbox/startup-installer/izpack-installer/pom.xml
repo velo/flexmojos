@@ -253,7 +253,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.flexmojos</groupId>
-			<artifactId>testing-support</artifactId>
+			<artifactId>flexmojos-testing-support</artifactId>
 			<version>${flexmojos.version}</version>
 			<type>swc</type>
 		</dependency>
