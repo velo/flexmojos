@@ -40,16 +40,16 @@
 
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flex-mojos-parent</artifactId>
+		<artifactId>flexmojos-parent</artifactId>
 		<version>2.0M11-SNAPSHOT</version>
-		<relativePath>../flex-mojos-parent/pom.xml</relativePath>
+		<relativePath>../flexmojos-parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>flex-mojos-installer</artifactId>
+	<artifactId>flexmojos-installer</artifactId>
 
 	<packaging>pom</packaging>
 
-	<name>Flex-mojos start-up kit</name>
+	<name>flexmojos start-up kit</name>
 
 	<dependencyManagement>
 		<dependencies>
@@ -63,6 +63,6 @@
 
 	<modules>
 		<module>izpack-installer</module>
-		<module>flex-mojos-installer-destination-panel</module>
+		<module>flexmojos-installer-destination-panel</module>
 	</modules></project>
 

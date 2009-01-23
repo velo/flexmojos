@@ -25,7 +25,7 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flex-super-pom</artifactId>
-		<version>%{flex-mojos.version}</version>
+		<version>%{flexmojos.version}</version>
 	</parent>
 
 	<artifactId>issue0076</artifactId>
@@ -36,7 +36,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
 				<configuration>
 					<locales>
 						<locale>en_US</locale>
@@ -54,7 +54,7 @@
 				<plugins>
 					<plugin>
 						<groupId>org.sonatype.flexmojos</groupId>
-						<artifactId>flex-maven-plugin</artifactId>
+						<artifactId>flexmojos-maven-plugin</artifactId>
 						<configuration>
 							<mergeResourceBundle>true</mergeResourceBundle>
 						</configuration>
@@ -69,7 +69,7 @@
 				<plugins>
 					<plugin>
 						<groupId>org.sonatype.flexmojos</groupId>
-						<artifactId>flex-maven-plugin</artifactId>
+						<artifactId>flexmojos-maven-plugin</artifactId>
 						<configuration>
 							<mergeResourceBundle>false</mergeResourceBundle>
 						</configuration>

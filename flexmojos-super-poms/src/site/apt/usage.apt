@@ -19,7 +19,7 @@
 Flex Super Pom: Usage
 
   Using the Flex Super Pom is really easy. Just add the Flex Super Pom as parent
-  pom for your Flex project and add the flex-mojos repository so the Flex Super Pom 
+  pom for your Flex project and add the flexmojos repository so the Flex Super Pom 
   can be downloaded by maven.
   
 +-----
@@ -32,11 +32,11 @@ Flex Super Pom: Usage
     <version>1.0-beta2</version>
   </parent>
   ...
-  <!-- Add the Flex-Mojos repository so the Flex Super Pom can be downloaded by Maven -->
+  <!-- Add the flexmojos repository so the Flex Super Pom can be downloaded by Maven -->
   <repositories>
     <repository>
-      <id>flex-mojos-repository</id>
-      <url>http://flex-mojos.googlecode.com/svn/trunk/repository/</url>
+      <id>flexmojos-repository</id>
+      <url>http://flexmojos.googlecode.com/svn/trunk/repository/</url>
       <releases>
         <enabled>true</enabled>
       </releases>

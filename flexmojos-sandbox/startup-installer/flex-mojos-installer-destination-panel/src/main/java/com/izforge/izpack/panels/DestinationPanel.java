@@ -76,10 +76,10 @@ public class DestinationPanel
 
         add( IzPanelLayout.createVerticalStrut( 20 ) );
 
-        add( createLabel( "Flex-mojos installation destination:", "open", LEFT, true ), NEXT_LINE );
+        add( createLabel( "flexmojos installation destination:", "open", LEFT, true ), NEXT_LINE );
         flexMojosPathSelectionPanel = new PathSelectionPanel( this, idata );
         flexMojosPathSelectionPanel.setPath( idata.getVariable( "APPLICATIONS_DEFAULT_ROOT" ) + File.separator
-            + "flex-mojos" );
+            + "flexmojos" );
         add( flexMojosPathSelectionPanel, NEXT_LINE );
 
         add( IzPanelLayout.createVerticalStrut( 20 ) );

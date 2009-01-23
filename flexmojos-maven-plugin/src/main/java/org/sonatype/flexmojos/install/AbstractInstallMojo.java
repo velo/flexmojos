@@ -184,7 +184,7 @@ public abstract class AbstractInstallMojo
     {
         getLog().warn( "------------------------------------------------------------------------" );
         getLog().warn( " ATTENTION:" );
-        getLog().warn( "Flex-mojos detected Flex SDK " + version + " is already installed!" );
+        getLog().warn( "flexmojos detected Flex SDK " + version + " is already installed!" );
         getLog().warn( "It is strongly recommend you never overwrite Flex SDK version released on" );
         getLog().warn( "public repositories!" );
         getLog().warn( "If you are sure about this, run this mojo with the followinf parameter:" );

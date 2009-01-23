@@ -783,7 +783,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected File linkReportFile;
 
     /**
-     * Quick compile mode. When true, flex-mojos will check if the last artifact available at maven repository is newer
+     * Quick compile mode. When true, flexmojos will check if the last artifact available at maven repository is newer
      * then sources. If so, will not recompile.
      * 
      * @parameter default-value="false" expression="${quick.compile}"
@@ -791,7 +791,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean quick;
 
     /**
-     * When enabled flex-mojos will add a custom path resolver to flex compiler. This allow flex-mojos to resolve Embed
+     * When enabled flexmojos will add a custom path resolver to flex compiler. This allow flexmojos to resolve Embed
      * assets located at src/main/resources. This is a workaround and it is described at
      * http://bugs.adobe.com/jira/browse/SDK-15466
      * 

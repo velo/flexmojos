@@ -41,7 +41,7 @@
 	<groupId>org.sonatype.flexmojos.sandbox</groupId>
 	<artifactId>flex-sdk-publisher</artifactId>
 
-	<name>Flex-mojos Sandbox - Flex SDK Published</name>
+	<name>flexmojos Sandbox - Flex SDK Published</name>
 
 	<dependencies>
 		<dependency>
