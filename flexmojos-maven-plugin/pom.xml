@@ -162,8 +162,8 @@
       <classifier>template</classifier>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.flexmojos.sandbox</groupId>
-      <artifactId>bundle-publisher-component</artifactId>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-bundle-publisher-component</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

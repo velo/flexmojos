@@ -16,6 +16,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+@Test( sequential = true )
 public class InstallMojoTest
     extends AbstractConceptTest
 {
@@ -29,7 +30,7 @@ public class InstallMojoTest
         testDir = getProject( "/concept/install-sdk" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test
     public void installCompiler()
         throws Exception
     {
@@ -46,7 +47,7 @@ public class InstallMojoTest
         AssertJUnit.assertTrue( compilerLibrary.exists() );
     }
 
-    @Test( timeOut = 120000 )
+    @Test
     public void installFramework()
         throws Exception
     {
@@ -74,8 +75,8 @@ public class InstallMojoTest
         AssertJUnit.assertTrue( flexLibraryEnUsLocale.exists() );
     }
 
-    @Test( timeOut = 120000 )
-    public void accidentalOverwriteProtection()
+    @Test( alwaysRun = true, dependsOnMethods = { "installFramework" } )
+    void accidentalOverwriteProtection()
         throws Exception
     {
         File frameworkDescriptor = new File( testDir, "flex-descriptor.xml" );
@@ -92,7 +93,7 @@ public class InstallMojoTest
         Verifier verifier = getInstallVerifier( frameworkDescriptor );
         try
         {
-            verifier.executeGoal( "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" )
+            verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" )
                 + ":install-sdk" );
             verifier.verifyErrorFreeLog();
             AssertJUnit.fail( "Install mojo fail to prevent FDK get overwrote!" );
@@ -108,7 +109,8 @@ public class InstallMojoTest
         throws IOException, VerificationException
     {
         Verifier verifier = getInstallVerifier( descriptor );
-        verifier.executeGoal( "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":install-sdk" );
+        verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" )
+            + ":install-sdk" );
         verifier.verifyErrorFreeLog();
     }
 
