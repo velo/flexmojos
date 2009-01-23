@@ -20,15 +20,27 @@ package org.sonatype.flexmojos.war;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.flexmojos.common.FlexExtension;
+import org.sonatype.flexmojos.common.FlexScopes;
+import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
+import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 
 /**
  * @goal copy-flex-resources
@@ -38,7 +50,23 @@ import org.codehaus.plexus.util.FileUtils;
  */
 public class CopyMojo
     extends AbstractMojo
+    implements FlexScopes, FlexExtension
 {
+
+    /**
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * @component
+     */
+    private ArtifactResolver resolver;
 
     /**
      * The maven project.
@@ -48,6 +76,20 @@ public class CopyMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List<?> remoteRepositories;
 
     /**
      * The directory where the webapp is built.
@@ -87,35 +129,184 @@ public class CopyMojo
         for ( Artifact artifact : swfDependencies )
         {
             File sourceFile = artifact.getFile();
-            File destFile;
-            if ( stripVersion )
-            {
-                destFile = new File( webappDirectory, artifact.getArtifactId() + ".swf" );
-            }
-            else
-            {
-                destFile = new File( webappDirectory, artifact.getArtifactId() + "-" + artifact.getVersion() + ".swf" );
-            }
+            File destFile = getDestinationFile( artifact );
 
-            try
+            copy( sourceFile, destFile );
+
+            if ( copyRSL )
             {
-                FileUtils.copyFile( sourceFile, destFile );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to copy " + artifact, e );
+                performRslCopy( artifact );
             }
         }
     }
 
-    @SuppressWarnings( "unchecked" )
+    private void performRslCopy( Artifact artifact )
+        throws MojoExecutionException
+    {
+        MavenProject artifactProject = getProject( artifact );
+        if ( artifactProject != null )
+        {
+
+            try
+            {
+                artifactProject.setArtifacts( artifactProject.createArtifacts( artifactFactory, null, null ) );
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+                throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
+            }
+
+            List<Artifact> rslDeps = getRSLDependencies( artifactProject );
+
+            if ( rslDeps.isEmpty() )
+            {
+                return;
+            }
+
+            String[] rslUrls = getRslUrls( artifactProject );
+
+            for ( Artifact rslArtifact : rslDeps )
+            {
+                String extension;
+                if ( RSL.equals( rslArtifact.getScope() ) )
+                {
+                    extension = SWF;
+                }
+                else
+                {
+                    extension = SWZ;
+                }
+
+                rslArtifact =
+                    artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(),
+                                                                  rslArtifact.getArtifactId(),
+                                                                  rslArtifact.getVersion(), extension, null );
+
+                try
+                {
+                    resolver.resolve( rslArtifact, remoteRepositories, localRepository );
+                }
+                catch ( AbstractArtifactResolutionException e )
+                {
+                    throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
+                }
+
+                File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
+                File sourceFile = rslArtifact.getFile();
+
+                for ( File destFile : destFiles )
+                {
+                    copy( sourceFile, destFile );
+                }
+            }
+        }
+    }
+
+    private File[] resolveRslDestination( String[] rslUrls, Artifact artifact, String extension )
+    {
+        String absoluteWebappPath = webappDirectory.getAbsolutePath();
+
+        File[] rsls = new File[rslUrls.length];
+        for ( int i = 0; i < rslUrls.length; i++ )
+        {
+            String rsl = rslUrls[i];
+            if ( rsl.contains( "/{contextRoot}" ) )
+            {
+                rsl = rsl.replace( "/{contextRoot}", absoluteWebappPath );
+            }
+            else
+            {
+                rsl = absoluteWebappPath + "/" + rsl;
+            }
+            rsl = rsl.replace( "{groupId}", artifact.getGroupId() );
+            rsl = rsl.replace( "{artifactId}", artifact.getArtifactId() );
+            rsl = rsl.replace( "{version}", artifact.getVersion() );
+            rsl = rsl.replace( "{extension}", extension );
+            rsls[i] = new File( rsl ).getAbsoluteFile();
+        }
+        return rsls;
+    }
+
+    private String[] getRslUrls( MavenProject artifactProject )
+    {
+        String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
+        if ( urls == null )
+        {
+            urls = AbstractFlexCompilerMojo.DEFAULT_RSL_URLS;
+        }
+        return urls;
+    }
+
+    private List<Artifact> getRSLDependencies( MavenProject artifactProject )
+    {
+        List<Artifact> swcDeps = getArtifacts( SWC, artifactProject );
+        for ( Iterator<Artifact> iterator = swcDeps.iterator(); iterator.hasNext(); )
+        {
+            Artifact artifact = (Artifact) iterator.next();
+            if ( !( RSL.equals( artifact.getScope() ) || CACHING.equals( artifact.getScope() ) ) )
+            {
+                iterator.remove();
+            }
+        }
+        return swcDeps;
+    }
+
+    private MavenProject getProject( Artifact artifact )
+        throws MojoExecutionException
+    {
+        try
+        {
+            MavenProject pomProject =
+                mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+            return pomProject;
+        }
+        catch ( ProjectBuildingException e )
+        {
+            getLog().warn( "Failed to retrieve pom for " + artifact );
+            return null;
+        }
+    }
+
+    private void copy( File sourceFile, File destFile )
+        throws MojoExecutionException
+    {
+        try
+        {
+            FileUtils.copyFile( sourceFile, destFile );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to copy " + sourceFile, e );
+        }
+    }
+
+    private File getDestinationFile( Artifact artifact )
+    {
+        File destFile;
+        if ( stripVersion )
+        {
+            destFile = new File( webappDirectory, artifact.getArtifactId() + "." + SWF );
+        }
+        else
+        {
+            destFile = new File( webappDirectory, artifact.getArtifactId() + "-" + artifact.getVersion() + "." + SWF );
+        }
+        return destFile;
+    }
+
     private List<Artifact> getSwfArtifacts()
+    {
+        return getArtifacts( SWF, project );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private List<Artifact> getArtifacts( String type, MavenProject project )
     {
         List<Artifact> swfArtifacts = new ArrayList<Artifact>();
         Set<Artifact> artifacts = project.getArtifacts();
         for ( Artifact artifact : artifacts )
         {
-            if ( "swf".equals( artifact.getType() ) )
+            if ( type.equals( artifact.getType() ) )
             {
                 swfArtifacts.add( artifact );
             }

@@ -265,11 +265,6 @@
 				<classifier>template</classifier>
 			</dependency>
 			<dependency>
-				<groupId>com.adobe.flex.compiler</groupId>
-				<artifactId>adt</artifactId>
-				<version>${flex.sdk.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-core</artifactId>
 				<version>${maven.version}</version>
