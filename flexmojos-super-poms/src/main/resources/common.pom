@@ -29,7 +29,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sonatype.flexmojos</groupId>
-	<artifactId>super-pom-commons</artifactId>
+	<artifactId>flexmojos-super-pom-commons</artifactId>
 	<version>${project.version}</version>
 
 	<packaging>pom</packaging>
@@ -40,7 +40,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flex-maven-plugin</artifactId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<extensions>true</extensions>
 			</plugin>

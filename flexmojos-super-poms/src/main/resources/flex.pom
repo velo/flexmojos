@@ -30,12 +30,12 @@
 
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>super-pom-commons</artifactId>
+		<artifactId>flexmojos-super-pom-commons</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
 	<groupId>org.sonatype.flexmojos</groupId>
-	<artifactId>flex-super-pom</artifactId>
+	<artifactId>flexmojos-flex-super-pom</artifactId>
 	<version>${project.version}</version>
 
 	<name>Flex Super Pom</name>

@@ -30,12 +30,12 @@
 
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>super-pom-commons</artifactId>
+		<artifactId>flexmojos-super-pom-commons</artifactId>
 		<version>${project.version}</version>
 	</parent>
 
 	<groupId>org.sonatype.flexmojos</groupId>
-	<artifactId>air-super-pom</artifactId>
+	<artifactId>flexmojos-air-super-pom</artifactId>
 	<version>${project.version}</version>
 
 	<name>Air Super Pom</name>

@@ -41,14 +41,14 @@ public class IT0013IssuesTest
         test( testDir, "install" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue11()
         throws Exception
     {
         testIssue( "issue-0011" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue13()
         throws Exception
     {
@@ -59,14 +59,14 @@ public class IT0013IssuesTest
         assertEquals( 2, reportDir.listFiles().length );
     }
 
-    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
+    @Test( , expectedExceptions = { VerificationException.class } )
     public void issue14()
         throws Exception
     {
         testIssue( "issue-0014" );
     }
 
-    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
+    @Test( , expectedExceptions = { VerificationException.class } )
     public void issue15()
         throws Exception
     {
@@ -91,29 +91,29 @@ public class IT0013IssuesTest
 
     }
 
-    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
+    @Test( , expectedExceptions = { VerificationException.class } )
     public void issue27()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0027" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue29()
         throws Exception
     {
         testIssue( "issue-0029" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue32()
         throws Exception
     {
         testIssue( "issue-0032" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue39()
         throws Exception
     {
@@ -130,15 +130,15 @@ public class IT0013IssuesTest
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
 
-    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
+    @Test( , expectedExceptions = { VerificationException.class } )
     public void issue44()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0044" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue53()
         throws Exception
     {
@@ -148,37 +148,37 @@ public class IT0013IssuesTest
         test( testDir, "install", "-DskipTests=true" );
     }
 
-    @Test( timeOut = 120000, groups = { "generator" } )
+    @Test( , groups = { "generator" } )
     public void issue61()
         throws Exception
     {
         testIssue( "issue-0061" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue67()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0067" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue68()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0068" );
-        test( testDir, "org.sonatype.flexmojos:flex-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue70()
         throws Exception
     {
         testIssue( "issue-0070" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test(  )
     public void issue103()
         throws Exception
     {

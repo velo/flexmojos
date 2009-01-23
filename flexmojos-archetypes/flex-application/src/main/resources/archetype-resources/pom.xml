@@ -41,7 +41,7 @@
 
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flex-super-pom</artifactId>
+		<artifactId>flexmojos-flex-super-pom</artifactId>
 		<version>1.0</version>
 	</parent>
 
