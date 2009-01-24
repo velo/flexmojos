@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
-
 import java.io.File;
 
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
