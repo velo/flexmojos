@@ -26,14 +26,15 @@ public class IT0015CoverageTest
         test( testDir, "install" );
     }
 
-    @Test( oid testSourceFileResolver()
+    @Test
+    public void testSourceFileResolver()
         throws Exception
     {
         standardConceptTester( "source-file-resolver" );
     }
 
-    @Test(  )
-    public vlusionExclusion()
+    @Test
+    public void testAsdocInclusionExclusion()
         throws Exception
     {
         File testDir = getProject( "/coverage/asdoc-inclusion-exclusion" );
@@ -44,8 +45,9 @@ public class IT0015CoverageTest
         assertFalse( "Should not generate Amarelo.html.", amarelo.exists() );
     }
 
-    @Test(  )
-    public void testFlexUnit  throws Exception
+    @Test
+    public void testFlexUnitReport()
+        throws Exception
     {
         File testDir = getProject( "/concept/flexunit-example" );
         test( testDir, "site:site" );
@@ -53,9 +55,9 @@ public class IT0015CoverageTest
         assertTrue( asdoc.isDirectory() );
     }
 
-    @Test(  )
+    @Test
     public void testHtmlwrapperTemplates()
-xception
+        throws Exception
     {
         File testDir = getProject( "/coverage/htmlwrapper-templates" );
         test( testDir, "package" );
@@ -65,19 +67,20 @@ xception
         assertTrue( "Should generate htmlwrapper " + zip.getAbsolutePath(), zip.exists() );
     }
 
-    @Test(  )
+    @Test
     public void testDefines()
         throws Exception
-    testDir = getProject( "/issues/issue-0068" );
+    {
+        File testDir = getProject( "/issues/issue-0068" );
         test( testDir, "install" );
 
     }
 
-    @Test(  )
+    @Test
     public void testCompilationOptions()
         throws Exception
     {
- onceptTester( "compilation-options" );
+        standardConceptTester( "compilation-options" );
     }
 
 }

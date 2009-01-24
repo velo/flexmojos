@@ -21,7 +21,7 @@ public class FlexUnitTest
     extends AbstractConceptTest
 {
 
-    @Test( timeOut = 120000, expectedExceptions = { VerificationException.class } )
+    @Test( expectedExceptions = { VerificationException.class } )
     public void testFlexUnitExample()
         throws Exception
     {

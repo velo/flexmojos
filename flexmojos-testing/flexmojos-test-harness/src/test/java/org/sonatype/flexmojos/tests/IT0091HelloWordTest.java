@@ -14,20 +14,13 @@ public class IT0091HelloWordTest
 {
 
     @Test
-    // ( timeOut = 120000 )
     public void helloWordTest()
         throws Exception
     {
-        // File testDir = getProject( "/issues/issue-0017" );
-        // test( testDir, "site" );
-        //
-        // File asdoc = new File( testDir, "target/asdoc" );
-        // assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
         test( getProject( "intro/hello-world" ), "install" );
     }
 
     @Test
-    // ( timeOut = 120000 )
     public void helloWordNoInherit()
         throws Exception
     {

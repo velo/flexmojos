@@ -13,7 +13,7 @@ public class Issue0076Test
     extends AbstractIssueTest
 {
 
-    @Test( timeOut = 120000 )
+    @Test
     public void notDeclared()
         throws Exception
     {
@@ -21,14 +21,14 @@ public class Issue0076Test
         super.testIssue( "issue-0076" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test
     public void merged()
         throws Exception
     {
         super.testIssue( "issue-0076", "-Pmerge-true" );
     }
 
-    @Test( timeOut = 120000 )
+    @Test
     public void notMerged()
         throws Exception
     {

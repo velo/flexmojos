@@ -9,7 +9,6 @@ public class ProgressListener
     @Override
     public void onTestStart( ITestResult result )
     {
-        // TODO Auto-generated method stub
         super.onTestStart( result );
 
         System.out.println( "Running: " + result.getName() );
