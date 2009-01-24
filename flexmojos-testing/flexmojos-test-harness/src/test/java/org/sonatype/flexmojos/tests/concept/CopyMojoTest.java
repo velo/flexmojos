@@ -28,7 +28,7 @@ public class CopyMojoTest
     extends AbstractConceptTest
 {
 
-    @Test( timeOut = 120000 )
+    @Test
     public void copyFlexResouces()
         throws Exception
     {

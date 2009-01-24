@@ -28,7 +28,7 @@ public class Issue0066Test
     extends AbstractIssueTest
 {
 
-    @Test( timeOut = 120000, groups = { "generator" } )
+    @Test( groups = { "generator" } )
     public void issue66()
         throws Exception
     {
