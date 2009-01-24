@@ -15,7 +15,8 @@ public class Issue0106Test
     extends AbstractIssueTest
 {
 
-    @Test( oid issue106()
+    @Test
+    public void issue106()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0106" );

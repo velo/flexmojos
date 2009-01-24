@@ -13,7 +13,7 @@ public class L10NTest
     extends AbstractConceptTest
 {
 
-    @Test( timeOut = 120000 )
+    @Test
     public void testLocalizedLibraryAndApplication()
         throws Exception
     {
