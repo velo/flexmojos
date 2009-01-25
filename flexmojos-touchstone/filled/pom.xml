@@ -30,5 +30,16 @@
 		<module>filled-swf</module>
 		<module>filled-war</module>
 	</modules>
-
+	<repositories>
+		<repository>
+			<id>flexmojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>flexmojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
