@@ -318,30 +318,13 @@ public class AsDocMojo
             List<Resource> resources = build.getResources();
             for ( Resource resource : resources )
             {
-                File cfg = new File( resource.getDirectory(), getConfigFileName() );
+                File cfg = new File( resource.getDirectory(), "config.xml" );
                 if ( cfg.exists() )
                 {
                     configFile = cfg;
                     break;
                 }
             }
-        }
-        if ( configFile == null )
-        {
-            URL url = getClass().getResource( "/configs/" + getConfigFileName() );
-            configFile = new File( build.getDirectory(), getConfigFileName() );
-            try
-            {
-                FileUtils.copyURLToFile( url, configFile );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error creating config.xml" );
-            }
-        }
-        if ( !configFile.exists() )
-        {
-            throw new MojoExecutionException( "Unable to find " + configFile );
         }
 
         if ( fontsSnapshot == null )
@@ -435,11 +418,6 @@ public class AsDocMojo
         }
     }
 
-    private String getConfigFileName()
-    {
-        return "config.xml";
-    }
-
     protected void run()
         throws MojoExecutionException, MojoFailureException
     {
@@ -466,7 +444,14 @@ public class AsDocMojo
         {
             args.add( "-compiler.headless-server=true" );
         }
-        args.add( "-load-config=" + configFile.getAbsolutePath() );
+        if ( configFile != null )
+        {
+            args.add( "-load-config=" + configFile.getAbsolutePath() );
+        }
+        else
+        {
+            args.add( "-load-config=" );
+        }
         args.add( "-output=" + output.getAbsolutePath() );
 
         getLog().info( args.toString() );
