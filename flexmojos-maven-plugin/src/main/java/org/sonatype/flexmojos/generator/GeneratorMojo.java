@@ -65,7 +65,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * 
  * @goal generate
  * @phase generate-sources
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  */
 public class GeneratorMojo
     extends AbstractMojo

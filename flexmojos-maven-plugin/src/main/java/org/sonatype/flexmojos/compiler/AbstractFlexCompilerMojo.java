@@ -67,6 +67,7 @@ import org.sonatype.flexmojos.utilities.Namespace;
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
 import flex2.tools.oem.Report;
+import flex2.tools.oem.internal.OEMConfiguration;
 
 public abstract class AbstractFlexCompilerMojo<E extends Builder>
     extends AbstractIrvinMojo
@@ -453,8 +454,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     /**
      * Load a file containing configuration options If not defined, by default will search for one on resources folder.
-     * If not found an empty config file will be generated at target folder. This file doesn't reflect the
-     * configurations defined on pom.xml, is only put there because flex-compiler-oem always try to read a config.xml.
      * 
      * @parameter
      */
@@ -587,7 +586,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * This is equilvalent to the <code>compiler.mxmlc.compatibility-version</code> option of the compc compiler. Must
      * be in the form <major>.<minor>.<revision> Valid values: <tt>2.0.0</tt>, <tt>2.0.1</tt> and <tt>3.0.0</tt>
      * 
-     * @see http ://livedocs.adobe.com/flex/3/html/help.html?content=versioning_4. html
+     * @see http://livedocs.adobe.com/flex/3/html/help.html?content=versioning_4. html
      * @parameter
      */
     private String compatibilityVersion;
@@ -657,10 +656,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @parameter default-value="375"
      */
     private int defaultSizeHeight;
-
-    /*
-     * TODO how to set this on flex-compiler-oem -dump-config <filename> private String dumpConfig;
-     */
 
     /**
      * Sets a list of definitions to omit from linking when building an application. This is equivalent to using the
@@ -740,14 +735,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      */
     private boolean useResourceBundleMetadata;
 
-    /*
-     * TODO how to set this on flex-compiler-oem -resource-bundle-list <filename> private String resourceBundleList;
+    /**
+     * Determines whether to compile against libraries statically or use RSLs. Set this option to true to ignore the
+     * RSLs specified by the <code>rslUrls</code>. Set this option to false to use the RSLs.
+     * 
+     * @parameter default-value="false"
      */
-
-    /*
-     * TODO how to set this on flex-compiler-oem -static-link-runtime-shared-libraries private boolean
-     * staticLinkRuntimeSharedLibraries;
-     */
+    private boolean staticLinkRuntimeSharedLibraries;
 
     /**
      * Verifies the RSL loaded has the same digest as the RSL specified when the application was compiled. This is
@@ -768,7 +762,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected E builder;
 
     /**
-     * Flex OEM compiler configurations
+     * Flex OEM compiler configurations We can not use interface, because Flex SDK 3.2.0.3958 has method
+     * "setConfiguration(java.lang.String[] strings)" only in OEMConfiguration (Flex SDK 4 is ok)
      */
     protected Configuration configuration;
 
@@ -860,6 +855,35 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private String[] themes;
 
     /**
+     * This is equilvalent to the <code>include-resource-bundles</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;bundle&gt;SharedResources&lt;/bundle&gt;
+     *   &lt;bundle&gt;collections&lt;/bundle&gt;
+     *   &lt;bundle&gt;containers&lt;/bundle&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] includeResourceBundles;
+
+    /**
+     * @parameter TODO check if is used/useful
+     */
+    private MavenArtifact[] includeResourceBundlesArtifact;
+
+    /**
+     * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
+     * that manifests can mention classes that come in from filespec rather than classpath, e.g. in playerglobal.swc.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean includeLookupOnly;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -911,18 +935,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 }
             }
         }
-
-        if ( configFile == null )
-        {
-            getLog().debug( "No config found, generating one!" );
-            configFile = MavenUtils.getConfigFile( build );
-        }
-
-        if ( !configFile.exists() )
-        {
-            throw new MojoExecutionException( "Unable to find " + configFile );
-        }
-        else
+        if ( configFile != null )
         {
             getLog().info( "Using configuration file " + configFile );
         }
@@ -1249,7 +1262,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         configuration.keepLinkReport( linkReport );
         configuration.keepConfigurationReport( configurationReport );
-        configuration.setConfiguration( configFile );
         configuration.setServiceConfiguration( services );
 
         if ( loadExterns != null )
@@ -1347,6 +1359,66 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.keepAllTypeSelectors( keepAllTypeSelectors );
 
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
+
+        if ( configuration instanceof OEMConfiguration )
+        {
+            // http://bugs.adobe.com/jira/browse/SDK-15581
+            // http://bugs.adobe.com/jira/browse/SDK-18719
+            // workaround
+
+            OEMConfiguration oemConfig = (OEMConfiguration) configuration;
+            List<String> commandLineArguments = new ArrayList<String>();
+
+            if ( staticLinkRuntimeSharedLibraries )
+            {
+                commandLineArguments.add( "-static-link-runtime-shared-libraries=true" );
+            }
+
+            if ( includeResourceBundles != null )
+            {
+                oemConfig.addIncludeResourceBundles( includeResourceBundles );
+            }
+
+            if ( includeResourceBundlesArtifact != null )
+            {
+                for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
+                {
+                    Artifact artifact =
+                        artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
+                                                                      mvnArtifact.getArtifactId(),
+                                                                      mvnArtifact.getVersion(), "properties",
+                                                                      "resource-bundle" );
+                    MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
+                    String bundleFile;
+                    try
+                    {
+                        bundleFile = FileUtils.readFileToString( artifact.getFile() );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
+                    }
+                    String[] bundles = bundleFile.split( " " );
+                    oemConfig.addIncludeResourceBundles( bundles );
+                }
+            }
+
+            if ( configFile == null )
+            {
+                commandLineArguments.add( "-load-config=" );
+            }
+
+            if ( includeLookupOnly )
+            {
+                commandLineArguments.add( "-include-lookup-only" );
+            }
+
+            oemConfig.setConfiguration( commandLineArguments.toArray( new String[commandLineArguments.size()] ) );
+        }
+        else
+        {
+            throw new MojoFailureException( "Flex-compiler API change, unable to use suggested 'solutions'!" );
+        }
 
         verifyDigests();
     }
@@ -1603,6 +1675,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             String[] rslUrls = getRslUrls( artifact, extension );
             String[] rslPolicyFileUrls = getRslPolicyFileUrls( artifact );
             configuration.addRuntimeSharedLibraryPath( artifactPath, rslUrls, rslPolicyFileUrls );
+
+            // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
+            // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
+            configuration.addLibraryPath( new File[] { artifactFile } );
         }
     }
 

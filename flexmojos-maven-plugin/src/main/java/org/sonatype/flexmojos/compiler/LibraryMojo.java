@@ -18,7 +18,6 @@
 package org.sonatype.flexmojos.compiler;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -100,27 +98,6 @@ public class LibraryMojo
      * @parameter
      */
     private String[] includeNamespaces;
-
-    /**
-     * This is equilvalent to the <code>include-resource-bundles</code> option of the compc compiler.<BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;includeResourceBundles&gt;
-     *   &lt;bundle&gt;SharedResources&lt;/bundle&gt;
-     *   &lt;bundle&gt;collections&lt;/bundle&gt;
-     *   &lt;bundle&gt;containers&lt;/bundle&gt;
-     * &lt;/includeResourceBundles&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] includeResourceBundles;
-
-    /**
-     * @parameter TODO check if is used/useful
-     */
-    private MavenArtifact[] includeResourceBundlesArtifact;
 
     /**
      * This is the equilvalent of the <code>include-sources</code> option of the compc compiler.<BR>
@@ -205,8 +182,7 @@ public class LibraryMojo
         builder.setOutput( getOutput() );
 
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
-            && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeResourceBundles )
-            && checkNullOrEmpty( includeResourceBundlesArtifact ) && checkNullOrEmpty( includeSources )
+            && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeSources )
             && checkNullOrEmpty( includeStylesheet ) )
         {
             getLog().warn( "Nothing expecified to include.  Assuming source and resources folders." );
@@ -259,41 +235,6 @@ public class LibraryMojo
                 catch ( URISyntaxException e )
                 {
                     throw new MojoExecutionException( "Invalid URI " + uri, e );
-                }
-            }
-        }
-
-        if ( !checkNullOrEmpty( includeResourceBundles ) )
-        {
-            for ( String rb : includeResourceBundles )
-            {
-                builder.addResourceBundle( rb );
-            }
-        }
-
-        if ( !checkNullOrEmpty( includeResourceBundlesArtifact ) )
-        {
-            for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
-            {
-                Artifact artifact =
-                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
-                                                                  mvnArtifact.getArtifactId(),
-                                                                  mvnArtifact.getVersion(), "properties",
-                                                                  "resource-bundle" );
-                MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
-                String bundleFile;
-                try
-                {
-                    bundleFile = FileUtils.readFileToString( artifact.getFile() );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
-                }
-                String[] bundles = bundleFile.split( " " );
-                for ( String bundle : bundles )
-                {
-                    builder.addResourceBundle( bundle );
                 }
             }
         }
