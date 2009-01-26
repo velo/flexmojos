@@ -19,7 +19,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-aggregator</artifactId>
-  <version>3.0-SNAPSHOT</version>
+  <version>3.0-alpha9</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Aggregator</name>
@@ -33,8 +33,8 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-3.0-alpha9</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-3.0-alpha9</developerConnection>
   </scm>
 
   <distributionManagement>
@@ -67,6 +67,17 @@
       </properties>
     </profile>
 
+    <profile>
+      <id>release</id>
+      <modules>
+        <module>flexmojos-parent</module>
+        <module>flexmojos-sandbox</module>
+        <module>flexmojos-maven-plugin</module>
+        <module>flexmojos-super-poms</module>
+        <module>flexmojos-testing</module>
+      </modules>
+    </profile>
+    
     <profile>
       <id>deploy</id>
       <activation>
