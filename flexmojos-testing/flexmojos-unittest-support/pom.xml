@@ -37,7 +37,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0-alpha9</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -53,7 +53,7 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0-alpha9</version>
         <extensions>true</extensions>
         <executions>
           <execution>
