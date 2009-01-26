@@ -315,29 +315,6 @@ public class MavenUtils
     }
 
     /**
-     * Returns file reference to config.xml file. Copies the config file to the build directory.
-     * 
-     * @param build Build for which to get the config.xml file
-     * @return file reference to config.xml file
-     * @throws MojoExecutionException thrown if the config file could not be copied to the build directory
-     */
-    public static File getConfigFile( Build build )
-        throws MojoExecutionException
-    {
-        URL url = MavenUtils.class.getResource( "/configs/config.xml" );
-        File configFile = new File( build.getOutputDirectory(), "config.xml" );
-        try
-        {
-            FileUtils.copyURLToFile( url, configFile );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error generating config file.", e );
-        }
-        return configFile;
-    }
-
-    /**
      * Returns the file reference to the fonts file. Depending on the os, the correct fonts.ser file is used. The fonts
      * file is copied to the build directory.
      * 
