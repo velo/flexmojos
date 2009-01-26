@@ -24,7 +24,7 @@ public class AdvancedFlexTest
 {
 
     @Test
-    public void testAsUnitExample()
+    public void testAdvancedFlexUnitExample()
         throws Exception
     {
         standardConceptTester( "advancedflex-example" );
