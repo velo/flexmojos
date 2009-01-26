@@ -285,7 +285,7 @@ public class ApplicationMojo
         args.add( "-include-resource-bundles=" + bundlesString );
         args.add( "-output=" + output.getAbsolutePath() );
         args.add( "-compiler.fonts.local-fonts-snapshot=" + getFontsSnapshot().getAbsolutePath() );
-        args.add( "-load-config=" + configFile.getAbsolutePath() );
+        args.add( "-load-config=" + ( configFile == null ? "" : configFile.getAbsolutePath() ) );
         args.add( "-external-library-path=" + toString( external ) );
         args.add( "-include-libraries=" + toString( internal ) );
         args.add( "-library-path=" + toString( merged ) );
