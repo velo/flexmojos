@@ -66,26 +66,5 @@
 			</configuration>
 		</component>
 
-		<component>
-			<role>org.sonatype.flexmojos.sandbox.bundlepublisher.BundlePublisher</role>
-			<role-hint>default</role-hint>
-			<implementation>org.sonatype.flexmojos.sandbox.bundlepublisher.DefaultBundlePublisher</implementation>
-			<isolated-realm>false</isolated-realm>
-			<requirements>
-				<requirement>
-					<role>org.apache.maven.artifact.factory.ArtifactFactory</role>
-					<field-name>artifactFactory</field-name>
-				</requirement>
-				<requirement>
-					<role>org.apache.maven.artifact.installer.ArtifactInstaller</role>
-					<field-name>installer</field-name>
-				</requirement>
-				<requirement>
-					<role>org.apache.maven.artifact.deployer.ArtifactDeployer</role>
-					<field-name>deployer</field-name>
-				</requirement>
-			</requirements>
-		</component>
-
 	</components>
 </component-set>

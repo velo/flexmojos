@@ -103,8 +103,8 @@ public class InstallMojoTest
         Verifier verifier = getInstallVerifier( frameworkDescriptor );
         try
         {
-            verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" )
-                + ":install-sdk" );
+            verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-bundle-publisher-component:"
+                + getProperty( "version" ) + ":install-sdk" );
             verifier.verifyErrorFreeLog();
             AssertJUnit.fail( "Install mojo fail to prevent FDK get overwrote!" );
         }
@@ -119,7 +119,7 @@ public class InstallMojoTest
         throws IOException, VerificationException
     {
         Verifier verifier = getInstallVerifier( descriptor );
-        verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" )
+        verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-bundle-publisher-component:" + getProperty( "version" )
             + ":install-sdk" );
         verifier.verifyErrorFreeLog();
     }
