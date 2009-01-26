@@ -28,6 +28,7 @@
 
     <welcome-file-list>
         <welcome-file>filled-swf-1.0-SNAPSHOT.swf</welcome-file>
+        <welcome-file>main.swf</welcome-file>
     </welcome-file-list>
 
 </web-app>
