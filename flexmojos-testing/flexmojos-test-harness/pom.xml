@@ -29,7 +29,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>test-harness</artifactId>
+  <artifactId>flexmojos-test-harness</artifactId>
 
   <name>Flexmojos Integration Tests</name>
 
