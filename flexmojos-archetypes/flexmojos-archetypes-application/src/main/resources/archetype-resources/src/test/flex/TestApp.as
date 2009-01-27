@@ -15,22 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ${groupId} {
+package ${groupId} 
+{
 
 	import flexunit.framework.TestCase;
-	import flexunit.framework.TestSuite;
+	import Main;
 
-	public class TestApp extends TestCase {
+	public class TestApp extends TestCase 
+	{
 
-		/**
-		 * Tests our greeting() method
-		 */
-		public function testGreeting():void {
-			var name:String = "Buck Rogers";
-			var expectedGreeting:String = "Hello, Buck Rogers";
-
-			var result:String = App.greeting(name);
-			assertEquals("Greeting is incorrect", expectedGreeting, result);
+		public function testNothing():void 
+		{
+			//TODO un implemented
+			trace("Hello test"); 
 		}
 	}
 }
