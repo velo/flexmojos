@@ -29,7 +29,7 @@
   <name>Flexmojos Archetypes</name>
 
   <modules>
-    <module>flex-application</module>
+    <module>flexmojos-archetypes-application</module>
   </modules>
 
 </project>
