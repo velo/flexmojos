@@ -8,7 +8,7 @@
 
 -->
 <archetype>
-	<id>flexmojos-archetype</id>
+	<id>flexmojos-archetypes-application</id>
 	<sources>
 		<source>src/main/flex/App.as</source>
 	</sources>
