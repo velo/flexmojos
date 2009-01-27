@@ -41,7 +41,7 @@ public class ArchetypesTest
             new String[] { "-DarchetypeGroupId=org.sonatype.flexmojos",
                 "-DarchetypeArtifactId=flexmojos-archetypes-" + kind, "-DarchetypeVersion=" + getProperty( "version" ),
                 "-DgroupId=org.sonatype.flexmojos.it", "-DartifactId=" + artifactId, "-Dversion=1.0-SNAPSHOT" };
-        test( baseTestDir, "archetype:create", args );
+        test( baseTestDir, "archetype:generate", args );
 
         File testDir2 = new File( baseTestDir, artifactId );
         test( testDir2, "install" );
