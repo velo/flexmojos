@@ -74,6 +74,7 @@
         <module>flexmojos-sandbox</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
+        <module>flexmojos-archetypes</module>
         <module>flexmojos-testing</module>
       </modules>
     </profile>
@@ -89,6 +90,7 @@
         <module>flexmojos-sandbox</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
+        <module>flexmojos-archetypes</module>
         <module>flexmojos-testing</module>
       </modules>
 

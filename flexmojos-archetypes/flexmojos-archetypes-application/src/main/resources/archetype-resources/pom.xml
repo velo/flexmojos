@@ -28,33 +28,14 @@
 	<parent>
 		<groupId>org.sonatype.flexmojos</groupId>
 		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>1.0</version>
+		<version>${project.version}</version>
 	</parent>
 
-	<groupId>${groupId}</groupId>
-	<artifactId>${artifactId}</artifactId>
-	<version>${version}</version>
+	<groupId>\${groupId}</groupId>
+	<artifactId>\${artifactId}</artifactId>
+	<version>\${version}</version>
 	<packaging>swf</packaging>
 
-	<name>${artifactId} Flex</name>
-
-	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<configuration>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<repositories>
-		<repository>
-			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
-		</repository>
-	</repositories>
+	<name>\${artifactId} Flex</name>
 
 </project>
