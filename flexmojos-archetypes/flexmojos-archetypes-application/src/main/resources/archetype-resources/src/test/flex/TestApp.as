@@ -5,22 +5,19 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package ${groupId} {
+package ${groupId} 
+{
 
 	import flexunit.framework.TestCase;
-	import flexunit.framework.TestSuite;
+	import Main;
 
-	public class TestApp extends TestCase {
+	public class TestApp extends TestCase 
+	{
 
-		/**
-		 * Tests our greeting() method
-		 */
-		public function testGreeting():void {
-			var name:String = "Buck Rogers";
-			var expectedGreeting:String = "Hello, Buck Rogers";
-
-			var result:String = App.greeting(name);
-			assertEquals("Greeting is incorrect", expectedGreeting, result);
+		public function testNothing():void 
+		{
+			//TODO un implemented
+			trace("Hello test"); 
 		}
 	}
 }
