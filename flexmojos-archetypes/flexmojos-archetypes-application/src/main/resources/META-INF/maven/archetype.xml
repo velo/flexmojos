@@ -19,9 +19,6 @@
 -->
 <archetype>
 	<id>flexmojos-archetypes-application</id>
-	<sources>
-		<source>src/main/flex/App.as</source>
-	</sources>
 	<resources>
 		<resource>src/main/flex/Main.mxml</resource>
 	</resources>
