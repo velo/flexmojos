@@ -31,23 +31,4 @@
 
   <name>Flexmojos Archetypes - flex-application</name>
 
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <configuration>
-          <escapeString>\</escapeString>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>
