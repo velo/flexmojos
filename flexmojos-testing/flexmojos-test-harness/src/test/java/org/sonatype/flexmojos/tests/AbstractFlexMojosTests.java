@@ -127,6 +127,7 @@ public class AbstractFlexMojosTests
         sysProps.setProperty( "MAVEN_OPTS", "-Xmx512m" );
         verifier.setSystemProperties( sysProps );
         verifier.setLogFileName( getTestName() + ".log" );
+        verifier.setAutoclean( false );
         return verifier;
     }
 
@@ -172,6 +173,10 @@ public class AbstractFlexMojosTests
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName );
+            if ( destDir.exists() )
+            {
+                FileUtils.forceDelete( destDir );
+            }
 
             FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 
