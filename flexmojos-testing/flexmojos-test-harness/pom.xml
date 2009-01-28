@@ -21,7 +21,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
@@ -294,6 +294,12 @@
       <artifactId>flexmojos-testing</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>bundle-publisher-maven-plugin</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

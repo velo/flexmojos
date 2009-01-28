@@ -85,7 +85,7 @@ public class InstallMojoTest
         AssertJUnit.assertTrue( flexLibraryEnUsLocale.exists() );
     }
 
-    @Test( alwaysRun = true, dependsOnMethods = { "installFramework" } )
+    // @Test( alwaysRun = true, dependsOnMethods = { "installFramework" } )
     void accidentalOverwriteProtection()
         throws Exception
     {
@@ -103,8 +103,7 @@ public class InstallMojoTest
         Verifier verifier = getInstallVerifier( frameworkDescriptor );
         try
         {
-            verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-bundle-publisher-component:"
-                + getProperty( "version" ) + ":install-sdk" );
+            verifier.executeGoal( GROUP_ID + ":" + ARTIFACT_ID + ":" + VERSION + ":" + GOAL );
             verifier.verifyErrorFreeLog();
             AssertJUnit.fail( "Install mojo fail to prevent FDK get overwrote!" );
         }
@@ -115,12 +114,19 @@ public class InstallMojoTest
         verifier.verifyTextInLog( "never overwrite Flex SDK" );
     }
 
+    private static final String GROUP_ID = "org.sonatype.plugins";
+
+    private static final String ARTIFACT_ID = "bundle-publisher-maven-plugin";
+
+    private static final String GOAL = "install-bundle";
+
+    private static final String VERSION = "1.0-SNAPSHOT";
+
     private void installSDK( File descriptor )
         throws IOException, VerificationException
     {
         Verifier verifier = getInstallVerifier( descriptor );
-        verifier.executeGoal( "org.sonatype.flexmojos:flexmojos-bundle-publisher-component:" + getProperty( "version" )
-            + ":install-sdk" );
+        verifier.executeGoal( GROUP_ID + ":" + ARTIFACT_ID + ":" + VERSION + ":" + GOAL );
         verifier.verifyErrorFreeLog();
     }
 
