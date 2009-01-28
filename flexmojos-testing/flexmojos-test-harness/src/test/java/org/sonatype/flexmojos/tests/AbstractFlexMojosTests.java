@@ -173,10 +173,6 @@ public class AbstractFlexMojosTests
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName );
-            if ( destDir.exists() )
-            {
-                FileUtils.forceDelete( destDir );
-            }
 
             FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 
