@@ -43,16 +43,25 @@
   </parent>
 
   <groupId>\${groupId}</groupId>
-  <artifactId>\${artifactId}</artifactId>
+  <artifactId>\${artifactId}-swf</artifactId>
   <version>\${version}</version>
-  <packaging>swc</packaging>
+  <packaging>swf</packaging>
 
-  <name>\${artifactId} Flex</name>
+  <name>\${artifactId} Application</name>
 
   <build>
     <!-- this is a workaround due to archetype plugin problems.  Can be removed! -->
     <sourceDirectory>src/main/flex</sourceDirectory>
     <testSourceDirectory>src/test/flex</testSourceDirectory>
   </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>\${groupId}</groupId>
+      <artifactId>\${artifactId}-swc</artifactId>
+      <version>\${version}</version>
+      <type>swc</type>
+    </dependency>
+  </dependencies>
 
 </project>

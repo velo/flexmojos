@@ -43,11 +43,11 @@
   </parent>
 
   <groupId>\${groupId}</groupId>
-  <artifactId>\${artifactId}</artifactId>
+  <artifactId>\${artifactId}-swc</artifactId>
   <version>\${version}</version>
   <packaging>swc</packaging>
 
-  <name>\${artifactId} Flex</name>
+  <name>\${artifactId} Library</name>
 
   <build>
     <!-- this is a workaround due to archetype plugin problems.  Can be removed! -->
