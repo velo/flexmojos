@@ -94,7 +94,7 @@
         <module>flexmojos-testing</module>
       </modules>
     </profile>
-    
+
     <profile>
       <id>deploy</id>
       <activation>
@@ -112,11 +112,39 @@
 
       <build>
         <plugins>
-          <!--
-            <plugin> <groupId>com.google.code.maven-license-plugin</groupId> <artifactId>maven-license-plugin</artifactId> <configuration> <header>src/etc/header.txt</header> <excludes> <exclude>**/*.vm</exclude> <exclude>**/*.zip</exclude>
-            <exclude>**/*.swc</exclude> <exclude>**/*.swf</exclude> <exclude>**/*.ser</exclude> <exclude>**/*.ttf</exclude> <exclude>**/*.gsp</exclude> <exclude>**/izpack/*</exclude> <exclude>**/*.pom</exclude> </excludes> <mapping> <mxml>XML_STYLE</mxml>
-            <as>JAVADOC_STYLE</as> <aj>JAVADOC_STYLE</aj> </mapping> <aggregate>true</aggregate> </configuration> <executions> <execution> <goals> <goal>check</goal> </goals> </execution> </executions> </plugin>
-          -->
+          <plugin>
+            <groupId>com.google.code.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <configuration>
+              <header>src/etc/header.txt</header>
+              <excludes>
+                <exclude>**/*.vm</exclude>
+                <exclude>**/*.zip</exclude>
+                <exclude>**/*.swc</exclude>
+                <exclude>**/*.swf</exclude>
+                <exclude>**/*.ser</exclude>
+                <exclude>**/*.ttf</exclude>
+                <exclude>**/*.gsp</exclude>
+                <exclude>**/izpack/*</exclude>
+                <exclude>**/*.pom</exclude>
+              </excludes>
+              <mapping>
+                <mxml>XML_STYLE</mxml>
+                <as>JAVADOC_STYLE</as>
+                <aj>JAVADOC_STYLE</aj>
+              </mapping>
+              <aggregate>true</aggregate>
+            </configuration>
+            <!--
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            -->
+          </plugin>
         </plugins>
       </build>
     </profile>
