@@ -259,6 +259,11 @@
       <artifactId>flexmojos-archetypes-library</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>

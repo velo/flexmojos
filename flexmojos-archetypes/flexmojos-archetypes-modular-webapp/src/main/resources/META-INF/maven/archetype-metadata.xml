@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor name="flexmojos-archetypes-modular-webapp">
+  <modules>
+    <module id="swc" dir="swc" name="swc">
+      <fileSets>
+        <fileSet encoding="UTF-8">
+          <directory>src/main/flex</directory>
+          <includes>
+            <include>**/*.as</include>
+          </includes>
+        </fileSet>
+        <fileSet encoding="UTF-8">
+          <directory>src/test/flex</directory>
+          <includes>
+            <include>**/*.as</include>
+          </includes>
+        </fileSet>
+      </fileSets>
+    </module>
+    <module id="swf" dir="swf" name="swf">
+      <fileSets>
+        <fileSet encoding="UTF-8">
+          <directory>src/main/flex</directory>
+          <includes>
+            <include>**/*.mxml</include>
+          </includes>
+        </fileSet>
+      </fileSets>
+    </module>
+    <module id="war" dir="war" name="war">
+      <fileSets>
+        <fileSet filtered="true" encoding="UTF-8">
+          <directory>src/main/webapp</directory>
+          <includes>
+            <include>**/*.xml</include>
+          </includes>
+        </fileSet>
+      </fileSets>
+    </module>
+  </modules>
+</archetype-descriptor>
