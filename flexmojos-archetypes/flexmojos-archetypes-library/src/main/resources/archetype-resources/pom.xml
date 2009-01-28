@@ -35,4 +35,10 @@
 
   <name>\${artifactId} Flex</name>
 
+  <build>
+    <!-- this is a workaround due to archetype plugin problems.  Can be removed! -->
+    <sourceDirectory>src/main/flex</sourceDirectory>
+    <testSourceDirectory>src/test/flex</testSourceDirectory>
+  </build>
+
 </project>

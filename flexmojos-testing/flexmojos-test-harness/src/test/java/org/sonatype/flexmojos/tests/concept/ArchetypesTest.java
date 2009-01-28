@@ -27,6 +27,13 @@ public class ArchetypesTest
         testArchetype( "library" );
     }
 
+    @Test
+    public void testModular()
+        throws Exception
+    {
+        testArchetype( "modular-webapp" );
+    }
+
     private void testArchetype( String kind )
         throws IOException, VerificationException
     {
@@ -41,7 +48,7 @@ public class ArchetypesTest
             new String[] { "-DarchetypeGroupId=org.sonatype.flexmojos",
                 "-DarchetypeArtifactId=flexmojos-archetypes-" + kind, "-DarchetypeVersion=" + getProperty( "version" ),
                 "-DgroupId=org.sonatype.flexmojos.it", "-DartifactId=" + artifactId, "-Dversion=1.0-SNAPSHOT" };
-        test( baseTestDir, "archetype:generate", args );
+        test( baseTestDir, "archetype:create", args );
 
         File testDir2 = new File( baseTestDir, artifactId );
         test( testDir2, "install" );

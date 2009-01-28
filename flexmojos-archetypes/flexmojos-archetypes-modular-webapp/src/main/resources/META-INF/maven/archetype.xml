@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><archetype>
+  <id>flexmojos-archetypes-modular-webapp</id>
+  <!--
+  <sources>
+    <source>swc/src/main/flex/App.as</source>
+  </sources>
+  -->
+  <resources>
+    <resource>swc/src/main/flex/App.as</resource>
+    <resource>swc/pom.xml</resource>
+    <resource>swf/pom.xml</resource>
+    <resource>war/pom.xml</resource>
+    <resource>swf/src/main/flex/Main.mxml</resource>
+    <resource>war/src/main/webapp/WEB-INF/web.xml</resource>
+    <resource>swf/src/test/flex/TestApp.as</resource>
+    <resource>swc/src/test/flex/TestApp.as</resource>
+  </resources>
+  <!--
+  <testSources>
+    <source>swf/src/test/flex/TestApp.as</source>
+    <source>swc/src/test/flex/TestApp.as</source>
+  </testSources>
+  -->
+</archetype>
