@@ -47,6 +47,7 @@
   <modules>
     <module>flexmojos-archetypes-application</module>
     <module>flexmojos-archetypes-library</module>
+    <module>flexmojos-archetypes-modular-webapp</module>
   </modules>
 
   <build>
