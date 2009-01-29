@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -18,20 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>info.rvin.itest.coverage</groupId>
-	<artifactId>application-main</artifactId>
-	<version>1.0-SNAPSHOT</version>
-
-	<packaging>pom</packaging>
-
-	<modules>
-	   <module>application-main</module>
-	   <module>application-index</module>
-	   <module>application-not-default</module>
-	   <module>application-forced</module>
-	</modules>
-
-</project>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+	<mx:Label text="Hello World" />
+</mx:Application>
