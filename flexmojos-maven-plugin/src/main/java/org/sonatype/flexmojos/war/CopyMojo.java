@@ -111,9 +111,22 @@ public class CopyMojo
      */
     private boolean copyRSL;
 
+    /**
+     * Skip mojo execution
+     * 
+     * @parameter default-value="false" expression="${flexmojos.copy.skip}"
+     */
+    private boolean skip;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping copy-mojo execution" );
+            return;
+        }
+
         String packaging = project.getPackaging();
 
         if ( !"war".equals( packaging ) )
