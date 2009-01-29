@@ -12,26 +12,12 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
+import org.sonatype.flexmojos.tests.coverage.AbstractCoverageTest;
 import org.testng.annotations.Test;
 
 public class IT0015CoverageTest
-    extends AbstractFlexMojosTests
+    extends AbstractCoverageTest
 {
-
-    public void standardConceptTester( String coverageName )
-        throws Exception
-    {
-        File testDir = getProject( "/coverage/" + coverageName );
-        test( testDir, "install" );
-    }
-
-    @Test
-    public void testSourceFileResolver()
-        throws Exception
-    {
-        standardConceptTester( "source-file-resolver" );
-    }
 
     @Test
     public void testAsdocInclusionExclusion()
@@ -80,7 +66,7 @@ public class IT0015CoverageTest
     public void testCompilationOptions()
         throws Exception
     {
-        standardConceptTester( "compilation-options" );
+        standardCoverageTester( "compilation-options" );
     }
 
 }
