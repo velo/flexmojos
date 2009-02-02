@@ -29,8 +29,4 @@
 
   <name>Flexmojos Sandbox</name>
 
-  <modules>
-    <module>flexmojos-bundle-publisher-component</module>
-  </modules>
-
 </project>
