@@ -18,48 +18,44 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>%{flexmojos.version}</version>
-	</parent>
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-flex-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
 
-	<groupId>org.sonatype.flexmojos.itest</groupId>
-	<artifactId>simple-generation</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <groupId>org.sonatype.flexmojos.itest</groupId>
+  <artifactId>simple-generation</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-	<packaging>swc</packaging>
+  <packaging>swc</packaging>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>%{flexmojos.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-            <plugin>
-                <groupId>org.sonatype.flexmojos</groupId>
-                <artifactId>flexmojos-maven-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.sonatype.flexmojos.itest</groupId>
-			<artifactId>generator-jar</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.sonatype.flexmojos.itest</groupId>
+      <artifactId>generator-jar</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 
 </project>
