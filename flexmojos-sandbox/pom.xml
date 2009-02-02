@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>3.0-alpha-11</version>
+    <version>3.0-SNAPSHOT</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -31,5 +31,9 @@
   <packaging>pom</packaging>
 
   <name>Flexmojos Sandbox</name>
+
+  <modules>
+    <module>flexmojos-bundle-publisher-component</module>
+  </modules>
 
 </project>
