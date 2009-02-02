@@ -133,7 +133,7 @@ public class MavenUtils
                     public boolean accept( File pathname )
                     {
                         return pathname.isFile()
-                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) );
+                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith( ".css" ) );
                     }
                 } );
 
