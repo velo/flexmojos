@@ -171,20 +171,4 @@ public class IT0014ConceptTest
         test( testDir, "install", "-Dincremental=true" );
     }
 
-    @Test
-    public void testCompiledLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation1" );
-        test( testDir, "install" );
-    }
-
-    @Test
-    public void testRuntimeLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation2" );
-        test( testDir, "install" );
-    }
-
 }

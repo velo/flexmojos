@@ -7,11 +7,29 @@
  */
 package org.sonatype.flexmojos.tests.concept;
 
+import java.io.File;
+
 import org.testng.annotations.Test;
 
 public class L10NTest
     extends AbstractConceptTest
 {
+
+    @Test
+    public void testCompiledLocalization()
+        throws Exception
+    {
+        File testDir = getProject( "/concept/l10n-swf/FlightReservation1" );
+        test( testDir, "install" );
+    }
+
+    @Test
+    public void testRuntimeLocalization()
+        throws Exception
+    {
+        File testDir = getProject( "/concept/l10n-swf/FlightReservation2" );
+        test( testDir, "install" );
+    }
 
     @Test
     public void testLocalizedLibraryAndApplication()
