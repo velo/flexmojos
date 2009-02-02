@@ -164,7 +164,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean allowSourcePathOverlap;
 
     /**
-     * Run the AS3 compiler in a mode that detects legal but potentially incorrect code
+     * Run the AS3 compiler in a mode that detects legal but potentially incorrect code. Equivalent compiler option:
+     * warnings
      * 
      * @parameter default-value="true"
      */
@@ -1966,7 +1967,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         for ( String locale : runtimeLocales )
         {
-            getLog().info( "Generating resource-bundle for " + locale );
+            getLog().info( "Generating resource bundle for locale: " + locale );
             File localePath = MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
 
             if ( !localePath.exists() )
@@ -1981,7 +1982,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * Write resource bundle
      * 
-     * @param bundles
+     * @param bundlesNames
      * @param locale
      * @param localePath
      * @throws MojoExecutionException
@@ -1996,67 +1997,100 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      */
     private void configureWarnings( Configuration cfg )
     {
+        if ( !warnings.getActionScript() || !showWarnings )
+        {
+            cfg.showActionScriptWarnings( false );
+        }
+        if ( !warnings.getBinding() || !showWarnings )
+        {
+            cfg.showBindingWarnings( false );
+        }
+        if ( !warnings.getDeprecation() || !showWarnings )
+        {
+            cfg.showDeprecationWarnings( false );
+        }
+        if ( !warnings.getUnusedTypeSelector() || !showWarnings )
+        {
+            cfg.showUnusedTypeSelectorWarnings( false );
+        }
+
         if ( !showWarnings )
         {
-            cfg.showActionScriptWarnings( showWarnings );
             return;
         }
-        cfg.showActionScriptWarnings( showWarnings );
-        cfg.showBindingWarnings( warnings.getBinding() );
-        cfg.showDeprecationWarnings( warnings.getDeprecation() );
-        cfg.showUnusedTypeSelectorWarnings( warnings.getUnusedTypeSelector() );
-        cfg.checkActionScriptWarning( Configuration.WARN_ARRAY_TOSTRING_CHANGES, warnings.getArrayTostringChanges() );
-        cfg.checkActionScriptWarning( Configuration.WARN_ASSIGNMENT_WITHIN_CONDITIONAL,
-                                      warnings.getAssignmentWithinConditional() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_ARRAY_CAST, warnings.getBadArrayCast() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_BOOLEAN_ASSIGNMENT, warnings.getBadBooleanAssignment() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_DATE_CAST, warnings.getBadDateCast() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_ES3_TYPE_METHOD, warnings.getBadEs3TypeMethod() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_ES3_TYPE_PROP, warnings.getBadEs3TypeProp() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_NAN_COMPARISON, warnings.getBadNanComparison() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_NULL_ASSIGNMENT, warnings.getBadNullAssignment() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_NULL_COMPARISON, warnings.getBadNullComparison() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BAD_UNDEFINED_COMPARISON, warnings.getBadUndefinedComparison() );
-        cfg.checkActionScriptWarning( Configuration.WARN_BOOLEAN_CONSTRUCTOR_WITH_NO_ARGS,
-                                      warnings.getBooleanConstructorWithNoArgs() );
-        cfg.checkActionScriptWarning( Configuration.WARN_CHANGES_IN_RESOLVE, warnings.getChangesInResolve() );
-        cfg.checkActionScriptWarning( Configuration.WARN_CLASS_IS_SEALED, warnings.getClassIsSealed() );
-        cfg.checkActionScriptWarning( Configuration.WARN_CONST_NOT_INITIALIZED, warnings.getConstNotInitialized() );
-        cfg.checkActionScriptWarning( Configuration.WARN_CONSTRUCTOR_RETURNS_VALUE,
-                                      warnings.getConstructorReturnsValue() );
-        cfg.checkActionScriptWarning( Configuration.WARN_DEPRECATED_EVENT_HANDLER_ERROR,
-                                      warnings.getDeprecatedEventHandlerError() );
-        cfg.checkActionScriptWarning( Configuration.WARN_DEPRECATED_FUNCTION_ERROR,
-                                      warnings.getDeprecatedFunctionError() );
-        cfg.checkActionScriptWarning( Configuration.WARN_DEPRECATED_PROPERTY_ERROR,
-                                      warnings.getDeprecatedPropertyError() );
-        cfg.checkActionScriptWarning( Configuration.WARN_DUPLICATE_ARGUMENT_NAMES, warnings.getDuplicateArgumentNames() );
-        cfg.checkActionScriptWarning( Configuration.WARN_DUPLICATE_VARIABLE_DEF, warnings.getDuplicateVariableDef() );
-        cfg.checkActionScriptWarning( Configuration.WARN_FOR_VAR_IN_CHANGES, warnings.getForVarInChanges() );
-        cfg.checkActionScriptWarning( Configuration.WARN_IMPORT_HIDES_CLASS, warnings.getImportHidesClass() );
-        cfg.checkActionScriptWarning( Configuration.WARN_INSTANCEOF_CHANGES, warnings.getInstanceOfChanges() );
-        cfg.checkActionScriptWarning( Configuration.WARN_INTERNAL_ERROR, warnings.getInternalError() );
-        cfg.checkActionScriptWarning( Configuration.WARN_LEVEL_NOT_SUPPORTED, warnings.getLevelNotSupported() );
-        cfg.checkActionScriptWarning( Configuration.WARN_MISSING_NAMESPACE_DECL, warnings.getMissingNamespaceDecl() );
-        cfg.checkActionScriptWarning( Configuration.WARN_NEGATIVE_UINT_LITERAL, warnings.getNegativeUintLiteral() );
-        cfg.checkActionScriptWarning( Configuration.WARN_NO_CONSTRUCTOR, warnings.getNoConstructor() );
-        cfg.checkActionScriptWarning( Configuration.WARN_NO_EXPLICIT_SUPER_CALL_IN_CONSTRUCTOR,
-                                      warnings.getNoExplicitSuperCallInConstructor() );
-        cfg.checkActionScriptWarning( Configuration.WARN_NO_TYPE_DECL, warnings.getNoTypeDecl() );
-        cfg.checkActionScriptWarning( Configuration.WARN_NUMBER_FROM_STRING_CHANGES,
-                                      warnings.getNumberFromStringChanges() );
-        cfg.checkActionScriptWarning( Configuration.WARN_SCOPING_CHANGE_IN_THIS, warnings.getScopingChangeInThis() );
-        cfg.checkActionScriptWarning( Configuration.WARN_SLOW_TEXTFIELD_ADDITION, warnings.getSlowTextFieldAddition() );
-        cfg.checkActionScriptWarning( Configuration.WARN_UNLIKELY_FUNCTION_VALUE, warnings.getUnlikelyFunctionValue() );
-        cfg.checkActionScriptWarning( Configuration.WARN_XML_CLASS_HAS_CHANGED, warnings.getXmlClassHasChanged() );
+
+        configureWarningIfTrue( Configuration.WARN_ARRAY_TOSTRING_CHANGES, warnings.getArrayTostringChanges(), cfg );
+        configureWarningIfFalse( Configuration.WARN_ASSIGNMENT_WITHIN_CONDITIONAL,
+                                 warnings.getAssignmentWithinConditional(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_ARRAY_CAST, warnings.getBadArrayCast(), cfg );
+
+        configureWarningIfFalse( Configuration.WARN_BAD_BOOLEAN_ASSIGNMENT, warnings.getBadBooleanAssignment(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_DATE_CAST, warnings.getBadDateCast(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_ES3_TYPE_METHOD, warnings.getBadEs3TypeMethod(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_ES3_TYPE_PROP, warnings.getBadEs3TypeProp(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_NAN_COMPARISON, warnings.getBadNanComparison(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_NULL_ASSIGNMENT, warnings.getBadNullAssignment(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_NULL_COMPARISON, warnings.getBadNullComparison(), cfg );
+        configureWarningIfFalse( Configuration.WARN_BAD_UNDEFINED_COMPARISON, warnings.getBadUndefinedComparison(), cfg );
+        configureWarningIfTrue( Configuration.WARN_BOOLEAN_CONSTRUCTOR_WITH_NO_ARGS,
+                                warnings.getBooleanConstructorWithNoArgs(), cfg );
+        configureWarningIfTrue( Configuration.WARN_CHANGES_IN_RESOLVE, warnings.getChangesInResolve(), cfg );
+        configureWarningIfFalse( Configuration.WARN_CLASS_IS_SEALED, warnings.getClassIsSealed(), cfg );
+        configureWarningIfFalse( Configuration.WARN_CONST_NOT_INITIALIZED, warnings.getConstNotInitialized(), cfg );
+        configureWarningIfTrue( Configuration.WARN_CONSTRUCTOR_RETURNS_VALUE, warnings.getConstructorReturnsValue(),
+                                cfg );
+        configureWarningIfTrue( Configuration.WARN_DEPRECATED_EVENT_HANDLER_ERROR,
+                                warnings.getDeprecatedEventHandlerError(), cfg );
+        configureWarningIfFalse( Configuration.WARN_DEPRECATED_FUNCTION_ERROR, warnings.getDeprecatedFunctionError(),
+                                 cfg );
+        configureWarningIfFalse( Configuration.WARN_DEPRECATED_PROPERTY_ERROR, warnings.getDeprecatedPropertyError(),
+                                 cfg );
+        configureWarningIfFalse( Configuration.WARN_DUPLICATE_ARGUMENT_NAMES, warnings.getDuplicateArgumentNames(), cfg );
+        configureWarningIfFalse( Configuration.WARN_DUPLICATE_VARIABLE_DEF, warnings.getDuplicateVariableDef(), cfg );
+        configureWarningIfTrue( Configuration.WARN_FOR_VAR_IN_CHANGES, warnings.getForVarInChanges(), cfg );
+        configureWarningIfFalse( Configuration.WARN_IMPORT_HIDES_CLASS, warnings.getImportHidesClass(), cfg );
+        configureWarningIfFalse( Configuration.WARN_INSTANCEOF_CHANGES, warnings.getInstanceOfChanges(), cfg );
+        configureWarningIfFalse( Configuration.WARN_INTERNAL_ERROR, warnings.getInternalError(), cfg );
+        configureWarningIfFalse( Configuration.WARN_LEVEL_NOT_SUPPORTED, warnings.getLevelNotSupported(), cfg );
+        configureWarningIfFalse( Configuration.WARN_MISSING_NAMESPACE_DECL, warnings.getMissingNamespaceDecl(), cfg );
+        configureWarningIfFalse( Configuration.WARN_NEGATIVE_UINT_LITERAL, warnings.getNegativeUintLiteral(), cfg );
+        configureWarningIfFalse( Configuration.WARN_NO_CONSTRUCTOR, warnings.getNoConstructor(), cfg );
+        configureWarningIfTrue( Configuration.WARN_NO_EXPLICIT_SUPER_CALL_IN_CONSTRUCTOR,
+                                warnings.getNoExplicitSuperCallInConstructor(), cfg );
+        configureWarningIfFalse( Configuration.WARN_NO_TYPE_DECL, warnings.getNoTypeDecl(), cfg );
+        configureWarningIfTrue( Configuration.WARN_NUMBER_FROM_STRING_CHANGES, warnings.getNumberFromStringChanges(),
+                                cfg );
+        configureWarningIfTrue( Configuration.WARN_SCOPING_CHANGE_IN_THIS, warnings.getScopingChangeInThis(), cfg );
+        configureWarningIfFalse( Configuration.WARN_SLOW_TEXTFIELD_ADDITION, warnings.getSlowTextFieldAddition(), cfg );
+        configureWarningIfFalse( Configuration.WARN_UNLIKELY_FUNCTION_VALUE, warnings.getUnlikelyFunctionValue(), cfg );
+        configureWarningIfTrue( Configuration.WARN_XML_CLASS_HAS_CHANGED, warnings.getXmlClassHasChanged(), cfg );
 
         configureWarnings3( cfg );
+    }
+
+    private void configureWarningIfTrue( int code, boolean value, Configuration cfg )
+    {
+        if ( value )
+        {
+            cfg.checkActionScriptWarning( code, true );
+        }
+    }
+
+    private void configureWarningIfFalse( int code, boolean value, Configuration cfg )
+    {
+        if ( !value )
+        {
+            cfg.checkActionScriptWarning( code, false );
+        }
     }
 
     @FlexCompatibility( minVersion = "3" )
     private void configureWarnings3( Configuration cfg )
     {
-        cfg.showShadowedDeviceFontWarnings( warnings.getShadowedDeviceFont() );
+        if ( !warnings.getShadowedDeviceFont() )
+        {
+            cfg.showShadowedDeviceFontWarnings( warnings.getShadowedDeviceFont() );
+        }
     }
 
     /**

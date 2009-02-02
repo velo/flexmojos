@@ -19,6 +19,11 @@ package org.sonatype.flexmojos.compiler;
 
 public class Warning
 {
+	/**
+     * runs the AS3 compiler in a mode that detects legal but potentially incorrect code
+     */
+    private boolean actionscript = true;
+
     /**
      * Array.toString() format has changed.
      */
@@ -169,7 +174,7 @@ public class Warning
     /**
      * Missing constructor.
      */
-    private boolean noConstructor = false;
+    private boolean noConstructor = true;
 
     /**
      * The super() statement was not called within the constructor.
@@ -225,6 +230,11 @@ public class Warning
      * to using the <code>compiler.show-shadowed-device-font-warnings</code> option of the mxmlc or compc compilers.
      */
     private boolean shadowedDeviceFont = true;
+
+	public boolean getActionScript()
+    {
+        return actionscript;
+    }
 
     public boolean getArrayTostringChanges()
     {
@@ -414,6 +424,11 @@ public class Warning
     public boolean getXmlClassHasChanged()
     {
         return xmlClassHasChanged;
+    }
+
+	public void setActionScript( boolean actionscript )
+    {
+        this.actionscript = actionscript;
     }
 
     public void setArrayTostringChanges( boolean arrayTostringChanges )
