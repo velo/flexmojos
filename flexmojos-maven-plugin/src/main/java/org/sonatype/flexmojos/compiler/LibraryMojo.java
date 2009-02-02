@@ -396,7 +396,7 @@ public class LibraryMojo
 
         build( localized );
 
-        projectHelper.attachArtifact( project, "resource-bundle", locale, output );
+        projectHelper.attachArtifact( project, RB_SWC, locale, output );
     }
 
     @Override

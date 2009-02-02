@@ -54,6 +54,7 @@ import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import flex2.tools.oem.Application;
+import flex2.tools.oem.internal.OEMConfiguration;
 
 /**
  * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
@@ -244,8 +245,8 @@ public class ApplicationMojo
         }
     }
 
-    @Override
-    protected void writeResourceBundle( String[] bundles, String locale, File localePath )
+    @FlexCompatibility( minVersion = "3", maxVersion = "3.1" )
+    protected void writeResourceBundleFlex30( String[] bundles, String locale, File localePath )
         throws MojoExecutionException
     {
 
@@ -325,6 +326,39 @@ public class ApplicationMojo
             sb.append( lib.getAbsolutePath() );
         }
         return sb.toString();
+    }
+
+    @Override
+    protected void writeResourceBundle( String[] bundlesNames, String locale, File localePath )
+        throws MojoExecutionException
+    {
+        writeResourceBundleFlex30( bundlesNames, locale, localePath );
+        writeResourceBundleFlex32( bundlesNames, locale, localePath );
+    }
+
+    @FlexCompatibility( minVersion = "3.2" )
+    protected void writeResourceBundleFlex32( String[] bundlesNames, String locale, File localePath )
+        throws MojoExecutionException
+    {
+        Application rbBuilder = new Application();
+        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + SWF );
+
+        rbBuilder.setLogger( new CompileLogger( getLog() ) );
+        rbBuilder.setOutput( output );
+        rbBuilder.setConfiguration( configuration );
+
+        if ( configuration instanceof OEMConfiguration )
+        {
+            OEMConfiguration oemConfiguration = (OEMConfiguration) configuration;
+            oemConfiguration.setIncludeResourceBundles( bundlesNames );
+        }
+        configuration.setLocale( new String[] { locale } );
+        configuration.setSourcePath( new File[] { localePath } );
+        configuration.addLibraryPath( getResourcesBundles( locale ) );
+
+        build( rbBuilder );
+
+        projectHelper.attachArtifact( project, SWF, locale, output );
     }
 
     private void updateSecuritySandbox()
