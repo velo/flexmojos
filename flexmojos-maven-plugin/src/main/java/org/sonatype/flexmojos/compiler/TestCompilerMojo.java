@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -258,6 +257,11 @@ public class TestCompilerMojo
         // test launcher is at testOutputDirectory
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
+        if ( compiledLocales != null || runtimeLocales != null )
+        {
+            configuration.addSourcePath( new File[] { new File( resourceBundlePath ) } );
+        }
+
         configuration.allowSourcePathOverlap( true );
 
         configuration.enableDebugging( true, super.debugPassword );
