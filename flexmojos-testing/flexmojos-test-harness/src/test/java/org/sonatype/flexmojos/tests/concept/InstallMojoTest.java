@@ -137,8 +137,8 @@ public class InstallMojoTest
         File sdkBundle = new File( testDir, "flex-sdk-" + getProperty( "flex-version" ) + "-bundle.zip" );
         Verifier verifier = getVerifier( testDir );
         verifier.setAutoclean( false );
-        verifier.getCliOptions().add( "-Dflex.sdk.bundle=" + sdkBundle.getAbsolutePath() );
-        verifier.getCliOptions().add( "-Dflex.sdk.descriptor=" + descriptor.getAbsolutePath() );
+        verifier.getCliOptions().add( "-Dbundle=" + sdkBundle.getAbsolutePath() );
+        verifier.getCliOptions().add( "-Ddescriptor=" + descriptor.getAbsolutePath() );
         return verifier;
     }
 
