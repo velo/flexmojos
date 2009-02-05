@@ -18,8 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
   <artifactId>filled-war</artifactId>
@@ -37,18 +36,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>3.0-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>copy-flex-resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
       </plugin>
@@ -63,5 +50,29 @@
       <type>swf</type>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>cmd</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-maven-plugin</artifactId>
+            <version>3.0-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>copy-flex-resources</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+  </profiles>
 
 </project>
