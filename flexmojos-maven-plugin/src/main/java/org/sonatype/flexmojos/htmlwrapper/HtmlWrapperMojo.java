@@ -164,6 +164,13 @@ public class HtmlWrapperMojo
      */
     private String htmlName;
 
+    /**
+     * output Directory to store final html
+     * 
+     * @parameter default-value="${project.build.directory}/html-wrapper-template"
+     */
+    private File templateOutputDirectory;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -173,15 +180,15 @@ public class HtmlWrapperMojo
 
         init();
 
-        File templateFolder = extractTemplate();
-        copyTemplates( templateFolder );
-        copyIndex( templateFolder );
+        extractTemplate();
+        copyTemplates();
+        copyIndex();
     }
 
-    private void copyIndex( File templateFolder )
+    private void copyIndex()
         throws MojoExecutionException
     {
-        File indexTemplate = new File( templateFolder, "index.template.html" );
+        File indexTemplate = new File( templateOutputDirectory, "index.template.html" );
         String template;
         try
         {
@@ -210,12 +217,12 @@ public class HtmlWrapperMojo
         }
     }
 
-    private void copyTemplates( File templateFolder )
+    private void copyTemplates()
         throws MojoExecutionException
     {
         try
         {
-            FileUtils.copyDirectory( templateFolder, outputDirectory, new FileFilter()
+            FileUtils.copyDirectory( templateOutputDirectory, outputDirectory, new FileFilter()
             {
                 public boolean accept( File pathname )
                 {
@@ -229,12 +236,11 @@ public class HtmlWrapperMojo
         }
     }
 
-    private File extractTemplate()
+    private void extractTemplate()
         throws MojoExecutionException
     {
         getLog().info( "Extracting template" );
-        File outputDir = new File( build.getOutputDirectory(), "html-template" );
-        outputDir.mkdirs();
+        templateOutputDirectory.mkdirs();
 
         URI uri;
         try
@@ -255,25 +261,24 @@ public class HtmlWrapperMojo
         String scheme = uri.getScheme();
         if ( "embed".equals( scheme ) )
         {
-            copyEmbedTemplate( uri.getSchemeSpecificPart(), outputDir );
+            copyEmbedTemplate( uri.getSchemeSpecificPart() );
         }
         else if ( "zip".equals( scheme ) )
         {
-            copyZipTemplate( uri.getSchemeSpecificPart(), outputDir );
+            copyZipTemplate( uri.getSchemeSpecificPart() );
         }
         else if ( "folder".equals( scheme ) )
         {
-            copyFolderTemplate( uri.getSchemeSpecificPart(), outputDir );
+            copyFolderTemplate( uri.getSchemeSpecificPart() );
         }
         else
         {
             throw new MojoExecutionException( "Invalid URI scheme: " + scheme );
         }
 
-        return outputDir;
     }
 
-    private void copyFolderTemplate( String path, File outputDir )
+    private void copyFolderTemplate( String path )
         throws MojoExecutionException
     {
         File source = new File( path );
@@ -284,16 +289,16 @@ public class HtmlWrapperMojo
 
         try
         {
-            FileUtils.copyDirectory( source, outputDir,
+            FileUtils.copyDirectory( source, templateOutputDirectory,
                                      FileFilterUtils.makeSVNAware( FileFilterUtils.makeCVSAware( null ) ) );
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to copy template to: " + outputDir, e );
+            throw new MojoExecutionException( "Unable to copy template to: " + templateOutputDirectory, e );
         }
     }
 
-    private void copyZipTemplate( String path, File outputDir )
+    private void copyZipTemplate( String path )
         throws MojoExecutionException
     {
         File source = new File( path );
@@ -302,14 +307,14 @@ public class HtmlWrapperMojo
             throw new MojoExecutionException( "Zip template doesn't exists. " + source );
         }
 
-        extractZipTemplate( outputDir, source );
+        extractZipTemplate( templateOutputDirectory, source );
     }
 
-    private void copyEmbedTemplate( String path, File outputDir )
+    private void copyEmbedTemplate( String path )
         throws MojoExecutionException
     {
         URL url = getClass().getResource( "/templates/wrapper/" + path + ".zip" );
-        File template = new File( build.getOutputDirectory(), "template.zip" );
+        File template = new File( templateOutputDirectory, "template.zip" );
         try
         {
             FileUtils.copyURLToFile( url, template );
@@ -318,7 +323,7 @@ public class HtmlWrapperMojo
         {
             throw new MojoExecutionException( "Unable to copy template to: " + template, e );
         }
-        extractZipTemplate( outputDir, template );
+        extractZipTemplate( templateOutputDirectory, template );
     }
 
     private void extractZipTemplate( File outputDir, File template )
