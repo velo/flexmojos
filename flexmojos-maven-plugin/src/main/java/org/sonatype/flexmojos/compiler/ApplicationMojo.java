@@ -252,7 +252,7 @@ public class ApplicationMojo
 
         // Dont break this method in parts, is a work around
 
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + SWF );
+        File output = getRuntimeLocaleOutputFile( locale, SWF );
 
         /*
          * mxmlc -locale=en_US -source-path=locale/{locale} -include-resource-bundles
@@ -305,7 +305,7 @@ public class ApplicationMojo
         throw new MojoExecutionException( "Not implemented yet" );
     }
 
-    @FlexCompatibility( minVersion = "3" )
+    @FlexCompatibility( minVersion = "3", maxVersion = "3.1" )
     private void runMxmlc( Set<String> args )
     {
         // Just a work around
@@ -341,7 +341,7 @@ public class ApplicationMojo
         throws MojoExecutionException
     {
         Application rbBuilder = new Application();
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + SWF );
+        File output = getRuntimeLocaleOutputFile( locale, SWF );
 
         rbBuilder.setLogger( new CompileLogger( getLog() ) );
         rbBuilder.setOutput( output );
@@ -354,6 +354,10 @@ public class ApplicationMojo
         }
         configuration.setLocale( new String[] { locale } );
         configuration.setSourcePath( new File[] { localePath } );
+
+		configuration.includeLibraries( null );
+		configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
+
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 
         build( rbBuilder );
