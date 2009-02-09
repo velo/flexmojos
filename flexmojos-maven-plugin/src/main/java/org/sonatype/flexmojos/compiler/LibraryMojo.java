@@ -390,7 +390,7 @@ public class LibraryMojo
         }
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 
-        File output = new File( build.getDirectory(), build.getFinalName() + "-" + locale + "." + RB_SWC );
+        File output = getRuntimeLocaleOutputFile( locale, RB_SWC );
 
         localized.setOutput( output );
 
