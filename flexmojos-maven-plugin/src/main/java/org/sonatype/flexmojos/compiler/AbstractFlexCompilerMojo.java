@@ -519,6 +519,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private String[] rslUrls;
 
     /**
+	 * @parameter default-value="${project.build.directory}/locales/${project.artifactId}-${project.version}-{locale}.{extension}"
+	 */
+	private String runtimeLocaleOutputPath;
+
+    /**
      * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
      * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
      * file is not required, then set it to an empty string. Accept some special tokens:
@@ -1806,6 +1811,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         return rsls;
     }
 
+	protected File getRuntimeLocaleOutputFile( String locale, String extension )
+	{
+		String path = runtimeLocaleOutputPath;
+		path = path.replace( "{locale}", locale );
+		path = path.replace( "{extension}", extension );
+
+		File output = new File( path );
+		output.getParentFile().mkdirs();
+
+		return output;
+	}
+
     /**
      * Get Fonts snapshot
      * 
@@ -1972,7 +1989,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * Write resource bundle
      * 
-     * @param bundlesNames
+     * @param bundles
      * @param locale
      * @param localePath
      * @throws MojoExecutionException
