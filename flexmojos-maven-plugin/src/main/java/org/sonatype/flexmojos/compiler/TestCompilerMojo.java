@@ -267,7 +267,7 @@ public class TestCompilerMojo
         // test launcher is at testOutputDirectory
         configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
-        if ( compiledLocales != null || runtimeLocales != null )
+        if ( getResource( compiledLocales[0] ) != null )
         {
             configuration.addSourcePath( new File[] { new File( resourceBundlePath ) } );
         }
@@ -275,6 +275,18 @@ public class TestCompilerMojo
         configuration.allowSourcePathOverlap( true );
 
         configuration.enableDebugging( true, super.debugPassword );
+    }
+
+    private File getResource( String locale )
+    {
+        try
+        {
+            return MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
+        }
+        catch ( MojoExecutionException e )
+        {
+            return null;
+        }
     }
 
     @Override
