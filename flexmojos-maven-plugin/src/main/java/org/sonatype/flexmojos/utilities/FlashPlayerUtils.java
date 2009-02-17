@@ -40,7 +40,7 @@ public class FlashPlayerUtils
             String appData = System.getenv( "APPDATA" );
             if ( MavenUtils.isWindowsVista() )
             {
-                trustPath = appData + "/Roaming/Macromedia/Flash Player/#Security/FlashPlayerTrust";
+                trustPath = appData + "/Macromedia/Flash Player/#Security/FlashPlayerTrust";
             }
             else
             {

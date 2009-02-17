@@ -282,6 +282,10 @@ public class HtmlWrapperMojo
         throws MojoExecutionException
     {
         File source = new File( path );
+		if ( !source.isAbsolute() )
+		{
+			source = new File( project.getBasedir(), path );
+		}
         if ( !source.exists() || !source.isDirectory() )
         {
             throw new MojoExecutionException( "Template folder doesn't exists. " + source );
