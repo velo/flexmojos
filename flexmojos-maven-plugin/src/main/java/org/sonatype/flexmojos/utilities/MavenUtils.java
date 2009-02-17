@@ -557,4 +557,30 @@ public class MavenUtils
         return flexmojosProperties.getProperty( "version" );
     }
 
+	public static String replaceArtifactCoordinatesTokens( String sample, Artifact artifact )
+	{
+		sample = sample.replace( "{groupId}", artifact.getGroupId() );
+		sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
+		sample = sample.replace( "{version}", artifact.getVersion() );
+		
+		return sample;
+}
+
+	public static String getRslUrl( String sample, Artifact artifact, String extension )
+	{
+		String url = replaceArtifactCoordinatesTokens( sample, artifact );
+		url = url.replace( "{extension}", extension );
+
+		return url;
+	}
+
+	public static String getRuntimeLocaleOutputPath( String sample, Artifact artifact, String locale, String extension )
+	{
+		String path = replaceArtifactCoordinatesTokens( sample, artifact );
+		path = path.replace( "{locale}", locale );
+		path = path.replace( "{extension}", extension );
+
+		return path;
+	}
+
 }
