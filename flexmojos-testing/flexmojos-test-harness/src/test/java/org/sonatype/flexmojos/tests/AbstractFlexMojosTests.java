@@ -36,6 +36,8 @@ public class AbstractFlexMojosTests
 
     private static Properties props;
 
+    private static File mavenHome;
+
     private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
 
     private static final ReadWriteLock downloadArtifactsLock = new ReentrantReadWriteLock();
@@ -65,6 +67,20 @@ public class AbstractFlexMojosTests
 
         projectsSource = new File( getProperty( "projects-source" ) );
         projectsWorkdir = new File( getProperty( "projects-target" ) );
+        mavenHome = new File( getProperty( "fake-maven" ) );
+
+        File mvn = new File( mavenHome, "bin/mvn" );
+        updateMavenMemory( mvn );
+        File mvnBat = new File( mavenHome, "bin/mvn.bat" );
+        updateMavenMemory( mvnBat );
+    }
+
+    private static void updateMavenMemory( File mvn )
+        throws IOException
+    {
+        String mvnContent = org.codehaus.plexus.util.FileUtils.fileRead( mvn );
+        mvnContent = "set MAVEN_OPTS=-Xmx512M\n" + mvnContent;
+        org.codehaus.plexus.util.FileUtils.fileWrite( mvn.getAbsolutePath(), mvnContent );
     }
 
     protected static synchronized String getProperty( String key )
@@ -88,7 +104,7 @@ public class AbstractFlexMojosTests
     protected static Verifier getVerifier( File projectDirectory )
         throws VerificationException
     {
-        System.setProperty( "maven.home", getProperty( "fake-maven" ) );
+        System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
 
         if ( new File( projectDirectory, "pom.xml" ).exists() )
         {
