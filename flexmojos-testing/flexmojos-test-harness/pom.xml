@@ -130,25 +130,6 @@
               <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-fdk-bundle</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe.flex</groupId>
-                  <artifactId>flex-sdk</artifactId>
-                  <version>${flex.sdk.version}</version>
-                  <classifier>bundle</classifier>
-                  <type>zip</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/projects/concept/install-sdk</outputDirectory>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -225,11 +206,6 @@
       <artifactId>flexmojos-sandbox</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-bundle-publisher-component</artifactId>
-      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>

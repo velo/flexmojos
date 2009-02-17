@@ -67,6 +67,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
+	public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
+			"/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
+
     private static final String COMPATIBILITY_2_0_0 = "2.0.0";
 
     private static final String COMPATIBILITY_2_0_1 = "2.0.1";
@@ -81,7 +84,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                                "C:/Documents and Settings/All Users/Application Data/Adobe/Flex/license.properties" ),
             new File( // Windows Vista
                       "C:/ProgramData/Adobe/Flex/license.properties" ),
-            new File( // Mac OSC
+            new File( // Mac OSX
                       "/Library/Application Support/Adobe/Flex/license.properties" ),
             new File( // Linux
                       System.getProperty( "user.home" ), ".adobe/Flex/license.properties" ) };
@@ -401,7 +404,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Sets the context root path so that the compiler can replace <code>{context.root}</code> tokens for service
      * channel endpoints.
      * 
-     * @parameter default-value=""
+     * @parameter
      */
     private String contextRoot;
 
@@ -958,6 +961,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         if ( policyFileUrls == null )
         {
             policyFileUrls = new String[] { "" };
+        }
+
+		if ( runtimeLocaleOutputPath == null )
+        {
+            runtimeLocaleOutputPath = DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
 
         if ( metadata == null )
@@ -1798,14 +1806,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         for ( int i = 0; i < rslUrls.length; i++ )
         {
             String rsl = rslUrls[i];
-            if ( contextRoot != null )
+            if ( contextRoot == null || "".equals(contextRoot))
             {
-                rsl = rsl.replace( "{contextRoot}", contextRoot );
+				rsl = rsl.replace( "/{contextRoot}", "" );
             }
-            rsl = rsl.replace( "{groupId}", artifact.getGroupId() );
-            rsl = rsl.replace( "{artifactId}", artifact.getArtifactId() );
-            rsl = rsl.replace( "{version}", artifact.getVersion() );
-            rsl = rsl.replace( "{extension}", extension );
+			else
+			{
+                rsl = rsl.replace( "{contextRoot}", contextRoot );
+			}
+			rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
             rsls[i] = rsl;
         }
         return rsls;
@@ -1813,11 +1822,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
 	protected File getRuntimeLocaleOutputFile( String locale, String extension )
 	{
-		String path = runtimeLocaleOutputPath;
-		path = path.replace( "{locale}", locale );
-		path = path.replace( "{extension}", extension );
-
-		File output = new File( path );
+		String path = runtimeLocaleOutputPath.replace( "/{contextRoot}", project.getBuild().getDirectory() );
+		File output = new File( MavenUtils.getRuntimeLocaleOutputPath( path, project.getArtifact(), locale, extension ) );
 		output.getParentFile().mkdirs();
 
 		return output;
@@ -1886,7 +1892,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     /**
-     * Get array of files for dependency artfacts for given scope
+     * Get array of files for dependency artifacts for given scope
      * 
      * @param scope for which to get files
      * @return Array of dependency artifact files

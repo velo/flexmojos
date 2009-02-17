@@ -17,6 +17,7 @@ package org.sonatype.flexmojos.war;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
+import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * @goal copy-flex-resources
@@ -109,6 +111,11 @@ public class CopyMojo
     private boolean copyRSL;
 
     /**
+     * @parameter default-value="true"
+     */
+    private boolean copyRuntimeLocales;
+
+    /**
      * Skip mojo execution
      * 
      * @parameter default-value="false" expression="${flexmojos.copy.skip}"
@@ -142,21 +149,19 @@ public class CopyMojo
             File destFile = getDestinationFile( artifact );
 
             copy( sourceFile, destFile );
-
-            if ( copyRSL )
+            if ( copyRSL || copyRuntimeLocales )
             {
-                performRslCopy( artifact );
+                performSubArtifactsCopy( artifact );
             }
         }
     }
 
-    private void performRslCopy( Artifact artifact )
+    private void performSubArtifactsCopy( Artifact artifact )
         throws MojoExecutionException
     {
         MavenProject artifactProject = getProject( artifact );
         if ( artifactProject != null )
         {
-
             try
             {
                 artifactProject.setArtifacts( artifactProject.createArtifacts( artifactFactory, null, null ) );
@@ -166,72 +171,98 @@ public class CopyMojo
                 throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
             }
 
-            List<Artifact> rslDeps = getRSLDependencies( artifactProject );
-
-            if ( rslDeps.isEmpty() )
+            if ( copyRSL )
             {
-                return;
+                performRslCopy( artifactProject );
+            }
+            if ( copyRuntimeLocales )
+            {
+                performRuntimeLocalesCopy( artifactProject );
+            }
+        }
+    }
+
+    private void performRslCopy( MavenProject artifactProject )
+        throws MojoExecutionException
+    {
+        List<Artifact> rslDeps = getRSLDependencies( artifactProject );
+
+        if ( rslDeps.isEmpty() )
+        {
+            return;
+        }
+
+        String[] rslUrls = getRslUrls( artifactProject );
+
+        for ( Artifact rslArtifact : rslDeps )
+        {
+            String extension;
+            if ( RSL.equals( rslArtifact.getScope() ) )
+            {
+                extension = SWF;
+            }
+            else
+            {
+                extension = SWZ;
             }
 
-            String[] rslUrls = getRslUrls( artifactProject );
+            rslArtifact =
+                artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
+                                                              rslArtifact.getVersion(), extension, null );
 
-            for ( Artifact rslArtifact : rslDeps )
+            try
             {
-                String extension;
-                if ( RSL.equals( rslArtifact.getScope() ) )
-                {
-                    extension = SWF;
-                }
-                else
-                {
-                    extension = SWZ;
-                }
-
-                rslArtifact =
-                    artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(),
-                                                                  rslArtifact.getArtifactId(),
-                                                                  rslArtifact.getVersion(), extension, null );
-
-                try
-                {
-                    resolver.resolve( rslArtifact, remoteRepositories, localRepository );
-                }
-                catch ( AbstractArtifactResolutionException e )
-                {
-                    throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
-                }
-
-                File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
-                File sourceFile = rslArtifact.getFile();
-
-                for ( File destFile : destFiles )
-                {
-                    copy( sourceFile, destFile );
-                }
+                resolver.resolve( rslArtifact, remoteRepositories, localRepository );
             }
+            catch ( AbstractArtifactResolutionException e )
+            {
+                throw new MojoExecutionException( "Error resolving artifacts " + rslArtifact, e );
+            }
+
+            File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
+            File sourceFile = rslArtifact.getFile();
+
+            for ( File destFile : destFiles )
+            {
+                copy( sourceFile, destFile );
+            }
+        }
+    }
+
+    private void performRuntimeLocalesCopy( MavenProject artifactProject )
+        throws MojoExecutionException
+    {
+        List<Artifact> deps = getRuntimeLocalesDependencies( artifactProject );
+
+        if ( deps.isEmpty() )
+        {
+            return;
+        }
+
+        String runtimeLocaleOutputPath = getRuntimeLocaleOutputPath( artifactProject );
+
+        for ( Artifact artifact : deps )
+        {
+            try
+            {
+                resolver.resolve( artifact, remoteRepositories, localRepository );
+            }
+            catch ( AbstractArtifactResolutionException e )
+            {
+                throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
+            }
+
+            copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
         }
     }
 
     private File[] resolveRslDestination( String[] rslUrls, Artifact artifact, String extension )
     {
-        String absoluteWebappPath = webappDirectory.getAbsolutePath();
-
         File[] rsls = new File[rslUrls.length];
         for ( int i = 0; i < rslUrls.length; i++ )
         {
-            String rsl = rslUrls[i];
-            if ( rsl.contains( "/{contextRoot}" ) )
-            {
-                rsl = rsl.replace( "/{contextRoot}", absoluteWebappPath );
-            }
-            else
-            {
-                rsl = absoluteWebappPath + "/" + rsl;
-            }
-            rsl = rsl.replace( "{groupId}", artifact.getGroupId() );
-            rsl = rsl.replace( "{artifactId}", artifact.getArtifactId() );
-            rsl = rsl.replace( "{version}", artifact.getVersion() );
-            rsl = rsl.replace( "{extension}", extension );
+            String rsl = replaceContextRoot( rslUrls[i] );
+            rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
             rsls[i] = new File( rsl ).getAbsoluteFile();
         }
         return rsls;
@@ -259,6 +290,44 @@ public class CopyMojo
             }
         }
         return swcDeps;
+    }
+
+    private File resolveRuntimeLocaleDestination( String runtimeLocaleOutputPath, Artifact artifact )
+    {
+        String path = replaceContextRoot( runtimeLocaleOutputPath );
+        path = MavenUtils.getRuntimeLocaleOutputPath( path, artifact, artifact.getClassifier(), SWF );
+
+        return new File( path ).getAbsoluteFile();
+    }
+
+    private String getRuntimeLocaleOutputPath( MavenProject artifactProject )
+    {
+        String runtimeLocaleOutputPath =
+            CompileConfigurationLoader.getCompilerPluginSetting( artifactProject, "runtimeLocaleOutputPath" );
+        if ( runtimeLocaleOutputPath == null )
+        {
+            runtimeLocaleOutputPath = AbstractFlexCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
+        }
+        return runtimeLocaleOutputPath;
+    }
+
+    private List<Artifact> getRuntimeLocalesDependencies( MavenProject artifactProject )
+    {
+        String[] runtimeLocales =
+            CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "runtimeLocales" );
+        if ( runtimeLocales == null || runtimeLocales.length == 0 )
+        {
+            return Collections.emptyList();
+        }
+
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+        for ( String locale : runtimeLocales )
+        {
+            artifacts.add( artifactFactory.createArtifactWithClassifier( artifactProject.getGroupId(),
+                                                                         artifactProject.getArtifactId(),
+                                                                         artifactProject.getVersion(), SWF, locale ) );
+        }
+        return artifacts;
     }
 
     private MavenProject getProject( Artifact artifact )
@@ -322,5 +391,20 @@ public class CopyMojo
             }
         }
         return swfArtifacts;
+    }
+
+    private String replaceContextRoot( String sample )
+    {
+        String absoluteWebappPath = webappDirectory.getAbsolutePath();
+        if ( sample.contains( "/{contextRoot}" ) )
+        {
+            sample = sample.replace( "/{contextRoot}", absoluteWebappPath );
+        }
+        else
+        {
+            sample = absoluteWebappPath + "/" + sample;
+        }
+
+        return sample;
     }
 }

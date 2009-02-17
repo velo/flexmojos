@@ -362,8 +362,6 @@ public class LibraryMojo
     protected void writeResourceBundle( String[] bundles, String locale, File localePath )
         throws MojoExecutionException
     {
-        getLog().info( "Generating resource-bundle for " + locale );
-
         Library localized = new Library();
         localized.setConfiguration( configuration );
         configuration.setLibraryPath( new File[0] );
