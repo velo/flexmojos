@@ -84,7 +84,8 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>playerglobal</artifactId>
-      <version>9-${flex.sdk.version}</version>
+      <version>${flex.sdk.version}</version>
+      <classifier>9</classifier>
       <type>swc</type>
       <scope>external</scope>
     </dependency>
