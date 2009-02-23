@@ -29,6 +29,10 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 import eu.cedarsoft.utils.ZipExtractor;
 
 /**
+ * This goal generate the html wrapper to Flex applications, like what is done by flex builder.
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @phase generate-resources
  * @goal wrapper
  * @author marvin

@@ -28,8 +28,16 @@ import org.sonatype.flexmojos.utilities.PathUtil;
 import flex2.tools.oem.Library;
 
 /**
+ * <p>
  * Goal which compiles the Flex sources into a library for either Flex or AIR depending.
+ * </p>
+ * <p>
+ * The Flex Compiler plugin compiles all ActionScript sources. It can compile the source into 'swc' files. The plugin
+ * supports the 'swc' packaging.
+ * </p>
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @goal compile-swc
  * @requiresDependencyResolution
  * @phase compile

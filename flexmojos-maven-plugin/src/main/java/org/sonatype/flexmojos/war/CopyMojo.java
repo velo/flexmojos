@@ -42,6 +42,10 @@ import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
+ * Goal to copy flex artifacts into war projects.
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 3.0
  * @goal copy-flex-resources
  * @phase process-resources
  * @requiresDependencyResolution compile

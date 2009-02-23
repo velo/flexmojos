@@ -38,6 +38,10 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
 
 /**
+ * Generates Flex Builder configuration files for SWC and SWF projects.
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 3.0
  * @extendsPlugin eclipse
  * @extendsGoal eclipse
  * @goal flexbuilder

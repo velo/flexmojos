@@ -30,8 +30,10 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
- * Goal which optimize swc files.
+ * Goal which run post-link SWF optimization on swc files. This goal is used to produce RSL files.
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 2.0
  * @goal optimize
  * @phase package
  */

@@ -1808,7 +1808,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             String rsl = rslUrls[i];
             if ( contextRoot == null || "".equals(contextRoot))
             {
-				rsl = rsl.replace( "/{contextRoot}", "" );
+				rsl = rsl.replace( "/{contextRoot}/", "" );
             }
 			else
 			{

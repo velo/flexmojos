@@ -47,8 +47,16 @@ import flex2.tools.oem.Application;
 import flex2.tools.oem.internal.OEMConfiguration;
 
 /**
+ * <p>
  * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
+ * </p>
+ * <p>
+ * The Flex Compiler plugin compiles all ActionScript sources. It can compile the source into 'swf' files. The plugin
+ * supports 'swf' packaging.
+ * </p>
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @goal compile-swf
  * @requiresDependencyResolution
  * @phase compile
@@ -345,8 +353,8 @@ public class ApplicationMojo
         configuration.setLocale( new String[] { locale } );
         configuration.setSourcePath( new File[] { localePath } );
 
-		configuration.includeLibraries( null );
-		configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
+        configuration.includeLibraries( null );
+        configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
 
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 

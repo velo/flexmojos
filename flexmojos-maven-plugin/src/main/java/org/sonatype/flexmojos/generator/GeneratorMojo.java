@@ -51,8 +51,10 @@ import org.granite.generator.template.StandardTemplateUris;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
- * Goal which touches a timestamp file.
+ * This goal generate actionscript 3 code based on Java classes.  It does uses Granite GAS3.
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @goal generate
  * @phase generate-sources
  * @requiresDependencyResolution test
