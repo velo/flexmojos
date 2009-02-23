@@ -27,7 +27,8 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar
+    </flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -70,7 +71,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1-SONATYPE-709464</version>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>extract-maven</id>
@@ -187,27 +188,26 @@
           </properties>
         </configuration>
       </plugin>
-    </plugins>
-  </build>
-
-  <reporting>
-    <plugins>
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.0</version>
-        <configuration>
-          <jarFiles>
-            <jarFile>${flexmojos-maven-plugin}</jarFile>
-          </jarFiles>
-          <searchPath>${project.build.directory}/projects</searchPath>
-          <sourceFolders>
-            <sourceFolder>${sources}</sourceFolder>
-          </sourceFolders>
-        </configuration>
+        <version>1.2-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+            <configuration>
+              <jarFiles>
+                <jarFile>${flexmojos-maven-plugin}</jarFile>
+              </jarFiles>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
+
     </plugins>
-  </reporting>
+  </build>
 
   <dependencies>
 
