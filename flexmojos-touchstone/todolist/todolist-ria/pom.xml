@@ -18,94 +18,93 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>todolist</artifactId>
-		<groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>todolist</artifactId>
+    <groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>todolist-ria</artifactId>
-	<packaging>swf</packaging>
-	<name>todolist-ria</name>
+  <artifactId>todolist-ria</artifactId>
+  <packaging>swf</packaging>
+  <name>todolist-ria</name>
 
-	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
+  <build>
+    <sourceDirectory>src/main/flex</sourceDirectory>
 
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>${basedir}/target/generated-resources</directory>
-			</resource>
-		</resources>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${basedir}/target/generated-resources</directory>
+      </resource>
+    </resources>
 
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<contextRoot>todolist-web</contextRoot>
-					<debug>true</debug>
-					<compiledLocales>
-						<locale>en_US</locale>
-						<locale>pt_BR</locale>
-					</compiledLocales>
-				</configuration>
-			</plugin>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <contextRoot>todolist-web</contextRoot>
+          <debug>true</debug>
+          <compiledLocales>
+            <locale>en_US</locale>
+            <locale>pt_BR</locale>
+          </compiledLocales>
+        </configuration>
+      </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-config</id>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
-							<includeGroupIds>${project.groupId}</includeGroupIds>
-							<includeArtifacIds>todolist-config</includeArtifacIds>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-config</id>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifacIds>todolist-config</includeArtifacIds>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-		</plugins>
-	</build>
+    </plugins>
+  </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>todolist-config</artifactId>
-			<version>${project.version}</version>
-			<classifier>resources</classifier>
-			<type>zip</type>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>todolist-lib</artifactId>
-			<version>${project.version}</version>
-			<type>swc</type>
-			<scope>rsl</scope>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>todolist-config</artifactId>
+      <version>${project.version}</version>
+      <classifier>resources</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>flex-framework</artifactId>
-			<version>3.2.0.3958</version>
-			<type>pom</type>
-		</dependency>
-		
-	</dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>todolist-lib</artifactId>
+      <version>${project.version}</version>
+      <type>swc</type>
+      <scope>rsl</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>3.2.0.3958</version>
+      <type>pom</type>
+    </dependency>
+
+  </dependencies>
 
 </project>
