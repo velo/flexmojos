@@ -58,7 +58,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>copy-flex-resources</goal>
+              <goal>copy-flex-resources</goal> <!-- Copy of Flex resource into WAR -->
             </goals>
           </execution>
         </executions>
