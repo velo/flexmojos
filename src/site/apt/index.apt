@@ -31,13 +31,13 @@ flexmojos
 	
   So far, Air support is limited to SWC/SWF compilation.
 	
-  * {{{flexmojos-archetypes/index.html}flexmojos-archetypes}}
+  * {{{flexmojos-archetypes/project-summary.html}flexmojos-archetypes}}
 
   Contains some artifacts to setup flex project. 
 
 * Support artifacts
 
-  * {{{flexmojos-testing/flexmojos-unittest-support/index.html}flexmojos-unittest-support}}
+  * {{{flexmojos-testing/flexmojos-unittest-support/project-summary.html}flexmojos-unittest-support}}
 
   Library used by flexmojos to integrate Java and Flex on unit tests
 
