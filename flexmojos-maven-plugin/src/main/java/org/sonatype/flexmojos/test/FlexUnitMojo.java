@@ -29,8 +29,17 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * Goal to run FlexUnit tests. Based on: http://weblogs.macromedia.com/pmartin/archives/2007/09/flexunit_for_an_2.cfm
+ * Goal to run unit tests on Flex.  It does support the following frameworks:
+ * <ul>
+ * <li>Adobe Flexunit</li>
+ * <li>FUnit</li>
+ * <li>asunit</li>
+ * <li>advanced flex debug</li>
+ * <li>FlexMonkey</li>
+ * </ul>
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @goal test-run
  * @requiresDependencyResolution
  * @phase test

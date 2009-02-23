@@ -81,7 +81,7 @@ public class AsDocReport
         getLog().info(
                        "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
+        
         try
         {
             SiteRendererSink sink = siteRenderer.createSink( getReportOutputDirectory(), getOutputName() + ".html" );
@@ -98,6 +98,13 @@ public class AsDocReport
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
+        String packaging = project.getPackaging();
+        if ( !"swc".equals( packaging ) && !"swf".equals( packaging ) )
+        {
+            getLog().warn( "Invalid packaging for asdoc generation " + packaging );
+            return;
+        }
+
         output = getReportOutputDirectory();
         try
         {
