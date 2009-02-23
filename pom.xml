@@ -35,7 +35,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <properties>
     <!-- need due grid limitations -->
     <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
@@ -59,6 +59,66 @@
       <url>${flexSnapshotUrl}</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.maven.plugin</groupId>
+        <artifactId>emma4it-maven-plugin</artifactId>
+        <version>1.2-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <configuration>
+              <searchPath>${basedir}</searchPath>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.maven.plugin</groupId>
+        <artifactId>emma4it-maven-plugin</artifactId>
+        <version>1.2-SNAPSHOT</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>emma4it-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+        <sourceFolders>
+          <sourceFolder>${basedir}/flexmojos-maven-plugin/src/main/java</sourceFolder>
+        </sourceFolders>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
 
