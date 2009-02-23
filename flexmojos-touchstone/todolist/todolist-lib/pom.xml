@@ -22,7 +22,7 @@
     <sourceDirectory>src/main/flex</sourceDirectory>
 
     <plugins>
-      <plugin>
+      <plugin><!-- Flex (SWC and SWF) compilation -->
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <extensions>true</extensions>
@@ -33,8 +33,8 @@
         <executions>
           <execution>
             <goals>
-              <goal>optimize</goal>
-              <goal>generate</goal>
+              <goal>optimize</goal> <!-- Optimized RSL generation -->
+              <goal>generate</goal> <!-- ActionScript POJOs generation based on Java POJOs -->
             </goals>
             <configuration>
               <includeJavaClasses>

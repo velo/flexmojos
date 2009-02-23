@@ -32,14 +32,14 @@
     </resources>
 
     <plugins>
-      <plugin>
+      <plugin> <!-- Flex (SWC and SWF) compilation -->
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
           <contextRoot>todolist-web</contextRoot>
           <debug>true</debug>
-          <compiledLocales>
+          <compiledLocales><!-- Compiled localization -->
             <locale>en_US</locale>
             <locale>pt_BR</locale>
           </compiledLocales>
