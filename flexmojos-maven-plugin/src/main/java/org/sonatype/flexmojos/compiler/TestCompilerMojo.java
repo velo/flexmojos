@@ -40,6 +40,8 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 /**
  * Goal to compile the Flex test sources.
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
  * @goal test-compile
  * @requiresDependencyResolution
  * @phase test
