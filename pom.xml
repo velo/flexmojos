@@ -53,7 +53,7 @@
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
         <executions>
           <execution>
             <phase>verify</phase>
@@ -91,7 +91,7 @@
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
         <reportSets>
           <reportSet>
             <reports>
