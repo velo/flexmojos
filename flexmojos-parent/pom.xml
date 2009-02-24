@@ -201,8 +201,8 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/my-branch</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/my-branch</developerConnection>
   </scm>
 
   <distributionManagement>
