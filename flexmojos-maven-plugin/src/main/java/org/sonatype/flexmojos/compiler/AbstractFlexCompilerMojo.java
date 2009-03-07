@@ -2148,7 +2148,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @param type Type of report to write. Valid types are <code>link</code> and <code>config</code>.
      * @throws MojoExecutionException throw if an error occurs during writing of report to file
      */
-    private void writeReport( Report report, String type )
+    protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
         File fileReport =

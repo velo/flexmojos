@@ -24,6 +24,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.tools.oem.Report;
+
 /**
  * Build a SWC of the test classes for the current project.
  * 
@@ -102,5 +104,12 @@ public class TestLibraryCompilerMojo
     {
         return new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
     }
+
+    @Override
+    protected void writeReport( Report report, String type )
+        throws MojoExecutionException
+    {
+        // reports are ignored on unit tests
+    }    
 
 }
