@@ -39,7 +39,8 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar
+    </flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -82,11 +83,11 @@
       </plugin>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1-SONATYPE-709464</version>
+        <version>2.1</version>
         <executions>
           <execution>
             <id>extract-maven</id>
-            <phase>generate-resources</phase>
+            <phase>generate-test-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -105,7 +106,7 @@
           </execution>
           <execution>
             <id>copy-emma</id>
-            <phase>generate-resources</phase>
+            <phase>generate-test-resources</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -115,12 +116,24 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-repo</id>
-            <phase>generate-resources</phase>
+            <id>copy-bundle</id>
+            <phase>generate-test-resources</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
+              <includeArtifactIds>bundle</includeArtifactIds>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-repo</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeGroupIds>com.adobe.flex.framework,com.adobe.flex.compiler</excludeGroupIds>
               <outputDirectory>${fake-repo}</outputDirectory>
               <useRepositoryLayout>true</useRepositoryLayout>
               <generateRepositoryMetadatas>true</generateRepositoryMetadatas>
@@ -130,7 +143,7 @@
           </execution>
           <execution>
             <id>copy-sources</id>
-            <phase>generate-resources</phase>
+            <phase>generate-test-resources</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
@@ -145,6 +158,37 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>bundle-publisher-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>compiler</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>deploy-bundle</goal>
+            </goals>
+            <configuration>
+              <descriptor>${basedir}/src/test/resources/${flex.sdk.version}/compiler-descriptor.xml</descriptor>
+            </configuration>
+          </execution>
+          <execution>
+            <id>framework</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>deploy-bundle</goal>
+            </goals>
+            <configuration>
+              <descriptor>${basedir}/src/test/resources/${flex.sdk.version}/framework-descriptor.xml</descriptor>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <bundle>${project.build.directory}/bundle-${flex.sdk.version}.zip</bundle>
+          <url>file://${fake-repo}</url>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -156,34 +200,32 @@
           </properties>
         </configuration>
       </plugin>
-    </plugins>
-  </build>
-
-  <reporting>
-    <plugins>
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.0</version>
-        <configuration>
-          <jarFiles>
-            <jarFile>${flexmojos-maven-plugin}</jarFile>
-          </jarFiles>
-          <searchPath>${project.build.directory}/projects</searchPath>
-          <sourceFolders>
-            <sourceFolder>${sources}</sourceFolder>
-          </sourceFolders>
-        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+            <configuration>
+              <jarFiles>
+                <jarFile>${flexmojos-maven-plugin}</jarFile>
+              </jarFiles>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
+
     </plugins>
-  </reporting>
+  </build>
 
   <dependencies>
 
     <dependency>
       <groupId>emma</groupId>
       <artifactId>emma</artifactId>
-      <version>2.0.5312</version>
+      <version>2.1.5320</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -270,6 +312,12 @@
       <artifactId>flexmojos-testing</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>bundle</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>zip</type>
     </dependency>
   </dependencies>
 

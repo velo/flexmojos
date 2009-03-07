@@ -21,9 +21,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.sonatype.forge</groupId>
+    <artifactId>forge-parent</artifactId>
+    <version>5</version>
+  </parent>
+
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>3.0.0</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -50,6 +56,11 @@
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>3.2.0.3958</flex.sdk.version>
     <maven.version>2.0.9</maven.version>
+
+    <!-- need due grid limitations -->
+    <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
+    <flexSnapshotUrl>http://repository.sonatype.org/content/repositories/flexmojos-snapshots</flexSnapshotUrl>
+    <flexSiteUrl>dav:https://sites.sonatype.org/flexmojos</flexSiteUrl>
   </properties>
 
   <build>
@@ -74,7 +85,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.1-SNAPSHOT</version>
+          <version>2.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -84,6 +95,28 @@
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>attach-artifact-maven-plugin</artifactId>
           <version>1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.ops4j</groupId>
+          <artifactId>maven-inherit-plugin</artifactId>
+          <version>1.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>inherit</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.maven.plugin</groupId>
+          <artifactId>emma-maven-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.maven.plugin</groupId>
+          <artifactId>emma4it-maven-plugin</artifactId>
+          <version>1.2-SNAPSHOT</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -118,6 +151,20 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.4.3</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>coverage.ec</include>
+              </includes>
+              <followSymlinks>true</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -161,27 +208,26 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-3.0.0</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-3.0.0</developerConnection>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/flexmojos-3.0.x</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/flexmojos-3.0.x</developerConnection>
   </scm>
 
   <distributionManagement>
     <repository>
-      <id>forge-releases</id>
+      <id>flexmojos-releases</id>
       <name>flexmojos Release Repository</name>
-      <!--
-				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-releases</url>
-			-->
       <url>${flexReleaseUrl}</url>
     </repository>
     <snapshotRepository>
-      <id>forge-snapshots</id>
+      <id>flexmojos-snapshots</id>
       <name>flexmojos Snapshot Repository</name>
-      <!--
-				<url>http://repository.sonatype.org/content/repositories/sonatype-flex-snapshots</url>
-			-->
       <url>${flexSnapshotUrl}</url>
     </snapshotRepository>
+    <site>
+      <id>flexmojos-site</id>
+      <name>flexmojos site</name>
+      <url>${flexSiteUrl}</url>
+    </site>
   </distributionManagement>
 
   <mailingLists>
@@ -205,8 +251,7 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin
-				</artifactId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -226,8 +271,24 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changelog-maven-plugin
-				</artifactId>
+        <artifactId>changelog-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

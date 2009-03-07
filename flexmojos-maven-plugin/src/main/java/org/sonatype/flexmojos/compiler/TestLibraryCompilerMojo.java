@@ -24,9 +24,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.tools.oem.Report;
+
 /**
- * Goal to compile the Flex test sources.
+ * Build a SWC of the test classes for the current project.
  * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 2.0
  * @goal test-swc
  * @requiresDependencyResolution
  */
@@ -100,5 +104,12 @@ public class TestLibraryCompilerMojo
     {
         return new File( build.getDirectory(), build.getFinalName() + "-test.swc" );
     }
+
+    @Override
+    protected void writeReport( Report report, String type )
+        throws MojoExecutionException
+    {
+        // reports are ignored on unit tests
+    }    
 
 }
