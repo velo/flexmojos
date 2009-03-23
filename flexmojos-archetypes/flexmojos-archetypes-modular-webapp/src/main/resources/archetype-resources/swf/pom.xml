@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+  <!--
 
     Copyright 2008 Marvin Herman Froeder
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>${project.version}</version>
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
+    <version>\${version}</version>
   </parent>
 
   <groupId>\${groupId}</groupId>
@@ -32,12 +32,40 @@
   <name>\${artifactId} Application</name>
 
   <build>
-    <!-- this is a workaround due to archetype plugin problems.  Can be removed! -->
     <sourceDirectory>src/main/flex</sourceDirectory>
     <testSourceDirectory>src/test/flex</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <locales>
+            <locale>en_US</locale>
+          </locales>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>${flex.version}</version>
+      <type>pom</type>
+    </dependency>
+
+    <!-- flexmojos Unit testing support -->
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-support</artifactId>
+      <version>${project.version}</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>\${groupId}</groupId>
       <artifactId>\${artifactId}-swc</artifactId>
