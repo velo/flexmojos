@@ -81,11 +81,18 @@ public class TestCompilerMojo
     private File testFolder;
 
     /**
-     * Socket connect port for flex/java communication
+     * Socket connect port for flex/java communication to transfer tests results
      * 
-     * @parameter default-value="13539"
+     * @parameter default-value="13539" expression="${testPort}"
      */
     private int testPort;
+
+    /**
+     * Socket connect port for flex/java communication to control if flashplayer is alive
+     * 
+     * @parameter default-value="13540" expression="${testControlPort}"
+     */
+    private int testControlPort;
 
     @Override
     public void execute()
@@ -224,6 +231,7 @@ public class TestCompilerMojo
         sourceString = sourceString.replace( "$imports", imports );
         sourceString = sourceString.replace( "$testClasses", classes );
         sourceString = sourceString.replace( "$port", String.valueOf( testPort ) );
+        sourceString = sourceString.replace( "$controlPort", String.valueOf( testControlPort ) );
         File testSourceFile = new File( build.getTestOutputDirectory(), "TestRunner.mxml" );
         FileWriter fileWriter = new FileWriter( testSourceFile );
         IOUtils.write( sourceString, fileWriter );

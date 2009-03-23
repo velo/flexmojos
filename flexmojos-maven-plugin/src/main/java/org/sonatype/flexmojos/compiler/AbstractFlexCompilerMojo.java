@@ -77,8 +77,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
-	public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
-			"/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
+    public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
+        "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
 
     private static final String COMPATIBILITY_2_0_0 = "2.0.0";
 
@@ -532,9 +532,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private String[] rslUrls;
 
     /**
-	 * @parameter default-value="${project.build.directory}/locales/${project.artifactId}-${project.version}-{locale}.{extension}"
-	 */
-	private String runtimeLocaleOutputPath;
+     * @parameter 
+     *            default-value="${project.build.directory}/locales/${project.artifactId}-${project.version}-{locale}.{extension}"
+     */
+    private String runtimeLocaleOutputPath;
 
     /**
      * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
@@ -973,7 +974,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             policyFileUrls = new String[] { "" };
         }
 
-		if ( runtimeLocaleOutputPath == null )
+        if ( runtimeLocaleOutputPath == null )
         {
             runtimeLocaleOutputPath = DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
@@ -1816,28 +1817,29 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         for ( int i = 0; i < rslUrls.length; i++ )
         {
             String rsl = rslUrls[i];
-            if ( contextRoot == null || "".equals(contextRoot))
+            if ( contextRoot == null || "".equals( contextRoot ) )
             {
-				rsl = rsl.replace( "/{contextRoot}/", "" );
+                rsl = rsl.replace( "/{contextRoot}/", "" );
             }
-			else
-			{
+            else
+            {
                 rsl = rsl.replace( "{contextRoot}", contextRoot );
-			}
-			rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
+            }
+            rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
             rsls[i] = rsl;
         }
         return rsls;
     }
 
-	protected File getRuntimeLocaleOutputFile( String locale, String extension )
-	{
-		String path = runtimeLocaleOutputPath.replace( "/{contextRoot}", project.getBuild().getDirectory() );
-		File output = new File( MavenUtils.getRuntimeLocaleOutputPath( path, project.getArtifact(), locale, extension ) );
-		output.getParentFile().mkdirs();
+    protected File getRuntimeLocaleOutputFile( String locale, String extension )
+    {
+        String path = runtimeLocaleOutputPath.replace( "/{contextRoot}", project.getBuild().getDirectory() );
+        File output =
+            new File( MavenUtils.getRuntimeLocaleOutputPath( path, project.getArtifact(), locale, extension ) );
+        output.getParentFile().mkdirs();
 
-		return output;
-	}
+        return output;
+    }
 
     /**
      * Get Fonts snapshot

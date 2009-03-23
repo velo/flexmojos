@@ -26,6 +26,7 @@ java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTproces
 	layout="absolute"
 	initialize="init()" 
 	port="$port" 
+	controlPort="$controlPort" 
 	>
 	
 	<mx:Script>

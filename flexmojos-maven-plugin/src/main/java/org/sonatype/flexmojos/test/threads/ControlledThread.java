@@ -15,25 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.components.publisher.filefilters;
+package org.sonatype.flexmojos.test.threads;
 
-import java.io.File;
-import java.io.FileFilter;
-
-public class DirFilter
-    implements FileFilter
+public interface ControlledThread
+    extends Runnable
 {
 
-    public static final FileFilter INSTANCE = new DirFilter();;
+    void stop();
 
-    private DirFilter()
-    {
-        super();
-    }
+    ThreadStatus getStatus();
 
-    public boolean accept( File pathname )
-    {
-        return pathname.isDirectory();
-    }
+    Error getError();
+
+    void setStatus( ThreadStatus status );
+
+    void setError( Error error );
 
 }
