@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+  <!--
 
     Copyright 2008 Marvin Herman Froeder
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>${project.version}</version>
-  </parent>
-
   <groupId>\${groupId}</groupId>
   <artifactId>\${artifactId}</artifactId>
   <version>\${version}</version>
@@ -32,9 +26,34 @@
   <name>\${artifactId} Flex</name>
 
   <build>
-    <!-- this is a workaround due to archetype plugin problems.  Can be removed! -->
     <sourceDirectory>src/main/flex</sourceDirectory>
     <testSourceDirectory>src/test/flex</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
   </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>${flex.version}</version>
+      <type>pom</type>
+    </dependency>
+
+    <!-- flexmojos Unit testing support -->
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-support</artifactId>
+      <version>${project.version}</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
