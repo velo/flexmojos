@@ -15,37 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.components.publisher.filefilters;
+package org.sonatype.flexmojos.test.threads;
 
-import java.io.File;
-import java.io.FileFilter;
-
-public class SuffixFilter
-    implements FileFilter
+public interface ControlledThread
+    extends Runnable
 {
 
-    private String[] extensions;
+    void stop();
 
-    public SuffixFilter( String... extension )
-    {
-        super();
-        if ( extension == null )
-        {
-            throw new NullPointerException( "Invalid null extension" );
-        }
-        this.extensions = extension;
-    }
+    ThreadStatus getStatus();
 
-    public boolean accept( File pathname )
-    {
-        for ( String extension : extensions )
-        {
-            if ( pathname.getName().endsWith( extension ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    Error getError();
+
+    void setStatus( ThreadStatus status );
+
+    void setError( Error error );
 
 }

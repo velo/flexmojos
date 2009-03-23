@@ -17,54 +17,67 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-	<!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
+  <!-- http://www.sonatype.com/book/reference/writing-plugins.html -->
 
 <component-set>
-	<components>
-		<!-- i18n resource bundles -->
-		<component>
-			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
-			<role-hint>resource-bundle</role-hint>
-			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
-			<configuration>
-				<type>resource-bundle</type>
-				<extension>rb.swc</extension>
-			</configuration>
-		</component>
+  <components>
+    <!-- i18n resource bundles -->
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>resource-bundle</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>resource-bundle</type>
+        <extension>rb.swc</extension>
+      </configuration>
+    </component>
 
-		<!-- Flex -->
-		<component>
-			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>swc</role-hint>
-			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
-			<configuration>
-				<phases>
-					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-					<compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swc</compile>
-					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-					<test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
-					<test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
-					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
-					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
-				</phases>
-			</configuration>
-		</component>
-		<component>
-			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-			<role-hint>swf</role-hint>
-			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
-			<configuration>
-				<phases>
-					<process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-					<compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swf</compile>
-					<process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-					<test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
-					<test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
-					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
-					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
-				</phases>
-			</configuration>
-		</component>
+    <!-- Flex -->
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>swc</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <phases>
+          <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+          <compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swc</compile>
+          <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+          <test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
+          <test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
+          <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+          <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+        </phases>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>swf</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <phases>
+          <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+          <compile>org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swf</compile>
+          <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+          <test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
+          <test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
+          <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+          <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+        </phases>
+      </configuration>
+    </component>
 
-	</components>
+    <component>
+      <role>org.sonatype.flexmojos.test.threads.AsVmLauncher</role>
+      <implementation>org.sonatype.flexmojos.test.threads.AsVmLauncher</implementation>
+    </component>
+    <component>
+      <role>org.sonatype.flexmojos.test.threads.AsVmControl</role>
+      <implementation>org.sonatype.flexmojos.test.threads.AsVmControl</implementation>
+    </component>
+    <component>
+      <role>org.sonatype.flexmojos.test.threads.ResultHandler</role>
+      <implementation>org.sonatype.flexmojos.test.threads.ResultHandler</implementation>
+    </component>
+
+  </components>
 </component-set>

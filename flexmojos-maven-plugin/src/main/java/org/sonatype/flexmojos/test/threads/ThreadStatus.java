@@ -15,27 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.components.publisher;
+package org.sonatype.flexmojos.test.threads;
 
-public class PublishingException
-    extends Exception
+public enum ThreadStatus
 {
-
-    private static final long serialVersionUID = 4622375202301352416L;
-
-    public PublishingException()
-    {
-        this( null );
-    }
-
-    public PublishingException( String message, Throwable cause )
-    {
-        super( message, cause );
-    }
-
-    public PublishingException( String message )
-    {
-        this( message, null );
-    }
-
+    RUNNING, DONE, ERROR
 }

@@ -39,8 +39,7 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar
-    </flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -160,7 +159,7 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>bundle-publisher-maven-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
         <executions>
           <execution>
             <id>compiler</id>
