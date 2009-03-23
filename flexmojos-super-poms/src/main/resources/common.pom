@@ -50,7 +50,7 @@
 	<repositories>
 		<repository>
 			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<url>http://repository.sonatype.org/content/repositories/flexmojos-releases/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -63,7 +63,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<url>http://repository.sonatype.org/content/repositories/flexmojos-releases/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
