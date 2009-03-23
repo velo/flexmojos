@@ -16,9 +16,15 @@ package org.sonatype.flexmojos.unitestingsupport
 		private var tests:Array;
 		
 		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+
+		private static var controlSocket:ControlSocket = ControlSocket.getInstance();
 		
 		public function set port(port:int):void {
 			socketReporter.port = port;
+		}
+
+		public function set controlPort(port:int):void {
+			controlSocket.port = port;
 		}
 		
 		public function TestApplication()
@@ -30,6 +36,7 @@ package org.sonatype.flexmojos.unitestingsupport
 		
 		private function runTests(e:*):void
 		{
+			controlSocket.connect();
 			socketReporter.runTests(this.tests);
 		}
 

@@ -23,6 +23,10 @@
   <name>Flexmojos Maven Plugin</name>
   <description>With this maven plugin Flex3/AS3 sources can be compiled into a SWC or SWF package.</description>
 
+  <prerequisites>
+    <maven>${maven.version}</maven>
+  </prerequisites>
+
   <build>
     <resources>
       <resource>
@@ -169,10 +173,6 @@
       <artifactId>asdoc</artifactId>
       <type>zip</type>
       <classifier>template</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
     </dependency>
   </dependencies>
 

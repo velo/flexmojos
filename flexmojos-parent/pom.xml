@@ -97,7 +97,7 @@
         <plugin>
           <groupId>org.sonatype.maven.plugin</groupId>
           <artifactId>emma4it-maven-plugin</artifactId>
-          <version>1.2-SNAPSHOT</version>
+          <version>1.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -189,8 +189,8 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/flexmojos-3.0.x</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/flexmojos-3.0.x</developerConnection>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
   </scm>
 
   <distributionManagement>
@@ -431,22 +431,6 @@
         <artifactId>plexus-archiver</artifactId>
         <version>1.0-alpha-7</version>
         <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-cli</artifactId>
-        <version>1.0-alpha-8</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-annotations</artifactId>
-        <version>1.0-alpha-8</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-container-default</artifactId>
-        <version>1.0-alpha-8</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
