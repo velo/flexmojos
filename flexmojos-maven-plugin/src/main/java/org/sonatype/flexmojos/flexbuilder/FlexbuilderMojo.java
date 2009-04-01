@@ -191,6 +191,20 @@ public class FlexbuilderMojo
     protected File[] includeSources;
 
     /**
+     * This is the equilvalent of the <code>include-classes</code> option of the compc compiler.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeClassses&gt;
+     *   &lt;class&gt;foo.Bar&lt;/class&gt;
+     * &lt;/includeClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] includeClasses;
+
+    /**
      * List of path elements that form the roots of ActionScript class hierarchies.<BR>
      * Usage:
      * 
@@ -321,8 +335,9 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
+        // TODO if no includeClasses set put them all there
+        context.put( "flexClasses", includeClasses );
         // TODO
-        // context.put( "flexClasses", classes );
         // context.put( "includeFiles", files );
 
         runVelocity( "/templates/flexbuilder/flexLibProperties.vm", ".flexLibProperties", context );
@@ -357,7 +372,7 @@ public class FlexbuilderMojo
             if ( ideDependency.isReferencedProject() )
             {
                 String template = IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE; // TODO
-                                                                          // http://jira.codehaus.org/browse/MECLIPSE-519
+                // http://jira.codehaus.org/browse/MECLIPSE-519
                 String projectName = IdeUtils.getProjectName( template, ideDependency );
                 // /todolist-lib/bin-debug/todolist-lib.swc
                 ideDependency.setFile( new File( "/" + projectName + "/bin-debug/" + projectName + ".swc" ) );
@@ -444,7 +459,6 @@ public class FlexbuilderMojo
     {
         VelocityContext context = new VelocityContext();
         context.put( "dependencies", getDependencies( ideDependencies ) );
-        context.put( "locales", getPlainLocales() );
         context.put( "mainSources", getMainSources() );
         context.put( "targetPlayer", targetPlayer );
         context.put( "accessible", accessible );
@@ -452,6 +466,12 @@ public class FlexbuilderMojo
         context.put( "useApolloConfig", useApolloConfig( ideDependencies ) );
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
+
+        String additionalCompilerArguments = "";
+        if ( ( compiledLocales != null && compiledLocales.length > 0 ) || !SWC.equals( packaging ) )
+        {
+            additionalCompilerArguments += "-locale" + getPlainLocales();
+        }
 
         if ( SWF.equals( packaging ) )
         {
@@ -462,9 +482,17 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             context.put( "mainApplication", project.getArtifactId() + ".as" );
-            context.put( "includes", "-include-sources " + getPlainSources() );
+            if ( includeClasses == null && includeSources == null )
+            {
+                additionalCompilerArguments += " -include-sources " + plain( getSourceRoots() );
+            }
+            else if ( includeSources != null )
+            {
+                additionalCompilerArguments += " -include-sources " + getPlainSources();
+            }
             context.put( "generateHtmlWrapper", false );
         }
+        context.put( "additionalCompilerArguments", additionalCompilerArguments.trim() );
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
@@ -487,17 +515,14 @@ public class FlexbuilderMojo
     private String getMainSources()
     {
         String mainSources =
-            PathUtil.getRelativePath( project.getBasedir(), new File( project.getBuild().getSourceDirectory() ) );
+            PathUtil.getRelativePath( project.getBasedir(), new File( project.getBuild().getSourceDirectory() ) ).replace(
+                                                                                                                           '\\',
+                                                                                                                           '/' );
         return mainSources;
     }
 
     private String getPlainSources()
     {
-        if ( includeSources == null )
-        {
-            return plain( getSourceRoots() );
-        }
-
         Collection<String> sources = new ArrayList<String>();
         for ( File source : includeSources )
         {
@@ -548,6 +573,7 @@ public class FlexbuilderMojo
 
         Set<String> sources = new HashSet<String>();
         List<String> sourceRoots;
+
         if ( project.getExecutionProject() != null )
         {
             sourceRoots = project.getExecutionProject().getCompileSourceRoots();
