@@ -22,15 +22,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
@@ -173,6 +170,36 @@ public class LibraryMojo
      */
     private File output;
 
+    /**
+     * workaround
+     */
+    private String[] includeFilesNames;
+
+    private String[] includeFilesPaths;
+
+    @Override
+    protected void fixConfigReport( FlexConfigBuilder configBuilder )
+    {
+        super.fixConfigReport( configBuilder );
+
+        if ( !checkNullOrEmpty( includeNamespaces ) )
+        {
+            configBuilder.addList( includeNamespaces, "include-namespaces", "uri" );
+        }
+        if ( !checkNullOrEmpty( includeClasses ) )
+        {
+            configBuilder.addList( includeClasses, "include-classes", "class" );
+        }
+        if ( !checkNullOrEmpty( includeSources ) )
+        {
+            configBuilder.addList( includeSources, "include-sources", "path-element" );
+        }
+        if ( !checkNullOrEmpty( includeFiles ) )
+        {
+            configBuilder.addIncludeFiles( includeFilesNames, includeFilesPaths );
+        }
+    }
+
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -210,6 +237,9 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeFiles ) )
         {
+            List<String> includeFilesNames = new ArrayList<String>();
+            List<String> includeFilesPaths = new ArrayList<String>();
+
             for ( String includeFile : includeFiles )
             {
                 if ( includeFile == null )
@@ -227,8 +257,21 @@ public class LibraryMojo
                 {
                     relativePath = file.getName();
                 }
+                relativePath = relativePath.replace( '\\', '/' );
 
-                builder.addArchiveFile( relativePath.replace( '\\', '/' ), file );
+                if ( configurationReport )
+                {
+                    includeFilesNames.add( relativePath );
+                    includeFilesPaths.add( file.getAbsolutePath() );
+                }
+
+                builder.addArchiveFile( relativePath, file );
+            }
+
+            if ( configurationReport )
+            {
+                this.includeFilesNames = includeFilesNames.toArray( new String[includeFilesNames.size()] );
+                this.includeFilesPaths = includeFilesPaths.toArray( new String[includeFilesPaths.size()] );
             }
         }
 
@@ -257,7 +300,7 @@ public class LibraryMojo
                 }
                 if ( !file.getName().contains( "{locale}" ) && !file.exists() )
                 {
-                    throw new MojoFailureException( "File " + file.getName() + " not found" );
+                    throw new MojoFailureException( "File " + file + " not found" );
                 }
                 builder.addComponent( file );
             }
@@ -289,12 +332,12 @@ public class LibraryMojo
                 continue;
             }
 
-            Collection<File> files =
-                FileUtils.listFiles( resourceDir, HiddenFileFilter.VISIBLE, TrueFileFilter.INSTANCE );
-            for ( File file : files )
-            {
-                resources.add( file.getAbsolutePath() );
-            }
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setBasedir( resourceDir );
+            scanner.addDefaultExcludes();
+            scanner.scan();
+            String[] files = scanner.getIncludedFiles();
+            resources.addAll( Arrays.asList( files ) );
         }
 
         return resources.toArray( new String[resources.size()] );
@@ -401,6 +444,22 @@ public class LibraryMojo
         localized.setOutput( output );
 
         build( localized );
+
+        if ( configurationReport )
+        {
+            try
+            {
+                FlexConfigBuilder configBuilder = new FlexConfigBuilder( localized );
+                configBuilder.addOutput( output );
+                configBuilder.addList( bundles, "include-resource-bundles", "bundle" );
+                configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion()
+                    + "-" + locale + "-config-report.xml" ) );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "An error has ocurried while recording config-report", e );
+            }
+        }
 
         projectHelper.attachArtifact( project, RB_SWC, locale, output );
     }

@@ -430,7 +430,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * @parameter default-value="false" expression="${configurationReport}"
      */
-    private boolean configurationReport;
+    protected boolean configurationReport;
 
     /**
      * Sets a list of artifacts to omit from linking when building an application. This is equivalent to using the
@@ -532,6 +532,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private String[] rslUrls;
 
     /**
+     * Resource module or resource library output path
+     * 
      * @parameter 
      *            default-value="${project.build.directory}/locales/${project.artifactId}-${project.version}-{locale}.{extension}"
      */
@@ -1375,6 +1377,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
 
+        if ( configFile != null )
+        {
+            configuration.setConfiguration( configFile );
+        }
+
         if ( configuration instanceof OEMConfiguration )
         {
             // http://bugs.adobe.com/jira/browse/SDK-15581
@@ -2164,22 +2171,47 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             {
                 report.writeLinkReport( writer );
                 linkReportFile = fileReport;
+                FileUtils.writeStringToFile( fileReport, writer.toString() );
             }
             else if ( "config".equals( type ) )
             {
                 report.writeConfigurationReport( writer );
+                FlexConfigBuilder configBuilder = new FlexConfigBuilder( writer.toString() );
+                fixConfigReport( configBuilder );
+                configBuilder.write( fileReport );
             }
-
-            FileUtils.writeStringToFile( fileReport, writer.toString() );
 
             getLog().info( "Written " + type + " report to " + fileReport );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "An error has ocurried while recording " + type + "-report", e );
         }
 
-        projectHelper.attachArtifact( project, "xml", type + "-report", fileReport );
+        if ( !( "config".equals( type ) ) )
+        {
+            projectHelper.attachArtifact( project, "xml", type + "-report", fileReport );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected void fixConfigReport( FlexConfigBuilder configBuilder )
+    {
+        configBuilder.addOutput( getOutput() );
+
+        if ( compiledLocales == null )
+        {
+            configBuilder.addEmptyLocale();
+        }
+
+        for ( Resource resource : (List<Resource>) project.getResources() )
+        {
+            File resourceDirectory = new File( resource.getDirectory() );
+            if ( resourceDirectory.exists() )
+            {
+                configBuilder.addSourcePath( resourceDirectory );
+            }
+        }
     }
 
     protected void build( E builder )

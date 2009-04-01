@@ -165,6 +165,21 @@ public class FlexConfigBuilder
 		compilerElement.addContent( new Element( "locale", namespace ) );
 	}
 
+	public void addSourcePath( String path )
+	{
+		Element sourceElement = rootElement.getChild( "compiler", namespace ).getChild( "source-path", namespace );
+
+		Element pathElement = new Element( "path-element", namespace );
+		pathElement.addContent( path );
+
+		sourceElement.addContent( pathElement );
+	}
+
+	public void addSourcePath( File file )
+	{
+		addSourcePath( file.getAbsolutePath() );
+	}
+
 	private void removeCommentsAndSetNamespace( List l )
 	{
 		for ( Iterator i = l.iterator(); i.hasNext(); )

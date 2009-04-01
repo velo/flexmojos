@@ -141,6 +141,14 @@ public class ApplicationMojo
     protected File output;
 
     @Override
+	protected void fixConfigReport(FlexConfigBuilder configBuilder)
+	{
+		super.fixConfigReport( configBuilder );
+
+		configBuilder.addList( new String[] { source.getAbsolutePath() }, "file-specs", "path-element" );
+	}
+
+	@Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
@@ -369,6 +377,20 @@ public class ApplicationMojo
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 
         build( rbBuilder );
+
+		if ( configurationReport )
+		{
+			try
+			{
+				FlexConfigBuilder configBuilder = new FlexConfigBuilder( rbBuilder );
+				configBuilder.addOutput( output );
+				configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion() + "-" + locale + "-config-report.xml" ) );
+			}
+			catch ( Exception e )
+			{
+				throw new MojoExecutionException( "An error has ocurried while recording config-report", e );
+			}
+		}
 
         projectHelper.attachArtifact( project, SWF, locale, output );
     }
