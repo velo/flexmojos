@@ -21,6 +21,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.sonatype.forge</groupId>
+    <artifactId>forge-parent</artifactId>
+    <version>5</version>
+  </parent>
+
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-aggregator</artifactId>
   <version>3.1-SNAPSHOT</version>
@@ -40,6 +46,7 @@
     <!-- need due grid limitations -->
     <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
     <flexSnapshotUrl>http://repository.sonatype.org/content/repositories/flexmojos-snapshots</flexSnapshotUrl>
+    <flexSiteUrl>dav:https://sites.sonatype.org/flexmojos</flexSiteUrl>
   </properties>
 
   <scm>
@@ -112,9 +119,9 @@
           </reportSet>
         </reportSets>
         <configuration>
-        <sourceFolders>
-          <sourceFolder>${basedir}/flexmojos-maven-plugin/src/main/java</sourceFolder>
-        </sourceFolders>
+          <sourceFolders>
+            <sourceFolder>${basedir}/flexmojos-maven-plugin/src/main/java</sourceFolder>
+          </sourceFolders>
         </configuration>
       </plugin>
     </plugins>
