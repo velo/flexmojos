@@ -17,7 +17,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.1.0</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -196,8 +196,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-3.1.0</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-3.1.0</developerConnection>
+    <url>http://svn.sonatype.org/forge/tags/flexmojos-3.1.0</url>
   </scm>
 
   <distributionManagement>
