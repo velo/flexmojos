@@ -5,7 +5,7 @@
         >
 
     <compiler 
-            additionalCompilerArguments="-locale $locales $!includes" 
+            additionalCompilerArguments="$!additionalCompilerArguments" 
             copyDependentFiles="true" 
             enableModuleDebug="true" 
             generateAccessible="$accessible" 
@@ -40,7 +40,7 @@
             <libraryPathEntry 
                     kind="3" 
                     linkType="1" 
-                    path="$artifact.getFile()" 
+                    path="$artifact.getFile().getAbsolutePath().replaceAll('\\', '/')" 
                     useDefaultLinkType="false"
                     />
 
