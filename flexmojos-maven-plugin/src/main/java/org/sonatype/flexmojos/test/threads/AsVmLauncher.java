@@ -39,7 +39,7 @@ public class AsVmLauncher
 
     private static final String WINDOWS_CMD = "FlashPlayer.exe";
 
-    private static final String MAC_CMD = "FlashPlayer.app";
+    private static final String MAC_CMD = "Flash Player";
 
     private static final String UNIX_CMD = "FlashPlayer";
 
