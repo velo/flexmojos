@@ -17,7 +17,9 @@
  */
 package org.sonatype.flexmojos.test.threads;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -41,7 +43,7 @@ public class AsVmLauncher
 
     private static final String MAC_CMD = "Flash Player";
 
-    private static final String UNIX_CMD = "FlashPlayer";
+    private static final String UNIX_CMD = "flashplayer";
 
     private ThreadStatus status;
 
@@ -50,10 +52,6 @@ public class AsVmLauncher
     private Error error;
 
     private Process process;
-
-    private String flashPlayerCommand;
-
-    private String targetSwf;
 
     private String getPlatformDefaultCommand()
     {
@@ -84,30 +82,46 @@ public class AsVmLauncher
      * Run the SWF that contains the FlexUnit tests.
      * 
      * @param targetSwf the SWF.
+     * @throws IOException
      * @throws Exception if there is an error launching the tests.
      */
-    public void init( String flashPlayer, File targetSwf )
+    public void init( String flashPlayer, File targetSwf, boolean allowHeadlessMode )
+        throws IOException, FileNotFoundException
     {
+        if ( targetSwf == null )
+        {
+            throw new FileNotFoundException( "Target SWF not defined" );
+        }
+
+        if ( !targetSwf.isFile() )
+        {
+            throw new FileNotFoundException( "Target SWF not found " + targetSwf );
+        }
+
         if ( flashPlayer == null )
         {
             flashPlayer = getPlatformDefaultCommand();
         }
 
-        this.flashPlayerCommand = flashPlayer;
-        this.targetSwf = targetSwf.getAbsolutePath();
+        setStatus( ThreadStatus.RUNNING );
+
+        getLogger().debug( "exec: " + flashPlayer + " - " + targetSwf );
+
+        getLogger().debug( "Creating process" );
+        if ( allowHeadlessMode && MavenUtils.isLinux() && GraphicsEnvironment.isHeadless() )
+        {
+            getLogger().warn( "Using xvfb-run to launch headless tests" );
+            process = Runtime.getRuntime().exec( new String[] { "xvfb-run", flashPlayer, targetSwf.getAbsolutePath() } );
+        }
+        else
+        {
+            process = Runtime.getRuntime().exec( new String[] { flashPlayer, targetSwf.getAbsolutePath() } );
+        }
+        getLogger().debug( "Process created " + process );
     }
 
     public void run()
     {
-        if ( flashPlayerCommand == null )
-        {
-            setStatus( ThreadStatus.ERROR );
-            error = new Error( "Command Line not defined, try to initilize FlexUnit Launcher" );
-            throw error;
-        }
-        setStatus( ThreadStatus.RUNNING );
-
-        getLogger().debug( "exec: " + flashPlayerCommand );
 
         StreamConsumer stdout = new StreamConsumer()
         {
@@ -124,19 +138,6 @@ public class AsVmLauncher
                 getLogger().debug( "[SYSERR]: " + line );
             }
         };
-
-        try
-        {
-            getLogger().debug( "Creating process" );
-            process = Runtime.getRuntime().exec( new String[] { flashPlayerCommand, targetSwf } );
-            getLogger().debug( "Process created " + process );
-        }
-        catch ( IOException e )
-        {
-            setStatus( ThreadStatus.ERROR );
-            error = new Error( "Error running flashplayer", e );
-            throw error;
-        }
 
         StreamPumper outputPumper = new StreamPumper( process.getInputStream(), stdout );
 
