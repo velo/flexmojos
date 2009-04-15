@@ -31,7 +31,10 @@ public class ControlledThreadUtil
     {
         for ( ControlledThread controlledThread : threads )
         {
-            controlledThread.stop();
+            if ( controlledThread != null )
+            {
+                controlledThread.stop();
+            }
         }
     }
 
