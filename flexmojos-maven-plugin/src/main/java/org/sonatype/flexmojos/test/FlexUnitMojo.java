@@ -13,6 +13,7 @@ import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.hasError;
 import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.stop;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -125,6 +126,13 @@ public class FlexUnitMojo
      * @component
      */
     private AsVmControl asVmControl;
+
+    /**
+     * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
+     * 
+     * @parameter default-value="true" expression="${allowHeadlessMode}"
+     */
+    private boolean allowHeadlessMode;
 
     @Override
     public void execute()
@@ -239,20 +247,33 @@ public class FlexUnitMojo
     {
         getLog().info( "Starting tests" );
 
-        // Start a thread that pings flashplayer to be sure if it still alive.
-        asVmControl.init( testControlPort );
-        run( asVmControl );
-
-        // Start a thread that receives the FlexUnit results.
-        resultHandler.init( testPort );
-        run( resultHandler );
-
-        // Start the browser and run the FlexUnit tests.
-        asVmLauncher.init( flashPlayerCommand, swf );
-        run( asVmLauncher );
-
         try
         {
+            // Start a thread that pings flashplayer to be sure if it still alive.
+            asVmControl.init( testControlPort );
+            run( asVmControl );
+
+            // Start a thread that receives the FlexUnit results.
+            resultHandler.init( testPort );
+            run( resultHandler );
+
+            // Start the browser and run the FlexUnit tests.
+            try
+            {
+                asVmLauncher.init( flashPlayerCommand, swf, allowHeadlessMode );
+            }
+            catch ( FileNotFoundException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException(
+                                                  "Failed to launch Flash Player.  Make sure it is available on PATH or user -DflashPlayer.command=${flashplayer executable}",
+                                                  e );
+            }
+            run( asVmLauncher );
+
             // Wait until the tests are complete.
             while ( true )
             {
