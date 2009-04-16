@@ -1008,6 +1008,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             licenses = getLicenses();
         }
 
+        if ( licenses != null )
+        {
+            try
+            {
+                Class.forName( "flex.license.License" );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                getLog().warn(
+                               "Unable to find license.jar on classpath. Check wiki for instructions about how to add it:\n   https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
+            }
+        }
+
         validateLocales( runtimeLocales );
         validateLocales( compiledLocales );
 
@@ -1104,11 +1117,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         try
         {
             props.load( new FileInputStream( licensePropertyFile ) );
-        }
-        catch ( FileNotFoundException e )
-        {
-            getLog().warn( "Unable to read license files " + licensePropertyFile.getAbsolutePath(), e );
-            return null;
         }
         catch ( IOException e )
         {
