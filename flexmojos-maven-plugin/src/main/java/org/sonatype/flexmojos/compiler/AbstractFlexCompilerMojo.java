@@ -1018,6 +1018,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             {
                 getLog().warn(
                                "Unable to find license.jar on classpath. Check wiki for instructions about how to add it:\n   https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
+                getLog().debug( "Java classpath: " + System.getProperty( "java.class.path" ) );
             }
         }
 
