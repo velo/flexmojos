@@ -189,7 +189,11 @@ public class AsVmLauncher
     public void stop()
     {
         holdStatus = true;
-        process.destroy();
+
+        if ( process != null )
+        {
+            process.destroy();
+        }
     }
 
     public ThreadStatus getStatus()
