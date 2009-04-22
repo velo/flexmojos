@@ -1040,7 +1040,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
-        setMavenPathResolver();
+        setMavenPathResolver(builder);
 
         // compiler didn't create parent if it doesn't exists
         getOutput().getParentFile().mkdirs();
@@ -1098,7 +1098,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "unchecked" )
     @FlexCompatibility( minVersion = "3" )
-    private void setMavenPathResolver()
+    protected void setMavenPathResolver(E builder)
     {
         if ( enableMavenResourcesResolver )
         {
