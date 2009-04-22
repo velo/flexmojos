@@ -248,6 +248,7 @@ public class ApplicationMojo
                 throw new MojoFailureException( "Unable to find " + module, e );
             }
 
+            setMavenPathResolver(moduleBuilder);
             moduleBuilder.setConfiguration( configuration );
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
             File outputModule =
