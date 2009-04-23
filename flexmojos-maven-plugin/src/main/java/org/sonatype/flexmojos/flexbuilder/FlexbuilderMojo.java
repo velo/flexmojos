@@ -470,7 +470,7 @@ public class FlexbuilderMojo
         String additionalCompilerArguments = "";
         if ( ( compiledLocales != null && compiledLocales.length > 0 ) || !SWC.equals( packaging ) )
         {
-            additionalCompilerArguments += "-locale" + getPlainLocales();
+            additionalCompilerArguments += " -locale " + getPlainLocales();
         }
 
         if ( SWF.equals( packaging ) )
