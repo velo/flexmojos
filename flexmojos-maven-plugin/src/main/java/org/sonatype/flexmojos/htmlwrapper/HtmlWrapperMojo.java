@@ -8,7 +8,6 @@
 package org.sonatype.flexmojos.htmlwrapper;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -24,6 +23,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
+import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import eu.cedarsoft.utils.ZipExtractor;
@@ -165,6 +165,14 @@ public class HtmlWrapperMojo
      */
     private File templateOutputDirectory;
 
+    /**
+     * Files to not interpolate while copying files. Usually binary files. Accepts wild cards. By default exclude all
+     * swf files.
+     * 
+     * @parameter
+     */
+    private String[] templateExclusions;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -175,35 +183,19 @@ public class HtmlWrapperMojo
         init();
 
         extractTemplate();
-        copyTemplates();
-        copyIndex();
+        copySurroundingFiles();
+        copyIndexTemplate();
     }
 
-    private void copyIndex()
+    private void copyIndexTemplate()
         throws MojoExecutionException
     {
         File indexTemplate = new File( templateOutputDirectory, "index.template.html" );
-        String template;
-        try
-        {
-            template = FileUtils.readFileToString( indexTemplate );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read " + indexTemplate, e );
-        }
-
-        for ( String key : parameters.keySet() )
-        {
-            String value = parameters.get( key );
-            template = template.replace( "${" + key + "}", value );
-        }
-
         File index = new File( outputDirectory, htmlName + ".html" );
 
         try
         {
-            FileUtils.writeStringToFile( index, template );
+            FileInterpolationUtil.copyFile( indexTemplate, index, parameters );
         }
         catch ( IOException e )
         {
@@ -211,18 +203,13 @@ public class HtmlWrapperMojo
         }
     }
 
-    private void copyTemplates()
+    private void copySurroundingFiles()
         throws MojoExecutionException
     {
         try
         {
-            FileUtils.copyDirectory( templateOutputDirectory, outputDirectory, new FileFilter()
-            {
-                public boolean accept( File pathname )
-                {
-                    return !"index.template.html".equals( pathname.getName() );
-                }
-            } );
+            FileInterpolationUtil.copyDirectory( templateOutputDirectory, outputDirectory, parameters,
+                                                 templateExclusions );
         }
         catch ( IOException e )
         {
@@ -276,10 +263,10 @@ public class HtmlWrapperMojo
         throws MojoExecutionException
     {
         File source = new File( path );
-		if ( !source.isAbsolute() )
-		{
-			source = new File( project.getBasedir(), path );
-		}
+        if ( !source.isAbsolute() )
+        {
+            source = new File( project.getBasedir(), path );
+        }
         if ( !source.exists() || !source.isDirectory() )
         {
             throw new MojoExecutionException( "Template folder doesn't exists. " + source );
@@ -383,6 +370,11 @@ public class HtmlWrapperMojo
         if ( !parameters.containsKey( "bgcolor" ) )
         {
             parameters.put( "bgcolor", "#869ca7" );
+        }
+
+        if ( templateExclusions == null )
+        {
+            templateExclusions = new String[] { "*.swf" };
         }
     }
 
