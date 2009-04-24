@@ -23,7 +23,6 @@ import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.hasError;
 import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.stop;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -144,6 +143,14 @@ public class FlexUnitMojo
      */
     private boolean allowHeadlessMode;
 
+    /**
+     * Timeout for the first connection on ping Thread. That means how much time flexmojos will wait for Flashplayer be
+     * loaded at first time.
+     * 
+     * @parameter default-value="20000" expression="${firstConnectionTimeout}"
+     */
+    private int firstConnectionTimeout;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -260,7 +267,7 @@ public class FlexUnitMojo
         try
         {
             // Start a thread that pings flashplayer to be sure if it still alive.
-            asVmControl.init( testControlPort );
+            asVmControl.init( testControlPort, firstConnectionTimeout );
             run( asVmControl );
 
             // Start a thread that receives the FlexUnit results.
@@ -268,20 +275,7 @@ public class FlexUnitMojo
             run( resultHandler );
 
             // Start the browser and run the FlexUnit tests.
-            try
-            {
-                asVmLauncher.init( flashPlayerCommand, swf, allowHeadlessMode );
-            }
-            catch ( FileNotFoundException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException(
-                                                  "Failed to launch Flash Player.  Make sure it is available on PATH or user -DflashPlayer.command=${flashplayer executable}",
-                                                  e );
-            }
+            asVmLauncher.init( flashPlayerCommand, swf, allowHeadlessMode );
             run( asVmLauncher );
 
             // Wait until the tests are complete.
@@ -294,6 +288,7 @@ public class FlexUnitMojo
                 if ( hasError( asVmLauncher, asVmControl, resultHandler ) )
                 {
                     this.executionError = getError( asVmLauncher, asVmControl, resultHandler );
+                    getLog().error( executionError.getMessage(), executionError );
                     return;
                 }
 
