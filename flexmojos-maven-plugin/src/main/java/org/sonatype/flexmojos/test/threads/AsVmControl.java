@@ -28,7 +28,6 @@ public class AsVmControl
         throws SocketTimeoutException, SocketException, IOException
     {
         getLogger().debug( "AsVmControl handleRequest" );
-        clientSocket.setSoTimeout( 2000 );
 
         while ( true )
         {
@@ -53,6 +52,12 @@ public class AsVmControl
                 setError( "Remote virtual machine didn't reply, looks to be stucked", e );
             }
         }
+    }
+
+    public void init( int testControlPort, int firstConnectionTimeout )
+    {
+        super.init( testControlPort );
+        super.firstConnectionTimeout = firstConnectionTimeout;
     }
 
 }

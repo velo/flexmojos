@@ -70,16 +70,21 @@ public class AbstractFlexMojosTests
         mavenHome = new File( getProperty( "fake-maven" ) );
 
         File mvn = new File( mavenHome, "bin/mvn" );
-        updateMavenMemory( mvn );
+        updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M\"\n" );
         File mvnBat = new File( mavenHome, "bin/mvn.bat" );
-        updateMavenMemory( mvnBat );
+        updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M\n" );
     }
 
-    private static void updateMavenMemory( File mvn )
+    private static void updateMavenMemory( File mvn, String memString )
         throws IOException
     {
         String mvnContent = org.codehaus.plexus.util.FileUtils.fileRead( mvn );
-        mvnContent = "set MAVEN_OPTS=-Xmx512M\n" + mvnContent;
+        if ( mvnContent.contains( memString ) )
+        {
+            return;
+        }
+        int i = mvnContent.indexOf( '\n' );
+        mvnContent = mvnContent.substring( 0, i ) + memString + mvnContent.substring( i );
         org.codehaus.plexus.util.FileUtils.fileWrite( mvn.getAbsolutePath(), mvnContent );
     }
 
