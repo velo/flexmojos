@@ -19,9 +19,9 @@ package org.sonatype.flexmojos.test.threads;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.StreamPumper;
@@ -86,16 +86,16 @@ public class AsVmLauncher
      * @throws Exception if there is an error launching the tests.
      */
     public void init( String flashPlayer, File targetSwf, boolean allowHeadlessMode )
-        throws IOException, FileNotFoundException
+        throws MojoExecutionException
     {
         if ( targetSwf == null )
         {
-            throw new FileNotFoundException( "Target SWF not defined" );
+            throw new MojoExecutionException( "Target SWF not defined" );
         }
 
         if ( !targetSwf.isFile() )
         {
-            throw new FileNotFoundException( "Target SWF not found " + targetSwf );
+            throw new MojoExecutionException( "Target SWF not found " + targetSwf );
         }
 
         if ( flashPlayer == null )
@@ -110,14 +110,48 @@ public class AsVmLauncher
         getLogger().debug( "Creating process" );
         if ( allowHeadlessMode && MavenUtils.isLinux() && GraphicsEnvironment.isHeadless() )
         {
-            getLogger().warn( "Using xvfb-run to launch headless tests" );
-            process = Runtime.getRuntime().exec( new String[] { "xvfb-run", flashPlayer, targetSwf.getAbsolutePath() } );
+            runFlashplayerHeadless( flashPlayer, targetSwf );
         }
         else
         {
-            process = Runtime.getRuntime().exec( new String[] { flashPlayer, targetSwf.getAbsolutePath() } );
+            runFlashplayer( flashPlayer, targetSwf );
         }
         getLogger().debug( "Process created " + process );
+    }
+
+    private void runFlashplayer( String flashPlayer, File targetSwf )
+        throws MojoExecutionException
+    {
+        try
+        {
+            process = Runtime.getRuntime().exec( new String[] { flashPlayer, targetSwf.getAbsolutePath() } );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException(
+                                              "Failed to launch Flash Player.  Make sure flashplayer is available on PATH"
+                                                  + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
+                                                  + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
+                                              e );
+        }
+    }
+
+    private void runFlashplayerHeadless( String flashPlayer, File targetSwf )
+        throws MojoExecutionException
+    {
+        getLogger().warn( "Using xvfb-run to launch headless tests" );
+        try
+        {
+            process = Runtime.getRuntime().exec( new String[] { "xvfb-run", flashPlayer, targetSwf.getAbsolutePath() } );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException(
+                                              "Failed to launch Flash Player in headless environment.  Make sure flashplayer and xvfb-run are available on PATH"
+                                                  + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
+                                                  + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
+                                              e );
+        }
     }
 
     public void run()

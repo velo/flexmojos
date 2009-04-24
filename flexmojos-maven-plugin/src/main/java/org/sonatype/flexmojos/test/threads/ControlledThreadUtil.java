@@ -48,7 +48,8 @@ public class ControlledThreadUtil
     {
         for ( ControlledThread controlledThread : threads )
         {
-            if ( controlledThread != null )
+            // only stop if is running
+            if ( controlledThread != null && ThreadStatus.RUNNING.equals( controlledThread.getStatus() ) )
             {
                 controlledThread.stop();
             }

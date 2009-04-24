@@ -34,7 +34,7 @@ public abstract class AbstractSocketThread
     implements ControlledThread
 {
 
-    private ServerSocket serverSocket = null;
+    protected ServerSocket serverSocket = null;
 
     protected Socket clientSocket = null;
 
@@ -51,6 +51,8 @@ public abstract class AbstractSocketThread
     protected Integer testPort;
 
     protected List<String> testReportData = new ArrayList<String>();
+
+    protected Integer firstConnectionTimeout;
 
     public AbstractSocketThread()
     {
@@ -125,7 +127,10 @@ public abstract class AbstractSocketThread
         throws IOException
     {
         serverSocket = new ServerSocket( testPort );
-        // serverSocket.setSoTimeout( 10000 );
+        if ( firstConnectionTimeout != null )
+        {
+            serverSocket.setSoTimeout( firstConnectionTimeout );
+        }
 
         getLogger().debug( "opened server socket" );
     }
