@@ -15,23 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.issues;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.maven.it.VerificationException;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+package 
 {
+    import flash.utils.Timer;
+    import flash.events.TimerEvent;
+	import flexunit.framework.TestCase;
+	
+	public class TimeoutTest extends TestCase
+	{
+		
+		public function test():void
+		{
+		    var timer:Timer = new Timer(5000, 1);
+		    timer.addEventListener
+		    (
+		        TimerEvent.TIMER_COMPLETE,
+		        addAsync
+		        (
+		            function(event:TimerEvent):void
+		            {
+		                trace("done");
+		            },
+		            10000
+		        )
+		    );
+		    timer.start();
+		}
 
-    public void testIssue( String issueNumber, String... args )
-        throws IOException, VerificationException
-    {
-        File testDir = getProject( "/issues/" + issueNumber );
-        test( testDir, "install", args );
-    }
-
+	}
 }
