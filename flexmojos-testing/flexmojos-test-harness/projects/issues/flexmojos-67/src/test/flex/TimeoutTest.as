@@ -5,23 +5,32 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.sonatype.flexmojos.tests.issues;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.maven.it.VerificationException;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+package 
 {
+    import flash.utils.Timer;
+    import flash.events.TimerEvent;
+	import flexunit.framework.TestCase;
+	
+	public class TimeoutTest extends TestCase
+	{
+		
+		public function test():void
+		{
+		    var timer:Timer = new Timer(5000, 1);
+		    timer.addEventListener
+		    (
+		        TimerEvent.TIMER_COMPLETE,
+		        addAsync
+		        (
+		            function(event:TimerEvent):void
+		            {
+		                trace("done");
+		            },
+		            10000
+		        )
+		    );
+		    timer.start();
+		}
 
-    public void testIssue( String issueNumber, String... args )
-        throws IOException, VerificationException
-    {
-        File testDir = getProject( "/issues/" + issueNumber );
-        test( testDir, "install", args );
-    }
-
+	}
 }

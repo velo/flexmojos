@@ -141,6 +141,13 @@ public class FlexUnitMojo
      */
     private int firstConnectionTimeout;
 
+    /**
+     * Test timeout to wait for socket responding
+     * 
+     * @parameter default-value="2000" expression="${testTimeout}"
+     */
+    private int testTimeout;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -158,9 +165,6 @@ public class FlexUnitMojo
         else if ( swf == null || !swf.exists() )
         {
             getLog().warn( "Skipping test run. Runner not found: " + swf );
-            // TODO need to check problems on MAC OS
-            // } else if (GraphicsEnvironment.isHeadless()) {
-            // getLog().error("Can't run flexunit in headless enviroment.");
         }
         else
         {
@@ -257,7 +261,7 @@ public class FlexUnitMojo
         try
         {
             // Start a thread that pings flashplayer to be sure if it still alive.
-            asVmControl.init( testControlPort, firstConnectionTimeout );
+            asVmControl.init( testControlPort, firstConnectionTimeout, testTimeout );
             run( asVmControl );
 
             // Start a thread that receives the FlexUnit results.

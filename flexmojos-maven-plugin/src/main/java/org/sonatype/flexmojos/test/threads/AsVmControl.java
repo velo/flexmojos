@@ -23,11 +23,15 @@ public class AsVmControl
 
     public static final String OK = "OK";
 
+    private int testTimeout;
+
     @Override
     protected void handleRequest()
         throws SocketTimeoutException, SocketException, IOException
     {
         getLogger().debug( "AsVmControl handleRequest" );
+
+        clientSocket.setSoTimeout( testTimeout );
 
         while ( true )
         {
@@ -54,10 +58,17 @@ public class AsVmControl
         }
     }
 
-    public void init( int testControlPort, int firstConnectionTimeout )
+    @Override
+    public void init( int portNumber )
+    {
+        this.init( portNumber, 20000, 2000 );
+    }
+
+    public void init( int testControlPort, int firstConnectionTimeout, int testTimeout )
     {
         super.init( testControlPort );
         super.firstConnectionTimeout = firstConnectionTimeout;
+        this.testTimeout = testTimeout;
     }
 
 }

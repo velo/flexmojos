@@ -7,21 +7,17 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
-import java.io.File;
-import java.io.IOException;
+import org.testng.annotations.Test;
 
-import org.apache.maven.it.VerificationException;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+public class Flexmojos67Test
+    extends AbstractIssueTest
 {
 
-    public void testIssue( String issueNumber, String... args )
-        throws IOException, VerificationException
+    @Test
+    public void flexmojos67()
+        throws Exception
     {
-        File testDir = getProject( "/issues/" + issueNumber );
-        test( testDir, "install", args );
+        testIssue( "flexmojos-67", "install" );
     }
 
 }
