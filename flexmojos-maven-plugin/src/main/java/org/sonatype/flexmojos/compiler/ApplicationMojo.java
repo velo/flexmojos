@@ -141,14 +141,14 @@ public class ApplicationMojo
     protected File output;
 
     @Override
-	protected void fixConfigReport(FlexConfigBuilder configBuilder)
-	{
-		super.fixConfigReport( configBuilder );
+    protected void fixConfigReport( FlexConfigBuilder configBuilder )
+    {
+        super.fixConfigReport( configBuilder );
 
-		configBuilder.addList( new String[] { source.getAbsolutePath() }, "file-specs", "path-element" );
-	}
+        configBuilder.addList( new String[] { source.getAbsolutePath() }, "file-specs", "path-element" );
+    }
 
-	@Override
+    @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
@@ -248,7 +248,7 @@ public class ApplicationMojo
                 throw new MojoFailureException( "Unable to find " + module, e );
             }
 
-            setMavenPathResolver(moduleBuilder);
+            setMavenPathResolver( moduleBuilder );
             moduleBuilder.setConfiguration( configuration );
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
             File outputModule =
@@ -379,19 +379,20 @@ public class ApplicationMojo
 
         build( rbBuilder );
 
-		if ( configurationReport )
-		{
-			try
-			{
-				FlexConfigBuilder configBuilder = new FlexConfigBuilder( rbBuilder );
-				configBuilder.addOutput( output );
-				configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion() + "-" + locale + "-config-report.xml" ) );
-			}
-			catch ( Exception e )
-			{
-				throw new MojoExecutionException( "An error has ocurried while recording config-report", e );
-			}
-		}
+        if ( configurationReport )
+        {
+            try
+            {
+                FlexConfigBuilder configBuilder = new FlexConfigBuilder( rbBuilder );
+                configBuilder.addOutput( output );
+                configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion()
+                    + "-" + locale + "-config-report.xml" ) );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "An error has ocurried while recording config-report", e );
+            }
+        }
 
         projectHelper.attachArtifact( project, SWF, locale, output );
     }
@@ -416,6 +417,8 @@ public class ApplicationMojo
             }
         }
 
+        getLog().debug( "maven.cfg location: " + mavenCfg );
+
         try
         {
             // Load maven.cfg
@@ -426,7 +429,7 @@ public class ApplicationMojo
             String trustedFile = getOutput().getAbsolutePath();
             if ( cfg.contains( trustedFile ) )
             {
-                getLog().info( "Already trust on " + trustedFile );
+                getLog().debug( "Already trust on " + trustedFile );
                 return;
             }
             else
