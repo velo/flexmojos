@@ -44,7 +44,7 @@ public class FlashPlayerUtils
             {
                 if ( MavenUtils.isWindowsVista() )
                 {
-                    appData = home + "/AppData";
+                    appData = home + "/AppData/Roaming";
                 }
                 else
                 {
