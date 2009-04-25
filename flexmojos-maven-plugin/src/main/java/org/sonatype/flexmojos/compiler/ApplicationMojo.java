@@ -424,7 +424,7 @@ public class ApplicationMojo
             }
             else
             {
-                getLog().info( "Updating Flash Payer Trust directory " + trustedFile );
+                getLog().info( "Updating Flash Player Trust directory " + trustedFile );
             }
 
             if ( !cfg.endsWith( "\n" ) )
