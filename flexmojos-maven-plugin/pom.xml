@@ -26,11 +26,28 @@
   <prerequisites>
     <maven>${maven.version}</maven>
   </prerequisites>
+
+  <developers>
+    <developer>
+      <id>velo</id>
+      <name>Marvin Herman Froeder</name>
+      <email>velo.br at gmail.com</email>
+      <roles>
+        <role>Author Developer</role>
+      </roles>
+      <timezone>-3</timezone>
+    </developer>
+  </developers>
+
   <contributors>
-  	<contributor>
-  		<name>Marla Bonar</name>
-  		<email>Marla_Bonar@Intuit.com</email>
-  	</contributor>
+    <contributor>
+      <name>Marla Bonar</name>
+      <email>Marla_Bonar@Intuit.com</email>
+    </contributor>
+    <contributor>
+      <name>David Rom</name>
+      <email>david.s.rom@gmail.com</email>
+    </contributor>
   </contributors>
 
   <build>
@@ -40,7 +57,6 @@
         <directory>src/main/resources</directory>
         <includes>
           <include>flexmojos.properties</include>
-          <include>META-INF/plexus/components.xml</include>
         </includes>
       </resource>
       <resource>
@@ -48,7 +64,6 @@
         <directory>src/main/resources</directory>
         <excludes>
           <exclude>flexmojos.properties</exclude>
-          <exclude>META-INF/plexus/components.xml</exclude>
         </excludes>
       </resource>
     </resources>
