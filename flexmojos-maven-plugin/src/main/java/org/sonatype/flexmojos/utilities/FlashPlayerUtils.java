@@ -38,6 +38,20 @@ public class FlashPlayerUtils
         {
             // workaround, application data folder is localized
             String appData = System.getenv( "APPDATA" );
+
+            // use default english folders when APPDATA is not defined
+            if ( appData == null )
+            {
+                if ( MavenUtils.isWindowsVista() )
+                {
+                    appData = "/AppData";
+                }
+                else
+                {
+                    appData = "/Application Data";
+                }
+            }
+
             if ( MavenUtils.isWindowsVista() )
             {
                 trustPath = appData + "/Macromedia/Flash Player/#Security/FlashPlayerTrust";
