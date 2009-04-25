@@ -38,6 +38,12 @@
   <prerequisites>
     <maven>${maven.version}</maven>
   </prerequisites>
+  <contributors>
+  	<contributor>
+  		<name>Marla Bonar</name>
+  		<email>Marla_Bonar@Intuit.com</email>
+  	</contributor>
+  </contributors>
 
   <build>
     <resources>
