@@ -33,6 +33,8 @@ public class AsVmControl
 
         clientSocket.setSoTimeout( testTimeout );
 
+        int errorCount = 0;
+
         while ( true )
         {
             getLogger().debug( "get status" );
@@ -46,14 +48,26 @@ public class AsVmControl
                 BufferedReader in = new BufferedReader( new InputStreamReader( super.in ) );
                 String result = in.readLine();
                 getLogger().debug( "status: " + result );
-                if ( !result.equals( OK ) )
+                if ( !OK.equals( result ) )
                 {
-                    setError( "Invalid virtual machine status: " + result, null );
+                    errorCount++;
+                    if ( errorCount >= 3 )
+                    {
+                        setError( "Invalid virtual machine status: " + result, null );
+                    }
+                }
+                else
+                {
+                    errorCount = 0;
                 }
             }
             catch ( SocketTimeoutException e )
             {
-                setError( "Remote virtual machine didn't reply, looks to be stucked", e );
+                errorCount++;
+                if ( errorCount >= 3 )
+                {
+                    setError( "Remote virtual machine didn't reply, looks to be stucked", e );
+                }
             }
         }
     }
