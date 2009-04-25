@@ -44,11 +44,11 @@ public class FlashPlayerUtils
             {
                 if ( MavenUtils.isWindowsVista() )
                 {
-                    appData = "/AppData";
+                    appData = home + "/AppData";
                 }
                 else
                 {
-                    appData = "/Application Data";
+                    appData = home + "/Application Data";
                 }
             }
 
