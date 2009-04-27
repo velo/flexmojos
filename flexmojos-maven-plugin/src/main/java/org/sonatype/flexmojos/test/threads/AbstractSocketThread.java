@@ -118,6 +118,8 @@ public abstract class AbstractSocketThread
 
     protected void setError( String msg, Exception root )
     {
+        getLogger().debug( msg, root );
+
         setStatus( ThreadStatus.ERROR );
         error = new Error( msg + " - " + getClass(), root );
         throw error;

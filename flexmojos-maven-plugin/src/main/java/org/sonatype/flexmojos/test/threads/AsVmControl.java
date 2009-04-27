@@ -86,6 +86,8 @@ public class AsVmControl
                     setError( "Remote virtual machine didn't reply, looks to be stucked", e );
                 }
             }
+
+            clientSocket.setSoTimeout( 0 );
         }
     }
 
