@@ -14,17 +14,14 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
@@ -66,8 +63,10 @@ public class TestCompilerMojo
      */
     private String[] excludeTestFiles;
 
-    private List<String> testClasses;
-
+    /**
+     * @parameter expression="${project.build.testSourceDirectory}"
+     * @readonly
+     */
     private File testFolder;
 
     /**
@@ -92,8 +91,6 @@ public class TestCompilerMojo
                        "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
-        testFolder = new File( build.getTestSourceDirectory() );
-
         if ( skipTests )
         {
             getLog().warn( "Skipping test phase." );
@@ -106,16 +103,8 @@ public class TestCompilerMojo
         }
 
         setUp();
-
-        if ( testClasses == null || testClasses.isEmpty() )
-        {
-            getLog().warn( "No test classes found for pattern: " + Arrays.toString( includeTestFiles ) );
-        }
-        else
-        {
-            run();
-            tearDown();
-        }
+        run();
+        tearDown();
     }
 
     @Override
@@ -137,7 +126,7 @@ public class TestCompilerMojo
             outputFolder.mkdirs();
         }
 
-        testClasses = getTestClasses();
+        List<String> testClasses = getTestClasses();
 
         File testSourceFile;
         try
@@ -155,35 +144,30 @@ public class TestCompilerMojo
         super.setUp();
     }
 
-    @SuppressWarnings( "unchecked" )
     private List<String> getTestClasses()
     {
-        Collection<File> testFiles =
-            FileUtils.listFiles( testFolder, new WildcardFileFilter( includeTestFiles ), DirectoryFileFilter.DIRECTORY );
+        getLog().debug(
+                        "Scanning for tests at " + testFolder + " for " + Arrays.toString( includeTestFiles ) + " but "
+                            + Arrays.toString( excludeTestFiles ) );
 
-        if ( excludeTestFiles != null && excludeTestFiles.length > 0 )
-        {
-            getLog().debug( "excludeTestFiles: " + Arrays.asList( excludeTestFiles ) );
-            Collection<File> excludedTestFiles =
-                FileUtils.listFiles( testFolder, new WildcardFileFilter( excludeTestFiles ),
-                                     DirectoryFileFilter.DIRECTORY );
-            testFiles.removeAll( excludedTestFiles );
-        }
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setIncludes( includeTestFiles );
+        scanner.setExcludes( excludeTestFiles );
+        scanner.addDefaultExcludes();
+        scanner.setBasedir( testFolder );
+        scanner.scan();
 
+        getLog().debug( "Test files: " + scanner.getIncludedFiles() );
         List<String> testClasses = new ArrayList<String>();
-
-        int trimPoint = testFolder.getAbsolutePath().length() + 1;
-
-        for ( File testFile : testFiles )
+        for ( String testClass : scanner.getIncludedFiles() )
         {
-            String testClass = testFile.getAbsolutePath();
             int endPoint = testClass.lastIndexOf( '.' );
-            testClass = testClass.substring( trimPoint, endPoint );
+            testClass = testClass.substring( 0, endPoint ); // remove extension
             testClass = testClass.replace( '/', '.' ); // Unix OS
             testClass = testClass.replace( '\\', '.' ); // Windows OS
             testClasses.add( testClass );
         }
-        getLog().debug( "testClasses: " + testClasses );
+        getLog().debug( "Test classes: " + testClasses );
         return testClasses;
     }
 
