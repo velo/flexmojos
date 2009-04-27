@@ -13,8 +13,62 @@ package
 	
 	public class TimeoutTest extends TestCase
 	{
-		
-		public function test():void
+
+		public function test1():void
+		{
+		    var timer:Timer = new Timer(5000, 1);
+		    timer.addEventListener
+		    (
+		        TimerEvent.TIMER_COMPLETE,
+		        addAsync
+		        (
+		            function(event:TimerEvent):void
+		            {
+		                trace("done");
+		            },
+		            10000
+		        )
+		    );
+		    timer.start();
+		}
+
+		public function test2():void
+		{
+		    var timer:Timer = new Timer(5000, 1);
+		    timer.addEventListener
+		    (
+		        TimerEvent.TIMER_COMPLETE,
+		        addAsync
+		        (
+		            function(event:TimerEvent):void
+		            {
+		                trace("done");
+		            },
+		            10000
+		        )
+		    );
+		    timer.start();
+		}
+
+		public function test3():void
+		{
+		    var timer:Timer = new Timer(5000, 1);
+		    timer.addEventListener
+		    (
+		        TimerEvent.TIMER_COMPLETE,
+		        addAsync
+		        (
+		            function(event:TimerEvent):void
+		            {
+		                trace("done");
+		            },
+		            10000
+		        )
+		    );
+		    timer.start();
+		}
+
+		public function test4():void
 		{
 		    var timer:Timer = new Timer(5000, 1);
 		    timer.addEventListener
