@@ -127,7 +127,7 @@ public class TestCompilerMojo
 
         if ( includeTestFiles == null )
         {
-            includeTestFiles = new String[] { "Test*.as", "*Test.as" };
+            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as" };
         }
 
         File outputFolder = new File( build.getTestOutputDirectory() );
