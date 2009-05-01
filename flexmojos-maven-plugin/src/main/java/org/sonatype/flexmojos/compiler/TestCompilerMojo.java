@@ -125,9 +125,23 @@ public class TestCompilerMojo
         linkReport = false;
         loadExterns = null;
 
-        if ( includeTestFiles == null )
+        if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
             includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as" };
+        }
+        else
+        {
+            for ( int i = 0; i < includeTestFiles.length; i++ )
+            {
+                String pattern = includeTestFiles[i];
+                if ( pattern.startsWith( "/" ) )
+                {
+                    continue;
+                }
+                // keeping backward compatibility with previous wildcard
+                pattern = "**/" + pattern;
+                includeTestFiles[i] = pattern;
+            }
         }
 
         File outputFolder = new File( build.getTestOutputDirectory() );
