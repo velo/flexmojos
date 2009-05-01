@@ -146,6 +146,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * By default use Maven source and resources folders.
      * 
      * @parameter
+     * @readonly
      */
     protected File[] sourcePaths;
 
@@ -1030,7 +1031,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         compilationData = new File( build.getDirectory(), build.getFinalName() + ".incr" );
 
-        setMavenPathResolver(builder);
+        setMavenPathResolver( builder );
 
         // compiler didn't create parent if it doesn't exists
         getOutput().getParentFile().mkdirs();
@@ -1088,7 +1089,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "unchecked" )
     @FlexCompatibility( minVersion = "3" )
-    protected void setMavenPathResolver(E builder)
+    protected void setMavenPathResolver( E builder )
     {
         if ( enableMavenResourcesResolver )
         {
