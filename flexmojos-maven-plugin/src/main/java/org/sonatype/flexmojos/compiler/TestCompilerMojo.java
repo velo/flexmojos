@@ -124,9 +124,9 @@ public class TestCompilerMojo
             for ( int i = 0; i < includeTestFiles.length; i++ )
             {
                 String pattern = includeTestFiles[i];
-                if ( pattern.endsWith( ".java" ) )
+                if ( pattern.endsWith( ".as" ) )
                 {
-                    pattern = pattern.substring( 0, pattern.length() - 5 );
+                    pattern = pattern.substring( 0, pattern.length() - 3 );
                 }
                 // Allow paths delimited by '.' or '/'
                 pattern = pattern.replace( '.', '/' );
