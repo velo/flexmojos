@@ -130,7 +130,7 @@ public class TestCompilerMojo
                 }
                 // Allow paths delimited by '.' or '/'
                 pattern = pattern.replace( '.', '/' );
-                includeTestFiles[i] = "**/" + pattern + ".java";
+                includeTestFiles[i] = "**/" + pattern + ".as";
             }
         }
 
