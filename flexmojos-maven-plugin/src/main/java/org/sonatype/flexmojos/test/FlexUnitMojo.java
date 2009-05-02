@@ -7,11 +7,6 @@
  */
 package org.sonatype.flexmojos.test;
 
-import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.getError;
-import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.hasDone;
-import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.hasError;
-import static org.sonatype.flexmojos.test.threads.ControlledThreadUtil.stop;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -313,7 +308,6 @@ public class FlexUnitMojo
         {
             stop( asVmLauncher, asVmControl, resultHandler );
         }
-
     }
 
     private void run( final ControlledThread thread )
@@ -371,5 +365,61 @@ public class FlexUnitMojo
             }
         }
 
+    }
+
+    private void stop( ControlledThread... threads )
+    {
+        for ( ControlledThread controlledThread : threads )
+        {
+            // only stop if is running
+            if ( controlledThread != null && ThreadStatus.RUNNING.equals( controlledThread.getStatus() ) )
+            {
+                try
+                {
+                    controlledThread.stop();
+                }
+                catch ( Throwable e )
+                {
+                    getLog().debug( "Error sttoping " + controlledThread.getClass(), e );
+                }
+            }
+        }
+    }
+
+    private boolean hasDone( ControlledThread... threads )
+    {
+        for ( ControlledThread controlledThread : threads )
+        {
+            if ( ThreadStatus.DONE.equals( controlledThread.getStatus() ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Error getError( ControlledThread... threads )
+    {
+        for ( ControlledThread controlledThread : threads )
+        {
+            if ( controlledThread.getError() != null )
+            {
+                return controlledThread.getError();
+            }
+        }
+
+        throw new IllegalStateException( "No error found!" );
+    }
+
+    private boolean hasError( ControlledThread... threads )
+    {
+        for ( ControlledThread controlledThread : threads )
+        {
+            if ( ThreadStatus.ERROR.equals( controlledThread.getStatus() ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
