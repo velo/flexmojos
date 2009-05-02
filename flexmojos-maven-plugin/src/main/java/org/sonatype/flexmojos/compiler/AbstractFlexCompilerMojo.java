@@ -156,8 +156,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * By default use Maven source and resources folders.
      * 
      * @parameter
-     * @readonly
      */
+    // * @readonly
     protected File[] sourcePaths;
 
     /**
