@@ -134,13 +134,13 @@ public class TestCompilerMojo
             for ( int i = 0; i < includeTestFiles.length; i++ )
             {
                 String pattern = includeTestFiles[i];
-                if ( pattern.startsWith( "/" ) )
+                if ( pattern.endsWith( ".java" ) )
                 {
-                    continue;
+                    pattern = pattern.substring( 0, pattern.length() - 5 );
                 }
-                // keeping backward compatibility with previous wildcard
-                pattern = "**/" + pattern;
-                includeTestFiles[i] = pattern;
+                // Allow paths delimited by '.' or '/'
+                pattern = pattern.replace( '.', '/' );
+                includeTestFiles[i] = "**/" + pattern + ".java";
             }
         }
 
