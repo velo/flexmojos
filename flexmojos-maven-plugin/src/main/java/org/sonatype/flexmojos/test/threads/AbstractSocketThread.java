@@ -7,8 +7,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
@@ -33,8 +31,6 @@ public abstract class AbstractSocketThread
 
     protected Integer testPort;
 
-    protected List<String> testReportData = new ArrayList<String>();
-
     protected Integer firstConnectionTimeout;
 
     public AbstractSocketThread()
@@ -42,12 +38,7 @@ public abstract class AbstractSocketThread
         super();
     }
 
-    public List<String> getTestReportData()
-    {
-        return testReportData;
-    }
-
-    public void init( int portNumber )
+    protected void init( int portNumber )
     {
         this.testPort = portNumber;
     }

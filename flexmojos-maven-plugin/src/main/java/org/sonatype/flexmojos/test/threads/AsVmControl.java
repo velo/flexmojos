@@ -8,12 +8,14 @@ import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
  * This class will ping Action Script virtual machine to make sure if the application still running
  * 
- * @plexus.component role="org.sonatype.flexmojos.test.threads.AsVmControl"
  * @author velo
  */
+@Component( role = AsVmControl.class, instantiationStrategy = "per-lookup" )
 public class AsVmControl
     extends AbstractSocketThread
 {
@@ -72,12 +74,6 @@ public class AsVmControl
 
             clientSocket.setSoTimeout( 0 );
         }
-    }
-
-    @Override
-    public void init( int portNumber )
-    {
-        this.init( portNumber, 20000, 2000 );
     }
 
     public void init( int testControlPort, int firstConnectionTimeout, int testTimeout )
