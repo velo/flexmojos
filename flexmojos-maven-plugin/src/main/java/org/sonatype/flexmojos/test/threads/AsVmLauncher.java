@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.StreamPumper;
@@ -19,9 +20,8 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * ActionScript runtime launcher. This class is used to launch the application that runs unit tests.
- * 
- * @plexus.component role="org.sonatype.flexmojos.test.threads.ASRLauncher"
  */
+@Component( role = AsVmLauncher.class, instantiationStrategy = "per-lookup" )
 public class AsVmLauncher
     extends AbstractLogEnabled
     implements ControlledThread
