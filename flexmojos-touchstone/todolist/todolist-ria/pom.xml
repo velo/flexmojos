@@ -59,7 +59,7 @@
             <configuration>
               <outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifacIds>todolist-config</includeArtifacIds>
+              <includeArtifactIds>todolist-config</includeArtifactIds>
             </configuration>
           </execution>
         </executions>
