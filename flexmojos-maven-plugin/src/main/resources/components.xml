@@ -54,18 +54,5 @@
       </configuration>
     </component>
 
-    <component>
-      <role>org.sonatype.flexmojos.test.threads.AsVmLauncher</role>
-      <implementation>org.sonatype.flexmojos.test.threads.AsVmLauncher</implementation>
-    </component>
-    <component>
-      <role>org.sonatype.flexmojos.test.threads.AsVmControl</role>
-      <implementation>org.sonatype.flexmojos.test.threads.AsVmControl</implementation>
-    </component>
-    <component>
-      <role>org.sonatype.flexmojos.test.threads.ResultHandler</role>
-      <implementation>org.sonatype.flexmojos.test.threads.ResultHandler</implementation>
-    </component>
-
   </components>
 </component-set>

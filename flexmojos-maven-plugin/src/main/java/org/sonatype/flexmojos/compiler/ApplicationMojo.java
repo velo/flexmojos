@@ -43,6 +43,7 @@ import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.compiler.io.FileUtil;
 import flex2.tools.oem.Application;
 import flex2.tools.oem.internal.OEMConfiguration;
 
@@ -205,7 +206,8 @@ public class ApplicationMojo
 
         if ( updateSecuritySandbox )
         {
-            updateSecuritySandbox();
+            String trustedFile = FileUtil.getCanonicalPath( getOutput() );
+            updateSecuritySandbox( trustedFile );
         }
 
         if ( modules != null )
@@ -245,7 +247,7 @@ public class ApplicationMojo
                 new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "." + project.getPackaging() );
             moduleBuilder.setOutput( outputModule );
 
-            build( moduleBuilder );
+            build( moduleBuilder, false );
 
             projectHelper.attachArtifact( project, SWF, moduleName, outputModule );
 
@@ -367,7 +369,7 @@ public class ApplicationMojo
 
         configuration.addLibraryPath( getResourcesBundles( locale ) );
 
-        build( rbBuilder );
+        build( rbBuilder, true );
 
         if ( configurationReport )
         {
@@ -387,7 +389,7 @@ public class ApplicationMojo
         projectHelper.attachArtifact( project, SWF, locale, output );
     }
 
-    private void updateSecuritySandbox()
+    protected void updateSecuritySandbox( String trustedFile )
         throws MojoExecutionException
     {
 
@@ -416,7 +418,6 @@ public class ApplicationMojo
             String cfg = IOUtils.toString( input );
             input.close();
 
-            String trustedFile = getOutput().getAbsolutePath();
             if ( cfg.contains( trustedFile ) )
             {
                 getLog().debug( "Already trust on " + trustedFile );
