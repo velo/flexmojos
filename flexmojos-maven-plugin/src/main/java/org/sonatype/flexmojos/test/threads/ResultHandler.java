@@ -19,13 +19,15 @@ package org.sonatype.flexmojos.test.threads;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
- * 
- * @plexus.component role="org.sonatype.flexmojos.test.threads.ResultHandler"
  */
+@Component( role = ResultHandler.class, instantiationStrategy = "per-lookup" )
 public class ResultHandler
     extends AbstractSocketThread
     implements ControlledThread
@@ -38,10 +40,12 @@ public class ResultHandler
 
     public static final char NULL_BYTE = '\u0000';
 
-    public static final String POLICY_FILE_REQUEST = "<policy-file-request/>";
+    protected List<String> testReportData;
 
-    public final static String DOMAIN_POLICY =
-        "<cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"{0}\" /></cross-domain-policy>";
+    public List<String> getTestReportData()
+    {
+        return testReportData;
+    }
 
     protected void handleRequest()
         throws SocketException, IOException
@@ -59,15 +63,7 @@ public class ResultHandler
                 // getLogger().debug( "Recivied data: " + data );
                 buffer = new StringBuffer();
 
-                if ( data.equals( POLICY_FILE_REQUEST ) )
-                {
-                    getLogger().debug( "Send policy file" );
-
-                    sendPolicyFile();
-                    closeClientSocket();
-                    openClientSocket();
-                }
-                else if ( data.endsWith( END_OF_TEST_SUITE ) )
+                if ( data.endsWith( END_OF_TEST_SUITE ) )
                 {
                     getLogger().debug( "End test suite" );
 
@@ -88,13 +84,11 @@ public class ResultHandler
         getLogger().debug( "Socket buffer " + buffer );
     }
 
-    protected void sendPolicyFile()
-        throws IOException
+    @Override
+    public void init( int portNumber )
     {
-        out.write( MessageFormat.format( DOMAIN_POLICY, new Object[] { Integer.toString( testPort ) } ).getBytes() );
+        super.init( portNumber );
 
-        out.write( NULL_BYTE );
-
-        getLogger().debug( "sent policy file" );
+        testReportData = new ArrayList<String>();
     }
 }
