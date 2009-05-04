@@ -24,6 +24,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.compiler.io.FileUtil;
+import flex2.tools.oem.Application;
+
 /**
  * Goal to compile the Flex test sources.
  * 
@@ -67,7 +70,13 @@ public class TestCompilerMojo
      * @parameter expression="${project.build.testSourceDirectory}"
      * @readonly
      */
-    private File testFolder;
+    private File testSourceDirectory;
+
+    /**
+     * @parameter expression="${project.build.testOutputDirectory}"
+     * @readonly
+     */
+    private File testOutputDirectory;
 
     /**
      * Socket connect port for flex/java communication to transfer tests results
@@ -83,6 +92,8 @@ public class TestCompilerMojo
      */
     private int testControlPort;
 
+    private List<String> testClasses;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -96,9 +107,9 @@ public class TestCompilerMojo
             getLog().warn( "Skipping test phase." );
             return;
         }
-        else if ( !testFolder.exists() )
+        else if ( !testSourceDirectory.exists() )
         {
-            getLog().warn( "Test folder not found" + testFolder );
+            getLog().warn( "Test folder not found" + testSourceDirectory );
             return;
         }
 
@@ -134,26 +145,15 @@ public class TestCompilerMojo
             }
         }
 
-        File outputFolder = new File( build.getTestOutputDirectory() );
-        if ( !outputFolder.exists() )
+        if ( !testOutputDirectory.exists() )
         {
-            outputFolder.mkdirs();
+            testOutputDirectory.mkdirs();
         }
 
-        List<String> testClasses = getTestClasses();
+        this.testClasses = getTestClasses();
 
-        File testSourceFile;
-        try
-        {
-            testSourceFile = generateTester( testClasses );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Unable to generate tester class.", e );
-        }
-
-        sourceFile = null;
-        source = testSourceFile;
+        // workaround to avoid file not found issues.
+        super.source = project.getFile();
 
         super.setUp();
     }
@@ -161,14 +161,14 @@ public class TestCompilerMojo
     private List<String> getTestClasses()
     {
         getLog().debug(
-                        "Scanning for tests at " + testFolder + " for " + Arrays.toString( includeTestFiles ) + " but "
-                            + Arrays.toString( excludeTestFiles ) );
+                        "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
+                            + " but " + Arrays.toString( excludeTestFiles ) );
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setIncludes( includeTestFiles );
         scanner.setExcludes( excludeTestFiles );
         scanner.addDefaultExcludes();
-        scanner.setBasedir( testFolder );
+        scanner.setBasedir( testSourceDirectory );
         scanner.scan();
 
         getLog().debug( "Test files: " + scanner.getIncludedFiles() );
@@ -185,7 +185,7 @@ public class TestCompilerMojo
         return testClasses;
     }
 
-    private File generateTester( List<String> testClasses )
+    private File generateTester( String testClass, String testFilename )
         throws Exception
     {
         // can't use velocity, got:
@@ -195,24 +195,18 @@ public class TestCompilerMojo
 
         StringBuilder imports = new StringBuilder();
 
-        for ( String testClass : testClasses )
-        {
-            imports.append( "import " );
-            imports.append( testClass );
-            imports.append( ";" );
-            imports.append( '\n' );
-        }
+        imports.append( "import " );
+        imports.append( testClass );
+        imports.append( ";" );
+        imports.append( '\n' );
 
         StringBuilder classes = new StringBuilder();
 
-        for ( String testClass : testClasses )
-        {
-            testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
-            classes.append( "addTest( " );
-            classes.append( testClass );
-            classes.append( ");" );
-            classes.append( '\n' );
-        }
+        testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
+        classes.append( "addTest( " );
+        classes.append( testClass );
+        classes.append( ");" );
+        classes.append( '\n' );
 
         InputStream templateSource = getTemplate();
         String sourceString = IOUtils.toString( templateSource );
@@ -220,7 +214,7 @@ public class TestCompilerMojo
         sourceString = sourceString.replace( "$testClasses", classes );
         sourceString = sourceString.replace( "$port", String.valueOf( testPort ) );
         sourceString = sourceString.replace( "$controlPort", String.valueOf( testControlPort ) );
-        File testSourceFile = new File( build.getTestOutputDirectory(), "TestRunner.mxml" );
+        File testSourceFile = new File( testOutputDirectory, testFilename + ".mxml" );
         FileWriter fileWriter = new FileWriter( testSourceFile );
         IOUtils.write( sourceString, fileWriter );
         fileWriter.flush();
@@ -263,7 +257,7 @@ public class TestCompilerMojo
         super.configure();
 
         // test launcher is at testOutputDirectory
-        configuration.addSourcePath( new File[] { new File( build.getTestOutputDirectory() ) } );
+        configuration.addSourcePath( new File[] { testOutputDirectory } );
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
         if ( getResource( compiledLocales[0] ) != null )
         {
@@ -341,7 +335,52 @@ public class TestCompilerMojo
     @Override
     protected File getOutput()
     {
-        return new File( build.getTestOutputDirectory(), "TestRunner.swf" );
+        return new File( testOutputDirectory, "TestRunner.swf" );
+    }
+
+    @Override
+    public void run()
+        throws MojoExecutionException, MojoFailureException
+    {
+        // shouldn't call supper super.run();
+        for ( String testClass : this.testClasses )
+        {
+            getLog().info( "Compiling test class: " + testClass );
+            String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
+
+            File testMxml;
+            try
+            {
+                testMxml = generateTester( testClass, testFilename );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Unable to generate tester class.", e );
+            }
+
+            Application testBuilder;
+            try
+            {
+                testBuilder = new Application( testMxml );
+            }
+            catch ( FileNotFoundException e )
+            {
+                // Shouldn't happen
+                throw new MojoFailureException( "Unable to find " + testMxml, e );
+            }
+
+            setMavenPathResolver( testBuilder );
+            testBuilder.setConfiguration( configuration );
+            testBuilder.setLogger( new DebugLogger( getLog() ) );
+            File testSwf = new File( testOutputDirectory, testFilename + ".swf" );
+            testBuilder.setOutput( testSwf );
+
+            build( testBuilder, false );
+
+            String trustedFile = FileUtil.getCanonicalPath( testSwf );
+            updateSecuritySandbox( trustedFile );
+        }
+
     }
 
     @Override
