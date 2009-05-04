@@ -57,6 +57,7 @@ package org.sonatype.flexmojos.unitestingsupport
 		public function addTest( test:Class ) : void
     	{
     	    tests.push(test);
+    	    trace("Testing "+test);
 		}
 	}
 }

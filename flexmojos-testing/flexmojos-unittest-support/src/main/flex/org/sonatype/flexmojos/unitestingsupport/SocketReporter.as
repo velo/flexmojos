@@ -24,6 +24,8 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	
+	import mx.binding.utils.BindingUtils;
+	
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
 	import org.sonatype.flexmojos.test.report.TestMethodReport;
@@ -31,8 +33,6 @@ package org.sonatype.flexmojos.unitestingsupport
 	import org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener;
 	import org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
 	import org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener;
-	
-	import mx.binding.utils.BindingUtils;
 	
 	public class SocketReporter
 	{
@@ -187,7 +187,9 @@ package org.sonatype.flexmojos.unitestingsupport
 		private function exit():void
 		{
 			// Close the socket.
-			socket.close();
+			if(socket) {
+				socket.close();
+			}
 				
 			// Execute the user's test complete function.
 			fscommand( "quit" )
@@ -202,16 +204,21 @@ package org.sonatype.flexmojos.unitestingsupport
 
 		public function runTests(tests:Array):void 
 		{
+			var count:int = 0;
 			//flexunit supported
 			if(getDefinitionByName("flexunit.framework.Test"))
 			{
-				totalTestCount += FlexUnitListener.run(tests);
+				count = FlexUnitListener.run(tests);
+				totalTestCount += count;
+				trace("Running " + count + " FlexUnit tests");
 			}
 
 			//funit supported			
 			if(getDefinitionByName("funit.core.FUnitFramework"))
 			{
-				totalTestCount += FUnitListener.run(tests);
+				count = FUnitListener.run(tests);
+				totalTestCount += count;
+				trace("Running " + count + " FUnit tests");
 			}
 			
 			//fluint supported
@@ -219,18 +226,29 @@ package org.sonatype.flexmojos.unitestingsupport
 			{
 				//too much complicated, didn't figure out how to run a test w/o UI
 				//testsScheduledToRun += FluintListener.run(tests);
+				//totalTestCount += count;
+				//trace("Running " + count + " FlexUnit tests");
 			}
 
 			//asunit supported
 			if(getDefinitionByName("asunit.framework.Test"))
 			{
-				totalTestCount += AsUnitListener.run(tests);
+				count = AsUnitListener.run(tests);
+				totalTestCount += count;
+				trace("Running " + count + " asunit tests");
 			}
 
 			//advancedflex supported
 			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
 			{
-				totalTestCount += AdvancedFlexListener.run(tests);
+				count = AdvancedFlexListener.run(tests);
+				totalTestCount += count;
+				trace("Running " + count + " Advanced Flex tests");
+			}
+			
+			if(totalTestCount == 0) {
+				trace("No tests to run, exiting");
+				exit();
 			}
 		}
 		

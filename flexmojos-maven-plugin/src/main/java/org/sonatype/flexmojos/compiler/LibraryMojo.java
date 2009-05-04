@@ -443,7 +443,7 @@ public class LibraryMojo
 
         localized.setOutput( output );
 
-        build( localized );
+        build( localized, true );
 
         if ( configurationReport )
         {

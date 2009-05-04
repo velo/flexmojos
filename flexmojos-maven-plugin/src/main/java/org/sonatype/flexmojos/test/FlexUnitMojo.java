@@ -26,6 +26,14 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
@@ -57,6 +65,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public class FlexUnitMojo
     extends AbstractIrvinMojo
+    implements Contextualizable
 {
 
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
@@ -84,7 +93,11 @@ public class FlexUnitMojo
      */
     private String flashPlayerCommand;
 
-    protected File swf;
+    /**
+     * @parameter expression="${project.build.testOutputDirectory}"
+     * @readonly
+     */
+    private File testOutputDirectory;
 
     private Error executionError;
 
@@ -117,21 +130,6 @@ public class FlexUnitMojo
     private int time;
 
     /**
-     * @component
-     */
-    private AsVmLauncher asVmLauncher;
-
-    /**
-     * @component
-     */
-    private ResultHandler resultHandler;
-
-    /**
-     * @component
-     */
-    private AsVmControl asVmControl;
-
-    /**
      * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
      * 
      * @parameter default-value="true" expression="${allowHeadlessMode}"
@@ -153,6 +151,8 @@ public class FlexUnitMojo
      */
     private int testTimeout;
 
+    private PlexusContainer plexus;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -167,9 +167,9 @@ public class FlexUnitMojo
         {
             getLog().info( "Skipping test phase." );
         }
-        else if ( swf == null || !swf.exists() )
+        else if ( testOutputDirectory == null || !testOutputDirectory.isDirectory() )
         {
-            getLog().warn( "Skipping test run. Runner not found: " + swf );
+            getLog().warn( "Skipping test run. Runner not found: " + testOutputDirectory );
         }
         else
         {
@@ -178,15 +178,11 @@ public class FlexUnitMojo
         }
     }
 
-    /**
-     * Called by Ant to execute the task.
-     */
     @Override
     protected void setUp()
         throws MojoExecutionException, MojoFailureException
     {
-        swf = new File( build.getTestOutputDirectory(), "TestRunner.swf" );
-        reportPath = new File( build.getDirectory(), "surefire-reports" );
+        reportPath = new File( build.getDirectory(), "surefire-reports" ); // I'm not surefire, but ok
         reportPath.mkdirs();
     }
 
@@ -261,19 +257,41 @@ public class FlexUnitMojo
     protected void run()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info( "Starting tests" );
+        DirectoryScanner scan = new DirectoryScanner();
+        scan.setIncludes( new String[] { "*.swf" } );
+        scan.addDefaultExcludes();
+        scan.setBasedir( testOutputDirectory );
+        scan.scan();
 
+        String[] swfs = scan.getIncludedFiles();
+        for ( String swfName : swfs )
+        {
+            run( new File( testOutputDirectory, swfName ) );
+        }
+    }
+
+    protected void run( File swf )
+        throws MojoExecutionException
+    {
+        getLog().info( "Running tests " + swf );
+
+        AsVmControl asVmControl = null;
+        ResultHandler resultHandler = null;
+        AsVmLauncher asVmLauncher = null;
         try
         {
             // Start a thread that pings flashplayer to be sure if it still alive.
+            asVmControl = lookup( AsVmControl.class );
             asVmControl.init( testControlPort, firstConnectionTimeout, testTimeout );
             run( asVmControl );
 
             // Start a thread that receives the FlexUnit results.
+            resultHandler = lookup( ResultHandler.class );
             resultHandler.init( testPort );
             run( resultHandler );
 
             // Start the browser and run the FlexUnit tests.
+            asVmLauncher = lookup( AsVmLauncher.class );
             asVmLauncher.init( flashPlayerCommand, swf, allowHeadlessMode );
             run( asVmLauncher );
 
@@ -287,7 +305,9 @@ public class FlexUnitMojo
                 if ( hasError( asVmLauncher, asVmControl, resultHandler ) )
                 {
                     this.executionError = getError( asVmLauncher, asVmControl, resultHandler );
-                    getLog().error( executionError.getMessage(), executionError );
+                    getLog().error( executionError.getMessage() + swf, executionError );
+                    numTests++;
+                    numErrors++;
                     return;
                 }
 
@@ -307,16 +327,35 @@ public class FlexUnitMojo
                     return;
                 }
 
-                Thread.sleep( 1000 );
+                try
+                {
+                    Thread.sleep( 1000 );
+                }
+                catch ( InterruptedException e )
+                {
+                    // no worries
+                }
             }
-        }
-        catch ( InterruptedException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
         }
         finally
         {
             stop( asVmLauncher, asVmControl, resultHandler );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private <E> E lookup( Class<E> clazz )
+        throws MojoExecutionException
+    {
+        String role = clazz.getName();
+        getLog().debug( "Looking up for " + role );
+        try
+        {
+            return (E) plexus.lookup( role );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new MojoExecutionException( "Unable to lookup for " + role, e );
         }
     }
 
@@ -392,6 +431,18 @@ public class FlexUnitMojo
                 {
                     getLog().debug( "Error sttoping " + controlledThread.getClass(), e );
                 }
+                finally
+                {
+                    try
+                    {
+                        plexus.release( controlledThread );
+                    }
+                    catch ( ComponentLifecycleException e )
+                    {
+                        getLog().debug( "Error releasing " + controlledThread.getClass(), e );
+                        // just releasing ignoring
+                    }
+                }
             }
         }
     }
@@ -432,4 +483,11 @@ public class FlexUnitMojo
         }
         return false;
     }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        plexus = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
 }
