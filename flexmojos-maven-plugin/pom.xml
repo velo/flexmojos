@@ -97,9 +97,24 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.3</version>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>generate-metadata</goal>
+              <goal>merge-metadata</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <descriptors>
+                <descriptor>${project.build.directory}/components.xml</descriptor>
+                <descriptor>${basedir}/src/main/resources/components.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.ops4j</groupId>
@@ -108,7 +123,6 @@
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma-maven-plugin</artifactId>
-        <version>1.0</version>
         <executions>
           <execution>
             <phase>process-classes</phase>
@@ -211,6 +225,10 @@
       <type>zip</type>
       <classifier>template</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+    </dependency>
   </dependencies>
 
   <reporting>
@@ -218,7 +236,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.3</version>
       </plugin>
     </plugins>
   </reporting>

@@ -1159,7 +1159,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         builder.setConfiguration( configuration );
 
-        build( builder );
+        build( builder, true );
     }
 
     /**
@@ -2224,7 +2224,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
-    protected void build( E builder )
+    protected void build( E builder, boolean printConfigurations )
         throws MojoExecutionException
     {
         if ( !isCompilationRequired() )
@@ -2233,7 +2233,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         long bytes;
-        getLog().info( "Flex compiler configurations:" + configuration.toString().replace( "--", "\n-" ) );
+        if ( printConfigurations )
+        {
+            getLog().info( "Flex compiler configurations:" + configuration.toString().replace( "--", "\n-" ) );
+        }
+        else
+        {
+            getLog().debug( "Flex compiler configurations:" + configuration.toString().replace( "--", "\n-" ) );
+        }
+
         try
         {
 

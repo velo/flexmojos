@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.flexcover;
 
-
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -78,7 +77,7 @@ public class FlexCoverMojo
             e.printStackTrace();
         }
 
-        swf = new File( "target/flexcover-classes", "TestRunner.swf" );
+        // FIXME swf = new File( "target/flexcover-classes", "TestRunner.swf" );
 
         super.run();
 
