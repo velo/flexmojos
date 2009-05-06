@@ -42,7 +42,8 @@ public class FlexUnitTest
         }
         finally
         {
-            File sureFireReports = new File( testDir, "target/surefire-reports" );
+            File target = new File( testDir, "target" );
+            File sureFireReports = new File( target, "surefire-reports" );
             Assert.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
 
             String[] reportFiles = sureFireReports.list();
@@ -57,6 +58,56 @@ public class FlexUnitTest
             Assert.assertEquals( 1, report.getErrors() );
             Assert.assertEquals( 1, report.getFailures() );
             Assert.assertEquals( 3, report.getTests() );
+
+            File testClasses = new File( target, "test-classes" );
+            Assert.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
+
+            File mxml = new File( testClasses, "TestRunner.mxml" );
+            Assert.assertTrue( mxml.isFile() );
+            File swf = new File( testClasses, "TestRunner.swf" );
+            Assert.assertTrue( swf.isFile() );
+        }
+    }
+
+    @Test( expectedExceptions = { VerificationException.class } )
+    public void testFlexUnitExampleForked()
+        throws Exception
+    {
+        File testDir = getProject( "/concept/flexunit-example/" );
+        try
+        {
+            test( testDir, "install", "-DforkMode=always" );
+        }
+        finally
+        {
+            File target = new File( testDir, "target" );
+            File sureFireReports = new File( target, "surefire-reports" );
+            Assert.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
+
+            String[] reportFiles = sureFireReports.list();
+            Assert.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2, reportFiles.length );
+
+            File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
+            Assert.assertTrue( "Report was not created!", reportFile.isFile() );
+
+            String reportContent = FileUtils.readFileToString( reportFile );
+            TestCaseReport report = (TestCaseReport) XStreamFactory.getXStreamInstance().fromXML( reportContent );
+
+            Assert.assertEquals( 1, report.getErrors() );
+            Assert.assertEquals( 1, report.getFailures() );
+            Assert.assertEquals( 3, report.getTests() );
+
+            File testClasses = new File( target, "test-classes" );
+            Assert.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
+
+            File mxml = new File( testClasses, "com_adobe_example_TestCalculator_Flexmojos_test.mxml" );
+            Assert.assertTrue( mxml.isFile() );
+            File swf = new File( testClasses, "com_adobe_example_TestCalculator_Flexmojos_test.swf" );
+            Assert.assertTrue( swf.isFile() );
+            File mxml2 = new File( testClasses, "com_adobe_example_TestCalculator2_Flexmojos_test.mxml" );
+            Assert.assertTrue( mxml2.isFile() );
+            File swf2 = new File( testClasses, "com_adobe_example_TestCalculator2_Flexmojos_test.swf" );
+            Assert.assertTrue( swf2.isFile() );
         }
     }
 
