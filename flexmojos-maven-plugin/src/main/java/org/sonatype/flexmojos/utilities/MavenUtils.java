@@ -58,6 +58,8 @@ import eu.cedarsoft.utils.ZipExtractor;
 public class MavenUtils
 {
 
+    private static final String FREE_BSD = "freebsd";
+
     private static final String WINDOWS_OS = "windows";
 
     private static final String MAC_OS = "mac os x";
@@ -143,7 +145,8 @@ public class MavenUtils
                     public boolean accept( File pathname )
                     {
                         return pathname.isFile()
-                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith( ".css" ) );
+                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith(
+                                                                                                                                                ".css" ) );
                     }
                 } );
 
@@ -392,7 +395,9 @@ public class MavenUtils
      */
     public static boolean isLinux()
     {
-        return osString().startsWith( LINUX_OS );
+        return osString().startsWith( LINUX_OS ) ||
+        // I know, but people said that workds...
+            osString().startsWith( FREE_BSD );
     }
 
     /**
@@ -557,30 +562,30 @@ public class MavenUtils
         return flexmojosProperties.getProperty( "version" );
     }
 
-	public static String replaceArtifactCoordinatesTokens( String sample, Artifact artifact )
-	{
-		sample = sample.replace( "{groupId}", artifact.getGroupId() );
-		sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
-		sample = sample.replace( "{version}", artifact.getVersion() );
-		
-		return sample;
-}
+    public static String replaceArtifactCoordinatesTokens( String sample, Artifact artifact )
+    {
+        sample = sample.replace( "{groupId}", artifact.getGroupId() );
+        sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
+        sample = sample.replace( "{version}", artifact.getVersion() );
 
-	public static String getRslUrl( String sample, Artifact artifact, String extension )
-	{
-		String url = replaceArtifactCoordinatesTokens( sample, artifact );
-		url = url.replace( "{extension}", extension );
+        return sample;
+    }
 
-		return url;
-	}
+    public static String getRslUrl( String sample, Artifact artifact, String extension )
+    {
+        String url = replaceArtifactCoordinatesTokens( sample, artifact );
+        url = url.replace( "{extension}", extension );
 
-	public static String getRuntimeLocaleOutputPath( String sample, Artifact artifact, String locale, String extension )
-	{
-		String path = replaceArtifactCoordinatesTokens( sample, artifact );
-		path = path.replace( "{locale}", locale );
-		path = path.replace( "{extension}", extension );
+        return url;
+    }
 
-		return path;
-	}
+    public static String getRuntimeLocaleOutputPath( String sample, Artifact artifact, String locale, String extension )
+    {
+        String path = replaceArtifactCoordinatesTokens( sample, artifact );
+        path = path.replace( "{locale}", locale );
+        path = path.replace( "{extension}", extension );
+
+        return path;
+    }
 
 }
