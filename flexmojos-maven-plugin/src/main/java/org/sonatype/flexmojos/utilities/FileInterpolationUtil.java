@@ -21,9 +21,9 @@ public class FileInterpolationUtil
         dest.mkdirs();
 
         DirectoryScanner scan = new DirectoryScanner();
-        scan.addDefaultExcludes();
-        scan.setExcludes( excludesInterpolation );
         scan.setBasedir( from );
+        scan.setExcludes( excludesInterpolation );
+        scan.addDefaultExcludes();
         scan.scan();
 
         String[] files = scan.getIncludedFiles();
@@ -35,9 +35,9 @@ public class FileInterpolationUtil
         }
 
         scan = new DirectoryScanner();
-        scan.addDefaultExcludes();
-        scan.setIncludes( excludesInterpolation );
         scan.setBasedir( from );
+        scan.setIncludes( excludesInterpolation );
+        scan.addDefaultExcludes();
         scan.scan();
 
         files = scan.getIncludedFiles();
