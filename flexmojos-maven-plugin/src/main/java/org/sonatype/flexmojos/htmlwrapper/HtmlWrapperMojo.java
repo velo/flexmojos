@@ -51,6 +51,8 @@ public class HtmlWrapperMojo
     extends AbstractMojo
 {
 
+    private static final String INDEX_TEMPLATE_HTML = "index.template.html";
+
     /**
      * The maven project.
      * 
@@ -200,7 +202,12 @@ public class HtmlWrapperMojo
     private void copyIndexTemplate()
         throws MojoExecutionException
     {
-        File indexTemplate = new File( templateOutputDirectory, "index.template.html" );
+        File indexTemplate = new File( templateOutputDirectory, INDEX_TEMPLATE_HTML );
+        if ( !indexTemplate.isFile() )
+        {
+            getLog().debug( "No index.template.html" );
+            return;
+        }
         File index = new File( outputDirectory, htmlName + ".html" );
 
         try
@@ -224,6 +231,13 @@ public class HtmlWrapperMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Unable to create templates.", e );
+        }
+
+        // XXX shouldn't copy template, but there isn't a fast fix for that right know
+        File template = new File( outputDirectory, INDEX_TEMPLATE_HTML );
+        if ( template.exists() )
+        {
+            template.delete();
         }
     }
 
@@ -384,7 +398,7 @@ public class HtmlWrapperMojo
 
         if ( templateExclusions == null )
         {
-            templateExclusions = new String[] { "*.swf" };
+            templateExclusions = new String[] { "*.swf", "*.png", "*.jpg", "*.pdf" };
         }
     }
 
