@@ -203,7 +203,7 @@ public class AbstractFlexMojosTests
                                     "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
                                     projectFolder.isDirectory() );
 
-            File destDir = new File( projectsWorkdir, projectName );
+            File destDir = new File( projectsWorkdir, projectName + "_" + getTestName() );
 
             FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 
