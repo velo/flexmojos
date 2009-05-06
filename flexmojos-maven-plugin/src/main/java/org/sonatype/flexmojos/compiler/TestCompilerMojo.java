@@ -40,6 +40,8 @@ public class TestCompilerMojo
     extends ApplicationMojo
 {
 
+    private static final String ONCE = "once";
+
     /**
      * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
      * 
@@ -91,6 +93,13 @@ public class TestCompilerMojo
      * @parameter default-value="13540" expression="${testControlPort}"
      */
     private int testControlPort;
+
+    /**
+     * Option to specify the forking mode. Can be "once" or "always". Always fork flashplayer per test class.
+     * 
+     * @parameter default-value="once" expression="${forkMode}"
+     */
+    private String forkMode;
 
     private List<String> testClasses;
 
@@ -185,7 +194,7 @@ public class TestCompilerMojo
         return testClasses;
     }
 
-    private File generateTester( String testClass, String testFilename )
+    private File generateTester( String[] testClasses, String testFilename )
         throws Exception
     {
         // can't use velocity, got:
@@ -195,18 +204,24 @@ public class TestCompilerMojo
 
         StringBuilder imports = new StringBuilder();
 
-        imports.append( "import " );
-        imports.append( testClass );
-        imports.append( ";" );
-        imports.append( '\n' );
+        for ( String testClass : testClasses )
+        {
+            imports.append( "import " );
+            imports.append( testClass );
+            imports.append( ";" );
+            imports.append( '\n' );
+        }
 
         StringBuilder classes = new StringBuilder();
 
-        testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
-        classes.append( "addTest( " );
-        classes.append( testClass );
-        classes.append( ");" );
-        classes.append( '\n' );
+        for ( String testClass : testClasses )
+        {
+            testClass = testClass.substring( testClass.lastIndexOf( '.' ) + 1 );
+            classes.append( "addTest( " );
+            classes.append( testClass );
+            classes.append( ");" );
+            classes.append( '\n' );
+        }
 
         InputStream templateSource = getTemplate();
         String sourceString = IOUtils.toString( templateSource );
@@ -342,45 +357,65 @@ public class TestCompilerMojo
     public void run()
         throws MojoExecutionException, MojoFailureException
     {
-        // shouldn't call supper super.run();
-        for ( String testClass : this.testClasses )
+        // shouldn't call super super.run();
+
+        if ( ONCE.equals( forkMode ) )
         {
-            getLog().info( "Compiling test class: " + testClass );
-            String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
-
-            File testMxml;
-            try
+            String testFilename = "TestRunner";
+            buildTest( testFilename, testClasses.toArray( new String[0] ) );
+        }
+        else
+        {
+            for ( String testClass : testClasses )
             {
-                testMxml = generateTester( testClass, testFilename );
+                String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
+                buildTest( testFilename, testClass );
             }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "Unable to generate tester class.", e );
-            }
-
-            Application testBuilder;
-            try
-            {
-                testBuilder = new Application( testMxml );
-            }
-            catch ( FileNotFoundException e )
-            {
-                // Shouldn't happen
-                throw new MojoFailureException( "Unable to find " + testMxml, e );
-            }
-
-            setMavenPathResolver( testBuilder );
-            testBuilder.setConfiguration( configuration );
-            testBuilder.setLogger( new DebugLogger( getLog() ) );
-            File testSwf = new File( testOutputDirectory, testFilename + ".swf" );
-            testBuilder.setOutput( testSwf );
-
-            build( testBuilder, false );
-
-            String trustedFile = FileUtil.getCanonicalPath( testSwf );
-            updateSecuritySandbox( trustedFile );
         }
 
+    }
+
+    private void buildTest( String testFilename, String... testClasses )
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( testClasses == null || testClasses.length == 0 )
+        {
+            return;
+        }
+
+        getLog().info( "Compiling test class: " + testClasses );
+
+        File testMxml;
+        try
+        {
+            testMxml = generateTester( testClasses, testFilename );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to generate tester class.", e );
+        }
+
+        Application testBuilder;
+        try
+        {
+            testBuilder = new Application( testMxml );
+        }
+        catch ( FileNotFoundException e )
+        {
+            // Shouldn't happen
+            throw new MojoFailureException( "Unable to find " + testMxml, e );
+        }
+
+        setMavenPathResolver( testBuilder );
+        testBuilder.setConfiguration( configuration );
+        testBuilder.setLogger( new DebugLogger( getLog() ) );
+        File testSwf = new File( testOutputDirectory, testFilename + ".swf" );
+        testBuilder.setOutput( testSwf );
+
+        build( testBuilder, false );
+
+        String trustedFile = FileUtil.getCanonicalPath( testSwf );
+        updateSecuritySandbox( trustedFile );
     }
 
     @Override
