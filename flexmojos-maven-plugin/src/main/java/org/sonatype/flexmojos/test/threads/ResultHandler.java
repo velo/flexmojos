@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 
 import org.codehaus.plexus.component.annotations.Component;
 
@@ -21,6 +23,8 @@ public class ResultHandler
 
     public static final String END_OF_TEST_SUITE = "</testsuite>";
 
+    public static final String ACK_OF_TEST_RESULT = "<endOfTestRunAck/>";
+    
     public static final char NULL_BYTE = '\u0000';
 
     protected List<String> testReportData;
@@ -43,19 +47,27 @@ public class ResultHandler
             if ( chr == NULL_BYTE )
             {
                 final String data = buffer.toString();
-                // getLogger().debug( "Recivied data: " + data );
+                getLogger().debug( "[RESULT] port: "+testPort+" Recivied data: " + data  );
                 buffer = new StringBuffer();
 
                 if ( data.endsWith( END_OF_TEST_SUITE ) )
                 {
-                    getLogger().debug( "End test suite" );
+                    getLogger().debug( "[MISI] End test suite" );
 
                     this.testReportData.add( data );
                 }
                 else if ( data.equals( END_OF_TEST_RUN ) )
                 {
-                    getLogger().debug( "End test run" );
-                    break;
+                    getLogger().debug( "[MISI] End test run - sending ACK: "+ACK_OF_TEST_RESULT );
+               
+                    /*
+                     * [MISI] Here is the acknowledge sending code
+                     */
+                    
+                    BufferedWriter out = new BufferedWriter( new OutputStreamWriter( super.out ) );
+                    out.write( ACK_OF_TEST_RESULT + NULL_BYTE );
+                    out.flush();
+                    break;                    
                 }
             }
             else
