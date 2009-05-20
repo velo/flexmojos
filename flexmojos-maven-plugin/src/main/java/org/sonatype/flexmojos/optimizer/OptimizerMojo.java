@@ -99,9 +99,7 @@ public class OptimizerMojo
         {
             if ( "swf".equals( packaging ) )
             {
-                backupOriginalSWF( originalFile );
-
-                inputSWF = new FileInputStream( originalFile );
+                inputSWF = new FileInputStream(  backupOriginalSWF( originalFile ) );
                 zipFile = null;
             }
             else
@@ -195,7 +193,7 @@ public class OptimizerMojo
         return inputSWF;
     }
 
-    private void backupOriginalSWF( File originalFile )
+    private File backupOriginalSWF( File originalFile )
         throws MojoExecutionException
     {
         File bkpOriginalFile = new File( build.getOutputDirectory(), "orig-library.swf" );
@@ -210,6 +208,7 @@ public class OptimizerMojo
 
         getLog().debug( "attaching original swf" );
         projectHelper.attachArtifact( project, "swf", "original", bkpOriginalFile );
+		return bkpOriginalFile;
     }
 
     private ZipFile newZipFile( File originalFile )
