@@ -95,6 +95,9 @@ public class AsVmLauncher
 
         setStatus( ThreadStatus.RUNNING );
 
+        getLogger().debug( "[MISI] start" );
+
+        
         getLogger().debug( "exec: " + flashPlayer + " - " + targetSwf );
 
         getLogger().debug( "Creating process" );
@@ -216,7 +219,14 @@ public class AsVmLauncher
 
         if ( process != null )
         {
-            process.destroy();
+
+        	//[MISI] cleanup disabled for the moment
+        	getLogger().debug( "[MISI] stop but not destroying" );
+       	
+  
+        	//process.destroy();
+           
+        	
         }
     }
 
