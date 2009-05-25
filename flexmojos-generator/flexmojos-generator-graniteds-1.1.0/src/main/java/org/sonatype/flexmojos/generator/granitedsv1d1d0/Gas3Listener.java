@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator;
+package org.sonatype.flexmojos.generator.granitedsv1d1d0;
 
-import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
 import org.granite.generator.Listener;
 import org.granite.generator.Output;
@@ -27,16 +27,16 @@ import org.granite.generator.Output;
  * 
  * @author Juraj Burian
  */
-public class Gas3Listener
+final class Gas3Listener
     implements Listener
 {
 
-    private final Log log;
+    private final Logger log;
 
     /**
      * @param log
      */
-    public Gas3Listener( final Log log )
+    public Gas3Listener( final Logger log )
     {
         this.log = log;
     }

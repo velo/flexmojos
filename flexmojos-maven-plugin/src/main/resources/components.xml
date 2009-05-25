@@ -21,6 +21,32 @@
 
 <component-set>
   <components>
+
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>swc</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>swc</type>
+        <extension>swc</extension>
+        <includesDependencies>false</includesDependencies>
+        <language>actionscript</language>
+        <addedToClasspath>false</addedToClasspath>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>swf</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>swf</type>
+        <extension>swf</extension>
+        <includesDependencies>false</includesDependencies>
+        <language>actionscript</language>
+        <addedToClasspath>false</addedToClasspath>
+      </configuration>
+    </component>
+
     <!-- i18n resource bundles -->
     <component>
       <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
@@ -29,6 +55,9 @@
       <configuration>
         <type>resource-bundle</type>
         <extension>rb.swc</extension>
+        <includesDependencies>false</includesDependencies>
+        <language>actionscript</language>
+        <addedToClasspath>false</addedToClasspath>
       </configuration>
     </component>
 

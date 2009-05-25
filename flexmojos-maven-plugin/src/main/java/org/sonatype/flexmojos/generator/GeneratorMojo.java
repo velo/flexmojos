@@ -17,61 +17,45 @@
  */
 package org.sonatype.flexmojos.generator;
 
+import static java.lang.Thread.currentThread;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Build;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.classworlds.ClassWorld;
 import org.codehaus.classworlds.DuplicateRealmException;
-import org.granite.generator.Generator;
-import org.granite.generator.Output;
-import org.granite.generator.TemplateUri;
-import org.granite.generator.as3.As3TypeFactory;
-import org.granite.generator.as3.DefaultAs3TypeFactory;
-import org.granite.generator.as3.JavaAs3GroovyConfiguration;
-import org.granite.generator.as3.JavaAs3Input;
-import org.granite.generator.as3.PackageTranslator;
-import org.granite.generator.as3.reflect.JavaEntityBean;
-import org.granite.generator.as3.reflect.JavaEnum;
-import org.granite.generator.as3.reflect.JavaInterface;
-import org.granite.generator.as3.reflect.JavaType;
-import org.granite.generator.gsp.GroovyTemplateFactory;
-import org.granite.generator.template.StandardTemplateUris;
+import org.codehaus.plexus.util.SelectorUtils;
+import org.sonatype.flexmojos.generator.api.GenerationException;
+import org.sonatype.flexmojos.generator.api.GenerationRequest;
+import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.api.GeneratorFactory;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
- * This goal generate actionscript 3 code based on Java classes.  It does uses Granite GAS3.
+ * This goal generate actionscript 3 code based on Java classes. It does uses Granite GAS3.
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 1.0
+ * @author edward.yakop@gmail.com
  * @goal generate
  * @phase generate-sources
  * @requiresDependencyResolution test
+ * @since 1.0
  */
 public class GeneratorMojo
     extends AbstractMojo
-    implements JavaAs3GroovyConfiguration
 {
 
     /**
@@ -81,7 +65,7 @@ public class GeneratorMojo
      * @required
      * @readonly
      */
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * File to generate as3 file. If not defined assumes all classes must be included
@@ -114,20 +98,6 @@ public class GeneratorMojo
     private String[] excludeJavaClasses;
 
     /**
-     * File to include as output from as3 generation. If not defined, assumes all classes are included in the output
-     * 
-     * @parameter
-     */
-    private String[] outputClasses;
-
-    /**
-     * @parameter expression="${project.build}"
-     * @required
-     * @readonly
-     */
-    protected Build build;
-
-    /**
      * @parameter default-value="${project.build.sourceDirectory}"
      */
     private File outputDirectory;
@@ -139,93 +109,77 @@ public class GeneratorMojo
 
     /**
      * @parameter
+     * @deprecated
      */
     private String uid = "uid";
 
     /**
      * @parameter
+     * @deprecated
      */
     private String[] entityTemplate;
 
     /**
      * @parameter
+     * @deprecated
      */
     private String[] interfaceTemplate;
 
     /**
      * @parameter
+     * @deprecated
      */
     private String[] beanTemplate;
 
     /**
      * @parameter
+     * @deprecated
      */
     private String[] enumTemplate;
-
-    /**
-     * @parameter default-value="false"
-     */
-    private boolean useTransitiveDependencies;
 
     /**
      * Controls whether or not enum classes are output to the baseOutputDirectory (true) or the outputDirectory (false)
      * 
      * @parameter default-value="false"
+     * @deprecated
      */
     private boolean outputEnumToBaseOutputDirectory;
 
     /**
-     * internal properties
+     * @parameter default-value="graniteds1"
      */
-    private Gas3Listener listener;
-
-    private As3TypeFactory as3TypeFactoryImpl;
-
-    private List<PackageTranslator> translators = new ArrayList<PackageTranslator>();
-
-    private Map<String, File> classes;
-
-    private ClassLoader loader;
-
-    private GroovyTemplateFactory groovyTemplateFactory = null;
-
-    private TemplateUri[] entityTemplateUris = null;
-
-    private TemplateUri[] interfaceTemplateUris = null;
-
-    private TemplateUri[] beanTemplateUris = null;
-
-    private TemplateUri[] enumTemplateUris = null;
+    private String generatorToUse;
 
     /**
-     * @component
+     * @parameter default-value="false";
+     * @deprecated
      */
-    protected ArtifactResolver resolver;
+    private boolean useTideEntityTemplate;
 
     /**
-     * @component
+     * @component role="org.sonatype.flexmojos.generator.api.GeneratorFactory"
      */
-    protected ArtifactMetadataSource artifactMetadataSource;
+    private GeneratorFactory generatorFactory;
 
     /**
-     * @component
-     */
-    protected MavenProjectBuilder mavenProjectBuilder;
-
-    /**
-     * Local repository to be used by the plugin to resolve dependencies.
+     * Configurations used by the generator implementation, check generator docs to see which parameters can be used.
      * 
-     * @parameter expression="${localRepository}"
+     * @parameter
      */
-    protected ArtifactRepository localRepository;
+    private Map<String, String> extraOptions;
 
     /**
-     * List of remote repositories to be used by the plugin to resolve dependencies.
+     * Templates used by the generator implementation, check generator docs to see which Templates can be used. Example:
      * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * <pre>
+     * &lt;templates&gt;
+     *   &lt;base-enum-template&gt;your-template&lt;/base-enum-template&gt;
+     * &lt;/templates&gt;
+     * </pre>
+     * 
+     * @parameter
      */
-    @SuppressWarnings( "unchecked" )
-    protected List remoteRepositories;
+    private Map<String, String> templates;
 
     public void execute()
         throws MojoExecutionException
@@ -236,241 +190,23 @@ public class GeneratorMojo
 
         setUp();
 
-        List<File> jarDependencies = getJarDependencies();
-        if ( jarDependencies.isEmpty() )
-        {
-            getLog().warn( "No jar dependencies found." );
-            return;
-        }
+        GenerationRequest request = new GenerationRequest();
+        request.setClasses( getFilesToGenerator() );
+        request.setClassLoader( this.initializeClassLoader() );
+        request.setExtraOptions( extraOptions );
+        request.setPersistentOutputFolder( outputDirectory );
+        request.setTemplates( templates );
+        request.setTransientOutputFolder( baseOutputDirectory );
 
+        Generator generator = generatorFactory.getGenerator( generatorToUse );
         try
         {
-            classes = getClasses( jarDependencies );
+            generator.generate( request );
         }
-        catch ( IOException e )
+        catch ( GenerationException e )
         {
-            throw new MojoExecutionException( "Error on classes resolve", e );
+            throw new MojoExecutionException( e.getMessage(), e );
         }
-
-        try
-        {
-            // create a new classloading space
-            ClassWorld world = new ClassWorld();
-
-            // use the existing ContextClassLoader in a realm of the classloading space
-            ClassRealm realm =
-                world.newRealm( "plugin.flexmojos.generator", Thread.currentThread().getContextClassLoader() );
-
-            // create another realm for just the dependency jars and make
-            // sure it is in a child-parent relationship with the current ContextClassLoader
-            ClassRealm gas3GeneratorRealm = realm.createChildRealm( "gas3Generator" );
-
-            // add all the jars to the new child realm
-            for ( URL url : getUrls( jarDependencies ) )
-                gas3GeneratorRealm.addConstituent( url );
-
-            loader = gas3GeneratorRealm.getClassLoader();
-            Thread.currentThread().setContextClassLoader( gas3GeneratorRealm.getClassLoader() );
-        }
-        catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "Unable to get dependency URL", e );
-        }
-        catch ( DuplicateRealmException e )
-        {
-            throw new MojoExecutionException( "Unable to create new class loading realm", e );
-        }
-
-        setupTemplateUris();
-
-        Generator generator = getGenerator( loader );
-
-        as3TypeFactoryImpl = new DefaultAs3TypeFactory();
-
-        int count = 0;
-        for ( Map.Entry<String, File> classEntry : classes.entrySet() )
-        {
-            Class<?> clazz = null;
-            try
-            {
-                clazz = loader.loadClass( classEntry.getKey() );
-                JavaAs3Input input = new JavaAs3Input( clazz, classEntry.getValue() );
-                for ( Output<?> output : generator.generate( input ) )
-                {
-                    if ( output.isOutdated() )
-                        count++;
-                }
-            }
-            catch ( Exception e )
-            {
-                getLog().warn( "Could not generate AS3 beans for: '" + clazz + "'", e );
-            }
-        }
-        getLog().info( count + " files generated." );
-    }
-
-    private URL[] getUrls( List<File> jarDependencies )
-        throws MalformedURLException
-    {
-        URL[] urls = new URL[jarDependencies.size()];
-        for ( int i = 0; i < jarDependencies.size(); i++ )
-        {
-            urls[i] = jarDependencies.get( i ).toURL();
-        }
-        return urls;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private List<File> getJarDependencies()
-    {
-        List<File> jarDependencies = new ArrayList<File>();
-        final Collection<Artifact> artifacts;
-        if ( useTransitiveDependencies )
-        {
-            artifacts = project.getArtifacts();
-        }
-        else
-        {
-            artifacts = project.getDependencyArtifacts();
-        }
-
-        for ( Artifact artifact : artifacts )
-        {
-            if ( "jar".equals( artifact.getType() ) )
-            {
-                try
-                {
-                    resolver.resolveAlways( artifact, remoteRepositories, localRepository );
-                }
-                catch ( AbstractArtifactResolutionException e )
-                {
-                    getLog().warn( "Dependency file not found: " + artifact );
-                    getLog().debug( e );
-                    continue;
-                }
-
-                File file = artifact.getFile();
-                if ( file != null && file.exists() )
-                {
-                    jarDependencies.add( file );
-                }
-            }
-        }
-        return jarDependencies;
-    }
-
-    private void setupTemplateUris()
-    {
-        String baseTemplateUri = null;
-        String templateUri = StandardTemplateUris.ENUM;
-        if ( get0( enumTemplate ) != null )
-        {
-            templateUri = get0( enumTemplate );
-        }
-        enumTemplateUris = createTemplateUris( baseTemplateUri, templateUri );
-
-        // Interface templates.
-        baseTemplateUri = StandardTemplateUris.INTERFACE_BASE;
-        templateUri = StandardTemplateUris.INTERFACE;
-        if ( get1( interfaceTemplate ) != null )
-        {
-            templateUri = get1( interfaceTemplate );
-        }
-        if ( get0( interfaceTemplate ) != null )
-        {
-            baseTemplateUri = get0( interfaceTemplate );
-        }
-        interfaceTemplateUris = createTemplateUris( baseTemplateUri, templateUri );
-
-        // Entity templates.
-        baseTemplateUri = StandardTemplateUris.ENTITY_BASE;
-        templateUri = StandardTemplateUris.ENTITY;
-        if ( get1( entityTemplate ) != null )
-        {
-            templateUri = get1( entityTemplate );
-        }
-        if ( get0( entityTemplate ) != null )
-        {
-            baseTemplateUri = get0( entityTemplate );
-        }
-        entityTemplateUris = createTemplateUris( baseTemplateUri, templateUri );
-
-        // Other bean templates.
-        baseTemplateUri = StandardTemplateUris.BEAN_BASE;
-        templateUri = StandardTemplateUris.BEAN;
-        if ( get1( beanTemplate ) != null )
-        {
-            templateUri = get1( beanTemplate );
-        }
-        if ( get0( beanTemplate ) != null )
-        {
-            baseTemplateUri = get0( beanTemplate );
-        }
-        beanTemplateUris = createTemplateUris( baseTemplateUri, templateUri );
-
-    }
-
-    private Generator getGenerator( ClassLoader loader )
-        throws MojoExecutionException
-    {
-        this.listener = new Gas3Listener( getLog() );
-        Generator generator = new Generator( this );
-        generator.add( new Gas3GroovyTransformer( this, this.listener, outputClasses ) );
-        return generator;
-    }
-
-    private Map<String, File> getClasses( List<File> jarDependencies )
-        throws IOException
-    {
-        Map<String, File> classes = new HashMap<String, File>();
-        for ( File file : jarDependencies )
-        {
-            JarInputStream jar = new JarInputStream( new FileInputStream( file ) );
-
-            JarEntry jarEntry;
-            while ( true )
-            {
-                jarEntry = jar.getNextJarEntry();
-
-                if ( jarEntry == null )
-                {
-                    break;
-                }
-
-                String className = jarEntry.getName();
-
-                if ( jarEntry.isDirectory() || !className.endsWith( ".class" ) )
-                {
-                    continue;
-                }
-
-                className = className.replace( '/', '.' );
-                className = className.substring( 0, className.length() - 6 );
-
-                if ( matchWildCard( className, includeJavaClasses ) && !matchWildCard( className, excludeJavaClasses ) )
-                {
-                    classes.put( className, file );
-                }
-            }
-        }
-
-        return classes;
-    }
-
-    private boolean matchWildCard( String className, String[] wildCards )
-    {
-        if ( wildCards == null )
-        {
-            return false;
-        }
-
-        for ( String wildCard : wildCards )
-        {
-            if ( FilenameUtils.wildcardMatch( className, wildCard ) )
-                return true;
-        }
-
-        return false;
     }
 
     private void setUp()
@@ -514,90 +250,160 @@ public class GeneratorMojo
             project.addCompileSourceRoot( baseOutputPath );
         }
 
+        if ( extraOptions == null )
+        {
+            extraOptions = new HashMap<String, String>();
+            extraOptions.put( "uidFieldName", uid );
+            extraOptions.put( "outputEnumToBaseOutputDirectory", String.valueOf( outputEnumToBaseOutputDirectory ) );
+            extraOptions.put( "usingTideEntity", String.valueOf( useTideEntityTemplate ) );
+        }
+
+        if ( templates == null )
+        {
+            templates = new HashMap<String, String>();
+            if ( enumTemplate != null )
+            {
+                templates.put( "base-enum-template", enumTemplate[0] );
+                templates.put( "enum-template", enumTemplate[1] );
+            }
+            if ( interfaceTemplate != null )
+            {
+                templates.put( "base-interface-template", interfaceTemplate[0] );
+                templates.put( "interface-template", interfaceTemplate[1] );
+            }
+            if ( entityTemplate != null )
+            {
+                templates.put( "base-entity-template", entityTemplate[0] );
+                templates.put( "entity-template", entityTemplate[1] );
+            }
+            if ( beanTemplate != null )
+            {
+                templates.put( "base-bean-template", beanTemplate[0] );
+                templates.put( "bean-template", beanTemplate[1] );
+            }
+        }
     }
 
-    private String get0( String[] a )
+    private final Map<String, File> getFilesToGenerator()
+        throws MojoExecutionException
     {
+        List<String> classpaths = getClasspath();
+        Map<String, File> classes = new HashMap<String, File>();
 
-        return this.get0Or1( a, 0 );
+        try
+        {
+            for ( String jarFileName : classpaths )
+            {
+                File jarFile = new File( jarFileName ).getAbsoluteFile();
+
+                JarInputStream jar = new JarInputStream( new FileInputStream( jarFile ) );
+
+                JarEntry jarEntry;
+                while ( true )
+                {
+                    jarEntry = jar.getNextJarEntry();
+
+                    if ( jarEntry == null )
+                    {
+                        break;
+                    }
+
+                    String className = jarEntry.getName();
+
+                    if ( jarEntry.isDirectory() || !className.endsWith( ".class" ) )
+                    {
+                        continue;
+                    }
+
+                    className = className.replace( '/', '.' );
+                    className = className.substring( 0, className.length() - 6 );
+
+                    if ( matchWildCard( className, includeJavaClasses )
+                        && !matchWildCard( className, excludeJavaClasses ) )
+                    {
+                        classes.put( className, jarFile );
+                    }
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error on classes resolve", e );
+        }
+
+        return classes;
     }
 
-    private String get1( String[] a )
+    private boolean matchWildCard( String className, String... wildCards )
     {
+        if ( wildCards == null )
+        {
+            return false;
+        }
 
-        return this.get0Or1( a, 1 );
+        for ( String wildCard : wildCards )
+        {
+            if ( SelectorUtils.matchPath( wildCard, className ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private String get0Or1( String[] a, int index )
+    private ClassLoader initializeClassLoader()
+        throws MojoExecutionException
     {
+        List<String> classpaths = getClasspath();
 
-        String s = a == null ? null : ( a.length < index + 1 ? null : a[index] );
+        try
+        {
+            // create a new classloading space
+            ClassWorld world = new ClassWorld();
 
-        return s == null ? null : new File( s ).toURI().toString();
+            // use the existing ContextClassLoader in a realm of the classloading space
+            Thread currentThread = currentThread();
+            ClassRealm realm = world.newRealm( "plugin.flexmojos.generator", currentThread.getContextClassLoader() );
+
+            // create another realm for just the dependency jars and make
+            // sure it is in a child-parent relationship with the current ContextClassLoader
+            ClassRealm gas3GeneratorRealm = realm.createChildRealm( "gas3Generator" );
+
+            // add all the jars to the new child realm
+            for ( String path : classpaths )
+            {
+                URL url = new File( path ).toURI().toURL();
+                gas3GeneratorRealm.addConstituent( url );
+            }
+
+            return gas3GeneratorRealm.getClassLoader();
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new MojoExecutionException( "Unable to get dependency URL", e );
+        }
+        catch ( DuplicateRealmException e )
+        {
+            throw new MojoExecutionException( "Unable to create new class loading realm", e );
+        }
     }
 
-    public As3TypeFactory getAs3TypeFactory()
+    @SuppressWarnings( "unchecked" )
+    private List<String> getClasspath()
+        throws MojoExecutionException
     {
-        return as3TypeFactoryImpl;
+        List<String> classpaths;
+        try
+        {
+            classpaths = project.getCompileClasspathElements();
+            classpaths.remove( project.getBuild().getOutputDirectory() );
+        }
+        catch ( DependencyResolutionRequiredException e )
+        {
+            throw new MojoExecutionException( "Failed to find dependencies", e );
+        }
+        return classpaths;
     }
 
-    public File getBaseOutputDir( JavaAs3Input javaas3input )
-    {
-        return baseOutputDirectory;
-    }
-
-    public File getOutputDir( JavaAs3Input javaas3input )
-    {
-        if ( outputEnumToBaseOutputDirectory && javaas3input.getType().isEnum() )
-            return baseOutputDirectory;
-        return outputDirectory;
-    }
-
-    public TemplateUri[] getTemplateUris( JavaType javaType )
-    {
-        if ( javaType instanceof JavaEnum )
-            return enumTemplateUris;
-        if ( javaType instanceof JavaInterface )
-            return interfaceTemplateUris;
-        if ( javaType instanceof JavaEntityBean )
-            return entityTemplateUris;
-        return beanTemplateUris;
-    }
-
-    public List<PackageTranslator> getTranslators()
-    {
-        return translators;
-    }
-
-    public String getUid()
-    {
-        return uid;
-    }
-
-    public boolean isGenerated( Class<?> clazz )
-    {
-        return classes.containsKey( clazz.getName() );
-    }
-
-    public GroovyTemplateFactory getGroovyTemplateFactory()
-    {
-        if ( groovyTemplateFactory == null )
-            groovyTemplateFactory = new GroovyTemplateFactory();
-        return groovyTemplateFactory;
-    }
-
-    public ClassLoader getClassLoader()
-    {
-        return loader;
-    }
-
-    private TemplateUri[] createTemplateUris( String baseUri, String uri )
-    {
-        TemplateUri[] templateUris = new TemplateUri[baseUri == null ? 1 : 2];
-        int i = 0;
-        if ( baseUri != null )
-            templateUris[i++] = new TemplateUri( baseUri, true );
-        templateUris[i] = new TemplateUri( uri, false );
-        return templateUris;
-    }
 }
