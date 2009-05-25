@@ -5,9 +5,9 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.sonatype.flexmojos.generator;
+package org.sonatype.flexmojos.generator.granitedsv1d1d0;
 
-import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
 import org.granite.generator.Listener;
 import org.granite.generator.Output;
@@ -17,16 +17,16 @@ import org.granite.generator.Output;
  * 
  * @author Juraj Burian
  */
-public class Gas3Listener
+final class Gas3Listener
     implements Listener
 {
 
-    private final Log log;
+    private final Logger log;
 
     /**
      * @param log
      */
-    public Gas3Listener( final Log log )
+    public Gas3Listener( final Logger log )
     {
         this.log = log;
     }
