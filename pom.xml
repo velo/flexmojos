@@ -135,8 +135,10 @@
       <modules>
         <module>flexmojos-parent</module>
         <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
+        <module>flexmojos-generator</module>
       </modules>
       <properties>
         <maven.test.skip>true</maven.test.skip>
@@ -148,6 +150,7 @@
       <modules>
         <module>flexmojos-parent</module>
         <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
         <module>flexmojos-archetypes</module>
@@ -164,6 +167,7 @@
       <modules>
         <module>flexmojos-parent</module>
         <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
         <module>flexmojos-archetypes</module>
