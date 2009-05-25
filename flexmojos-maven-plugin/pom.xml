@@ -132,6 +132,21 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-api</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
       <type>pom</type>

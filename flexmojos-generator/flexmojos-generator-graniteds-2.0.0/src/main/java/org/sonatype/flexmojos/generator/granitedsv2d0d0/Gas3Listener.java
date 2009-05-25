@@ -5,9 +5,9 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.sonatype.flexmojos.generator;
+package org.sonatype.flexmojos.generator.granitedsv2d0d0;
 
-import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
 import org.granite.generator.Listener;
 import org.granite.generator.Output;
@@ -17,18 +17,15 @@ import org.granite.generator.Output;
  * 
  * @author Juraj Burian
  */
-public class Gas3Listener
+final class Gas3Listener
     implements Listener
 {
 
-    private final Log log;
+    private Logger logger;
 
-    /**
-     * @param log
-     */
-    public Gas3Listener( final Log log )
+    public Gas3Listener( Logger logger )
     {
-        this.log = log;
+        this.logger = logger;
     }
 
     public void error( String message )
@@ -38,7 +35,7 @@ public class Gas3Listener
 
     public void error( String message, Throwable e )
     {
-        log.error( message, e );
+        this.logger.error( message, e );
     }
 
     public void info( String message )
@@ -48,7 +45,7 @@ public class Gas3Listener
 
     public void info( String message, Throwable e )
     {
-        log.info( message, e );
+        this.logger.info( message, e );
     }
 
     public void warn( String message )
@@ -58,7 +55,7 @@ public class Gas3Listener
 
     public void warn( String message, Throwable e )
     {
-        log.warn( message, e );
+        this.logger.warn( message, e );
     }
 
     public void generating( Input<?> input, Output<?> output )
