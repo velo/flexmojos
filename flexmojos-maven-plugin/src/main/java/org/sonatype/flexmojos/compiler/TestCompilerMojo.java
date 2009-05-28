@@ -408,7 +408,7 @@ public class TestCompilerMojo
 
         setMavenPathResolver( testBuilder );
         testBuilder.setConfiguration( configuration );
-        testBuilder.setLogger( new DebugLogger( getLog() ) );
+        testBuilder.setLogger( new CompileLogger( getLog() ) );
         File testSwf = new File( testOutputDirectory, testFilename + ".swf" );
         testBuilder.setOutput( testSwf );
 
