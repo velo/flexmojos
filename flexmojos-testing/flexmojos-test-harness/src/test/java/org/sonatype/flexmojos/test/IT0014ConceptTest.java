@@ -133,13 +133,6 @@ public class IT0014ConceptTest
         standardConceptTester( "simple-flex-modular" );
     }
 
-    @Test( groups = { "generator" } )
-    public void testSimpleGeneration()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation" );
-    }
-
     @Test
     public void testSources()
         throws Exception

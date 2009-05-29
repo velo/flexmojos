@@ -17,19 +17,24 @@
  */
 package org.sonatype.flexmojos.tests.concept;
 
-import java.io.File;
+import org.testng.annotations.Test;
 
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractConceptTest
-    extends AbstractFlexMojosTests
+public class GeneratorTest
+    extends AbstractConceptTest
 {
 
-    public void standardConceptTester( String conceptName, String... args )
+    @Test( groups = { "generator" } )
+    public void testGenerationGranite1()
         throws Exception
     {
-        File testDir = getProject( "/concept/" + conceptName );
-        test( testDir, "install", args );
+        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds1" );
+    }
+
+    @Test( groups = { "generator" } )
+    public void testGenerationGranite2()
+        throws Exception
+    {
+        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds2" );
     }
 
 }
