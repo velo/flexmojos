@@ -15,11 +15,11 @@ public abstract class AbstractConceptTest
     extends AbstractFlexMojosTests
 {
 
-    public void standardConceptTester( String conceptName )
+    public void standardConceptTester( String conceptName, String... args )
         throws Exception
     {
         File testDir = getProject( "/concept/" + conceptName );
-        test( testDir, "install" );
+        test( testDir, "install", args );
     }
 
 }
