@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +36,6 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.classworlds.ClassRealm;
-import org.codehaus.classworlds.ClassWorld;
-import org.codehaus.classworlds.DuplicateRealmException;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.sonatype.flexmojos.generator.api.GenerationException;
 import org.sonatype.flexmojos.generator.api.GenerationRequest;
@@ -198,14 +197,22 @@ public class GeneratorMojo
         request.setTemplates( templates );
         request.setTransientOutputFolder( baseOutputDirectory );
 
-        Generator generator = generatorFactory.getGenerator( generatorToUse );
+        ClassLoader cl = currentThread().getContextClassLoader();
+
         try
         {
+            currentThread().setContextClassLoader( request.getClassLoader() );
+
+            Generator generator = generatorFactory.getGenerator( generatorToUse );
             generator.generate( request );
         }
         catch ( GenerationException e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+        finally
+        {
+            currentThread().setContextClassLoader( cl );
         }
     }
 
@@ -359,33 +366,20 @@ public class GeneratorMojo
 
         try
         {
-            // create a new classloading space
-            ClassWorld world = new ClassWorld();
-
-            // use the existing ContextClassLoader in a realm of the classloading space
-            Thread currentThread = currentThread();
-            ClassRealm realm = world.newRealm( "plugin.flexmojos.generator", currentThread.getContextClassLoader() );
-
-            // create another realm for just the dependency jars and make
-            // sure it is in a child-parent relationship with the current ContextClassLoader
-            ClassRealm gas3GeneratorRealm = realm.createChildRealm( "gas3Generator" );
+            List<URL> classpathsUrls = new ArrayList<URL>();
 
             // add all the jars to the new child realm
             for ( String path : classpaths )
             {
                 URL url = new File( path ).toURI().toURL();
-                gas3GeneratorRealm.addConstituent( url );
+                classpathsUrls.add( url );
             }
 
-            return gas3GeneratorRealm.getClassLoader();
+            return new URLClassLoader( classpathsUrls.toArray( new URL[0] ), currentThread().getContextClassLoader() );
         }
         catch ( MalformedURLException e )
         {
             throw new MojoExecutionException( "Unable to get dependency URL", e );
-        }
-        catch ( DuplicateRealmException e )
-        {
-            throw new MojoExecutionException( "Unable to create new class loading realm", e );
         }
     }
 
