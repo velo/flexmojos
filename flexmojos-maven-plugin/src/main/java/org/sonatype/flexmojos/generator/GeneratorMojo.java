@@ -36,6 +36,7 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.sonatype.flexmojos.generator.api.GenerationException;
 import org.sonatype.flexmojos.generator.api.GenerationRequest;
@@ -297,45 +298,68 @@ public class GeneratorMojo
         List<String> classpaths = getClasspath();
         Map<String, File> classes = new HashMap<String, File>();
 
-        try
+        for ( String fileName : classpaths )
         {
-            for ( String jarFileName : classpaths )
+            File file = new File( fileName ).getAbsoluteFile();
+
+            if ( file.isDirectory() )
             {
-                File jarFile = new File( jarFileName ).getAbsoluteFile();
+                DirectoryScanner ds = new DirectoryScanner();
+                ds.setBasedir( file );
+                ds.setIncludes( new String[] { "**/*.class" } );
+                ds.scan();
 
-                JarInputStream jar = new JarInputStream( new FileInputStream( jarFile ) );
-
-                JarEntry jarEntry;
-                while ( true )
+                for ( String classFileName : ds.getIncludedFiles() )
                 {
-                    jarEntry = jar.getNextJarEntry();
-
-                    if ( jarEntry == null )
-                    {
-                        break;
-                    }
-
-                    String className = jarEntry.getName();
-
-                    if ( jarEntry.isDirectory() || !className.endsWith( ".class" ) )
-                    {
-                        continue;
-                    }
-
-                    className = className.replace( '/', '.' );
+                    String className = classFileName.replace( File.separatorChar, '.' );
                     className = className.substring( 0, className.length() - 6 );
 
                     if ( matchWildCard( className, includeJavaClasses )
                         && !matchWildCard( className, excludeJavaClasses ) )
                     {
-                        classes.put( className, jarFile );
+                        classes.put( className, new File( file, classFileName ) );
                     }
                 }
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error on classes resolve", e );
+            else
+            {
+
+                try
+                {
+                    JarInputStream jar = new JarInputStream( new FileInputStream( file ) );
+
+                    JarEntry jarEntry;
+                    while ( true )
+                    {
+                        jarEntry = jar.getNextJarEntry();
+
+                        if ( jarEntry == null )
+                        {
+                            break;
+                        }
+
+                        String className = jarEntry.getName();
+
+                        if ( jarEntry.isDirectory() || !className.endsWith( ".class" ) )
+                        {
+                            continue;
+                        }
+
+                        className = className.replace( '/', '.' );
+                        className = className.substring( 0, className.length() - 6 );
+
+                        if ( matchWildCard( className, includeJavaClasses )
+                            && !matchWildCard( className, excludeJavaClasses ) )
+                        {
+                            classes.put( className, file );
+                        }
+                    }
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Error on classes resolve", e );
+                }
+            }
         }
 
         return classes;
