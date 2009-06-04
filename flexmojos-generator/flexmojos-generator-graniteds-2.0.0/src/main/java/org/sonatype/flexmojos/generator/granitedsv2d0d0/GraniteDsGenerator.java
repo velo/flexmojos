@@ -45,7 +45,7 @@ public final class GraniteDsGenerator
 
     private static final String PREFIX_TO_REPLACE = "class:";
 
-    private static final String SHADED_PREFIX = "class:shaded200/";
+    private static final String SHADED_PREFIX = "class:";
 
     private String uid = "uid";
 
@@ -171,7 +171,20 @@ public final class GraniteDsGenerator
     public final void generate( GenerationRequest request )
         throws GenerationException
     {
+    	// tide
+    	String useTide = request.getExtraOptions().get("tide");
+    	if(useTide != null)
+    	{
+    		tide = new Boolean(useTide.trim());
+    	}
+        uid = request.getExtraOptions().get( "uid" );
+        
+        transformer = request.getExtraOptions().get( "transformer" );
 
+        outputDirectory = request.getPersistentOutputFolder();
+        
+        baseOutputDirectory = request.getTransientOutputFolder();
+		
         String[] enumTemplate = getTemplate( request, "enum-template" );
         enumTemplateUris = initializeEnumTemplateURIs( enumTemplate );
 
@@ -184,11 +197,6 @@ public final class GraniteDsGenerator
         String[] beanTemplate = getTemplate( request, "bean-template" );
         beanTemplateUris = initializeBeanTemplateURIs( beanTemplate );
 
-        uid = request.getExtraOptions().get( "uidFieldName" );
-        transformer = request.getExtraOptions().get( "transformer" );
-
-        outputDirectory = request.getPersistentOutputFolder();
-        baseOutputDirectory = request.getTransientOutputFolder();
 
         classes = request.getClasses();
         if ( classes.isEmpty() )
@@ -270,6 +278,10 @@ public final class GraniteDsGenerator
             try
             {
                 Class<?> classToGenerate = classLoader.loadClass( className );
+				if( classToGenerate.isMemberClass() && !classToGenerate.isEnum() )
+				{
+					continue;
+				}
                 JavaAs3Input input = new JavaAs3Input( classToGenerate, classFile.getValue() );
                 for ( Output<?> output : generator.generate( input ) )
                 {

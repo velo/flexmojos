@@ -41,11 +41,11 @@
               <relocations>
                 <relocation>
                   <pattern>org.granite.builder</pattern>
-                  <shadedPattern>shaded200.org.granite.builder</shadedPattern>
+                  <shadedPattern>org.granite.builder</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>org.granite.generator</pattern>
-                  <shadedPattern>shaded200.org.granite.generator</shadedPattern>
+                  <shadedPattern>org.granite.generator</shadedPattern>
                 </relocation>
               </relocations>
               <transformers>
