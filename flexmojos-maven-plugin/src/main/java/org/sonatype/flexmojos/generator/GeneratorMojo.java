@@ -254,9 +254,9 @@ public class GeneratorMojo
         if ( extraOptions == null )
         {
             extraOptions = new HashMap<String, String>();
-            extraOptions.put( "uidFieldName", uid );
+            extraOptions.put( "uid", uid );
             extraOptions.put( "outputEnumToBaseOutputDirectory", String.valueOf( outputEnumToBaseOutputDirectory ) );
-            extraOptions.put( "usingTideEntity", String.valueOf( useTideEntityTemplate ) );
+            extraOptions.put( "tide", String.valueOf( useTideEntityTemplate ) );
         }
 
         if ( templates == null )
