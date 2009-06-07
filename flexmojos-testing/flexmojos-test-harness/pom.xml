@@ -27,8 +27,7 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar
-    </flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -275,6 +274,30 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-testing</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-api</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
     </dependency>
