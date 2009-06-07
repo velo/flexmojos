@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -289,7 +291,7 @@ public class GeneratorMojo
     private final Map<String, File> getFilesToGenerator()
         throws MojoExecutionException
     {
-        List<String> classpaths = getClasspath();
+        List<String> classpaths = getDirectDependencies();
         Map<String, File> classes = new HashMap<String, File>();
 
         for ( String fileName : classpaths )
@@ -414,6 +416,22 @@ public class GeneratorMojo
         catch ( DependencyResolutionRequiredException e )
         {
             throw new MojoExecutionException( "Failed to find dependencies", e );
+        }
+        return classpaths;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private List<String> getDirectDependencies()
+        throws MojoExecutionException
+    {
+        List<String> classpaths = new ArrayList<String>();
+        Set<Artifact> artifacts = project.getDependencyArtifacts();
+        for ( Artifact artifact : artifacts )
+        {
+            if ( "jar".equals( artifact.getType() ) )
+            {
+                classpaths.add( artifact.getFile().getAbsolutePath() );
+            }
         }
         return classpaths;
     }
