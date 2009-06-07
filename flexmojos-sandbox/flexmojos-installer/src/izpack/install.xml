@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+  <info>
+    <appname>Flexmojos</appname>
+    <appversion>${project.version}</appversion>
+    <authors>
+      <author name="Marvin Herman Froeder" email="velo.br AT gmail.com"/>
+    </authors>
+    <url>http://flexmojos.sonatype.org/</url>
+    <!--<webdir>${web.dir}</webdir>-->
+  </info>
+
+  <guiprefs width="640" height="480" resizable="no"/>
+
+  <locale>
+    <langpack iso3="eng"/>
+  </locale>
+
+  <resources>
+    <res id="LicencePanel.licence" src="Licence.txt"/>
+  </resources>
+
+  <panels>
+    <panel classname="HelloPanel"/>
+    <panel classname="LicencePanel"/>
+    <panel classname="TargetPanel"/>
+    <panel classname="JDKPathPanel"/>
+    <panel classname="PacksPanel"/>
+    <panel classname="SummaryPanel"/>
+    <panel classname="InstallPanel"/>
+    <panel classname="FinishPanel"/>
+  </panels>
+
+  <variables>
+    <variable name="JDKPathPanel.minVersion" value="1.5.0"/>
+    <variable name="JDKPathPanel.skipIfValid" value="false"/>
+  </variables>
+
+  <packs>
+    <pack name="maven" required="yes">
+      <description>Maven Installation</description>
+      <file src="apache-maven-${maven.version}" targetdir="$INSTALL_PATH/maven"/>
+    </pack>
+    <pack name="mavenSettings" required="yes">
+      <description>Maven Settings file with flexmojos configuration</description>
+      <file src="settings.xml" targetdir="$INSTALL_PATH/maven/conf"/>
+    </pack>
+    <pack name="repository" required="no">
+      <description>Basic Maven Repository with flexmojos artifacts</description>
+      <file src="repo" targetdir="$USER_HOME/.m2/repository"/>
+    </pack>
+    <!--
+    <pack name="docs" required="no">
+      <description>Flexmojos mavendocs, javadoc and asdoc</description>
+      <file src="docs" targetdir="$INSTALL_PATH/docs"/>
+    </pack>
+    <pack name="samples" required="no">
+      <description>Flexmojos usage samples</description>
+      <file src="samples" targetdir="$INSTALL_PATH/docs"/>
+    </pack>
+    -->
+  </packs>
+
+</installation>
