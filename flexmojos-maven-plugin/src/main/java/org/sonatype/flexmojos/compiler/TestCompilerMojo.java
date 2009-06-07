@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -204,7 +205,7 @@ public class TestCompilerMojo
         return testClasses;
     }
 
-    private File generateTester( String[] testClasses, String testFilename )
+    private File generateTester( List<? extends String> testClasses, String testFilename )
         throws Exception
     {
         // can't use velocity, got:
@@ -372,23 +373,23 @@ public class TestCompilerMojo
         if ( ONCE.equals( forkMode ) )
         {
             String testFilename = "TestRunner";
-            buildTest( testFilename, testClasses.toArray( new String[0] ) );
+            buildTest( testFilename, testClasses );
         }
         else
         {
             for ( String testClass : testClasses )
             {
                 String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
-                buildTest( testFilename, testClass );
+                buildTest( testFilename, Collections.singletonList( testClass ) );
             }
         }
 
     }
 
-    private void buildTest( String testFilename, String... testClasses )
+    private void buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
     {
-        if ( testClasses == null || testClasses.length == 0 )
+        if ( testClasses == null || testClasses.isEmpty() )
         {
             return;
         }

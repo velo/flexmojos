@@ -211,9 +211,9 @@ public class FlexUnitMojo
         final int numErrors = report.getErrors();
         final int totalProblems = numFailures + numErrors;
 
-        getLog().debug( "Running " + name );
+        getLog().debug( "[MOJO] Test report of " + name );
         getLog().debug( reportString );
-
+        
         // Get the output file name.
         final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
 
@@ -298,9 +298,9 @@ public class FlexUnitMojo
             // Wait until the tests are complete.
             while ( true )
             {
-                getLog().debug( "asVmLauncher " + asVmLauncher.getStatus() );
-                getLog().debug( "asVmControl " + asVmControl.getStatus() );
-                getLog().debug( "resultHandler " + resultHandler.getStatus() );
+                getLog().debug( "[MOJO] asVmLauncher " + asVmLauncher.getStatus() );
+                getLog().debug( "[MOJO] asVmControl " + asVmControl.getStatus() );
+                getLog().debug( "[MOJO] resultHandler " + resultHandler.getStatus() );
 
                 if ( hasError( asVmLauncher, asVmControl, resultHandler ) )
                 {
@@ -311,19 +311,13 @@ public class FlexUnitMojo
                     return;
                 }
 
-                if ( hasDone( resultHandler ) )
+                if ( hasDone( resultHandler ) && hasDone ( asVmControl ) && hasDone( asVmLauncher ) )
                 {
                     List<String> results = resultHandler.getTestReportData();
                     for ( String result : results )
                     {
                         writeTestReport( result );
                     }
-                    return;
-                }
-
-                if ( hasDone( asVmLauncher ) )
-                {
-                    this.executionError = new Error( "Flash Player was closed!" );
                     return;
                 }
 
@@ -348,7 +342,7 @@ public class FlexUnitMojo
         throws MojoExecutionException
     {
         String role = clazz.getName();
-        getLog().debug( "Looking up for " + role );
+        getLog().debug( "[MOJO] Looking up for " + role );
         try
         {
             return (E) plexus.lookup( role );
@@ -371,7 +365,7 @@ public class FlexUnitMojo
                     thread.setStatus( ThreadStatus.ERROR );
                     thread.setError( new Error( "Runtime error running: " + thread.getClass(), e ) );
                 }
-                getLog().debug( "Error running: " + thread.getClass(), e );
+                getLog().debug( "[MOJO] Error running: " + thread.getClass(), e );
             }
         } );
         t.setDaemon( true );
@@ -429,7 +423,7 @@ public class FlexUnitMojo
                 }
                 catch ( Throwable e )
                 {
-                    getLog().debug( "Error sttoping " + controlledThread.getClass(), e );
+                    getLog().debug( "[MOJO] Error stopping " + controlledThread.getClass(), e );
                 }
                 finally
                 {
@@ -439,7 +433,7 @@ public class FlexUnitMojo
                     }
                     catch ( ComponentLifecycleException e )
                     {
-                        getLog().debug( "Error releasing " + controlledThread.getClass(), e );
+                        getLog().debug( "[MOJO] Error releasing " + controlledThread.getClass(), e );
                         // just releasing ignoring
                     }
                 }

@@ -42,13 +42,15 @@ public class AsVmControl
 
     public static final String OK = "OK";
 
+    public static final String FINISHED = "FINISHED";
+    
     private int testTimeout;
 
     @Override
     protected void handleRequest()
         throws SocketTimeoutException, SocketException, IOException
     {
-        getLogger().debug( "AsVmControl handleRequest" );
+        getLogger().debug( "[CONTROL] AsVmControl handleRequest" );
 
         clientSocket.setSoTimeout( testTimeout );
 
@@ -56,18 +58,18 @@ public class AsVmControl
 
         while ( true )
         {
-            getLogger().debug( "get status" );
+            getLogger().debug( "[CONTROL] query status" );
             BufferedWriter out = new BufferedWriter( new OutputStreamWriter( super.out ) );
             out.write( STATUS );
             out.flush();
 
             try
             {
-                getLogger().debug( "got status" );
+                getLogger().debug( "[CONTROL] received status" );
                 BufferedReader in = new BufferedReader( new InputStreamReader( super.in ) );
                 String result = in.readLine();
-                getLogger().debug( "status: " + result );
-                if ( !OK.equals( result ) )
+                getLogger().debug( "[CONTROL] status is: " + result );
+                if ( !OK.equals( result ) && !FINISHED.equals( result ))
                 {
                     errorCount++;
                     if ( errorCount >= 3 )
@@ -78,6 +80,12 @@ public class AsVmControl
                 else
                 {
                     errorCount = 0;
+                    if (FINISHED.equals( result )){
+                    	
+                    	getLogger().debug( "[CONTROL] FINISHED received, terminating the thread" );
+                    	break;
+                 
+                    }
                 }
             }
             catch ( SocketTimeoutException e )
