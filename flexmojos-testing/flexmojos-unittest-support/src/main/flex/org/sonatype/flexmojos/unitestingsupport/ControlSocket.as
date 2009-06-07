@@ -20,6 +20,8 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.events.DataEvent;
 	import flash.events.ProgressEvent;
 	import flash.net.Socket;
+    import flash.system.fscommand;
+
 	
 	public class ControlSocket
 	{
@@ -27,6 +29,8 @@ package org.sonatype.flexmojos.unitestingsupport
 	    public static const STATUS:String = "Server Status";
 	
 	    public static const OK:String = "OK";
+	    
+	    public static const FINISHED:String = "FINISHED";
 
 		[Inspectable]
 		public var port:uint = 1024;
@@ -35,6 +39,8 @@ package org.sonatype.flexmojos.unitestingsupport
 		public var server:String = "127.0.0.1";
 		
     	private var socket:Socket;
+
+    	private var closeController:CloseController = CloseController.getInstance();
 
 		public function connect():void
 		{
@@ -49,16 +55,35 @@ package org.sonatype.flexmojos.unitestingsupport
 		 */
 		private function dataHandler( event:* ):void
 		{
-			trace("dataHandler");
-			
+						
 			var data:String = socket.readUTFBytes( socket.bytesAvailable );
-			trace("data " + data);
+			trace("Data handler received data: " + data);
 			
 
 			if ( data == STATUS )
 			{
-				trace( "replying" );
-				socket.writeUTFBytes( OK );
+				
+				if ( closeController.canClose ) {
+					trace("Replying FINISHED");
+					socket.writeUTFBytes( FINISHED );
+					socket.flush();
+					
+					// Close the socket.
+					if(socket) {
+						socket.close();
+					}
+					
+					//Exiting
+					
+					trace("Exiting");
+					fscommand("quit");
+						
+				} else {
+					trace("Replying OK");
+					socket.writeUTFBytes( OK );
+					socket.flush();
+				}
+				
    			}
 		}
 		

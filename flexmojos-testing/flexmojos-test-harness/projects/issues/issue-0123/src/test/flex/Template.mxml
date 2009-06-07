@@ -29,22 +29,26 @@
 		<![CDATA[
 			import mx.events.FlexEvent;
 
-			import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
+			import org.sonatype.flexmojos.unitestingsupport.*;
 		
 $imports
 
 			private var tests:Array;
 		
 			private static var socketReporter:SocketReporter = SocketReporter.getInstance();
-		
+
+            private static var controlSocket:ControlSocket = ControlSocket.getInstance();
+
 			private function startUp():void {
 				socketReporter.port = $port;
+                controlSocket.port = $controlPort;
 
 				this.tests = new Array;
 
 $testClasses
 
-				socketReporter.runTests(this.tests);
+    			controlSocket.connect();
+    			socketReporter.runTests(this.tests);
 			}
 
 			public function addTest( test:Class ) : void

@@ -64,22 +64,20 @@ public class ResultHandler
             if ( chr == NULL_BYTE )
             {
                 final String data = buffer.toString();
-                getLogger().debug( "[RESULT] port: "+testPort+" Recivied data: " + data  );
+                getLogger().debug( "[RESULT] Recivied data: " + data  );
                 buffer = new StringBuffer();
 
                 if ( data.endsWith( END_OF_TEST_SUITE ) )
                 {
-                    getLogger().debug( "[MISI] End test suite" );
+                    getLogger().debug( "[RESULT] End test suite" );
 
                     this.testReportData.add( data );
                 }
                 else if ( data.equals( END_OF_TEST_RUN ) )
                 {
-                    getLogger().debug( "[MISI] End test run - sending ACK: "+ACK_OF_TEST_RESULT );
+                    getLogger().debug( "[RESULT] End test run - sending ACK: "+ACK_OF_TEST_RESULT );
                
-                    /*
-                     * [MISI] Here is the acknowledge sending code
-                     */
+                    //Sending the acknowledgement to testrunner
                     
                     BufferedWriter out = new BufferedWriter( new OutputStreamWriter( super.out ) );
                     out.write( ACK_OF_TEST_RESULT + NULL_BYTE );
@@ -93,7 +91,7 @@ public class ResultHandler
             }
         }
 
-        getLogger().debug( "Socket buffer " + buffer );
+        getLogger().debug( "[RESULT] Socket buffer " + buffer );
     }
 
     @Override

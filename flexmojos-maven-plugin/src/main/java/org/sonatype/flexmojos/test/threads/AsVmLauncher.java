@@ -105,12 +105,12 @@ public class AsVmLauncher
 
         setStatus( ThreadStatus.RUNNING );
 
-        getLogger().debug( "[MISI] start" );
+        getLogger().debug( "[LAUNCHER] ASVmLauncher starting" );
 
         
-        getLogger().debug( "exec: " + flashPlayer + " - " + targetSwf );
+        getLogger().debug( "[LAUNCHER] exec: " + flashPlayer + " - " + targetSwf );
 
-        getLogger().debug( "Creating process" );
+        getLogger().debug( "[LAUNCHER] Creating process" );
         if ( allowHeadlessMode && MavenUtils.isLinux() && GraphicsEnvironment.isHeadless() )
         {
             runFlashplayerHeadless( flashPlayer, targetSwf );
@@ -119,7 +119,7 @@ public class AsVmLauncher
         {
             runFlashplayer( flashPlayer, targetSwf );
         }
-        getLogger().debug( "Process created " + process );
+        getLogger().debug( "[LAUNCHER] Process created " + process );
     }
 
     private void runFlashplayer( String flashPlayer, File targetSwf )
@@ -142,7 +142,7 @@ public class AsVmLauncher
     private void runFlashplayerHeadless( String flashPlayer, File targetSwf )
         throws MojoExecutionException
     {
-        getLogger().warn( "Using xvfb-run to launch headless tests" );
+        getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
         try
         {
             process = Runtime.getRuntime().exec( new String[] { "xvfb-run", flashPlayer, targetSwf.getAbsolutePath() } );
@@ -184,13 +184,14 @@ public class AsVmLauncher
 
         errorPumper.start();
 
-        getLogger().debug( "Output pumpers ON" );
+        getLogger().debug( "[LAUNCHER] Output pumpers ON" );
 
         int returnCode;
         try
         {
-            getLogger().debug( "Waiting for" );
+            getLogger().debug( "[LAUNCHER] Waiting for flashplayer termination" );
             returnCode = process.waitFor();
+        	getLogger().debug( "[LAUNCHER] Flashplayer closed" );
         }
         catch ( InterruptedException e )
         {
@@ -229,14 +230,8 @@ public class AsVmLauncher
 
         if ( process != null )
         {
-
-        	//[MISI] cleanup disabled for the moment
-        	getLogger().debug( "[MISI] stop but not destroying" );
-       	
-  
-        	//process.destroy();
-           
-        	
+        	getLogger().debug( "[LAUNCHER] process has not been finished, destroying" );
+        	process.destroy();
         }
     }
 

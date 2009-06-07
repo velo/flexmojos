@@ -125,7 +125,7 @@ public abstract class AbstractSocketThread
             serverSocket.setSoTimeout( firstConnectionTimeout );
         }
 
-        getLogger().debug( "opened server socket" );
+        getLogger().debug( "["+this.getClass().getName()+"] opened server socket on port "+testPort );
     }
 
     private void closeServerSocket()
@@ -157,14 +157,14 @@ public abstract class AbstractSocketThread
         }
         // serverSocket.setSoTimeout( 0 );
 
-        getLogger().debug( "accepting data from client" );
+        getLogger().debug( "["+this.getClass().getName()+"] accepting data from client" );
 
         setStatus( ThreadStatus.RUNNING );
 
         in = clientSocket.getInputStream();
         out = clientSocket.getOutputStream();
     }
-
+    
     protected void closeClientSocket()
     {
         // Close the output stream.

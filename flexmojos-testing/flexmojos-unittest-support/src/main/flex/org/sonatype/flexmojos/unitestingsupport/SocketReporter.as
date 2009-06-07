@@ -20,7 +20,6 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.net.XMLSocket;
-	import flash.system.fscommand;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	
@@ -55,6 +54,8 @@ package org.sonatype.flexmojos.unitestingsupport
 
 		[Bindable]
     	public var numTestsRun : int = 0;
+    	
+    	private var closeController:CloseController = CloseController.getInstance();
 
 		/**
 		 * Called when an error occurs.
@@ -182,7 +183,7 @@ package org.sonatype.flexmojos.unitestingsupport
 		}
 
 		/**
-		 * Exit the test runner and close the player.
+		 * Exit the test runner and enabling to close the player.
 		 */
 		private function exit():void
 		{
@@ -191,8 +192,8 @@ package org.sonatype.flexmojos.unitestingsupport
 				socket.close();
 			}
 				
-			// Execute the user's test complete function.
-			fscommand( "quit" )
+			// Enabling to close flashplayer
+			closeController.canClose = true;
 		}
 
 		private function formatQualifiedClassName( className:String ):String
