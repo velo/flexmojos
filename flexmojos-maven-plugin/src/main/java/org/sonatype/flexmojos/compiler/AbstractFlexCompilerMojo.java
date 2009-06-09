@@ -64,6 +64,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     implements FlexMojo, FlexScopes, FlexExtension
 {
 
+    private static final String REPORT_LINK = "link";
+
+    private static final String REPORT_CONFIG = "config";
+
     public static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
@@ -2135,7 +2139,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         throws MojoExecutionException
     {
 
-        writeReport( report, "link" );
+        writeReport( report, REPORT_LINK );
     }
 
     /**
@@ -2147,7 +2151,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void writeConfigurationReport( Report report )
         throws MojoExecutionException
     {
-        writeReport( report, "config" );
+        writeReport( report, REPORT_CONFIG );
     }
 
     /**
@@ -2157,7 +2161,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @param type Type of report to write. Valid types are <code>link</code> and <code>config</code>.
      * @throws MojoExecutionException throw if an error occurs during writing of report to file
      */
-    private void writeReport( Report report, String type )
+    protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
         File fileReport =
@@ -2167,13 +2171,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         try
         {
             StringWriter writer = new StringWriter();
-            if ( "link".equals( type ) )
+            if ( REPORT_LINK.equals( type ) )
             {
                 report.writeLinkReport( writer );
                 linkReportFile = fileReport;
                 FileUtils.writeStringToFile( fileReport, writer.toString() );
             }
-            else if ( "config".equals( type ) )
+            else if ( REPORT_CONFIG.equals( type ) )
             {
                 report.writeConfigurationReport( writer );
                 FlexConfigBuilder configBuilder = new FlexConfigBuilder( writer.toString() );
@@ -2188,7 +2192,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             throw new MojoExecutionException( "An error has ocurried while recording " + type + "-report", e );
         }
 
-        if ( !( "config".equals( type ) ) )
+        if ( !( REPORT_CONFIG.equals( type ) ) )
         {
             projectHelper.attachArtifact( project, "xml", type + "-report", fileReport );
         }
