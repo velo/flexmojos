@@ -460,9 +460,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     /**
      * specifies the version of the player the application is targeting. Features requiring a later version will not be
-     * compiled into the application. The minimum value supported is "9.0.0".
+     * compiled into the application. The minimum value supported is "9.0.0". If not defined will take the default value
+     * from current playerglobal dependency.
      * 
-     * @parameter default-value="9.0.0"
+     * @parameter
      */
     private String targetPlayer;
 
@@ -1522,33 +1523,51 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @FlexCompatibility( minVersion = "3" )
     private void setTargetPlayer()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
-        if ( targetPlayer != null )
+        String playerGlobalVersion = getGlobalArtifact().getClassifier();
+        if ( targetPlayer == null && playerGlobalVersion != null )
         {
-            String[] nodes = targetPlayer.split( "\\." );
-            if ( nodes.length != 3 )
-            {
-                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-            }
-            int[] versions = new int[nodes.length];
-            for ( int i = 0; i < nodes.length; i++ )
-            {
-                try
-                {
-                    versions[i] = Integer.parseInt( nodes[i] );
-                }
-                catch ( NumberFormatException e )
-                {
-                    throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-                }
-            }
-            if ( versions[0] < 9 )
-            {
-                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-            }
-            configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
+            targetPlayer = playerGlobalVersion + ".0.0";
         }
+
+        if ( targetPlayer == null )
+        {
+            return;
+        }
+
+        String[] nodes = targetPlayer.split( "\\." );
+        if ( nodes.length != 3 )
+        {
+            throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+        }
+        int[] versions = new int[nodes.length];
+        for ( int i = 0; i < nodes.length; i++ )
+        {
+            try
+            {
+                versions[i] = Integer.parseInt( nodes[i] );
+            }
+            catch ( NumberFormatException e )
+            {
+                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+            }
+        }
+        if ( versions[0] < 9 )
+        {
+            throw new MojoExecutionException( "Invalid player version " + targetPlayer );
+        }
+
+        if ( playerGlobalVersion != null )
+        {
+            if ( !nodes[0].equals( playerGlobalVersion ) )
+            {
+                throw new MojoFailureException(
+                                                "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
+                                                    + targetPlayer + ", player global: " + playerGlobalVersion );
+            }
+        }
+        configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
     }
 
     @FlexCompatibility( minVersion = "3" )
@@ -1657,7 +1676,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
     }
 
-    protected File[] getGlobalDependency()
+    protected Artifact getGlobalArtifact()
         throws MojoExecutionException
     {
         Set<Artifact> dependencies = getDependencyArtifacts();
@@ -1666,11 +1685,17 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             if ( "playerglobal".equals( artifact.getArtifactId() ) || //
                 "airglobal".equals( artifact.getArtifactId() ) )
             {
-                return new File[] { MavenUtils.getArtifactFile( artifact, build ) };
+                return artifact;
             }
         }
 
         throw new MojoExecutionException( "Player/Air Global dependency not found." );
+    }
+
+    protected File[] getGlobalDependency()
+        throws MojoExecutionException
+    {
+        return new File[] { MavenUtils.getArtifactFile( getGlobalArtifact(), build ) };
     }
 
     /**
