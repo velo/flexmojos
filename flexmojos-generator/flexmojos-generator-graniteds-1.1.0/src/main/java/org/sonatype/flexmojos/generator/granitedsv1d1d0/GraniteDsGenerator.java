@@ -176,7 +176,7 @@ public final class GraniteDsGenerator
 
     public final void generate( GenerationRequest request )
     {
-        String[] enumTemplate = getTemplate( request, "enum-template" );
+        String[] enumTemplate = new String[] { request.getTemplates().get( "enum-template" ) };
         enumTemplateUris = initializeEnumTemplateURIs( enumTemplate );
 
         String[] interfaceTemplate = getTemplate( request, "interface-template" );

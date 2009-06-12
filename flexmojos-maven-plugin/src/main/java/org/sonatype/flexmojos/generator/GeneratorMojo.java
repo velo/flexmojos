@@ -273,8 +273,7 @@ public class GeneratorMojo
             templates = new HashMap<String, String>();
             if ( enumTemplate != null )
             {
-                templates.put( "base-enum-template", enumTemplate[0] );
-                templates.put( "enum-template", enumTemplate[1] );
+                templates.put( "enum-template", enumTemplate[0] );
             }
             if ( interfaceTemplate != null )
             {
