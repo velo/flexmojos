@@ -99,7 +99,7 @@ public class FlexUnitMojo
      */
     private File testOutputDirectory;
 
-    private Error executionError;
+    private Throwable executionError;
 
     /**
      * @parameter default-value="false" expression="${maven.test.skip}"
@@ -213,7 +213,7 @@ public class FlexUnitMojo
 
         getLog().debug( "[MOJO] Test report of " + name );
         getLog().debug( reportString );
-        
+
         // Get the output file name.
         final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
 
@@ -311,29 +311,50 @@ public class FlexUnitMojo
                     return;
                 }
 
-                if ( hasDone( resultHandler ) && hasDone ( asVmControl ) && hasDone( asVmLauncher ) )
+                if ( hasDone( asVmLauncher ) )
                 {
-                    List<String> results = resultHandler.getTestReportData();
-                    for ( String result : results )
+                    for ( int i = 0; i < 3; i++ )
                     {
-                        writeTestReport( result );
+                        if ( hasDone( resultHandler ) && hasDone( asVmControl ) )
+                        {
+                            List<String> results = resultHandler.getTestReportData();
+                            for ( String result : results )
+                            {
+                                writeTestReport( result );
+                            }
+                            return; // expected exit!
+                        }
+                        sleep( 500 );
                     }
-                    return;
+
+                    // the flashplayer is closed, but the sockets still running...
+
+                    this.executionError =
+                        new IllegalStateException( "the flashplayer is closed, but the sockets still running" );
+                    getLog().error( "Invalid state: the flashplayer is closed, but the sockets still running..." );
+                    numTests++;
+                    numErrors++;
+                    return; // abnormal exit!
                 }
 
-                try
-                {
-                    Thread.sleep( 1000 );
-                }
-                catch ( InterruptedException e )
-                {
-                    // no worries
-                }
+                sleep( 1000 );
             }
         }
         finally
         {
             stop( asVmLauncher, asVmControl, resultHandler );
+        }
+    }
+
+    private void sleep( int time )
+    {
+        try
+        {
+            Thread.sleep( time );
+        }
+        catch ( InterruptedException e )
+        {
+            // no worries
         }
     }
 
@@ -387,7 +408,7 @@ public class FlexUnitMojo
         {
             if ( executionError != null )
             {
-                throw executionError;
+                throw new MojoExecutionException( executionError.getMessage(), executionError );
             }
 
             if ( failures )
