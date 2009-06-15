@@ -139,20 +139,21 @@ public class TestCompilerMojo
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
-            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as" };
+            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" };
         }
         else
         {
             for ( int i = 0; i < includeTestFiles.length; i++ )
             {
                 String pattern = includeTestFiles[i];
-                if ( pattern.endsWith( ".as" ) )
+
+                if ( !pattern.endsWith( ".as" ) && !pattern.endsWith( ".mxml" ) )
                 {
-                    pattern = pattern.substring( 0, pattern.length() - 3 );
+                    pattern = pattern + ".as";
                 }
                 // Allow paths delimited by '.' or '/'
                 pattern = pattern.replace( '.', '/' );
-                includeTestFiles[i] = "**/" + pattern + ".as";
+                includeTestFiles[i] = "**/" + pattern;
             }
         }
 
