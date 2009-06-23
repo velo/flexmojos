@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -488,4 +489,14 @@ public class LibraryMojo
         return this.output;
     }
 
+    @Override
+    protected void addRuntimeLibrary( Artifact artifact )
+    {
+        getLog().warn(
+                       "Invalid scope for '" + artifact.getArtifactId()
+                           + "'. SWC doesn't support runtime scope, switching to external!" );
+
+        File artifactFile = artifact.getFile();
+        configuration.addExternalLibraryPath( new File[] { artifactFile } );
+    }
 }
