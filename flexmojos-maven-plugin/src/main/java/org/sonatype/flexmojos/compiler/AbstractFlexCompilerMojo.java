@@ -1711,26 +1711,31 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         for ( Artifact artifact : rsls )
         {
-            String scope = artifact.getScope();
-            File artifactFile = artifact.getFile();
-            String artifactPath = artifactFile.getAbsolutePath();
-            String extension;
-            if ( CACHING.equals( scope ) )
-            {
-                extension = SWZ;
-            }
-            else
-            {
-                extension = SWF;
-            }
-            String[] rslUrls = getRslUrls( artifact, extension );
-            String[] rslPolicyFileUrls = getRslPolicyFileUrls( artifact );
-            configuration.addRuntimeSharedLibraryPath( artifactPath, rslUrls, rslPolicyFileUrls );
-
-            // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
-            // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
-            configuration.addLibraryPath( new File[] { artifactFile } );
+            addRuntimeLibrary( artifact );
         }
+    }
+
+    protected void addRuntimeLibrary( Artifact artifact )
+    {
+        String scope = artifact.getScope();
+        File artifactFile = artifact.getFile();
+        String artifactPath = artifactFile.getAbsolutePath();
+        String extension;
+        if ( CACHING.equals( scope ) )
+        {
+            extension = SWZ;
+        }
+        else
+        {
+            extension = SWF;
+        }
+        String[] rslUrls = getRslUrls( artifact, extension );
+        String[] rslPolicyFileUrls = getRslPolicyFileUrls( artifact );
+        configuration.addRuntimeSharedLibraryPath( artifactPath, rslUrls, rslPolicyFileUrls );
+
+        // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
+        // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
+        configuration.addLibraryPath( new File[] { artifactFile } );
     }
 
     public void rslsSort( List<Artifact> rslArtifacts )
