@@ -34,11 +34,13 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -259,8 +261,51 @@ public class MavenUtils
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+
         Set<Artifact> result = arr.getArtifacts();
+
+        // ## 6/18/09 StoneRiver Change to resolve RELEASE Artifact version ##
+        for ( Artifact artifact : result )
+        {
+            if ( artifact.getVersion().equals( Artifact.RELEASE_VERSION ) )
+            {
+                getReleaseVersion( artifact, localRepository, remoteRepositories, artifactMetadataSource );
+            }
+        }
+
         return result;
+
+    }
+
+    /**
+     * Get the Release version for the Artifact.
+     * 
+     * @param artifact The artifact to update with the release version.
+     * @param localRepository artifact repository
+     * @param remoteRepositories List of remote repositories
+     * @param artifactMetadataSource artifactMetadataSource
+     * @throws MojoExecutionException thrown if an exception occured during artifact resolving
+     */
+    @SuppressWarnings( "unchecked" )
+    private static void getReleaseVersion( Artifact artifact, ArtifactRepository localRepository,
+                                           List remoteRepositories, ArtifactMetadataSource artifactMetadataSource )
+        throws MojoExecutionException
+    {
+        try
+        {
+            List<ArtifactVersion> artifactVersions =
+                artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
+            if ( artifactVersions != null && !artifactVersions.isEmpty() )
+            {
+                ArtifactVersion release = artifactVersions.get( artifactVersions.size() - 1 );
+                artifact.setBaseVersion( release.toString() );
+                artifact.setVersion( release.toString() );
+            }
+        }
+        catch ( ArtifactMetadataRetrievalException ex )
+        {
+            throw new MojoExecutionException( "Error retrieving release version for artifact: " + artifact.getId(), ex );
+        }
     }
 
     /**
