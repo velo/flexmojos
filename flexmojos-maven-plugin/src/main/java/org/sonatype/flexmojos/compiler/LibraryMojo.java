@@ -29,6 +29,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
@@ -345,12 +346,14 @@ public class LibraryMojo
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void computeDigest()
     {
         configuration.enableDigestComputation( computeDigest );
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void includeStylesheet()
         throws MojoExecutionException
     {

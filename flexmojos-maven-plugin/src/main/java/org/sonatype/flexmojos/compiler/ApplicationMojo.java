@@ -49,6 +49,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -265,6 +266,7 @@ public class ApplicationMojo
     }
 
     @FlexCompatibility( minVersion = "3", maxVersion = "3.1" )
+    @IgnoreJRERequirement
     protected void writeResourceBundleFlex30( String[] bundles, String locale, File localePath )
         throws MojoExecutionException
     {
@@ -318,6 +320,7 @@ public class ApplicationMojo
     }
 
     @FlexCompatibility( maxVersion = "2" )
+    @IgnoreJRERequirement
     private void forkMxmlc( Set<String> args )
         throws MojoExecutionException
     {
@@ -325,6 +328,7 @@ public class ApplicationMojo
     }
 
     @FlexCompatibility( minVersion = "3", maxVersion = "3.1" )
+    @IgnoreJRERequirement
     private void runMxmlc( Set<String> args )
     {
         // Just a work around
@@ -356,6 +360,7 @@ public class ApplicationMojo
     }
 
     @FlexCompatibility( minVersion = "3.2" )
+    @IgnoreJRERequirement
     protected void writeResourceBundleFlex32( String[] bundlesNames, String locale, File localePath )
         throws MojoExecutionException
     {

@@ -56,6 +56,7 @@ import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
@@ -1104,6 +1105,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "unchecked" )
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     protected void setMavenPathResolver( E builder )
     {
         if ( enableMavenResourcesResolver )
@@ -1411,34 +1413,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=true" );
             }
 
-            if ( includeResourceBundles != null )
-            {
-                oemConfig.addIncludeResourceBundles( includeResourceBundles );
-            }
-
-            if ( includeResourceBundlesArtifact != null )
-            {
-                for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
-                {
-                    Artifact artifact =
-                        artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
-                                                                      mvnArtifact.getArtifactId(),
-                                                                      mvnArtifact.getVersion(), "properties",
-                                                                      "resource-bundle" );
-                    MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
-                    String bundleFile;
-                    try
-                    {
-                        bundleFile = FileUtils.readFileToString( artifact.getFile() );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
-                    }
-                    String[] bundles = bundleFile.split( " " );
-                    oemConfig.addIncludeResourceBundles( bundles );
-                }
-            }
+            addIncludeResourceBundles( oemConfig );
 
             if ( configFile == null )
             {
@@ -1458,6 +1433,41 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         verifyDigests();
+    }
+
+    @FlexCompatibility( minVersion = "3.1" )
+    @IgnoreJRERequirement
+    private void addIncludeResourceBundles( OEMConfiguration oemConfig )
+        throws MojoExecutionException
+    {
+        if ( includeResourceBundles != null )
+        {
+            oemConfig.addIncludeResourceBundles( includeResourceBundles );
+        }
+
+        if ( includeResourceBundlesArtifact != null )
+        {
+            for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
+            {
+                Artifact artifact =
+                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
+                                                                  mvnArtifact.getArtifactId(),
+                                                                  mvnArtifact.getVersion(), "properties",
+                                                                  "resource-bundle" );
+                MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
+                String bundleFile;
+                try
+                {
+                    bundleFile = FileUtils.readFileToString( artifact.getFile() );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
+                }
+                String[] bundles = bundleFile.split( " " );
+                oemConfig.addIncludeResourceBundles( bundles );
+            }
+        }
     }
 
     protected abstract String getDefaultLocale();
@@ -1520,18 +1530,21 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "deprecation" )
     @FlexCompatibility( maxVersion = "2" )
+    @IgnoreJRERequirement
     private void enableFlashType()
     {
         configuration.enableFlashType( fonts.isFlashType() );
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void verifyDigests()
     {
         configuration.enableDigestVerification( verifyDigests );
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void setTargetPlayer()
         throws MojoExecutionException, MojoFailureException
     {
@@ -1581,6 +1594,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void setCompatibilityMode()
         throws MojoExecutionException
     {
@@ -1619,6 +1633,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void setLocales3( String[] locales )
     {
         configuration.setLocale( locales );
@@ -1626,6 +1641,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "deprecation" )
     @FlexCompatibility( maxVersion = "2" )
+    @IgnoreJRERequirement
     private void setLocales2( String[] locales )
         throws MojoExecutionException
     {
@@ -1641,6 +1657,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @SuppressWarnings( "deprecation" )
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void addDefines()
         throws MojoExecutionException
     {
@@ -1681,6 +1698,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void configureFontsAntiAliasing()
     {
         configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
@@ -2161,6 +2179,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     @FlexCompatibility( minVersion = "3" )
+    @IgnoreJRERequirement
     private void configureWarnings3( Configuration cfg )
     {
         if ( !warnings.getShadowedDeviceFont() )
