@@ -64,7 +64,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-maven-plugin</artifactId>
+      <artifactId>flexmojos-tester</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

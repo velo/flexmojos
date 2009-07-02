@@ -7,10 +7,9 @@
  */
 package org.sonatype.flexmojos.test.report;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-@XStreamAlias( "testcase" )
+@SuppressWarnings( "unused" )
 public class TestMethodReport
 {
 
@@ -18,50 +17,65 @@ public class TestMethodReport
 
     private ErrorReport failure;
 
-    @XStreamAsAttribute
     private String name;
 
-    @XStreamAsAttribute
     private double time;
+
+    private Xpp3Dom dom;
+
+    public TestMethodReport( Xpp3Dom dom )
+    {
+        this.dom = dom;
+    }
 
     public ErrorReport getError()
     {
-        return error;
+        Xpp3Dom child = this.dom.getChild( "error" );
+        if ( child != null )
+        {
+            return new ErrorReport( child );
+        }
+        return null;
     }
 
     public ErrorReport getFailure()
     {
-        return failure;
+        Xpp3Dom child = this.dom.getChild( "failure" );
+        if ( child != null )
+        {
+            return new ErrorReport( child );
+        }
+        return null;
     }
 
     public String getName()
     {
-        return name;
+        return dom.getAttribute( "name" );
     }
 
     public double getTime()
     {
-        return time;
+        return Double.parseDouble( dom.getAttribute( "time" ) );
     }
 
     public void setError( ErrorReport error )
     {
-        this.error = error;
+        throw new UnsupportedOperationException();
     }
 
     public void setFailure( ErrorReport failure )
     {
-        this.failure = failure;
+        throw new UnsupportedOperationException();
     }
 
     public void setName( String name )
     {
-        this.name = name;
+        throw new UnsupportedOperationException();
     }
 
     public void setTime( double time )
     {
-        this.time = time;
+        throw new UnsupportedOperationException();
     }
 
 }

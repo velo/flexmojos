@@ -127,6 +127,7 @@
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
         <module>flexmojos-generator</module>
+        <module>flexmojos-tester</module>
       </modules>
       <properties>
         <maven.test.skip>true</maven.test.skip>
@@ -143,6 +144,7 @@
         <module>flexmojos-super-poms</module>
         <module>flexmojos-archetypes</module>
         <module>flexmojos-testing</module>
+        <module>flexmojos-tester</module>
       </modules>
     </profile>
 
@@ -160,6 +162,7 @@
         <module>flexmojos-super-poms</module>
         <module>flexmojos-archetypes</module>
         <module>flexmojos-testing</module>
+        <module>flexmojos-tester</module>
       </modules>
 
       <build>

@@ -105,7 +105,7 @@
             <configuration>
               <outputDirectory>${project.build.directory}</outputDirectory>
               <descriptors>
-                <descriptor>${project.build.directory}/components.xml</descriptor>
+                <!-- <descriptor>${project.build.directory}/components.xml</descriptor> -->
                 <descriptor>${basedir}/src/main/resources/components.xml</descriptor>
               </descriptors>
             </configuration>
@@ -185,10 +185,6 @@
       <artifactId>jaxen</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <classifier>jdk15</classifier>
@@ -248,7 +244,11 @@
     <dependency>
       <groupId>org.jvnet</groupId>
       <artifactId>animal-sniffer-annotation</artifactId>
-      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-tester</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.test.threads;
+package org.sonatype.flexmojos.test.monitor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,63 +8,57 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.sonatype.flexmojos.test.AbstractControlledThread;
+import org.sonatype.flexmojos.test.ControlledThread;
+import org.sonatype.flexmojos.test.ThreadStatus;
 
 public abstract class AbstractSocketThread
-    extends AbstractLogEnabled
+    extends AbstractControlledThread
     implements ControlledThread
 {
 
-    protected ServerSocket serverSocket = null;
+    protected ServerSocket serverSocket;
 
-    protected Socket clientSocket = null;
+    protected Socket clientSocket;
 
-    protected InputStream in = null;
+    protected InputStream in;
 
-    protected OutputStream out = null;
+    protected OutputStream out;
 
-    private Error error;
+    protected int testPort;
 
-    private ThreadStatus status;
-
-    private boolean holdStatus;
-
-    protected Integer testPort;
-
-    protected Integer firstConnectionTimeout;
+    protected int firstConnectionTimeout;
 
     public AbstractSocketThread()
     {
         super();
     }
 
-    protected void init( int portNumber )
-    {
-        this.testPort = portNumber;
-    }
-
     public void run()
     {
-        if ( testPort == null )
-        {
-            setError( "Test port not defined!", null );
-        }
         try
         {
             openServerSocket();
+            status = ThreadStatus.STARTED;
+
             openClientSocket();
 
             handleRequest();
 
-            setStatus( ThreadStatus.DONE );
+            if ( !ThreadStatus.ERROR.equals( status ) )
+            {
+                status = ThreadStatus.DONE;
+            }
         }
         catch ( SocketTimeoutException e )
         {
-            setError( "Timeout waiting for flexunit report", e );
+            status = ThreadStatus.ERROR;
+            error = e;
         }
         catch ( IOException e )
         {
-            setError( "Error receiving report from flexunit", e );
+            status = ThreadStatus.ERROR;
+            error = e;
         }
         finally
         {
@@ -74,41 +68,16 @@ public abstract class AbstractSocketThread
         }
     }
 
-    public void setStatus( ThreadStatus status )
-    {
-        if ( !holdStatus )
-        {
-            this.status = status;
-        }
-    }
-
-    public void setError( Error error )
-    {
-        this.error = error;
-    }
-
     protected abstract void handleRequest()
         throws SocketTimeoutException, SocketException, IOException;
-
-    protected void setError( String msg, Exception root )
-    {
-        getLogger().debug( msg, root );
-
-        setStatus( ThreadStatus.ERROR );
-        error = new Error( msg + " - " + getClass(), root );
-        throw error;
-    }
 
     private void openServerSocket()
         throws IOException
     {
         serverSocket = new ServerSocket( testPort );
-        if ( firstConnectionTimeout != null )
-        {
-            serverSocket.setSoTimeout( firstConnectionTimeout );
-        }
+        serverSocket.setSoTimeout( firstConnectionTimeout );
 
-        getLogger().debug( "["+this.getClass().getName()+"] opened server socket on port "+testPort );
+        getLogger().debug( "[" + this.getClass().getName() + "] opened server socket on port " + testPort );
     }
 
     private void closeServerSocket()
@@ -127,27 +96,21 @@ public abstract class AbstractSocketThread
     }
 
     protected void openClientSocket()
-        throws SocketException, IOException
+        throws SocketException, IOException, SocketTimeoutException
     {
         // This method blocks until a connection is made.
-        try
-        {
-            clientSocket = serverSocket.accept();
-        }
-        catch ( SocketTimeoutException e )
-        {
-            setError( "Flash player didn't open connection.", e );
-        }
+        clientSocket = serverSocket.accept();
+
         // serverSocket.setSoTimeout( 0 );
 
-        getLogger().debug( "["+this.getClass().getName()+"] accepting data from client" );
+        getLogger().debug( "[" + this.getClass().getName() + "] accepting data from client" );
 
-        setStatus( ThreadStatus.RUNNING );
+        status = ThreadStatus.RUNNING;
 
         in = clientSocket.getInputStream();
         out = clientSocket.getOutputStream();
     }
-    
+
     protected void closeClientSocket()
     {
         // Close the output stream.
@@ -190,22 +153,14 @@ public abstract class AbstractSocketThread
         }
     }
 
-    public Error getError()
-    {
-        return this.error;
-    }
-
-    public ThreadStatus getStatus()
-    {
-        return this.status;
-    }
-
     public void stop()
     {
-        this.holdStatus = true;
         try
         {
-            this.serverSocket.close();
+            if ( this.serverSocket != null )
+            {
+                this.serverSocket.close();
+            }
         }
         catch ( IOException e )
         {
