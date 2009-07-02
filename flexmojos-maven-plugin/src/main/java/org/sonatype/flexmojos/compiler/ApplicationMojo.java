@@ -152,7 +152,10 @@ public class ApplicationMojo
 
         if ( source == null )
         {
-            getLog().warn( "Source file was not defined, flexmojos will guess one." );
+			if ( sourceFile == null )
+			{
+            	getLog().warn( "Source file was not defined, flexmojos will guess one." );
+			}
             source = MavenUtils.resolveSourceFile( project, sourceFile );
         }
 
