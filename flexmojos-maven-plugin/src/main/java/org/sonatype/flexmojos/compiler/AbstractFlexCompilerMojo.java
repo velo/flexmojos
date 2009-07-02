@@ -1412,6 +1412,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             {
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=true" );
             }
+            else 
+            {
+                commandLineArguments.add( "-static-link-runtime-shared-libraries=false" );
+            }
 
             addIncludeResourceBundles( oemConfig );
 
@@ -2224,8 +2228,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         throws MojoExecutionException
     {
         File fileReport =
-            new File( build.getDirectory(), project.getArtifactId() + "-" + project.getVersion() + "-" + type
-                + "-report.xml" );
+            new File( build.getDirectory(), build.getFinalName() + "-" + type + "-report.xml" );
 
         try
         {

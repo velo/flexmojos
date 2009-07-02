@@ -395,8 +395,7 @@ public class ApplicationMojo
             {
                 FlexConfigBuilder configBuilder = new FlexConfigBuilder( rbBuilder );
                 configBuilder.addOutput( output );
-                configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion()
-                    + "-" + locale + "-config-report.xml" ) );
+                configBuilder.write( new File( output.getPath().replace( "." + SWF, "-config-report.xml" ) ) );
             }
             catch ( Exception e )
             {
