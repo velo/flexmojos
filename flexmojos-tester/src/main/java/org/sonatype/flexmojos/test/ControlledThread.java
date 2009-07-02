@@ -15,20 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.threads;
+package org.sonatype.flexmojos.test;
 
 public interface ControlledThread
-    extends Runnable
 {
 
     void stop();
 
     ThreadStatus getStatus();
 
-    Error getError();
-
-    void setStatus( ThreadStatus status );
-
-    void setError( Error error );
+    Throwable getError();
 
 }

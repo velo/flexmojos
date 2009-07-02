@@ -15,23 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.util;
+package org.sonatype.flexmojos.test;
 
-import org.sonatype.flexmojos.test.report.ErrorReport;
-import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.report.TestMethodReport;
+import java.io.File;
+import java.util.List;
 
-import com.thoughtworks.xstream.XStream;
+import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 
-public class XStreamFactory
+public interface TestRunner
 {
-    public static XStream getXStreamInstance()
-    {
-        XStream xs = new XStream();
-        xs.processAnnotations( TestCaseReport.class );
-        xs.processAnnotations( TestMethodReport.class );
-        xs.processAnnotations( ErrorReport.class );
-        return xs;
-    }
-
+    List<String> run( File swf )
+        throws TestRunnerException, LaunchFlashPlayerException;
 }

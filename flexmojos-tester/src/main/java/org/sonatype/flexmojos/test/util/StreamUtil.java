@@ -15,9 +15,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.threads;
+package org.sonatype.flexmojos.test.util;
 
-public enum ThreadStatus
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketException;
+import java.util.Arrays;
+
+import org.codehaus.plexus.util.StringOutputStream;
+
+public class StreamUtil
 {
-    RUNNING, DONE, ERROR
+
+    public static String readAvailable( InputStream in )
+        throws IOException
+    {
+        StringOutputStream out = new StringOutputStream();
+        in.skip( 0 );
+
+        int available = in.available();
+
+        byte[] buffer = new byte[available];
+        try
+        {
+            in.read( buffer );
+        }
+        catch ( SocketException e )
+        {
+            System.out.println( available );
+            System.out.println( Arrays.toString( buffer ) );
+        }
+        out.write( buffer );
+
+        out.flush();
+        out.close();
+        return out.toString();
+    }
+
 }

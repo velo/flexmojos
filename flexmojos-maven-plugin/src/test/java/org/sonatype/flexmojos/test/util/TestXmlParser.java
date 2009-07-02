@@ -17,12 +17,11 @@
  */
 package org.sonatype.flexmojos.test.util;
 
+import java.io.StringReader;
 
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.util.XStreamFactory;
 import org.testng.annotations.Test;
-
-import com.thoughtworks.xstream.XStream;
 
 public class TestXmlParser
 {
@@ -39,9 +38,9 @@ public class TestXmlParser
 
     @Test
     public void parseXml()
+        throws Exception
     {
-        XStream xs = XStreamFactory.getXStreamInstance();
-        TestCaseReport report = (TestCaseReport) xs.fromXML( XML );
+        TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new StringReader( XML ) ) );
         System.out.println( report );
     }
 }

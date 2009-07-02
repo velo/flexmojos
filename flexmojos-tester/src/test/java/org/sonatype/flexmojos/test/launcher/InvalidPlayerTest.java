@@ -15,48 +15,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.report;
+package org.sonatype.flexmojos.test.launcher;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import static org.testng.Assert.fail;
 
-public class ErrorReport
+import org.codehaus.plexus.context.Context;
+import org.testng.annotations.Test;
+
+public class InvalidPlayerTest
+    extends AbstractAsVmLauncherTest
 {
-    @XStreamAsAttribute
-    private String message;
 
-    private String stackTrace;
-
-    @XStreamAsAttribute
-    private String type;
-
-    public String getMessage()
+    @Override
+    protected void customizeContext( Context context )
     {
-        return message;
+        super.customizeContext( context );
+
+        context.put( "flashplayer.command", "invalid_flash_player" );
     }
 
-    public String getStackTrace()
+    @Test( timeOut = 20000 )
+    public void invalidPlayer()
+        throws Exception
     {
-        return stackTrace;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
-
-    public void setMessage( String message )
-    {
-        this.message = message;
-    }
-
-    public void setStackTrace( String stackTrace )
-    {
-        this.stackTrace = stackTrace;
-    }
-
-    public void setType( String type )
-    {
-        this.type = type;
+        AsVmLauncher launcher = getContainer().lookup( AsVmLauncher.class );
+        try
+        {
+            launcher.start( VALID_SWF );
+            fail( launcher.getConsoleOutput() );
+        }
+        catch ( LaunchFlashPlayerException e )
+        {
+            // expected
+        }
+        finally
+        {
+            launcher.stop();
+        }
     }
 
 }

@@ -23,12 +23,10 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.apache.maven.it.VerificationException;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.util.XStreamFactory;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
-
-import com.thoughtworks.xstream.XStream;
 
 public class IT0013IssuesTest
     extends AbstractFlexMojosTests
@@ -80,9 +78,8 @@ public class IT0013IssuesTest
             File reportDir = new File( testDir, "target/surefire-reports" );
             assertEquals( 2, reportDir.listFiles().length );
 
-            XStream xs = XStreamFactory.getXStreamInstance();
             File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
-            TestCaseReport report = (TestCaseReport) xs.fromXML( new FileReader( reportFile ) );
+            TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
             assertEquals( "com.adobe.example.TestCalculator", report.getName() );
             assertEquals( 2, report.getTests() );
