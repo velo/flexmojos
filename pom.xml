@@ -59,9 +59,24 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>coverage.ec</include>
+              </includes>
+              <followSymlinks>true</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
         <executions>
           <execution>
             <phase>verify</phase>
@@ -99,7 +114,7 @@
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma4it-maven-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
         <reportSets>
           <reportSet>
             <reports>
