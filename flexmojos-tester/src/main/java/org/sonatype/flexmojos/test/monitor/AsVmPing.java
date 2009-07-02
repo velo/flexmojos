@@ -1,32 +1,32 @@
-package org.sonatype.flexmojos.test.threads;
+package org.sonatype.flexmojos.test.monitor;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.util.IOUtil;
+import org.sonatype.flexmojos.test.ThreadStatus;
 
 /**
  * This class will ping Action Script virtual machine to make sure if the application still running
  * 
  * @author velo
  */
-@Component( role = AsVmControl.class, instantiationStrategy = "per-lookup" )
-public class AsVmControl
+@Component( role = AsVmPing.class, instantiationStrategy = "per-lookup" )
+public class AsVmPing
     extends AbstractSocketThread
 {
-    public static final String ROLE = AsVmControl.class.getName();
-
     public static final String STATUS = "Server Status";
 
     public static final String OK = "OK";
 
     public static final String FINISHED = "FINISHED";
-    
+
+    public static final String EOL = "\n";
+
     private int testTimeout;
 
     @Override
@@ -42,9 +42,8 @@ public class AsVmControl
         while ( true )
         {
             getLogger().debug( "[CONTROL] query status" );
-            BufferedWriter out = new BufferedWriter( new OutputStreamWriter( super.out ) );
-            out.write( STATUS );
-            out.flush();
+            IOUtil.copy( STATUS, out );
+            IOUtil.copy( EOL, out );
 
             try
             {
@@ -52,23 +51,26 @@ public class AsVmControl
                 BufferedReader in = new BufferedReader( new InputStreamReader( super.in ) );
                 String result = in.readLine();
                 getLogger().debug( "[CONTROL] status is: " + result );
-                if ( !OK.equals( result ) && !FINISHED.equals( result ))
+                if ( !OK.equals( result ) && !FINISHED.equals( result ) )
                 {
                     errorCount++;
                     if ( errorCount >= 3 )
                     {
-                        setError( "Invalid virtual machine status: " + result, null );
+                        status = ThreadStatus.ERROR;
+                        error = new Error( "Invalid virtual machine status: " + result );
+
+                        return;
                     }
+                }
+                else if ( FINISHED.equals( result ) )
+                {
+                    getLogger().debug( "[CONTROL] FINISHED received, terminating the thread" );
+                    return;
                 }
                 else
                 {
                     errorCount = 0;
-                    if (FINISHED.equals( result )){
-                    	
-                    	getLogger().debug( "[CONTROL] FINISHED received, terminating the thread" );
-                    	break;
-                 
-                    }
+
                 }
             }
             catch ( SocketTimeoutException e )
@@ -76,19 +78,23 @@ public class AsVmControl
                 errorCount++;
                 if ( errorCount >= 3 )
                 {
-                    setError( "Remote virtual machine didn't reply, looks to be stucked", e );
+                    status = ThreadStatus.ERROR;
+                    error = e;
+
+                    return;
                 }
             }
 
-            clientSocket.setSoTimeout( 0 );
         }
     }
 
-    public void init( int testControlPort, int firstConnectionTimeout, int testTimeout )
+    public void start( int testControlPort, int firstConnectionTimeout, int testTimeout )
     {
-        super.init( testControlPort );
-        super.firstConnectionTimeout = firstConnectionTimeout;
+        this.testPort = testControlPort;
+        this.firstConnectionTimeout = firstConnectionTimeout;
         this.testTimeout = testTimeout;
+
+        launch();
     }
 
 }

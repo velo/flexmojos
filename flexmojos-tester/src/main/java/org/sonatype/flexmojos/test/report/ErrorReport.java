@@ -7,46 +7,52 @@
  */
 package org.sonatype.flexmojos.test.report;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+@SuppressWarnings( "unused" )
 public class ErrorReport
 {
-    @XStreamAsAttribute
     private String message;
 
     private String stackTrace;
 
-    @XStreamAsAttribute
     private String type;
+
+    private Xpp3Dom dom;
+
+    public ErrorReport( Xpp3Dom dom )
+    {
+        this.dom = dom;
+    }
 
     public String getMessage()
     {
-        return message;
+        return dom.getAttribute( "message" );
     }
 
     public String getStackTrace()
     {
-        return stackTrace;
+        return dom.getAttribute( "stackTrace" );
     }
 
     public String getType()
     {
-        return type;
+        return dom.getAttribute( "type" );
     }
 
     public void setMessage( String message )
     {
-        this.message = message;
+        throw new UnsupportedOperationException();
     }
 
     public void setStackTrace( String stackTrace )
     {
-        this.stackTrace = stackTrace;
+        throw new UnsupportedOperationException();
     }
 
     public void setType( String type )
     {
-        this.type = type;
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -10,32 +10,20 @@ package org.sonatype.flexmojos.test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.Thread.UncaughtExceptionHandler;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
+import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.threads.AsVmControl;
-import org.sonatype.flexmojos.test.threads.AsVmLauncher;
-import org.sonatype.flexmojos.test.threads.ControlledThread;
-import org.sonatype.flexmojos.test.threads.ResultHandler;
-import org.sonatype.flexmojos.test.threads.ThreadStatus;
-import org.sonatype.flexmojos.test.util.XStreamFactory;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -55,7 +43,6 @@ import com.thoughtworks.xstream.XStream;
  */
 public class FlexUnitMojo
     extends AbstractIrvinMojo
-    implements Contextualizable
 {
 
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
@@ -141,7 +128,10 @@ public class FlexUnitMojo
      */
     private int testTimeout;
 
-    private PlexusContainer plexus;
+    /**
+     * @component role="org.sonatype.flexmojos.test.TestRunner"
+     */
+    private TestRunner testRunner;
 
     @Override
     public void execute()
@@ -189,11 +179,22 @@ public class FlexUnitMojo
     private void writeTestReport( final String reportString )
         throws MojoExecutionException
     {
-
-        XStream xs = XStreamFactory.getXStreamInstance();
-
         // Parse the report.
-        TestCaseReport report = (TestCaseReport) xs.fromXML( reportString );
+        TestCaseReport report;
+        try
+        {
+            report = new TestCaseReport( Xpp3DomBuilder.build( new StringReader( reportString ) ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            // should never happen
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            // should never happen
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
 
         // Get the test attributes.
         final String name = report.getName();
@@ -256,132 +257,28 @@ public class FlexUnitMojo
         String[] swfs = scan.getIncludedFiles();
         for ( String swfName : swfs )
         {
-            run( new File( testOutputDirectory, swfName ) );
-        }
-    }
-
-    protected void run( File swf )
-        throws MojoExecutionException
-    {
-        getLog().info( "Running tests " + swf );
-
-        AsVmControl asVmControl = null;
-        ResultHandler resultHandler = null;
-        AsVmLauncher asVmLauncher = null;
-        try
-        {
-            // Start a thread that pings flashplayer to be sure if it still alive.
-            asVmControl = lookup( AsVmControl.class );
-            asVmControl.init( testControlPort, firstConnectionTimeout, testTimeout );
-            run( asVmControl );
-
-            // Start a thread that receives the FlexUnit results.
-            resultHandler = lookup( ResultHandler.class );
-            resultHandler.init( testPort );
-            run( resultHandler );
-
-            // Start the browser and run the FlexUnit tests.
-            asVmLauncher = lookup( AsVmLauncher.class );
-            asVmLauncher.init( flashPlayerCommand, swf, allowHeadlessMode );
-            run( asVmLauncher );
-
-            // Wait until the tests are complete.
-            while ( true )
+            try
             {
-                getLog().debug( "[MOJO] asVmLauncher " + asVmLauncher.getStatus() );
-                getLog().debug( "[MOJO] asVmControl " + asVmControl.getStatus() );
-                getLog().debug( "[MOJO] resultHandler " + resultHandler.getStatus() );
-
-                if ( hasError( asVmLauncher, asVmControl, resultHandler ) )
+                List<String> results = testRunner.run( new File( testOutputDirectory, swfName ) );
+                for ( String result : results )
                 {
-                    this.executionError = getError( asVmLauncher, asVmControl, resultHandler );
-                    getLog().error( executionError.getMessage() + swf, executionError );
-                    numTests++;
-                    numErrors++;
-                    return;
+                    writeTestReport( result );
                 }
-
-                if ( hasDone( asVmLauncher ) )
-                {
-                    for ( int i = 0; i < 3; i++ )
-                    {
-                        if ( hasDone( resultHandler ) && hasDone( asVmControl ) )
-                        {
-                            List<String> results = resultHandler.getTestReportData();
-                            for ( String result : results )
-                            {
-                                writeTestReport( result );
-                            }
-                            return; // expected exit!
-                        }
-                        sleep( 500 );
-                    }
-
-                    // the flashplayer is closed, but the sockets still running...
-
-                    this.executionError =
-                        new IllegalStateException( "the flashplayer is closed, but the sockets still running" );
-                    getLog().error( "Invalid state: the flashplayer is closed, but the sockets still running..." );
-                    numTests++;
-                    numErrors++;
-                    return; // abnormal exit!
-                }
-
-                sleep( 1000 );
+            }
+            catch ( TestRunnerException e )
+            {
+                executionError = e;
+            }
+            catch ( LaunchFlashPlayerException e )
+            {
+                throw new MojoExecutionException(
+                                                  "Failed to launch Flash Player.  Probably java was not able to find flashplayer."
+                                                      + "\n\t\tMake sure flashplayer is available on PATH"
+                                                      + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
+                                                      + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
+                                                  e );
             }
         }
-        finally
-        {
-            stop( asVmLauncher, asVmControl, resultHandler );
-        }
-    }
-
-    private void sleep( int time )
-    {
-        try
-        {
-            Thread.sleep( time );
-        }
-        catch ( InterruptedException e )
-        {
-            // no worries
-        }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private <E> E lookup( Class<E> clazz )
-        throws MojoExecutionException
-    {
-        String role = clazz.getName();
-        getLog().debug( "[MOJO] Looking up for " + role );
-        try
-        {
-            return (E) plexus.lookup( role );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new MojoExecutionException( "Unable to lookup for " + role, e );
-        }
-    }
-
-    private void run( final ControlledThread thread )
-    {
-        Thread t = new Thread( thread );
-        t.setUncaughtExceptionHandler( new UncaughtExceptionHandler()
-        {
-            public void uncaughtException( Thread t, Throwable e )
-            {
-                if ( thread.getStatus() != ThreadStatus.ERROR )
-                {
-                    thread.setStatus( ThreadStatus.ERROR );
-                    thread.setError( new Error( "Runtime error running: " + thread.getClass(), e ) );
-                }
-                getLog().debug( "[MOJO] Error running: " + thread.getClass(), e );
-            }
-        } );
-        t.setDaemon( true );
-        t.start();
-        Thread.yield();
     }
 
     @Override
@@ -419,80 +316,6 @@ public class FlexUnitMojo
             }
         }
 
-    }
-
-    private void stop( ControlledThread... threads )
-    {
-        for ( ControlledThread controlledThread : threads )
-        {
-            // only stop if is running
-            if ( controlledThread != null && ThreadStatus.RUNNING.equals( controlledThread.getStatus() ) )
-            {
-                try
-                {
-                    controlledThread.stop();
-                }
-                catch ( Throwable e )
-                {
-                    getLog().debug( "[MOJO] Error stopping " + controlledThread.getClass(), e );
-                }
-                finally
-                {
-                    try
-                    {
-                        plexus.release( controlledThread );
-                    }
-                    catch ( ComponentLifecycleException e )
-                    {
-                        getLog().debug( "[MOJO] Error releasing " + controlledThread.getClass(), e );
-                        // just releasing ignoring
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean hasDone( ControlledThread... threads )
-    {
-        for ( ControlledThread controlledThread : threads )
-        {
-            if ( ThreadStatus.DONE.equals( controlledThread.getStatus() ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Error getError( ControlledThread... threads )
-    {
-        for ( ControlledThread controlledThread : threads )
-        {
-            if ( controlledThread.getError() != null )
-            {
-                return controlledThread.getError();
-            }
-        }
-
-        throw new IllegalStateException( "No error found!" );
-    }
-
-    private boolean hasError( ControlledThread... threads )
-    {
-        for ( ControlledThread controlledThread : threads )
-        {
-            if ( ThreadStatus.ERROR.equals( controlledThread.getStatus() ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        plexus = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
 }
