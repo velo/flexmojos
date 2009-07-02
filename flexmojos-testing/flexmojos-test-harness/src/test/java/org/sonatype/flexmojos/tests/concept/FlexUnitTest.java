@@ -18,13 +18,13 @@
 package org.sonatype.flexmojos.tests.concept;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.junit.Assert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.util.XStreamFactory;
 import org.testng.annotations.Test;
 
 public class FlexUnitTest
@@ -35,7 +35,7 @@ public class FlexUnitTest
     public void testFlexUnitExample()
         throws Exception
     {
-        File testDir = getProject( "/concept/flexunit-example/" );
+        File testDir = getProject( "/concept/flexunit-example" );
         try
         {
             test( testDir, "install" );
@@ -52,8 +52,7 @@ public class FlexUnitTest
             File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
             Assert.assertTrue( "Report was not created!", reportFile.isFile() );
 
-            String reportContent = FileUtils.readFileToString( reportFile );
-            TestCaseReport report = (TestCaseReport) XStreamFactory.getXStreamInstance().fromXML( reportContent );
+            TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
             Assert.assertEquals( 1, report.getErrors() );
             Assert.assertEquals( 1, report.getFailures() );
@@ -73,7 +72,7 @@ public class FlexUnitTest
     public void testFlexUnitExampleForked()
         throws Exception
     {
-        File testDir = getProject( "/concept/flexunit-example/" );
+        File testDir = getProject( "/concept/flexunit-example" );
         try
         {
             test( testDir, "install", "-DforkMode=always" );
@@ -90,8 +89,7 @@ public class FlexUnitTest
             File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
             Assert.assertTrue( "Report was not created!", reportFile.isFile() );
 
-            String reportContent = FileUtils.readFileToString( reportFile );
-            TestCaseReport report = (TestCaseReport) XStreamFactory.getXStreamInstance().fromXML( reportContent );
+            TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
             Assert.assertEquals( 1, report.getErrors() );
             Assert.assertEquals( 1, report.getFailures() );

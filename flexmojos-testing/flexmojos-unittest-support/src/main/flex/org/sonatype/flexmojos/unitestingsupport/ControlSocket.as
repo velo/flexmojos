@@ -26,11 +26,11 @@ package org.sonatype.flexmojos.unitestingsupport
 	public class ControlSocket
 	{
 
-	    public static const STATUS:String = "Server Status";
+	    public static const STATUS:String = "Server Status\n";
 	
-	    public static const OK:String = "OK";
+	    public static const OK:String = "OK\n";
 	    
-	    public static const FINISHED:String = "FINISHED";
+	    public static const FINISHED:String = "FINISHED\n";
 
 		[Inspectable]
 		public var port:uint = 1024;

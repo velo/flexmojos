@@ -15,23 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.util;
+package org.sonatype.flexmojos.test;
 
-import org.sonatype.flexmojos.test.report.ErrorReport;
-import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.test.report.TestMethodReport;
-
-import com.thoughtworks.xstream.XStream;
-
-public class XStreamFactory
+public class TestRunnerException
+    extends Exception
 {
-    public static XStream getXStreamInstance()
+
+    private static final long serialVersionUID = 6504362216993363359L;
+
+    public TestRunnerException( String message, Throwable cause )
     {
-        XStream xs = new XStream();
-        xs.processAnnotations( TestCaseReport.class );
-        xs.processAnnotations( TestMethodReport.class );
-        xs.processAnnotations( ErrorReport.class );
-        return xs;
+        super( message, cause );
+    }
+
+    public TestRunnerException( String message )
+    {
+        super( message );
     }
 
 }

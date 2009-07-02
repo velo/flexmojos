@@ -15,16 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.threads;
+package org.sonatype.flexmojos.test.monitor;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.sonatype.flexmojos.test.ControlledThread;
 
 /**
  * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
@@ -41,7 +42,7 @@ public class ResultHandler
     public static final String END_OF_TEST_SUITE = "</testsuite>";
 
     public static final String ACK_OF_TEST_RESULT = "<endOfTestRunAck/>";
-    
+
     public static final char NULL_BYTE = '\u0000';
 
     protected List<String> testReportData;
@@ -64,7 +65,7 @@ public class ResultHandler
             if ( chr == NULL_BYTE )
             {
                 final String data = buffer.toString();
-                getLogger().debug( "[RESULT] Recivied data: " + data  );
+                getLogger().debug( "[RESULT] Recivied data: " + data );
                 buffer = new StringBuffer();
 
                 if ( data.endsWith( END_OF_TEST_SUITE ) )
@@ -75,14 +76,14 @@ public class ResultHandler
                 }
                 else if ( data.equals( END_OF_TEST_RUN ) )
                 {
-                    getLogger().debug( "[RESULT] End test run - sending ACK: "+ACK_OF_TEST_RESULT );
-               
-                    //Sending the acknowledgement to testrunner
-                    
+                    getLogger().debug( "[RESULT] End test run - sending ACK: " + ACK_OF_TEST_RESULT );
+
+                    // Sending the acknowledgement to testrunner
+
                     BufferedWriter out = new BufferedWriter( new OutputStreamWriter( super.out ) );
                     out.write( ACK_OF_TEST_RESULT + NULL_BYTE );
                     out.flush();
-                    break;                    
+                    break;
                 }
             }
             else
@@ -94,11 +95,12 @@ public class ResultHandler
         getLogger().debug( "[RESULT] Socket buffer " + buffer );
     }
 
-    @Override
-    public void init( int portNumber )
+    public void start( int portNumber )
     {
-        super.init( portNumber );
+        super.testPort = portNumber;
 
         testReportData = new ArrayList<String>();
+
+        launch();
     }
 }

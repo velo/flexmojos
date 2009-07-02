@@ -17,92 +17,100 @@
  */
 package org.sonatype.flexmojos.test.report;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-@XStreamAlias( "testsuite" )
+@SuppressWarnings( "unused" )
 public class TestCaseReport
 {
 
-    @XStreamAsAttribute
     private int errors;
 
-    @XStreamAsAttribute
     private int failures;
 
-    @XStreamImplicit( itemFieldName = "testcase" )
     private List<TestMethodReport> methods;
 
-    @XStreamAsAttribute
     private String name;
 
-    @XStreamAsAttribute
     private int tests;
 
-    @XStreamAsAttribute
     private double time;
+
+    private Xpp3Dom dom;
+
+    public TestCaseReport( Xpp3Dom dom )
+    {
+        this.dom = dom;
+    }
 
     public int getErrors()
     {
-        return errors;
+        return Integer.parseInt( dom.getAttribute( "errors" ) );
     }
 
     public int getFailures()
     {
-        return failures;
+        return Integer.parseInt( dom.getAttribute( "failures" ) );
     }
 
     public List<TestMethodReport> getMethods()
     {
-        return methods;
+        if ( this.methods == null )
+        {
+            this.methods = new ArrayList<TestMethodReport>();
+            for ( Xpp3Dom child : dom.getChildren( "testcase" ) )
+            {
+                methods.add( new TestMethodReport( child ) );
+            }
+        }
+        return this.methods;
     }
 
     public String getName()
     {
-        return name;
+        return dom.getAttribute( "name" );
     }
 
     public int getTests()
     {
-        return tests;
+        return Integer.parseInt( dom.getAttribute( "tests" ) );
     }
 
     public double getTime()
     {
-        return time;
+        return Double.parseDouble( dom.getAttribute( "time" ) );
     }
 
     public void setErrors( int errors )
     {
-        this.errors = errors;
+        throw new UnsupportedOperationException();
     }
 
     public void setFailures( int failures )
     {
-        this.failures = failures;
+        throw new UnsupportedOperationException();
     }
 
     public void setMethods( List<TestMethodReport> methods )
     {
-        this.methods = methods;
+        throw new UnsupportedOperationException();
     }
 
     public void setName( String name )
     {
-        this.name = name;
+        throw new UnsupportedOperationException();
     }
 
     public void setTests( int tests )
     {
-        this.tests = tests;
+        throw new UnsupportedOperationException();
     }
 
     public void setTime( double time )
     {
-        this.time = time;
+        throw new UnsupportedOperationException();
     }
 
 }
