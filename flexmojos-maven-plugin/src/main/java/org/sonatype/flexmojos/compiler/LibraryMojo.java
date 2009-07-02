@@ -446,8 +446,7 @@ public class LibraryMojo
                 FlexConfigBuilder configBuilder = new FlexConfigBuilder( localized );
                 configBuilder.addOutput( output );
                 configBuilder.addList( bundles, "include-resource-bundles", "bundle" );
-                configBuilder.write( new File( output.getParent(), project.getArtifactId() + "-" + project.getVersion()
-                    + "-" + locale + "-config-report.xml" ) );
+                configBuilder.write( new File( output.getPath().replace( "." + RB_SWC, "-config-report.xml" ) ) );
             }
             catch ( Exception e )
             {
