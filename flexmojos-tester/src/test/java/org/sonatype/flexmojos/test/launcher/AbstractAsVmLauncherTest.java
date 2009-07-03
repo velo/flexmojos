@@ -61,8 +61,6 @@ public class AbstractAsVmLauncherTest
         throws Exception
     {
         launcher.stop();
-
-        System.out.println( launcher.getConsoleOutput() );
     }
 
     @Override
