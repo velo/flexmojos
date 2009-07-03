@@ -13,8 +13,8 @@ import java.util.Arrays;
 
 import org.apache.maven.it.VerificationException;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.junit.Assert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
+import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 public class FlexUnitTest
@@ -34,27 +34,28 @@ public class FlexUnitTest
         {
             File target = new File( testDir, "target" );
             File sureFireReports = new File( target, "surefire-reports" );
-            Assert.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
+            AssertJUnit.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
 
             String[] reportFiles = sureFireReports.list();
-            Assert.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2, reportFiles.length );
+            AssertJUnit.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2,
+                                      reportFiles.length );
 
             File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
-            Assert.assertTrue( "Report was not created!", reportFile.isFile() );
+            AssertJUnit.assertTrue( "Report was not created!", reportFile.isFile() );
 
             TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
-            Assert.assertEquals( 1, report.getErrors() );
-            Assert.assertEquals( 1, report.getFailures() );
-            Assert.assertEquals( 3, report.getTests() );
+            AssertJUnit.assertEquals( 1, report.getErrors() );
+            AssertJUnit.assertEquals( 1, report.getFailures() );
+            AssertJUnit.assertEquals( 3, report.getTests() );
 
             File testClasses = new File( target, "test-classes" );
-            Assert.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
+            AssertJUnit.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
 
             File mxml = new File( testClasses, "TestRunner.mxml" );
-            Assert.assertTrue( mxml.isFile() );
+            AssertJUnit.assertTrue( mxml.isFile() );
             File swf = new File( testClasses, "TestRunner.swf" );
-            Assert.assertTrue( swf.isFile() );
+            AssertJUnit.assertTrue( swf.isFile() );
         }
     }
 
@@ -71,31 +72,32 @@ public class FlexUnitTest
         {
             File target = new File( testDir, "target" );
             File sureFireReports = new File( target, "surefire-reports" );
-            Assert.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
+            AssertJUnit.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
 
             String[] reportFiles = sureFireReports.list();
-            Assert.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2, reportFiles.length );
+            AssertJUnit.assertEquals( "Expected for 2 files, got: " + Arrays.toString( reportFiles ), 2,
+                                      reportFiles.length );
 
             File reportFile = new File( sureFireReports, "TEST-com.adobe.example.TestCalculator.xml" );
-            Assert.assertTrue( "Report was not created!", reportFile.isFile() );
+            AssertJUnit.assertTrue( "Report was not created!", reportFile.isFile() );
 
             TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
-            Assert.assertEquals( 1, report.getErrors() );
-            Assert.assertEquals( 1, report.getFailures() );
-            Assert.assertEquals( 3, report.getTests() );
+            AssertJUnit.assertEquals( 1, report.getErrors() );
+            AssertJUnit.assertEquals( 1, report.getFailures() );
+            AssertJUnit.assertEquals( 3, report.getTests() );
 
             File testClasses = new File( target, "test-classes" );
-            Assert.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
+            AssertJUnit.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
 
             File mxml = new File( testClasses, "com_adobe_example_TestCalculator_Flexmojos_test.mxml" );
-            Assert.assertTrue( mxml.isFile() );
+            AssertJUnit.assertTrue( mxml.isFile() );
             File swf = new File( testClasses, "com_adobe_example_TestCalculator_Flexmojos_test.swf" );
-            Assert.assertTrue( swf.isFile() );
+            AssertJUnit.assertTrue( swf.isFile() );
             File mxml2 = new File( testClasses, "com_adobe_example_TestCalculator2_Flexmojos_test.mxml" );
-            Assert.assertTrue( mxml2.isFile() );
+            AssertJUnit.assertTrue( mxml2.isFile() );
             File swf2 = new File( testClasses, "com_adobe_example_TestCalculator2_Flexmojos_test.swf" );
-            Assert.assertTrue( swf2.isFile() );
+            AssertJUnit.assertTrue( swf2.isFile() );
         }
     }
 
