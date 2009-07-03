@@ -23,7 +23,7 @@ import static org.sonatype.flexmojos.compatibilitykit.VersionUtils.splitVersion;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class VersionUtilsTest
