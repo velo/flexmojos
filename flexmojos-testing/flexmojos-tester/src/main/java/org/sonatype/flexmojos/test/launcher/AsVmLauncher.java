@@ -13,7 +13,6 @@ import java.io.IOException;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Configuration;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.StreamPumper;
@@ -50,8 +49,6 @@ public class AsVmLauncher
     public void start( File targetSwf )
         throws LaunchFlashPlayerException, InvalidSwfException
     {
-        getLogger().setThreshold( Logger.LEVEL_DEBUG );
-
         if ( targetSwf == null )
         {
             throw new InvalidSwfException( "targetSwf is null" );
