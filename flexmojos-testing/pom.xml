@@ -34,6 +34,7 @@
     <profile>
       <id>release</id>
       <modules>
+        <module>flexmojos-tester</module>
         <module>flexmojos-unittest-support</module>
       </modules>
     </profile>
@@ -45,6 +46,7 @@
       </activation>
 
       <modules>
+        <module>flexmojos-tester</module>
         <module>flexmojos-unittest-support</module>
         <module>flexmojos-test-harness</module>
       </modules>
