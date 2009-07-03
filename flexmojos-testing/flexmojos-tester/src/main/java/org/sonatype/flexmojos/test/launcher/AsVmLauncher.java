@@ -224,42 +224,43 @@ public class AsVmLauncher
             {
                 getLogger().debug( "[LAUNCHER] process has not been finished, destroying" );
                 process.destroy();
-
-                if ( useXvfb() )
-                {
-                    try
-                    {
-                        getLogger().debug( "[LAUNCHER] process has not been finished, killing Xvfb" );
-                        Runtime.getRuntime().exec( new String[] { "killall", "Xvfb" } ).waitFor();
-                        Runtime.getRuntime().exec( new String[] { "killall", "xvfb-run" } ).waitFor();
-                        Runtime.getRuntime().exec( new String[] { "killall", new File( flashplayerCommand ).getName() } ).waitFor();
-                    }
-                    catch ( IOException e )
-                    {
-                        getLogger().error( "Error killing Xvfb", e );
-                    }
-                    catch ( InterruptedException e )
-                    {
-                        // ignore, process wake up call
-                    }
-
-                    if ( log != null )
-                    {
-                        try
-                        {
-                            consoleLog.append( FileUtils.fileRead( log ) );
-                        }
-                        catch ( IOException e )
-                        {
-                            getLogger().error( "Error reading Xvfb log", e );
-                        }
-
-                        log.delete();
-                    }
-
-                }
             }
         }
+
+        if ( useXvfb() )
+        {
+            try
+            {
+                getLogger().debug( "[LAUNCHER] process has not been finished, killing Xvfb" );
+                Runtime.getRuntime().exec( new String[] { "killall", "Xvfb" } ).waitFor();
+                Runtime.getRuntime().exec( new String[] { "killall", "xvfb-run" } ).waitFor();
+                Runtime.getRuntime().exec( new String[] { "killall", new File( flashplayerCommand ).getName() } ).waitFor();
+            }
+            catch ( IOException e )
+            {
+                getLogger().error( "Error killing Xvfb", e );
+            }
+            catch ( InterruptedException e )
+            {
+                // ignore, process wake up call
+            }
+
+            if ( log != null )
+            {
+                try
+                {
+                    consoleLog.append( FileUtils.fileRead( log ) );
+                }
+                catch ( IOException e )
+                {
+                    getLogger().error( "Error reading Xvfb log", e );
+                }
+
+                log.delete();
+            }
+
+        }
+
     }
 
     public String getConsoleOutput()
