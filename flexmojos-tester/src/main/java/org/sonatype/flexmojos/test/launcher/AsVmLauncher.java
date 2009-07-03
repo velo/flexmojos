@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Configuration;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.StreamPumper;
@@ -59,7 +60,7 @@ public class AsVmLauncher
     public void start( File targetSwf )
         throws LaunchFlashPlayerException, InvalidSwfException
     {
-        // getLogger().setThreshold( Logger.LEVEL_DEBUG );
+        getLogger().setThreshold( Logger.LEVEL_DEBUG );
 
         if ( targetSwf == null )
         {
@@ -119,6 +120,19 @@ public class AsVmLauncher
         throws LaunchFlashPlayerException
     {
         getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
+
+        try
+        {
+            FileUtils.forceDelete( "/tmp/.X99-lock" );
+            FileUtils.forceDelete( "/tmp/.X11-unix" );
+        }
+        catch ( IOException e )
+        {
+            throw new LaunchFlashPlayerException(
+                                                  "Failed to delete Xvfb locking files, does the current user has access?",
+                                                  e );
+        }
+
         try
         {
             log = File.createTempFile( "xvfbrun", "flashplayer" );
@@ -132,7 +146,7 @@ public class AsVmLauncher
         {
             process =
                 Runtime.getRuntime().exec(
-                                           new String[] { "xvfb-run", "-e", log.getAbsolutePath(), flashPlayer,
+                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), flashPlayer,
                                                targetSwf.getAbsolutePath() } );
         }
         catch ( IOException e )
@@ -249,6 +263,8 @@ public class AsVmLauncher
                         {
                             getLogger().error( "Error reading Xvfb log", e );
                         }
+
+                        log.delete();
                     }
 
                 }
