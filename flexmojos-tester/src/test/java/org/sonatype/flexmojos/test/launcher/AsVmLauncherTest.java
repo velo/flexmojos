@@ -6,6 +6,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.testng.annotations.Test;
@@ -14,10 +15,12 @@ public class AsVmLauncherTest
     extends AbstractAsVmLauncherTest
 {
 
-    @Test( timeOut = 20000 )
+    @Test( timeOut = 20000, invocationCount = 5 )
     public void launch()
         throws Exception
     {
+        System.out.println( "launch" );
+
         launcher.start( VALID_SWF );
 
         do
@@ -25,7 +28,10 @@ public class AsVmLauncherTest
             Thread.yield();
             Thread.sleep( 100 );
         }
-        while ( !ThreadStatus.DONE.equals( launcher.getStatus() ) );
+        while ( !( ThreadStatus.DONE.equals( launcher.getStatus() ) || ThreadStatus.ERROR.equals( launcher.getStatus() ) ) );
+
+        assertEquals( launcher.getStatus(), ThreadStatus.DONE, "tmp: "
+            + Arrays.toString( new File( "/tmp" ).listFiles() ) );
 
         String log = launcher.getConsoleOutput();
         assertTrue( log.contains( "SWF Created!" ) );
@@ -35,6 +41,8 @@ public class AsVmLauncherTest
     public void stop()
         throws Exception
     {
+        System.out.println( "stop" );
+
         launcher.start( INVALID_SWF );
 
         do
@@ -47,13 +55,13 @@ public class AsVmLauncherTest
         Thread.yield();
         Thread.sleep( 2000 );// give some extra time
 
-        String log = launcher.getConsoleOutput();
-        assertTrue( log.contains( "SWF Created!" ), "Log: " + log + " - Status: " + launcher.getStatus() );
-
         launcher.stop();
 
         Thread.yield();
         Thread.sleep( 2000 );// give some extra time
+
+        String log = launcher.getConsoleOutput();
+        assertTrue( log.contains( "SWF Created!" ), "Log: " + log + " - Status: " + launcher.getStatus() );
 
         assertEquals( ThreadStatus.ERROR, launcher.getStatus() );
         assertNotNull( launcher.getError() );
@@ -63,6 +71,8 @@ public class AsVmLauncherTest
     public void fakeSwf()
         throws Exception
     {
+        System.out.println( "fakeSwf" );
+
         try
         {
             launcher.start( null );
