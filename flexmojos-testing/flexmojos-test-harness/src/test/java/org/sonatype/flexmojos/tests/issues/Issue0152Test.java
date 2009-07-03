@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.it.VerificationException;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class Issue0152Test
@@ -34,7 +34,7 @@ public class Issue0152Test
     {
         long off = run( false );
         long on = run( true );
-        Assert.assertTrue( "loadExterns should reduce module size " + on + "/" + off, on < off );
+        Assert.assertTrue( on < off, "loadExterns should reduce module size " + on + "/" + off );
     }
 
     private long run( boolean isLoadExterns )
