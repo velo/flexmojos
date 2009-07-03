@@ -111,13 +111,18 @@ public class AsVmLauncher
         try
         {
             FileUtils.forceDelete( "/tmp/.X99-lock" );
+        }
+        catch ( IOException e )
+        {
+            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
+        }
+        try
+        {
             FileUtils.forceDelete( "/tmp/.X11-unix" );
         }
         catch ( IOException e )
         {
-            throw new LaunchFlashPlayerException(
-                                                  "Failed to delete Xvfb locking files, does the current user has access?",
-                                                  e );
+            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
         }
 
         try
@@ -228,7 +233,7 @@ public class AsVmLauncher
         {
             try
             {
-                getLogger().debug( "[LAUNCHER] process has not been finished, killing Xvfb" );
+                getLogger().debug( "[LAUNCHER] killing Xvfb" );
                 Runtime.getRuntime().exec( new String[] { "killall", "Xvfb" } ).waitFor();
                 Runtime.getRuntime().exec( new String[] { "killall", "xvfb-run" } ).waitFor();
                 Runtime.getRuntime().exec( new String[] { "killall", new File( flashplayerCommand ).getName() } ).waitFor();
