@@ -11,12 +11,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
-import org.junit.Test;
-import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class MavenUtilsTest
 {
