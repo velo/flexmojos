@@ -8,6 +8,7 @@
 package org.sonatype.flexmojos.unitestingsupport
 {
 	import flash.events.DataEvent;
+	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.net.Socket;
     import flash.system.fscommand;
@@ -36,9 +37,17 @@ package org.sonatype.flexmojos.unitestingsupport
 		{
 			socket = new Socket();
 			socket.addEventListener( ProgressEvent.SOCKET_DATA, dataHandler );
+			socket.addEventListener( Event.CLOSE, exitFP );
    	   		socket.connect( server, port );
 		}
 		
+		private function exitFP( event:* ):void
+		{
+			//Exiting
+			trace("Exiting");
+			fscommand("quit");
+		}
+
 		/**
 		 * Event listener to handle data received on the socket.
 		 * @param event the DataEvent.
@@ -57,17 +66,6 @@ package org.sonatype.flexmojos.unitestingsupport
 					trace("Replying FINISHED");
 					socket.writeUTFBytes( FINISHED );
 					socket.flush();
-					
-					// Close the socket.
-					if(socket) {
-						socket.close();
-					}
-					
-					//Exiting
-					
-					trace("Exiting");
-					fscommand("quit");
-						
 				} else {
 					trace("Replying OK");
 					socket.writeUTFBytes( OK );

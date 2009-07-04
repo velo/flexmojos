@@ -79,8 +79,8 @@ public class DefaultTestRunner
             // Wait until the tests are complete.
             while ( true )
             {
-                getLogger().debug( "[MOJO] asVmLauncher " + launcher.getStatus() );
-                getLogger().debug( "[MOJO] asVmControl " + pinger.getStatus() );
+                getLogger().debug( "[MOJO] launcher " + launcher.getStatus() );
+                getLogger().debug( "[MOJO] pinger " + pinger.getStatus() );
                 getLogger().debug( "[MOJO] resultHandler " + resultHandler.getStatus() );
 
                 if ( hasError( launcher, pinger, resultHandler ) )

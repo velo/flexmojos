@@ -188,21 +188,8 @@ public class AsVmLauncher
             int returnCode = process.waitFor();
             getLogger().debug( "[LAUNCHER] Flashplayer closed" );
 
-            if ( returnCode == 0 )
-            {
-                getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
-
-                status = ThreadStatus.DONE;
-
-                return;
-            }
-            else
-            {
-                getLogger().debug( "[LAUNCHER] Unexpected return code " + returnCode );
-
-                status = ThreadStatus.ERROR;
-                error = new Error( "Unexpected return code " + returnCode );
-            }
+            processExitCode( returnCode );
+            return;
         }
         catch ( InterruptedException e )
         {
@@ -210,6 +197,59 @@ public class AsVmLauncher
 
             status = ThreadStatus.ERROR;
             error = new Error( "Error while executing external command, process killed.", e );
+        }
+    }
+
+    private void processExitCode( int returnCode )
+    {
+
+        String errorMessage = null;
+
+        switch ( returnCode )
+        {
+            case 0:
+                getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+
+                status = ThreadStatus.DONE;
+                break;
+            case 2:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: No command run was specified.";
+                }
+            case 3:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: The xauth command is not available.";
+                }
+            case 4:
+                if ( useXvfb() )
+                {
+                    errorMessage =
+                        "Xvfb-run error: Temporary directory already exists. This may indicate a race condition.";
+                }
+            case 5:
+                if ( useXvfb() )
+                {
+                    errorMessage =
+                        "Xvfb-run error: A problem was encountered while cleanning up the temporary directory.";
+                }
+            case 6:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
+                }
+            default:
+                if ( errorMessage != null )
+                {
+                    errorMessage = "Unexpected return code " + returnCode;
+                }
+
+                getLogger().debug( "[LAUNCHER] " + errorMessage );
+
+                status = ThreadStatus.ERROR;
+                error = new Error( errorMessage );
+                break;
         }
     }
 
