@@ -101,7 +101,6 @@ public class AsVmPing
                     return;
                 }
             }
-
         }
     }
 
