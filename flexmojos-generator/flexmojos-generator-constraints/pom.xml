@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -19,24 +18,37 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>flexmojos-parent</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-generator</artifactId>
     <version>3.3-SNAPSHOT</version>
-    <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
-  <artifactId>flexmojos-generator</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>flexmojos-generator-constraints</artifactId>
 
-  <name>Flexmojos Generator</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
-  <modules>
-    <module>flexmojos-generator-api</module>
-    <module>flexmojos-generator-graniteds-1.1.0</module>
-    <module>flexmojos-generator-graniteds-2.0.0</module>
-    <module>flexmojos-generator-constraints</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-api</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+    </dependency>
+  </dependencies>
+
 </project>
