@@ -42,9 +42,7 @@ public abstract class AbstractSocketThread
 
     protected OutputStream out;
 
-    protected int testPort;
-
-    protected int firstConnectionTimeout;
+    public int testPort;
 
     public AbstractSocketThread()
     {
@@ -91,11 +89,15 @@ public abstract class AbstractSocketThread
     private void openServerSocket()
         throws IOException
     {
-        serverSocket = new ServerSocket( testPort );
-        serverSocket.setSoTimeout( firstConnectionTimeout );
+        serverSocket = new ServerSocket( getTestPort() );
+        serverSocket.setSoTimeout( getFirstConnectionTimeout() );
 
-        getLogger().debug( "[" + this.getClass().getName() + "] opened server socket on port " + testPort );
+        getLogger().debug( "[" + this.getClass().getName() + "] opened server socket on port " + getTestPort() );
     }
+
+    protected abstract int getFirstConnectionTimeout();
+
+    protected abstract int getTestPort();
 
     private void closeServerSocket()
     {
@@ -183,6 +185,17 @@ public abstract class AbstractSocketThread
         {
             getLogger().debug( e.getMessage(), e );
         }
+    }
+
+    @Override
+    protected void reset()
+    {
+        super.reset();
+
+        this.serverSocket = null;
+        this.clientSocket = null;
+        this.in = null;
+        this.out = null;
     }
 
 }

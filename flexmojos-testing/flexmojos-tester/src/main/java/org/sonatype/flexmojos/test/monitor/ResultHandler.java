@@ -17,6 +17,11 @@
  */
 package org.sonatype.flexmojos.test.monitor;
 
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.ACK_OF_TEST_RESULT;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.END_OF_TEST_RUN;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.END_OF_TEST_SUITE;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.NULL_BYTE;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Configuration;
 import org.sonatype.flexmojos.test.ControlledThread;
 
 /**
@@ -37,13 +43,8 @@ public class ResultHandler
 {
     public static final String ROLE = ResultHandler.class.getName();
 
-    public static final String END_OF_TEST_RUN = "<endOfTestRun/>";
-
-    public static final String END_OF_TEST_SUITE = "</testsuite>";
-
-    public static final String ACK_OF_TEST_RESULT = "<endOfTestRunAck/>";
-
-    public static final char NULL_BYTE = '\u0000';
+    @Configuration( value = "13539" )
+    private int testReportPort;
 
     protected List<String> testReportData;
 
@@ -95,12 +96,32 @@ public class ResultHandler
         getLogger().debug( "[RESULT] Socket buffer " + buffer );
     }
 
-    public void start( int portNumber )
+    public void start()
     {
-        super.testPort = portNumber;
+        reset();
 
         testReportData = new ArrayList<String>();
 
         launch();
+    }
+
+    @Override
+    protected void reset()
+    {
+        super.reset();
+
+        testReportData = null;
+    }
+
+    @Override
+    protected int getTestPort()
+    {
+        return testReportPort;
+    }
+
+    @Override
+    protected int getFirstConnectionTimeout()
+    {
+        return 0; // no timeout
     }
 }
