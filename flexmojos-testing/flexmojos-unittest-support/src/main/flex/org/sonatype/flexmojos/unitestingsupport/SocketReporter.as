@@ -15,6 +15,8 @@ package org.sonatype.flexmojos.unitestingsupport
 	
 	import mx.binding.utils.BindingUtils;
 	
+
+    import org.sonatype.flexmojos.test.monitor.CommConstraints;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
 	import org.sonatype.flexmojos.test.report.TestMethodReport;
@@ -26,9 +28,6 @@ package org.sonatype.flexmojos.unitestingsupport
 	public class SocketReporter
 	{
 
-		private const END_OF_TEST_RUN:String = "<endOfTestRun/>";
-		private const END_OF_TEST_ACK:String ="<endOfTestRunAck/>";
-		
 		[Inspectable]
 		public var port:uint = 1024;
 		
@@ -154,7 +153,7 @@ package org.sonatype.flexmojos.unitestingsupport
 			}
 			
 			// Send the end of reports terminator.
-			socket.send( END_OF_TEST_RUN );
+			socket.send( CommConstraints.END_OF_TEST_RUN );
 		}
 		
 		/**
@@ -166,7 +165,7 @@ package org.sonatype.flexmojos.unitestingsupport
 			var data:String = event.data;
 
 			// If we received an acknowledgement finish-up.			
-			if ( data == END_OF_TEST_ACK )
+			if ( data == CommConstraints.ACK_OF_TEST_RESULT )
 			{
 				exit();
    			}

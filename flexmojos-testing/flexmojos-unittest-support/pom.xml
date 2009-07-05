@@ -33,12 +33,25 @@
         <extensions>true</extensions>
         <executions>
           <execution>
+            <id>gas</id>
             <goals>
               <goal>generate</goal>
             </goals>
             <configuration>
               <includeClasses>
                 <include>org.sonatype.flexmojos.test.report.*</include>
+              </includeClasses>
+            </configuration>
+          </execution>
+          <execution>
+            <id>const</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorToUse>constraints</generatorToUse>
+              <includeClasses>
+                <include>org.sonatype.flexmojos.test.monitor.CommConstraints</include>
               </includeClasses>
             </configuration>
           </execution>
