@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.test;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
@@ -12,6 +13,8 @@ public abstract class AbstractControlledThread
     protected ThreadStatus status;
 
     protected Throwable error;
+
+    private ReentrantLock lock;
 
     protected void launch()
     {
@@ -43,4 +46,32 @@ public abstract class AbstractControlledThread
     {
         return this.error;
     }
+
+    public void lock()
+    {
+        if ( lock != null )
+        {
+            return;
+        }
+
+        lock = new ReentrantLock();
+        lock.lock();
+    }
+
+    public void unlock()
+    {
+        if ( lock == null )
+        {
+            return;
+        }
+
+        lock.unlock();
+    }
+
+    protected void reset()
+    {
+        status = null;
+        error = null;
+    }
+
 }

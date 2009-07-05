@@ -49,6 +49,8 @@ public class AsVmLauncher
     public void start( File targetSwf )
         throws LaunchFlashPlayerException, InvalidSwfException
     {
+        reset();
+
         if ( targetSwf == null )
         {
             throw new InvalidSwfException( "targetSwf is null" );
@@ -308,6 +310,15 @@ public class AsVmLauncher
     public String getConsoleOutput()
     {
         return this.consoleLog.toString();
+    }
+
+    @Override
+    protected void reset()
+    {
+        super.reset();
+
+        process = null;
+        consoleLog = new StringBuffer();
     }
 
 }

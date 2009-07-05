@@ -24,7 +24,7 @@ package
 		        (
 		            function(event:TimerEvent):void
 		            {
-		                trace("done");
+		                trace("done test1");
 		            },
 		            10000
 		        )
@@ -42,7 +42,7 @@ package
 		        (
 		            function(event:TimerEvent):void
 		            {
-		                trace("done");
+		                trace("done test2");
 		            },
 		            10000
 		        )
@@ -60,7 +60,7 @@ package
 		        (
 		            function(event:TimerEvent):void
 		            {
-		                trace("done");
+		                trace("done test3");
 		            },
 		            10000
 		        )
@@ -78,7 +78,7 @@ package
 		        (
 		            function(event:TimerEvent):void
 		            {
-		                trace("done");
+		                trace("done test4");
 		            },
 		            10000
 		        )

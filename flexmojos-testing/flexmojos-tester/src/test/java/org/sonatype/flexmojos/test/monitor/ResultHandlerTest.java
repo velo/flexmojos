@@ -1,6 +1,9 @@
 package org.sonatype.flexmojos.test.monitor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.END_OF_TEST_RUN;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.END_OF_TEST_SUITE;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.NULL_BYTE;
 import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -22,9 +25,9 @@ public class ResultHandlerTest
     extends PlexusTestNGCase
 {
 
-    private static final String REPORT2 = "Another cool report!" + ResultHandler.END_OF_TEST_SUITE;
+    private static final String REPORT2 = "Another cool report!" + END_OF_TEST_SUITE;
 
-    private static final String REPORT1 = "Awesome complex report!" + ResultHandler.END_OF_TEST_SUITE;
+    private static final String REPORT1 = "Awesome complex report!" + END_OF_TEST_SUITE;
 
     private ResultHandler result;
 
@@ -39,6 +42,8 @@ public class ResultHandlerTest
         ServerSocket ss = new ServerSocket( 0 );
         port = ss.getLocalPort();
         ss.close();
+
+        set( result, "testReportPort", port );
     }
 
     @AfterMethod
@@ -52,7 +57,7 @@ public class ResultHandlerTest
     public void stopNoResults()
         throws Exception
     {
-        result.start( port );
+        result.start();
 
         do
         {
@@ -79,7 +84,7 @@ public class ResultHandlerTest
     public void sendResult()
         throws Exception
     {
-        result.start( port );
+        result.start();
 
         do
         {
@@ -93,7 +98,7 @@ public class ResultHandlerTest
         OutputStream out = s.getOutputStream();
 
         IOUtil.copy( REPORT1, out );
-        IOUtil.copy( String.valueOf( ResultHandler.NULL_BYTE ), out );
+        IOUtil.copy( String.valueOf( NULL_BYTE ), out );
 
         Thread.yield();
         Thread.sleep( 100 );
@@ -101,15 +106,15 @@ public class ResultHandlerTest
         assertEquals( result.getTestReportData().size(), 1 );
 
         IOUtil.copy( REPORT2, out );
-        IOUtil.copy( String.valueOf( ResultHandler.NULL_BYTE ), out );
+        IOUtil.copy( String.valueOf( NULL_BYTE ), out );
 
         Thread.yield();
         Thread.sleep( 100 );
 
         assertEquals( result.getTestReportData().size(), 2 );
 
-        IOUtil.copy( ResultHandler.END_OF_TEST_RUN, out );
-        IOUtil.copy( String.valueOf( ResultHandler.NULL_BYTE ), out );
+        IOUtil.copy( END_OF_TEST_RUN, out );
+        IOUtil.copy( String.valueOf( NULL_BYTE ), out );
 
         Thread.yield();
         Thread.sleep( 100 );
