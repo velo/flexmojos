@@ -145,18 +145,23 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-generator-constraints</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>
