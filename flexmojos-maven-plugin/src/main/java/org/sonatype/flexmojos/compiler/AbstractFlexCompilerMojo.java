@@ -7,6 +7,8 @@
  */
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.utilities.MavenUtils.searchFor;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -893,6 +895,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean includeLookupOnly;
 
     /**
+     * When true, flexmojos will check if the compiler and the framework versions match. Usually, you must use the same
+     * compiler and framework versions. Set this to true to avoid this check. EXTREMELLY UN-ADVISIBLE.
+     * 
+     * @parameter default-value="false" expression="${ignore.version.issues}"
+     */
+    private boolean ignoreVersionIssues;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -908,6 +918,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
+        checkFrameworkCompilerVersion();
 
         processLocales();
 
@@ -1041,6 +1052,30 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // compiler didn't create parent if it doesn't exists
         getOutput().getParentFile().mkdirs();
+    }
+
+    private void checkFrameworkCompilerVersion()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( ignoreVersionIssues )
+        {
+            return;
+        }
+
+        String compilerVersion = getCompilerVersion();
+        String frameworkVersion = getFrameworkVersion();
+        if ( compilerVersion == null || frameworkVersion == null )
+        {
+            // ignore, missing version
+            return;
+        }
+
+        if ( !compilerVersion.equals( frameworkVersion ) )
+        {
+            throw new MojoFailureException( "Flex compiler and flex framework versions doesn't match. Compiler: '"
+                + compilerVersion + "' - Framework: '" + frameworkVersion
+                + "'. You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc." );
+        }
     }
 
     @SuppressWarnings( "deprecation" )
@@ -1402,7 +1437,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             {
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=true" );
             }
-            else 
+            else
             {
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=false" );
             }
@@ -2217,8 +2252,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
-        File fileReport =
-            new File( build.getDirectory(), build.getFinalName() + "-" + type + "-report.xml" );
+        File fileReport = new File( build.getDirectory(), build.getFinalName() + "-" + type + "-report.xml" );
 
         try
         {
@@ -2410,10 +2444,35 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         return false;
     }
 
-    public String getFDKVersion()
+    public String getCompilerVersion()
     {
         Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
         return compiler.getVersion();
+    }
+
+    private String getFrameworkVersion()
+        throws MojoExecutionException
+    {
+        Artifact dep;
+        dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "flex-framework", null, "pom", null );
+        if ( dep == null )
+        {
+            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "air-framework", null, "pom", null );
+        }
+        if ( dep == null )
+        {
+            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "framework", null, "pom", null );
+        }
+        if ( dep == null )
+        {
+            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "airframework", null, "pom", null );
+        }
+
+        if ( dep == null )
+        {
+            return null;
+        }
+        return dep.getVersion();
     }
 
     protected abstract File getOutput();
