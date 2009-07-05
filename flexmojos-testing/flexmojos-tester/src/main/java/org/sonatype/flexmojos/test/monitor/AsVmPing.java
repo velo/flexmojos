@@ -1,5 +1,10 @@
 package org.sonatype.flexmojos.test.monitor;
 
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.EOL;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.FINISHED;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.OK;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.STATUS;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +12,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Configuration;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.test.ThreadStatus;
 
@@ -19,14 +25,14 @@ import org.sonatype.flexmojos.test.ThreadStatus;
 public class AsVmPing
     extends AbstractSocketThread
 {
-    public static final String STATUS = "Server Status";
 
-    public static final String OK = "OK";
+    @Configuration( value = "13540" )
+    private int testControlPort;
 
-    public static final String FINISHED = "FINISHED";
+    @Configuration( value = "20000" )
+    private int firstConnectionTimeout;
 
-    public static final String EOL = "\n";
-
+    @Configuration( value = "5000" )
     private int testTimeout;
 
     @Override
@@ -42,8 +48,7 @@ public class AsVmPing
         while ( true )
         {
             getLogger().debug( "[CONTROL] query status" );
-            IOUtil.copy( STATUS, out );
-            IOUtil.copy( EOL, out );
+            IOUtil.copy( STATUS + EOL, out );
 
             try
             {
@@ -87,13 +92,23 @@ public class AsVmPing
         }
     }
 
-    public void start( int testControlPort, int firstConnectionTimeout, int testTimeout )
+    public void start()
     {
-        this.testPort = testControlPort;
-        this.firstConnectionTimeout = firstConnectionTimeout;
-        this.testTimeout = testTimeout;
+        reset();
 
         launch();
+    }
+
+    @Override
+    protected int getTestPort()
+    {
+        return testControlPort;
+    }
+
+    @Override
+    protected int getFirstConnectionTimeout()
+    {
+        return firstConnectionTimeout;
     }
 
 }

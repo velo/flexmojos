@@ -9,4 +9,8 @@ public interface ControlledThread
 
     Throwable getError();
 
+    void lock();
+
+    void unlock();
+
 }

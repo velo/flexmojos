@@ -1,29 +1,44 @@
 package org.sonatype.flexmojos.generator.api;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class GenerationRequest
 {
+
+    private Map<String, File> classes;
+
+    private ClassLoader classLoader;
 
     // UidFieldName
     // OutputEnumToBaseOutputDirectory
     // UsingTideEntity
     private Map<String, String> extraOptions;
 
-    private File transientOutputFolder;
-
     private File persistentOutputFolder;
-
-    private Map<String, File> classes;
 
     private Map<String, String> templates;
 
-    private ClassLoader classLoader;
+    private File transientOutputFolder;
 
-    public void setClassLoader( ClassLoader classLoader )
+    public void addClass( String classname, File sourceJar )
     {
-        this.classLoader = classLoader;
+        getClasses().put( classname, sourceJar );
+    }
+
+    public Map<String, File> getClasses()
+    {
+        if ( classes == null )
+        {
+            classes = new LinkedHashMap<String, File>();
+        }
+        return classes;
+    }
+
+    public ClassLoader getClassLoader()
+    {
+        return this.classLoader;
     }
 
     public Map<String, String> getExtraOptions()
@@ -31,39 +46,9 @@ public class GenerationRequest
         return extraOptions;
     }
 
-    public void setExtraOptions( Map<String, String> extraOptions )
-    {
-        this.extraOptions = extraOptions;
-    }
-
-    public File getTransientOutputFolder()
-    {
-        return transientOutputFolder;
-    }
-
-    public void setTransientOutputFolder( File transientOutputFolder )
-    {
-        this.transientOutputFolder = transientOutputFolder;
-    }
-
     public File getPersistentOutputFolder()
     {
         return persistentOutputFolder;
-    }
-
-    public void setPersistentOutputFolder( File persistentOutputFolder )
-    {
-        this.persistentOutputFolder = persistentOutputFolder;
-    }
-
-    public Map<String, File> getClasses()
-    {
-        return classes;
-    }
-
-    public void setClasses( Map<String, File> classes )
-    {
-        this.classes = classes;
     }
 
     public Map<String, String> getTemplates()
@@ -71,14 +56,39 @@ public class GenerationRequest
         return templates;
     }
 
+    public File getTransientOutputFolder()
+    {
+        return transientOutputFolder;
+    }
+
+    public void setClasses( Map<String, File> classes )
+    {
+        this.classes = classes;
+    }
+
+    public void setClassLoader( ClassLoader classLoader )
+    {
+        this.classLoader = classLoader;
+    }
+
+    public void setExtraOptions( Map<String, String> extraOptions )
+    {
+        this.extraOptions = extraOptions;
+    }
+
+    public void setPersistentOutputFolder( File persistentOutputFolder )
+    {
+        this.persistentOutputFolder = persistentOutputFolder;
+    }
+
     public void setTemplates( Map<String, String> templates )
     {
         this.templates = templates;
     }
 
-    public ClassLoader getClassLoader()
+    public void setTransientOutputFolder( File transientOutputFolder )
     {
-        return this.classLoader;
+        this.transientOutputFolder = transientOutputFolder;
     }
 
 }

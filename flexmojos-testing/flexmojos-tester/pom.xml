@@ -24,7 +24,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
           <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
         </configuration>
       </plugin>
