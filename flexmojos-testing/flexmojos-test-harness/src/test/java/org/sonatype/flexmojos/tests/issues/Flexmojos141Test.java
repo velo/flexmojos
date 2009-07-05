@@ -18,21 +18,33 @@
 package org.sonatype.flexmojos.tests.issues;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-public abstract class AbstractIssueTest
-    extends AbstractFlexMojosTests
+public class Flexmojos141Test
+    extends AbstractIssueTest
 {
 
-    public Verifier testIssue( String issueNumber, String... args )
-        throws IOException, VerificationException
+    @Test
+    public void testInvalidVersion()
+        throws Exception
     {
-        File testDir = getProject( "/issues/" + issueNumber );
-        return test( testDir, "install", args );
+        File testDir = getProject( "/issues/" + "flexmojos-141" );
+        Verifier verifier = getVerifier( testDir );
+        try
+        {
+            verifier.executeGoal( "install" );
+            Assert.fail();
+        }
+        catch ( VerificationException e )
+        {
+            // expected
+        }
+
+        verifier.verifyTextInLog( "Flex compiler and flex framework versions doesn't match." );
     }
 
 }

@@ -32,7 +32,7 @@ public aspect FlexCompatibilityAspect
     void around() : compatibilityMethods() {
         FlexMojo mojo = (FlexMojo) thisJoinPoint.getTarget();
         MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
-        int[] fdkVersion = splitVersion( mojo.getFDKVersion() );
+        int[] fdkVersion = splitVersion( mojo.getCompilerVersion() );
         FlexCompatibility compatibility = signature.getMethod().getAnnotation( FlexCompatibility.class );
         String minVersion = compatibility.minVersion();
         String maxVersion = compatibility.maxVersion();
@@ -46,7 +46,7 @@ public aspect FlexCompatibilityAspect
         {
             mojo.getLog().debug(
                                  "Skiping method " + signature.getName() + ".\n" + "Min version: " + minVersion
-                                     + " Max version: " + maxVersion + " Current version: " + mojo.getFDKVersion() );
+                                     + " Max version: " + maxVersion + " Current version: " + mojo.getCompilerVersion() );
         }
     }
 }
