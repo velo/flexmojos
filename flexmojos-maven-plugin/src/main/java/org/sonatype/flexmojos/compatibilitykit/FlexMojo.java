@@ -26,6 +26,6 @@ public interface FlexMojo
     /**
      * @return Flex SDK version on x.x.x format
      */
-    public String getFDKVersion();
+    public String getCompilerVersion();
 
 }
