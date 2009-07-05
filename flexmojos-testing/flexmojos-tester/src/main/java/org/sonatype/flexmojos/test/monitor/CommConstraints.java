@@ -15,19 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test;
+package org.sonatype.flexmojos.test.monitor;
 
-public interface ControlledThread
+public class CommConstraints
 {
 
-    void stop();
+    public static final String END_OF_TEST_RUN = "<endOfTestRun/>";
 
-    ThreadStatus getStatus();
+    public static final String END_OF_TEST_SUITE = "</testsuite>";
 
-    Throwable getError();
+    public static final String ACK_OF_TEST_RESULT = "<endOfTestRunAck/>";
 
-    void lock();
+    public static final char NULL_BYTE = '\u0000';
 
-    void unlock();
+    public static final String STATUS = "Server Status";
+
+    public static final String OK = "OK";
+
+    public static final String FINISHED = "FINISHED";
+
+    public static final char EOL = '\n';
 
 }

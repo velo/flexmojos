@@ -40,7 +40,9 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>%{flexmojos.version}</version>
         <configuration>
+        <testRunner>
           <testTimeout>20000</testTimeout>
+        </testRunner>
         </configuration>
       </plugin>
     </plugins>

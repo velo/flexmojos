@@ -19,12 +19,8 @@ package org.codehaus.plexus;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
-import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.DefaultContext;
@@ -277,6 +273,14 @@ public class PlexusTestNGCase
         String s = clazz.getName().replace( '.', '/' );
 
         return s.substring( 0, s.indexOf( "$" ) ) + ".xml";
+    }
+
+    protected void set( Object obj, String field, Object value )
+        throws Exception
+    {
+        Field f = obj.getClass().getDeclaredField( field );
+        f.setAccessible( true );
+        f.set( obj, value );
     }
 
 }

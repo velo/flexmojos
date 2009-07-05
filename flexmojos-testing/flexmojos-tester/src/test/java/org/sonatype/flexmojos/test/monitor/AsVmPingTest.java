@@ -17,6 +17,10 @@
  */
 package org.sonatype.flexmojos.test.monitor;
 
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.EOL;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.FINISHED;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.OK;
+import static org.sonatype.flexmojos.test.monitor.CommConstraints.STATUS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -50,6 +54,10 @@ public class AsVmPingTest
         ServerSocket ss = new ServerSocket( 0 );
         port = ss.getLocalPort();
         ss.close();
+
+        set( ping, "testControlPort", port );
+        set( ping, "firstConnectionTimeout", 5000 );
+        set( ping, "testTimeout", 1000 );
     }
 
     @AfterMethod
@@ -63,7 +71,7 @@ public class AsVmPingTest
     public void checkConnectTimeout()
         throws Exception
     {
-        ping.start( port, 5000, 1000 );
+        ping.start();
 
         do
         {
@@ -79,7 +87,10 @@ public class AsVmPingTest
     public void checkPing()
         throws Exception
     {
-        ping.start( port, 500000, 100000 );
+        set( ping, "firstConnectionTimeout", 500000 );
+        set( ping, "testTimeout", 100000 );
+
+        ping.start();
 
         do
         {
@@ -93,24 +104,20 @@ public class AsVmPingTest
         OutputStream out = s.getOutputStream();
 
         String request = in.readLine();
-        assertEquals( request, AsVmPing.STATUS );
-        IOUtil.copy( AsVmPing.OK, out );
-        IOUtil.copy( AsVmPing.EOL, out );
+        assertEquals( request, STATUS );
+        IOUtil.copy( OK + EOL, out );
 
         request = in.readLine();
-        assertEquals( request, AsVmPing.STATUS );
-        IOUtil.copy( AsVmPing.OK, out );
-        IOUtil.copy( AsVmPing.EOL, out );
+        assertEquals( request, STATUS );
+        IOUtil.copy( OK + EOL, out );
 
         request = in.readLine();
-        assertEquals( request, AsVmPing.STATUS );
-        IOUtil.copy( AsVmPing.OK, out );
-        IOUtil.copy( AsVmPing.EOL, out );
+        assertEquals( request, STATUS );
+        IOUtil.copy( OK + EOL, out );
 
         request = in.readLine();
-        assertEquals( request, AsVmPing.STATUS );
-        IOUtil.copy( AsVmPing.FINISHED, out );
-        IOUtil.copy( AsVmPing.EOL, out );
+        assertEquals( request, STATUS );
+        IOUtil.copy( FINISHED + EOL, out );
 
         do
         {
@@ -126,7 +133,9 @@ public class AsVmPingTest
     public void checkPingTimeout()
         throws Exception
     {
-        ping.start( port, 500000, 1000 );
+        set( ping, "firstConnectionTimeout", 500000 );
+
+        ping.start();
 
         do
         {
@@ -139,7 +148,7 @@ public class AsVmPingTest
         BufferedReader in = new BufferedReader( new InputStreamReader( s.getInputStream() ) );
 
         String request = in.readLine();
-        assertEquals( request, AsVmPing.STATUS );
+        assertEquals( request, STATUS );
 
         do
         {
