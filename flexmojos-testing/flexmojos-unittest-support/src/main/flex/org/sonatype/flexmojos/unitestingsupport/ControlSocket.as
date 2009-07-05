@@ -23,15 +23,10 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.net.Socket;
     import flash.system.fscommand;
 
+    import org.sonatype.flexmojos.test.monitor.CommConstraints;
 	
 	public class ControlSocket
 	{
-
-	    public static const STATUS:String = "Server Status\n";
-	
-	    public static const OK:String = "OK\n";
-	    
-	    public static const FINISHED:String = "FINISHED\n";
 
 		[Inspectable]
 		public var port:uint = 1024;
@@ -68,17 +63,17 @@ package org.sonatype.flexmojos.unitestingsupport
 			var data:String = socket.readUTFBytes( socket.bytesAvailable );
 			trace("Data handler received data: " + data);
 			
+			var status:String = CommConstraints.STATUS + CommConstraints.EOL;
 
-			if ( data == STATUS )
+			if ( data == status )
 			{
-				
 				if ( closeController.canClose ) {
 					trace("Replying FINISHED");
-					socket.writeUTFBytes( FINISHED );
+					socket.writeUTFBytes( CommConstraints.FINISHED + CommConstraints.EOL );
 					socket.flush();
 				} else {
 					trace("Replying OK");
-					socket.writeUTFBytes( OK );
+					socket.writeUTFBytes( CommConstraints.OK + CommConstraints.EOL );
 					socket.flush();
 				}
 				
