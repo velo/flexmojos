@@ -64,11 +64,11 @@ public class AsVmPing
 
         while ( true )
         {
-            getLogger().debug( "[CONTROL] query status" );
-            IOUtil.copy( STATUS + EOL, out );
-
             try
             {
+                getLogger().debug( "[CONTROL] query status" );
+                IOUtil.copy( STATUS + EOL, out );
+
                 getLogger().debug( "[CONTROL] received status" );
                 BufferedReader in = new BufferedReader( new InputStreamReader( super.in ) );
                 String result = in.readLine();
