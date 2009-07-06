@@ -3,6 +3,8 @@ package org.sonatype.flexmojos.test.launcher;
 import static org.testng.Assert.fail;
 
 import org.codehaus.plexus.context.Context;
+import org.sonatype.flexmojos.test.ThreadStatus;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class InvalidPlayerTest
@@ -23,18 +25,38 @@ public class InvalidPlayerTest
     {
         set( launcher, "flashplayerCommand", "invalid_flash_player" );
 
-        try
+        if ( launcher.useXvfb() )
         {
             launcher.start( VALID_SWF );
-            fail( launcher.getConsoleOutput() );
+
+            do
+            {
+                Thread.yield();
+                Thread.sleep( 100 );
+            }
+            while ( !ThreadStatus.RUNNING.equals( launcher.getStatus() ) );
+
+            Assert.assertEquals( launcher.getStatus(), ThreadStatus.ERROR );
+
+            System.out.println( launcher.getConsoleOutput() );
+
         }
-        catch ( LaunchFlashPlayerException e )
+        else
         {
-            // expected
-        }
-        finally
-        {
-            launcher.stop();
+            try
+            {
+                launcher.start( VALID_SWF );
+
+                fail( launcher.getConsoleOutput() );
+            }
+            catch ( LaunchFlashPlayerException e )
+            {
+                // expected
+            }
+            finally
+            {
+                launcher.stop();
+            }
         }
     }
 
