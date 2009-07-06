@@ -112,6 +112,11 @@ public class AsVmPing
                 {
                     throw e;
                 }
+                else
+                {
+                    // Broken pipe is not a real error :D
+                    return;
+                }
             }
         }
     }
