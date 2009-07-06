@@ -21,7 +21,6 @@ import static org.testng.Assert.fail;
 
 import org.codehaus.plexus.context.Context;
 import org.sonatype.flexmojos.test.ThreadStatus;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class InvalidPlayerTest
@@ -51,12 +50,9 @@ public class InvalidPlayerTest
                 Thread.yield();
                 Thread.sleep( 100 );
             }
-            while ( !ThreadStatus.RUNNING.equals( launcher.getStatus() ) );
-
-            Assert.assertEquals( launcher.getStatus(), ThreadStatus.ERROR );
+            while ( !ThreadStatus.ERROR.equals( launcher.getStatus() ) );
 
             System.out.println( launcher.getConsoleOutput() );
-
         }
         else
         {
