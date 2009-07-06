@@ -267,6 +267,12 @@
       <artifactId>flexmojos-tester</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <!-- Workaround to get DITA asdoc, flexmojos doesn't need that -->
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-dom</artifactId>
+      <version>9.0</version>
+    </dependency>
   </dependencies>
 
   <reporting>

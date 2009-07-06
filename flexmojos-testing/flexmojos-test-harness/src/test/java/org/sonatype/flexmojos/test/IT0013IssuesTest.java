@@ -153,14 +153,6 @@ public class IT0013IssuesTest
     }
 
     @Test
-    public void issue67()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0067" );
-        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
-    }
-
-    @Test
     public void issue68()
         throws Exception
     {
