@@ -31,6 +31,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
@@ -47,6 +48,7 @@ import flex2.tools.ASDoc;
  */
 public class AsDocMojo
     extends AbstractMojo
+    implements FlexMojo
 {
 
     /**
@@ -192,11 +194,11 @@ public class AsDocMojo
     private String mainTitle;
 
     /**
-     * The output directory for the generated documentation. The default value is "asdoc-output".
+     * The output directory for the generated documentation.
      * 
-     * @parameter
+     * @parameter default-value="${project.build.directory}/asdoc"
      */
-    protected File output;
+    protected File outputDirectory;
 
     /**
      * The descriptions to use when describing a package in the documentation. You can specify more than one package
@@ -294,13 +296,9 @@ public class AsDocMojo
             }
         }
 
-        if ( output == null )
+        if ( outputDirectory != null )
         {
-            output = new File( build.getDirectory(), "asdoc" );
-            if ( !output.exists() )
-            {
-                output.mkdirs();
-            }
+            outputDirectory.mkdirs();
         }
 
         if ( configFile == null )
@@ -442,7 +440,12 @@ public class AsDocMojo
         {
             args.add( "-load-config=" );
         }
-        args.add( "-output=" + output.getAbsolutePath() );
+        if ( outputDirectory != null )
+        {
+            args.add( "-output=" + outputDirectory.getAbsolutePath() );
+        }
+
+        addExtraArgs( args );
 
         getLog().info( args.toString() );
 
@@ -455,6 +458,11 @@ public class AsDocMojo
         {
             throw new MojoExecutionException( "Error compiling!" );
         }
+    }
+
+    protected void addExtraArgs( List<String> args )
+    {
+        // meant to be overwritten
     }
 
     private void addDocNamespaces( List<String> args )
@@ -728,5 +736,11 @@ public class AsDocMojo
                                                    artifactMetadataSource );
         }
         return dependencyArtifacts;
+    }
+
+    public String getCompilerVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
     }
 }
