@@ -96,7 +96,7 @@ public class AsVmLauncher
         launch();
     }
 
-    private boolean useXvfb()
+    protected boolean useXvfb()
     {
         return allowHeadlessMode && OSUtils.isLinux() && GraphicsEnvironment.isHeadless();
     }
@@ -223,46 +223,47 @@ public class AsVmLauncher
                 getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
 
                 status = ThreadStatus.DONE;
-                break;
+                return;
             case 2:
                 if ( useXvfb() )
                 {
                     errorMessage = "Xvfb-run error: No command run was specified.";
+                    break;
                 }
             case 3:
                 if ( useXvfb() )
                 {
                     errorMessage = "Xvfb-run error: The xauth command is not available.";
+                    break;
                 }
             case 4:
                 if ( useXvfb() )
                 {
                     errorMessage =
                         "Xvfb-run error: Temporary directory already exists. This may indicate a race condition.";
+                    break;
                 }
             case 5:
                 if ( useXvfb() )
                 {
                     errorMessage =
                         "Xvfb-run error: A problem was encountered while cleanning up the temporary directory.";
+                    break;
                 }
             case 6:
                 if ( useXvfb() )
                 {
                     errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
+                    break;
                 }
             default:
-                if ( errorMessage != null )
-                {
-                    errorMessage = "Unexpected return code " + returnCode;
-                }
-
-                getLogger().debug( "[LAUNCHER] " + errorMessage );
-
-                status = ThreadStatus.ERROR;
-                error = new Error( errorMessage );
-                break;
+                errorMessage = "Unexpected return code " + returnCode;
         }
+
+        getLogger().debug( "[LAUNCHER] " + errorMessage );
+
+        status = ThreadStatus.ERROR;
+        error = new Error( errorMessage );
     }
 
     public void stop()
