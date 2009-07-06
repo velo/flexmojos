@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.asdoc;
 
-
 import java.io.File;
 import java.util.Locale;
 
@@ -36,6 +35,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @author <a href="mailto:justin.edelson@mtvstaff.com">Justin Edelson</a>
  * @goal asdoc-report
  */
+@SuppressWarnings( "deprecation" )
 public class AsDocReport
     extends AsDocMojo
     implements MavenReport
@@ -91,7 +91,7 @@ public class AsDocReport
         getLog().info(
                        "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-        
+
         try
         {
             SiteRendererSink sink = siteRenderer.createSink( getReportOutputDirectory(), getOutputName() + ".html" );
@@ -115,7 +115,7 @@ public class AsDocReport
             return;
         }
 
-        output = getReportOutputDirectory();
+        outputDirectory = getReportOutputDirectory();
         try
         {
             // Not really sure why this class loader switching
@@ -157,7 +157,7 @@ public class AsDocReport
     {
         if ( reportOutputDirectory == null )
         {
-            return output;
+            return outputDirectory;
         }
 
         return reportOutputDirectory;
