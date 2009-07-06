@@ -89,6 +89,13 @@ public class AsVmPing
                     return;
                 }
             }
+            catch ( SocketException e )
+            {
+                if ( !e.getMessage().contains( "Broken pipe" ) )
+                {
+                    throw e;
+                }
+            }
         }
     }
 
