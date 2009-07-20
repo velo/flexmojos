@@ -79,6 +79,8 @@ public class FlexbuilderMojo
     private static final String SWF = "swf";
 
     private static final String RB_SWC = "rb.swc";
+    
+    private static final String[] SDK_SOURCES = {"automation", "flex", "framework", "haloclassic", "rpc", "utilities"};
 
     /**
      * @parameter default-value="true" expression="${enableM2e}"
@@ -273,6 +275,9 @@ public class FlexbuilderMojo
             new File( project.getBasedir(), ".project" ).delete();
         }
 
+        // Just as precaution, in case someone adds a 'source' not in the natural order for strings
+        Arrays.sort(SDK_SOURCES);
+        
         return super.setup();
     }
 
@@ -386,11 +391,17 @@ public class FlexbuilderMojo
                 String projectName = IdeUtils.getProjectName( template, ideDependency );
                 // /todolist-lib/bin-debug/todolist-lib.swc
                 ideDependency.setFile( new File( "/" + projectName + "/bin-debug/" + projectName + ".swc" ) );
+                ideDependency.setSourceAttachment( new File("/" + projectName + "/src/main/flex/" ) );
             }
             else
             {
                 // resolve files
                 ideDependency.setFile( ideDependency.getFile().getAbsoluteFile() );
+
+                if (Arrays.binarySearch(SDK_SOURCES, ideDependency.getArtifactId()) >= 0)
+                {
+                    ideDependency.setSourceAttachment( new File( "${PROJECT_FRAMEWORKS}/projects/" + ideDependency.getArtifactId() + "/src" ) );
+                }
             }
         }
 

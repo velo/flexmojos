@@ -59,7 +59,10 @@
             <libraryPathEntry 
                     kind="3" 
                     linkType="1" 
-                    path="$artifact.getFile().getAbsolutePath().replaceAll('\\', '/')" 
+                    path="$artifact.getFile().getPath().replaceAll('\\', '/')"
+#if ($artifact.getSourceAttachment())
+                    sourcepath="$artifact.getSourceAttachment().getPath().replaceAll('\\', '/')"
+#end
                     useDefaultLinkType="false"
                     />
 
