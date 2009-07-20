@@ -211,11 +211,21 @@ public class FlexbuilderMojo
     protected File[] sourcePaths;
 
     /**
-     * The file to be compiled. The path must be relative with source folder
+     * The file to be compiled. The path must be relative to the source folder.
      * 
      * @parameter
      */
     protected String sourceFile;
+
+    /**
+     * Additional application files.
+     * 
+     * The paths must be relative to the source folder.
+     * 
+     * @parameter
+     * @alias "applications"
+     */
+    protected List<String> additionalApplications;
 
     /**
      * Define the base path to locate resouce bundle files Accept some special tokens:
@@ -467,6 +477,8 @@ public class FlexbuilderMojo
         {
             File sourceFile = MavenUtils.resolveSourceFile( project, this.sourceFile );
             context.put( "mainApplication", sourceFile.getName() );
+            getAllApplications().add( 0, sourceFile.getName() );
+            context.put( "applications", getAllApplications() );
             context.put( "generateHtmlWrapper", generateHtmlWrapper );
         }
         else if ( SWC.equals( packaging ) )
@@ -500,6 +512,16 @@ public class FlexbuilderMojo
             }
         }
         return false;
+    }
+
+    private List<String> getAllApplications()
+    {
+        if ( additionalApplications == null )
+        {
+            additionalApplications = new ArrayList<String>(10);
+        }
+        
+        return additionalApplications;
     }
 
     private String getMainSources()
