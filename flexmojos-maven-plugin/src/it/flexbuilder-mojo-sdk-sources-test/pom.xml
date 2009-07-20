@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-flex-super-pom</artifactId>
+        <version>3.2.0</version>
+    </parent>
+
+    <artifactId>flexbuilder-mojo-sdk-sources-test</artifactId>
+
+    <packaging>swf</packaging>
+
+    <inceptionYear>2009</inceptionYear>
+
+    <name>Flexbuilder Mojo Multiple A Test Project</name>
+
+    <description>
+        Integration test project to verify all/multiple applications specified
+        are correctly referenced in the generated .actionScriptProperties file.
+    </description>
+    
+    <properties>
+        <flex.sdk.version>3.2.0.3958</flex.sdk.version>
+    </properties>
+    
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.flexmojos</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>3.3-SNAPSHOT</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
