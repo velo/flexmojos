@@ -93,9 +93,11 @@
     </compiler>
 
     <applications>
+#foreach ($application in $applications)
         <application 
-                path="$mainApplication"
+                path="$application"
                 />
+#end
     </applications>
 
     <modules/>
