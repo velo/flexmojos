@@ -79,13 +79,21 @@ public class FlexbuilderMojo
     private static final String SWF = "swf";
 
     private static final String RB_SWC = "rb.swc";
-    
-    private static final String[] SDK_SOURCES = {"automation", "flex", "framework", "haloclassic", "rpc", "utilities"};
+
+    private static final String[] SDK_SOURCES =
+        { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
 
     /**
      * @parameter default-value="true" expression="${enableM2e}"
      */
     private boolean enableM2e;
+
+    /**
+     * Implies enableM2e=true
+     * 
+     * @parameter default-value="false" expression="${useM2Home}"
+     */
+    private boolean useM2Home;
 
     /**
      * @parameter default-value="false" expression="${generateHtmlWrapper}"
@@ -230,9 +238,7 @@ public class FlexbuilderMojo
     protected String sourceFile;
 
     /**
-     * Additional application files.
-     * 
-     * The paths must be relative to the source folder.
+     * Additional application files. The paths must be relative to the source folder.
      * 
      * @parameter
      * @alias "applications"
@@ -276,8 +282,8 @@ public class FlexbuilderMojo
         }
 
         // Just as precaution, in case someone adds a 'source' not in the natural order for strings
-        Arrays.sort(SDK_SOURCES);
-        
+        Arrays.sort( SDK_SOURCES );
+
         return super.setup();
     }
 
@@ -323,7 +329,7 @@ public class FlexbuilderMojo
             getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
 
-        if ( enableM2e )
+        if ( enableM2e || useM2Home )
         {
             getProjectnatures().add( M2ECLIPSE_NATURE );
         }
@@ -340,7 +346,7 @@ public class FlexbuilderMojo
             getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
         }
 
-        if ( enableM2e )
+        if ( enableM2e || useM2Home )
         {
             getBuildcommands().add( M2ECLIPSE_BUILD_COMMAND );
         }
@@ -391,16 +397,49 @@ public class FlexbuilderMojo
                 String projectName = IdeUtils.getProjectName( template, ideDependency );
                 // /todolist-lib/bin-debug/todolist-lib.swc
                 ideDependency.setFile( new File( "/" + projectName + "/bin-debug/" + projectName + ".swc" ) );
-                ideDependency.setSourceAttachment( new File("/" + projectName + "/src/main/flex/" ) );
+                ideDependency.setSourceAttachment( new File( "/" + projectName + "/src/main/flex/" ) );
             }
             else
             {
-                // resolve files
-                ideDependency.setFile( ideDependency.getFile().getAbsoluteFile() );
 
-                if (Arrays.binarySearch(SDK_SOURCES, ideDependency.getArtifactId()) >= 0)
+                String ideDependencyScope = null;
+
+                if ( ideDependency.isSystemScoped() )
                 {
-                    ideDependency.setSourceAttachment( new File( "${PROJECT_FRAMEWORKS}/projects/" + ideDependency.getArtifactId() + "/src" ) );
+                    ideDependencyScope = Artifact.SCOPE_SYSTEM;
+                }
+                else if ( ideDependency.isTestDependency() )
+                {
+                    ideDependencyScope = Artifact.SCOPE_TEST;
+                }
+                else if ( ideDependency.isProvided() )
+                {
+                    ideDependencyScope = Artifact.SCOPE_PROVIDED;
+                }
+
+                Artifact art =
+                    artifactFactory.createArtifact( ideDependency.getGroupId(), ideDependency.getArtifactId(),
+                                                    ideDependency.getVersion(), ideDependencyScope,
+                                                    ideDependency.getType() );
+
+                MavenUtils.resolveArtifact( art, resolver, localRepository, remoteRepositories );
+
+                if ( useM2Home )
+                {
+                    ideDependency.setFile( new File(
+                                                     ideDependency.getFile().getPath().replace(
+                                                                                                localRepository.getBasedir(),
+                                                                                                "${M2_HOME}" ) ) );
+                }
+                else
+                {
+                    ideDependency.setFile( ideDependency.getFile().getAbsoluteFile() );
+                }
+
+                if ( Arrays.binarySearch( SDK_SOURCES, ideDependency.getArtifactId() ) >= 0 )
+                {
+                    ideDependency.setSourceAttachment( new File( "${PROJECT_FRAMEWORKS}/projects/"
+                        + ideDependency.getArtifactId() + "/src" ) );
                 }
             }
         }
@@ -445,6 +484,13 @@ public class FlexbuilderMojo
                         new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
                                            art.getClassifier(), false, Artifact.SCOPE_TEST.equals( art.getScope() ),
                                            false, false, false, art.getFile(), art.getType(), false, null, 1 );
+
+                    if ( useM2Home )
+                    {
+                        dep.setFile( new File( dep.getFile().getPath().replace( localRepository.getBasedir(),
+                                                                                "${M2_HOME}" ) ) );
+                    }
+
                     extraRbs.add( dep );
                 }
                 it.remove();
@@ -479,6 +525,7 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
+        context.put( "useM2Home", useM2Home );
         context.put( "dependencies", getDependencies( ideDependencies ) );
         context.put( "mainSources", getMainSources() );
         context.put( "targetPlayer", targetPlayer );
@@ -539,9 +586,9 @@ public class FlexbuilderMojo
     {
         if ( additionalApplications == null )
         {
-            additionalApplications = new ArrayList<String>(10);
+            additionalApplications = new ArrayList<String>( 10 );
         }
-        
+
         return additionalApplications;
     }
 
