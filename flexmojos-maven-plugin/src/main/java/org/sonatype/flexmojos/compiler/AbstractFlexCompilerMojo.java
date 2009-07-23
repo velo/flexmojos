@@ -1072,9 +1072,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( !compilerVersion.equals( frameworkVersion ) )
         {
-            throw new MojoFailureException( "Flex compiler and flex framework versions doesn't match. Compiler: '"
-                + compilerVersion + "' - Framework: '" + frameworkVersion
-                + "'. You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc." );
+            String msg =
+                "Flex compiler and flex framework versions doesn't match. Compiler: '"
+                    + compilerVersion
+                    + "' - Framework: '"
+                    + frameworkVersion
+                    + "'.\n"
+                    + " You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc.\n"
+                    + "If you prefer fixing it instead of ignoring, take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
+            throw new MojoFailureException( msg );
         }
     }
 
