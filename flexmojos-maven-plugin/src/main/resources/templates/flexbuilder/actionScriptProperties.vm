@@ -104,7 +104,11 @@
     </applications>
 
     <modules/>
-    
-    <buildCSSFiles/>
+
+    <buildCSSFiles>
+#foreach( $cssfile in $cssfiles )
+        <buildCSSFileEntry destPath="bin-debug" sourcePath="$cssfile"/>
+#end
+    </buildCSSFiles>
 
 </actionScriptProperties>
