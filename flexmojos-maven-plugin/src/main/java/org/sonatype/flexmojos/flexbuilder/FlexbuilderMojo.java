@@ -257,6 +257,20 @@ public class FlexbuilderMojo
      */
     protected String resourceBundlePath;
 
+    /**
+     * List of css files that will be compiled into swfs within Eclipse. The path must be relative to the base directory
+     * of the project. Usage:
+     * 
+     * <pre>
+     * &lt;buildCssFiles&amp;gt
+     *     &lt;path&gt;src/style/main.css&lt;path&gt;
+     * &lt;/buildCssFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] buildCssFiles;
+
     /* end duplicated */
 
     /**
@@ -553,6 +567,7 @@ public class FlexbuilderMojo
             getAllApplications().add( 0, sourceFile.getName() );
             context.put( "applications", getAllApplications() );
             context.put( "generateHtmlWrapper", generateHtmlWrapper );
+            context.put( "cssfiles", buildCssFiles );
         }
         else if ( SWC.equals( packaging ) )
         {
