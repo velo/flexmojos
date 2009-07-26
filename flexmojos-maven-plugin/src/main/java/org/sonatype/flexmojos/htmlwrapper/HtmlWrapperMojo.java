@@ -12,16 +12,28 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -95,7 +107,9 @@ public class HtmlWrapperMojo
      * folder:c:/myTemplateFolder/
      * </pre>
      * <p>
-     * This mojo will look for <tt>index.template.html</tt> for replace parameters
+     * This mojo will look for <tt>index.template.html</tt> for replace parameters. <br/>
+     * <br/>
+     * This is ignored if running in project with war packaging.
      * 
      * @parameter default-value="embed:express-installation-with-history"
      */
@@ -140,14 +154,18 @@ public class HtmlWrapperMojo
      * <ul>
      * application
      * </ul>
-     * If you are using a custom template, and wanna some extra parameters, this is the right place to define it.
+     * If you are using a custom template, and wanna some extra parameters, this is the right place to define it. <br/>
+     * <br/>
+     * This is ignored if running in project with war packaging.
      * 
      * @parameter
      */
     private Map<String, String> parameters;
 
     /**
-     * output Directory to store final html
+     * output Directory to store final html <br/>
+     * <br/>
+     * This is ignored if running in project with war packaging.
      * 
      * @parameter default-value="${project.build.directory}"
      */
@@ -161,7 +179,9 @@ public class HtmlWrapperMojo
     private String htmlName;
 
     /**
-     * output Directory to store final html
+     * output Directory to store final html <br/>
+     * <br/>
+     * This is ignored if running in project with war packaging.
      * 
      * @parameter default-value="${project.build.directory}/html-wrapper-template"
      */
@@ -175,7 +195,132 @@ public class HtmlWrapperMojo
      */
     private String[] templateExclusions;
 
+    /**
+     * @component
+     */
+    private MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * @component
+     */
+    private ArtifactResolver resolver;
+
+    /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List<?> remoteRepositories;
+
+    /**
+     * An external pom that provides wrapper parameters in place of the current one.
+     */
+    private MavenProject sourceProject;
+
     public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        String packaging = project.getPackaging();
+
+        if ( !"swf".equals( packaging ) )
+        {
+            loadExternalParams();
+
+            if ( "war".equals( packaging ) )
+            {
+                rewireForWar();
+            }
+        }
+
+        executeInternal();
+    }
+
+    /**
+     * Loads the parameters value (from plugin configuration) from an externally referenced dependency pom rather than
+     * the pom for the current project.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    public void loadExternalParams()
+        throws MojoExecutionException
+    {
+        // Fetch
+        Artifact sourceArtifact = getPluginDependency( "org.sonatype.flexmojos:flexmojos-maven-plugin", "pom" );
+        if ( sourceArtifact == null )
+        {
+            throw new MojoExecutionException(
+                                              "If you are wrapping an external swf, flexmojos must be provided the swf's pom as a dependency" );
+        }
+
+        resolveArtifact( sourceArtifact );
+        this.sourceProject = loadProject( sourceArtifact );
+
+        // Does source pom contain flexmojos plugin?
+        Map<String, Plugin> sourcePlugins = sourceProject.getBuild().getPluginsAsMap();
+        Plugin sourceFlexmojos = sourcePlugins.get( "org.sonatype.flexmojos:flexmojos-maven-plugin" );
+        if ( sourceFlexmojos == null )
+        {
+            throw new MojoExecutionException( "Could not locate flexmojos plugin in wrapper source pom" );
+        }
+
+        this.parameters = MavenPluginUtil.extractParameters( sourceFlexmojos );
+    }
+
+    /**
+     * Insert flexmojos wrapper process into maven-war-plugin's process by re-routing its warSourceDirectory
+     * configuration to this.outputDirectory and using its original warSourceDirectory as the value for this.templateURI
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    private void rewireForWar()
+        throws MojoExecutionException
+    {
+        // Fetch war plugin configuration
+        Map<String, Plugin> plugins = build.getPluginsAsMap();
+        Plugin warPlugin = plugins.get( "org.apache.maven.plugins:maven-war-plugin" );
+        if ( warPlugin == null )
+        {
+            throw new MojoExecutionException( "Flexmojos HtmlWrapperMojo could not find the war plugin" );
+        }
+        Xpp3DomMap config = MavenPluginUtil.getParameters( warPlugin );
+
+        // Map this.templateURI to folder:{warPlugin.warSourceDirectory)
+        String warSourceDirectory = config.get( "warSourceDirectory" );
+        if ( warSourceDirectory == null )
+        {
+            warSourceDirectory = project.getBasedir() + "/src/main/webapp";
+        }
+        this.templateURI = "folder:" + warSourceDirectory;
+
+        // Map outputDirectory/templateOutputDirectory to warPlugin.workDirectory
+        // so that they don't get packaged in war accidentally
+        String workDirectory = config.get( "workDirectory" );
+        if ( workDirectory == null )
+        {
+            workDirectory = build.getDirectory() + "/war/work";
+        }
+        this.templateOutputDirectory = new File( workDirectory, "extracted-template" );
+        this.outputDirectory = new File( workDirectory, "wrapped-template" );
+
+        // Map warPlugin.warSourceDirectory to this.outputDirectory
+        config.put( "warSourceDirectory", outputDirectory.getAbsolutePath() );
+    }
+
+    private void executeInternal()
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info(
@@ -339,8 +484,87 @@ public class HtmlWrapperMojo
         }
     }
 
+    /**
+     * Searches the plugin local dependencies (i.e. only dependencies declared in the current plugin XML descriptor) for
+     * the first dependency of the given type and then return its artifact. If type is null, then the artifact for the
+     * first dependency is returned.
+     * 
+     * @param pluginId
+     * @param type
+     * @return
+     */
+    private Artifact getPluginDependency( String pluginId, String type )
+    {
+        Plugin currentPlugin = (Plugin) build.getPluginsAsMap().get( pluginId );
+        for ( Iterator<Dependency> iter = currentPlugin.getDependencies().iterator(); iter.hasNext(); )
+        {
+            Dependency dependency = iter.next();
+            if ( type == null || type.equals( dependency.getType() ) )
+            {
+                return artifactFactory.createArtifact( dependency.getGroupId(), dependency.getArtifactId(),
+                                                       dependency.getVersion(), dependency.getClassifier(),
+                                                       dependency.getType() );
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempts to find the provided artifact within the current repository path
+     * 
+     * @param artifact
+     * @throws MojoExecutionException
+     */
+    private void resolveArtifact( Artifact artifact )
+        throws MojoExecutionException
+    {
+        try
+        {
+            resolver.resolve( artifact, remoteRepositories, localRepository );
+        }
+        catch ( ArtifactResolutionException ex )
+        {
+            throw new MojoExecutionException( "Could not resolve wrapper source pom artifact:  " + artifact.getId(), ex );
+        }
+        catch ( ArtifactNotFoundException ex )
+        {
+            throw new MojoExecutionException( "Could not find wrapper source pom artifact" + artifact.getId(), ex );
+        }
+    }
+
+    /**
+     * Tries to construct project for the provided artifact
+     * 
+     * @param artifact
+     * @return MavenProject for the given artifact
+     * @throws MojoExecutionException
+     */
+    private MavenProject loadProject( Artifact artifact )
+        throws MojoExecutionException
+    {
+        try
+        {
+            return mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+        }
+        catch ( ProjectBuildingException ex )
+        {
+            throw new MojoExecutionException( "Problems building project for:  " + artifact.getId(), ex );
+        }
+    }
+
     private void init()
     {
+        /*
+         * If sourceProject is defined, then parameters are from an external project and that project (sourceProject)
+         * should be used as reference for default values rather than this project.
+         */
+        MavenProject project = this.project;
+        if ( sourceProject != null )
+        {
+            project = sourceProject;
+        }
+
         if ( parameters == null )
         {
             parameters = new HashMap<String, String>();
