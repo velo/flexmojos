@@ -8,7 +8,6 @@
 package org.sonatype.flexmojos.utilities;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -81,107 +77,6 @@ public class MavenUtils
 
     private MavenUtils()
     {
-    }
-
-    /**
-     * Parse an MXML file and returns true if the file is an application one
-     * 
-     * @param file the file to be parsed
-     * @return true if the file is an application one
-     */
-    public static boolean isApplicationFile( File file )
-    {
-        try
-        {
-            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-            parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespaces", true );
-            parser.getXMLReader().setFeature( "http://xml.org/sax/features/namespace-prefixes", true );
-            ApplicationHandler h = new ApplicationHandler();
-            parser.parse( file, h );
-            return h.isApplicationFile();
-        }
-        catch ( Exception e )
-        {
-            return false;
-        }
-    }
-
-    /**
-     * Resolve a source file in a maven project
-     * 
-     * @param project maven project
-     * @param sourceFileName sugested name on pom
-     * @return source file or null if source not found
-     */
-    @SuppressWarnings( "unchecked" )
-    public static File resolveSourceFile( MavenProject project, String sourceFileName )
-    {
-        List<String> sourceRoots = project.getCompileSourceRoots();
-        for ( String sourceRoot : sourceRoots )
-        {
-            File sourceDirectory = new File( sourceRoot );
-
-            if ( sourceFileName != null )
-            {
-                File sourceFile = new File( sourceDirectory, sourceFileName );
-                if ( !sourceFile.exists() )
-                {
-                    continue;
-                }
-                return sourceFile;
-            }
-            else
-            {
-                File[] files = sourceDirectory.listFiles( new FileFilter()
-                {
-                    public boolean accept( File pathname )
-                    {
-                        return pathname.isFile()
-                            && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith(
-                                                                                                                                                ".css" ) );
-                    }
-                } );
-
-                if ( files.length == 1 )
-                {
-                    return files[0];
-                }
-                if ( files.length > 1 )
-                {
-                    for ( File file : files )
-                    {
-                        if ( file.getName().equalsIgnoreCase( "Main.mxml" )
-                            || file.getName().equalsIgnoreCase( "Main.as" ) )
-                        {
-                            return file;
-                        }
-                    }
-                    for ( File file : files )
-                    {
-                        if ( file.getName().equalsIgnoreCase( "Index.mxml" )
-                            || file.getName().equalsIgnoreCase( "Index.as" ) )
-                        {
-                            return file;
-                        }
-                    }
-
-                    List<File> appFiles = new ArrayList<File>();
-                    for ( File file : files )
-                    {
-                        if ( file.getName().endsWith( ".mxml" ) && isApplicationFile( file ) )
-                        {
-                            appFiles.add( file );
-                        }
-                    }
-                    if ( appFiles.size() == 1 )
-                    {
-                        File file = appFiles.get( 0 );
-                        return file;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**
