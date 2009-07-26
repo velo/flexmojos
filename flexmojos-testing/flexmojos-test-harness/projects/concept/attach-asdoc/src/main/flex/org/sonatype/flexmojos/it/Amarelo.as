@@ -5,22 +5,13 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.sonatype.flexmojos.tests.concept;
-
-import java.io.File;
-
-import org.apache.maven.it.Verifier;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractConceptTest
-    extends AbstractFlexMojosTests
+package org.sonatype.flexmojos.it
 {
+	/**
+	 * This is a dummy excluded class
+	 */
+	public class Amarelo
+	{
 
-    public Verifier standardConceptTester( String conceptName, String... args )
-        throws Exception
-    {
-        File testDir = getProject( "/concept/" + conceptName );
-        return test( testDir, "install", args );
-    }
-
+	}
 }
