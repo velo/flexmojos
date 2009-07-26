@@ -20,17 +20,23 @@ package org.sonatype.flexmojos.tests.concept;
 import java.io.File;
 
 import org.apache.maven.it.Verifier;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-public abstract class AbstractConceptTest
-    extends AbstractFlexMojosTests
+public class AttachAsdocTest
+    extends AbstractConceptTest
 {
 
-    public Verifier standardConceptTester( String conceptName, String... args )
+    @Test
+    public void attachAsdoc()
         throws Exception
     {
-        File testDir = getProject( "/concept/" + conceptName );
-        return test( testDir, "install", args );
-    }
+        Verifier v = standardConceptTester( "attach-asdoc" );
+        File target = new File( v.getBasedir(), "target" );
 
+        Assert.assertTrue( target.exists() );
+
+        File doc = new File( target, "attach-asdoc-1.0-SNAPSHOT-asdoc.zip" );
+        Assert.assertTrue( doc.exists() );
+    }
 }

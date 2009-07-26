@@ -15,22 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
-
-import java.io.File;
-
-import org.apache.maven.it.Verifier;
-import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
-
-public abstract class AbstractConceptTest
-    extends AbstractFlexMojosTests
+package org.sonatype.flexmojos.it
 {
+	/**
+	 * This is a another excluded class
+	 */
+	public class Verde
+	{
 
-    public Verifier standardConceptTester( String conceptName, String... args )
-        throws Exception
-    {
-        File testDir = getProject( "/concept/" + conceptName );
-        return test( testDir, "install", args );
-    }
-
+	}
 }
