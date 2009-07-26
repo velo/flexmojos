@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<assembly xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+						http://maven.apache.org/xsd/assembly-1.0.0.xsd">
+
+	<id>main</id>
+
+	<formats>
+		<format>tar.gz</format>
+		<format>zip</format>
+	</formats>
+	
+	<includeBaseDirectory>false</includeBaseDirectory>d
+	
+	<fileSets>
+		<fileSet>
+			<directory>src/main/not-wrapped</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		
+		<fileSet>
+			<directory>target/wrapped</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+	
+	<dependencySets>
+		<dependencySet>
+			<includes>
+				<include>sandbox:swf-project</include>
+			</includes>
+			
+			<outputDirectory>/</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+
+</assembly>
