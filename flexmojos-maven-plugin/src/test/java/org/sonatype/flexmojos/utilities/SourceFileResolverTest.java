@@ -1,7 +1,7 @@
 package org.sonatype.flexmojos.utilities;
 
 import java.io.File;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +18,9 @@ public class SourceFileResolverTest
 
     @BeforeClass
     public void createRoot()
-        throws URISyntaxException
+        throws IOException
     {
-        root = new File( new File( getClass().getResource( "/" ).toURI() ), "fileresolver" );
+        root = new File( "./target/test-classes/fileresolver" ).getCanonicalFile();
     }
 
     private List<File> getDir( String... names )
@@ -139,8 +139,9 @@ public class SourceFileResolverTest
 
     @Test
     public void resolveAbsolute()
+        throws IOException
     {
-        File file = new File( root, "absolute/xummy.as" );
+        File file = new File( root, "absolute/xummy.as" ).getCanonicalFile();
         Assert.assertTrue( file.exists() );
         File rfile = SourceFileResolver.resolveSourceFile( file.getAbsolutePath(), null, null, null );
         Assert.assertTrue( rfile.exists() );
