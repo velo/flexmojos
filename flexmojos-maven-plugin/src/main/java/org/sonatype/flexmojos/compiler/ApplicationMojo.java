@@ -52,7 +52,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
-import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
 import flex2.compiler.io.FileUtil;
 import flex2.tools.oem.Application;
@@ -150,6 +150,7 @@ public class ApplicationMojo
         configBuilder.addList( new String[] { source.getAbsolutePath() }, "file-specs", "path-element" );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
@@ -162,11 +163,13 @@ public class ApplicationMojo
 
         if ( source == null )
         {
-			if ( sourceFile == null )
-			{
-            	getLog().warn( "Source file was not defined, flexmojos will guess one." );
-			}
-            source = MavenUtils.resolveSourceFile( project, sourceFile );
+            if ( sourceFile == null )
+            {
+                getLog().warn( "Source file was not defined, flexmojos will guess one." );
+            }
+            source =
+                SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile,
+                                                      project.getGroupId(), project.getArtifactId() );
         }
 
         if ( source == null )

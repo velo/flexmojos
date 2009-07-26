@@ -93,6 +93,14 @@ public class AsVmPing
                 {
                     errorCount = 0;
 
+                    try
+                    {
+                        Thread.sleep( 2000 );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        // wake up call, no problem
+                    }
                 }
             }
             catch ( SocketTimeoutException e )

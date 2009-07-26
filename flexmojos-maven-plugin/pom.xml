@@ -190,7 +190,7 @@
           </dependency>
         </dependencies>
       </plugin>
-          </plugins>
+    </plugins>
   </build>
 
   <dependencies>
@@ -305,6 +305,11 @@
       <artifactId>flexmojos-tester</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+    </dependency>
+
     <dependency>
       <!-- Workaround to get DITA asdoc, flexmojos doesn't need that -->
       <groupId>net.sf.saxon</groupId>

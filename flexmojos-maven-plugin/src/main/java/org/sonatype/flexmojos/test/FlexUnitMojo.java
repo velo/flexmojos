@@ -55,7 +55,7 @@ public class FlexUnitMojo
     extends AbstractIrvinMojo
 {
 
-    private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elpased: {3} sec";
+    private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elapsed: {3} sec";
 
     private boolean failures = false;
 

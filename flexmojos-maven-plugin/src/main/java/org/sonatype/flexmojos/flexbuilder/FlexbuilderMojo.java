@@ -46,6 +46,7 @@ import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
+import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
 /**
  * Generates Flex Builder configuration files for SWC and SWF projects.
@@ -521,6 +522,7 @@ public class FlexbuilderMojo
         return localesList;
     }
 
+    @SuppressWarnings( "unchecked" )
     private void writeAsProperties( String packaging, IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
@@ -543,7 +545,10 @@ public class FlexbuilderMojo
 
         if ( SWF.equals( packaging ) )
         {
-            File sourceFile = MavenUtils.resolveSourceFile( project, this.sourceFile );
+            File sourceFile =
+                SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), this.sourceFile,
+                                                      project.getGroupId(), project.getArtifactId() );
+
             context.put( "mainApplication", sourceFile.getName() );
             getAllApplications().add( 0, sourceFile.getName() );
             context.put( "applications", getAllApplications() );
