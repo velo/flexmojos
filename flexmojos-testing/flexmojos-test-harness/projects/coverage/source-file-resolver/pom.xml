@@ -32,6 +32,8 @@
 	   <module>application-index</module>
 	   <module>application-not-default</module>
 	   <module>application-forced</module>
+       <module>groupIdArtifactId</module>
+       <module>groupId</module>
 	</modules>
 
 </project>
