@@ -12,7 +12,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>3.3</version>
+    <version>3.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-installer</artifactId>
@@ -161,7 +161,5 @@
       <version>${project.version}</version>
       <type>swc</type>
     </dependency>
-  </dependencies>
-
-</project>
+  </dependencies></project>
 
