@@ -40,10 +40,62 @@
 
   <defaults>
     <groupId>com.adobe.flex.framework</groupId>
-    <version>4.0.0.7219</version>
+    <version>4.0.0.8811</version>
   </defaults>
 
   <artifacts>
+    <!-- rsls -->
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/framework_4.0.0.8811_o.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/framework_4.0.0.8811.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/rpc_4.0.0.8811_o.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/rpc_4.0.0.8811.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/spark_4.0.0.8811_o.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/spark_4.0.0.8811.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>textLayout</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/textLayout_4.0.0.8811_o.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>textLayout</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/textLayout_4.0.0.8811.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater_ui</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater_ui.swf</location>
+    </artifact>
+
     <artifact>
       <artifactId>flex-framework</artifactId>
       <type>pom</type>
@@ -694,58 +746,5 @@
       <classifier>zh_TW</classifier>
       <location>frameworks/locale/zh_TW/rpc_rb.swc</location>
     </artifact>
-    
-    <!-- rsls -->
-    <artifact>
-      <artifactId>framework</artifactId>
-      <type>swf</type>
-      <location>frameworks/rsls/framework_4.0.0.8811.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>framework</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/framework_4.0.0.8811.swz</location>
-    </artifact>
-    <artifact>
-      <artifactId>rpc</artifactId>
-      <type>swf</type>
-      <location>frameworks/rsls/rpc_4.0.0.8811.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>rpc</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/rpc_4.0.0.8811.swz</location>
-    </artifact>
-    <artifact>
-      <artifactId>spark</artifactId>
-      <type>swf</type>
-      <location>frameworks/rsls/spark_4.0.0.8811.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>spark</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/spark_4.0.0.8811.swz</location>
-    </artifact>
-    <artifact>
-      <artifactId>textLayout</artifactId>
-      <type>swf</type>
-      <location>frameworks/rsls/textLayout_4.0.0.8811.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>textLayout</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/textLayout_4.0.0.8811.swz</location>
-    </artifact>
-    <artifact>
-      <artifactId>applicationupdater</artifactId>
-      <type>swf</type>
-      <location>frameworks/libs/air/applicationupdater.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>applicationupdater_ui</artifactId>
-      <type>swf</type>
-      <location>frameworks/libs/air/applicationupdater_ui.swf</location>
-    </artifact>
-    
   </artifacts>
 </mapping>
