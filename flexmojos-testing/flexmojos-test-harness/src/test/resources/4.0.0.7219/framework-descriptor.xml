@@ -33,6 +33,58 @@
   </defaults>
 
   <artifacts>
+    <!-- rsls -->
+    <artifact>
+      <artifactId>flex4</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/flex4_4.0.0.7219.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>flex4</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/flex4_4.0.0.7219.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/framework_4.0.0.7219.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/framework_4.0.0.7219.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/rpc_4.0.0.7219.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/rpc_4.0.0.7219.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>textLayout</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/framework_textLayout_4.0.0.7219.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>textLayout</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/framework_textLayout_4.0.0.7219.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater_ui</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater_ui.swf</location>
+    </artifact>
+
     <artifact>
       <artifactId>flex-framework</artifactId>
       <type>pom</type>
