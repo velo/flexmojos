@@ -58,7 +58,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
-          <version>1.0</version>
+          <version>1.2</version>
           <configuration>
             <complianceLevel>1.5</complianceLevel>
           </configuration>
@@ -419,7 +419,7 @@
       <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.5</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
