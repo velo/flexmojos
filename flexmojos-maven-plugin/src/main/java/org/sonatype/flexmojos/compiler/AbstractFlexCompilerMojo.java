@@ -944,10 +944,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 sourceRoots = project.getCompileSourceRoots();
             }
             List<File> sources = getValidSourceRoots( sourceRoots );
-            // if ( mergeResourceBundle != null && mergeResourceBundle )
             if ( compiledLocales != null )
             {
-                sources.add( new File( resourceBundlePath ) );
+                File resourceBundlesDirectory = new File( resourceBundlePath );
+                if ( resourceBundlesDirectory.exists() )
+                {
+                    sources.add( new File( resourceBundlePath ) );
+                }
             }
             sourcePaths = sources.toArray( new File[sources.size()] );
         }
@@ -1126,7 +1129,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         for ( String locale : locales )
         {
-            MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
+            if ( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) == null )
+            {
+                getLog().warn( "Locale directory not found for: " + locale );
+            }
         }
     }
 
@@ -1300,7 +1306,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             // When using the resource-bundle-list option, you must also set the
             // value of the locale option to an empty string.
-            setLocales( new String[0] );
+            setLocales();
         }
 
         // Add namespaces from FDK
@@ -2108,12 +2114,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             getLog().info( "Generating resource bundle for locale: " + locale );
             File localePath = MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
-
-            if ( !localePath.exists() )
-            {
-                getLog().error( "Unable to find locales path: " + localePath.getAbsolutePath() );
-                continue;
-            }
             writeResourceBundle( bundles, locale, localePath );
         }
     }
@@ -2242,7 +2242,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void writeLinkReport( Report report )
         throws MojoExecutionException
     {
-
         writeReport( report, REPORT_LINK );
     }
 
