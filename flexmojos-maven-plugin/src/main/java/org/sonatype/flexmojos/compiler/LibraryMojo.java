@@ -424,9 +424,13 @@ public class LibraryMojo
         localized.setLogger( new CompileLogger( getLog() ) );
 
         configuration.addLibraryPath( new File[] { getOutput() } );
-        setLocales( new String[] { locale } );
+        setLocales( locale );
 
-        configuration.setSourcePath( new File[] { localePath } );
+        if ( localePath != null )
+        {
+           configuration.setSourcePath( new File[] { localePath } );
+        }
+
         for ( String bundle : bundles )
         {
             localized.addResourceBundle( bundle );

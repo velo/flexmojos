@@ -287,20 +287,13 @@ public class MavenUtils
      * 
      * @param resourceBundlePath Path to resource bundle.
      * @param locale Locale
-     * @throws MojoExecutionException thrown if the resourceBundlePath for given locale can not be found
      * @return File reference to the resourceBundlePath for given locale
      */
     public static File getLocaleResourcePath( String resourceBundlePath, String locale )
-        throws MojoExecutionException
     {
         String path = resourceBundlePath.replace( "{locale}", locale );
         File localePath = new File( path );
-        if ( !localePath.exists() )
-        {
-            throw new MojoExecutionException( "Unable to find locales folder for : " + locale + "\n"
-                + localePath.getAbsolutePath() + " does not exists." );
-        }
-        return localePath;
+        return localePath.exists() ? localePath : null;
     }
 
     public static String osString()
