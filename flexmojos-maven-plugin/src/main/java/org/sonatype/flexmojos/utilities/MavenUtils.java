@@ -7,17 +7,6 @@
  */
 package org.sonatype.flexmojos.utilities;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
@@ -32,11 +21,14 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
 
-import eu.cedarsoft.utils.ZipExtractor;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -388,96 +380,6 @@ public class MavenUtils
         }
 
         return str1.equals( str2 );
-    }
-
-    private static Map<String, File> getFDKNamespaces( File configZip, Build build )
-        throws MojoExecutionException
-    {
-        File outputFolder = new File( build.getOutputDirectory(), "configs" );
-        outputFolder.mkdirs();
-
-        ZipExtractor ze;
-        try
-        {
-            ze = new ZipExtractor( configZip );
-            ze.extract( outputFolder );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to extract configurations", e );
-        }
-
-        File configFile = new File( outputFolder, "flex-config.xml" );
-        if ( !configFile.isFile() )
-        {
-            return new HashMap<String, File>();
-        }
-        Document document;
-        try
-        {
-            SAXBuilder parser = new SAXBuilder();
-            document = parser.build( configFile );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error parsing config.xml", e );
-        }
-        return readNamespaces( outputFolder, document );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    static Map<String, File> readNamespaces( File outputFolder, Document document )
-    {
-        Map<String, File> namespaces = new HashMap<String, File>();
-
-        // "//compiler/namespaces/namespace"
-
-        Element node = document.getRootElement();
-        node = node.getChild( "compiler" );
-        if ( node == null )
-        {
-            return namespaces;
-        }
-        node = node.getChild( "namespaces" );
-        if ( node == null )
-        {
-            return namespaces;
-        }
-        List<Element> namespacesNodes = node.getChildren();
-        for ( Element element : namespacesNodes )
-        {
-            Element uriNode = element.getChild( "uri" );
-            Element manifestNode = element.getChild( "manifest" );
-            String uri = uriNode.getValue();
-            File manifest = new File( outputFolder, manifestNode.getValue() );
-            namespaces.put( uri, manifest );
-        }
-
-        return namespaces;
-    }
-
-    public static List<Namespace> getFdkNamespaces( Collection<Artifact> dependencies, Build build )
-        throws MojoExecutionException
-    {
-        Artifact configArtifact =
-            MavenUtils.searchFor( dependencies, "com.adobe.flex.framework", "framework", null, "zip", "configs" );
-
-        List<Namespace> namespaces = new ArrayList<Namespace>();
-        if ( configArtifact == null )
-        {
-            return namespaces;
-        }
-
-        File configZip = configArtifact.getFile();
-        Map<String, File> configNamespaces = MavenUtils.getFDKNamespaces( configZip, build );
-
-        Set<String> uris = configNamespaces.keySet();
-        for ( String uri : uris )
-        {
-            namespaces.add( new Namespace( uri, configNamespaces.get( uri ) ) );
-        }
-
-        return namespaces;
     }
 
     public static String getFlexMojosVersion()
