@@ -17,15 +17,9 @@
  */
 package org.sonatype.flexmojos.asdoc;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import eu.cedarsoft.utils.ZipExtractor;
+import flex2.compiler.util.ThreadLocalToolkit;
+import flex2.tools.ASDoc;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -45,10 +39,16 @@ import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
+import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 
-import eu.cedarsoft.utils.ZipExtractor;
-import flex2.compiler.util.ThreadLocalToolkit;
-import flex2.tools.ASDoc;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
@@ -355,12 +355,17 @@ public class AsDocMojo
             templatesPath = generateDefaultTemplate();
         }
 
-        List<Namespace> fdkNamespaces = MavenUtils.getFdkNamespaces( getDependencyArtifacts(), build );
-        if ( this.namespaces != null )
+        FDKConfigResolver sdkConfigResolver = new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
+        List<Namespace> fdkNamespaces = sdkConfigResolver.getNamespaces();
+        // we must merge user custom namespaces and default SDK namespaces, because we not use compiler API ? https://bugs.adobe.com/jira/browse/SDK-15405
+        if ( fdkNamespaces != null )
         {
-            fdkNamespaces.addAll( Arrays.asList( this.namespaces ) );
+            if ( namespaces != null )
+            {
+                fdkNamespaces.addAll( Arrays.asList( namespaces ) );
+            }
+            namespaces = fdkNamespaces.toArray( new Namespace[fdkNamespaces.size()] );
         }
-        this.namespaces = fdkNamespaces.toArray( new Namespace[0] );
     }
 
     private File generateDefaultTemplate()
