@@ -28,6 +28,8 @@
   </parent>
 
   <artifactId>flexmojos-generator-constraints</artifactId>
+  
+  <name>Flexmojos Generator - Constraints</name>
 
   <build>
     <plugins>
