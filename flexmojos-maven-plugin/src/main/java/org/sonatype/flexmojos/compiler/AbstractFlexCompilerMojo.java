@@ -66,6 +66,7 @@ import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
+import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
@@ -1257,12 +1258,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.enableDebugging( isDebug(), debugPassword );
         configuration.useECMAScript( es );
 
+        FDKConfigResolver sdkConfigResolver =
+            new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
+
         // Fonts
         if ( fonts != null )
         {
             configureFontsAntiAliasing();
             enableFlashType();
-            configuration.setFontManagers( fonts.getManagers() );
+
             configuration.setMaximumCachedFonts( fonts.getMaxCachedFonts() );
             configuration.setMaximumGlyphsPerFace( fonts.getMaxGlyphsPerFace() );
             if ( fonts.getLanguages() != null && !fonts.getLanguages().isEmpty() )
@@ -1273,6 +1277,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 }
             }
         }
+
+        if ( fonts != null && fonts.getManagers() != null )
+        {
+            configuration.setFontManagers( fonts.getManagers() );
+        }
+        else
+        {
+            String[] defaultFontManagers = sdkConfigResolver.getFontManagers();
+            if ( defaultFontManagers != null )
+            {
+                configuration.setFontManagers( defaultFontManagers );
+            }
+        }
+
         File fontsSnapshot = getFontsSnapshot();
         if ( fontsSnapshot == null || !fontsSnapshot.exists() )
         {
@@ -1310,12 +1328,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         // Add namespaces from FDK
-        List<Namespace> fdkNamespaces = MavenUtils.getFdkNamespaces( getDependencyArtifacts(), build );
-        if ( this.namespaces != null )
+        List<Namespace> fdkNamespaces = sdkConfigResolver.getNamespaces();
+
+        if ( fdkNamespaces != null )
         {
-            fdkNamespaces.addAll( Arrays.asList( this.namespaces ) );
+            if ( namespaces != null )
+            {
+                fdkNamespaces.addAll( Arrays.asList( namespaces ) );
+            }
+            namespaces = fdkNamespaces.toArray( new Namespace[fdkNamespaces.size()] );
         }
-        this.namespaces = fdkNamespaces.toArray( new Namespace[0] );
 
         if ( namespaces != null )
         {
@@ -1335,7 +1357,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.setSourcePath( sourcePaths );
         configuration.enableStrictChecking( strict );
         configuration.useNetwork( useNetwork );
-        configuration.enableVerboseStacktraces( verboseStacktraces );
+        if ( verboseStacktraces )
+        {
+            configuration.enableVerboseStacktraces( verboseStacktraces );
+        }
 
         if ( contextRoot != null )
         {
@@ -1455,11 +1480,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             OEMConfiguration oemConfig = (OEMConfiguration) configuration;
             List<String> commandLineArguments = new ArrayList<String>();
 
-            if ( staticLinkRuntimeSharedLibraries )
-            {
-                commandLineArguments.add( "-static-link-runtime-shared-libraries=true" );
-            }
-            else
+            if ( !staticLinkRuntimeSharedLibraries )
             {
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=false" );
             }
@@ -1484,6 +1505,27 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         verifyDigests();
+    }
+
+    private void configureNamespaces( FDKConfigResolver sdkConfigResolver )
+        throws MojoExecutionException
+    {
+        List<Namespace> defaultNamespaces = sdkConfigResolver.getNamespaces();
+        if ( defaultNamespaces != null )
+        {
+            for ( Namespace namespace : defaultNamespaces )
+            {
+                configuration.setComponentManifest( namespace.getUri(), namespace.getManifest() );
+            }
+        }
+
+        if ( namespaces != null )
+        {
+            for ( Namespace namespace : namespaces )
+            {
+                configuration.setComponentManifest( namespace.getUri(), namespace.getManifest() );
+            }
+        }
     }
 
     @FlexCompatibility( minVersion = "3.1" )
@@ -2073,7 +2115,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             writeResourceBundle( report );
         }
-
     }
 
     /**
