@@ -276,7 +276,6 @@ public class ApplicationMojo
     protected void writeResourceBundleFlex30( String[] bundles, String locale, File localePath )
         throws MojoExecutionException
     {
-
         // Dont break this method in parts, is a work around
 
         File output = getRuntimeLocaleOutputFile( locale, SWF );
@@ -309,7 +308,10 @@ public class ApplicationMojo
         Set<String> args = new HashSet<String>();
         // args.addAll(Arrays.asList(configs));
         args.add( "-locale=" + locale );
-        args.add( "-source-path=" + localePath.getAbsolutePath() );
+        if ( localePath != null )
+        {
+            args.add( "-source-path=" + localePath.getAbsolutePath() );
+        }
         args.add( "-include-resource-bundles=" + bundlesString );
         args.add( "-output=" + output.getAbsolutePath() );
         args.add( "-compiler.fonts.local-fonts-snapshot=" + getFontsSnapshot().getAbsolutePath() );
@@ -382,9 +384,11 @@ public class ApplicationMojo
             OEMConfiguration oemConfiguration = (OEMConfiguration) configuration;
             oemConfiguration.setIncludeResourceBundles( bundlesNames );
         }
-        configuration.setLocale( new String[] { locale } );
-        configuration.setSourcePath( new File[] { localePath } );
-
+        setLocales( locale );
+        if ( localePath != null )
+        {
+            configuration.setSourcePath( new File[] { localePath } );
+        }
         configuration.includeLibraries( null );
         configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
 

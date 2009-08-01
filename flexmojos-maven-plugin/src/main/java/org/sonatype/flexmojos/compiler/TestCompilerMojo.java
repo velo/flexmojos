@@ -299,14 +299,7 @@ public class TestCompilerMojo
 
     private File getResource( String locale )
     {
-        try
-        {
-            return MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
-        }
-        catch ( MojoExecutionException e )
-        {
-            return null;
-        }
+        return MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
     }
 
     @Override
