@@ -18,72 +18,77 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
-	<modelVersion>4.0.0</modelVersion>
-	
-	<parent>
-		<artifactId>other-wrapper-test</artifactId>
-		<groupId>sandbox</groupId>
-		<version>1</version>
-	</parent>
-	
-	<groupId>sandbox</groupId>
-	<artifactId>other-project</artifactId>
-	<version>1</version>
-	
-	<packaging>pom</packaging>
-	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>%{flexmojos.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>wrapper</goal>
-						</goals>
-					</execution>
-				</executions>
-				
-				<configuration>
-					<templateURI>folder:${basedir}/src/main/wrapped</templateURI>
-					<outputDirectory>${project.build.directory}/wrapped</outputDirectory>
-				</configuration>
-				
-				<dependencies>
-					<!-- External parameters source for wrapper -->
-					<dependency>
-						<groupId>sandbox</groupId>
-						<artifactId>swf-project</artifactId>
-						<version>1</version>
-						<type>pom</type>
-					</dependency>
-				</dependencies>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				
-				<configuration>
-					<descriptors>
-						<descriptor>src/assemblies/main.xml</descriptor>
-					</descriptors>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	
-	<dependencies>
-		<dependency>
-			<groupId>sandbox</groupId>
-			<artifactId>swf-project</artifactId>
-			<version>1</version>
-			<type>swf</type>
-		</dependency>
-	</dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>other-wrapper-test</artifactId>
+    <groupId>sandbox</groupId>
+    <version>1</version>
+  </parent>
+
+  <groupId>sandbox</groupId>
+  <artifactId>other-project</artifactId>
+  <version>1</version>
+
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>wrapper</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <wrapperArtifact>
+            <groupId>sandbox</groupId>
+            <artifactId>swf-project</artifactId>
+
+            <!-- Optional, as a swf dependency with the same id will be
+						     searched for if not defined. -->
+            <version>1</version>
+          </wrapperArtifact>
+
+          <templateInclusions>
+            <String>**/*.jsp</String>
+            <String>WEB-INF/**/*</String>
+          </templateInclusions>
+
+          <templateExclusions>
+            <String>**/*.txt</String>
+          </templateExclusions>
+        </configuration>
+
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+
+        <configuration>
+          <descriptors>
+            <descriptor>src/assemblies/main.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>sandbox</groupId>
+      <artifactId>swf-project</artifactId>
+      <version>1</version>
+      <type>swf</type>
+    </dependency>
+  </dependencies>
 </project>
