@@ -54,7 +54,7 @@
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
-        <filtering>false</filtering>
+        <filtering>true</filtering>
         <includes>
           <include>settings.xml</include>
         </includes>
@@ -115,17 +115,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-bundle</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeArtifactIds>bundle</includeArtifactIds>
-              <outputDirectory>${project.build.directory}</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
             <id>copy-repo</id>
             <phase>generate-test-resources</phase>
             <goals>
@@ -158,12 +147,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--
-        <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>bundle-publisher-maven-plugin</artifactId> <version>1.2-SNAPSHOT</version> <executions> <execution> <id>compiler</id> <phase>generate-test-resources</phase> <goals>
-        <goal>deploy-bundle</goal> </goals> <configuration> <descriptor>${basedir}/src/test/resources/${flex.sdk.version}/compiler-descriptor.xml</descriptor> </configuration> </execution> <execution> <id>framework</id>
-        <phase>generate-test-resources</phase> <goals> <goal>deploy-bundle</goal> </goals> <configuration> <descriptor>${basedir}/src/test/resources/${flex.sdk.version}/framework-descriptor.xml</descriptor> </configuration> </execution> </executions>
-        <configuration> <bundle>${project.build.directory}/bundle-${flex.sdk.version}.zip</bundle> <url>file://${fake-repo}</url> </configuration> </plugin>
-      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -320,10 +303,8 @@
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>bundle</artifactId>
-      <version>${flex.sdk.version}</version>
-      <type>zip</type>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
     </dependency>
   </dependencies>
 

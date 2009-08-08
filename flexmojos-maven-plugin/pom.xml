@@ -159,13 +159,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.sonatype.spice</groupId>
-            <artifactId>banned-plugins-enforcer</artifactId>
-            <version>1.0-SNAPSHOT</version>
-          </dependency>
-        </dependencies>
+        <version>1.0-beta-2-SNAPSHOT</version>
         <executions>
           <execution>
             <goals>
@@ -173,12 +167,12 @@
             </goals>
             <configuration>
               <rules>
-                <banPlugins implementation="org.sonatype.spice.bannedplugins.BannedPluginsRule">
+                <bannedPlugins>
                   <message>maven-invoker-plugin isn't allowed, add tests on flexmojos-test-harness instead</message>
                   <excludes>
                     <exclude>*:maven-invoker-plugin</exclude>
                   </excludes>
-                </banPlugins>
+                </bannedPlugins>
               </rules>
             </configuration>
           </execution>

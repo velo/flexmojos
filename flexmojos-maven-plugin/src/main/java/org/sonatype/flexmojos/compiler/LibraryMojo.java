@@ -35,6 +35,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
 
 import flex2.tools.oem.Library;
+import flex2.tools.oem.internal.OEMConfiguration;
 
 /**
  * <p>
@@ -220,9 +221,9 @@ public class LibraryMojo
 
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
             && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeSources )
-            && checkNullOrEmpty( includeStylesheet ) )
+            && checkNullOrEmpty( includeStylesheet ) && checkNullOrEmpty( includeResourceBundles ) )
         {
-            getLog().warn( "Nothing expecified to include.  Assuming source and resources folders." );
+            getLog().warn( "Nothing expecified to include. Assuming source and resources folders." );
             List<File> sourcePaths = new ArrayList<File>( Arrays.asList( this.sourcePaths ) );
             sourcePaths.remove( new File( resourceBundlePath ) );
             includeSources = sourcePaths.toArray( new File[0] );
@@ -317,7 +318,17 @@ public class LibraryMojo
             builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
                                     new File( project.getBasedir(), "pom.xml" ) );
         }
+    }
 
+    protected void configureIncludeResourceBundles( OEMConfiguration oemConfig )
+    {
+        if ( includeResourceBundles != null )
+        {
+            for ( String bundle : includeResourceBundles )
+            {
+                builder.addResourceBundle( bundle );
+            }
+        }
     }
 
     @SuppressWarnings( "unchecked" )
