@@ -18,31 +18,50 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>%{flexmojos.version}</version>
-  </parent>
-
-  <groupId>info.rvin.itest.issues</groupId>
-  <artifactId>flexmojos-159</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
+        <artifactId>flexmojos-flex-super-pom</artifactId>
+        <version>%{flexmojos.version}</version>
+    </parent>
 
-        <configuration>
-          <compileLocales>
-            <locale>en_US</locale>
-          </compileLocales>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <groupId>info.rvin.itest.issues</groupId>
+    <artifactId>flexmojos-159</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>swf</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>flex-framework</artifactId>
+            <version>4.0.0.8811</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.flexmojos</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>4.0.0.8811</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <compiledLocales>
+                        <locale>en_US</locale>
+                    </compiledLocales>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

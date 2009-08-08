@@ -64,9 +64,9 @@ import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
-import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
@@ -890,12 +890,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * @parameter
      */
-    private String[] includeResourceBundles;
-
-    /**
-     * @parameter TODO check if is used/useful
-     */
-    private MavenArtifact[] includeResourceBundlesArtifact;
+    protected String[] includeResourceBundles;
 
     /**
      * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
@@ -947,10 +942,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             List<File> sources = getValidSourceRoots( sourceRoots );
             if ( compiledLocales != null )
             {
-                File resourceBundlesDirectory = new File( resourceBundlePath );
-                if ( resourceBundlesDirectory.exists() )
+                File resourceBundleDirectory = new File( resourceBundlePath );
+                if ( resourceBundleDirectory.getParentFile().exists() )
                 {
-                    sources.add( new File( resourceBundlePath ) );
+                    sources.add( resourceBundleDirectory );
                 }
             }
             sourcePaths = sources.toArray( new File[sources.size()] );
@@ -1054,9 +1049,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
         }
 
-        validateLocales( runtimeLocales );
-        validateLocales( compiledLocales );
-
         configuration = builder.getDefaultConfiguration();
         configure();
 
@@ -1116,23 +1108,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             else
             {
                 this.runtimeLocales = locales;
-            }
-        }
-    }
-
-    private void validateLocales( String... locales )
-        throws MojoExecutionException
-    {
-        if ( locales == null )
-        {
-            return;
-        }
-
-        for ( String locale : locales )
-        {
-            if ( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) == null )
-            {
-                getLog().warn( "Locale directory not found for: " + locale );
             }
         }
     }
@@ -1327,26 +1302,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             setLocales();
         }
 
-        // Add namespaces from FDK
-        List<Namespace> fdkNamespaces = sdkConfigResolver.getNamespaces();
-
-        if ( fdkNamespaces != null )
-        {
-            if ( namespaces != null )
-            {
-                fdkNamespaces.addAll( Arrays.asList( namespaces ) );
-            }
-            namespaces = fdkNamespaces.toArray( new Namespace[fdkNamespaces.size()] );
-        }
-
-        if ( namespaces != null )
-        {
-            for ( Namespace namespace : namespaces )
-            {
-                File manifest = namespace.getManifest();
-                configuration.setComponentManifest( namespace.getUri(), manifest );
-            }
-        }
+        configureNamespaces( sdkConfigResolver );
 
         configuration.optimize( optimize );
         if ( this.warnings != null )
@@ -1357,10 +1313,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.setSourcePath( sourcePaths );
         configuration.enableStrictChecking( strict );
         configuration.useNetwork( useNetwork );
-        if ( verboseStacktraces )
-        {
-            configuration.enableVerboseStacktraces( verboseStacktraces );
-        }
+        configuration.enableVerboseStacktraces( verboseStacktraces );
 
         if ( contextRoot != null )
         {
@@ -1384,7 +1337,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 externsFiles.add( artifact.getFile() );
             }
             configuration.setExterns( externsFiles.toArray( new File[externsFiles.size()] ) );
-
         }
 
         if ( rawMetadata != null )
@@ -1485,7 +1437,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 commandLineArguments.add( "-static-link-runtime-shared-libraries=false" );
             }
 
-            addIncludeResourceBundles( oemConfig );
+            configureIncludeResourceBundles( oemConfig );
 
             if ( configFile == null )
             {
@@ -1530,38 +1482,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     @FlexCompatibility( minVersion = "3.1" )
     @IgnoreJRERequirement
-    private void addIncludeResourceBundles( OEMConfiguration oemConfig )
-        throws MojoExecutionException
-    {
-        if ( includeResourceBundles != null )
-        {
-            oemConfig.addIncludeResourceBundles( includeResourceBundles );
-        }
-
-        if ( includeResourceBundlesArtifact != null )
-        {
-            for ( MavenArtifact mvnArtifact : includeResourceBundlesArtifact )
-            {
-                Artifact artifact =
-                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
-                                                                  mvnArtifact.getArtifactId(),
-                                                                  mvnArtifact.getVersion(), "properties",
-                                                                  "resource-bundle" );
-                MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
-                String bundleFile;
-                try
-                {
-                    bundleFile = FileUtils.readFileToString( artifact.getFile() );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Ocorreu um erro ao ler o artefato " + artifact, e );
-                }
-                String[] bundles = bundleFile.split( " " );
-                oemConfig.addIncludeResourceBundles( bundles );
-            }
-        }
-    }
+    protected abstract void configureIncludeResourceBundles( OEMConfiguration oemConfig );
 
     protected abstract String getDefaultLocale();
 

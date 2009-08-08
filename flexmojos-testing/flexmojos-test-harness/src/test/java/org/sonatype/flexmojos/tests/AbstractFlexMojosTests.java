@@ -80,9 +80,9 @@ public class AbstractFlexMojosTests
         mavenHome = new File( getProperty( "fake-maven" ) );
 
         File mvn = new File( mavenHome, "bin/mvn" );
-        updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M\"\n" );
+        updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M -Duser.language=en -Duser.region=US\"\n" );
         File mvnBat = new File( mavenHome, "bin/mvn.bat" );
-        updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M\n" );
+        updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
     }
 
     private static void updateMavenMemory( File mvn, String memString )
