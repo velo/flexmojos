@@ -49,6 +49,13 @@ public class VersionUtilsTest
         Assert.assertFalse( isMinVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "3.1" ) ) );
         Assert.assertFalse( isMinVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "4" ) ) );
         Assert.assertTrue( isMinVersionOK( splitVersion( "3.1.0" ), splitVersion( "3.0.0" ) ) );
+
+        Assert.assertTrue( isMinVersionOK( splitVersion( "4.0.0-SNAPSHOT" ), splitVersion( "3.1" ) ) );
+        Assert.assertTrue( isMinVersionOK( splitVersion( "4.0.0-SNAPSHOT" ), splitVersion( "4.0.0-SNAPSHOT" ) ) );
+        Assert.assertTrue( isMinVersionOK( splitVersion( "4.0.0" ), splitVersion( "4.0.0" ) ) );
+        Assert.assertTrue( isMinVersionOK( splitVersion( "4.0.0-SNAPSHOT" ), splitVersion( "3.0.0-SNAPSHOT" ) ) );
+
+        Assert.assertFalse( isMinVersionOK( splitVersion( "3.0.0" ), splitVersion( "3.1.0" ) ) );
     }
 
     @Test
@@ -61,5 +68,8 @@ public class VersionUtilsTest
         Assert.assertTrue( isMaxVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "3.1" ) ) );
         Assert.assertTrue( isMaxVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "4" ) ) );
         Assert.assertFalse( isMaxVersionOK( splitVersion( "3.1.0" ), splitVersion( "3.0.0" ) ) );
+
+        Assert.assertFalse( isMaxVersionOK( splitVersion( "4.0.0-SNAPSHOT" ), splitVersion( "3.1" ) ) );
+        Assert.assertTrue( isMaxVersionOK( splitVersion( "3.1" ), splitVersion( "4.0.0-SNAPSHOT" ) ) );
     }
 }

@@ -46,36 +46,29 @@ public class VersionUtils
 
     public static boolean isMinVersionOK( int[] fdkVersion, int[] minVersion )
     {
-        int lenght = getSmaller( fdkVersion.length, minVersion.length );
-
-        for ( int i = 0; i < lenght; i++ )
-        {
-            int min = minVersion[i];
-            int current = fdkVersion[i];
-            if ( current < min )
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return isVersionOK( fdkVersion, minVersion );
     }
 
     public static boolean isMaxVersionOK( int[] fdkVersion, int[] maxVersion )
     {
-        int lenght = getSmaller( fdkVersion.length, maxVersion.length );
+        return isVersionOK( maxVersion, fdkVersion );
+    }
 
+    private static boolean isVersionOK( int[] fdkVersion, int[] minVersion )
+    {
+        int lenght = getSmaller( fdkVersion.length, minVersion.length );
+
+        int result = 0;
         for ( int i = 0; i < lenght; i++ )
         {
-            int max = maxVersion[i];
-            int current = fdkVersion[i];
-            if ( current > max )
+            result = fdkVersion[i] - minVersion[i];
+            if ( result != 0 )
             {
-                return false;
+                return result > -1;
             }
         }
 
-        return true;
+        return result > -1;
     }
 
     private static int getSmaller( int... integers )
