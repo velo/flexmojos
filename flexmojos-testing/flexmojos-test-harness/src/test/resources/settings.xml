@@ -25,46 +25,66 @@
       <id>flex-extras</id>
       <repositories>
         <repository>
-          <id>flex</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+          <id>local-repo</id>
+          <url>file://${localRepository.basedir}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-          <id>sonatype-flex-releases</id>
+          <id>custom-local-repo</id>
+          <url>file://${maven.repo.local}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>flex</id>
+          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>flexmojos-releases</id>
           <url>http://repository.sonatype.org:8081/content/repositories/sonatype-flex-releases</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>central</id>
+          <url>http://repo1.maven.org/maven2/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>flex</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+          <id>local-repo</id>
+          <url>file://${localRepository.basedir}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
         <pluginRepository>
-          <id>sonatype-flex-releases</id>
+          <id>custom-local-repo</id>
+          <url>file://${maven.repo.local}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>flex</id>
+          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>flexmojos-releases</id>
           <url>http://repository.sonatype.org:8081/content/repositories/sonatype-flex-releases</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>central</id>
+          <url>http://repo1.maven.org/maven2/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
       </pluginRepositories>
     </profile>
