@@ -205,6 +205,14 @@ public class ApplicationMojo
         builder.setOutput( getOutput() );
     }
 
+    protected void configureIncludeResourceBundles( OEMConfiguration oemConfig )
+    {
+        if ( includeResourceBundles != null )
+        {
+            oemConfig.setIncludeResourceBundles( includeResourceBundles );
+        }
+    }
+
     @Override
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
