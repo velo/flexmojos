@@ -19,43 +19,48 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>%{flexmojos.version}</version>
-	</parent>
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-flex-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
 
-	<groupId>com.adobe.samples</groupId>
-	<artifactId>calculator-api</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <groupId>com.adobe.samples</groupId>
+  <artifactId>calculator-api</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-	<packaging>swc</packaging>
+  <packaging>swc</packaging>
 
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>tests</testSourceDirectory>
-	</build>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>tests</testSourceDirectory>
+  </build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>%{flexmojos.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1.2</version>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.adobe.flexunit</groupId>
-			<artifactId>flexunit</artifactId>
-			<version>0.85</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>0.85</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
