@@ -62,6 +62,7 @@ import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
+import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
@@ -1323,21 +1324,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.keepConfigurationReport( configurationReport );
         configuration.setServiceConfiguration( services );
 
-        if ( loadExterns != null )
-        {
-            List<File> externsFiles = new ArrayList<File>();
-
-            for ( MavenArtifact mvnArtifact : loadExterns )
-            {
-                Artifact artifact =
-                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
-                                                                  mvnArtifact.getArtifactId(),
-                                                                  mvnArtifact.getVersion(), "xml", "link-report" );
-                MavenUtils.resolveArtifact( artifact, resolver, localRepository, remoteRepositories );
-                externsFiles.add( artifact.getFile() );
-            }
-            configuration.setExterns( externsFiles.toArray( new File[externsFiles.size()] ) );
-        }
+        configureExterns();
 
         if ( rawMetadata != null )
         {
@@ -1393,11 +1380,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.setDefaultScriptLimits( scriptMaxRecursionDepth, scriptMaxExecutionTime );
 
         configuration.setDefaultSize( defaultSizeWidth, defaultSizeHeight );
-
-        if ( externs != null && externs.length > 0 )
-        {
-            configuration.setExterns( externs );
-        }
 
         if ( frames != null && frames.length > 0 )
         {
@@ -1457,6 +1439,44 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         verifyDigests();
+    }
+
+    private void configureExterns()
+        throws MojoExecutionException
+    {
+        List<File> externsFiles = new ArrayList<File>();
+        if ( loadExterns == null )
+        {
+            for ( Artifact artifact : getDependencyArtifacts() )
+            {
+                if ( FlexClassifier.LINK_REPORT.equals( artifact.getClassifier() ) )
+                {
+                    externsFiles.add( artifact.getFile() );
+                }
+            }
+        }
+        else // legacy implementation
+        {
+            for ( MavenArtifact mvnArtifact : loadExterns )
+            {
+                Artifact artifact =
+                        artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
+                                mvnArtifact.getArtifactId(),
+                                mvnArtifact.getVersion(), "xml", FlexClassifier.LINK_REPORT );
+                artifact = MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
+                externsFiles.add( artifact.getFile() );
+            }
+        }
+
+        if ( externsFiles.size() > 0 )
+        {
+            configuration.setExterns( externsFiles.toArray( new File[externsFiles.size()] ) );
+        }
+
+        if ( externs != null && externs.length > 0 )
+        {
+            configuration.setExterns( externs );
+        }
     }
 
     private void configureNamespaces( FDKConfigResolver sdkConfigResolver )
@@ -1977,7 +1997,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                                                                   resourceBundleBeacon.getVersion(),
                                                                   resourceBundleBeacon.getType(), requestLocale );
 
-                MavenUtils.resolveArtifact( resolvedResourceBundle, resolver, localRepository, remoteRepositories );
+                resolvedResourceBundle = MavenUtils.resolveArtifact( project, resolvedResourceBundle, resolver, localRepository, remoteRepositories );
                 resourceBundles.add( resolvedResourceBundle.getFile() );
             }
 
@@ -2060,7 +2080,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         // install resource bundle beacon
         try
         {
-            File tempFile = File.createTempFile( build.getFinalName(), ".rb.swc" );
+            File tempFile = File.createTempFile( build.getFinalName(), "." + RB_SWC );
             tempFile.deleteOnExit();
             FileUtils.copyURLToFile( getClass().getResource( "/rb.swc" ), tempFile );
             getLog().info( "Installing resource bundle beacon: " + tempFile );

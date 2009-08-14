@@ -36,6 +36,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.sonatype.flexmojos.common.FlexExtension;
 
 /**
  * Encapsulate the access to Maven API. Some times just to hide Java 5 warnings
@@ -137,7 +138,7 @@ public abstract class AbstractIrvinMojo
     /**
      * Get dependency artifacts for given scope
      * 
-     * @param scope for which to get artifacts
+     * @param scopes for which to get artifacts
      * @return List of artifacts
      * @throws MojoExecutionException
      */
@@ -157,7 +158,7 @@ public abstract class AbstractIrvinMojo
         List<Artifact> artifacts = new ArrayList<Artifact>();
         for ( Artifact artifact : getDependencyArtifacts() )
         {
-            if ( "swc".equals( artifact.getType() ) && scopesList.contains( artifact.getScope() ) )
+            if ( FlexExtension.SWC.equals( artifact.getType() ) && scopesList.contains( artifact.getScope() ) )
             {
                 artifacts.add( artifact );
             }
