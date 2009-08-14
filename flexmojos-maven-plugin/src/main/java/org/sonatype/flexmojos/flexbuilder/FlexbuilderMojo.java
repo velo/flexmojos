@@ -437,7 +437,7 @@ public class FlexbuilderMojo
                                                     ideDependency.getVersion(), ideDependencyScope,
                                                     ideDependency.getType() );
 
-                MavenUtils.resolveArtifact( art, resolver, localRepository, remoteRepositories );
+                art = MavenUtils.resolveArtifact( project, art, resolver, localRepository, remoteRepositories );
 
                 if ( useM2Home )
                 {
@@ -493,7 +493,7 @@ public class FlexbuilderMojo
                                                                       dependency.getVersion(), dependency.getType(),
                                                                       locale );
 
-                    MavenUtils.resolveArtifact( art, resolver, localRepository, remoteRepositories );
+                    art = MavenUtils.resolveArtifact( project, art, resolver, localRepository, remoteRepositories );
 
                     IdeDependency dep =
                         new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),

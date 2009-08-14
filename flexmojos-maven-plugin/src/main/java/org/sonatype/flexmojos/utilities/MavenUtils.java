@@ -201,7 +201,6 @@ public class MavenUtils
      * to that location.
      * 
      * @param a artifact for which to retrieve the file reference
-     * @param scope scope of the library
      * @param build build for which to get the artifact
      * @return swc artifact file reference
      * @throws MojoExecutionException thrown if an IOException occurs while copying the file to the
@@ -228,20 +227,27 @@ public class MavenUtils
     /**
      * Use the resolver to resolve the given artifact in the local or remote repositories.
      * 
+     * @param project Active project
      * @param artifact Artifact to be resolved
      * @param resolver ArtifactResolver to use for resolving the artifact
      * @param localRepository ArtifactRepository
      * @param remoteRepositories List of remote artifact repositories
      * @throws MojoExecutionException thrown if an exception occured during artifact resolving
+     * @return resolved artifact
      */
     @SuppressWarnings( "unchecked" )
-    public static void resolveArtifact( Artifact artifact, ArtifactResolver resolver,
+    public static Artifact resolveArtifact( MavenProject project, Artifact artifact, ArtifactResolver resolver,
                                         ArtifactRepository localRepository, List remoteRepositories )
         throws MojoExecutionException
     {
         try
         {
-            resolver.resolve( artifact, remoteRepositories, localRepository );
+            artifact = project.replaceWithActiveArtifact( artifact );
+            if ( !artifact.isResolved() )
+            {
+                resolver.resolve( artifact, remoteRepositories, localRepository );
+            }
+            return artifact;
         }
         catch ( AbstractArtifactResolutionException e )
         {
