@@ -47,10 +47,10 @@
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-        </excludes>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -63,23 +63,6 @@
     </testResources>
 
     <plugins>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>maven-properties-plugin</artifactId>
-        <version>0.0.1</version>
-        <executions>
-          <execution>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>filter-file</goal>
-            </goals>
-            <configuration>
-              <in>src/test/resources/baseTest.properties</in>
-              <outDir>${build.testOutputDirectory}/</outDir>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>2.1</version>
@@ -121,28 +104,12 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <!-- 
-              <excludeGroupIds>com.adobe.flex.framework,com.adobe.flex.compiler</excludeGroupIds>
-               -->
+              <includeGroupIds>org.sonatype.flexmojos</includeGroupIds>
               <outputDirectory>${fake-repo}</outputDirectory>
               <useRepositoryLayout>true</useRepositoryLayout>
               <generateRepositoryMetadatas>true</generateRepositoryMetadatas>
               <silent>true</silent>
               <copyPom>true</copyPom>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-sources</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <classifier>sources</classifier>
-              <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${sources}</outputDirectory>
-              <silent>true</silent>
-              <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
             </configuration>
           </execution>
         </executions>
@@ -168,9 +135,18 @@
               <goal>instrument</goal>
             </goals>
             <configuration>
-              <jarFiles>
-                <jarFile>${flexmojos-maven-plugin}</jarFile>
-              </jarFiles>
+              <jarSets>
+                <jarSet>
+                  <directory>${fake-repo}</directory>
+                  <includes>
+                    <include>org/sonatype/flexmojos/**/*.jar</include>
+                  </includes>
+                </jarSet>
+              </jarSets>
+              <excludes>
+                <exclude>org.granite.*</exclude>
+                <exclude>shaded110.org.granite.*</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
