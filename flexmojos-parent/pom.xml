@@ -96,10 +96,12 @@
           <version>2.1</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.4.3</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
+            <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
           </configuration>
         </plugin>
         <plugin>
@@ -120,24 +122,6 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.maven.plugin</groupId>
-          <artifactId>emma-maven-plugin</artifactId>
-          <version>1.1</version>
-          <executions>
-            <execution>
-              <phase>process-classes</phase>
-              <goals>
-                <goal>instrument</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.sonatype.maven.plugin</groupId>
-          <artifactId>emma4it-maven-plugin</artifactId>
-          <version>1.3</version>
-        </plugin>
-        <plugin>
           <groupId>org.codehaus.plexus</groupId>
           <artifactId>plexus-component-metadata</artifactId>
           <version>${plexus.version}</version>
@@ -149,6 +133,24 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.maven.plugin</groupId>
+          <artifactId>emma-maven-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>process-test-resources</phase>
+              <goals>
+                <goal>instrument</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.maven.plugin</groupId>
+          <artifactId>emma4it-maven-plugin</artifactId>
+          <version>1.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -198,6 +200,10 @@
             </fileset>
           </filesets>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.maven.plugin</groupId>
+        <artifactId>emma-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
