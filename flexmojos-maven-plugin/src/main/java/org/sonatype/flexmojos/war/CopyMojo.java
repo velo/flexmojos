@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -216,15 +215,7 @@ public class CopyMojo
             rslArtifact =
                 artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
                                                               rslArtifact.getVersion(), extension, null );
-
-            try
-            {
-                resolver.resolve( rslArtifact, remoteRepositories, localRepository );
-            }
-            catch ( AbstractArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( "Error resolving artifacts " + rslArtifact, e );
-            }
+            rslArtifact = replaceWithResolvedArtifact( rslArtifact );
 
             File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
             File sourceFile = rslArtifact.getFile();
@@ -250,15 +241,7 @@ public class CopyMojo
 
         for ( Artifact artifact : deps )
         {
-            try
-            {
-                resolver.resolve( artifact, remoteRepositories, localRepository );
-            }
-            catch ( AbstractArtifactResolutionException e )
-            {
-                throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
-            }
-
+            artifact = replaceWithResolvedArtifact( artifact);
             copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
         }
     }
@@ -413,5 +396,11 @@ public class CopyMojo
         }
 
         return sample;
+    }
+
+    private Artifact replaceWithResolvedArtifact( Artifact artifact )
+        throws MojoExecutionException
+    {
+        return MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
     }
 }

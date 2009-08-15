@@ -23,17 +23,20 @@
     <name>Adobe Inc.</name>
     <url>http://www.adobe.com</url>
     <license>
-      The contents of the files contained in this Flex SDK directory are subject to the Mozilla Public License Version 1.1 (the "License"); you may not use these files except in compliance with the License. You may obtain a copy of the License here:
+      The contents of the files contained in this Flex SDK directory are subject to the Mozilla Public License Version 1.1 (the "License"); you may not use these files except in compliance with the License. You may obtain a copy of the License
+      here:
       Mozilla
       Public License Version 1.1 or http://www.mozilla.org/MPL/.
 
-      Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language governing
+      Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language
+      governing
       rights and limitations under the License.
 
       The Original Code consists of the files listed above.
 
       The Initial Developer of the Original Code is Adobe Systems Incorporated.
-      By downloading, modifying, distributing, using and/or accessing any files in this
+      By downloading, modifying, distributing, using and/or accessing any files
+      in this
       directory, you agree to the terms and conditions of the applicable end user license agreement.
 		</license>
   </organization>
@@ -247,11 +250,11 @@
       <location>frameworks/libs/framework.swc</location>
     </artifact>
     <artifact>
-			<artifactId>framework</artifactId>
-			<type>jar</type>
-			<classifier>sources</classifier>
-			<location>frameworks/projects/framework/src</location>
-		</artifact>
+      <artifactId>framework</artifactId>
+      <type>jar</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/framework/src</location>
+    </artifact>
     <artifact>
       <artifactId>framework</artifactId>
       <type>zip</type>
@@ -269,23 +272,23 @@
       <location>frameworks/libs/framework_textLayout.swc</location>
     </artifact>
     <!-- Adobe MPL package bug <artifact>-->
-			<!--<artifactId>framework_textLayout</artifactId>-->
-			<!--<type>jar</type>-->
-			<!--<classifier>sources</classifier>-->
-			<!--<location>frameworks/projects/framework_textLayout/src</location>-->
-		<!--</artifact>-->
-    
+    <!--<artifactId>framework_textLayout</artifactId>-->
+    <!--<type>jar</type>-->
+    <!--<classifier>sources</classifier>-->
+    <!--<location>frameworks/projects/framework_textLayout/src</location>-->
+    <!--</artifact>-->
+
     <artifact>
       <artifactId>rpc</artifactId>
       <type>swc</type>
       <location>frameworks/libs/rpc.swc</location>
     </artifact>
     <artifact>
-			<artifactId>rpc</artifactId>
-			<type>jar</type>
-			<classifier>sources</classifier>
-			<location>frameworks/projects/rpc/src</location>
-		</artifact>
+      <artifactId>rpc</artifactId>
+      <type>jar</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/rpc/src</location>
+    </artifact>
 
     <artifact>
       <artifactId>spark</artifactId>
@@ -293,11 +296,11 @@
       <location>frameworks/libs/spark.swc</location>
     </artifact>
     <!-- Adobe MPL package bug <artifact>-->
-			<!--<artifactId>spark</artifactId>-->
-			<!--<type>jar</type>-->
-			<!--<classifier>sources</classifier>-->
-			<!--<location>frameworks/projects/spark/src</location>-->
-		<!--</artifact>-->
+    <!--<artifactId>spark</artifactId>-->
+    <!--<type>jar</type>-->
+    <!--<classifier>sources</classifier>-->
+    <!--<location>frameworks/projects/spark/src</location>-->
+    <!--</artifact>-->
 
     <artifact>
       <artifactId>sparkskins</artifactId>
@@ -305,11 +308,11 @@
       <location>frameworks/libs/sparkskins.swc</location>
     </artifact>
     <!-- Adobe MPL package bug <artifact>-->
-			<!--<artifactId>sparkskins</artifactId>-->
-			<!--<type>jar</type>-->
-			<!--<classifier>sources</classifier>-->
-			<!--<location>frameworks/projects/sparkskins/src</location>-->
-		<!--</artifact>-->
+    <!--<artifactId>sparkskins</artifactId>-->
+    <!--<type>jar</type>-->
+    <!--<classifier>sources</classifier>-->
+    <!--<location>frameworks/projects/sparkskins/src</location>-->
+    <!--</artifact>-->
 
     <artifact>
       <artifactId>textLayout</artifactId>
@@ -323,12 +326,12 @@
       <location>frameworks/libs/utilities.swc</location>
     </artifact>
     <artifact>
-			<artifactId>utilities</artifactId>
-			<type>jar</type>
-			<classifier>sources</classifier>
-			<location>frameworks/projects/utilities/src</location>
-		</artifact>
-    
+      <artifactId>utilities</artifactId>
+      <type>jar</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/utilities/src</location>
+    </artifact>
+
     <artifact>
       <artifactId>playerglobal</artifactId>
       <classifier>9</classifier>
@@ -345,18 +348,18 @@
       <artifactId>playerglobal</artifactId>
       <type>pom</type>
     </artifact>
-    
+
     <artifact>
       <artifactId>airframework</artifactId>
       <type>swc</type>
       <location>frameworks/libs/air/airframework.swc</location>
     </artifact>
     <artifact>
-			<artifactId>airframework</artifactId>
-			<type>jar</type>
-			<classifier>sources</classifier>
-			<location>frameworks/projects/airframework/src</location>
-		</artifact>
+      <artifactId>airframework</artifactId>
+      <type>jar</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/airframework/src</location>
+    </artifact>
 
     <artifact>
       <artifactId>airglobal</artifactId>
@@ -370,11 +373,11 @@
       <location>frameworks/libs/air/applicationupdater.swc</location>
     </artifact>
     <!-- Adobe MPL package bug <artifact>-->
-			<!--<artifactId>applicationupdater</artifactId>-->
-			<!--<type>jar</type>-->
-			<!--<classifier>sources</classifier>-->
-			<!--<location>frameworks/projects/air/ApplicationUpdater/src</location>-->
-		<!--</artifact>-->
+    <!--<artifactId>applicationupdater</artifactId>-->
+    <!--<type>jar</type>-->
+    <!--<classifier>sources</classifier>-->
+    <!--<location>frameworks/projects/air/ApplicationUpdater/src</location>-->
+    <!--</artifact>-->
 
     <artifact>
       <artifactId>applicationupdater_ui</artifactId>
@@ -388,11 +391,11 @@
       <location>frameworks/libs/air/servicemonitor.swc</location>
     </artifact>
     <!-- Adobe MPL package <artifact>-->
-			<!--<artifactId>servicemonitor</artifactId>-->
-			<!--<type>jar</type>-->
-			<!--<classifier>sources</classifier>-->
-			<!--<location>frameworks/projects/air/ServiceMonitor/src</location>-->
-		<!--</artifact>-->
+    <!--<artifactId>servicemonitor</artifactId>-->
+    <!--<type>jar</type>-->
+    <!--<classifier>sources</classifier>-->
+    <!--<location>frameworks/projects/air/ServiceMonitor/src</location>-->
+    <!--</artifact>-->
 
     <artifact>
       <artifactId>airframework</artifactId>
