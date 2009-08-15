@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +34,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
+import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * Encapsulate the access to Maven API. Some times just to hide Java 5 warnings
@@ -107,6 +106,11 @@ public abstract class AbstractIrvinMojo
     protected List<Artifact> pluginArtifacts;
 
     /**
+     * @parameter default-value="false" expression="${flexmojos.skip}"
+     */
+    private boolean skip;
+
+    /**
      * Construct Mojo instance
      */
     public AbstractIrvinMojo()
@@ -172,9 +176,15 @@ public abstract class AbstractIrvinMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            getLog().info( "Skipping Flexmojos execution" );
+            return;
+        }
+
         getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
+                       "Flexmojos " + MavenUtils.getFlexMojosVersion()
+                           + " - Apache License (NO WARRANTY) - See COPYRIGHT file" );
         setUp();
         run();
         tearDown();

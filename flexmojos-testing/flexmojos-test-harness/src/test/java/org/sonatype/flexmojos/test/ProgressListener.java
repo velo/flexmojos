@@ -28,6 +28,6 @@ public class ProgressListener
     {
         super.onTestStart( result );
 
-        System.out.println( "Running: " + result.getName() );
+        System.out.println( "Running: " + result.getTestClass().getName() + "." + result.getName() + "()" );
     }
 }

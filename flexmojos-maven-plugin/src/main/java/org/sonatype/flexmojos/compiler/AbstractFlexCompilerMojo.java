@@ -60,9 +60,9 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
+import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
-import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
@@ -910,6 +910,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean ignoreVersionIssues;
 
     /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * 
+     * @parameter expression="${flexmojos.classifier}"
+     */
+    private String classifier;
+
+    /**
+     * The filename of the compiled artifact
+     * 
+     * @parameter
+     */
+    private File output;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -1455,15 +1469,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 }
             }
         }
-        else // legacy implementation
+        else
+        // legacy implementation
         {
             for ( MavenArtifact mvnArtifact : loadExterns )
             {
                 Artifact artifact =
-                        artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
-                                mvnArtifact.getArtifactId(),
-                                mvnArtifact.getVersion(), "xml", FlexClassifier.LINK_REPORT );
-                artifact = MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
+                    artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
+                                                                  mvnArtifact.getArtifactId(),
+                                                                  mvnArtifact.getVersion(), "xml",
+                                                                  FlexClassifier.LINK_REPORT );
+                artifact =
+                    MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
                 externsFiles.add( artifact.getFile() );
             }
         }
@@ -1997,7 +2014,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                                                                   resourceBundleBeacon.getVersion(),
                                                                   resourceBundleBeacon.getType(), requestLocale );
 
-                resolvedResourceBundle = MavenUtils.resolveArtifact( project, resolvedResourceBundle, resolver, localRepository, remoteRepositories );
+                resolvedResourceBundle =
+                    MavenUtils.resolveArtifact( project, resolvedResourceBundle, resolver, localRepository,
+                                                remoteRepositories );
                 resourceBundles.add( resolvedResourceBundle.getFile() );
             }
 
@@ -2041,7 +2060,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     {
         if ( isSetProjectFile )
         {
-            project.getArtifact().setFile( getOutput() );
+            if ( classifier == null )
+            {
+                project.getArtifact().setFile( getOutput() );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, getOutput() );
+            }
         }
         Report report = builder.getReport();
         if ( linkReport )
@@ -2249,7 +2275,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
-        File fileReport = new File( build.getDirectory(), build.getFinalName() + "-" + type + "-report.xml" );
+        String classifier = this.classifier == null ? "" : "-" + this.classifier;
+        File fileReport =
+            new File( build.getDirectory(), build.getFinalName() + classifier + "-" + type + "-report.xml" );
 
         try
         {
@@ -2472,5 +2500,25 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         return dep.getVersion();
     }
 
-    protected abstract File getOutput();
+    protected File getOutput()
+    {
+        if ( output == null )
+        {
+            String name = build.getFinalName();
+            if ( classifier != null )
+            {
+                name += "-" + classifier;
+            }
+            name += "." + getType();
+
+            output = new File( build.getDirectory(), name );
+        }
+        return output;
+    }
+
+    protected String getType()
+    {
+        return project.getPackaging();
+    }
+
 }
