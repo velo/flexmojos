@@ -78,6 +78,11 @@ public class FlexbuilderMojo
      * @parameter default-value="true" expression="${enableM2e}"
      */
     private boolean enableM2e;
+    
+    /**
+     * @parameter default-value="true" expression="${enableFlexBuilderBuildCommand}"
+     */
+    private boolean enableFlexBuilderBuildCommand;
 
     /**
      * Implies enableM2e=true
@@ -103,6 +108,13 @@ public class FlexbuilderMojo
      * @parameter default-value="false"
      */
     private boolean accessible;
+    
+    /**
+     * Customize the outputFolderPath of the Eclipse FlexBuilder Compiler.
+     * 
+     * @parameter default-value="bin-debug"
+     */
+    private String flexBuilderOutputFolderPath;
 
     /**
      * Run the AS3 compiler in strict error checking mode.
@@ -346,7 +358,7 @@ public class FlexbuilderMojo
     {
         super.fillDefaultBuilders( packaging );
 
-        if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
+        if ( ( SWF.equals( packaging ) || SWC.equals( packaging ) ) && enableFlexBuilderBuildCommand )
         {
             getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
         }
@@ -534,6 +546,7 @@ public class FlexbuilderMojo
         context.put( "useM2Home", useM2Home );
         context.put( "dependencies", getDependencies( ideDependencies ) );
         context.put( "mainSources", getMainSources() );
+        context.put( "flexBuilderOutputFolderPath", flexBuilderOutputFolderPath );
         context.put( "targetPlayer", targetPlayer );
         context.put( "accessible", accessible );
         context.put( "strict", strict );

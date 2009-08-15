@@ -14,7 +14,7 @@
             htmlHistoryManagement="true" 
             htmlPlayerVersion="$targetPlayer" 
             htmlPlayerVersionCheck="true" 
-            outputFolderPath="bin-debug" 
+            outputFolderPath="$flexBuilderOutputFolderPath" 
             sourceFolderPath="$mainSources" 
             strict="$strict" 
             useApolloConfig="$useApolloConfig" 
