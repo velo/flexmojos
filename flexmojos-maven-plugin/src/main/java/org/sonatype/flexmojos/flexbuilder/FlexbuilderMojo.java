@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -78,7 +79,7 @@ public class FlexbuilderMojo
      * @parameter default-value="true" expression="${enableM2e}"
      */
     private boolean enableM2e;
-    
+
     /**
      * @parameter default-value="true" expression="${enableFlexBuilderBuildCommand}"
      */
@@ -108,7 +109,7 @@ public class FlexbuilderMojo
      * @parameter default-value="false"
      */
     private boolean accessible;
-    
+
     /**
      * Customize the outputFolderPath of the Eclipse FlexBuilder Compiler.
      * 
@@ -461,7 +462,7 @@ public class FlexbuilderMojo
             }
         }
 
-        Set<IdeDependency> result = new HashSet<IdeDependency>();
+        Set<IdeDependency> result = new LinkedHashSet<IdeDependency>();
         result.addAll( dependencies );
         result.addAll( extraRbs );
         return result;
