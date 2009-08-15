@@ -31,7 +31,7 @@
 
   <packaging>jar</packaging>
 
-  <name>flexmojos izpack installer</name>
+  <name>Flexmojos Izpack Installer</name>
   
   <properties>
     <izpack.source.dir>${project.build.directory}/izpack-source</izpack.source.dir>
