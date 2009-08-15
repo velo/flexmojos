@@ -281,6 +281,22 @@ public class FlexbuilderMojo
      */
     private VelocityComponent velocityComponent;
 
+    /**
+     * Sets the location of the Flex Data Services service configuration file. This is equivalent to using the
+     * <code>compiler.services</code> option of the mxmlc and compc compilers. If not define will look inside resources
+     * directory for services-config.xml
+     * 
+     * @parameter
+     */
+    private File services;
+
+    /**
+     * The greeting to display.
+     * 
+     * @parameter services default-value="true"
+     */
+    private boolean incremental;
+
     @Override
     public boolean setup()
         throws MojoExecutionException
@@ -311,6 +327,8 @@ public class FlexbuilderMojo
     {
         super.writeConfiguration( deps );
 
+        init();
+
         String packaging = project.getPackaging();
 
         if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
@@ -325,6 +343,25 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             writeFlexLibProperties();
+        }
+
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private void init()
+    {
+        if ( services == null )
+        {
+            List<Resource> resources = project.getBuild().getResources();
+            for ( Resource resource : resources )
+            {
+                File cfg = new File( resource.getDirectory(), "services-config.xml" );
+                if ( cfg.exists() )
+                {
+                    services = cfg;
+                    break;
+                }
+            }
         }
 
     }
@@ -559,6 +596,16 @@ public class FlexbuilderMojo
         if ( ( compiledLocales != null && compiledLocales.length > 0 ) || !SWC.equals( packaging ) )
         {
             additionalCompilerArguments += " -locale " + getPlainLocales();
+        }
+
+        if ( services != null )
+        {
+            additionalCompilerArguments += " -services " + services.getAbsolutePath();
+        }
+
+        if ( incremental )
+        {
+            additionalCompilerArguments += " --incremental ";
         }
 
         if ( SWF.equals( packaging ) )
