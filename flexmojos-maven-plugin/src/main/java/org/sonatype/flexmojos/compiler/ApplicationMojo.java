@@ -126,13 +126,6 @@ public class ApplicationMojo
     private String defaultLocale;
 
     /**
-     * The filename of the SWF movie to create
-     * 
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}.swf"
-     */
-    protected File output;
-
-    /**
      * @parameter default-value="true"
      */
     private boolean useDefaultLocale;
@@ -496,12 +489,6 @@ public class ApplicationMojo
             return this.defaultLocale;
         }
         return null;
-    }
-
-    @Override
-    protected File getOutput()
-    {
-        return this.output;
     }
 
 }

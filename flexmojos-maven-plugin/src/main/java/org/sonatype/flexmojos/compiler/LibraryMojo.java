@@ -157,13 +157,6 @@ public class LibraryMojo
     private boolean addMavenDescriptor;
 
     /**
-     * The filename of the SWF movie to create
-     * 
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}.swc"
-     */
-    private File output;
-
-    /**
      * workaround
      */
     private String[] includeFilesNames;
@@ -439,7 +432,7 @@ public class LibraryMojo
 
         if ( localePath != null )
         {
-           configuration.setSourcePath( new File[] { localePath } );
+            configuration.setSourcePath( new File[] { localePath } );
         }
 
         for ( String bundle : bundles )
@@ -488,12 +481,6 @@ public class LibraryMojo
     protected String getDefaultLocale()
     {
         throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
-    }
-
-    @Override
-    protected File getOutput()
-    {
-        return this.output;
     }
 
     @Override
