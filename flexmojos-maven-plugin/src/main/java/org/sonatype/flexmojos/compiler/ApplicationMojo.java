@@ -132,6 +132,11 @@ public class ApplicationMojo
      */
     protected File output;
 
+    /**
+     * @parameter default-value="true"
+     */
+    private boolean useDefaultLocale;
+
     @Override
     protected void fixConfigReport( FlexConfigBuilder configBuilder )
     {
@@ -486,7 +491,11 @@ public class ApplicationMojo
     @Override
     protected String getDefaultLocale()
     {
-        return this.defaultLocale;
+        if ( useDefaultLocale )
+        {
+            return this.defaultLocale;
+        }
+        return null;
     }
 
     @Override
