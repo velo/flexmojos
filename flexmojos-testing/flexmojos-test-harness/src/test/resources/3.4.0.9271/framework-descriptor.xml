@@ -1,0 +1,317 @@
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<mapping>
+  <version>1.0</version>
+  <organization>
+    <name>Adobe Inc.</name>
+    <url>http://www.adobe.com</url>
+    <license>
+      The contents of the files contained in this Flex SDK directory are subject to the Mozilla Public License Version 1.1 (the "License"); you may not use these files except in compliance with the License. You may obtain a copy of the License here:
+      Mozilla
+      Public License Version 1.1 or http://www.mozilla.org/MPL/.
+
+      Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language governing
+      rights and limitations under the License.
+
+      The Original Code consists of the files listed above.
+
+      The Initial Developer of the Original Code is Adobe Systems Incorporated.
+      By downloading, modifying, distributing, using and/or accessing any files in this
+      directory, you agree to the terms and conditions of the applicable end user license agreement.
+		</license>
+  </organization>
+
+  <defaults>
+    <groupId>com.adobe.flex.framework</groupId>
+    <version>3.4.0.9271</version>
+  </defaults>
+
+  <artifacts>
+    <!-- rsls -->
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/framework_3.4.0.9271.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/framework_3.4.0.9271.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swf</type>
+      <location>frameworks/rsls/rpc_3.4.0.9271.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swz</type>
+      <location>frameworks/rsls/rpc_3.4.0.9271.swz</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater.swf</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater_ui</artifactId>
+      <type>swf</type>
+      <location>frameworks/libs/air/applicationupdater_ui.swf</location>
+    </artifact>
+    
+    <!-- sources -->
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>zip</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/framework/src</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>zip</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/rpc/src</location>
+    </artifact>
+    <artifact>
+      <artifactId>utilities</artifactId>
+      <type>zip</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/utilities/src</location>
+    </artifact>
+    <artifact>
+      <artifactId>flex</artifactId>
+      <type>zip</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/flex/src</location>
+    </artifact>
+    <artifact>
+      <artifactId>airframework</artifactId>
+      <type>zip</type>
+      <classifier>sources</classifier>
+      <location>frameworks/projects/airframework/src</location>
+    </artifact>
+
+
+    <!-- libraries -->
+    <artifact>
+      <artifactId>flex-framework</artifactId>
+      <type>pom</type>
+      <dependencies>
+        <dependency>
+          <artifactId>flex</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>zip</type>
+          <classifier>configs</classifier>
+        </dependency>
+        <dependency>
+          <artifactId>rpc</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>utilities</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>playerglobal</artifactId>
+          <classifier>9</classifier>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>rpc</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+      </dependencies>
+    </artifact>
+    <artifact>
+      <artifactId>air-framework</artifactId>
+      <type>pom</type>
+      <dependencies>
+        <dependency>
+          <artifactId>flex</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>zip</type>
+          <classifier>configs</classifier>
+        </dependency>
+        <dependency>
+          <artifactId>rpc</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>utilities</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>airframework</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>airglobal</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>applicationupdater</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>applicationupdater_ui</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>servicemonitor</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>airframework</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>rpc</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+      </dependencies>
+    </artifact>
+    <artifact>
+      <artifactId>flex</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/flex.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/framework.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>zip</type>
+      <classifier>configs</classifier>
+      <location>frameworks</location>
+      <includes>
+        <include>*.xml</include>
+        <include>*.ser</include>
+      </includes>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/rpc.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>utilities</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/utilities.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>playerglobal</artifactId>
+      <classifier>9</classifier>
+      <type>swc</type>
+      <location>frameworks/libs/player/9/playerglobal.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>playerglobal</artifactId>
+      <classifier>10</classifier>
+      <type>swc</type>
+      <location>frameworks/libs/player/10/playerglobal.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>playerglobal</artifactId>
+      <type>pom</type>
+    </artifact>
+    <artifact>
+      <artifactId>airframework</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/airframework.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>airglobal</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/airglobal.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/applicationupdater.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>applicationupdater_ui</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/applicationupdater_ui.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>servicemonitor</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/servicemonitor.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>airframework</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/airframework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/framework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/rpc_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>airframework</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/airframework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>framework</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/framework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/rpc_rb.swc</location>
+    </artifact>
+  </artifacts>
+</mapping>
