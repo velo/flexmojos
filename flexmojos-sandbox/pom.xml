@@ -30,7 +30,7 @@
   <name>Flexmojos Sandbox</name>
 
   <modules>
-    <module>flexmojos-installer</module>
+    <!-- <module>flexmojos-installer</module> -->
   </modules>
 
 </project>
