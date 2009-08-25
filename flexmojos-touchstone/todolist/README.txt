@@ -27,7 +27,7 @@
 	  <repositories>
 	    <repository>
 	      <id>forge</id>
-	      <url>http://repository.sonatype.org/content/groups/public</url>
+	      <url>http://repository.sonatype.org/content/groups/flexgroup</url>
 	      <snapshots> <enabled>true</enabled> </snapshots>
 	      <releases> <enabled>true</enabled> </releases>
 	    </repository>
@@ -35,7 +35,7 @@
 	  <pluginRepositories>
 	    <pluginRepository>
 	      <id>forge</id>
-	      <url>http://repository.sonatype.org/content/groups/public</url>
+	      <url>http://repository.sonatype.org/content/groups/flexgroup</url>
 	      <snapshots> <enabled>true</enabled> </snapshots>
 	      <releases> <enabled>true</enabled> </releases>
 	    </pluginRepository>
