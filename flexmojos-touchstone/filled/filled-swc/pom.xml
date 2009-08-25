@@ -13,7 +13,7 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.1.0</version>
         <extensions>true</extensions>
         <configuration>
           <sourcePaths>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-support</artifactId>
-      <version>3.1-SNAPSHOT</version>
+      <version>3.1.0</version>
       <type>swc</type>
       <scope>test</scope>
     </dependency>
