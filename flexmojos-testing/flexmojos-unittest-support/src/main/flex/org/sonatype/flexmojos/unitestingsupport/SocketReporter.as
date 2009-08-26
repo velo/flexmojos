@@ -12,53 +12,55 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.net.XMLSocket;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	
-	import mx.binding.utils.BindingUtils;
-	
 
-    import org.sonatype.flexmojos.test.monitor.CommConstraints;
+	import mx.binding.utils.BindingUtils;
+
+
+	import org.sonatype.flexmojos.test.monitor.CommConstraints;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
 	import org.sonatype.flexmojos.test.report.TestMethodReport;
 	import org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
 	import org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener;
 	import org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
+	import org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener;
 	import org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener;
-	
+
 	public class SocketReporter
 	{
 
 		[Inspectable]
-		public var port:uint = 1024;
-		
+		public var port:uint=1024;
+
 		[Inspectable]
-		public var server:String = "127.0.0.1";
-		
-    	private var socket:XMLSocket;
+		public var server:String="127.0.0.1";
 
-		private var reports:Dictionary = new Dictionary();
+		private var socket:XMLSocket;
 
-		[Bindable]
-		public var totalTestCount : int = 0;
+		private var reports:Dictionary=new Dictionary();
 
 		[Bindable]
-    	public var numTestsRun : int = 0;
-    	
-    	private var closeController:CloseController = CloseController.getInstance();
+		public var totalTestCount:int=0;
+
+		[Bindable]
+		public var numTestsRun:int=0;
+
+		private var closeController:CloseController=CloseController.getInstance();
 
 		/**
 		 * Called when an error occurs.
 		 * @param test the Test that generated the error.
 		 * @param error the Error.
 		 */
-		public function addError( testName:String, methodName:String, error:ErrorReport ):void {
+		public function addError(testName:String, methodName:String, error:ErrorReport):void
+		{
 			// Increment error count.
-			var report:TestCaseReport = getReport( testName );
+			var report:TestCaseReport=getReport(testName);
 			report.errors++;
-			
+
 			// Add the error to the method.
-			var methodObject:TestMethodReport = report.getMethod( methodName );
-			methodObject.error = error;
+			var methodObject:TestMethodReport=report.getMethod(methodName);
+			methodObject.error=error;
 		}
 
 		/**
@@ -66,62 +68,62 @@ package org.sonatype.flexmojos.unitestingsupport
 		 * model.
 		 * @param test the Test.
 		 */
-		public function addMethod( testName:String, methodName:String ):void
+		public function addMethod(testName:String, methodName:String):void
 		{
-			var reportObject:TestCaseReport = getReport( testName );
+			var reportObject:TestCaseReport=getReport(testName);
 			reportObject.getMethod(methodName);
 			reportObject.tests++;
 		}
-		
+
 		/**
 		 * Called when a failure occurs.
 		 * @param test the Test that generated the failure.
 		 * @param error the failure.
 		 */
-		public function addFailure( testName:String, methodName:String, failure:ErrorReport ):void
+		public function addFailure(testName:String, methodName:String, failure:ErrorReport):void
 		{
 			// Increment failure count.
-			var report:TestCaseReport = getReport( testName );
+			var report:TestCaseReport=getReport(testName);
 			report.failures++;
-			
+
 			// Add the failure to the method.
-			var methodObject:TestMethodReport = report.getMethod( methodName );
-			methodObject.failure = failure;
+			var methodObject:TestMethodReport=report.getMethod(methodName);
+			methodObject.failure=failure;
 		}
-		
-		public function testFinished(testName:String, timeTaken:int = 0):void
+
+		public function testFinished(testName:String, timeTaken:int=0):void
 		{
-			var reportObject:TestCaseReport = reports[ testName ];
-			reportObject.time = timeTaken;
+			var reportObject:TestCaseReport=reports[testName];
+			reportObject.time=timeTaken;
 
 			// If we have finished running all the tests send the results.
 			++numTestsRun;
 		}
-		
+
 
 		/**
 		 * Return the report Object from the internal report model for the
 		 * currently executing Test.
 		 * @param Test the test.
 		 */
-		public function getReport( testName:String ):TestCaseReport
+		public function getReport(testName:String):TestCaseReport
 		{
 			var reportObject:TestCaseReport;
-			
+
 			// Check we have a report Object for the executing Test, if not
 			// create a new one.
-			if ( reports[ testName ] )
+			if (reports[testName])
 			{
-				reportObject = reports[ testName ];
+				reportObject=reports[testName];
 			}
 			else
 			{
-				reportObject = new TestCaseReport();
-				reportObject.name = testName;
-				
-				reports[ testName ] = reportObject;
+				reportObject=new TestCaseReport();
+				reportObject.name=testName;
+
+				reports[testName]=reportObject;
 			}
-			
+
 			return reportObject;
 		}
 
@@ -132,43 +134,43 @@ package org.sonatype.flexmojos.unitestingsupport
 		private function sendResults():void
 		{
 			// Open an XML socket.
-			socket = new XMLSocket();
-			socket.addEventListener( Event.CONNECT, handleConnect );
-			socket.addEventListener( DataEvent.DATA, dataHandler );
-   	   		socket.connect( server, port );
+			socket=new XMLSocket();
+			socket.addEventListener(Event.CONNECT, handleConnect);
+			socket.addEventListener(DataEvent.DATA, dataHandler);
+			socket.connect(server, port);
 		}
-		
-		private function handleConnect( event:Event ):void
+
+		private function handleConnect(event:Event):void
 		{
-			for ( var className:String in reports )
+			for (var className:String in reports)
 			{
-				var testReport:TestCaseReport = reports[ className ];
+				var testReport:TestCaseReport=reports[className];
 				// Create the XML report.
-				var xml:XML = testReport.toXml();
-				
-				var xmlString:String = xml.toXMLString();
-				
+				var xml:XML=testReport.toXml();
+
+				var xmlString:String=xml.toXMLString();
+
 				// Send the XML report.
-				socket.send( xmlString );
+				socket.send(xmlString);
 			}
-			
+
 			// Send the end of reports terminator.
-			socket.send( CommConstraints.END_OF_TEST_RUN );
+			socket.send(CommConstraints.END_OF_TEST_RUN);
 		}
-		
+
 		/**
 		 * Event listener to handle data received on the socket.
 		 * @param event the DataEvent.
 		 */
-		private function dataHandler( event:DataEvent ):void
+		private function dataHandler(event:DataEvent):void
 		{
-			var data:String = event.data;
+			var data:String=event.data;
 
 			// If we received an acknowledgement finish-up.			
-			if ( data == CommConstraints.ACK_OF_TEST_RESULT )
+			if (data == CommConstraints.ACK_OF_TEST_RESULT)
 			{
 				exit();
-   			}
+			}
 		}
 
 		/**
@@ -177,86 +179,92 @@ package org.sonatype.flexmojos.unitestingsupport
 		private function exit():void
 		{
 			// Close the socket.
-			if(socket) {
+			if (socket)
+			{
 				socket.close();
 			}
-				
+
 			// Enabling to close flashplayer
-			closeController.canClose = true;
+			closeController.canClose=true;
 		}
 
-		private function formatQualifiedClassName( className:String ):String
+		private function formatQualifiedClassName(className:String):String
 		{
-			var pattern:RegExp = /::/;
-			
-			return className.replace( pattern, "." );
+			var pattern:RegExp=/::/;
+
+			return className.replace(pattern, ".");
 		}
 
-		public function runTests(tests:Array):void 
+		public function runTests(tests:Array):void
 		{
-			var count:int = 0;
+			var count:int=0;
 			//flexunit supported
-			if(getDefinitionByName("flexunit.framework.Test"))
+			if (getDefinitionByName("flexunit.framework.Test"))
 			{
-				count = FlexUnitListener.run(tests);
-				totalTestCount += count;
+				count=FlexUnitListener.run(tests);
+				totalTestCount+=count;
 				trace("Running " + count + " FlexUnit tests");
 			}
 
 			//funit supported			
-			if(getDefinitionByName("funit.core.FUnitFramework"))
+			if (getDefinitionByName("funit.core.FUnitFramework"))
 			{
-				count = FUnitListener.run(tests);
-				totalTestCount += count;
+				count=FUnitListener.run(tests);
+				totalTestCount+=count;
 				trace("Running " + count + " FUnit tests");
 			}
-			
+
 			//fluint supported
-			if(getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
+			if (getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
 			{
-				//too much complicated, didn't figure out how to run a test w/o UI
-				//testsScheduledToRun += FluintListener.run(tests);
-				//totalTestCount += count;
-				//trace("Running " + count + " FlexUnit tests");
+				count=FluintListener.run(tests);
+				totalTestCount+=count;
+				trace("Running " + count + " Fluint tests");
 			}
 
 			//asunit supported
-			if(getDefinitionByName("asunit.framework.Test"))
+			if (getDefinitionByName("asunit.framework.Test"))
 			{
-				count = AsUnitListener.run(tests);
-				totalTestCount += count;
+				count=AsUnitListener.run(tests);
+				totalTestCount+=count;
 				trace("Running " + count + " asunit tests");
 			}
 
 			//advancedflex supported
-			if(getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
+			if (getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
 			{
-				count = AdvancedFlexListener.run(tests);
-				totalTestCount += count;
+				count=AdvancedFlexListener.run(tests);
+				totalTestCount+=count;
 				trace("Running " + count + " Advanced Flex tests");
 			}
-			
-			if(totalTestCount == 0) {
+
+			if (totalTestCount == 0)
+			{
 				trace("No tests to run, exiting");
 				exit();
 			}
 		}
-		
+
 		private static var instance:SocketReporter;
-		
-		public static function getInstance():SocketReporter {
-			if(instance == null) {
-				instance = new SocketReporter();
-				
-				var checkIsDone:Function = function (e:*):void {
-					if(instance.totalTestCount == 0) {
+
+		public static function getInstance():SocketReporter
+		{
+			if (instance == null)
+			{
+				instance=new SocketReporter();
+
+				var checkIsDone:Function=function(e:*):void
+				{
+					if (instance.totalTestCount == 0)
+					{
 						return;
 					}
-					if(instance.totalTestCount == instance.numTestsRun) {
+					if (instance.totalTestCount == instance.numTestsRun)
+					{
 						instance.sendResults();
 					}
 				};
-				
+
 				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
 				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");
 			}
