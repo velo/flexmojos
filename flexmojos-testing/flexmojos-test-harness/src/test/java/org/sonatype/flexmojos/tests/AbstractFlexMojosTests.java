@@ -8,6 +8,7 @@
 package org.sonatype.flexmojos.tests;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -23,6 +24,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -214,6 +217,25 @@ public class AbstractFlexMojosTests
         {
             copyProjectLock.writeLock().unlock();
         }
+    }
+
+    protected TestCaseReport getTestReport( File testDir, String testClass )
+        throws Exception
+    {
+        File target = new File( testDir, "target" );
+
+        File testClasses = new File( target, "test-classes" );
+        AssertJUnit.assertTrue( "test-classes folder not created!", testClasses.isDirectory() );
+
+        File sureFireReports = new File( target, "surefire-reports" );
+        AssertJUnit.assertTrue( "Report folder not created!", sureFireReports.isDirectory() );
+
+        File reportFile = new File( sureFireReports, "TEST-" + testClass + ".xml" );
+        AssertJUnit.assertTrue( "Report was not created!", reportFile.isFile() );
+
+        TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
+
+        return report;
     }
 
 }

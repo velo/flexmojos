@@ -131,7 +131,7 @@
     <dependency>
       <groupId>net.digitalprimates</groupId>
       <artifactId>fluint</artifactId>
-      <version>v1</version>
+      <version>r269</version>
       <type>swc</type>
       <scope>external</scope>
     </dependency>
