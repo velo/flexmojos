@@ -752,7 +752,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Determines whether to compile against libraries statically or use RSLs. Set this option to true to ignore the
      * RSLs specified by the <code>rslUrls</code>. Set this option to false to use the RSLs.
      * 
-     * @parameter default-value="false"
+     * @parameter default-value="true"
      */
     private boolean staticLinkRuntimeSharedLibraries;
 
@@ -995,7 +995,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         if ( policyFileUrls == null )
         {
-            policyFileUrls = new String[] { "" };
+            policyFileUrls = new String[rslUrls.length];
+        }
+        for ( int i = 0; i < policyFileUrls.length; i++ )
+        {
+            policyFileUrls[i] = policyFileUrls[i] == null ? "" : policyFileUrls[i];
         }
 
         if ( runtimeLocaleOutputPath == null )
@@ -1418,10 +1422,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             OEMConfiguration oemConfig = (OEMConfiguration) configuration;
             List<String> commandLineArguments = new ArrayList<String>();
 
-            if ( !staticLinkRuntimeSharedLibraries )
-            {
-                commandLineArguments.add( "-static-link-runtime-shared-libraries=false" );
-            }
+            commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries);
 
             configureIncludeResourceBundles( oemConfig );
 
@@ -1804,7 +1805,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
         // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
-        configuration.addLibraryPath( new File[] { artifactFile } );
+        if(staticLinkRuntimeSharedLibraries)
+        {
+            configuration.addLibraryPath( new File[] { artifactFile } );
+        }
     }
 
     public void rslsSort( List<Artifact> rslArtifacts )
