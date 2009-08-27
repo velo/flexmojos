@@ -242,6 +242,10 @@ public class ApplicationMojo
     protected void compileModules()
         throws MojoFailureException, MojoExecutionException
     {
+
+        configuration.addExternalLibraryPath( getDependenciesPath( RSL, CACHING ) );
+        configuration.setRuntimeSharedLibraryPath( "", new String[] { "" }, new String[] { "" } );
+
         if ( loadExternsOnModules )
         {
             configuration.addExterns( new File[] { linkReportFile } );
@@ -268,6 +272,12 @@ public class ApplicationMojo
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
             File outputModule =
                 new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "." + project.getPackaging() );
+            if ( updateSecuritySandbox )
+            {
+                String trustedFile = FileUtil.getCanonicalPath( outputModule );
+                updateSecuritySandbox( trustedFile );
+            }
+
             moduleBuilder.setOutput( outputModule );
 
             build( moduleBuilder, false );

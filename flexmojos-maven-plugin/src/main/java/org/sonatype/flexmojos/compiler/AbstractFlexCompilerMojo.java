@@ -1432,7 +1432,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             OEMConfiguration oemConfig = (OEMConfiguration) configuration;
             List<String> commandLineArguments = new ArrayList<String>();
 
-            commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries);
+            commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
 
             configureIncludeResourceBundles( oemConfig );
 
@@ -1815,7 +1815,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
         // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
-        if(staticLinkRuntimeSharedLibraries)
+        if ( staticLinkRuntimeSharedLibraries )
         {
             configuration.addLibraryPath( new File[] { artifactFile } );
         }
@@ -2032,18 +2032,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * Get array of files for dependency artifacts for given scope
      * 
-     * @param scope for which to get files
+     * @param scopes for which to get files
      * @return Array of dependency artifact files
      * @throws MojoExecutionException
      */
-    protected File[] getDependenciesPath( String scope )
+    protected File[] getDependenciesPath( String... scopes )
         throws MojoExecutionException
     {
-        if ( scope == null )
+        if ( scopes == null )
             return null;
 
         List<File> files = new ArrayList<File>();
-        for ( Artifact a : getDependencyArtifacts( scope ) )
+        for ( Artifact a : getDependencyArtifacts( scopes ) )
         {
             if ( "playerglobal".equals( a.getArtifactId() ) || //
                 "airglobal".equals( a.getArtifactId() ) )
