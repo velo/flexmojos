@@ -216,8 +216,8 @@ public class AbstractFlexMojosTests
             for ( File pom : poms )
             {
                 String pomContent = FileUtils.readFileToString( pom );
-                pomContent = pomContent.replace( "%{flexmojos.version}", getProperty( "version" ) );
-                pomContent = pomContent.replace( "%{flex.version}", getProperty( "flex-version" ) );
+                pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
+                pomContent = pomContent.replace( "%{flex.version}", getFlexSDKVersion() );
                 FileUtils.writeStringToFile( pom, pomContent );
             }
 
@@ -227,6 +227,16 @@ public class AbstractFlexMojosTests
         {
             copyProjectLock.writeLock().unlock();
         }
+    }
+
+    protected static String getFlexSDKVersion()
+    {
+        return getProperty( "flex-version" );
+    }
+
+    protected static String getFlexmojosVersion()
+    {
+        return getProperty( "version" );
     }
 
     protected TestCaseReport getTestReport( File testDir, String testClass )
