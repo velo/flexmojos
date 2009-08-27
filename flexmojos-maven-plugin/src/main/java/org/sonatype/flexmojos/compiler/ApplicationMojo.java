@@ -46,6 +46,7 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
 import flex2.compiler.io.FileUtil;
 import flex2.tools.oem.Application;
+import flex2.tools.oem.Configuration;
 import flex2.tools.oem.internal.OEMConfiguration;
 
 /**
@@ -383,22 +384,7 @@ public class ApplicationMojo
 
         rbBuilder.setLogger( new CompileLogger( getLog() ) );
         rbBuilder.setOutput( output );
-        rbBuilder.setConfiguration( configuration );
-
-        if ( configuration instanceof OEMConfiguration )
-        {
-            OEMConfiguration oemConfiguration = (OEMConfiguration) configuration;
-            oemConfiguration.setIncludeResourceBundles( bundlesNames );
-        }
-        setLocales( locale );
-        if ( localePath != null )
-        {
-            configuration.setSourcePath( new File[] { localePath } );
-        }
-        configuration.includeLibraries( null );
-        configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
-
-        configuration.addLibraryPath( getResourcesBundles( locale ) );
+        rbBuilder.setConfiguration( getResourceBundleConfiguration( bundlesNames, locale, localePath ) );
 
         build( rbBuilder, true );
 
@@ -499,6 +485,27 @@ public class ApplicationMojo
             return this.defaultLocale;
         }
         return null;
+    }
+
+    protected Configuration getResourceBundleConfiguration( String[] bundlesNames, String locale, File localePath )
+        throws MojoExecutionException
+    {
+        if ( configuration instanceof OEMConfiguration )
+        {
+            OEMConfiguration oemConfiguration = (OEMConfiguration) configuration;
+            oemConfiguration.setIncludeResourceBundles( bundlesNames );
+        }
+        setLocales( locale );
+        if ( localePath != null )
+        {
+            configuration.setSourcePath( new File[] { localePath } );
+        }
+        configuration.includeLibraries( null );
+        configuration.addExternalLibraryPath( getDependenciesPath( INTERNAL ) );
+
+        configuration.addLibraryPath( getResourcesBundles( locale ) );
+
+        return configuration;
     }
 
 }
