@@ -24,6 +24,7 @@ import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
 
+import flex2.tools.oem.Configuration;
 import flex2.tools.oem.Library;
 import flex2.tools.oem.internal.OEMConfiguration;
 
@@ -159,9 +160,9 @@ public class LibraryMojo
     /**
      * workaround
      */
-    private String[] includeFilesNames;
+    private List<String> includeFilesNames;
 
-    private String[] includeFilesPaths;
+    private List<String> includeFilesPaths;
 
     @Override
     protected void fixConfigReport( FlexConfigBuilder configBuilder )
@@ -256,8 +257,8 @@ public class LibraryMojo
 
             if ( configurationReport )
             {
-                this.includeFilesNames = includeFilesNames.toArray( new String[includeFilesNames.size()] );
-                this.includeFilesPaths = includeFilesPaths.toArray( new String[includeFilesPaths.size()] );
+                this.includeFilesNames = includeFilesNames;
+                this.includeFilesPaths = includeFilesPaths;
             }
         }
 
@@ -422,24 +423,13 @@ public class LibraryMojo
         throws MojoExecutionException
     {
         Library localized = new Library();
-        localized.setConfiguration( configuration );
-        configuration.setLibraryPath( new File[0] );
-
+        localized.setConfiguration( getResourceBundleConfiguration( locale, localePath ) );
         localized.setLogger( new CompileLogger( getLog() ) );
-
-        configuration.addLibraryPath( new File[] { getOutput() } );
-        setLocales( locale );
-
-        if ( localePath != null )
-        {
-            configuration.setSourcePath( new File[] { localePath } );
-        }
 
         for ( String bundle : bundles )
         {
             localized.addResourceBundle( bundle );
         }
-        configuration.addLibraryPath( getResourcesBundles( locale ) );
 
         File output = getRuntimeLocaleOutputFile( locale, RB_SWC );
 
@@ -493,4 +483,23 @@ public class LibraryMojo
         File artifactFile = artifact.getFile();
         configuration.addExternalLibraryPath( new File[] { artifactFile } );
     }
+
+    protected Configuration getResourceBundleConfiguration( String locale, File localePath )
+        throws MojoExecutionException
+    {
+        configuration.setLibraryPath( new File[0] );
+
+        configuration.addLibraryPath( new File[] { getOutput() } );
+        setLocales( locale );
+
+        if ( localePath != null )
+        {
+            configuration.setSourcePath( new File[] { localePath } );
+        }
+
+        configuration.addLibraryPath( getResourcesBundles( locale ) );
+
+        return configuration;
+    }
+
 }

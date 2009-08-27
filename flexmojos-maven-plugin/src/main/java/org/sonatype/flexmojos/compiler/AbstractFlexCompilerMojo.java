@@ -69,9 +69,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     implements FlexMojo, FlexScopes, FlexExtension
 {
 
-    private static final String REPORT_LINK = "link";
+    protected static final String REPORT_LINK = "link";
 
-    private static final String REPORT_CONFIG = "config";
+    protected static final String REPORT_CONFIG = "config";
+
+    protected static final String REPORT_RESOURCE_BUNDLE = "resource-bundle";
 
     public static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
@@ -2084,7 +2086,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @param report from which to obtain info about resource bundle
      * @throws MojoExecutionException
      */
-    private void writeResourceBundle( Report report )
+    protected void writeResourceBundle( Report report )
         throws MojoExecutionException
     {
         getLog().info( "Compiling resources bundles!" );
@@ -2241,7 +2243,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @param report contains info to write
      * @throws MojoExecutionException throw if an error occurs during writing of report to file
      */
-    private void writeLinkReport( Report report )
+    protected void writeLinkReport( Report report )
         throws MojoExecutionException
     {
         writeReport( report, REPORT_LINK );
@@ -2269,9 +2271,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
-        String classifier = this.classifier == null ? "" : "-" + this.classifier;
-        File fileReport =
-            new File( build.getDirectory(), build.getFinalName() + classifier + "-" + type + "-report.xml" );
+        File fileReport = getReportFile( type );
 
         try
         {
@@ -2513,6 +2513,38 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected String getType()
     {
         return project.getPackaging();
+    }
+
+    protected File getReportFile( String type )
+    {
+        return new File( getReportPathname( type ) );
+    }
+
+    protected String getReportPathname( String type )
+    {
+        String name = build.getFinalName();
+        if ( classifier != null )
+        {
+            name += "-" + classifier;
+        }
+        name += "-" + type + "-report.xml";
+        return build.getDirectory() + "/" + name;
+    }
+
+    protected FlexConfigBuilder createFlexConfigBuilderWithoutBuild( Configuration configuration )
+        throws MojoExecutionException
+    {
+        FlexConfigBuilder configBuilder;
+        try
+        {
+            configBuilder = new FlexConfigBuilder( configuration, builder.getLogger(), isApplication() );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "An error has ocurried while parse config-report", e );
+        }
+
+        return configBuilder;
     }
 
 }
