@@ -17,6 +17,9 @@
  */
 package org.sonatype.flexmojos.optimizer;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -88,7 +91,7 @@ public class OptimizerMojo
         String packaging = project.getPackaging();
         getLog().debug( "project.getPackaging = " + packaging );
 
-        if ( !"swc".equals( packaging ) && !"swf".equals( packaging ) )
+        if ( !SWC.equals( packaging ) && !SWF.equals( packaging ) )
         {
             getLog().warn( "Optimizer mojo can only be used on SWC or SWF projects." );
             return;
@@ -107,9 +110,9 @@ public class OptimizerMojo
         OutputStream outputSWF = null;
         try
         {
-            if ( "swf".equals( packaging ) )
+            if ( SWF.equals( packaging ) )
             {
-                inputSWF = new FileInputStream(  backupOriginalSWF( originalFile ) );
+                inputSWF = new FileInputStream( backupOriginalSWF( originalFile ) );
                 zipFile = null;
             }
             else
@@ -119,7 +122,7 @@ public class OptimizerMojo
             }
 
             File optimizedSWFFile;
-            if ( "swf".equals( packaging ) )
+            if ( SWF.equals( packaging ) )
             {
                 originalFile.delete();
                 optimizedSWFFile = originalFile;
@@ -136,13 +139,13 @@ public class OptimizerMojo
 
             getLog().info( "optimized swf is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
 
-            if ( "swc".equals( packaging ) )
+            if ( SWC.equals( packaging ) )
             {
                 getLog().debug( "updating digest " );
                 updateDigest( optimizedSWFFile, originalFile );
 
                 getLog().debug( "attaching Artifact " );
-                projectHelper.attachArtifact( project, "swf", optimizedSWFFile );
+                projectHelper.attachArtifact( project, SWF, optimizedSWFFile );
             }
         }
         catch ( FileNotFoundException e )
@@ -217,8 +220,8 @@ public class OptimizerMojo
         }
 
         getLog().debug( "attaching original swf" );
-        projectHelper.attachArtifact( project, "swf", "original", bkpOriginalFile );
-		return bkpOriginalFile;
+        projectHelper.attachArtifact( project, SWF, "original", bkpOriginalFile );
+        return bkpOriginalFile;
     }
 
     private ZipFile newZipFile( File originalFile )

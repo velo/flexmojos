@@ -17,9 +17,18 @@
  */
 package org.sonatype.flexmojos.asdoc;
 
-import eu.cedarsoft.utils.ZipExtractor;
-import flex2.compiler.util.ThreadLocalToolkit;
-import flex2.tools.ASDoc;
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -37,18 +46,13 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
+import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
-import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import eu.cedarsoft.utils.ZipExtractor;
+import flex2.compiler.util.ThreadLocalToolkit;
+import flex2.tools.ASDoc;
 
 /**
  * Goal which generates documentation from the ActionScript sources.
@@ -300,7 +304,7 @@ public class AsDocMojo
         libraries = new ArrayList<File>();
         for ( Artifact artifact : getDependencyArtifacts() )
         {
-            if ( "swc".equals( artifact.getType() ) )
+            if ( SWC.equals( artifact.getType() ) )
             {
                 libraries.add( artifact.getFile() );
             }
@@ -355,9 +359,11 @@ public class AsDocMojo
             templatesPath = generateDefaultTemplate();
         }
 
-        FDKConfigResolver sdkConfigResolver = new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
+        FDKConfigResolver sdkConfigResolver =
+            new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
         List<Namespace> fdkNamespaces = sdkConfigResolver.getNamespaces();
-        // we must merge user custom namespaces and default SDK namespaces, because we not use compiler API ? https://bugs.adobe.com/jira/browse/SDK-15405
+        // we must merge user custom namespaces and default SDK namespaces, because we not use compiler API ?
+        // https://bugs.adobe.com/jira/browse/SDK-15405
         if ( fdkNamespaces != null )
         {
             if ( namespaces != null )
@@ -723,7 +729,7 @@ public class AsDocMojo
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         String packaging = project.getPackaging();
-        if ( "swc".equals( packaging ) || "swf".equals( packaging ) )
+        if ( SWC.equals( packaging ) || SWF.equals( packaging ) )
         {
             setUp();
             run();
