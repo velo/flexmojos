@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import java.lang.reflect.Method;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
@@ -166,11 +167,21 @@ public class OptimizerMojo
     {
         try
         {
-            // optimize
-            flex2.tools.API.optimize( inputSWF, outputSWF );
+            Class apiClass;
+            try
+            {
+                apiClass = Class.forName( "flex2.tools.WebTierAPI" );
+            }
+            catch ( ClassNotFoundException e )
+            {
+                apiClass = Class.forName( "flex2.tools.API" );
+            }
+
+            Method optimizeMethod = apiClass.getDeclaredMethod( "optimize", InputStream.class, OutputStream.class );
+            optimizeMethod.invoke( null, inputSWF, outputSWF );
             outputSWF.flush();
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "An error happen while trying to optimize.", e );
         }
