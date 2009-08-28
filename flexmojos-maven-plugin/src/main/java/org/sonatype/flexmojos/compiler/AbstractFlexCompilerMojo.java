@@ -7,6 +7,9 @@
  */
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.common.FlexExtension.SWZ;
 import static org.sonatype.flexmojos.utilities.MavenUtils.searchFor;
 
 import java.io.BufferedInputStream;
@@ -51,7 +54,6 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.common.FlexClassifier;
-import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
@@ -66,7 +68,7 @@ import flex2.tools.oem.internal.OEMConfiguration;
 
 public abstract class AbstractFlexCompilerMojo<E extends Builder>
     extends AbstractIrvinMojo
-    implements FlexMojo, FlexScopes, FlexExtension
+    implements FlexMojo, FlexScopes
 {
 
     protected static final String REPORT_LINK = "link";

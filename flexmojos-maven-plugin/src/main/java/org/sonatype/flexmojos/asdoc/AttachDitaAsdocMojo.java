@@ -1,5 +1,7 @@
 package org.sonatype.flexmojos.asdoc;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,7 +53,7 @@ public class AttachDitaAsdocMojo
             File tmp = new File( build.getDirectory(), "temp" );
             tmp.mkdirs();
 
-            File temp = File.createTempFile( build.getFinalName(), "swc", tmp );
+            File temp = File.createTempFile( build.getFinalName(), SWC, tmp );
 
             FileUtils.copyFile( output, temp );
             output.delete();
@@ -116,7 +118,7 @@ public class AttachDitaAsdocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !"swc".equals( project.getPackaging() ) )
+        if ( !SWC.equals( project.getPackaging() ) )
         {
             getLog().warn( "Unable to attach Dita Asdoc, only possible on SWC projects." );
             return;

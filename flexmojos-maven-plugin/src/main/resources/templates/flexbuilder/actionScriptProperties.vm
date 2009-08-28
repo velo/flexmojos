@@ -33,7 +33,7 @@
         </compilerSourcePath>
 
         <libraryPath
-                defaultLinkType="1">
+                defaultLinkType="$libraryPathDefaultLinkType">
 
 #foreach ($artifact in $dependencies)
 			<!-- artifact: $artifact -->
