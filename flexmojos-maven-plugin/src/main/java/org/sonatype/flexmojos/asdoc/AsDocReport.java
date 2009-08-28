@@ -17,6 +17,9 @@
  */
 package org.sonatype.flexmojos.asdoc;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -109,7 +112,7 @@ public class AsDocReport
         throws MavenReportException
     {
         String packaging = project.getPackaging();
-        if ( !"swc".equals( packaging ) && !"swf".equals( packaging ) )
+        if ( !SWC.equals( packaging ) && !SWF.equals( packaging ) )
         {
             getLog().warn( "Invalid packaging for asdoc generation " + packaging );
             return;

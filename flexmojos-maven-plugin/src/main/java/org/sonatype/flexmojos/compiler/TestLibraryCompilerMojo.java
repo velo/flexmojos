@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 
 import java.io.File;
 
@@ -94,7 +95,7 @@ public class TestLibraryCompilerMojo
     {
         super.tearDown();
 
-        projectHelper.attachArtifact( project, "swc", "test", getOutput() );
+        projectHelper.attachArtifact( project, SWC, "test", getOutput() );
     }
 
     @Override
