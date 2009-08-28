@@ -7,6 +7,10 @@
  */
 package org.sonatype.flexmojos.flexbuilder;
 
+import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -65,12 +69,6 @@ public class FlexbuilderMojo
     protected static final String M2ECLIPSE_NATURE = "org.maven.ide.eclipse.maven2Nature";
 
     protected static final String M2ECLIPSE_BUILD_COMMAND = "org.maven.ide.eclipse.maven2Builder";
-
-    private static final String SWC = "swc";
-
-    private static final String SWF = "swf";
-
-    private static final String RB_SWC = "rb.swc";
 
     private static final String[] SDK_SOURCES =
         { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
@@ -411,10 +409,7 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
-        // TODO if no includeClasses set put them all there
         context.put( "flexClasses", includeClasses );
-        // TODO
-        // context.put( "includeFiles", files );
 
         runVelocity( "/templates/flexbuilder/flexLibProperties.vm", ".flexLibProperties", context );
     }
@@ -636,6 +631,7 @@ public class FlexbuilderMojo
         context.put( "additionalCompilerArguments", additionalCompilerArguments.trim() );
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
+        context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
 
@@ -791,6 +787,46 @@ public class FlexbuilderMojo
             buf.append( locale );
         }
         return buf.toString();
+    }
+
+    /**
+     * Looks for the Flex framework dependency and determines result depending on specified scope.
+     * 
+     * @return "1" if framework is merged into code, or "3" if its a runtime shared library
+     * @throws MojoExecutionException if framework dependency can not be found
+     */
+    private String getLibraryPathDefaultLinkType()
+        throws MojoExecutionException
+    {
+        final Artifact flexArtifact = resolveFlexFrameworkArtifact();
+        final boolean isRsl = "rsl".equals( flexArtifact.getScope() );
+        return isRsl ? "3" : "1";
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Artifact resolveFlexFrameworkArtifact()
+        throws MojoExecutionException
+    {
+        Set<Artifact> artifacts = project.getDependencyArtifacts();
+
+        if ( artifacts == null )
+        {
+            throw new MojoExecutionException( "Could not find Flex Framework! Dependencies were not yet resolved!" );
+        }
+
+        for ( Artifact artifact : artifacts )
+        {
+            if ( "com.adobe.flex.framework".equals( artifact.getGroupId() )
+                && "framework".equals( artifact.getArtifactId() ) && "swc".equals( artifact.getType() ) )
+            {
+                getLog().debug(
+                                "Found Flex framework artifact. Scope: [" + artifact.getScope() + "]; " + "Version: ["
+                                    + artifact.getVersion() + "]" );
+                return artifact;
+            }
+        }
+
+        throw new MojoExecutionException( "Could not find Flex Framework! Not included as dependency!" );
     }
 
     private void runVelocity( String templateName, String fileName, VelocityContext context )

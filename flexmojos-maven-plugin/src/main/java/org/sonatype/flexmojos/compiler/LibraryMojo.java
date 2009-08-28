@@ -7,6 +7,8 @@
  */
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;

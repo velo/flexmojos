@@ -7,6 +7,8 @@
  */
 package org.sonatype.flexmojos.configGenerator;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
 import java.io.File;
 import java.io.IOException;
 
