@@ -37,6 +37,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
@@ -51,7 +52,6 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @goal copy-flex-resources
  * @phase process-resources
  * @requiresDependencyResolution compile
- * @author Marvin Froeder
  */
 public class CopyMojo
     extends AbstractMojo
@@ -241,7 +241,7 @@ public class CopyMojo
 
         for ( Artifact artifact : deps )
         {
-            artifact = replaceWithResolvedArtifact( artifact);
+            artifact = replaceWithResolvedArtifact( artifact );
             copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
         }
     }
@@ -351,15 +351,9 @@ public class CopyMojo
 
     private File getDestinationFile( Artifact artifact )
     {
-        File destFile;
-        if ( stripVersion )
-        {
-            destFile = new File( webappDirectory, artifact.getArtifactId() + "." + SWF );
-        }
-        else
-        {
-            destFile = new File( webappDirectory, artifact.getArtifactId() + "-" + artifact.getVersion() + "." + SWF );
-        }
+        String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+        String version = stripVersion ? "" : "-" + artifact.getVersion();
+        File destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
         return destFile;
     }
 

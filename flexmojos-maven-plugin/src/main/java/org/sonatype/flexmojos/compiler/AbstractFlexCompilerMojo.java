@@ -1314,7 +1314,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             setLocales( compiledLocales );
         }
-        else if ( runtimeLocales == null && isApplication() && getDefaultLocale() != null)
+        else if ( runtimeLocales == null && isApplication() && getDefaultLocale() != null )
         {
             setLocales( getDefaultLocale() );
         }
