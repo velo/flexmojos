@@ -1300,13 +1300,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         addDefines();
 
-        if ( compiledLocales == null && runtimeLocales == null && isApplication() )
-        {
-            setLocales( getDefaultLocale() );
-        }
-        else if ( compiledLocales != null )
+        if ( compiledLocales != null )
         {
             setLocales( compiledLocales );
+        }
+        else if ( runtimeLocales == null && isApplication() && getDefaultLocale() != null)
+        {
+            setLocales( getDefaultLocale() );
         }
         else
         {
@@ -1536,13 +1536,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.setLibraryPath( getDependenciesPath( Artifact.SCOPE_COMPILE ) );
         configuration.addLibraryPath( getDependenciesPath( MERGED ) );
 
-        if ( compiledLocales == null && runtimeLocales == null && isApplication() )
-        {
-            configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
-        }
-        else if ( compiledLocales != null )
+        if ( compiledLocales != null )
         {
             configuration.addLibraryPath( getResourcesBundles( compiledLocales ) );
+        }
+        else if ( runtimeLocales == null && isApplication() && getDefaultLocale() != null )
+        {
+            configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
         }
 
         resolveRuntimeLibraries();
