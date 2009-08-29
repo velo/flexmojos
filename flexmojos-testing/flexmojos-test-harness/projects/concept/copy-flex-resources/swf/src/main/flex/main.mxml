@@ -8,6 +8,44 @@
 
 
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-	<mx:Label text="Hello World" />
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:itest="info.rvin.itest.*" 
+    verticalAlign="top" layout="horizontal"
+    horizontalAlign="center" backgroundGradientColors="[0x000000,0x323232]" paddingTop="0">
+    
+    <mx:Script>
+
+    private function loadModule(title:String, url:String):void
+    {
+        var p:ModulePanel = new ModulePanel();
+        p.title = title;
+        p.url = url;
+        this.addChild(p);
+    }
+    </mx:Script>
+    
+    <mx:Component className="ModulePanel">
+        <mx:Panel>
+            <mx:Script>
+            [Bindable]
+            public var url:String;
+            </mx:Script>
+            <mx:ModuleLoader id="ml" url="{url}" width="100%" height="100%">
+                <mx:unload>
+                if (parent != null)
+                {
+                    parent.removeChild(this);
+                }
+                </mx:unload>
+            </mx:ModuleLoader>
+            <mx:ControlBar>
+                <mx:Button label="unload" click="ml.unloadModule()"/>
+            </mx:ControlBar>
+        </mx:Panel>
+    </mx:Component>
+    
+    <mx:ApplicationControlBar dock="true" fillColors="[0x000000,0x323232]" fillAlphas="[1,1]" horizontalAlign="center">
+        <mx:Button label="Load Module 1" click="loadModule('module 1', 'labels/label1.swf')"/>
+        <mx:Button label="Load Module 2" click="loadModule('module 2', 'labels/label2.swf')"/>
+    </mx:ApplicationControlBar>
+    
 </mx:Application>
