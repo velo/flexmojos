@@ -43,6 +43,10 @@ public class GenerationRequest
 
     public Map<String, String> getExtraOptions()
     {
+        if ( extraOptions == null )
+        {
+            this.extraOptions = new LinkedHashMap<String, String>();
+        }
         return extraOptions;
     }
 
@@ -89,6 +93,11 @@ public class GenerationRequest
     public void setTransientOutputFolder( File transientOutputFolder )
     {
         this.transientOutputFolder = transientOutputFolder;
+    }
+
+    public void addExtraOption( String name, String value )
+    {
+        getExtraOptions().put( name, value );
     }
 
 }
