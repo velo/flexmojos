@@ -9,26 +9,31 @@ package org.sonatype.flexmojos.compiler;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * This class hold SWF metadata
  * 
  * @author velo
+ *
+ * Vladimir Krivosheev, 16 Aug 2009: We must flip titles and description.
+ * flex2.tools.oem.Configuration declare setSWFMetaData as Map "lang tag -> text", but OEMConfiguration implementation use reverced order,
+ * because call flex2.compiler.common.MetadataConfiguration#cfgLocalizedTitle - method signature: String title, String lang
+ * Run mvn test -Dtest=IT0014ConceptTest (flexmojos-test-harness project) for test workaround
  */
 public class Metadata
 {
+    private static String DEFAULT_LANGUAGE_TAG = "x-default";
 
     /**
-     * A contributor's name to store in the SWF metadata (repeatable)
+     * A contributor's name to store in the SWF metadata
      */
-    private String contributor;
+    private String[] contributors;
 
     /**
-     * A creator's name to store in the SWF metadata (repeatable)
+     * A creator's name to store in the SWF metadata
      */
-    private String creator;
+    private String[] creators;
 
     /**
      * The creation date to store in the SWF metadata
@@ -36,43 +41,56 @@ public class Metadata
     private Date date;
 
     /**
-     * The default description to store in the SWF metadata
+     * The title to store in the SWF metadata
+     */
+    private String title;
+
+    /**
+     * The localized titles to store in the SWF metadata
+     */
+    private Map<String, String> titles;
+
+    /**
+     * The description to store in the SWF metadata
+     */
+    private String description;
+
+    /**
+     * The localized descriptions to store in the SWF metadata
      */
     private Map<String, String> descriptions;
 
     /**
-     * The language to store in the SWF metadata (i.e. EN, FR) (repeatable)
+     * The language code (RFC 4646) to store in the SWF metadata
+     * @see http://www.ietf.org/rfc/rfc4646.txt
+     * @see http://www.langtag.net/
+     * @see http://unicode.org/cldr/utility/languageid.jsp
      */
-    private String language;
+    private String[] languages;
 
     /**
-     * A publisher's name to store in the SWF metadata (repeatable)
+     * A publisher's name to store in the SWF metadata
      */
-    private List<String> publishers;
+    private String[] publishers;
 
-    /**
-     * The default title to store in the SWF metadata
-     */
-    private Map<String, String> titles;
-
-    public String getContributor()
+    public String[] getContributors()
     {
-        return contributor;
+        return contributors;
     }
 
-    public void setContributor( String contributor )
+    public void setContributors( String[] contributors )
     {
-        this.contributor = contributor;
+        this.contributors = contributors;
     }
 
-    public String getCreator()
+    public String[] getCreators()
     {
-        return creator;
+        return creators;
     }
 
-    public void setCreator( String creator )
+    public void setCreators( String[] creators )
     {
-        this.creator = creator;
+        this.creators = creators;
     }
 
     public Date getDate()
@@ -85,13 +103,23 @@ public class Metadata
         this.date = date;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void addDescription( String description )
+    {
+        addDescription( DEFAULT_LANGUAGE_TAG, description );
+    }
+
     public void addDescription( String locale, String description )
     {
         if ( descriptions == null )
         {
             descriptions = new HashMap<String, String>();
         }
-        descriptions.put( locale, description );
+        descriptions.put( description, locale );
     }
 
     public Map<String, String> getDescriptions()
@@ -99,29 +127,29 @@ public class Metadata
         return descriptions;
     }
 
-    public void setDescriptions( Map<String, String> description )
+    public String[] getLanguages()
     {
-        this.descriptions = description;
+        return languages;
     }
 
-    public String getLanguage()
+    public void setLanguages( String[] languages )
     {
-        return language;
+        this.languages = languages;
     }
 
-    public void setLanguage( String languages )
-    {
-        this.language = languages;
-    }
-
-    public List<String> getPublishers()
+    public String[] getPublishers()
     {
         return publishers;
     }
 
-    public void setPublishers( List<String> publishers )
+    public String getTitle()
     {
-        this.publishers = publishers;
+        return title;
+    }
+
+    public void addTitle( String title )
+    {
+        addTitle( DEFAULT_LANGUAGE_TAG, title );
     }
 
     public void addTitle( String locale, String title )
@@ -130,7 +158,7 @@ public class Metadata
         {
             titles = new HashMap<String, String>();
         }
-        titles.put( locale, title );
+        titles.put( title, locale );
     }
 
     public Map<String, String> getTitles()
@@ -138,9 +166,23 @@ public class Metadata
         return titles;
     }
 
-    public void setTitles( Map<String, String> titles )
+    public void fixTitles()
     {
-        this.titles = titles;
+        titles = fixMap( titles );
     }
 
+    public void fixDescriptions()
+    {
+        descriptions = fixMap( descriptions );
+    }
+
+    private Map<String, String> fixMap( Map<String, String> map )
+    {
+        HashMap<String, String> fixedMap = new HashMap<String, String>( map.size() );
+        for ( Map.Entry<String, String> entry : map.entrySet() )
+        {
+            fixedMap.put( entry.getValue(), entry.getKey() );
+        }
+        return fixedMap;
+    }
 }
