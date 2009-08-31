@@ -465,8 +465,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      *   &lt;/loadExtern&gt;
      * &lt;/loadExterns&gt;
      * </pre>
-     * 
+     *
      * @parameter
+     * @deprecated Use dependency with type "xml" and classifier "link-report"
      */
     protected MavenArtifact[] loadExterns;
 
