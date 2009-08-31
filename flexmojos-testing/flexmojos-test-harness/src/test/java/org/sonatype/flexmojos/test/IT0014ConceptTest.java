@@ -101,13 +101,6 @@ public class IT0014ConceptTest
     }
 
     @Test
-    public void testMetadataTest()
-        throws Exception
-    {
-        standardConceptTester( "metadata-test" );
-    }
-
-    @Test
     public void testOptimizedFlexLibrary()
         throws Exception
     {
@@ -173,5 +166,4 @@ public class IT0014ConceptTest
         File testDir = getProject( "/concept/simple-flex-application" );
         test( testDir, "install", "-Dincremental=true" );
     }
-
 }
