@@ -901,7 +901,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
      * that manifests can mention classes that come in from filespec rather than classpath, e.g. in playerglobal.swc.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean includeLookupOnly;
@@ -1022,37 +1022,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             runtimeLocaleOutputPath = DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
 
-        if ( metadata == null )
-        {
-            metadata = new Metadata();
-            if ( project.getDevelopers() != null && !project.getDevelopers().isEmpty() )
-            {
-                List<Developer> developers = project.getDevelopers();
-                for ( Developer d : developers )
-                {
-                    metadata.setCreator( d.getName() );
-                    break;
-                }
-            }
-
-            if ( project.getContributors() != null && !project.getContributors().isEmpty() )
-            {
-                List<Contributor> contributors = project.getContributors();
-                for ( Contributor c : contributors )
-                {
-                    metadata.setContributor( c.getName() );
-                    break;
-                }
-            }
-            metadata.setDate( new Date() );
-            // FIXME what to do here?
-            // if ( locales != null )
-            // {
-            // metadata.setLanguage( locales[0] );
-            // metadata.addDescription( locales[0], project.getDescription() );
-            // metadata.addTitle( locales[0], project.getName() );
-            // }
-        }
+        setUpMetadata();
 
         if ( licenses == null )
         {
@@ -1082,6 +1052,104 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // compiler didn't create parent if it doesn't exists
         getOutput().getParentFile().mkdirs();
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private void setUpMetadata()
+    {
+        if ( metadata == null )
+        {
+            metadata = new Metadata();
+        }
+
+        List<Developer> developers = project.getDevelopers();
+        if ( metadata.getCreators() == null && developers != null && !developers.isEmpty() )
+        {
+            String[] creatorsNames = new String[developers.size()];
+            for ( int i = 0; i < creatorsNames.length; i++ )
+            {
+                creatorsNames[i] = developers.get( i ).getName();
+            }
+            metadata.setCreators( creatorsNames );
+        }
+
+        List<Contributor> contributors = project.getContributors();
+        if ( metadata.getContributors() == null && contributors != null && !contributors.isEmpty() )
+        {
+            String[] contributorsNames = new String[contributors.size()];
+            for ( int i = 0; i < contributorsNames.length; i++ )
+            {
+                contributorsNames[i] = contributors.get( i ).getName();
+            }
+            metadata.setContributors( contributorsNames );
+        }
+
+        // title and description only for easy and convenient configuration ? compiler API doesn't support default title and default description
+        // we add default title and default description as localized ? "x-default" language tag
+        if ( metadata.getTitles() == null )
+        {
+            if ( metadata.getTitle() != null )
+            {
+                metadata.addTitle( metadata.getTitle() );
+            }
+            else if ( project.getName() != null )
+            {
+                metadata.addTitle( project.getName() );
+            }
+        }
+        else
+        {
+            // adobe flex compiler bug ? see comment in Metadata
+            metadata.fixTitles();
+        }
+
+        if ( metadata.getDescriptions() == null )
+        {
+            if ( metadata.getDescription() != null )
+            {
+                metadata.addDescription( metadata.getDescription() );
+            }
+            else if ( project.getDescription() != null )
+            {
+                metadata.addDescription( project.getDescription() );
+            }
+        }
+        else
+        {
+            // adobe flex compiler bug ? see comment in Metadata
+            metadata.fixDescriptions();
+        }
+
+        if ( metadata.getDate() == null )
+        {
+            metadata.setDate( new Date() );
+        }
+
+        if ( metadata.getLanguages() == null )
+        {
+            if ( compiledLocales == null && runtimeLocales == null )
+            {
+                if ( isApplication() && getDefaultLocale() != null )
+                {
+                    metadata.setLanguages( new String[] { getDefaultLocale() } );
+                }
+            }
+            else if ( compiledLocales == null )
+            {
+                metadata.setLanguages( runtimeLocales );
+            }
+            else if ( runtimeLocales == null )
+            {
+                metadata.setLanguages( compiledLocales );
+            }
+            else
+            {
+                String[] languages = new String[runtimeLocales.length + compiledLocales.length];
+                System.arraycopy( compiledLocales, 0, languages, 0, compiledLocales.length );
+                System.arraycopy( runtimeLocales, 0, languages, compiledLocales.length, runtimeLocales.length );
+                metadata.setLanguages( languages );
+            }
+        }
     }
 
     private void checkFrameworkCompilerVersion()
@@ -1354,39 +1422,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             configuration.setSWFMetaData( rawMetadata );
         }
 
-        if ( metadata != null )
-        {
-            if ( metadata.getContributor() != null )
-            {
-                configuration.setSWFMetaData( Configuration.CONTRIBUTOR, metadata.getContributor() );
-            }
-
-            if ( metadata.getCreator() != null )
-            {
-                configuration.setSWFMetaData( Configuration.CREATOR, metadata.getCreator() );
-            }
-
-            if ( metadata.getDate() != null )
-            {
-                configuration.setSWFMetaData( Configuration.DATE, metadata.getDate() );
-            }
-
-            if ( metadata.getDescriptions() != null )
-            {
-                configuration.setSWFMetaData( Configuration.DESCRIPTION, metadata.getDescriptions() );
-            }
-
-            if ( metadata.getTitles() != null )
-            {
-                configuration.setSWFMetaData( Configuration.TITLE, metadata.getTitles() );
-            }
-
-            if ( metadata.getLanguage() != null )
-            {
-                configuration.setSWFMetaData( Configuration.LANGUAGE, metadata.getLanguage() );
-            }
-        }
-
         setCompatibilityMode();
 
         configuration.setActionScriptFileEncoding( encoding );
@@ -1433,25 +1468,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             // http://bugs.adobe.com/jira/browse/SDK-15581
             // http://bugs.adobe.com/jira/browse/SDK-18719
             // workaround
-
             OEMConfiguration oemConfig = (OEMConfiguration) configuration;
             List<String> commandLineArguments = new ArrayList<String>();
-
-            commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
+            configureViaCommandLine( commandLineArguments );
+            oemConfig.setConfiguration( commandLineArguments.toArray( new String[commandLineArguments.size()] ) );
 
             configureIncludeResourceBundles( oemConfig );
-
-            if ( configFile == null )
-            {
-                commandLineArguments.add( "-load-config=" );
-            }
-
-            if ( includeLookupOnly )
-            {
-                commandLineArguments.add( "-include-lookup-only" );
-            }
-
-            oemConfig.setConfiguration( commandLineArguments.toArray( new String[commandLineArguments.size()] ) );
         }
         else
         {
@@ -1459,6 +1481,53 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         verifyDigests();
+    }
+
+    protected void configureViaCommandLine( List<String> commandLineArguments )
+    {
+        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries);
+
+        if ( includeLookupOnly )
+        {
+            commandLineArguments.add( "-include-lookup-only" );
+        }
+        if ( configFile == null )
+        {
+            commandLineArguments.add( "-load-config=" );
+        }
+
+        configureMetadataViaCommandLine( commandLineArguments );
+    }
+
+    private void configureMetadataViaCommandLine( List<String> commandLineArguments )
+    {
+        addCommandLineMetadataArguments( "creator", metadata.getCreators(), commandLineArguments );
+        addCommandLineMetadataArguments( "contributor", metadata.getContributors(), commandLineArguments );
+        addCommandLineMetadataArguments( "publisher", metadata.getPublishers(), commandLineArguments );
+
+        addCommandLineMetadataArguments( "language", metadata.getLanguages(), commandLineArguments );
+
+        configuration.setSWFMetaData( Configuration.DATE, metadata.getDate() );
+
+        if ( metadata.getTitles() != null )
+        {
+            configuration.setSWFMetaData( Configuration.TITLE, metadata.getTitles() );
+        }
+        if ( metadata.getDescriptions() != null )
+        {
+            configuration.setSWFMetaData( Configuration.DESCRIPTION, metadata.getDescriptions() );
+        }
+    }
+
+    private void addCommandLineMetadataArguments( String argumentName, String[] values, List<String> commandLineArguments )
+    {
+        if ( values != null )
+        {
+            for ( String value : values )
+            {
+                commandLineArguments.add( "--metadata." + argumentName + "+=" + value );
+            }
+        }
     }
 
     private void configureExterns()
@@ -1785,7 +1854,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     /**
      * Resolves all runtime libraries, that includes RSL and framework CACHING
-     * 
+     *
      * @throws MojoExecutionException
      */
     private void resolveRuntimeLibraries()
