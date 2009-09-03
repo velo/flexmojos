@@ -807,7 +807,7 @@ public class FlexbuilderMojo
     private Artifact resolveFlexFrameworkArtifact()
         throws MojoExecutionException
     {
-        Set<Artifact> artifacts = project.getDependencyArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         if ( artifacts == null )
         {
