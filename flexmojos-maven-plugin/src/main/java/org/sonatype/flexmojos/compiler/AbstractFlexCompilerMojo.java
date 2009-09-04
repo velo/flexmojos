@@ -766,8 +766,14 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * Determines whether to compile against libraries statically or use RSLs. Set this option to true to ignore the
      * RSLs specified by the <code>rslUrls</code>. Set this option to false to use the RSLs.
+     * <p>
+     * Add the static-link-runtime-shared-libraries=true option; this ensures that you are not using the framework RSL
+     * when compiling the application, regardless of the settings in your configuration files. Instead, you are
+     * compiling the framework classes into your SWF file.
+     * </p>
+     * http://livedocs.adobe.com/flex/3/html/help.html?content=rsl_09.html
      * 
-     * @parameter default-value="true"
+     * @parameter default-value="false"
      */
     private boolean staticLinkRuntimeSharedLibraries;
 
