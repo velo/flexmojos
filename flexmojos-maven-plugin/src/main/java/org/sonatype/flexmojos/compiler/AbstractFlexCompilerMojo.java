@@ -465,7 +465,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      *   &lt;/loadExtern&gt;
      * &lt;/loadExterns&gt;
      * </pre>
-     *
+     * 
      * @parameter
      * @deprecated Use dependency with type "xml" and classifier "link-report"
      */
@@ -901,7 +901,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     /**
      * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
      * that manifests can mention classes that come in from filespec rather than classpath, e.g. in playerglobal.swc.
-     *
+     * 
      * @parameter default-value="false"
      */
     private boolean includeLookupOnly;
@@ -1084,7 +1084,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             metadata.setContributors( contributorsNames );
         }
 
-        // title and description only for easy and convenient configuration ? compiler API doesn't support default title and default description
+        // title and description only for easy and convenient configuration ? compiler API doesn't support default title
+        // and default description
         // we add default title and default description as localized ? "x-default" language tag
         if ( metadata.getTitles() == null )
         {
@@ -1485,7 +1486,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     protected void configureViaCommandLine( List<String> commandLineArguments )
     {
-        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries);
+        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
 
         if ( includeLookupOnly )
         {
@@ -1519,7 +1520,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
-    private void addCommandLineMetadataArguments( String argumentName, String[] values, List<String> commandLineArguments )
+    private void addCommandLineMetadataArguments( String argumentName, String[] values,
+                                                  List<String> commandLineArguments )
     {
         if ( values != null )
         {
@@ -1854,7 +1856,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     /**
      * Resolves all runtime libraries, that includes RSL and framework CACHING
-     *
+     * 
      * @throws MojoExecutionException
      */
     private void resolveRuntimeLibraries()
@@ -1891,7 +1893,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
         if ( staticLinkRuntimeSharedLibraries )
         {
-            configuration.addLibraryPath( new File[] { artifactFile } );
+            configuration.addExternalLibraryPath( new File[] { artifactFile } );
         }
     }
 
