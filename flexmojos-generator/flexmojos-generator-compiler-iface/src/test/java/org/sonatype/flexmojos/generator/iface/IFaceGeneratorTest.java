@@ -22,6 +22,7 @@ import org.sonatype.flexmojos.generator.iface.model.MethodSignature;
 
 import com.thoughtworks.xstream.XStream;
 
+import flex2.tools.CompcConfiguration;
 import flex2.tools.oem.Configuration;
 
 @SuppressWarnings( "restriction" )
@@ -69,7 +70,8 @@ public class IFaceGeneratorTest
         request.addExtraOption( Excludes.NAME, getExcludes() );
         request.addExtraOption( "forceArrays", getArrays() );
         request.setTransientOutputFolder( files );
-        request.addClass( Configuration.class.getName(), null );
+        // request.addClass( Configuration.class.getName(), null );
+        request.addClass( CompcConfiguration.class.getName(), null );
         // request.addClass( Builder.class.getName(), null );
         // request.addClass( Library.class.getName(), null );
         // request.addClass( Application.class.getName(), null );

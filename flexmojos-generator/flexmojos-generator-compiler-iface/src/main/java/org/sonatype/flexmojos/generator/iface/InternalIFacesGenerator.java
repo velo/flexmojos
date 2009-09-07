@@ -77,7 +77,7 @@ public final class InternalIFacesGenerator
             for ( Method method : methods )
             {
                 MethodSignature signature = new MethodSignature( method );
-                if ( signatures.contains( signature ) )
+                if ( signatures != null && signatures.contains( signature ) )
                 {
                     signatures.remove( signature );
                     continue;
@@ -145,7 +145,11 @@ public final class InternalIFacesGenerator
                 boolean isArray = isAdd && !args[0].isArray();
                 if ( !isArray )
                 {
-                    isArray = forceArrays.get( clazz ).contains( signature );
+                    Set<MethodSignature> forceArray = forceArrays.get( clazz );
+                    if ( forceArray != null )
+                    {
+                        isArray = forceArray.contains( signature );
+                    }
                 }
 
                 if ( isArray )
