@@ -41,6 +41,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
+import org.sonatype.flexmojos.compiler.ApplicationMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -51,7 +52,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @since 3.0
  * @goal copy-flex-resources
  * @phase process-resources
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution
  */
 public class CopyMojo
     extends AbstractMojo
@@ -263,7 +264,7 @@ public class CopyMojo
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
         if ( urls == null )
         {
-            urls = AbstractFlexCompilerMojo.DEFAULT_RSL_URLS;
+            urls = ApplicationMojo.DEFAULT_RSL_URLS;
         }
         return urls;
     }

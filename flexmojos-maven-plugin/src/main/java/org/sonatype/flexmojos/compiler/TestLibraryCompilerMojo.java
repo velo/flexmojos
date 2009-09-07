@@ -31,7 +31,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 2.0
  * @goal test-swc
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  */
 public class TestLibraryCompilerMojo
     extends LibraryMojo
@@ -69,6 +69,7 @@ public class TestLibraryCompilerMojo
         File outputFolder = new File( build.getTestOutputDirectory() );
         if ( !outputFolder.exists() )
         {
+            // noinspection ResultOfMethodCallIgnored
             outputFolder.mkdirs();
         }
 
@@ -83,8 +84,7 @@ public class TestLibraryCompilerMojo
     {
         super.configure();
 
-        // add test libraries
-        configuration.addLibraryPath( getDependenciesPath( "test" ) );
+        configuration.addLibraryPath( dependencySorter.getTestLibraries() );
 
         configuration.addSourcePath( getValidSourceRoots( project.getTestCompileSourceRoots() ).toArray( new File[0] ) );
     }

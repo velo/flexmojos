@@ -48,7 +48,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 1.0
  * @goal test-run
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  * @phase test
  */
 public class FlexUnitMojo

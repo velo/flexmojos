@@ -33,6 +33,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.sonatype.flexmojos.common.FlexExtension;
+import org.sonatype.flexmojos.common.TestApplicationDependencySorter;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import flex2.compiler.io.FileUtil;
@@ -45,7 +47,7 @@ import flex2.tools.oem.Report;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 1.0
  * @goal test-compile
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  * @phase test
  */
 public class TestCompilerMojo
@@ -140,12 +142,19 @@ public class TestCompilerMojo
     }
 
     @Override
+    protected void setUpDependencySorter()
+        throws MojoExecutionException
+    {
+        dependencySorter = new TestApplicationDependencySorter();
+        dependencySorter.sort( project );
+    }
+
+    @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
         isSetProjectFile = false;
         linkReport = false;
-        loadExterns = null;
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
@@ -191,7 +200,7 @@ public class TestCompilerMojo
         scanner.setBasedir( testSourceDirectory );
         scanner.scan();
 
-        getLog().debug( "Test files: " + scanner.getIncludedFiles() );
+        getLog().debug( "Test files: " + Arrays.toString( scanner.getIncludedFiles() ) );
         List<String> testClasses = new ArrayList<String>();
         for ( String testClass : scanner.getIncludedFiles() )
         {
@@ -304,19 +313,14 @@ public class TestCompilerMojo
     protected void resolveDependencies()
         throws MojoExecutionException, MojoFailureException
     {
-        configuration.setExternalLibraryPath( getGlobalDependency() );
+        configuration.setExternalLibraryPath( dependencySorter.getGlobalLibraries() );
 
-        // Set all dependencies as merged
-        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
-        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        configuration.addLibraryPath( merge( getResourcesBundles( getDefaultLocale() ),
-                                             getResourcesBundles( runtimeLocales ),
-                                             getResourcesBundles( compiledLocales ) ) );
+        configuration.setLibraryPath( dependencySorter.getMergedLibraries() );
+        configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
+        configuration.addLibraryPath( getResourcesBundles( runtimeLocales ) );
+        configuration.addLibraryPath( getResourcesBundles( compiledLocales ) );
 
-        // and add test libraries
-        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
-                                               getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
-                                               getDependenciesPath( "external" ) ) );
+        configuration.includeLibraries( dependencySorter.getInternalLibraries() );
 
         configuration.setTheme( getThemes() );
     }
@@ -338,17 +342,7 @@ public class TestCompilerMojo
             locales.addAll( Arrays.asList( compiledLocales ) );
         }
 
-        return locales.toArray( new String[0] );
-    }
-
-    private File[] merge( File[]... filesSets )
-    {
-        List<File> files = new ArrayList<File>();
-        for ( File[] fileSet : filesSets )
-        {
-            files.addAll( Arrays.asList( fileSet ) );
-        }
-        return files.toArray( new File[0] );
+        return locales.toArray( new String[locales.size()] );
     }
 
     @Override
@@ -413,7 +407,7 @@ public class TestCompilerMojo
         setMavenPathResolver( testBuilder );
         testBuilder.setConfiguration( configuration );
         testBuilder.setLogger( new CompileLogger( getLog() ) );
-        File testSwf = new File( testOutputDirectory, testFilename + ".swf" );
+        File testSwf = new File( testOutputDirectory, testFilename + "." + FlexExtension.SWF );
         testBuilder.setOutput( testSwf );
 
         build( testBuilder, false );
@@ -434,5 +428,12 @@ public class TestCompilerMojo
         throws MojoExecutionException
     {
         // reports are ignored on unit tests
+    }
+
+    @Override
+    protected void configureExterns()
+        throws MojoExecutionException
+    {
+        // externs are ignore on unit tests
     }
 }

@@ -36,7 +36,6 @@ package org.sonatype.flexmojos.flexcover;
  * under the License.
  */
 
-
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
