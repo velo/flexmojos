@@ -29,4 +29,6 @@ public interface FlexScopes
 
     String RSL = "rsl";
 
+    String THEME = "theme";
+
 }
