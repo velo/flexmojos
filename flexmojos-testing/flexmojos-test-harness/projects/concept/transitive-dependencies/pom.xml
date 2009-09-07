@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-super-pom-commons</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
+
+  <groupId>info.rvin.itest.transitive-dependency</groupId>
+  <artifactId>aggregator</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <flex.sdk.version>4.0.0.8811</flex.sdk.version>
+  </properties>
+
+  <modules>
+    <module>internalLib</module>
+    <module>A</module>
+    <module>B</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>com.adobe.flex</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>pom</type>
+          </dependency>
+          <!-- Marvin, why I need specify it ;)? see my comment for FLEXMOJOS-153 -->
+          <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>xmlParserAPIs</artifactId>
+            <version>${flex.sdk.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>asdoc</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>zip</type>
+            <classifier>template</classifier>
+          </dependency>
+        </dependencies>
+        <configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
