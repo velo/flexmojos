@@ -8,9 +8,6 @@
 package org.sonatype.flexmojos.compiler;
 
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
-import static org.sonatype.flexmojos.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.common.FlexExtension.SWZ;
-import static org.sonatype.flexmojos.utilities.MavenUtils.searchFor;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,7 +36,6 @@ import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -48,25 +44,26 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.common.FlexClassifier;
+import org.sonatype.flexmojos.common.FlexDependencySorter;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
+import org.sonatype.flexmojos.utilities.PathUtil;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
 import flex2.tools.oem.Report;
 import flex2.tools.oem.internal.OEMConfiguration;
 
-public abstract class AbstractFlexCompilerMojo<E extends Builder>
+public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends FlexDependencySorter>
     extends AbstractIrvinMojo
     implements FlexMojo, FlexScopes
 {
@@ -76,9 +73,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected static final String REPORT_CONFIG = "config";
 
     protected static final String REPORT_RESOURCE_BUNDLE = "resource-bundle";
-
-    public static final String[] DEFAULT_RSL_URLS =
-        new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
     public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
         "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
@@ -420,7 +414,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * 
      * @parameter
      */
-    private String contextRoot;
+    protected String contextRoot;
 
     /**
      * Uses the default compiler options as base
@@ -513,63 +507,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private Metadata metadata;
 
     /**
-     * rslUrls array of URLs. The first RSL URL in the list is the primary RSL. The remaining RSL URLs will only be
-     * loaded if the primary RSL fails to load. Accept some special tokens:
-     * 
-     * <pre>
-     * {contextRoot}        - replace by defined context root
-     * {groupId}            - replace by library groupId
-     * {artifactId}         - replace by library artifactId
-     * {version}            - replace by library version
-     * {extension}          - replace by library extension swf or swz
-     * </pre>
-     * 
-     * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;rslUrls&gt;
-     *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{version}.{extension}&lt;/url&gt;
-     * &lt;/rslUrls&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] rslUrls;
-
-    /**
      * Resource module or resource library output path
      * 
      * @parameter 
      *            default-value="${project.build.directory}/locales/${project.artifactId}-${project.version}-{locale}.{extension}"
      */
     private String runtimeLocaleOutputPath;
-
-    /**
-     * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
-     * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
-     * file is not required, then set it to an empty string. Accept some special tokens:
-     * 
-     * <pre>
-     * {contextRoot}        - replace by defined context root
-     * {groupId}            - replace by library groupId
-     * {artifactId}         - replace by library artifactId
-     * {version}            - replace by library version
-     * {extension}          - replace by library extension swf or swz
-     * </pre>
-     * 
-     * <BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;policyFileUrls&gt;
-     *   &lt;url&gt;/{contextRoot}/rsl/policy-{artifactId}-{version}.xml&lt;/url&gt;
-     * &lt;/policyFileUrls&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] policyFileUrls;
 
     /**
      * Sets the location of the Flex Data Services service configuration file. This is equivalent to using the
@@ -754,20 +697,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private boolean useResourceBundleMetadata;
 
     /**
-     * Determines whether to compile against libraries statically or use RSLs. Set this option to true to ignore the
-     * RSLs specified by the <code>rslUrls</code>. Set this option to false to use the RSLs.
-     * <p>
-     * Add the static-link-runtime-shared-libraries=true option; this ensures that you are not using the framework RSL
-     * when compiling the application, regardless of the settings in your configuration files. Instead, you are
-     * compiling the framework classes into your SWF file.
-     * </p>
-     * http://livedocs.adobe.com/flex/3/html/help.html?content=rsl_09.html
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean staticLinkRuntimeSharedLibraries;
-
-    /**
      * Verifies the RSL loaded has the same digest as the RSL specified when the application was compiled. This is
      * equivalent to using the <code>verify-digests</code> option in the mxmlc compiler.
      * 
@@ -852,33 +781,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected String[] compiledLocales;
 
     /**
-     * List of CSS or SWC files to apply as a theme. <>BR Usage:
-     * 
-     * <pre>
-     * &lt;themes&gt;
-     *    &lt;theme&gt;css/main.css&lt;/theme&gt;
-     * &lt;/themes&gt;
-     * </pre>
-     * 
-     * If you are using SWC theme should be better keep it's version controlled, so is advised to use a dependency with
-     * theme scope.<BR>
-     * Like this:
-     * 
-     * <pre>
-     * &lt;dependency&gt;
-     *   &lt;groupId&gt;com.acme&lt;/groupId&gt;
-     *   &lt;artifactId&gt;acme-theme&lt;/artifactId&gt;
-     *   &lt;type&gt;swc&lt;/type&gt;
-     *   &lt;scope&gt;theme&lt;/scope&gt;
-     *   &lt;version&gt;1.0&lt;/version&gt;
-     * &lt;/dependency&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] themes;
-
-    /**
      * This is equilvalent to the <code>include-resource-bundles</code> option of the compc compiler.<BR>
      * Usage:
      * 
@@ -923,6 +825,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @parameter
      */
     private File output;
+
+    protected D dependencySorter;
 
     /**
      * Construct instance
@@ -999,20 +903,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
         }
 
-        if ( rslUrls == null )
-        {
-            rslUrls = DEFAULT_RSL_URLS;
-        }
-
-        if ( policyFileUrls == null )
-        {
-            policyFileUrls = new String[rslUrls.length];
-        }
-        for ( int i = 0; i < policyFileUrls.length; i++ )
-        {
-            policyFileUrls[i] = policyFileUrls[i] == null ? "" : policyFileUrls[i];
-        }
-
         if ( runtimeLocaleOutputPath == null )
         {
             runtimeLocaleOutputPath = DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
@@ -1047,6 +937,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         setMavenPathResolver( builder );
 
         // compiler didn't create parent if it doesn't exists
+        // noinspection ResultOfMethodCallIgnored
         getOutput().getParentFile().mkdirs();
     }
 
@@ -1158,7 +1049,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         String compilerVersion = getCompilerVersion();
-        String frameworkVersion = getFrameworkVersion();
+        String frameworkVersion = dependencySorter.getFDKVersion();
         if ( compilerVersion == null || frameworkVersion == null )
         {
             // ignore, missing version
@@ -1322,8 +1213,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.enableDebugging( isDebug(), debugPassword );
         configuration.useECMAScript( es );
 
-        FDKConfigResolver sdkConfigResolver =
-            new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
+        FDKConfigResolver sdkConfigResolver = new FDKConfigResolver( dependencySorter, build );
 
         // Fonts
         if ( fonts != null )
@@ -1482,12 +1372,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
     protected void configureViaCommandLine( List<String> commandLineArguments )
     {
-        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
-
-        if ( includeLookupOnly )
-        {
-            commandLineArguments.add( "-include-lookup-only" );
-        }
         if ( configFile == null )
         {
             commandLineArguments.add( "-load-config=" );
@@ -1528,25 +1412,22 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
-    private void configureExterns()
+    @SuppressWarnings( "deprecation" )
+    protected void configureExterns()
         throws MojoExecutionException
     {
-        List<File> externsFiles = new ArrayList<File>();
+        File[] externsFiles;
         if ( loadExterns == null )
         {
-            for ( Artifact artifact : getDependencyArtifacts() )
-            {
-                if ( FlexClassifier.LINK_REPORT.equals( artifact.getClassifier() ) )
-                {
-                    externsFiles.add( artifact.getFile() );
-                }
-            }
+            externsFiles = dependencySorter.getLinkReports();
         }
         else
         // legacy implementation
         {
-            for ( MavenArtifact mvnArtifact : loadExterns )
+            externsFiles = new File[loadExterns.length];
+            for ( int i = 0, loadExternsLength = loadExterns.length; i < loadExternsLength; i++ )
             {
+                MavenArtifact mvnArtifact = loadExterns[i];
                 Artifact artifact =
                     artifactFactory.createArtifactWithClassifier( mvnArtifact.getGroupId(),
                                                                   mvnArtifact.getArtifactId(),
@@ -1554,18 +1435,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                                                                   FlexClassifier.LINK_REPORT );
                 artifact =
                     MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
-                externsFiles.add( artifact.getFile() );
+                externsFiles[i] = artifact.getFile();
             }
         }
 
-        if ( externsFiles.size() > 0 )
+        if ( externsFiles != null )
         {
-            configuration.setExterns( externsFiles.toArray( new File[externsFiles.size()] ) );
-        }
-
-        if ( externs != null && externs.length > 0 )
-        {
-            configuration.setExterns( externs );
+            configuration.setExterns( externsFiles );
         }
     }
 
@@ -1606,13 +1482,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected void resolveDependencies()
         throws MojoExecutionException, MojoFailureException
     {
-        configuration.setExternalLibraryPath( getGlobalDependency() );
-        configuration.addExternalLibraryPath( getDependenciesPath( EXTERNAL ) );
-
-        configuration.includeLibraries( getDependenciesPath( INTERNAL ) );
-
-        configuration.setLibraryPath( getDependenciesPath( Artifact.SCOPE_COMPILE ) );
-        configuration.addLibraryPath( getDependenciesPath( MERGED ) );
+        configuration.setExternalLibraryPath( dependencySorter.getGlobalLibraries() );
+        configuration.addExternalLibraryPath( dependencySorter.getExternalLibraries() );
+        configuration.includeLibraries( dependencySorter.getInternalLibraries() );
+        configuration.setLibraryPath( dependencySorter.getMergedLibraries() );
 
         if ( compiledLocales != null )
         {
@@ -1622,34 +1495,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
         }
-
-        resolveRuntimeLibraries();
-
-        configuration.setTheme( getThemes() );
-    }
-
-    protected File[] getThemes()
-        throws MojoExecutionException, MojoFailureException
-    {
-        List<File> themeFiles = new ArrayList<File>();
-
-        if ( this.themes != null )
-        {
-            for ( String theme : themes )
-            {
-                File themeFile = MavenUtils.resolveResourceFile( project, theme );
-                themeFiles.add( themeFile );
-            }
-        }
-
-        themeFiles.addAll( Arrays.asList( getDependenciesPath( "theme" ) ) );
-
-        if ( themeFiles.isEmpty() )
-        {
-            return null;
-        }
-
-        return themeFiles.toArray( new File[0] );
     }
 
     @SuppressWarnings( "deprecation" )
@@ -1672,7 +1517,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void setTargetPlayer()
         throws MojoExecutionException, MojoFailureException
     {
-        String playerGlobalVersion = getGlobalArtifact().getClassifier();
+        String playerGlobalVersion = dependencySorter.getGlobalArtifact().getClassifier();
         if ( targetPlayer == null && playerGlobalVersion != null )
         {
             targetPlayer = playerGlobalVersion + ".0.0";
@@ -1828,210 +1673,12 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
     }
 
-    protected Artifact getGlobalArtifact()
-        throws MojoExecutionException
-    {
-        Set<Artifact> dependencies = getDependencyArtifacts();
-        for ( Artifact artifact : dependencies )
-        {
-            if ( "playerglobal".equals( artifact.getArtifactId() ) || //
-                "airglobal".equals( artifact.getArtifactId() ) )
-            {
-                return artifact;
-            }
-        }
-
-        throw new MojoExecutionException( "Player/Air Global dependency not found." );
-    }
-
-    protected File[] getGlobalDependency()
-        throws MojoExecutionException
-    {
-        return new File[] { MavenUtils.getArtifactFile( getGlobalArtifact(), build ) };
-    }
-
-    /**
-     * Resolves all runtime libraries, that includes RSL and framework CACHING
-     * 
-     * @throws MojoExecutionException
-     */
-    private void resolveRuntimeLibraries()
-        throws MojoExecutionException
-    {
-        List<Artifact> rsls = getDependencyArtifacts( RSL, CACHING );
-        rslsSort( rsls );
-
-        for ( Artifact artifact : rsls )
-        {
-            addRuntimeLibrary( artifact );
-        }
-    }
-
-    protected void addRuntimeLibrary( Artifact artifact )
-    {
-        String scope = artifact.getScope();
-        File artifactFile = artifact.getFile();
-        String artifactPath = artifactFile.getAbsolutePath();
-        String extension;
-        if ( CACHING.equals( scope ) )
-        {
-            extension = SWZ;
-        }
-        else
-        {
-            extension = SWF;
-        }
-        String[] rslUrls = getRslUrls( artifact, extension );
-        String[] rslPolicyFileUrls = getRslPolicyFileUrls( artifact );
-        configuration.addRuntimeSharedLibraryPath( artifactPath, rslUrls, rslPolicyFileUrls );
-
-        // when -static-link-runtime-shared-libraries=true ignore -runtime-shared-library-path,
-        // not put all RSLs to -library-path (tested on 3.2.0.3958 and 4.0.0.4600)
-        if ( staticLinkRuntimeSharedLibraries )
-        {
-            configuration.addExternalLibraryPath( new File[] { artifactFile } );
-        }
-    }
-
-    public void rslsSort( List<Artifact> rslArtifacts )
-        throws MojoExecutionException
-    {
-        Map<Artifact, List<Artifact>> dependencies = getDependencies( rslArtifacts );
-
-        List<Artifact> ordered = new ArrayList<Artifact>();
-        for ( Artifact a : rslArtifacts )
-        {
-            if ( dependencies.get( a ) == null || dependencies.get( a ).isEmpty() )
-            {
-                ordered.add( a );
-            }
-        }
-        rslArtifacts.removeAll( ordered );
-
-        while ( !rslArtifacts.isEmpty() )
-        {
-            int original = rslArtifacts.size();
-            for ( Artifact a : rslArtifacts )
-            {
-                List<Artifact> deps = dependencies.get( a );
-                if ( ordered.containsAll( deps ) )
-                {
-                    ordered.add( a );
-                }
-            }
-            rslArtifacts.removeAll( ordered );
-            if ( original == rslArtifacts.size() )
-            {
-                throw new MojoExecutionException( "Unable to resolve " + rslArtifacts );
-            }
-        }
-
-        rslArtifacts.addAll( ordered );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private Map<Artifact, List<Artifact>> getDependencies( List<Artifact> rslArtifacts )
-        throws MojoExecutionException
-    {
-        Map<Artifact, List<Artifact>> dependencies = new HashMap<Artifact, List<Artifact>>();
-
-        for ( Artifact pomArtifact : rslArtifacts )
-        {
-            try
-            {
-                MavenProject pomProject =
-                    mavenProjectBuilder.buildFromRepository( pomArtifact, remoteRepositories, localRepository );
-                Set pomArtifacts = pomProject.createArtifacts( artifactFactory, null, null );
-                ArtifactResolutionResult arr =
-                    resolver.resolveTransitively( pomArtifacts, pomArtifact, remoteRepositories, localRepository,
-                                                  artifactMetadataSource );
-                List<Artifact> artifactDependencies = new ArrayList<Artifact>( arr.getArtifacts() );
-                artifactDependencies = removeNonRSLDependencies( rslArtifacts, artifactDependencies );
-                dependencies.put( pomArtifact, artifactDependencies );
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-        }
-        return dependencies;
-    }
-
-    private List<Artifact> removeNonRSLDependencies( List<Artifact> rslArtifacts, List<Artifact> artifactDependencies )
-    {
-        List<Artifact> cleanArtifacts = new ArrayList<Artifact>();
-        artifacts: for ( Artifact artifact : artifactDependencies )
-        {
-            for ( Artifact rslArtifact : rslArtifacts )
-            {
-                if ( artifact.getGroupId().equals( rslArtifact.getGroupId() )
-                    && artifact.getArtifactId().equals( rslArtifact.getArtifactId() )
-                    && artifact.getType().equals( rslArtifact.getType() ) )
-                {
-                    cleanArtifacts.add( rslArtifact );
-                    continue artifacts;
-                }
-            }
-        }
-        return cleanArtifacts;
-    }
-
-    /**
-     * Gets RslPolicyFileUrls for given artifact
-     * 
-     * @param artifact
-     * @return Array of urls
-     */
-    private String[] getRslPolicyFileUrls( Artifact artifact )
-    {
-        String[] domains = new String[policyFileUrls.length];
-        for ( int i = 0; i < policyFileUrls.length; i++ )
-        {
-            String domain = policyFileUrls[i];
-            if ( contextRoot != null )
-            {
-                domain = domain.replace( "{contextRoot}", contextRoot );
-            }
-            domain = domain.replace( "{groupId}", artifact.getGroupId() );
-            domain = domain.replace( "{artifactId}", artifact.getArtifactId() );
-            domain = domain.replace( "{version}", artifact.getVersion() );
-            domains[i] = domain;
-        }
-        return domains;
-    }
-
-    /**
-     * Get RslUrls
-     * 
-     * @param artifact
-     * @param extension
-     * @return Array of url's
-     */
-    private String[] getRslUrls( Artifact artifact, String extension )
-    {
-        String[] rsls = new String[rslUrls.length];
-        for ( int i = 0; i < rslUrls.length; i++ )
-        {
-            String rsl = rslUrls[i];
-            if ( contextRoot == null || "".equals( contextRoot ) )
-            {
-                rsl = rsl.replace( "/{contextRoot}/", "" );
-            }
-            else
-            {
-                rsl = rsl.replace( "{contextRoot}", contextRoot );
-            }
-            rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
-            rsls[i] = rsl;
-        }
-        return rsls;
-    }
-
     protected File getRuntimeLocaleOutputFile( String locale, String extension )
     {
         String path = runtimeLocaleOutputPath.replace( "/{contextRoot}", project.getBuild().getDirectory() );
         File output =
             new File( MavenUtils.getRuntimeLocaleOutputPath( path, project.getArtifact(), locale, extension ) );
+        // noinspection ResultOfMethodCallIgnored
         output.getParentFile().mkdirs();
 
         return output;
@@ -2073,15 +1720,8 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
 
         List<File> resourceBundles = new ArrayList<File>();
-
-        for ( Artifact resourceBundleBeacon : getDependencyArtifacts() )
+        for ( Artifact resourceBundleBeacon : dependencySorter.getResourceBundleArtifacts() )
         {
-            if ( !RB_SWC.equals( resourceBundleBeacon.getType() ) )
-            {
-                continue;
-            }
-
-            // resouceBundles.add(artifact.getFile());
             for ( String requestLocale : requestedLocales )
             {
                 Artifact resolvedResourceBundle =
@@ -2097,34 +1737,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             }
 
         }
-        getLog().debug( "getResourcesBundles(" + requestedLocales + ") returning resourceBundles: " + resourceBundles );
+        getLog().debug(
+                        "getResourcesBundles(" + Arrays.toString( requestedLocales ) + ") returning resourceBundles: "
+                            + resourceBundles );
         return resourceBundles.toArray( new File[resourceBundles.size()] );
-    }
-
-    /**
-     * Get array of files for dependency artifacts for given scope
-     * 
-     * @param scopes for which to get files
-     * @return Array of dependency artifact files
-     * @throws MojoExecutionException
-     */
-    protected File[] getDependenciesPath( String... scopes )
-        throws MojoExecutionException
-    {
-        if ( scopes == null )
-            return null;
-
-        List<File> files = new ArrayList<File>();
-        for ( Artifact a : getDependencyArtifacts( scopes ) )
-        {
-            if ( "playerglobal".equals( a.getArtifactId() ) || //
-                "airglobal".equals( a.getArtifactId() ) )
-            {
-                continue;
-            }
-            files.add( a.getFile() );
-        }
-        return files.toArray( new File[files.size()] );
     }
 
     /**
@@ -2145,6 +1761,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
                 projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, getOutput() );
             }
         }
+
         Report report = builder.getReport();
         if ( linkReport )
         {
@@ -2386,11 +2003,18 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     @SuppressWarnings( "unchecked" )
     protected void fixConfigReport( FlexConfigBuilder configBuilder )
     {
-        configBuilder.addOutput( getOutput() );
+        fixOutputConfigReport8533( configBuilder );
+        fixOutputConfigReport( configBuilder );
 
         if ( compiledLocales == null )
         {
             configBuilder.addEmptyLocale();
+        }
+        if ( linkReport )
+        {
+            // https://bugs.adobe.com/jira/browse/FCM-15
+            configBuilder.addLinkReport( PathUtil.getRelativePath( new File( build.getDirectory() ),
+                                                                   getReportFile( REPORT_LINK ) ) );
         }
 
         for ( Resource resource : (List<Resource>) project.getResources() )
@@ -2403,6 +2027,19 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
+    @FlexCompatibility( maxVersion = "4.0.0.8532" )
+    private void fixOutputConfigReport( FlexConfigBuilder configBuilder )
+    {
+        configBuilder.addOutput( getOutput() );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.8533" )
+    private void fixOutputConfigReport8533( FlexConfigBuilder configBuilder )
+    {
+        configBuilder.addOutput( getOutput(), new File( build.getDirectory() ) );
+    }
+
+    @SuppressWarnings( { "ResultOfMethodCallIgnored" } )
     protected void build( E builder, boolean printConfigurations )
         throws MojoExecutionException
     {
@@ -2494,8 +2131,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         long lastCompiledArtifact = artifactFile.lastModified();
 
-        Set<Artifact> dependencies = getDependencyArtifacts();
-        for ( Artifact dependency : dependencies )
+        for ( Artifact dependency : (Set<Artifact>) project.getArtifacts() )
         {
             if ( FileUtils.isFileNewer( dependency.getFile(), lastCompiledArtifact ) )
             {
@@ -2547,31 +2183,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     {
         Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
         return compiler.getVersion();
-    }
-
-    private String getFrameworkVersion()
-        throws MojoExecutionException
-    {
-        Artifact dep;
-        dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "flex-framework", null, "pom", null );
-        if ( dep == null )
-        {
-            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "air-framework", null, "pom", null );
-        }
-        if ( dep == null )
-        {
-            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "framework", null, "pom", null );
-        }
-        if ( dep == null )
-        {
-            dep = searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "airframework", null, "pom", null );
-        }
-
-        if ( dep == null )
-        {
-            return null;
-        }
-        return dep.getVersion();
     }
 
     protected File getOutput()

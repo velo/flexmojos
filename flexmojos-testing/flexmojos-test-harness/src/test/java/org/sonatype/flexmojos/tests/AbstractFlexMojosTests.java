@@ -24,8 +24,11 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -246,6 +249,29 @@ public class AbstractFlexMojosTests
         TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
 
         return report;
+    }
+
+    protected Xpp3Dom getFlexConfigReport( Verifier verifier, String artifactId )
+    {
+        return getFlexConfigReport( verifier, artifactId, "1.0-SNAPSHOT" );
+    }
+
+    protected Xpp3Dom getFlexConfigReport( Verifier verifier, String artifactId, String version )
+    {
+        File configReport =
+            new File( verifier.getBasedir(), "target/" + artifactId + "-" + version + "-config-report.xml" );
+        Xpp3Dom configReportDOM;
+        try
+        {
+            configReportDOM = Xpp3DomBuilder.build( ReaderFactory.newXmlReader( configReport ) );
+        }
+        catch ( Exception e )
+        {
+            Assert.fail( "Unable to parse \n" + configReport, e );
+            throw new RuntimeException( e );
+        }
+
+        return configReportDOM;
     }
 
 }
