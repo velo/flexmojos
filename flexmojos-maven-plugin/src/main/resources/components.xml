@@ -34,6 +34,18 @@
         <addedToClasspath>false</addedToClasspath>
       </configuration>
     </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>air</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>air</type>
+        <extension>air</extension>
+        <includesDependencies>false</includesDependencies>
+        <language>actionscript</language>
+        <addedToClasspath>false</addedToClasspath>
+      </configuration>
+    </component>
 
     <!-- i18n resource bundles -->
     <component>
@@ -77,6 +89,20 @@
           <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
           <test-compile>org.sonatype.flexmojos:flexmojos-maven-plugin:test-compile</test-compile>
           <test>org.sonatype.flexmojos:flexmojos-maven-plugin:test-run</test>
+          <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+          <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+        </phases>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>air</role-hint>
+      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+      <configuration>
+        <phases>
+          <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+          <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+          <package>org.sonatype.flexmojos:flexmojos-maven-plugin:sign-air</package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
         </phases>

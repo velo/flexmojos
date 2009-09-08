@@ -355,6 +355,12 @@
         <type>zip</type>
         <classifier>template</classifier>
       </dependency>
+      <dependency>
+        <groupId>com.adobe.flex</groupId>
+        <artifactId>adt</artifactId>
+        <version>3.2.0.3958</version>
+        <scope>provided</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.maven</groupId>
