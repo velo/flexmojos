@@ -190,6 +190,17 @@
       <type>pom</type>
     </dependency>
     <dependency>
+      <groupId>com.adobe.flex</groupId>
+      <artifactId>adt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>asdoc</artifactId>
+      <type>zip</type>
+      <classifier>template</classifier>
+    </dependency>
+
+    <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
     </dependency>
@@ -255,12 +266,6 @@
     <dependency>
       <groupId>eu.cedarsoft.utils</groupId>
       <artifactId>zip</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>asdoc</artifactId>
-      <type>zip</type>
-      <classifier>template</classifier>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
