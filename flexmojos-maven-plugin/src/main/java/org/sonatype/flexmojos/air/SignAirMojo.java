@@ -5,23 +5,23 @@ import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
-
-import com.adobe.air.ADT;
-import com.adobe.air.AIRPackager;
 
 /**
  * @goal sign-air
@@ -42,7 +42,7 @@ public class SignAirMojo
     /**
      * @parameter default-value="${basedir}/src/main/resources/sign.p12"
      */
-    private String keystore;
+    private File keystore;
 
     /**
      * @parameter expression="${project}"
@@ -70,18 +70,49 @@ public class SignAirMojo
      */
     private File airOutput;
 
+    /**
+     * Plugin classpath.
+     * 
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    protected List<Artifact> pluginClasspath;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         try
         {
-            Constructor<ADT> c = ADT.class.getDeclaredConstructor( AIRPackager.class );
-            c.setAccessible( true );
-            ADT adt = c.newInstance( new AIRPackager() );
-            Method run = ADT.class.getDeclaredMethod( "run", String[].class );
-            run.setAccessible( true );
+            // look for EMMA dependency in this plugin classpath
+            final Map<String, Artifact> pluginArtifactMap = ArtifactUtils.artifactMapByVersionlessId( pluginClasspath );
+            Artifact adtArtifact = (Artifact) pluginArtifactMap.get( "com.adobe.flex:adt" );
+
+            if ( adtArtifact == null )
+            {
+                throw new MojoExecutionException(
+                                                  "Failed to find 'adt' artifact in plugin dependencies.  Be sure of adding it with compile scope!" );
+            }
+
+            Commandline cmd = new Commandline();
+            cmd.setExecutable( "java" );
+            cmd.setWorkingDirectory( airOutput.getAbsolutePath() );
+            cmd.createArgument().setValue( "-jar" );
+            cmd.createArgument().setValue( adtArtifact.getFile().getAbsolutePath() );
+
             String[] args = getArgs();
-            int result = (Integer) run.invoke( adt, (Object) args );
+            cmd.addArguments( args );
+
+            StreamConsumer consumer = new StreamConsumer()
+            {
+                public void consumeLine( String line )
+                {
+                    getLog().info( "  " + line );
+                }
+            };
+
+            int result = CommandLineUtils.executeCommandLine( cmd, consumer, consumer );
+
             if ( result != 0 )
             {
                 throw new MojoFailureException( "Error generating AIR package " + result );
@@ -112,7 +143,7 @@ public class SignAirMojo
         args.add( "-storetype" );
         args.add( storetype );
         args.add( "-keystore" );
-        args.add( keystore );
+        args.add( keystore.getAbsolutePath() );
         args.add( "-storepass" );
         args.add( storepass );
         File output = new File( project.getBuild().getDirectory(), outputName );
@@ -132,11 +163,11 @@ public class SignAirMojo
                 {
                     throw new MojoExecutionException( "Failed to copy " + artifact, e );
                 }
-                args.add( artifact.getFile().getAbsolutePath() );
+                args.add( new File( airOutput, artifact.getFile().getName() ).getAbsolutePath() );
             }
         }
 
-        System.out.println( args.toString().replace( ',', '\n' ) );
+        project.getArtifact().setFile( output );
 
         return args.toArray( new String[0] );
     }
