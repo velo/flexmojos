@@ -2,6 +2,7 @@ package org.sonatype.flexmojos.air;
 
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +97,9 @@ public class SignAirMojo
 
             Commandline cmd = new Commandline();
             cmd.setExecutable( "java" );
-            cmd.setWorkingDirectory( airOutput.getAbsolutePath() );
+            cmd.setWorkingDirectory( project.getPackaging().equals( AIR )
+                ? airOutput.getAbsolutePath()
+                : project.getBuild().getDirectory() );
             cmd.createArgument().setValue( "-jar" );
             cmd.createArgument().setValue( adtArtifact.getFile().getAbsolutePath() );
 
@@ -110,6 +113,8 @@ public class SignAirMojo
                     getLog().info( "  " + line );
                 }
             };
+
+            getLog().info( cmd.toString() );
 
             int result = CommandLineUtils.executeCommandLine( cmd, consumer, consumer );
 
@@ -150,26 +155,33 @@ public class SignAirMojo
         args.add( output.getAbsolutePath() );
         File xml = getAirDescriptor();
         args.add( xml.getAbsolutePath() );
-        Set<Artifact> deps = project.getDependencyArtifacts();
-        for ( Artifact artifact : deps )
+        if ( project.getPackaging().equals( AIR ) )
         {
-            if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+            Set<Artifact> deps = project.getDependencyArtifacts();
+            for ( Artifact artifact : deps )
             {
-                try
+                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
                 {
-                    FileUtils.copyFileToDirectory( artifact.getFile(), airOutput );
+                    try
+                    {
+                        FileUtils.copyFileToDirectory( artifact.getFile(), airOutput );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Failed to copy " + artifact, e );
+                    }
+                    args.add( new File( airOutput, artifact.getFile().getName() ).getAbsolutePath() );
                 }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Failed to copy " + artifact, e );
-                }
-                args.add( new File( airOutput, artifact.getFile().getName() ).getAbsolutePath() );
             }
+        }
+        else
+        {
+            args.add( project.getArtifact().getFile().getAbsolutePath() );
         }
 
         project.getArtifact().setFile( output );
 
-        return args.toArray( new String[0] );
+        return args.toArray( new String[args.size()] );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -177,14 +189,21 @@ public class SignAirMojo
         throws MojoExecutionException
     {
         File output = null;
-        Set<Artifact> deps = project.getDependencyArtifacts();
-        for ( Artifact artifact : deps )
+        if ( project.getPackaging().equals( AIR ) )
         {
-            if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+            Set<Artifact> deps = project.getDependencyArtifacts();
+            for ( Artifact artifact : deps )
             {
-                output = artifact.getFile();
-                break;
+                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+                {
+                    output = artifact.getFile();
+                    break;
+                }
             }
+        }
+        else
+        {
+            output = project.getArtifact().getFile();
         }
 
         File dest = new File( airOutput, project.getBuild().getFinalName() + "-descriptor.xml" );
