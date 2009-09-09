@@ -19,6 +19,8 @@ package org.sonatype.flexmojos.common;
 
 public interface FlexExtension
 {
+    String AIR = "air";
+    
     String SWF = "swf";
 
     String SWC = "swc";
