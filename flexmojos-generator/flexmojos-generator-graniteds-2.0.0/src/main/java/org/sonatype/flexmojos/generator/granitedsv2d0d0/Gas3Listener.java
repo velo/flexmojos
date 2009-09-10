@@ -76,7 +76,7 @@ final class Gas3Listener
 
     public void skipping( Input<?> input, Output<?> output )
     {
-        info( "  Skipping: " + output.getDescription() );
+        info( "  Skipping: " + output.getDescription() + " - " + output.getMessage() );
 
     }
 
