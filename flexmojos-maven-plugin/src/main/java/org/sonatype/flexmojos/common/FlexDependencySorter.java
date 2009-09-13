@@ -8,16 +8,19 @@
 package org.sonatype.flexmojos.common;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @since 3.4
@@ -56,6 +59,8 @@ public class FlexDependencySorter
     private List<File> globalLibraries = new ArrayList<File>();
 
     private Artifact globalArtifact;
+
+    private SortedMap<Integer, List<Artifact>> globalArtifactsDepthMap = new TreeMap<Integer, List<Artifact>>();
 
     public File getFDKConfigFile()
     {
@@ -123,13 +128,23 @@ public class FlexDependencySorter
             sortArtifact( artifact );
         }
 
-        if ( globalArtifact == null )
+        if ( globalArtifactsDepthMap.isEmpty() )
         {
-            throw new MojoExecutionException( "Player/Air Global dependency not found." );
+            throw new MojoExecutionException( "Player/AIR Global dependency not found." );
         }
         else
         {
+            List<Artifact> artifacts = globalArtifactsDepthMap.get( globalArtifactsDepthMap.firstKey() );
+            if ( artifacts.size() != 1 )
+            {
+                throw new MojoExecutionException( "Multiple Player/AIR Global dependencies.\n" + artifacts );
+            }
+
+            globalArtifact = artifacts.get( 0 );
+            globalLibraries.add( copyGlobalArtifactWorkaround() );
             isAIR = AIR_GLOBAL.equals( globalArtifact.getArtifactId() );
+
+            globalArtifactsDepthMap = null;
         }
     }
 
@@ -221,14 +236,43 @@ public class FlexDependencySorter
             }
         }
 
-        if ( globalArtifact != null )
+        final Integer mapKey = dependencyTrail.size();
+        List<Artifact> artifacts;
+        if ( globalArtifactsDepthMap.containsKey( mapKey ))
         {
-            throw new MojoExecutionException( "Player/Air Global dependency already specified.\n" + "First:  "
-                + globalArtifact + "\nSecond: " + artifact );
+            artifacts = globalArtifactsDepthMap.get( mapKey );
+        }
+        else
+        {
+            artifacts = new ArrayList<Artifact>();
+            globalArtifactsDepthMap.put( mapKey, artifacts );
+        }
+        artifacts.add( artifact );
+    }
+
+    /**
+     * @todo autoclean on version change (user must be able just change version in POM, without additional mvn clean)
+     * stupid adobe compiler determine global artifact by name
+     * (maven artifact contains version info in filename)
+     */
+    private File copyGlobalArtifactWorkaround()
+        throws MojoExecutionException
+    {
+        File dest = new File( project.getBuild().getOutputDirectory(),
+                              globalArtifact.getArtifactId() + "." + FlexExtension.SWC );
+        if ( !dest.exists() )
+        {
+            try
+            {
+                FileUtils.copyFile( globalArtifact.getFile(), dest );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
         }
 
-        globalArtifact = artifact;
-        globalLibraries.add( MavenUtils.getArtifactFile( artifact, project.getBuild() ) );
+        return dest;
     }
 
     private void checkFDKConfigAndVersion( Artifact artifact )
