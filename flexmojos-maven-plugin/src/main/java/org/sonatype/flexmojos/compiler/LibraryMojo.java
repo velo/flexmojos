@@ -319,6 +319,31 @@ public class LibraryMojo
         }
     }
 
+	@Override
+    protected void configure()
+        throws MojoFailureException, MojoExecutionException
+    {
+        super.configure();
+
+        // workaround for Adobe bug, themes applicable only for Application, but compiler is stupid
+        // ( defaults:[-1,-1] unable to open './themes/Spark/spark.css')
+        // If you need reference to theme's classes for some reasons, you must use theme's SWC as external dependency.
+        // Official document http://livedocs.adobe.com/flex/3/build_deploy_flex3.pdf doesn't contains theme option in compc option
+        configuration.setTheme( new File[0] );
+    }
+
+
+    @Override
+    protected void configureViaCommandLine( List<String> commandLineArguments )
+    {
+        super.configureViaCommandLine( commandLineArguments );
+
+        if ( includeLookupOnly )
+        {
+            commandLineArguments.add( "-include-lookup-only" );
+        }
+    }
+
     protected void configureIncludeResourceBundles( OEMConfiguration oemConfig )
     {
         if ( includeResourceBundles != null )

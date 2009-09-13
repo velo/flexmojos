@@ -20,11 +20,11 @@ package org.sonatype.flexmojos.utilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
@@ -34,6 +34,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -113,35 +114,6 @@ public class MavenUtils
         }
 
         throw new MojoFailureException( "File " + fileName + " not found" );
-    }
-
-    /**
-     * Get the file reference of an SWC artifact.<br>
-     * If the artifact file does not exist in the [build-dir]/libraries/[scope] directory, the artifact file is copied
-     * to that location.
-     * 
-     * @param a artifact for which to retrieve the file reference
-     * @param build build for which to get the artifact
-     * @return swc artifact file reference
-     * @throws MojoExecutionException thrown if an IOException occurs while copying the file to the
-     *             [build-dir]/libraries/[scope] directory
-     */
-    public static File getArtifactFile( Artifact a, Build build )
-        throws MojoExecutionException
-    {
-        File dest = new File( build.getOutputDirectory(), "libraries/" + a.getArtifactId() + ".swc" );
-        if ( !dest.exists() )
-        {
-            try
-            {
-                FileUtils.copyFile( a.getFile(), dest );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-        }
-        return dest;
     }
 
     /**
@@ -349,4 +321,4 @@ public class MavenUtils
         return path;
     }
 
-}
+        }

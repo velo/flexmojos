@@ -807,14 +807,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
     protected String[] includeResourceBundles;
 
     /**
-     * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
-     * that manifests can mention classes that come in from filespec rather than classpath, e.g. in playerglobal.swc.
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean includeLookupOnly;
-
-    /**
      * When true, flexmojos will check if the compiler and the framework versions match. Usually, you must use the same
      * compiler and framework versions. Set this to true to avoid this check. EXTREMELLY UN-ADVISIBLE.
      * 
@@ -1449,7 +1441,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
             }
         }
 
-        if ( externsFiles != null )
+        if ( externsFiles != null && externsFiles.length > 0 )
         {
             configuration.setExterns( externsFiles );
         }
