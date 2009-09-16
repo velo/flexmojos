@@ -14,30 +14,24 @@ import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.eclipse.EclipseConfigFile;
-import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.PathUtil;
@@ -54,41 +48,23 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
  * @requiresDependencyResolution compile
  */
 public class FlexbuilderMojo
-    extends EclipsePlugin
+    extends AbstractIdeMojo
 {
 
-    private static final String APPLICATION_NATURE = "com.adobe.flexbuilder.project.flexnature";
+    static final String APPLICATION_NATURE = "com.adobe.flexbuilder.project.flexnature";
 
-    private static final String LIBRARY_NATURE = "com.adobe.flexbuilder.project.flexlibnature";
+    static final String LIBRARY_NATURE = "com.adobe.flexbuilder.project.flexlibnature";
 
-    private static final String ACTIONSCRIPT_NATURE = "com.adobe.flexbuilder.project.actionscriptnature";
+    static final String ACTIONSCRIPT_NATURE = "com.adobe.flexbuilder.project.actionscriptnature";
 
-    private static final String FLEXBUILDER_BUILD_COMMAND = "com.adobe.flexbuilder.project.flexbuilder";
+    static final String FLEXBUILDER_BUILD_COMMAND = "com.adobe.flexbuilder.project.flexbuilder";
 
-    // TODO get from M2EclipseMojo
-    protected static final String M2ECLIPSE_NATURE = "org.maven.ide.eclipse.maven2Nature";
-
-    protected static final String M2ECLIPSE_BUILD_COMMAND = "org.maven.ide.eclipse.maven2Builder";
-
-    private static final String[] SDK_SOURCES =
-        { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
-
-    /**
-     * @parameter default-value="true" expression="${enableM2e}"
-     */
-    private boolean enableM2e;
+    static final String[] SDK_SOURCES = { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
 
     /**
      * @parameter default-value="true" expression="${enableFlexBuilderBuildCommand}"
      */
-    private boolean enableFlexBuilderBuildCommand;
-
-    /**
-     * Implies enableM2e=true
-     * 
-     * @parameter default-value="false" expression="${useM2Home}"
-     */
-    private boolean useM2Home;
+    boolean enableFlexBuilderBuildCommand;
 
     /**
      * @parameter default-value="false" expression="${generateHtmlWrapper}"
@@ -156,32 +132,6 @@ public class FlexbuilderMojo
     protected String[] locales;
 
     /**
-     * When true resources are compiled into Application or Library. When false resources are compiled into separated
-     * Application or Library files. If not defined no resourceBundle generation is done
-     * 
-     * @parameter
-     * @deprecated
-     */
-    private Boolean mergeResourceBundle;
-
-    /**
-     * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
-     * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;compiledLocales&gt;
-     *    &lt;locale&gt;en_US&lt;/locale&gt;
-     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
-     *    &lt;locale&gt;es_ES&lt;/locale&gt;
-     * &lt;/compiledLocales&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    protected String[] compiledLocales;
-
-    /**
      * Default locale for libraries. This is useful to non localized applications, just to define swc.rb locale
      * 
      * @parameter default-value="en_US"
@@ -217,22 +167,6 @@ public class FlexbuilderMojo
     protected String[] includeClasses;
 
     /**
-     * List of path elements that form the roots of ActionScript class hierarchies.<BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;sourcePaths&gt;
-     *    &lt;path&gt;${baseDir}/src/main/flex&lt;/path&gt;
-     * &lt;/sourcePaths&gt;
-     * </pre>
-     * 
-     * By default use Maven source and resources folders.
-     * 
-     * @parameter
-     */
-    protected File[] sourcePaths;
-
-    /**
      * The file to be compiled. The path must be relative to the source folder.
      * 
      * @parameter
@@ -246,17 +180,6 @@ public class FlexbuilderMojo
      * @alias "applications"
      */
     protected List<String> additionalApplications;
-
-    /**
-     * Define the base path to locate resouce bundle files Accept some special tokens:
-     * 
-     * <pre>
-     * {locale}     - replace by locale name
-     * </pre>
-     * 
-     * @parameter default-value="${basedir}/src/main/locales/{locale}"
-     */
-    protected String resourceBundlePath;
 
     /**
      * List of css files that will be compiled into swfs within Eclipse. The path must be relative to the base directory
@@ -294,30 +217,6 @@ public class FlexbuilderMojo
      * @parameter services default-value="true"
      */
     private boolean incremental;
-
-    @Override
-    public boolean setup()
-        throws MojoExecutionException
-    {
-        String packaging = project.getPackaging();
-        if ( !( SWF.equals( packaging ) || SWC.equals( packaging ) ) )
-        {
-            return false;
-        }
-
-        File classpathEntries = new File( project.getBasedir(), ".classpath" );
-        if ( classpathEntries.exists() )
-        {
-            // java nature breaks flex nature.
-            classpathEntries.delete();
-            new File( project.getBasedir(), ".project" ).delete();
-        }
-
-        // Just as precaution, in case someone adds a 'source' not in the natural order for strings
-        Arrays.sort( SDK_SOURCES );
-
-        return super.setup();
-    }
 
     @Override
     public void writeConfiguration( IdeDependency[] deps )
@@ -362,47 +261,6 @@ public class FlexbuilderMojo
             }
         }
 
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    protected void fillDefaultNatures( String packaging )
-    {
-        super.fillDefaultNatures( packaging );
-
-        if ( SWF.equals( packaging ) )
-        {
-            getProjectnatures().add( APPLICATION_NATURE );
-            getProjectnatures().add( ACTIONSCRIPT_NATURE );
-        }
-
-        if ( SWC.equals( packaging ) )
-        {
-            getProjectnatures().add( LIBRARY_NATURE );
-            getProjectnatures().add( ACTIONSCRIPT_NATURE );
-        }
-
-        if ( enableM2e || useM2Home )
-        {
-            getProjectnatures().add( M2ECLIPSE_NATURE );
-        }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    protected void fillDefaultBuilders( String packaging )
-    {
-        super.fillDefaultBuilders( packaging );
-
-        if ( ( SWF.equals( packaging ) || SWC.equals( packaging ) ) && enableFlexBuilderBuildCommand )
-        {
-            getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
-        }
-
-        if ( enableM2e || useM2Home )
-        {
-            getBuildcommands().add( M2ECLIPSE_BUILD_COMMAND );
-        }
     }
 
     private void writeFlexLibProperties()
@@ -678,115 +536,11 @@ public class FlexbuilderMojo
         return plain( sources );
     }
 
-    private Collection<String> getRelativeSources()
-    {
-        Collection<String> sourceRoots = getSourceRoots();
-
-        Collection<String> sources = new HashSet<String>();
-        for ( String sourceRoot : sourceRoots )
-        {
-            File source = new File( sourceRoot );
-            if ( source.isAbsolute() )
-            {
-                String relative = PathUtil.getRelativePath( project.getBasedir(), source );
-                sources.add( relative.replace( '\\', '/' ) );
-            }
-            else
-            {
-                sources.add( sourceRoot );
-            }
-        }
-
-        return sources;
-    }
-
-    private Collection<String> getAbsolutePaths( File[] sourcePaths )
-    {
-        Collection<String> paths = new HashSet<String>();
-        for ( File file : sourcePaths )
-        {
-            paths.add( file.getAbsolutePath() );
-        }
-        return paths;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private Collection<String> getSourceRoots()
-    {
-        if ( sourcePaths != null )
-        {
-            return getAbsolutePaths( sourcePaths );
-        }
-
-        Set<String> sources = new HashSet<String>();
-        List<String> sourceRoots;
-
-        if ( project.getExecutionProject() != null )
-        {
-            sourceRoots = project.getExecutionProject().getCompileSourceRoots();
-        }
-        else
-        {
-            sourceRoots = project.getCompileSourceRoots();
-        }
-        sources.addAll( sourceRoots );
-
-        List<String> testRoots;
-        if ( project.getExecutionProject() != null )
-        {
-            testRoots = project.getExecutionProject().getTestCompileSourceRoots();
-        }
-        else
-        {
-            testRoots = project.getTestCompileSourceRoots();
-        }
-        sources.addAll( testRoots );
-
-        for ( Resource resource : (List<Resource>) project.getBuild().getResources() )
-        {
-            sources.add( resource.getDirectory() );
-        }
-        for ( Resource resource : (List<Resource>) project.getBuild().getTestResources() )
-        {
-            sources.add( resource.getDirectory() );
-        }
-
-        for ( Iterator<String> iterator = sources.iterator(); iterator.hasNext(); )
-        {
-            String path = iterator.next();
-            if ( !new File( path ).exists() )
-            {
-                iterator.remove();
-            }
-        }
-
-        if ( Boolean.TRUE.equals( mergeResourceBundle ) || compiledLocales != null )
-        {
-            sources.add( resourceBundlePath );
-        }
-
-        return sources;
-    }
-
     private String getPlainLocales()
     {
         Collection<String> locales = getLocales();
         String buf = plain( locales );
         return buf;
-    }
-
-    private String plain( Collection<String> locales )
-    {
-        StringBuilder buf = new StringBuilder();
-        for ( String locale : locales )
-        {
-            if ( buf.length() != 0 )
-            {
-                buf.append( ' ' );
-            }
-            buf.append( locale );
-        }
-        return buf.toString();
     }
 
     /**
@@ -856,43 +610,43 @@ public class FlexbuilderMojo
     }
 
     @Override
-    protected void setupExtras()
+    public boolean setup()
         throws MojoExecutionException
     {
+        // Just as precaution, in case someone adds a 'source' not in the natural order for strings
+        Arrays.sort( SDK_SOURCES );
 
-        String packaging = project.getPackaging();
+        return super.setup();
+    }
 
-        if ( !SWF.equals( packaging ) && !SWC.equals( packaging ) )
+    @SuppressWarnings( "unchecked" )
+    @Override
+    protected void fillDefaultNatures( String packaging )
+    {
+        super.fillDefaultNatures( packaging );
+
+        if ( SWF.equals( packaging ) )
         {
-            return;
+            getProjectnatures().add( APPLICATION_NATURE );
+            getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
 
-        EclipseConfigFile utfConfig = new EclipseConfigFile();
-        utfConfig.setName( ".settings/org.eclipse.core.resources.prefs" );
-        utfConfig.setContent( getSettingsContent() );
-
-        try
+        if ( SWC.equals( packaging ) )
         {
-            Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "additionalConfig", getClass() );
-            field.setAccessible( true );
-            EclipseConfigFile[] originalConfig = (EclipseConfigFile[]) field.get( this );
-            EclipseConfigFile[] configs = new EclipseConfigFile[] { utfConfig };
-
-            configs = (EclipseConfigFile[]) ArrayUtils.addAll( configs, originalConfig );
-            field.set( this, configs );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error settings project to UTF-8", e );
+            getProjectnatures().add( LIBRARY_NATURE );
+            getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
     }
 
-    private String getSettingsContent()
+    @SuppressWarnings( "unchecked" )
+    @Override
+    protected void fillDefaultClasspathContainers( String packaging )
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append( '#' ).append( new Date().toString() ).append( '\n' );
-        sb.append( "eclipse.preferences.version=1" ).append( '\n' );
-        sb.append( "encoding/<project>=UTF-8" ).append( '\n' );
-        return sb.toString();
+        super.fillDefaultClasspathContainers( packaging );
+
+        if ( ( SWF.equals( packaging ) || SWC.equals( packaging ) ) && enableFlexBuilderBuildCommand )
+        {
+            getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
+        }
     }
 }
