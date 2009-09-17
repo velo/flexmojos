@@ -35,7 +35,7 @@ package org.sonatype.flexmojos.test.report {
     	 */
     	public function toXml():XML
     	{
-    		var xml:XML =
+    		var genxml:XML =
 		    <testcase 
 		    	name = { name }
 		        time = { time } />;
@@ -48,7 +48,7 @@ package org.sonatype.flexmojos.test.report {
 			        { error.stackTrace }
 			      </error>;
  
-    			xml = xml.appendChild(errorXml);
+    			genxml = genxml.appendChild(errorXml);
     		}
 
     		if(failure != null) {
@@ -59,10 +59,10 @@ package org.sonatype.flexmojos.test.report {
 			        { failure.stackTrace }
 			      </failure>;
  
-    			xml = xml.appendChild(failureXml);
+    			genxml = genxml.appendChild(failureXml);
     		}
 
-    		return xml;
+    		return genxml;
     	}
     }
 }

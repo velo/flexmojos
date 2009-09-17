@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-unittest-parent</artifactId>
+    <version>3.4-SNAPSHOT</version>
+    <relativePath>../flexmojos-unittest-parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>flexmojos-unittest-flexunit</artifactId>
+  <packaging>swc</packaging>
+
+  <name>Flexmojos Unit Test support - flexunit</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-unittest-support</artifactId>
+      <version>${project.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>0.85</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+  </dependencies>
+
+</project>

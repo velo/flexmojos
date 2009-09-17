@@ -20,9 +20,7 @@ package org.sonatype.flexmojos.common;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -54,19 +52,17 @@ public class FlexDependencySorter
 
     private boolean isAIR;
 
-    private List<File> linkReports = new ArrayList<File>();
+    private List<Artifact> linkReports = new ArrayList<Artifact>();
 
-    protected List<File> externalLibraries = new ArrayList<File>();
+    protected List<Artifact> externalArtifacts = new ArrayList<Artifact>();
 
-    protected List<File> internalLibraries = new ArrayList<File>();
+    protected List<Artifact> internalArtifacts = new ArrayList<Artifact>();
 
-    protected List<File> mergedLibraries = new ArrayList<File>();
+    protected List<Artifact> mergedArtifacts = new ArrayList<Artifact>();
 
-    protected List<File> testLibraries = new ArrayList<File>();
+    protected List<Artifact> testArtifacts = new ArrayList<Artifact>();
 
     private List<Artifact> resourceBundleArtifacts = new ArrayList<Artifact>();
-
-    private List<File> globalLibraries = new ArrayList<File>();
 
     private Artifact globalArtifact;
 
@@ -94,7 +90,7 @@ public class FlexDependencySorter
 
     public File[] getGlobalLibraries()
     {
-        return toArray( globalLibraries );
+        return new File[] { globalArtifact.getFile() };
     }
 
     public File[] getLinkReports()
@@ -104,22 +100,22 @@ public class FlexDependencySorter
 
     public File[] getExternalLibraries()
     {
-        return toArray( externalLibraries );
+        return toArray( externalArtifacts );
     }
 
     public File[] getInternalLibraries()
     {
-        return toArray( internalLibraries );
+        return toArray( internalArtifacts );
     }
 
     public File[] getMergedLibraries()
     {
-        return toArray( mergedLibraries );
+        return toArray( mergedArtifacts );
     }
 
     public File[] getTestLibraries()
     {
-        return toArray( testLibraries );
+        return toArray( testArtifacts );
     }
 
     public List<Artifact> getResourceBundleArtifacts()
@@ -151,7 +147,7 @@ public class FlexDependencySorter
             }
 
             globalArtifact = artifacts.get( 0 );
-            globalLibraries.add( copyGlobalArtifactWorkaround() );
+            copyGlobalArtifactWorkaround();
             isAIR = AIR_GLOBAL.equals( globalArtifact.getArtifactId() );
 
             globalArtifactsDepthMap = null;
@@ -166,7 +162,7 @@ public class FlexDependencySorter
     {
         if ( FlexClassifier.LINK_REPORT.equals( artifact.getClassifier() ) )
         {
-            linkReports.add( artifact.getFile() );
+            linkReports.add( artifact );
         }
         else if ( FlexExtension.SWC.equals( artifact.getType() ) )
         {
@@ -205,19 +201,19 @@ public class FlexDependencySorter
         }
         else if ( scope.equals( FlexScopes.EXTERNAL ) )
         {
-            externalLibraries.add( artifact.getFile() );
+            externalArtifacts.add( artifact );
         }
         else if ( scope.equals( FlexScopes.INTERNAL ) )
         {
-            internalLibraries.add( artifact.getFile() );
+            internalArtifacts.add( artifact );
         }
         else if ( scope.equals( FlexScopes.MERGED ) )
         {
-            mergedLibraries.add( artifact.getFile() );
+            mergedArtifacts.add( artifact );
         }
         else if ( scope.equals( Artifact.SCOPE_TEST ) )
         {
-            testLibraries.add( artifact.getFile() );
+            testArtifacts.add( artifact );
         }
         else
         {
@@ -230,9 +226,10 @@ public class FlexDependencySorter
     protected void addToDefaultScope( Artifact artifact )
         throws MojoExecutionException
     {
-        externalLibraries.add( artifact.getFile() );
+        externalArtifacts.add( artifact );
     }
 
+    @SuppressWarnings( "unchecked" )
     private void sortGlobalArtifact( Artifact artifact )
         throws MojoExecutionException
     {
@@ -248,7 +245,7 @@ public class FlexDependencySorter
 
         final Integer mapKey = dependencyTrail.size();
         List<Artifact> artifacts;
-        if ( globalArtifactsDepthMap.containsKey( mapKey ))
+        if ( globalArtifactsDepthMap.containsKey( mapKey ) )
         {
             artifacts = globalArtifactsDepthMap.get( mapKey );
         }
@@ -260,29 +257,23 @@ public class FlexDependencySorter
         artifacts.add( artifact );
     }
 
-    /**
-     * @todo autoclean on version change (user must be able just change version in POM, without additional mvn clean)
-     * stupid adobe compiler determine global artifact by name
-     * (maven artifact contains version info in filename)
-     */
-    private File copyGlobalArtifactWorkaround()
+    private void copyGlobalArtifactWorkaround()
         throws MojoExecutionException
     {
-        File dest = new File( project.getBuild().getOutputDirectory(),
-                              globalArtifact.getArtifactId() + "." + FlexExtension.SWC );
-        if ( !dest.exists() )
+        File dest =
+            new File( project.getBuild().getOutputDirectory(), globalArtifact.getArtifactId() + "." + FlexExtension.SWC );
+
+        // always overwrite
+        try
         {
-            try
-            {
-                FileUtils.copyFile( globalArtifact.getFile(), dest );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
+            FileUtils.copyFile( globalArtifact.getFile(), dest );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        return dest;
+        globalArtifact.setFile( dest );
     }
 
     private void checkFDKConfigAndVersion( Artifact artifact )
@@ -308,22 +299,26 @@ public class FlexDependencySorter
         }
     }
 
-    /**
-     * Vladimir Krivosheev: temp, we remove it after "flexmojos to stop using OEM API and use a lower level API"
-     */
-    private Map<List<File>, File[]> listArrayMap = new HashMap<List<File>, File[]>( 8 );
-
-    protected File[] toArray( List<File> list )
+    protected File[] toArray( List<Artifact> artifacts )
     {
-        if ( listArrayMap.containsKey( list ) )
+        List<File> files = new ArrayList<File>();
+        for ( Artifact artifact : artifacts )
         {
-            return listArrayMap.get( list );
+            files.add( artifact.getFile() );
         }
-        else
-        {
-            File[] array = list.toArray( new File[list.size()] );
-            listArrayMap.put( list, array );
-            return array;
-        }
+
+        return files.toArray( new File[files.size()] );
     }
+
+    public void addArtifact( Artifact artifact )
+        throws MojoExecutionException
+    {
+        sortSWCArtifact( artifact );
+    }
+
+    public List<Artifact> getTestArtifacts()
+    {
+        return testArtifacts;
+    }
+
 }
