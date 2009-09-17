@@ -35,5 +35,15 @@
       </plugin>
     </plugins>
   </build>
-
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>0.85</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
 </project>
