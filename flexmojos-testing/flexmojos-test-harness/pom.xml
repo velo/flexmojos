@@ -244,12 +244,6 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-unittest-support</artifactId>
-      <version>${pom.version}</version>
-      <type>swc</type>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-testing</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
@@ -277,6 +271,54 @@
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
       <version>${pom.version}</version>
       <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-parent</artifactId>
+      <version>${pom.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-support</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-advancedflex</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-asunit</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-flexunit</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-flexunit4</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-fluint</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-funit</artifactId>
+      <version>${pom.version}</version>
+      <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>

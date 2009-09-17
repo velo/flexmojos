@@ -22,19 +22,15 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.net.XMLSocket;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
+	import flash.utils.describeType;
 
 	import mx.binding.utils.BindingUtils;
-
+	import mx.utils.ObjectUtil;
 
 	import org.sonatype.flexmojos.test.monitor.CommConstraints;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
 	import org.sonatype.flexmojos.test.report.TestMethodReport;
-	import org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener;
-	import org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener;
-	import org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener;
-	import org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener;
-	import org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener;
 
 	public class SocketReporter
 	{
@@ -207,52 +203,73 @@ package org.sonatype.flexmojos.unitestingsupport
 
 		public function runTests(tests:Array):void
 		{
-			var count:int=0;
+			var def:*=null;
+
 			//flexunit supported
-			if (getDefinitionByName("flexunit.framework.Test"))
+			if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener")) != null)
 			{
-				count=FlexUnitListener.run(tests);
-				totalTestCount+=count;
-				trace("Running " + count + " FlexUnit tests");
+				trace("Running tests using Flexunit");
+			}
+
+			//flexunit4 supported
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit4.FlexUnit4Listener")) != null)
+			{
+				trace("Running tests using Flexunit4");
 			}
 
 			//funit supported			
-			if (getDefinitionByName("funit.core.FUnitFramework"))
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener")) != null)
 			{
-				count=FUnitListener.run(tests);
-				totalTestCount+=count;
-				trace("Running " + count + " FUnit tests");
+				trace("Running tests using FUnit");
 			}
 
 			//fluint supported
-			if (getDefinitionByName("net.digitalprimates.fluint.tests.TestCase"))
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener")) != null)
 			{
-				count=FluintListener.run(tests);
-				totalTestCount+=count;
-				trace("Running " + count + " Fluint tests");
+				trace("Running tests using Fluint");
 			}
 
 			//asunit supported
-			if (getDefinitionByName("asunit.framework.Test"))
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener")) != null)
 			{
-				count=AsUnitListener.run(tests);
-				totalTestCount+=count;
-				trace("Running " + count + " asunit tests");
+				trace("Running tests using asunit");
 			}
 
 			//advancedflex supported
-			if (getDefinitionByName("advancedflex.debugger.aut.framework.Test"))
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener")) != null)
 			{
-				count=AdvancedFlexListener.run(tests);
-				totalTestCount+=count;
-				trace("Running " + count + " Advanced Flex tests");
+				trace("Running tests using Advanced Flex tests");
 			}
+
+			//not found
+			else
+			{
+				trace("No test runner found, exiting");
+				exit();
+			}
+
+			var runner:UnitTestRunner=new def();
+			runner.socketReporter=this;
+			totalTestCount=runner.run(tests);
+			trace("Running " + totalTestCount + " tests");
 
 			if (totalTestCount == 0)
 			{
 				trace("No tests to run, exiting");
 				exit();
 			}
+		}
+
+		private function tryGetDefinitionByName(classname:String):Class
+		{
+			try
+			{
+				return getDefinitionByName(classname) as Class;
+			}
+			catch (e:ReferenceError)
+			{
+			}
+			return null;
 		}
 
 		private static var instance:SocketReporter;
@@ -264,16 +281,16 @@ package org.sonatype.flexmojos.unitestingsupport
 				instance=new SocketReporter();
 
 				var checkIsDone:Function=function(e:*):void
-				{
-					if (instance.totalTestCount == 0)
 					{
-						return;
-					}
-					if (instance.totalTestCount == instance.numTestsRun)
-					{
-						instance.sendResults();
-					}
-				};
+						if (instance.totalTestCount == 0)
+						{
+							return;
+						}
+						if (instance.totalTestCount == instance.numTestsRun)
+						{
+							instance.sendResults();
+						}
+					};
 
 				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
 				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");

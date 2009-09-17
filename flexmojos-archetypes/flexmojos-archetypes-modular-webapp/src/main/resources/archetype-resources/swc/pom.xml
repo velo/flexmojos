@@ -60,11 +60,10 @@
       <type>pom</type>
     </dependency>
 
-    <!-- flexmojos Unit testing support -->
     <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-unittest-support</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>0.85</version>
       <type>swc</type>
       <scope>test</scope>
     </dependency>

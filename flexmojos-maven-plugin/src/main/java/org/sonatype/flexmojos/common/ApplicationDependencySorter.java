@@ -35,11 +35,11 @@ public class ApplicationDependencySorter
 
     private String defaultScope;
 
-    private List<File> themes = new ArrayList<File>();
+    private List<Artifact> themes = new ArrayList<Artifact>();
 
-    private List<File> rslLibraries = new ArrayList<File>();
+    private List<Artifact> rslLibraries = new ArrayList<Artifact>();
 
-    private List<File> cachingLibraries = new ArrayList<File>();
+    private List<Artifact> cachingLibraries = new ArrayList<Artifact>();
 
     private List<Artifact> rslAndCachingArtifacts = new ArrayList<Artifact>();
 
@@ -58,9 +58,9 @@ public class ApplicationDependencySorter
         return rslAndCachingArtifacts;
     }
 
-    public List<File> getThemes()
+    public File[] getThemes()
     {
-        return themes;
+        return toArray( themes );
     }
 
     public void sort( MavenProject project, String defaultScope, StaticRSLScope rslScope )
@@ -78,7 +78,7 @@ public class ApplicationDependencySorter
             return;
         }
 
-        List<File> desiredList = getDesiredListForStaticRSL( rslScope );
+        List<Artifact> desiredList = getDesiredListForStaticRSL( rslScope );
         desiredList.addAll( rslLibraries );
         desiredList.addAll( cachingLibraries );
 
@@ -87,16 +87,16 @@ public class ApplicationDependencySorter
         rslAndCachingArtifacts.clear();
     }
 
-    private List<File> getDesiredListForStaticRSL( StaticRSLScope rslScope )
+    private List<Artifact> getDesiredListForStaticRSL( StaticRSLScope rslScope )
     {
         switch ( rslScope )
         {
             case MERGED:
-                return mergedLibraries;
+                return mergedArtifacts;
             case INTERNAL:
-                return internalLibraries;
+                return internalArtifacts;
             case EXTERNAL:
-                return externalLibraries;
+                return externalArtifacts;
             default:
                 throw new IllegalArgumentException( "unsupported static RSL scope" );
         }
@@ -111,17 +111,17 @@ public class ApplicationDependencySorter
             final String scope = artifact.getScope();
             if ( FlexScopes.RSL.equals( scope ) )
             {
-                rslLibraries.add( artifact.getFile() );
+                rslLibraries.add( artifact );
                 rslAndCachingArtifacts.add( artifact );
             }
             else if ( FlexScopes.CACHING.equals( scope ) )
             {
-                cachingLibraries.add( artifact.getFile() );
+                cachingLibraries.add( artifact );
                 rslAndCachingArtifacts.add( artifact );
             }
             else if ( FlexScopes.THEME.equals( scope ) )
             {
-                themes.add( artifact.getFile() );
+                themes.add( artifact );
             }
             else
             {
@@ -138,17 +138,7 @@ public class ApplicationDependencySorter
     protected void addToDefaultScope( Artifact artifact )
         throws MojoExecutionException
     {
-        if ( defaultScope.equals( FlexScopes.EXTERNAL ) )
-        {
-            externalLibraries.add( artifact.getFile() );
-        }
-        else if ( defaultScope.equals( FlexScopes.MERGED ) )
-        {
-            mergedLibraries.add( artifact.getFile() );
-        }
-        else
-        {
-            throw new MojoExecutionException( "Unknown default scope" + "\"" + defaultScope + "\"" );
-        }
+        mergedArtifacts.add( artifact );
     }
+
 }

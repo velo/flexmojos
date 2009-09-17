@@ -389,7 +389,7 @@ public class ApplicationMojo
             }
         }
 
-        themeFiles.addAll( dependencySorter.getThemes() );
+        themeFiles.addAll( Arrays.asList( dependencySorter.getThemes() ) );
 
         if ( themeFiles.isEmpty() )
         {
