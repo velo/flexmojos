@@ -62,7 +62,7 @@ package org.sonatype.flexmojos.test.report {
 		 */
 		public function toXml():XML {
 			
-			var xml:XML =
+			var genxml:XML =
 				<testsuite 
 					errors = { errors } 
 					failures = { failures }
@@ -72,11 +72,11 @@ package org.sonatype.flexmojos.test.report {
 
 			for each (var methodReport:TestMethodReport in methods)
 			{
-				xml = xml.appendChild(methodReport.toXml());
+				genxml = genxml.appendChild(methodReport.toXml());
 			}
 			
 				
-			return xml;
+			return genxml;
 		}
 
     }

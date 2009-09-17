@@ -31,6 +31,12 @@
           <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
+          <id>settings-local-repo</id>
+          <url>file://${settings.localRepository}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
           <id>custom-local-repo</id>
           <url>file://${maven.repo.local}</url>
           <releases><enabled>true</enabled></releases>
@@ -59,6 +65,12 @@
         <pluginRepository>
           <id>local-repo</id>
           <url>file://${localRepository.basedir}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>settings-local-repo</id>
+          <url>file://${settings.localRepository}</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>

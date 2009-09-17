@@ -17,14 +17,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.sonatype.flexmojos.common.ApplicationDependencySorter;
 import org.sonatype.flexmojos.common.FlexExtension;
-import org.sonatype.flexmojos.common.TestApplicationDependencySorter;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import flex2.compiler.io.FileUtil;
@@ -135,7 +139,7 @@ public class TestCompilerMojo
     protected void setUpDependencySorter()
         throws MojoExecutionException
     {
-        dependencySorter = new TestApplicationDependencySorter();
+        dependencySorter = new ApplicationDependencySorter();
         dependencySorter.sort( project );
     }
 
@@ -144,7 +148,6 @@ public class TestCompilerMojo
         throws MojoExecutionException, MojoFailureException
     {
         isSetProjectFile = false;
-        linkReport = false;
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
@@ -310,9 +313,81 @@ public class TestCompilerMojo
         configuration.addLibraryPath( getResourcesBundles( runtimeLocales ) );
         configuration.addLibraryPath( getResourcesBundles( compiledLocales ) );
 
-        configuration.includeLibraries( dependencySorter.getInternalLibraries() );
+        dependencySorter.addArtifact( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) );
+
+        Artifact dependency = getFlexmojosUnittestFrameworkIntegrationLibrary();
+        dependencySorter.addArtifact( dependency );
+
+        List<File> includes = new ArrayList<File>();
+        includes.addAll( Arrays.asList( dependencySorter.getInternalLibraries() ) );
+        includes.addAll( Arrays.asList( dependencySorter.getTestLibraries() ) );
+        configuration.includeLibraries( includes.toArray( new File[includes.size()] ) );
 
         configuration.setTheme( getThemes() );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Artifact getFlexmojosUnittestFrameworkIntegrationLibrary()
+        throws MojoExecutionException
+    {
+        Artifact artifact;
+
+        Map<String, Artifact> artifacts =
+            ArtifactUtils.artifactMapByVersionlessId( dependencySorter.getTestArtifacts() );
+
+        Artifact flexunit = (Artifact) artifacts.get( "com.adobe.flexunit:flexunit" );
+        if ( flexunit != null )
+        {
+            if ( flexunit.getVersion().startsWith( "0" ) )
+            {
+                // non-flexunit4
+                artifact = getFlexmojosTestArtifact( "flexmojos-unittest-flexunit" );
+            }
+            else
+            {
+                artifact = getFlexmojosTestArtifact( "flexmojos-unittest-flexunit4" );
+            }
+        }
+        else if ( artifacts.containsKey( "advancedflex:debugger" ) )
+        {
+            artifact = getFlexmojosTestArtifact( "flexmojos-unittest-advancedflex" );
+        }
+        else if ( artifacts.containsKey( "com.asunit:asunit" ) )
+        {
+            artifact = getFlexmojosTestArtifact( "flexmojos-unittest-asunit" );
+        }
+        else if ( artifacts.containsKey( "net.digitalprimates:fluint" ) )
+        {
+            artifact = getFlexmojosTestArtifact( "flexmojos-unittest-fluint" );
+        }
+        else if ( artifacts.containsKey( "org.funit:funit" ) )
+        {
+            artifact = getFlexmojosTestArtifact( "flexmojos-unittest-funit" );
+        }
+        else
+        {
+            throw new MojoExecutionException( "Not found and compatible unit test framework: " + artifacts.keySet() );
+        }
+
+        return artifact;
+    }
+
+    private Artifact getFlexmojosTestArtifact( String artifactId )
+        throws MojoExecutionException
+    {
+        Artifact artifact =
+            artifactFactory.createArtifact( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(),
+                                            "test", "swc" );
+        try
+        {
+            resolver.resolve( artifact, remoteRepositories, localRepository );
+        }
+        catch ( AbstractArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        return artifact;
     }
 
     private String[] getLocales()
