@@ -33,7 +33,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -298,6 +297,15 @@ public class HtmlWrapperMojo
      * An external pom that provides wrapper parameters in place of the current one.
      */
     private MavenProject sourceProject;
+
+    /**
+     * specifies the version of the player the application is targeting. Features requiring a later version will not be
+     * compiled into the application. The minimum value supported is "9.0.0". If not defined will take the default value
+     * from current playerglobal dependency.
+     * 
+     * @parameter
+     */
+    private String targetPlayer;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -724,7 +732,6 @@ public class HtmlWrapperMojo
             parameters.put( "title", project.getName() );
         }
 
-        String targetPlayer = CompileConfigurationLoader.getCompilerPluginSetting( project, "targetPlayer" );
         String[] nodes = targetPlayer != null ? targetPlayer.split( "\\." ) : new String[] { "9", "0", "0" };
         if ( !parameters.containsKey( "version_major" ) )
         {
