@@ -466,7 +466,13 @@ public class FlexbuilderMojo
             File sourceFile =
                 SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), this.sourceFile,
                                                       project.getGroupId(), project.getArtifactId() );
-
+            
+            if( sourceFile == null )
+            {
+            	throw new MojoExecutionException( "Could not find main application! " +
+            			"(Hint: Try to create a MXML file below your source root)" );
+            }
+            
             context.put( "mainApplication", sourceFile.getName() );
             getAllApplications().add( 0, sourceFile.getName() );
             context.put( "applications", getAllApplications() );
