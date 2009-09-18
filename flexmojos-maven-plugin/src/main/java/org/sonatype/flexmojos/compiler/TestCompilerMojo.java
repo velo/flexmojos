@@ -366,7 +366,8 @@ public class TestCompilerMojo
         }
         else
         {
-            throw new MojoExecutionException( "Not found and compatible unit test framework: " + artifacts.keySet() );
+            throw new MojoExecutionException( "Not found any compatible unit test framework: " + artifacts.keySet()
+                + "\n\thttp://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests" );
         }
 
         return artifact;
