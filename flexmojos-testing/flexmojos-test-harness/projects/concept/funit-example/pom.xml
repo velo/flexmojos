@@ -19,50 +19,49 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>%{flexmojos.version}</version>
-	</parent>
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-flex-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
 
-	<groupId>org.sonatype.flexmojos.itests</groupId>
-	<artifactId>funit-example</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <groupId>org.sonatype.flexmojos.itests</groupId>
+  <artifactId>funit-example</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-	<packaging>swc</packaging>
+  <packaging>swc</packaging>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>%{flexmojos.version}</version>
-				<configuration>
-					<includeTestFiles>
-						<include>*Tests.as</include>
-					</includeTestFiles>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <includeTestFiles>
+            <include>*Tests.as</include>
+          </includeTestFiles>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.funit</groupId>
-			<artifactId>funit</artifactId>
-			<version>0.50.0245</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.swirlyvision</groupId>
-			<artifactId>swirly-vision</artifactId>
-			<version>1.0</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.funit</groupId>
+      <artifactId>funit</artifactId>
+      <version>0.50.0245</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.swirlyvision</groupId>
+      <artifactId>swirly-vision</artifactId>
+      <version>1.0</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>
