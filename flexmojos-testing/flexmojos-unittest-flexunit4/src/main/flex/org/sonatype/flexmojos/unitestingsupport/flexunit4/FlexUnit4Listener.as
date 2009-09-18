@@ -22,7 +22,6 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 {
 	import flex.lang.reflect.Klass;
 	
-	import org.flexunit.internals.builders.MetaDataBuilder;
 	import org.flexunit.runner.Descriptor;
 	import org.flexunit.runner.FlexUnitCore;
 	import org.flexunit.runner.IDescription;
@@ -30,11 +29,9 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 	import org.flexunit.runner.notification.Failure;
 	import org.flexunit.runner.notification.IRunListener;
 	import org.flexunit.runners.model.TestClass;
-	
-	import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
-	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
+	import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
 
 	public class FlexUnit4Listener implements IRunListener, UnitTestRunner
 	{
@@ -42,13 +39,18 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 
 		private var _socketReporter:SocketReporter;
 		
+		public function FlexUnit4Listener(socketReporter:SocketReporter=null) 
+		{
+			this._socketReporter = socketReporter;
+		}
+		
 		public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
 
 		public function run(tests:Array):int
 		{
-			var listener:FlexUnit4Listener = new FlexUnit4Listener();
+			var listener:FlexUnit4Listener = new FlexUnit4Listener(_socketReporter);
 			var flexUnitCore:FlexUnitCore = new FlexUnitCore();
 			
  			flexUnitCore.addListener( listener );
@@ -109,7 +111,7 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 		}
 
 		/* This method comes from the FlexUnit4 org.flexunit.runners.Suite class */
-		private static function getSuiteClasses( klassInfo ):Array
+		private static function getSuiteClasses( klassInfo:Klass ):Array
 		{
 			var classRef:Class;
 			var classArray:Array = new Array();
