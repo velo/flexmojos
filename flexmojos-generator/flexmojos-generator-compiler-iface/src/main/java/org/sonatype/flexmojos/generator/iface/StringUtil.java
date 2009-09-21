@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.generator.iface;
 
+
 public class StringUtil
 {
 
@@ -34,6 +35,32 @@ public class StringUtil
         }
 
         return str.substring( cut );
+    }
+
+    public static String toCamelCase( String str )
+    {
+        StringBuilder sb = new StringBuilder();
+        char[] chars = str.toCharArray();
+        boolean nextUp = false;
+        for ( int i = 0; i < chars.length; i++ )
+        {
+            char c = chars[i];
+            if ( '-' == c )
+            {
+                nextUp = true;
+                continue;
+            }
+
+            if ( nextUp )
+            {
+                c = Character.toUpperCase( c );
+                nextUp = false;
+            }
+
+            sb.append( c );
+        }
+
+        return sb.toString();
     }
 
 }
