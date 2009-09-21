@@ -41,7 +41,7 @@
     <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
-      <version>4.0.0.8811</version>
+      <version>${flex.sdk.version}</version> 
       <type>pom</type>
       <scope>test</scope>
     </dependency>
