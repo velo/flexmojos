@@ -263,10 +263,11 @@ public class FlexDependencySorter
         File dest =
             new File( project.getBuild().getOutputDirectory(), globalArtifact.getArtifactId() + "." + FlexExtension.SWC );
 
-        // always overwrite
+        // must overwrite if the dependency changed
         try
         {
             FileUtils.copyFile( globalArtifact.getFile(), dest );
+            dest.setLastModified( globalArtifact.getFile().lastModified() );
         }
         catch ( IOException e )
         {
