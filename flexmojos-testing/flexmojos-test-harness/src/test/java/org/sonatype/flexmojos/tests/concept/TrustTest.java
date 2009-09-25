@@ -5,7 +5,7 @@
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.sonatype.flexmojos.tests.issues;
+package org.sonatype.flexmojos.tests.concept;
 
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -16,12 +16,12 @@ import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.testng.annotations.Test;
 
-public class Issue0069Test
-    extends AbstractIssueTest
+public class TrustTest
+    extends AbstractConceptTest
 {
 
     @Test
-    public void issue69()
+    public void testTrust()
         throws Exception
     {
         File fpTrustFolder = container.lookup( FlashPlayerTruster.class ).getTrustDir();
@@ -37,16 +37,12 @@ public class Issue0069Test
             mavenCfg.delete();
         }
 
-        testIssue( "issue-0069" );
-
-        File testDir = getProject( "/issues/issue-0069" );
-        File swf = new File( testDir, "target/test-classes/TestRunner.swf" );
-
-        assertTrue( "flexmojos should generate maven.cfg: " + mavenCfg.getAbsolutePath(), mavenCfg.exists() );
+        standardConceptTester( "flashplayertrust" );
 
         String cfg = IOUtil.toString( new FileReader( mavenCfg ) );
 
-        assertTrue( "flexmojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
+        assertTrue( "flexmojos should write trust localtion", cfg.contains( "file1.swf" ) );
+        assertTrue( "flexmojos should write trust localtion", cfg.contains( "something_else.zip" ) );
     }
 
 }

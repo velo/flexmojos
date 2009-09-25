@@ -108,7 +108,7 @@
             <configuration>
               <outputDirectory>${project.build.directory}</outputDirectory>
               <descriptors>
-                <!-- <descriptor>${project.build.directory}/components.xml</descriptor> -->
+                <descriptor>${project.build.directory}/components.xml</descriptor>
                 <descriptor>${basedir}/src/main/resources/components.xml</descriptor>
               </descriptors>
             </configuration>
@@ -172,6 +172,7 @@
       <artifactId>flexmojos-generator-constraints</artifactId>
       <version>${pom.version}</version>
     </dependency>
+
     <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
