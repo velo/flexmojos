@@ -116,4 +116,21 @@ public class PathUtil
         System.out.println( "file = " + args[1] );
         System.out.println( "path = " + getRelativePath( new File( args[0] ), new File( args[1] ) ) );
     }
+
+    public static String getCanonicalPath( File trustedFile )
+    {
+        if ( trustedFile == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return trustedFile.getCanonicalPath();
+        }
+        catch ( IOException e )
+        {
+            return trustedFile.getAbsolutePath();
+        }
+    }
 }
