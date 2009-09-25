@@ -15,21 +15,90 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.utilities;
+package org.sonatype.flexmojos.truster;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.sonatype.flexmojos.utilities.PathUtil;
 
-public class FlashPlayerUtils
+@Component( role = FlashPlayerTruster.class )
+public class DefaultFlashPlayerTruster
+    extends AbstractLogEnabled
+    implements FlashPlayerTruster
 {
+
+    public void updateSecuritySandbox( File trustedFile )
+        throws TrustException
+    {
+
+        String trustedPath = PathUtil.getCanonicalPath( trustedFile );
+
+        File mavenCfg = new File( getTrustDir(), "maven.cfg" );
+        if ( !mavenCfg.exists() )
+        {
+            try
+            {
+                // noinspection ResultOfMethodCallIgnored
+                mavenCfg.createNewFile();
+            }
+            catch ( IOException e )
+            {
+                throw new TrustException( "Unable to create FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
+            }
+        }
+
+        getLogger().debug( "maven.cfg location: " + mavenCfg );
+
+        try
+        {
+            // Load maven.cfg
+            FileReader input = new FileReader( mavenCfg );
+            String cfg = IOUtils.toString( input );
+            input.close();
+
+            if ( cfg.contains( trustedPath ) )
+            {
+                getLogger().debug( "Already trust on " + trustedPath );
+                return;
+            }
+            else
+            {
+                getLogger().info( "Updating Flash Player Trust directory " + trustedPath );
+            }
+
+            if ( !cfg.endsWith( "\n" ) )
+            {
+                cfg = cfg + '\n';
+            }
+
+            // add builder folder
+            cfg = cfg + trustedPath + '\n';
+
+            // Save maven.cfg
+            FileWriter output = new FileWriter( mavenCfg );
+            IOUtils.write( cfg, output );
+            output.flush();
+            output.close();
+
+        }
+        catch ( IOException e )
+        {
+            throw new TrustException( "Unable to edit FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
+        }
+    }
 
     /**
      * Retrieves flash player trust folder, based on:
      * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html #140756
      */
-    public static File getTrustDir()
-        throws MojoExecutionException
+    public File getTrustDir()
     {
         String trustPath;
         String home = System.getProperty( "user.home" );
@@ -72,7 +141,7 @@ public class FlashPlayerUtils
         else
         // if isUnsupported OS
         {
-            throw new MojoExecutionException( "Unable to resolve current OS: " + MavenUtils.osString() );
+            throw new IllegalArgumentException( "Unable to resolve current OS: " + MavenUtils.osString() );
         }
 
         File trustDir = new File( trustPath );
@@ -84,5 +153,4 @@ public class FlashPlayerUtils
         return trustDir;
 
     }
-
 }

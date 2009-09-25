@@ -34,6 +34,9 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -54,13 +57,15 @@ public class AbstractFlexMojosTests
 
     private static File mavenHome;
 
+    protected static PlexusContainer container;
+
     private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
 
     private static final ReadWriteLock downloadArtifactsLock = new ReentrantReadWriteLock();
 
     @BeforeSuite( alwaysRun = true )
     public static void initFolders()
-        throws IOException
+        throws IOException, PlexusContainerException
     {
         if ( props != null )
         {
@@ -89,6 +94,8 @@ public class AbstractFlexMojosTests
         updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M -Duser.language=en -Duser.region=US\"\n" );
         File mvnBat = new File( mavenHome, "bin/mvn.bat" );
         updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
+
+        container = new DefaultPlexusContainer();
     }
 
     private static void updateMavenMemory( File mvn, String memString )

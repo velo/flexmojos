@@ -41,7 +41,6 @@ import org.sonatype.flexmojos.common.ApplicationDependencySorter;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
-import flex2.compiler.io.FileUtil;
 import flex2.tools.oem.Application;
 import flex2.tools.oem.Report;
 
@@ -488,8 +487,7 @@ public class TestCompilerMojo
 
         build( testBuilder, false );
 
-        String trustedFile = FileUtil.getCanonicalPath( testSwf );
-        updateSecuritySandbox( trustedFile );
+        updateSecuritySandbox( testSwf );
     }
 
     @Override

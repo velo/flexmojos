@@ -38,9 +38,6 @@ import static org.sonatype.flexmojos.common.FlexExtension.SWZ;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -60,11 +56,11 @@ import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.common.ApplicationDependencySorter;
 import org.sonatype.flexmojos.common.ApplicationDependencySorter.StaticRSLScope;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
-import org.sonatype.flexmojos.utilities.FlashPlayerUtils;
+import org.sonatype.flexmojos.truster.FlashPlayerTruster;
+import org.sonatype.flexmojos.truster.TrustException;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
-import flex2.compiler.io.FileUtil;
 import flex2.tools.oem.Application;
 import flex2.tools.oem.Configuration;
 import flex2.tools.oem.internal.OEMConfiguration;
@@ -260,6 +256,11 @@ public class ApplicationMojo
      */
     private String[] policyFileUrls;
 
+    /**
+     * @component
+     */
+    private FlashPlayerTruster truster;
+
     @Override
     protected void fixConfigReport( FlexConfigBuilder configBuilder )
     {
@@ -413,11 +414,7 @@ public class ApplicationMojo
     {
         super.tearDown();
 
-        if ( updateSecuritySandbox )
-        {
-            String trustedFile = FileUtil.getCanonicalPath( getOutput() );
-            updateSecuritySandbox( trustedFile );
-        }
+        updateSecuritySandbox( getOutput() );
 
         if ( modules != null )
         {
@@ -459,11 +456,7 @@ public class ApplicationMojo
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
             File outputModule =
                 new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "." + project.getPackaging() );
-            if ( updateSecuritySandbox )
-            {
-                String trustedFile = FileUtil.getCanonicalPath( outputModule );
-                updateSecuritySandbox( trustedFile );
-            }
+            updateSecuritySandbox( outputModule );
 
             moduleBuilder.setOutput( outputModule );
 
@@ -598,67 +591,6 @@ public class ApplicationMojo
         }
 
         projectHelper.attachArtifact( project, SWF, locale, output );
-    }
-
-    protected void updateSecuritySandbox( String trustedFile )
-        throws MojoExecutionException
-    {
-
-        File fpTrustFolder = FlashPlayerUtils.getTrustDir();
-
-        File mavenCfg = new File( fpTrustFolder, "maven.cfg" );
-        if ( !mavenCfg.exists() )
-        {
-            try
-            {
-                // noinspection ResultOfMethodCallIgnored
-                mavenCfg.createNewFile();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to create FlashPayerTrust file: "
-                    + mavenCfg.getAbsolutePath(), e );
-            }
-        }
-
-        getLog().debug( "maven.cfg location: " + mavenCfg );
-
-        try
-        {
-            // Load maven.cfg
-            FileReader input = new FileReader( mavenCfg );
-            String cfg = IOUtils.toString( input );
-            input.close();
-
-            if ( cfg.contains( trustedFile ) )
-            {
-                getLog().debug( "Already trust on " + trustedFile );
-                return;
-            }
-            else
-            {
-                getLog().info( "Updating Flash Player Trust directory " + trustedFile );
-            }
-
-            if ( !cfg.endsWith( "\n" ) )
-            {
-                cfg = cfg + '\n';
-            }
-
-            // add builder folder
-            cfg = cfg + trustedFile + '\n';
-
-            // Save maven.cfg
-            FileWriter output = new FileWriter( mavenCfg );
-            IOUtils.write( cfg, output );
-            output.flush();
-            output.close();
-
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to edit FlashPayerTrust file: " + mavenCfg.getAbsolutePath(), e );
-        }
     }
 
     @Override
@@ -885,5 +817,21 @@ public class ApplicationMojo
             }
         }
         return cleanArtifacts;
+    }
+
+    protected void updateSecuritySandbox( File output )
+        throws MojoExecutionException
+    {
+        if ( updateSecuritySandbox )
+        {
+            try
+            {
+                truster.updateSecuritySandbox( getOutput() );
+            }
+            catch ( TrustException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+        }
     }
 }
