@@ -27,8 +27,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.compiler.FlexConfigBuilder;
 import org.sonatype.flexmojos.compiler.LibraryMojo;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import org.sonatype.flexmojos.utilities.PathUtil;
 
 import flex2.tools.oem.Library;
 import flex2.tools.oem.Report;
