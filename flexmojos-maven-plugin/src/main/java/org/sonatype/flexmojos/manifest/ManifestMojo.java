@@ -17,7 +17,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
-import org.sonatype.flexmojos.utilities.PathUtil;
+import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**
  * @phase generate-resources

@@ -19,7 +19,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseConfigFile;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
 import org.codehaus.plexus.util.ReflectionUtils;
-import org.sonatype.flexmojos.utilities.PathUtil;
+import org.sonatype.flexmojos.test.util.PathUtil;
 
 public class AbstractIdeMojo
     extends EclipsePlugin

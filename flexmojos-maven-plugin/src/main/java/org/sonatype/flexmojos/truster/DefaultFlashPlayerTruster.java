@@ -8,8 +8,8 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import org.sonatype.flexmojos.utilities.PathUtil;
 
 @Component( role = FlashPlayerTruster.class )
 public class DefaultFlashPlayerTruster
