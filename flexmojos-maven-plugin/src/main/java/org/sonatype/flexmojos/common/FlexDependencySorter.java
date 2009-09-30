@@ -256,8 +256,12 @@ public class FlexDependencySorter
         // must overwrite if the dependency changed
         try
         {
-            FileUtils.copyFile( globalArtifact.getFile(), dest );
-            dest.setLastModified( globalArtifact.getFile().lastModified() );
+            File globalDepFile = globalArtifact.getFile();
+            if ( !FileUtils.contentEquals( globalDepFile, dest ) )
+            {
+                FileUtils.copyFile( globalDepFile, dest );
+                dest.setLastModified( globalDepFile.lastModified() );
+            }
         }
         catch ( IOException e )
         {
@@ -285,6 +289,7 @@ public class FlexDependencySorter
                 if ( artifactId.equals( fdkId ) )
                 {
                     fdkVersion = artifact.getVersion();
+                    break;
                 }
             }
         }
