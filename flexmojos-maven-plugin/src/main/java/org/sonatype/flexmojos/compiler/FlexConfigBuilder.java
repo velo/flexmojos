@@ -35,7 +35,7 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.sonatype.flexmojos.utilities.PathUtil;
+import org.sonatype.flexmojos.test.util.PathUtil;
 
 import flex2.compiler.config.ConfigurationBuffer;
 import flex2.tools.oem.Application;

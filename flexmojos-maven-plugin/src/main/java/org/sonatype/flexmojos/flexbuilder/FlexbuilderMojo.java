@@ -43,8 +43,8 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import org.sonatype.flexmojos.utilities.PathUtil;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
 /**
