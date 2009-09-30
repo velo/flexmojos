@@ -53,10 +53,10 @@ import org.sonatype.flexmojos.common.FlexDependencySorter;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
-import org.sonatype.flexmojos.utilities.PathUtil;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;

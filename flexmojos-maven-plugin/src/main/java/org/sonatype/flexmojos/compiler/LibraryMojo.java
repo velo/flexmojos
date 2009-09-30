@@ -23,8 +23,8 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.common.FlexDependencySorter;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import org.sonatype.flexmojos.utilities.PathUtil;
 
 import flex2.tools.oem.Configuration;
 import flex2.tools.oem.Library;
