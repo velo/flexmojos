@@ -20,6 +20,7 @@ import org.sonatype.flexmojos.test.AbstractControlledThread;
 import org.sonatype.flexmojos.test.ControlledThread;
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.sonatype.flexmojos.test.util.OSUtils;
+import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**
  * ActionScript runtime launcher. This class is used to launch the application that runs unit tests.
@@ -97,7 +98,7 @@ public class AsVmLauncher
         getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
         try
         {
-            process = Runtime.getRuntime().exec( new String[] { flashPlayer, targetSwf.getAbsolutePath() } );
+            process = Runtime.getRuntime().exec( new String[] { flashPlayer, PathUtil.getCanonicalPath( targetSwf ) } );
         }
         catch ( IOException e )
         {
@@ -141,7 +142,7 @@ public class AsVmLauncher
             process =
                 Runtime.getRuntime().exec(
                                            new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), flashPlayer,
-                                               targetSwf.getAbsolutePath() } );
+                                               PathUtil.getCanonicalPath( targetSwf ) } );
         }
         catch ( IOException e )
         {
