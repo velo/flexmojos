@@ -23,7 +23,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>\${groupId}</groupId>
-  <artifactId>\${artifactId}-war</artifactId>
+  <artifactId>war</artifactId>
   <version>\${version}</version>
 
 <packaging>war</packaging>
@@ -50,12 +50,12 @@
   </build>
 
 <dependencies>
-<dependency>
-  <groupId>\${groupId}</groupId>
-  <artifactId>\${artifactId}-swf</artifactId>
-  <version>\${version}</version>
-  <type>swf</type>
-</dependency>
+  <dependency>
+    <groupId>\${groupId}</groupId>
+    <artifactId>swf</artifactId>
+    <version>\${version}</version>
+    <type>swf</type>
+  </dependency>
 </dependencies>
 
 </project>
