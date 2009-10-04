@@ -1330,6 +1330,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
         {
             configuration.setIncludes( includes );
         }
+        if ( externs != null && externs.length > 0 )
+        {
+            configuration.setExterns( externs );
+        }
 
         configuration.useHeadlessServer( headlessServer );
 
@@ -2031,7 +2035,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
         configBuilder.addOutput( getOutput(), new File( build.getDirectory() ) );
     }
 
-    @SuppressWarnings( { "ResultOfMethodCallIgnored" } )
     protected void build( E builder, boolean printConfigurations )
         throws MojoExecutionException
     {
@@ -2134,24 +2137,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
         }
 
         List<File> paths = new ArrayList<File>( Arrays.asList( sourcePaths ) );
-        if ( compiledLocales != null )
-        {
-            // resourceBundlePath is unresolved
-            paths.remove( new File( resourceBundlePath ) );
-            // resolving it
-            for ( String locale : compiledLocales )
-            {
-                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
-            }
-        }
-        if ( runtimeLocales != null )
-        {
-            // resolving locale
-            for ( String locale : runtimeLocales )
-            {
-                paths.add( MavenUtils.getLocaleResourcePath( resourceBundlePath, locale ) );
-            }
-        }
+        paths.remove( new File( resourceBundlePath ) );
+
+        addLocalesPath( paths, compiledLocales );
+        addLocalesPath( paths, runtimeLocales );
 
         for ( File sourcePath : paths )
         {
@@ -2169,6 +2158,23 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder, D extends Flex
 
         // nothing new was found.
         return false;
+    }
+
+    private void addLocalesPath( List<File> paths, String[] locales )
+    {
+        if ( locales != null )
+        {
+            // resourceBundlePath is unresolved
+            // resolving it
+            for ( String locale : locales )
+            {
+                File localeResourcePath = MavenUtils.getLocaleResourcePath( resourceBundlePath, locale );
+                if ( localeResourcePath != null )
+                {
+                    paths.add( localeResourcePath );
+                }
+            }
+        }
     }
 
     public String getCompilerVersion()
