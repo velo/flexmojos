@@ -34,6 +34,7 @@
 
   <modules>
     <!-- <module>flexmojos-installer</module> -->
+  	<module>flexmojos-flex-compiler</module>
   </modules>
 
 </project>
