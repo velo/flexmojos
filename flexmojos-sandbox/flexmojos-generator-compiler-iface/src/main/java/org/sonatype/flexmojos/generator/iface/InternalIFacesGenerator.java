@@ -3,11 +3,7 @@ package org.sonatype.flexmojos.generator.iface;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.ws.jaxme.js.JavaMethod;
 import org.apache.ws.jaxme.js.JavaQName;
@@ -19,12 +15,6 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.generator.api.GenerationException;
 import org.sonatype.flexmojos.generator.api.GenerationRequest;
 import org.sonatype.flexmojos.generator.api.Generator;
-import org.sonatype.flexmojos.generator.iface.model.Definition;
-import org.sonatype.flexmojos.generator.iface.model.Excludes;
-import org.sonatype.flexmojos.generator.iface.model.ForceArrays;
-import org.sonatype.flexmojos.generator.iface.model.MethodSignature;
-
-import com.thoughtworks.xstream.XStream;
 
 import flex2.compiler.config.ConfigurationInfo;
 import flex2.compiler.config.ConfigurationValue;
@@ -45,23 +35,13 @@ public final class InternalIFacesGenerator
 
     private static final String INFO_SUFFIX = "Info";
 
-    private final XStream xstream;
-
     public InternalIFacesGenerator()
     {
-        this.xstream = new XStream();
-        xstream.processAnnotations( Excludes.class );
-        xstream.processAnnotations( ForceArrays.class );
-        xstream.processAnnotations( Definition.class );
-        xstream.processAnnotations( Method.class );
     }
 
     public void generate( GenerationRequest request )
         throws GenerationException
     {
-
-        Map<Class<?>, Set<MethodSignature>> ignores = getIgnores( request );
-        Map<Class<?>, Set<MethodSignature>> forceArrays = getForceArrays( request );
 
         for ( String classname : request.getClasses().keySet() )
         {
@@ -186,9 +166,9 @@ public final class InternalIFacesGenerator
         return className;
     }
 
-    private Class getArgType( ConfigurationInfo info, int i )
+    private Class<?> getArgType( ConfigurationInfo info, int i )
     {
-        Class argType;
+        Class<?> argType;
         try
         {
             argType = info.getArgType( i );
@@ -205,7 +185,7 @@ public final class InternalIFacesGenerator
         ConfigurationInfo info = null;
 
         String infoMethodName = GET_PREFIX + setterMethod.getName().substring( SET_PREFIX.length() ) + INFO_SUFFIX;
-        Class cfgClass = setterMethod.getDeclaringClass();
+        Class<?> cfgClass = setterMethod.getDeclaringClass();
 
         try
         {
@@ -232,95 +212,6 @@ public final class InternalIFacesGenerator
         // info.setGetterMethod( getterMethod );
 
         return info;
-    }
-
-    private boolean hasAddMethod( Class<?> clazz, String name, Class<?>[] args )
-    {
-        try
-        {
-            clazz.getMethod( "add" + name, args );
-            return true;
-        }
-        catch ( NoSuchMethodException e )
-        {
-            try
-            {
-                clazz.getMethod( "add" + name, simplify( args ) );
-                return true;
-            }
-            catch ( NoSuchMethodException e2 )
-            {
-                // ignore
-            }
-        }
-
-        return false;
-    }
-
-    private String getMethodName( List<String> methodNames, String name, Class<?>[] args )
-    {
-        String prefix;
-
-        if ( args.length == 1 && ( args[0].equals( Boolean.class ) || args[0].equals( boolean.class ) ) )
-        {
-            prefix = "is";
-        }
-        else
-        {
-            prefix = "get";
-        }
-
-        String methodName = prefix + name;
-
-        if ( methodNames.contains( methodName ) )
-        {
-            int i = 1;
-            while ( methodNames.contains( methodName ) )
-            {
-                methodName = prefix + i + name;
-            }
-        }
-        else
-        {
-            methodNames.add( methodName );
-        }
-        return methodName;
-    }
-
-    private Map<Class<?>, Set<MethodSignature>> getIgnores( GenerationRequest request )
-    {
-        if ( !request.getExtraOptions().containsKey( Excludes.NAME ) )
-        {
-            return Collections.emptyMap();
-        }
-
-        Excludes ignoresL = (Excludes) this.xstream.fromXML( request.getExtraOptions().get( Excludes.NAME ) );
-        List<Definition> ignores = ignoresL.getExcludes();
-
-        Map<Class<?>, Set<MethodSignature>> map = new LinkedHashMap<Class<?>, Set<MethodSignature>>();
-        for ( Definition ignore : ignores )
-        {
-            map.put( ignore.getClassname(), ignore.getMethods() );
-        }
-        return map;
-    }
-
-    private Map<Class<?>, Set<MethodSignature>> getForceArrays( GenerationRequest request )
-    {
-        if ( !request.getExtraOptions().containsKey( ForceArrays.NAME ) )
-        {
-            return Collections.emptyMap();
-        }
-
-        ForceArrays arrays = (ForceArrays) this.xstream.fromXML( request.getExtraOptions().get( ForceArrays.NAME ) );
-        List<Definition> ignores = arrays.getSignatures();
-
-        Map<Class<?>, Set<MethodSignature>> map = new LinkedHashMap<Class<?>, Set<MethodSignature>>();
-        for ( Definition ignore : ignores )
-        {
-            map.put( ignore.getClassname(), ignore.getMethods() );
-        }
-        return map;
     }
 
     private Class<?>[] simplify( Class<?>[] args )
