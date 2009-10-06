@@ -1,0 +1,1 @@
+The configurations under this folders are for integration tests only.  Shouldn't be used on production.
