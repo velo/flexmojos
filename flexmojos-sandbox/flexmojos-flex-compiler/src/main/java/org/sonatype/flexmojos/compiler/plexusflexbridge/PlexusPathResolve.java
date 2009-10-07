@@ -15,29 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.iface;
+package org.sonatype.flexmojos.compiler.plexusflexbridge;
 
-import java.util.Arrays;
+import flex2.compiler.common.SinglePathResolver;
+import flex2.compiler.io.VirtualFile;
 
-import junit.framework.TestCase;
-
-public class StringUtilTest
-    extends TestCase
+public class PlexusPathResolve
+    implements SinglePathResolver
 {
 
-    public void testPrefixRemoval()
+    public VirtualFile resolve( String path )
     {
-        String a = "abcCba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
-        a = "abc3Cba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
-    }
-
-    public void testSplit()
-    {
-        String a = "abcCba";
-        assertEquals( Arrays.toString( new String[] { "abc", "cba" } ),
-                      Arrays.toString( StringUtil.splitCamelCase( a ) ) );
+        return null;
     }
 
 }

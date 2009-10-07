@@ -15,29 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.iface;
+package org.sonatype.flexmojos.compiler.command;
 
-import java.util.Arrays;
-
-import junit.framework.TestCase;
-
-public class StringUtilTest
-    extends TestCase
+public interface Command
 {
-
-    public void testPrefixRemoval()
-    {
-        String a = "abcCba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
-        a = "abc3Cba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
-    }
-
-    public void testSplit()
-    {
-        String a = "abcCba";
-        assertEquals( Arrays.toString( new String[] { "abc", "cba" } ),
-                      Arrays.toString( StringUtil.splitCamelCase( a ) ) );
-    }
-
+    void command();
 }

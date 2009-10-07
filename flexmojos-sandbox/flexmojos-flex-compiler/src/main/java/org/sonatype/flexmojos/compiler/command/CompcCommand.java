@@ -15,29 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.iface;
+/**
+ * 
+ */
+package org.sonatype.flexmojos.compiler.command;
 
-import java.util.Arrays;
+import java.util.List;
 
-import junit.framework.TestCase;
+import flex2.tools.Compc;
 
-public class StringUtilTest
-    extends TestCase
+public class CompcCommand
+    implements Command
 {
 
-    public void testPrefixRemoval()
+    private String[] args;
+
+    public CompcCommand( List<String> args )
     {
-        String a = "abcCba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
-        a = "abc3Cba";
-        assertEquals( "Cba", StringUtil.removePrefix( a ) );
+        this.args = args.toArray( new String[args.size()] );
     }
 
-    public void testSplit()
+    public void command()
     {
-        String a = "abcCba";
-        assertEquals( Arrays.toString( new String[] { "abc", "cba" } ),
-                      Arrays.toString( StringUtil.splitCamelCase( a ) ) );
+        Compc.compc( args );
     }
-
 }
