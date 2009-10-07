@@ -1,6 +1,10 @@
 package org.sonatype.flexmojos.compiler;
 
-public class FlexCompiler
+public interface FlexCompiler
 {
+
+    void compileSwf( ICommandLineConfiguration configuration );
+
+    void compileSwc( ICompcConfiguration configuration );
 
 }

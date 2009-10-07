@@ -1,5 +1,7 @@
 package org.sonatype.flexmojos.generator.iface;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class StringUtil
 {
@@ -44,6 +46,36 @@ public class StringUtil
         }
 
         return sb.toString();
+    }
+
+    public static String[] splitCamelCase( String string )
+    {
+        List<String> nodes = new ArrayList<String>();
+
+        char[] chars = string.toCharArray();
+
+        StringBuilder buff = new StringBuilder();
+        for ( int i = 0; i < chars.length; i++ )
+        {
+            char c = chars[i];
+            if ( Character.isUpperCase( c ) )
+            {
+                nodes.add( buff.toString() );
+                buff.delete( 0, buff.length() );
+                buff.append( Character.toLowerCase( c ) );
+            }
+            else
+            {
+                buff.append( c );
+            }
+        }
+
+        if ( buff.length() != 0 )
+        {
+            nodes.add( buff.toString() );
+        }
+
+        return nodes.toArray( new String[nodes.size()] );
     }
 
 }
