@@ -15,13 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.compiler.command;
 
-public interface FlexCompiler
+public interface Command
 {
-
-    void compileSwf( ICommandLineConfiguration configuration );
-
-    void compileSwc( ICompcConfiguration configuration );
-
+    void command();
 }

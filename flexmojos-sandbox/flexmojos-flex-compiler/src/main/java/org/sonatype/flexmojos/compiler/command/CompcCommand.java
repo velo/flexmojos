@@ -15,13 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+/**
+ * 
+ */
+package org.sonatype.flexmojos.compiler.command;
 
-public interface FlexCompiler
+import java.util.List;
+
+import flex2.tools.Compc;
+
+public class CompcCommand
+    implements Command
 {
 
-    void compileSwf( ICommandLineConfiguration configuration );
+    private String[] args;
 
-    void compileSwc( ICompcConfiguration configuration );
+    public CompcCommand( List<String> args )
+    {
+        this.args = args.toArray( new String[args.size()] );
+    }
 
+    public void command()
+    {
+        Compc.compc( args );
+    }
 }

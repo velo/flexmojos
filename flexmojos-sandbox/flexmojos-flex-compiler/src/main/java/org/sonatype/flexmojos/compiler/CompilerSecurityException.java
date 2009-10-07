@@ -17,11 +17,10 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-public interface FlexCompiler
+public class CompilerSecurityException
+    extends SecurityException
 {
 
-    void compileSwf( ICommandLineConfiguration configuration );
-
-    void compileSwc( ICompcConfiguration configuration );
+    private static final long serialVersionUID = -6833879641526598904L;
 
 }

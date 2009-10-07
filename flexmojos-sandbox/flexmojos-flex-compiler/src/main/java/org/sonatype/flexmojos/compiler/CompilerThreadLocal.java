@@ -17,11 +17,14 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-public interface FlexCompiler
+import flex2.compiler.Logger;
+import flex2.compiler.common.SinglePathResolver;
+
+public class CompilerThreadLocal
 {
+    // I HATE THIS PATTERN
+    public static final ThreadLocal<Logger> logger = new ThreadLocal<Logger>();
 
-    void compileSwf( ICommandLineConfiguration configuration );
-
-    void compileSwc( ICompcConfiguration configuration );
+    public static final ThreadLocal<SinglePathResolver> pathResolver = new ThreadLocal<SinglePathResolver>();
 
 }

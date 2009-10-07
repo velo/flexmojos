@@ -15,13 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.compiler.plexusflexbridge;
 
-public interface FlexCompiler
+import flex2.compiler.common.SinglePathResolver;
+import flex2.compiler.io.VirtualFile;
+
+public class PlexusPathResolve
+    implements SinglePathResolver
 {
 
-    void compileSwf( ICommandLineConfiguration configuration );
-
-    void compileSwc( ICompcConfiguration configuration );
+    public VirtualFile resolve( String path )
+    {
+        return null;
+    }
 
 }
