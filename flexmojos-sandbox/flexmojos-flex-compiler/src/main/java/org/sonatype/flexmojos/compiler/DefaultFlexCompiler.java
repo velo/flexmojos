@@ -42,14 +42,14 @@ public class DefaultFlexCompiler
         this.classLoader = cl;
     }
 
-    public void compileSwc( final ICompcConfiguration configuration )
+    public void compileSwc( ICompcConfiguration configuration )
     {
-        execute( new CompcCommand( getArguments( configuration ) ) );
+        execute( new CompcCommand( getArguments( configuration, ICompcConfiguration.class ) ) );
     }
 
     public void compileSwf( ICommandLineConfiguration configuration )
     {
-        execute( new MxmlcCommand( getArguments( configuration ) ) );
+        execute( new MxmlcCommand( getArguments( configuration, ICommandLineConfiguration.class ) ) );
     }
 
     private void execute( final Command command )

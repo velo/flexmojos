@@ -42,6 +42,11 @@ public final class InternalIFacesGenerator
     public void generate( GenerationRequest request )
         throws GenerationException
     {
+        JavaSourceFactory factory = new JavaSourceFactory();
+
+        JavaQName ann = JavaQNameImpl.getInstance( PACKAGE, "IFlexConfiguration" );
+        JavaSource annSource = factory.newJavaSource( ann, "public" );
+        annSource.setType( JavaSource.INTERFACE );
 
         for ( String classname : request.getClasses().keySet() )
         {
@@ -55,9 +60,7 @@ public final class InternalIFacesGenerator
                 throw new GenerationException( e.getMessage(), e );
             }
 
-            JavaSourceFactory factory = new JavaSourceFactory();
-
-            getMethods( clazz, factory );
+            getMethods( clazz, factory, ann );
 
             File outDir = request.getTransientOutputFolder();
             outDir.mkdirs();
@@ -78,11 +81,12 @@ public final class InternalIFacesGenerator
         return ( ( basename == null ) ? membername : ( basename + "." + membername ) );
     }
 
-    private JavaQName getMethods( Class<?> clazz, JavaSourceFactory factory )
+    private JavaQName getMethods( Class<?> clazz, JavaSourceFactory factory, JavaQName ann )
     {
         JavaQName className = JavaQNameImpl.getInstance( PACKAGE, "I" + clazz.getSimpleName() );
         JavaSource js = factory.newJavaSource( className, "public" );
         js.setType( JavaSource.INTERFACE );
+        js.addExtends( ann );
 
         Method methods[] = clazz.getMethods();
         for ( int m = 0; m < methods.length; ++m )
@@ -121,6 +125,7 @@ public final class InternalIFacesGenerator
                         type = JavaQNameImpl.getInstance( PACKAGE, "I" + name );
                         JavaSource subClass = factory.newJavaSource( type, "public" );
                         subClass.setType( JavaSource.INTERFACE );
+                        subClass.addExtends( ann );
                         for ( int i = 0; i < args; i++ )
                         {
                             Class<?> argType = getArgType( info, i );
@@ -134,6 +139,8 @@ public final class InternalIFacesGenerator
                     {
                         type = JavaQNameImpl.getInstance( File.class );
                     }
+
+                    type = promoteWrappers( type );
 
                     if ( info.allowMultiple()
                         && !( type.isArray() || type.equals( JavaQNameImpl.getInstance( List.class ) ) ) )
@@ -154,7 +161,7 @@ public final class InternalIFacesGenerator
             String name = method.getName();
             if ( name.startsWith( GET_PREFIX ) && name.endsWith( CONFIGURATION_SUFFIX ) )
             {
-                JavaQName source = getMethods( method.getReturnType(), factory );
+                JavaQName source = getMethods( method.getReturnType(), factory, ann );
                 js.newJavaMethod( name, source );
             }
             else
@@ -164,6 +171,51 @@ public final class InternalIFacesGenerator
         }
 
         return className;
+    }
+
+    private JavaQName promoteWrappers( JavaQName type )
+    {
+        if ( !type.isPrimitive() )
+        {
+            return type;
+        }
+
+        if ( JavaQNameImpl.BOOLEAN.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Boolean.class );
+        }
+        else if ( JavaQNameImpl.BYTE.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Byte.class );
+        }
+        else if ( JavaQNameImpl.CHAR.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Character.class );
+        }
+        else if ( JavaQNameImpl.DOUBLE.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Double.class );
+        }
+        else if ( JavaQNameImpl.FLOAT.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Float.class );
+        }
+        else if ( JavaQNameImpl.INT.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Integer.class );
+        }
+        else if ( JavaQNameImpl.LONG.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Long.class );
+        }
+        else if ( JavaQNameImpl.SHORT.equals( type ) )
+        {
+            return JavaQNameImpl.getInstance( Short.class );
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Invalid primitive type: " + type );
+        }
     }
 
     private Class<?> getArgType( ConfigurationInfo info, int i )
