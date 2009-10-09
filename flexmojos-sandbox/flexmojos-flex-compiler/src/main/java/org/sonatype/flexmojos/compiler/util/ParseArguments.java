@@ -6,20 +6,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.sonatype.flexmojos.compiler.IFlexConfiguration;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
 public class ParseArguments
 {
-    public static List<String> getArguments( Object cfg )
+    public static <E> List<String> getArguments( E cfg, Class<? extends E> configClass )
+    {
+        List<CharSequence> charArgs = doGetArgs( cfg, configClass );
+        List<String> args = new ArrayList<String>();
+        for ( CharSequence charSequence : charArgs )
+        {
+            args.add( "-" + charSequence );
+        }
+        return args;
+    }
+
+    private static <E> List<CharSequence> doGetArgs( E cfg, Class<? extends E> configClass )
     {
         if ( cfg == null )
         {
             return Collections.emptyList();
         }
 
-        List<String> args = new ArrayList<String>();
+        List<CharSequence> args = new ArrayList<CharSequence>();
 
-        Method[] methods = cfg.getClass().getDeclaredMethods();
+        Method[] methods = configClass.getDeclaredMethods();
         for ( Method method : methods )
         {
             if ( method.getParameterTypes().length != 0 || !Modifier.isPublic( method.getModifiers() ) )
@@ -42,13 +54,32 @@ public class ParseArguments
                 continue;
             }
 
-            args.add( parseName( method.getName() ) + "=" + value.toString() );
+            if ( value instanceof IFlexConfiguration )
+            {
+                List<CharSequence> subArgs = doGetArgs( value, method.getReturnType() );
+                String configurationName = parseConfigurationName( method.getName() );
+                for ( CharSequence arg : subArgs )
+                {
+                    args.add( configurationName + "." + arg );
+                }
+            }
+            else
+            {
+                args.add( parseName( method.getName() ) + "=" + value.toString() );
+            }
 
         }
         return args;
     }
 
-    private static CharSequence parseName( String name )
+    private static String parseConfigurationName( String name )
+    {
+        name = parseName( name );
+        name = name.substring( 0, name.length() - 14 );
+        return name;
+    }
+
+    private static String parseName( String name )
     {
         name = StringUtil.removePrefix( name );
         String[] nodes = StringUtil.splitCamelCase( name );
@@ -63,6 +94,6 @@ public class ParseArguments
             finalName.append( node.toLowerCase() );
         }
 
-        return finalName;
+        return finalName.toString();
     }
 }
