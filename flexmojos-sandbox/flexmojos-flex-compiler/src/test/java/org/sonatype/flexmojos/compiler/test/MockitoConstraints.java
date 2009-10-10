@@ -15,15 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.compiler.test;
 
-import java.io.File;
+import org.mockito.ReturnValues;
+import org.mockito.invocation.InvocationOnMock;
 
-public interface FlexCompiler
+public interface MockitoConstraints
 {
-
-    void compileSwf( ICommandLineConfiguration configuration, File sourceFile );
-
-    void compileSwc( ICompcConfiguration configuration );
-
+    ReturnValues RETURNS_NULL = new ReturnValues()
+    {
+        public Object valueFor( InvocationOnMock invocation )
+        {
+            return null;
+        }
+    };
 }
