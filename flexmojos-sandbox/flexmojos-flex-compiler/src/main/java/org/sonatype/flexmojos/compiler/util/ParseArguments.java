@@ -4,8 +4,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.sonatype.flexmojos.compiler.IFlexArgument;
 import org.sonatype.flexmojos.compiler.IFlexConfiguration;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
@@ -13,7 +16,16 @@ public class ParseArguments
 {
     public static <E> List<String> getArguments( E cfg, Class<? extends E> configClass )
     {
-        List<CharSequence> charArgs = doGetArgs( cfg, configClass );
+        Set<CharSequence> charArgs;
+        try
+        {
+            charArgs = doGetArgs( cfg, configClass );
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+
         List<String> args = new ArrayList<String>();
         for ( CharSequence charSequence : charArgs )
         {
@@ -22,14 +34,15 @@ public class ParseArguments
         return args;
     }
 
-    private static <E> List<CharSequence> doGetArgs( E cfg, Class<? extends E> configClass )
+    private static <E> Set<CharSequence> doGetArgs( E cfg, Class<? extends E> configClass )
+        throws Exception
     {
         if ( cfg == null )
         {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
-        List<CharSequence> args = new ArrayList<CharSequence>();
+        Set<CharSequence> args = new LinkedHashSet<CharSequence>();
 
         Method[] methods = configClass.getDeclaredMethods();
         for ( Method method : methods )
@@ -39,28 +52,67 @@ public class ParseArguments
                 continue;
             }
 
-            Object value;
-            try
-            {
-                value = method.invoke( cfg );
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( e );
-            }
+            Object value = method.invoke( cfg );
 
             if ( value == null )
             {
                 continue;
             }
 
+            Class<?> returnType = method.getReturnType();
+
             if ( value instanceof IFlexConfiguration )
             {
-                List<CharSequence> subArgs = doGetArgs( value, method.getReturnType() );
+                Set<CharSequence> subArgs = doGetArgs( value, returnType );
                 String configurationName = parseConfigurationName( method.getName() );
                 for ( CharSequence arg : subArgs )
                 {
                     args.add( configurationName + "." + arg );
+                }
+            }
+            else if ( value instanceof IFlexArgument || value instanceof IFlexArgument[] )
+            {
+                IFlexArgument[] values;
+                Class<?> type = returnType;
+                if ( type.isArray() )
+                {
+                    values = (IFlexArgument[]) value;
+                    type = returnType.getComponentType();
+                }
+                else
+                {
+                    values = new IFlexArgument[] { (IFlexArgument) value };
+                    type = returnType;
+                }
+
+                for ( IFlexArgument iFlexArgument : values )
+                {
+                    String[] order = (String[]) type.getField( "ORDER" ).get( iFlexArgument );
+                    StringBuilder arg = new StringBuilder();
+                    for ( String argMethodName : order )
+                    {
+                        if ( arg.length() != 0 )
+                        {
+                            arg.append( ' ' );
+                        }
+
+                        Object argValue = type.getDeclaredMethod( argMethodName ).invoke( iFlexArgument );
+
+                        arg.append( argValue.toString() );
+                    }
+
+                    args.add( parseName( method.getName() ) + " " + arg );
+                }
+            }
+            else if ( returnType.isArray() )
+            {
+                Object[] values = (Object[]) value;
+                String name = parseName( method.getName() );
+                String appender = "=";
+                for ( Object object : values )
+                {
+                    args.add( name + appender + object.toString() );
+                    appender = "+=";
                 }
             }
             else
