@@ -65,6 +65,10 @@ public final class InternalIFacesGenerator
         JavaSource annSource = factory.newJavaSource( ann, "public" );
         annSource.setType( JavaSource.INTERFACE );
 
+        JavaQName arg = JavaQNameImpl.getInstance( PACKAGE, "IFlexArgument" );
+        JavaSource argSource = factory.newJavaSource( arg, "public" );
+        argSource.setType( JavaSource.INTERFACE );
+
         for ( String classname : request.getClasses().keySet() )
         {
             Class<?> clazz;
@@ -77,7 +81,7 @@ public final class InternalIFacesGenerator
                 throw new GenerationException( e.getMessage(), e );
             }
 
-            getMethods( clazz, factory, ann );
+            getMethods( clazz, factory, ann, arg );
 
             File outDir = request.getTransientOutputFolder();
             outDir.mkdirs();
@@ -98,9 +102,14 @@ public final class InternalIFacesGenerator
         return ( ( basename == null ) ? membername : ( basename + "." + membername ) );
     }
 
-    private JavaQName getMethods( Class<?> clazz, JavaSourceFactory factory, JavaQName ann )
+    private JavaQName getMethods( Class<?> clazz, JavaSourceFactory factory, JavaQName ann, JavaQName arg )
     {
         JavaQName className = JavaQNameImpl.getInstance( PACKAGE, "I" + clazz.getSimpleName() );
+        if ( factory.getJavaSource( className ) != null )
+        {
+            return className;
+        }
+
         JavaSource js = factory.newJavaSource( className, "public" );
         js.setType( JavaSource.INTERFACE );
         js.addExtends( ann );
@@ -140,15 +149,27 @@ public final class InternalIFacesGenerator
                     else
                     {
                         type = JavaQNameImpl.getInstance( PACKAGE, "I" + name );
-                        JavaSource subClass = factory.newJavaSource( type, "public" );
-                        subClass.setType( JavaSource.INTERFACE );
-                        subClass.addExtends( ann );
-                        for ( int i = 0; i < args; i++ )
+
+                        if ( factory.getJavaSource( type ) == null )
                         {
-                            Class<?> argType = getArgType( info, i );
-                            String argName = info.getArgName( i );
-                            argName = StringUtil.toCamelCase( argName );
-                            subClass.newJavaMethod( argName, argType );
+                            JavaSource subClass = factory.newJavaSource( type, "public" );
+                            subClass.setType( JavaSource.INTERFACE );
+                            subClass.addExtends( arg );
+
+                            StringBuilder order = new StringBuilder();
+                            order.append( "  String[] ORDER = new String[] {" );
+                            for ( int i = 0; i < args; i++ )
+                            {
+                                Class<?> argType = getArgType( info, i );
+                                String argName = info.getArgName( i );
+                                argName = StringUtil.toCamelCase( argName );
+                                subClass.newJavaMethod( argName, argType );
+
+                                order.append( '"' ).append( argName ).append( '"' ).append( ", " );
+                            }
+                            order.append( " };" );
+
+                            subClass.addRawJavaSource( order.toString() );
                         }
                     }
 
@@ -178,7 +199,7 @@ public final class InternalIFacesGenerator
             String name = method.getName();
             if ( name.startsWith( GET_PREFIX ) && name.endsWith( CONFIGURATION_SUFFIX ) )
             {
-                JavaQName source = getMethods( method.getReturnType(), factory, ann );
+                JavaQName source = getMethods( method.getReturnType(), factory, ann, arg );
                 js.newJavaMethod( name, source );
             }
             else
