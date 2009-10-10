@@ -15,6 +15,7 @@ import org.sonatype.flexmojos.generator.api.GenerationRequest;
 import org.sonatype.flexmojos.generator.api.Generator;
 
 import flex2.tools.CompcConfiguration;
+import flex2.tools.ToolsConfiguration;
 
 @SuppressWarnings( "restriction" )
 public class IFaceGeneratorTest
@@ -54,6 +55,7 @@ public class IFaceGeneratorTest
         request.setTransientOutputFolder( files );
         // request.addClass( Configuration.class.getName(), null );
         request.addClass( CompcConfiguration.class.getName(), null );
+        request.addClass( ToolsConfiguration.class.getName(), null );
         // request.addClass( Builder.class.getName(), null );
         // request.addClass( Library.class.getName(), null );
         // request.addClass( Application.class.getName(), null );
