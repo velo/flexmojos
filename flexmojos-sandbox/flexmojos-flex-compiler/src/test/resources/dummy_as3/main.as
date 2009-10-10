@@ -15,15 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
-
-import java.io.File;
-
-public interface FlexCompiler
-{
-
-    void compileSwf( ICommandLineConfiguration configuration, File sourceFile );
-
-    void compileSwc( ICompcConfiguration configuration );
-
+package {
+	import flash.display.Sprite;
+	public class main extends Sprite {}
 }
