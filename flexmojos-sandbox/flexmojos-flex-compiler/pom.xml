@@ -61,6 +61,52 @@
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-fdk-configs</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.adobe.flex.framework</groupId>
+                  <artifactId>framework</artifactId>
+                  <version>${flex.sdk.version}</version>
+                  <classifier>configs</classifier>
+                  <type>zip</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-playerglobal</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.adobe.flex.framework</groupId>
+                  <artifactId>playerglobal</artifactId>
+                  <version>${flex.sdk.version}</version>
+                  <classifier>9</classifier>
+                  <type>swc</type>
+                  <destFileName>playerglobal.swc</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

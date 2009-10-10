@@ -2,11 +2,10 @@ package org.sonatype.flexmojos.compiler.util;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.sonatype.flexmojos.compiler.test.MockitoConstraints.RETURNS_NULL;
 
 import java.util.List;
 
-import org.mockito.ReturnValues;
-import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
@@ -18,14 +17,6 @@ import org.testng.annotations.Test;
 
 public class ParseArgumentsTest
 {
-
-    private static final ReturnValues RETURNS_NULL = new ReturnValues()
-    {
-        public Object valueFor( InvocationOnMock invocation )
-        {
-            return null;
-        }
-    };
 
     @Test
     public void simpleCfgParse()
@@ -74,5 +65,19 @@ public class ParseArgumentsTest
         Assert.assertTrue( args.contains( "-metadata.creator=Marvin" ) );
         Assert.assertTrue( args.contains( "-metadata.creator+=VELO" ) );
         Assert.assertTrue( args.contains( "-metadata.creator+=Froeder" ) );
+    }
+
+    @Test
+    public void emptyCfgParse()
+        throws Exception
+    {
+        ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
+        when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
+
+        List<String> args = ParseArguments.getArguments( cfg, ICompcConfiguration.class );
+
+        Assert.assertNotNull( args );
+        Assert.assertEquals( args.size(), 1, args.toString() );
+        Assert.assertTrue( args.contains( "-load-config=" ) );
     }
 }

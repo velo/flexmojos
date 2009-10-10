@@ -108,11 +108,18 @@ public class ParseArguments
             {
                 Object[] values = (Object[]) value;
                 String name = parseName( method.getName() );
-                String appender = "=";
-                for ( Object object : values )
+                if ( values.length == 0 )
                 {
-                    args.add( name + appender + object.toString() );
-                    appender = "+=";
+                    args.add( name + "=" );
+                }
+                else
+                {
+                    String appender = "=";
+                    for ( Object object : values )
+                    {
+                        args.add( name + appender + object.toString() );
+                        appender = "+=";
+                    }
                 }
             }
             else

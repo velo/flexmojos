@@ -2,7 +2,9 @@ package org.sonatype.flexmojos.compiler;
 
 import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArguments;
 
+import java.io.File;
 import java.io.PrintStream;
+import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -47,9 +49,11 @@ public class DefaultFlexCompiler
         execute( new CompcCommand( getArguments( configuration, ICompcConfiguration.class ) ) );
     }
 
-    public void compileSwf( ICommandLineConfiguration configuration )
+    public void compileSwf( ICommandLineConfiguration configuration, File sourceFile )
     {
-        execute( new MxmlcCommand( getArguments( configuration, ICommandLineConfiguration.class ) ) );
+        List<String> args = getArguments( configuration, ICommandLineConfiguration.class );
+        args.add( sourceFile.getAbsolutePath() );
+        execute( new MxmlcCommand( args ) );
     }
 
     private void execute( final Command command )
