@@ -17,14 +17,19 @@
  */
 package org.sonatype.flexmojos.common;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -32,6 +37,7 @@ import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.FrameLabel;
 import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
@@ -41,18 +47,23 @@ import org.sonatype.flexmojos.compiler.IDefaultSize;
 import org.sonatype.flexmojos.compiler.IDefine;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
 import org.sonatype.flexmojos.compiler.IFramesConfiguration;
+import org.sonatype.flexmojos.compiler.ILanguageRange;
+import org.sonatype.flexmojos.compiler.ILanguages;
 import org.sonatype.flexmojos.compiler.ILicense;
 import org.sonatype.flexmojos.compiler.ILicensesConfiguration;
 import org.sonatype.flexmojos.compiler.ILocalizedDescription;
 import org.sonatype.flexmojos.compiler.ILocalizedTitle;
 import org.sonatype.flexmojos.compiler.IMetadataConfiguration;
 import org.sonatype.flexmojos.compiler.IMxmlConfiguration;
+import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public class AbstractMavenFlexCompilerConfiguration
     implements ICompcConfiguration, ICommandLineConfiguration, ICompilerConfiguration, IFramesConfiguration,
-    ILicensesConfiguration, IMetadataConfiguration
+    ILicensesConfiguration, IMetadataConfiguration, IFontsConfiguration, ILanguages, IMxmlConfiguration,
+    INamespacesConfiguration
 {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -427,6 +438,17 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean swcChecksum;
 
     /**
+     * Specifies the version of the player the application is targeting. Features requiring a later version will not be
+     * compiled into the application. The minimum value supported is "9.0.0".
+     * <p>
+     * Equivalent to -target-player
+     * </p>
+     * 
+     * @parameter expression="${flex.targetPlayer}"
+     */
+    private String targetPlayer;
+
+    /**
      * Toggle whether the SWF is flagged for access to network resources
      * <p>
      * Equivalent to -use-network
@@ -577,6 +599,307 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.debug}"
      */
     private Boolean debug;
+
+    /**
+     * Defines the location of the default style sheet. Setting this option overrides the implicit use of the
+     * defaults.css style sheet in the framework.swc file
+     * <p>
+     * Equivalent to -compiler.defaults-css-url
+     * </p>
+     * 
+     * @parameter expression="${flex.defaultsCssUrl}"
+     */
+    private String defaultsCssUrl;
+
+    /**
+     * Location of defaults style stylesheets
+     * <p>
+     * Equivalent to -compiler.defaults-css-url
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;defaultsCssFiles&gt;
+     *   &lt;defaultsCssFile&gt;???&lt;/defaultsCssFile&gt;
+     *   &lt;defaultsCssFile&gt;???&lt;/defaultsCssFile&gt;
+     * &lt;/defaultsCssFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] defaultsCssFiles;
+
+    /**
+     * Define a global AS3 conditional compilation definition, e.g. -define=CONFIG::debugging,true or
+     * -define+=CONFIG::debugging,true (to append to existing definitions in flex-config.xml)
+     * <p>
+     * Equivalent to -compiler.define
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;definesDeclaration&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;SOMETHING::aNumber&lt;/name&gt;
+     *     &lt;value&gt;2.2&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;SOMETHING::aString&lt;/name&gt;
+     *     &lt;value&gt;&quot;text&quot;&lt;/value&gt;
+     *   &lt;/property&gt;
+     * &lt;/definesDeclaration&gt;
+     * </pre>
+     */
+    private Properties defines;
+
+    /**
+     * Back-door to disable optimizations in case they are causing problems
+     * <p>
+     * Equivalent to -compiler.disable-incremental-optimizations
+     * </p>
+     * 
+     * @parameter expression="${flex.disableIncrementalOptimizations}"
+     */
+    private Boolean disableIncrementalOptimizations;
+
+    /**
+     * FIXME undocumented
+     * <p>
+     * Equivalent to -compiler.doc
+     * </p>
+     * 
+     * @parameter expression="${flex.doc}"
+     */
+    private Boolean doc;
+
+    /**
+     * Use the ECMAScript edition 3 prototype based object model to allow dynamic overriding of prototype properties. In
+     * the prototype based object model built-in functions are implemented as dynamic properties of prototype objects
+     * <p>
+     * Equivalent to -compiler.es
+     * </p>
+     * 
+     * @parameter expression="${flex.es}"
+     */
+    private Boolean es;
+
+    /**
+     * Enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts
+     * <p>
+     * Equivalent to -compiler.fonts.advanced-anti-aliasing
+     * </p>
+     * 
+     * @parameter expression="${flex.advancedAntiAliasing}"
+     */
+    private Boolean advancedAntiAliasing;
+
+    /**
+     * Enables FlashType for embedded fonts, which provides greater clarity for small fonts
+     * <p>
+     * Equivalent to -compiler.fonts.flash-type
+     * </p>
+     * 
+     * @parameter expression="${flex.flashType}"
+     */
+    private Boolean flashType;
+
+    /**
+     * A range to restrict the number of font glyphs embedded into the SWF
+     * <p>
+     * Equivalent to -compiler.fonts.languages.language-range
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;languageRange&gt;
+     *   &lt;lang&gt;range&lt;/lang&gt;
+     * &lt;/languageRange&gt;
+     * </pre>
+     */
+    private Map<String, String> languageRange;
+
+    /**
+     * Compiler font manager classes, in policy resolution order
+     * <p>
+     * Equivalent to -compiler.fonts.local-fonts-snapshot
+     * </p>
+     * 
+     * @parameter expression="${flex.localFontsSnapshot}"
+     */
+    private File localFontsSnapshot;
+
+    /**
+     * Compiler font manager classes, in policy resolution order
+     * <p>
+     * Equivalent to -compiler.fonts.managers
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;managers&gt;
+     *   &lt;manager&gt;???&lt;/manager&gt;
+     *   &lt;manager&gt;???&lt;/manager&gt;
+     * &lt;/managers&gt;
+     * </pre>
+     */
+    private List<String> managers;
+
+    /**
+     * Sets the maximum number of fonts to keep in the server cache
+     * <p>
+     * Equivalent to -compiler.fonts.max-cached-fonts
+     * </p>
+     * 
+     * @parameter expression="${flex.maxCachedFonts}"
+     */
+    private Integer maxCachedFonts;
+
+    /**
+     * Sets the maximum number of character glyph-outlines to keep in the server cache for each font face
+     * <p>
+     * Equivalent to -compiler.fonts.max-glyphs-per-face
+     * </p>
+     * 
+     * @parameter expression="${flex.maxGlyphsPerFace}"
+     */
+    private Integer maxGlyphsPerFace;
+
+    /**
+     * A flag to set when Flex is running on a server without a display
+     * <p>
+     * Equivalent to -compiler.headless-server
+     * </p>
+     * 
+     * @parameter expression="${flex.headlessServer}"
+     */
+    private Boolean headlessServer;
+
+    /**
+     * Enables incremental compilation
+     * <p>
+     * Equivalent to -compiler.incremental
+     * </p>
+     * 
+     * @parameter expression="${flex.incremental}"
+     */
+    private Boolean incremental;
+
+    /**
+     * Disables the pruning of unused CSS type selectors
+     * <p>
+     * Equivalent to -compiler.keep-all-type-selectors
+     * </p>
+     * 
+     * @parameter expression="${flex.keepAllTypeSelectors}"
+     */
+    private Boolean keepAllTypeSelectors;
+
+    /**
+     * Keep the specified metadata in the SWF
+     * <p>
+     * Equivalent to -compiler.keep-as3-metadata
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;keepAs3Metadatas&gt;
+     *   &lt;keepAs3Metadata&gt;Bindable&lt;/keepAs3Metadata&gt;
+     *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
+     * &lt;/keepAs3Metadatas&gt;
+     * </pre>
+     */
+    private String[] keepAs3Metadatas;
+
+    /**
+     * Keep the specified metadata in the SWF
+     * <p>
+     * Equivalent to -compiler.keep-generated-actionscript
+     * </p>
+     * 
+     * @parameter expression="${flex.keepGeneratedActionscript}"
+     */
+    private Boolean keepGeneratedActionscript;
+
+    /**
+     * FIXME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.keep-generated-signatures
+     * </p>
+     * 
+     * @parameter expression="${flex.keepGeneratedSignatures}"
+     */
+    private Boolean keepGeneratedSignatures;
+
+    /**
+     * FIXME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.memory-usage-factor
+     * </p>
+     * 
+     * @parameter expression="${flex.memoryUsageFactor}"
+     */
+    private Integer memoryUsageFactor;
+
+    /**
+     * Specifies a compatibility version
+     * <p>
+     * Equivalent to -compiler.mxml.compatibility-version
+     * </p>
+     * 
+     * @parameter expression="${flex.compatibilityVersion}"
+     */
+    private String compatibilityVersion;
+
+    /**
+     * Specify a URI to associate with a manifest of components for use as MXML elements
+     * <p>
+     * Equivalent to -compiler.namespaces.namespace
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;namespaces&gt;
+     *   &lt;namespace&gt;
+     *     &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
+     *     &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
+     *   &lt;/namespace&gt;
+     * &lt;/namespaces&gt;
+     * </pre>
+     */
+    private MavenNamespaces[] namespaces;
+
+    /**
+     * Enable post-link SWF optimization
+     * <p>
+     * Equivalent to -compiler.optimize
+     * </p>
+     * 
+     * @parameter expression="${flex.optimize}"
+     */
+    private Boolean optimize;
+
+    /**
+     * This undocumented option is for compiler performance testing. It allows the Flex 3 compiler to compile the Flex 2
+     * framework and Flex 2 apps. This is not an officially-supported combination
+     * <p>
+     * Equivalent to -compiler.resource-hack
+     * </p>
+     * 
+     * @parameter expression="${flex.resourceHack}"
+     */
+    private Boolean resourceHack;
+
+    /**
+     * Path to Flex Data Services configuration file
+     * <p>
+     * Equivalent to -compiler.services
+     * </p>
+     * 
+     * @parameter expression="${flex.services}"
+     */
+    private File services;
+
+    private Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
 
     public Boolean getBenchmark()
     {
@@ -756,7 +1079,7 @@ public class AbstractMavenFlexCompilerConfiguration
     {
         if ( loadConfig == null && loadConfigs != null )
         {
-            return filesToStrings( loadConfigs );
+            return PathUtil.getCanonicalPath( loadConfigs );
         }
 
         File configFile;
@@ -791,7 +1114,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String[] getLoadExterns()
     {
-        return filesToStrings( loadExterns );
+        return PathUtil.getCanonicalPath( loadExterns );
     }
 
     public IMetadataConfiguration getMetadataConfiguration()
@@ -955,8 +1278,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getTargetPlayer()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return targetPlayer;
     }
 
     public Boolean getUseNetwork()
@@ -1035,40 +1357,57 @@ public class AbstractMavenFlexCompilerConfiguration
         return debug;
     }
 
-    public List getDefaultsCssFiles()
+    public List<String> getDefaultsCssFiles()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return PathUtil.getCanonicalPathList( defaultsCssFiles );
     }
 
     public String getDefaultsCssUrl()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return defaultsCssUrl;
     }
 
     public IDefine[] getDefine()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( defines == null )
+        {
+            return null;
+        }
+
+        List<IDefine> keys = new ArrayList<IDefine>();
+        Set<Entry<Object, Object>> entries = this.defines.entrySet();
+        for ( final Entry<Object, Object> entry : entries )
+        {
+            keys.add( new IDefine()
+            {
+                public String value()
+                {
+                    return entry.getValue().toString();
+                }
+
+                public String name()
+                {
+                    return entry.getKey().toString();
+                }
+            } );
+        }
+
+        return keys.toArray( new IDefine[keys.size()] );
     }
 
     public Boolean getDisableIncrementalOptimizations()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return disableIncrementalOptimizations;
     }
 
     public Boolean getDoc()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return doc;
     }
 
     public Boolean getEs()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return es;
     }
 
     public File[] getExternalLibraryPath()
@@ -1079,14 +1418,113 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public IFontsConfiguration getFontsConfiguration()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
+    }
+
+    public Boolean getAdvancedAntiAliasing()
+    {
+        return advancedAntiAliasing;
+    }
+
+    public Boolean getFlashType()
+    {
+        return flashType;
+    }
+
+    public ILanguages getLanguagesConfiguration()
+    {
+        return this;
+    }
+
+    public ILanguageRange[] getLanguageRange()
+    {
+        if ( licenses == null )
+        {
+            return null;
+        }
+
+        List<ILanguageRange> keys = new ArrayList<ILanguageRange>();
+        Set<Entry<String, String>> entries = this.languageRange.entrySet();
+        for ( final Entry<String, String> entry : entries )
+        {
+            keys.add( new ILanguageRange()
+            {
+                public String range()
+                {
+                    return entry.getValue();
+                }
+
+                public String lang()
+                {
+                    return entry.getKey();
+                }
+            } );
+        }
+
+        return keys.toArray( new ILanguageRange[keys.size()] );
+    }
+
+    public String getLocalFontsSnapshot()
+    {
+        if ( localFontsSnapshot != null )
+        {
+            return PathUtil.getCanonicalPath( localFontsSnapshot );
+        }
+
+        URL url;
+        if ( MavenUtils.isMac() )
+        {
+            url = getClass().getResource( "/fonts/macFonts.ser" );
+        }
+        else
+        {
+            // TODO And linux?!
+            // if(os.contains("windows")) {
+            url = getClass().getResource( "/fonts/winFonts.ser" );
+        }
+        File fontsSer = new File( project.getBuild().getOutputDirectory(), "fonts.ser" );
+        try
+        {
+            FileUtils.copyURLToFile( url, fontsSer );
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( "Error copying fonts file.", e );
+        }
+        return PathUtil.getCanonicalPath( fontsSer );
+    }
+
+    public List<String> getManagers()
+    {
+        return managers;
+    }
+
+    public String getMaxCachedFonts()
+    {
+        if ( maxCachedFonts == null )
+        {
+            return null;
+        }
+        return maxCachedFonts.toString();
+    }
+
+    public String getMaxGlyphsPerFace()
+    {
+        if ( maxGlyphsPerFace == null )
+        {
+            return null;
+        }
+        return maxGlyphsPerFace.toString();
     }
 
     public Boolean getHeadlessServer()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( headlessServer == null )
+        {
+            return GraphicsEnvironment.isHeadless();
+        }
+
+        return headlessServer;
     }
 
     public File[] getIncludeLibraries()
@@ -1097,32 +1535,27 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public Boolean getIncremental()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return incremental;
     }
 
     public Boolean getKeepAllTypeSelectors()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return keepAllTypeSelectors;
     }
 
     public String[] getKeepAs3Metadata()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return keepAs3Metadatas;
     }
 
     public Boolean getKeepGeneratedActionscript()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return keepGeneratedActionscript;
     }
 
     public Boolean getKeepGeneratedSignatures()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return keepGeneratedSignatures;
     }
 
     public File[] getLibraryPath()
@@ -1139,74 +1572,82 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public Integer getMemoryUsageFactor()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return memoryUsageFactor;
     }
 
     public IMxmlConfiguration getMxmlConfiguration()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
+    }
+
+    public String getCompatibilityVersion()
+    {
+        return compatibilityVersion;
     }
 
     public INamespacesConfiguration getNamespacesConfiguration()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
+    }
+
+    public INamespace[] getNamespace()
+    {
+        return namespaces;
     }
 
     public Boolean getOptimize()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return optimize;
     }
 
     public Boolean getResourceHack()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return resourceHack;
     }
 
     public String getServices()
     {
-        // TODO Auto-generated method stub
+        if ( services != null )
+        {
+            return PathUtil.getCanonicalPath( services );
+        }
+
+        File cfg = new File( configDirectory, "services-config.xml" );
+        if ( cfg.exists() )
+        {
+            return PathUtil.getCanonicalPath( cfg );
+        }
         return null;
     }
 
     public Boolean getShowActionscriptWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-actionscript-warnings" );
     }
 
     public Boolean getShowBindingWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-binding-warnings" );
     }
 
     public Boolean getShowDependencyWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-dependency-warnings" );
     }
 
     public Boolean getShowDeprecationWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-deprecation-warnings" );
     }
 
     public Boolean getShowShadowedDeviceFontWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-shadowed-device-font-warnings" );
     }
 
     public Boolean getShowUnusedTypeSelectorWarnings()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "show-unused-type-selector-warnings" );
     }
 
     public File getSignatureDirectory()
@@ -1253,234 +1694,182 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public Boolean getWarnArrayTostringChanges()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-array-tostring-changes" );
     }
 
     public Boolean getWarnAssignmentWithinConditional()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-assignment-within-conditional" );
     }
 
     public Boolean getWarnBadArrayCast()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-array-cast" );
     }
 
     public Boolean getWarnBadBoolAssignment()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-bool-assignment" );
     }
 
     public Boolean getWarnBadDateCast()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-date-cast" );
     }
 
     public Boolean getWarnBadEs3TypeMethod()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-es3-type-method" );
     }
 
     public Boolean getWarnBadEs3TypeProp()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-es3-type-prop" );
     }
 
     public Boolean getWarnBadNanComparison()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-nan-comparison" );
     }
 
     public Boolean getWarnBadNullAssignment()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-null-assignment" );
     }
 
     public Boolean getWarnBadNullComparison()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-null-comparison" );
     }
 
     public Boolean getWarnBadUndefinedComparison()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-bad-undefined-comparison" );
     }
 
     public Boolean getWarnBooleanConstructorWithNoArgs()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-boolean-constructor-with-no-args" );
     }
 
     public Boolean getWarnChangesInResolve()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-changes-in-resolve" );
     }
 
     public Boolean getWarnClassIsSealed()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-class-is-sealed" );
     }
 
     public Boolean getWarnConstNotInitialized()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-const-not-initialized" );
     }
 
     public Boolean getWarnConstructorReturnsValue()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-constructor-returns-value" );
     }
 
     public Boolean getWarnDeprecatedEventHandlerError()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-deprecated-event-handler-error" );
     }
 
     public Boolean getWarnDeprecatedFunctionError()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-deprecated-function-error" );
     }
 
     public Boolean getWarnDeprecatedPropertyError()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-deprecated-property-error" );
     }
 
     public Boolean getWarnDuplicateArgumentNames()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-duplicate-argument-names" );
     }
 
     public Boolean getWarnDuplicateVariableDef()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-duplicate-variable-def" );
     }
 
     public Boolean getWarnForVarInChanges()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-for-var-in-changes" );
     }
 
     public Boolean getWarnImportHidesClass()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-import-hides-class" );
     }
 
     public Boolean getWarnInstanceOfChanges()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-instance-of-changes" );
     }
 
     public Boolean getWarnInternalError()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-internal-error" );
     }
 
     public Boolean getWarnLevelNotSupported()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-level-not-supported" );
     }
 
     public Boolean getWarnMissingNamespaceDecl()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-missing-namespace-decl" );
     }
 
     public Boolean getWarnNegativeUintLiteral()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-negative-uint-literal" );
     }
 
     public Boolean getWarnNoConstructor()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-no-constructor" );
     }
 
     public Boolean getWarnNoExplicitSuperCallInConstructor()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-no-explicit-super-call-in-constructor" );
     }
 
     public Boolean getWarnNoTypeDecl()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-no-type-decl" );
     }
 
     public Boolean getWarnNumberFromStringChanges()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-number-from-string-changes" );
     }
 
     public Boolean getWarnScopingChangeInThis()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-scoping-change-in-this" );
     }
 
     public Boolean getWarnSlowTextFieldAddition()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-slow-text-field-addition" );
     }
 
     public Boolean getWarnUnlikelyFunctionValue()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerWarnings.get( "warn-unlikely-function-value" );
     }
 
     public Boolean getWarnXmlClassHasChanged()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private String[] filesToStrings( File[] files )
-    {
-        // TODO move out here
-        if ( files == null )
-        {
-            return null;
-        }
-
-        String[] configs = new String[files.length];
-        for ( int i = 0; i < configs.length; i++ )
-        {
-            configs[i] = PathUtil.getCanonicalPath( files[i] );
-        }
-        return configs;
+        return compilerWarnings.get( "warn-xml-class-has-changed" );
     }
 
 }
