@@ -10,6 +10,7 @@ package org.sonatype.flexmojos.test.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -132,5 +133,29 @@ public class PathUtil
         {
             return trustedFile.getAbsolutePath();
         }
+    }
+
+    public static List<String> getCanonicalPathList( File[] files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+        return Arrays.asList( getCanonicalPath( files ) );
+    }
+
+    public static String[] getCanonicalPath( File[] files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+
+        String[] configs = new String[files.length];
+        for ( int i = 0; i < configs.length; i++ )
+        {
+            configs[i] = getCanonicalPath( files[i] );
+        }
+        return configs;
     }
 }
