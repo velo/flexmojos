@@ -184,6 +184,11 @@
       <artifactId>flexmojos-generator-constraints</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+        <artifactId>flexmojos-flex-compiler</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.adobe.flex</groupId>
