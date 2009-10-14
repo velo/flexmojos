@@ -285,6 +285,11 @@
       <artifactId>saxon-dom</artifactId>
       <version>9.0</version>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.maven.shared</groupId>
+    	<artifactId>maven-common-artifact-filters</artifactId>
+    	<version>1.2</version>
+    </dependency>
   </dependencies>
 
   <reporting>
