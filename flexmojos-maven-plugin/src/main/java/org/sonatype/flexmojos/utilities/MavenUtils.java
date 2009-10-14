@@ -10,10 +10,11 @@ package org.sonatype.flexmojos.utilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -311,4 +312,39 @@ public class MavenUtils
         return path;
     }
 
+    public static Set<File> getFilesSet( Collection<Artifact> dependencies )
+    {
+        if ( dependencies == null )
+        {
+            return null;
         }
+
+        Set<File> files = new LinkedHashSet<File>();
+        for ( Artifact artifact : dependencies )
+        {
+            if ( !artifact.isResolved() )
+            {
+                throw new IllegalArgumentException( "Unable to handle unresolved artifact: " + artifact );
+            }
+
+            if ( artifact.getFile() == null )
+            {
+                throw new NullPointerException( "Artifact file not defined: " + artifact );
+            }
+
+            files.add( artifact.getFile() );
+        }
+        return files;
+    }
+
+    public static File[] getFiles( Collection<Artifact> dependencies )
+    {
+        if ( dependencies == null )
+        {
+            return null;
+        }
+
+        return getFilesSet( dependencies ).toArray( new File[dependencies.size()] );
+    }
+
+}

@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -151,11 +152,38 @@ public class PathUtil
             return null;
         }
 
-        String[] configs = new String[files.length];
-        for ( int i = 0; i < configs.length; i++ )
+        String[] paths = new String[files.length];
+        for ( int i = 0; i < paths.length; i++ )
         {
-            configs[i] = getCanonicalPath( files[i] );
+            paths[i] = getCanonicalPath( files[i] );
         }
-        return configs;
+        return paths;
+    }
+
+    public static String[] getCanonicalPath( Collection<File> files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+
+        return getCanonicalPath( files.toArray( new File[files.size()] ) );
+    }
+
+    public static File[] getFiles( Collection<String> paths )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        File[] files = new File[paths.size()];
+        int i = 0;
+        for ( String path : paths )
+        {
+            files[i++] = new File( path );
+        }
+
+        return files;
     }
 }
