@@ -31,8 +31,11 @@ import org.sonatype.flexmojos.generator.api.GenerationException;
 import org.sonatype.flexmojos.generator.api.GenerationRequest;
 import org.sonatype.flexmojos.generator.api.Generator;
 
+import flex2.tools.ASDocConfiguration;
 import flex2.tools.CompcConfiguration;
+import flex2.tools.DigestRootConfiguration;
 import flex2.tools.ToolsConfiguration;
+import flex2.tools.Optimizer.OptimizerConfiguration;
 
 @SuppressWarnings( "restriction" )
 public class IFaceGeneratorTest
@@ -70,12 +73,11 @@ public class IFaceGeneratorTest
     {
         GenerationRequest request = new GenerationRequest();
         request.setTransientOutputFolder( files );
-        // request.addClass( Configuration.class.getName(), null );
         request.addClass( CompcConfiguration.class.getName(), null );
         request.addClass( ToolsConfiguration.class.getName(), null );
-        // request.addClass( Builder.class.getName(), null );
-        // request.addClass( Library.class.getName(), null );
-        // request.addClass( Application.class.getName(), null );
+        request.addClass( ASDocConfiguration.class.getName(), null );
+        request.addClass( OptimizerConfiguration.class.getName(), null );
+        request.addClass( DigestRootConfiguration.class.getName(), null );
         request.setClassLoader( Thread.currentThread().getContextClassLoader() );
 
         generator.generate( request );

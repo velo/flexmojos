@@ -17,18 +17,16 @@
  */
 package org.sonatype.flexmojos.common;
 
-public interface FlexExtension
+
+public class MavenRuntimeException
+    extends RuntimeException
 {
-    String AIR = "air";
 
-    String SWF = "swf";
+    public MavenRuntimeException( Throwable e )
+    {
+        super( e );
+    }
 
-    String SWC = "swc";
-
-    String SWZ = "swz";
-
-    String RB_SWC = "rb.swc";
-
-    String ZIP = "zip";
+    private static final long serialVersionUID = -9121873468164622710L;
 
 }

@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,10 +34,17 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.FrameLabel;
 import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
@@ -94,6 +102,19 @@ public class AbstractMavenFlexCompilerConfiguration
      * @readonly
      */
     protected File configDirectory;
+
+    /**
+     * The maven compile source roots
+     * <p>
+     * Equivalent to -compiler.source-path
+     * </p>
+     * List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> sourcePaths;
 
     /**
      * Output performance benchmark
@@ -244,7 +265,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private List<FrameLabel> frames;
 
     /**
-     * FIXME Undocumented by adobe
+     * DOCME Undocumented by adobe
      * <p>
      * Equivalent to -generated-frame-loader
      * </p>
@@ -282,7 +303,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private String[] includes;
 
     /**
-     * FIXME Undocumented by adobe
+     * DOCME Undocumented by adobe
      * <p>
      * Equivalent to -lazy-init
      * </p>
@@ -365,8 +386,44 @@ public class AbstractMavenFlexCompilerConfiguration
      */
     private File[] loadExterns;
 
-    // FIXME
-    private IMetadataConfiguration metadataConfiguration;
+    /**
+     * Information to store in the SWF metadata
+     * <p>
+     * Equivalent to: -metadata.contributor, -metadata.creator, -metadata.date, -metadata.description,
+     * -metadata.language, -metadata.localized-description, -metadata.localized-title, -metadata.publisher,
+     * -metadata.title
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;metadata&gt;
+     *   &lt;contributors&gt;
+     *     &lt;contributor&gt;???&lt;/contributor&gt;
+     *   &lt;/contributors&gt;
+     *   &lt;creators&gt;
+     *     &lt;creator&gt;???&lt;/creator&gt;
+     *   &lt;/creators&gt;
+     *   &lt;date&gt;???&lt;/date&gt;
+     *   &lt;description&gt;???&lt;/description&gt;
+     *   &lt;languages&gt;
+     *     &lt;language&gt;???&lt;/language&gt;
+     *   &lt;/languages&gt;
+     *   &lt;localizedDescriptions&gt;
+     *     &lt;lang&gt;text&lt;/land&gt;
+     *   &lt;/localizedDescriptions&gt;
+     *   &lt;localizedTitles&gt;
+     *     &lt;lang&gt;title&lt;/land&gt;
+     *   &lt;/localizedTitles&gt;
+     *   &lt;publishers&gt;
+     *     &lt;publisher&gt;???&lt;/publisher&gt;
+     *   &lt;/publishers&gt;
+     *   &lt;title&gt;???&lt;/title&gt;
+     * &lt;/metadata&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenMetadataConfiguration metadata;
 
     /**
      * The filename of the SWF movie to create
@@ -389,7 +446,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private String rawMetadata;
 
     /**
-     * FIXME Guess what, undocumented by adobe. Looks like it was overwritten by source paths
+     * DOCME Guess what, undocumented by adobe. Looks like it was overwritten by source paths
      * <p>
      * Equivalent to -root
      * </p>
@@ -479,7 +536,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean warnings;
 
     /**
-     * FIXME Again, undocumented by adobe
+     * DOCME Again, undocumented by adobe
      * <p>
      * Equivalent to -file-specs
      * </p>
@@ -497,7 +554,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private List<String> fileSpecs;
 
     /**
-     * FIXME Another, undocumented by adobe
+     * DOCME Another, undocumented by adobe
      * <p>
      * Equivalent to -projector
      * </p>
@@ -528,7 +585,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private String actionscriptFileEncoding;
 
     /**
-     * FIXME undocumented by adobe
+     * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.adjust-opdebugline
      * </p>
@@ -549,7 +606,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean allowSourcePathOverlap;
 
     /**
-     * FIXME undocumented by adobe
+     * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.archive-classes-and-assets
      * </p>
@@ -570,7 +627,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean as3;
 
     /**
-     * FIXME undocumented by adobe
+     * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.conservative
      * </p>
@@ -663,7 +720,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean disableIncrementalOptimizations;
 
     /**
-     * FIXME undocumented
+     * DOCME undocumented
      * <p>
      * Equivalent to -compiler.doc
      * </p>
@@ -821,7 +878,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean keepGeneratedActionscript;
 
     /**
-     * FIXME undocumented by adobe
+     * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.keep-generated-signatures
      * </p>
@@ -831,7 +888,7 @@ public class AbstractMavenFlexCompilerConfiguration
     private Boolean keepGeneratedSignatures;
 
     /**
-     * FIXME undocumented by adobe
+     * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.memory-usage-factor
      * </p>
@@ -900,6 +957,56 @@ public class AbstractMavenFlexCompilerConfiguration
     private File services;
 
     private Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.signature-directory
+     * </p>
+     * 
+     * @parameter expression="${flex.signatureDirectory}"
+     */
+    private File signatureDirectory;
+
+    /**
+     * Runs the AS3 compiler in strict error checking mode
+     * <p>
+     * Equivalent to -compiler.strict
+     * </p>
+     * 
+     * @parameter expression="${flex.strict}"
+     */
+    private Boolean strict;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.translation-format
+     * </p>
+     * 
+     * @parameter expression="${flex.translationFormat}"
+     */
+    private String translationFormat;
+
+    /**
+     * Determines whether resources bundles are included in the application
+     * <p>
+     * Equivalent to -compiler.use-resource-bundle-metadata
+     * </p>
+     * 
+     * @parameter expression="${flex.useResourceBundleMetadata}"
+     */
+    private Boolean useResourceBundleMetadata;
+
+    /**
+     * Save callstack information to the SWF for debugging
+     * <p>
+     * Equivalent to -compiler.verbose-stacktraces
+     * </p>
+     * 
+     * @parameter expression="${flex.verboseStacktraces}"
+     */
+    private Boolean verboseStacktraces;
 
     public Boolean getBenchmark()
     {
@@ -1114,6 +1221,17 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String[] getLoadExterns()
     {
+        if ( loadExterns == null )
+        {
+            Set<Artifact> dependencies = getDependencies( FlexClassifier.LINK_REPORT, FlexExtension.ZIP, null );
+
+            if ( dependencies.isEmpty() )
+            {
+                return null;
+            }
+
+            return PathUtil.getCanonicalPath( MavenUtils.getFilesSet( dependencies ) );
+        }
         return PathUtil.getCanonicalPath( loadExterns );
     }
 
@@ -1125,9 +1243,9 @@ public class AbstractMavenFlexCompilerConfiguration
     @SuppressWarnings( "unchecked" )
     public String[] getContributor()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getContributor();
+            return this.metadata.getContributor();
         }
 
         List<Contributor> contributors = project.getContributors();
@@ -1148,9 +1266,9 @@ public class AbstractMavenFlexCompilerConfiguration
     @SuppressWarnings( "unchecked" )
     public String[] getCreator()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getCreator();
+            return this.metadata.getCreator();
         }
 
         List<Developer> developers = project.getDevelopers();
@@ -1170,9 +1288,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getDate()
     {
-        if ( this.metadataConfiguration != null && this.metadataConfiguration.getDate() != null )
+        if ( this.metadata != null && this.metadata.getDate() != null )
         {
-            return this.metadataConfiguration.getDate();
+            return this.metadata.getDate();
         }
 
         return DATE_FORMAT.format( new Date() );
@@ -1180,9 +1298,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getDescription()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getDescription();
+            return this.metadata.getDescription();
         }
 
         return project.getDescription();
@@ -1190,15 +1308,20 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String[] getLanguage()
     {
-        // TODO Auto-generated method stub
+        if ( this.metadata != null )
+        {
+            return this.metadata.getLanguage();
+        }
+
+        // TODO get from locales
         return null;
     }
 
     public ILocalizedDescription[] getLocalizedDescription()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getLocalizedDescription();
+            return this.metadata.getLocalizedDescription();
         }
 
         return null;
@@ -1206,9 +1329,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public ILocalizedTitle[] getLocalizedTitle()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getLocalizedTitle();
+            return this.metadata.getLocalizedTitle();
         }
 
         return null;
@@ -1216,9 +1339,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String[] getPublisher()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getPublisher();
+            return this.metadata.getPublisher();
         }
 
         return getCreator();
@@ -1226,9 +1349,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getTitle()
     {
-        if ( this.metadataConfiguration != null )
+        if ( this.metadata != null )
         {
-            return this.metadataConfiguration.getDescription();
+            return this.metadata.getDescription();
         }
 
         return project.getName();
@@ -1412,8 +1535,10 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File[] getExternalLibraryPath()
     {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO on swc include compile dependencies too
+        ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, "external" ) ),
+                           MavenUtils.getFiles( getDependencies( null, null, "compile" ) ) );
+        return MavenUtils.getFiles( getDependencies( null, null, "external" ) );
     }
 
     public IFontsConfiguration getFontsConfiguration()
@@ -1529,8 +1654,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File[] getIncludeLibraries()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return MavenUtils.getFiles( getDependencies( null, null, "internal" ) );
     }
 
     public Boolean getIncremental()
@@ -1560,8 +1684,8 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File[] getLibraryPath()
     {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO on SWF include compile dependencies too
+        return MavenUtils.getFiles( getDependencies( null, null, "merged" ) );
     }
 
     public String[] getLocale()
@@ -1652,20 +1776,17 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File getSignatureDirectory()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return signatureDirectory;
     }
 
     public File[] getSourcePath()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return PathUtil.getFiles( sourcePaths );
     }
 
     public Boolean getStrict()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return strict;
     }
 
     public List getTheme()
@@ -1676,20 +1797,17 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getTranslationFormat()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return translationFormat;
     }
 
     public Boolean getUseResourceBundleMetadata()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return useResourceBundleMetadata;
     }
 
     public Boolean getVerboseStacktraces()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return verboseStacktraces;
     }
 
     public Boolean getWarnArrayTostringChanges()
@@ -1872,4 +1990,46 @@ public class AbstractMavenFlexCompilerConfiguration
         return compilerWarnings.get( "warn-xml-class-has-changed" );
     }
 
+    @SuppressWarnings( "unchecked" )
+    private Set<Artifact> getDependencies( String classifier, String type, String scope )
+    {
+        Set<Artifact> dependencies = getDependencies();
+        FilterArtifacts filter = new FilterArtifacts();
+
+        if ( classifier != null )
+        {
+            filter.addFilter( new ClassifierFilter( classifier, null ) );
+        }
+        if ( type != null )
+        {
+            filter.addFilter( new TypeFilter( type, null ) );
+        }
+        if ( scope != null )
+        {
+            filter.addFilter( new ScopeFilter( scope, null ) );
+        }
+
+        Set filteredDependencies;
+        try
+        {
+            filteredDependencies = filter.filter( dependencies );
+        }
+        catch ( ArtifactFilterException e )
+        {
+            throw new MavenRuntimeException( e );
+        }
+
+        if ( filteredDependencies.isEmpty() )
+        {
+            return null;
+        }
+
+        return Collections.unmodifiableSet( filteredDependencies );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public Set<Artifact> getDependencies()
+    {
+        return Collections.unmodifiableSet( project.getDependencyArtifacts() );
+    }
 }

@@ -17,7 +17,28 @@
  */
 package org.sonatype.flexmojos.common;
 
-public class MavenCompilerWarnings
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.aspectj.lang.reflect.MethodSignature;
+
+public aspect LazyLoadAspect
 {
 
+    pointcut getters() :
+        execution(public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.get*());
+
+    private Map<String, Object> cachedValues = new LinkedHashMap<String, Object>();
+
+    Object around() : getters() {
+        MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
+        String name = signature.getName();
+
+        if ( !cachedValues.containsKey( name ) )
+        {
+            cachedValues.put( name, proceed() );
+        }
+
+        return cachedValues.get( name );
+    }
 }
