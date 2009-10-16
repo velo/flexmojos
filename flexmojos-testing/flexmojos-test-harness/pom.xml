@@ -13,12 +13,12 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>4.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-test-harness</artifactId>
-  <version>3.4-SNAPSHOT</version>
+  <version>4.0-SNAPSHOT</version>
 
   <name>Flexmojos Integration Tests</name>
 
