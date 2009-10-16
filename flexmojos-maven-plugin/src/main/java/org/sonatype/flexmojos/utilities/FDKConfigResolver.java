@@ -20,14 +20,15 @@ package org.sonatype.flexmojos.utilities;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-import org.sonatype.flexmojos.common.FlexDependencySorter;
 
 import eu.cedarsoft.utils.ZipExtractor;
 
@@ -37,35 +38,48 @@ public class FDKConfigResolver
 
     private Document config;
 
-    private boolean isAIR;
+    private Boolean isAIR;
 
     private String[] fontManagers;
 
     private List<Namespace> namespaces;
 
-    public FDKConfigResolver( FlexDependencySorter dependencySorter, Build build )
+    public FDKConfigResolver( Collection<Artifact> dependencies, Build build, String sdkVersion )
         throws MojoExecutionException
     {
-        this.isAIR = dependencySorter.isAIR();
-
-        configDirectory = new File( build.getOutputDirectory(), "config-" + dependencySorter.getFDKVersion() );
+        configDirectory = new File( build.getOutputDirectory(), "config-" + sdkVersion );
         if ( !configDirectory.exists() )
         {
-            resolveConfigDirectory( dependencySorter.getFDKConfigFile() );
+            resolveConfigDirectory( dependencies );
+        }
+
+        for ( Artifact artifact : dependencies )
+        {
+            if ( "airglobal".equals( artifact.getArtifactId() ) )
+            {
+                isAIR = true;
+                break;
+            }
+            else if ( "playerglobal".equals( artifact.getArtifactId() ) )
+            {
+                isAIR = false;
+                break;
+            }
         }
     }
 
-    private void resolveConfigDirectory( File configFile )
+    private void resolveConfigDirectory( Collection<Artifact> dependencies )
         throws MojoExecutionException
     {
-        if ( configFile != null )
+        Artifact configArtifact =
+            MavenUtils.searchFor( dependencies, "com.adobe.flex.framework", "framework", null, "zip", "configs" );
+        if ( configArtifact != null )
         {
             ZipExtractor zipExtractor;
-            // noinspection ResultOfMethodCallIgnored
             configDirectory.mkdirs();
             try
             {
-                zipExtractor = new ZipExtractor( configFile );
+                zipExtractor = new ZipExtractor( configArtifact.getFile() );
                 zipExtractor.extract( configDirectory );
             }
             catch ( IOException e )

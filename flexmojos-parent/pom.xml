@@ -555,23 +555,23 @@
         <version>1.1</version>
         <scope>test</scope>
       </dependency>
-
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm</artifactId>
-        <version>1.5.1</version>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm-attrs</artifactId>
-        <version>1.5.1</version>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm-util</artifactId>
-        <version>1.5.1</version>
-      </dependency>
-
+      <!--
+        <dependency>
+          <groupId>asm</groupId>
+          <artifactId>asm</artifactId>
+          <version>1.5.1</version>
+        </dependency>
+        <dependency>
+          <groupId>asm</groupId>
+          <artifactId>asm-attrs</artifactId>
+          <version>1.5.1</version>
+        </dependency>
+        <dependency>
+          <groupId>asm</groupId>
+          <artifactId>asm-util</artifactId>
+          <version>1.5.1</version>
+        </dependency>
+      -->
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
