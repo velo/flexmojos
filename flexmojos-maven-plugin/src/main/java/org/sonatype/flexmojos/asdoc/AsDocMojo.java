@@ -27,14 +27,13 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.sonatype.flexmojos.AbstractIrvinMojo;
-import org.sonatype.flexmojos.common.FlexDependencySorter;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
@@ -49,10 +48,10 @@ import flex2.tools.ASDoc;
  * Goal which generates documentation from the ActionScript sources.
  * 
  * @goal asdoc
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution
  */
 public class AsDocMojo
-    extends AbstractIrvinMojo
+    extends AbstractMojo
     implements FlexMojo
 {
 
@@ -266,15 +265,12 @@ public class AsDocMojo
      */
     private boolean headlessServer;
 
-    private FlexDependencySorter dependencySorter;
+    private Set<Artifact> dependencyArtifacts;
 
     @SuppressWarnings( "unchecked" )
     protected void setUp()
         throws MojoExecutionException, MojoFailureException
     {
-        dependencySorter = new FlexDependencySorter();
-        dependencySorter.sort( project );
-
         if ( sourcePaths == null )
         {
             List<String> sourceRoots = project.getCompileSourceRoots();
@@ -296,7 +292,7 @@ public class AsDocMojo
         }
 
         libraries = new ArrayList<File>();
-        for ( Artifact artifact : (Set<Artifact>) project.getArtifacts() )
+        for ( Artifact artifact : getDependencyArtifacts() )
         {
             if ( SWC.equals( artifact.getType() ) )
             {
@@ -353,9 +349,10 @@ public class AsDocMojo
             templatesPath = generateDefaultTemplate();
         }
 
-        FDKConfigResolver sdkConfigResolver = new FDKConfigResolver( dependencySorter, build );
+        FDKConfigResolver sdkConfigResolver =
+            new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
         List<Namespace> fdkNamespaces = sdkConfigResolver.getNamespaces();
-        // we must merge user custom namespaces and default SDK namespaces, because we not use compiler API
+        // we must merge user custom namespaces and default SDK namespaces, because we not use compiler API ?
         // https://bugs.adobe.com/jira/browse/SDK-15405
         if ( fdkNamespaces != null )
         {
@@ -732,6 +729,24 @@ public class AsDocMojo
         {
             getLog().warn( "Invalid packaging for asdoc generation " + packaging );
         }
+    }
+
+    /**
+     * Returns Set of dependency artifacts which are resolved for the project.
+     * 
+     * @return Set of dependency artifacts.
+     * @throws MojoExecutionException
+     */
+    protected Set<Artifact> getDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        if ( dependencyArtifacts == null )
+        {
+            dependencyArtifacts =
+                MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                                   artifactMetadataSource );
+        }
+        return dependencyArtifacts;
     }
 
     public String getCompilerVersion()

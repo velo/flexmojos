@@ -14,10 +14,12 @@ import java.util.Map;
 /**
  * This class hold SWF metadata
  * 
- * @author velo Vladimir Krivosheev, 16 Aug 2009: We must flip titles and description. flex2.tools.oem.Configuration
- *         declare setSWFMetaData as Map "lang tag -> text", but OEMConfiguration implementation use reverced order,
- *         because call flex2.compiler.common.MetadataConfiguration#cfgLocalizedTitle - method signature: String title,
- *         String lang Run mvn test -Dtest=IT0014ConceptTest (flexmojos-test-harness project) for test workaround
+ * @author velo
+ *
+ * Vladimir Krivosheev, 16 Aug 2009: We must flip titles and description.
+ * flex2.tools.oem.Configuration declare setSWFMetaData as Map "lang tag -> text", but OEMConfiguration implementation use reverced order,
+ * because call flex2.compiler.common.MetadataConfiguration#cfgLocalizedTitle - method signature: String title, String lang
+ * Run mvn test -Dtest=IT0014ConceptTest (flexmojos-test-harness project) for test workaround
  */
 public class Metadata
 {
@@ -60,7 +62,6 @@ public class Metadata
 
     /**
      * The language code (RFC 4646) to store in the SWF metadata
-     * 
      * @see http://www.ietf.org/rfc/rfc4646.txt
      * @see http://www.langtag.net/
      * @see http://unicode.org/cldr/utility/languageid.jsp

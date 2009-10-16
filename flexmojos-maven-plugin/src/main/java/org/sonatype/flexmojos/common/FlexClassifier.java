@@ -17,6 +17,4 @@ package org.sonatype.flexmojos.common;
 public interface FlexClassifier
 {
     String LINK_REPORT = "link-report";
-
-    String CONFIGS = "configs";
 }
