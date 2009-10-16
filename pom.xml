@@ -38,9 +38,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
-    <url>http://svn.sonatype.org/forge/tags/forge-parent-5/flexmojos-aggregator</url>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</developerConnection>
+    <url>http://svn.sonatype.org/forge/branches/flexmojos-3.x</url>
   </scm>
 
   <distributionManagement>
