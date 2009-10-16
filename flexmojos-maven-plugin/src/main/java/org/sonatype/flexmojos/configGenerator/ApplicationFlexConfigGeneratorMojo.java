@@ -28,7 +28,7 @@ import flex2.tools.oem.internal.OEMConfiguration;
  * Goal which generate the flex-config without compile.
  * 
  * @goal generate-config-swf
- * @since 3.4
+ * @since 3.3
  */
 public class ApplicationFlexConfigGeneratorMojo
     extends ApplicationMojo
