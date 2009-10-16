@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * Goal which generates documentation from the ActionScript sources in DITA format.
  * 
  * @goal dita-asdoc
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution
  */
 public class DitaAsdocMojo
     extends AsDocMojo

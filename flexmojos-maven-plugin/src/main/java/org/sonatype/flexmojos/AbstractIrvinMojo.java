@@ -17,7 +17,10 @@
  */
 package org.sonatype.flexmojos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -31,6 +34,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
@@ -112,6 +116,58 @@ public abstract class AbstractIrvinMojo
     public AbstractIrvinMojo()
     {
         super();
+    }
+
+    // dependency artifactes
+    private Set<Artifact> dependencyArtifacts;
+
+    /**
+     * Returns Set of dependency artifacts which are resolved for the project.
+     * 
+     * @return Set of dependency artifacts.
+     * @throws MojoExecutionException
+     */
+    protected Set<Artifact> getDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        if ( dependencyArtifacts == null )
+        {
+            dependencyArtifacts =
+                MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                                   artifactMetadataSource );
+        }
+        return dependencyArtifacts;
+    }
+
+    /**
+     * Get dependency artifacts for given scope
+     * 
+     * @param scopes for which to get artifacts
+     * @return List of artifacts
+     * @throws MojoExecutionException
+     */
+    protected List<Artifact> getDependencyArtifacts( String... scopes )
+        throws MojoExecutionException
+    {
+        if ( scopes == null )
+            return null;
+
+        if ( scopes.length == 0 )
+        {
+            return new ArrayList<Artifact>();
+        }
+
+        List<String> scopesList = Arrays.asList( scopes );
+
+        List<Artifact> artifacts = new ArrayList<Artifact>();
+        for ( Artifact artifact : getDependencyArtifacts() )
+        {
+            if ( FlexExtension.SWC.equals( artifact.getType() ) && scopesList.contains( artifact.getScope() ) )
+            {
+                artifacts.add( artifact );
+            }
+        }
+        return artifacts;
     }
 
     /**

@@ -27,11 +27,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import java.lang.reflect.Method;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
