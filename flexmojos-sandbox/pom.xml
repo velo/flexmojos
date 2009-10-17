@@ -31,10 +31,8 @@
 
   <modules>
     <!-- <module>flexmojos-installer</module> -->
-    <!--
-    	<module>flexmojos-generator-compiler-iface</module>
-    	<module>flexmojos-flex-compiler</module>
-    -->
+  	<module>flexmojos-generator-compiler-iface</module>
+  	<module>flexmojos-flex-compiler</module>
   </modules>
 
 </project>

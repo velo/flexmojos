@@ -22,7 +22,7 @@ import org.sonatype.flexmojos.test.FlexUnitMojo;
  * @extendsGoal test-run
  * @goal flexcover-run
  * @phase test
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  * @requiresProject
  */
 public class FlexCoverMojo

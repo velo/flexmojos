@@ -16,28 +16,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -120,110 +108,6 @@ public class MavenUtils
     }
 
     /**
-     * Get dependency artifacts for a project using the local and remote repositories to resolve the artifacts
-     * 
-     * @param project maven project
-     * @param resolver artifact resolver
-     * @param localRepository artifact repository
-     * @param remoteRepositories List of remote repositories
-     * @param artifactMetadataSource artifactMetadataSource
-     * @return all dependencies from the project
-     * @throws MojoExecutionException thrown if an exception occured during artifact resolving
-     */
-    @SuppressWarnings( "unchecked" )
-    public static Set<Artifact> getDependencyArtifacts( MavenProject project, ArtifactResolver resolver,
-                                                        ArtifactRepository localRepository, List remoteRepositories,
-                                                        ArtifactMetadataSource artifactMetadataSource )
-        throws MojoExecutionException
-    {
-        ArtifactResolutionResult arr;
-        try
-        {
-            arr =
-                resolver.resolveTransitively( project.getDependencyArtifacts(), project.getArtifact(),
-                                              remoteRepositories, localRepository, artifactMetadataSource );
-        }
-        catch ( AbstractArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
-        Set<Artifact> result = arr.getArtifacts();
-
-        // ## 6/18/09 StoneRiver Change to resolve RELEASE Artifact version ##
-        for ( Artifact artifact : result )
-        {
-            if ( artifact.getVersion().equals( Artifact.RELEASE_VERSION ) )
-            {
-                getReleaseVersion( artifact, localRepository, remoteRepositories, artifactMetadataSource );
-            }
-        }
-
-        return result;
-
-    }
-
-    /**
-     * Get the Release version for the Artifact.
-     * 
-     * @param artifact The artifact to update with the release version.
-     * @param localRepository artifact repository
-     * @param remoteRepositories List of remote repositories
-     * @param artifactMetadataSource artifactMetadataSource
-     * @throws MojoExecutionException thrown if an exception occured during artifact resolving
-     */
-    @SuppressWarnings( "unchecked" )
-    private static void getReleaseVersion( Artifact artifact, ArtifactRepository localRepository,
-                                           List remoteRepositories, ArtifactMetadataSource artifactMetadataSource )
-        throws MojoExecutionException
-    {
-        try
-        {
-            List<ArtifactVersion> artifactVersions =
-                artifactMetadataSource.retrieveAvailableVersions( artifact, localRepository, remoteRepositories );
-            if ( artifactVersions != null && !artifactVersions.isEmpty() )
-            {
-                ArtifactVersion release = artifactVersions.get( artifactVersions.size() - 1 );
-                artifact.setBaseVersion( release.toString() );
-                artifact.setVersion( release.toString() );
-            }
-        }
-        catch ( ArtifactMetadataRetrievalException ex )
-        {
-            throw new MojoExecutionException( "Error retrieving release version for artifact: " + artifact.getId(), ex );
-        }
-    }
-
-    /**
-     * Get the file reference of an SWC artifact.<br>
-     * If the artifact file does not exist in the [build-dir]/libraries/[scope] directory, the artifact file is copied
-     * to that location.
-     * 
-     * @param a artifact for which to retrieve the file reference
-     * @param build build for which to get the artifact
-     * @return swc artifact file reference
-     * @throws MojoExecutionException thrown if an IOException occurs while copying the file to the
-     *             [build-dir]/libraries/[scope] directory
-     */
-    public static File getArtifactFile( Artifact a, Build build )
-        throws MojoExecutionException
-    {
-        File dest = new File( build.getOutputDirectory(), "libraries/" + a.getArtifactId() + ".swc" );
-        if ( !dest.exists() )
-        {
-            try
-            {
-                FileUtils.copyFile( a.getFile(), dest );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-        }
-        return dest;
-    }
-
-    /**
      * Use the resolver to resolve the given artifact in the local or remote repositories.
      * 
      * @param project Active project
@@ -236,7 +120,7 @@ public class MavenUtils
      */
     @SuppressWarnings( "unchecked" )
     public static Artifact resolveArtifact( MavenProject project, Artifact artifact, ArtifactResolver resolver,
-                                        ArtifactRepository localRepository, List remoteRepositories )
+                                            ArtifactRepository localRepository, List remoteRepositories )
         throws MojoExecutionException
     {
         try
