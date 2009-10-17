@@ -32,11 +32,19 @@
   <packaging>swc</packaging>
 
   <dependencies>
+    <!-- http://groups.google.com/group/flex-mojos/browse_thread/thread/8242dc44810c4463 -->
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>%{flex.version}</version>
       <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>playerglobal</artifactId>
+      <version>%{flex.version}</version>
+      <classifier>10</classifier>
+      <type>swc</type>
     </dependency>
     <dependency>
       <groupId>info.rvin.itest.transitive-dependency</groupId>
@@ -53,6 +61,7 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
+          <ignoreVersionIssues>true</ignoreVersionIssues>
         </configuration>
       </plugin>
     </plugins>

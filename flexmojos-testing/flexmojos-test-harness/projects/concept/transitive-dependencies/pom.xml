@@ -34,10 +34,6 @@
 
   <packaging>pom</packaging>
 
-  <properties>
-    <flex.sdk.version>4.0.0.8811</flex.sdk.version>
-  </properties>
-
   <modules>
     <module>internalLib</module>
     <module>A</module>
@@ -53,19 +49,13 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>${flex.sdk.version}</version>
+            <version>%{flex.version}</version>
             <type>pom</type>
-          </dependency>
-          <!-- Marvin, why I need specify it ;)? see my comment for FLEXMOJOS-153 -->
-          <dependency>
-            <groupId>com.adobe.flex.compiler</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-            <version>${flex.sdk.version}</version>
           </dependency>
           <dependency>
             <groupId>com.adobe.flex.compiler</groupId>
             <artifactId>asdoc</artifactId>
-            <version>${flex.sdk.version}</version>
+            <version>%{flex.version}</version>
             <type>zip</type>
             <classifier>template</classifier>
           </dependency>

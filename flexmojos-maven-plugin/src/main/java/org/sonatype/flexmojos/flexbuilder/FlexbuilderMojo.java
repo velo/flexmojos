@@ -55,7 +55,7 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
  * @extendsPlugin eclipse
  * @extendsGoal eclipse
  * @goal flexbuilder
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  */
 public class FlexbuilderMojo
     extends AbstractIdeMojo
