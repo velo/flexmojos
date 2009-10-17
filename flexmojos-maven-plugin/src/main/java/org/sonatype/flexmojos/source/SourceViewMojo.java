@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.source;
 
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;

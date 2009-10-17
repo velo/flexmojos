@@ -19,7 +19,7 @@ package org.sonatype.flexmojos.compiler;
 
 public class Warning
 {
-	/**
+    /**
      * runs the AS3 compiler in a mode that detects legal but potentially incorrect code
      */
     private boolean actionscript = true;
@@ -231,7 +231,7 @@ public class Warning
      */
     private boolean shadowedDeviceFont = true;
 
-	public boolean getActionScript()
+    public boolean getActionScript()
     {
         return actionscript;
     }
@@ -426,7 +426,7 @@ public class Warning
         return xmlClassHasChanged;
     }
 
-	public void setActionScript( boolean actionscript )
+    public void setActionScript( boolean actionscript )
     {
         this.actionscript = actionscript;
     }

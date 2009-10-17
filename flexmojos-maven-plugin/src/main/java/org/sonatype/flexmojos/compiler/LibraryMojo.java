@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
+import org.sonatype.flexmojos.common.FlexDependencySorter;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -52,11 +52,11 @@ import flex2.tools.oem.internal.OEMConfiguration;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 1.0
  * @goal compile-swc
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  * @phase compile
  */
 public class LibraryMojo
-    extends AbstractFlexCompilerMojo<Library>
+    extends AbstractFlexCompilerMojo<Library, FlexDependencySorter>
 {
 
     /**
@@ -125,15 +125,19 @@ public class LibraryMojo
     protected File[] includeSources;
 
     /**
+     * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
+     * that manifests can mention classes that come in from filespec rather than classpath, e.g. in playerglobal.swc.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean includeLookupOnly;
+
+    /**
      * Sets the RSL output directory.
      * 
      * @parameter
      */
     private File directory;
-
-    /*
-     * TODO how to set this on flex-compiler-oem -include-lookup-only private boolean includeLookupOnly;
-     */
 
     /**
      * Adds a CSS stylesheet to this <code>Library</code> object. This is equilvalent to the
@@ -170,7 +174,7 @@ public class LibraryMojo
     private boolean addMavenDescriptor;
 
     /**
-     * workaround
+     * workaround for flex compiler configuration dump
      */
     private List<String> includeFilesNames;
 
@@ -205,6 +209,8 @@ public class LibraryMojo
     {
         // need to initialize builder before go super
         builder = new Library();
+        dependencySorter = new FlexDependencySorter();
+        dependencySorter.sort( project );
 
         if ( directory != null )
         {
@@ -236,8 +242,11 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeFiles ) )
         {
-            List<String> includeFilesNames = new ArrayList<String>();
-            List<String> includeFilesPaths = new ArrayList<String>();
+            if ( configurationReport )
+            {
+                includeFilesNames = new ArrayList<String>();
+                includeFilesPaths = new ArrayList<String>();
+            }
 
             for ( String includeFile : includeFiles )
             {
@@ -265,12 +274,6 @@ public class LibraryMojo
                 }
 
                 builder.addArchiveFile( relativePath, file );
-            }
-
-            if ( configurationReport )
-            {
-                this.includeFilesNames = includeFilesNames;
-                this.includeFilesPaths = includeFilesPaths;
             }
         }
 
@@ -313,6 +316,31 @@ public class LibraryMojo
         {
             builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
                                     new File( project.getBasedir(), "pom.xml" ) );
+        }
+    }
+
+	@Override
+    protected void configure()
+        throws MojoFailureException, MojoExecutionException
+    {
+        super.configure();
+
+        // workaround for Adobe bug, themes applicable only for Application, but compiler is stupid
+        // ( defaults:[-1,-1] unable to open './themes/Spark/spark.css')
+        // If you need reference to theme's classes for some reasons, you must use theme's SWC as external dependency.
+        // Official document http://livedocs.adobe.com/flex/3/build_deploy_flex3.pdf doesn't contains theme option in compc option
+        configuration.setTheme( new File[0] );
+    }
+
+
+    @Override
+    protected void configureViaCommandLine( List<String> commandLineArguments )
+    {
+        super.configureViaCommandLine( commandLineArguments );
+
+        if ( includeLookupOnly )
+        {
+            commandLineArguments.add( "-include-lookup-only" );
         }
     }
 
@@ -483,17 +511,6 @@ public class LibraryMojo
     protected String getDefaultLocale()
     {
         throw new UnsupportedOperationException( "Default locale is not available to Libraries" );
-    }
-
-    @Override
-    protected void addRuntimeLibrary( Artifact artifact )
-    {
-        getLog().warn(
-                       "Invalid scope for '" + artifact.getArtifactId()
-                           + "'. SWC doesn't support runtime scope, switching to external!" );
-
-        File artifactFile = artifact.getFile();
-        configuration.addExternalLibraryPath( new File[] { artifactFile } );
     }
 
     protected Configuration getResourceBundleConfiguration( String locale, File localePath )

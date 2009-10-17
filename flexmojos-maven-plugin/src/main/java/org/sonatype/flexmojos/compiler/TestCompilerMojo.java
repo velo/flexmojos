@@ -37,6 +37,7 @@ import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.sonatype.flexmojos.common.ApplicationDependencySorter;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -144,13 +145,18 @@ public class TestCompilerMojo
     }
 
     @Override
+    protected void setUpDependencySorter()
+        throws MojoExecutionException
+    {
+        dependencySorter = new ApplicationDependencySorter();
+        dependencySorter.sort( project );
+    }
+
+    @Override
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
         isSetProjectFile = false;
-
-        linkReport = false;
-        loadExterns = null;
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
@@ -309,23 +315,22 @@ public class TestCompilerMojo
     protected void resolveDependencies()
         throws MojoExecutionException, MojoFailureException
     {
-        configuration.setExternalLibraryPath( getGlobalDependency() );
+        configuration.setExternalLibraryPath( dependencySorter.getGlobalLibraries() );
 
-        // Set all dependencies as merged
-        configuration.setLibraryPath( getDependenciesPath( "compile" ) );
-        configuration.addLibraryPath( getDependenciesPath( "merged" ) );
-        configuration.addLibraryPath( merge( getResourcesBundles( getDefaultLocale() ),
-                                             getResourcesBundles( runtimeLocales ),
-                                             getResourcesBundles( compiledLocales ) ) );
+        configuration.setLibraryPath( dependencySorter.getMergedLibraries() );
+        configuration.addLibraryPath( getResourcesBundles( getDefaultLocale() ) );
+        configuration.addLibraryPath( getResourcesBundles( runtimeLocales ) );
+        configuration.addLibraryPath( getResourcesBundles( compiledLocales ) );
 
-        File[] testFiles =
-            new File[] { getFlexmojosTestArtifact( "flexmojos-unittest-support" ).getFile(),
-                getFlexmojosUnittestFrameworkIntegrationLibrary().getFile() };
+        dependencySorter.addArtifact( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) );
 
-        // and add test libraries
-        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
-                                               getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
-                                               getDependenciesPath( "external" ), testFiles ) );
+        Artifact dependency = getFlexmojosUnittestFrameworkIntegrationLibrary();
+        dependencySorter.addArtifact( dependency );
+
+        List<File> includes = new ArrayList<File>();
+        includes.addAll( Arrays.asList( dependencySorter.getInternalLibraries() ) );
+        includes.addAll( Arrays.asList( dependencySorter.getTestLibraries() ) );
+        configuration.includeLibraries( includes.toArray( new File[includes.size()] ) );
 
         configuration.setTheme( getThemes() );
     }
@@ -336,7 +341,8 @@ public class TestCompilerMojo
     {
         Artifact artifact;
 
-        Map<String, Artifact> artifacts = ArtifactUtils.artifactMapByVersionlessId( getDependencyArtifacts( "test" ) );
+        Map<String, Artifact> artifacts =
+            ArtifactUtils.artifactMapByVersionlessId( dependencySorter.getTestArtifacts() );
 
         Artifact flexunit = (Artifact) artifacts.get( "com.adobe.flexunit:flexunit" );
         if ( flexunit != null )
@@ -412,16 +418,6 @@ public class TestCompilerMojo
         }
 
         return locales.toArray( new String[locales.size()] );
-    }
-
-    private File[] merge( File[]... filesSets )
-    {
-        List<File> files = new ArrayList<File>();
-        for ( File[] fileSet : filesSets )
-        {
-            files.addAll( Arrays.asList( fileSet ) );
-        }
-        return files.toArray( new File[0] );
     }
 
     @Override
@@ -508,4 +504,10 @@ public class TestCompilerMojo
         // reports are ignored on unit tests
     }
 
+    @Override
+    protected void configureExterns()
+        throws MojoExecutionException
+    {
+        // externs are ignore on unit tests
+    }
 }
