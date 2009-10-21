@@ -22,7 +22,10 @@ import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +44,10 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 
+import com.adobe.air.AIRPackager;
+import com.adobe.air.Listener;
+import com.adobe.air.Message;
+
 /**
  * @goal sign-air
  * @requiresDependencyResolution compile
@@ -52,7 +59,7 @@ public class SignAirMojo
 
     /**
      * The type of keystore, determined by the keystore implementation.
-     * 
+     *
      * @parameter default-value="pkcs12"
      */
     private String storetype;
@@ -90,7 +97,7 @@ public class SignAirMojo
 
     /**
      * Plugin classpath.
-     * 
+     *
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
@@ -100,61 +107,67 @@ public class SignAirMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        AIRPackager airPackager = new AIRPackager();
         try
         {
-            // look for EMMA dependency in this plugin classpath
-            final Map<String, Artifact> pluginArtifactMap = ArtifactUtils.artifactMapByVersionlessId( pluginClasspath );
-            Artifact adtArtifact = (Artifact) pluginArtifactMap.get( "com.adobe.flex:adt" );
+            File output = new File( project.getBuild().getDirectory(), outputName );
+            airPackager.setOutput(output);
+            airPackager.setDescriptor(getAirDescriptor());
 
-            if ( adtArtifact == null )
+            KeyStore keyStore = KeyStore.getInstance(storetype);
+            keyStore.load(new FileInputStream(keystore.getAbsolutePath()), storepass.toCharArray());
+            String alias = keyStore.aliases().nextElement();
+            airPackager.setPrivateKey((PrivateKey) keyStore.getKey(alias, storepass.toCharArray()));
+            airPackager.setSignerCertificate(keyStore.getCertificate(alias));
+            airPackager.setCertificateChain(keyStore.getCertificateChain(alias));
+
+            if ( project.getPackaging().equals( AIR ) )
             {
-                throw new MojoExecutionException(
-                                                  "Failed to find 'adt' artifact in plugin dependencies.  Be sure of adding it with compile scope!" );
-            }
-
-            Commandline cmd = new Commandline();
-            cmd.setExecutable( "java" );
-            cmd.setWorkingDirectory( project.getPackaging().equals( AIR )
-                ? airOutput.getAbsolutePath()
-                : project.getBuild().getDirectory() );
-            cmd.createArgument().setValue( "-jar" );
-            cmd.createArgument().setValue( adtArtifact.getFile().getAbsolutePath() );
-
-            String[] args = getArgs();
-            cmd.addArguments( args );
-
-            StreamConsumer consumer = new StreamConsumer()
-            {
-                public void consumeLine( String line )
+                Set<Artifact> deps = project.getDependencyArtifacts();
+                for ( Artifact artifact : deps )
                 {
-                    getLog().info( "  " + line );
+                    if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+                    {
+                        airPackager.addSourceWithPath(artifact.getFile(), artifact.getFile().getName());
+                    }
                 }
-            };
-
-            getLog().info( cmd.toString() );
-
-            int result = CommandLineUtils.executeCommandLine( cmd, consumer, consumer );
-
-            if ( result != 0 )
-            {
-                throw new MojoFailureException( "Error generating AIR package " + result );
             }
+            else
+            {
+                airPackager.addSourceWithPath(project.getArtifact().getFile(), project.getArtifact().getFile().getName());
+            }
+
+            project.getArtifact().setFile( output );
+
+            airPackager.setListener(new Listener()
+                {
+                    public void message(Message message)
+                    {
+                        getLog().info( "  " + message );
+                    }
+
+                    public void progress(int soFar, int total)
+                    {
+                        getLog().info( "  completed " + soFar + " of " + total);
+                    }
+                });
+            airPackager.createAIR();
         }
         catch ( MojoExecutionException e )
         {
             // do not handle
             throw e;
         }
-        catch ( MojoFailureException e )
-        {
-            // do not handle
-            throw e;
-        }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Error invoking AIR api, blame adobe for not providing a public API", e );
+            throw new MojoExecutionException( "Error invoking AIR api", e );
+        }
+        finally
+        {
+            airPackager.close();
         }
     }
+
 
     @SuppressWarnings( "unchecked" )
     private String[] getArgs()
