@@ -336,7 +336,7 @@ public class TestCompilerMojo
     {
         Artifact artifact;
 
-        Map<String, Artifact> artifacts = ArtifactUtils.artifactMapByVersionlessId( getDependencyArtifacts( "test" ) );
+        Map<String, Artifact> artifacts = ArtifactUtils.artifactMapByVersionlessId( getDependencyArtifacts() );
 
         Artifact flexunit = (Artifact) artifacts.get( "com.adobe.flexunit:flexunit" );
         if ( flexunit != null )
