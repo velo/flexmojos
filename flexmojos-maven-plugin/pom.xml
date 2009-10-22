@@ -12,12 +12,11 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>3.4.0</version>
+    <version>3.5-SNAPSHOT</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>
-  <version>3.4.2-SNAPSHOT</version>
 
   <packaging>maven-plugin</packaging>
 
@@ -157,22 +156,22 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>3.4.0</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
-      <version>3.4.0</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
-      <version>3.4.0</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-constraints</artifactId>
-      <version>3.4.0</version>
+      <version>${pom.version}</version>
     </dependency>
 
     <dependency>
@@ -269,7 +268,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-tester</artifactId>
-      <version>3.4.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -297,4 +296,5 @@
       </plugin>
     </plugins>
   </reporting>
+
 </project>
