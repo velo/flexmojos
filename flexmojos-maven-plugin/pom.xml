@@ -17,7 +17,7 @@
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>
-  <version>3.4.1-SNAPSHOT</version>
+  <version>3.4.1</version>
 
   <packaging>maven-plugin</packaging>
 
@@ -298,4 +298,10 @@
     </plugins>
   </reporting>
 
+
+  <scm>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-maven-plugin-3.4.1</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-maven-plugin-3.4.1</developerConnection>
+    <url>http://svn.sonatype.org/forge/tags/flexmojos-maven-plugin-3.4.1</url>
+  </scm>
 </project>
