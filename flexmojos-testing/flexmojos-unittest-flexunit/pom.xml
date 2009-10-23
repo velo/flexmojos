@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-unittest-parent</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.4.2</version>
     <relativePath>../flexmojos-unittest-parent/pom.xml</relativePath>
   </parent>
 
