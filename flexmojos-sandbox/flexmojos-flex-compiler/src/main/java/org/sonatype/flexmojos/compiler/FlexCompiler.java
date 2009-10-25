@@ -5,8 +5,19 @@ import java.io.File;
 public interface FlexCompiler
 {
 
-    void compileSwf( ICommandLineConfiguration configuration, File sourceFile );
+    int compileSwf( ICommandLineConfiguration configuration, File sourceFile )
+        throws Exception;
 
-    void compileSwc( ICompcConfiguration configuration );
+    int compileSwc( ICompcConfiguration configuration )
+        throws Exception;
+
+    int asdoc( final IASDocConfiguration configuration )
+        throws Exception;
+
+    int optimize( final IOptimizerConfiguration configuration )
+        throws Exception;
+
+    int digest( final IDigestConfiguration configuration )
+        throws Exception;
 
 }

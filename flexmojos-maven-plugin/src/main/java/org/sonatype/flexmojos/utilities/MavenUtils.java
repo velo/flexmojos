@@ -125,7 +125,8 @@ public class MavenUtils
     {
         try
         {
-            artifact = project.replaceWithActiveArtifact( artifact );
+            // Maven 3 should take care of it
+            // artifact = project.replaceWithActiveArtifact( artifact );
             if ( !artifact.isResolved() )
             {
                 resolver.resolve( artifact, remoteRepositories, localRepository );

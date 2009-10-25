@@ -30,31 +30,11 @@
     </license>
   </licenses>
 
-  <properties>
-    <!-- need due grid limitations -->
-    <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
-    <flexSnapshotUrl>http://repository.sonatype.org/content/repositories/flexmojos-snapshots</flexSnapshotUrl>
-    <flexSiteUrl>dav:https://sites.sonatype.org/flexmojos</flexSiteUrl>
-  </properties>
-
   <scm>
     <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
     <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
-    <url>http://svn.sonatype.org/forge/tags/forge-parent-5/flexmojos-aggregator</url>
+    <url>http://svn.sonatype.org/flexmojos/trunk</url>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>flexmojos-releases</id>
-      <name>flexmojos Release Repository</name>
-      <url>${flexReleaseUrl}</url>
-    </repository>
-    <snapshotRepository>
-      <id>flexmojos-snapshots</id>
-      <name>flexmojos Snapshot Repository</name>
-      <url>${flexSnapshotUrl}</url>
-    </snapshotRepository>
-  </distributionManagement>
 
   <build>
     <plugins>
@@ -143,7 +123,6 @@
         <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
-        <module>flexmojos-generator</module>
         <module>flexmojos-testing</module>
       </modules>
       <properties>

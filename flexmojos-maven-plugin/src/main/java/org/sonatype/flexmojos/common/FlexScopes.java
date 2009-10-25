@@ -16,6 +16,9 @@ package org.sonatype.flexmojos.common;
 
 public interface FlexScopes
 {
+
+    String COMPILE = "compile";
+
     String EXTERNAL = "external";
 
     String INTERNAL = "internal";

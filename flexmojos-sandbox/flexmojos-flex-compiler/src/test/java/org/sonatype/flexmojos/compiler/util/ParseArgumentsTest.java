@@ -25,7 +25,7 @@ public class ParseArgumentsTest
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
         when( cfg.getDebugPassword() ).thenReturn( "dbgPw" );
 
-        List<String> args = ParseArguments.getArguments( cfg, ICompcConfiguration.class );
+        List<String> args = ParseArguments.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
         Assert.assertEquals( args.size(), 1, args.toString() );
@@ -55,7 +55,7 @@ public class ParseArgumentsTest
         when( ptLangRangeCfg.range() ).thenReturn( "U+0A0C-0EAA" );
         when( metadataCfg.getCreator() ).thenReturn( new String[] { "Marvin", "VELO", "Froeder" } );
 
-        List<String> args = ParseArguments.getArguments( cfg, ICompcConfiguration.class );
+        List<String> args = ParseArguments.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
         Assert.assertEquals( args.size(), 6, args.toString() );
@@ -74,7 +74,7 @@ public class ParseArgumentsTest
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
 
-        List<String> args = ParseArguments.getArguments( cfg, ICompcConfiguration.class );
+        List<String> args = ParseArguments.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
         Assert.assertEquals( args.size(), 1, args.toString() );
