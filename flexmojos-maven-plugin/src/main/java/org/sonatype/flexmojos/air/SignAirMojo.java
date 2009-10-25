@@ -1,8 +1,8 @@
 package org.sonatype.flexmojos.air;
 
+import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,19 +12,13 @@ import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 
 import com.adobe.air.AIRPackager;
@@ -42,7 +36,7 @@ public class SignAirMojo
 
     /**
      * The type of keystore, determined by the keystore implementation.
-     *
+     * 
      * @parameter default-value="pkcs12"
      */
     private String storetype;
@@ -80,13 +74,14 @@ public class SignAirMojo
 
     /**
      * Plugin classpath.
-     *
+     * 
      * @parameter expression="${plugin.artifacts}"
      * @required
      * @readonly
      */
     protected List<Artifact> pluginClasspath;
 
+    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -94,47 +89,78 @@ public class SignAirMojo
         try
         {
             File output = new File( project.getBuild().getDirectory(), outputName );
-            airPackager.setOutput(output);
-            airPackager.setDescriptor(getAirDescriptor());
+            airPackager.setOutput( output );
+            airPackager.setDescriptor( getAirDescriptor() );
 
-            KeyStore keyStore = KeyStore.getInstance(storetype);
-            keyStore.load(new FileInputStream(keystore.getAbsolutePath()), storepass.toCharArray());
+            KeyStore keyStore = KeyStore.getInstance( storetype );
+            keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
             String alias = keyStore.aliases().nextElement();
-            airPackager.setPrivateKey((PrivateKey) keyStore.getKey(alias, storepass.toCharArray()));
-            airPackager.setSignerCertificate(keyStore.getCertificate(alias));
-            airPackager.setCertificateChain(keyStore.getCertificateChain(alias));
+            airPackager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+            airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
+            airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
 
             if ( project.getPackaging().equals( AIR ) )
             {
                 Set<Artifact> deps = project.getDependencyArtifacts();
                 for ( Artifact artifact : deps )
                 {
-                    if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+                    if ( SWF.equals( artifact.getType() ) )
                     {
-                        airPackager.addSourceWithPath(artifact.getFile(), artifact.getFile().getName());
+                        File source = artifact.getFile();
+                        String path = source.getName();
+                        getLog().debug( "  adding source " + source + " with path " + path );
+                        airPackager.addSourceWithPath( source, path );
                     }
                 }
             }
             else
             {
-                airPackager.addSourceWithPath(project.getArtifact().getFile(), project.getArtifact().getFile().getName());
+                File source = project.getArtifact().getFile();
+                String path = source.getName();
+                getLog().debug( "  adding source " + source + " with path " + path );
+                airPackager.addSourceWithPath( source, path );
+            }
+
+            String path = project.getBuild().getFinalName() + "." + SWF;
+            File source = new File( project.getBuild().getDirectory(), path );
+            if ( source.exists() )
+            {
+                getLog().debug( "  adding source " + source + " with path " + path );
+                airPackager.addSourceWithPath( source, path );
             }
 
             project.getArtifact().setFile( output );
 
-            airPackager.setListener(new Listener()
-                {
-                    public void message(Message message)
-                    {
-                        getLog().info( "  " + message );
-                    }
+            final List<Message> messages = new ArrayList<Message>();
 
-                    public void progress(int soFar, int total)
-                    {
-                        getLog().info( "  completed " + soFar + " of " + total);
-                    }
-                });
+            airPackager.setListener( new Listener()
+            {
+                public void message( Message message )
+                {
+                    messages.add( message );
+                }
+
+                public void progress( int soFar, int total )
+                {
+                    getLog().info( "  completed " + soFar + " of " + total );
+                }
+            } );
+
             airPackager.createAIR();
+
+            if ( messages.size() > 0 )
+            {
+                for ( Message message : messages )
+                {
+                    getLog().error( "  " + message.errorDescription );
+                }
+
+                throw new MojoExecutionException( "Error creating AIR application" );
+            }
+            else
+            {
+                getLog().info( "  AIR package created: " + output.getAbsolutePath() );
+            }
         }
         catch ( MojoExecutionException e )
         {
@@ -151,53 +177,6 @@ public class SignAirMojo
         }
     }
 
-
-    @SuppressWarnings( "unchecked" )
-    private String[] getArgs()
-        throws MojoExecutionException
-    {
-        List<String> args = new ArrayList<String>();
-        args.add( "-package" );
-        args.add( "-storetype" );
-        args.add( storetype );
-        args.add( "-keystore" );
-        args.add( keystore.getAbsolutePath() );
-        args.add( "-storepass" );
-        args.add( storepass );
-        File output = new File( project.getBuild().getDirectory(), outputName );
-        args.add( output.getAbsolutePath() );
-        File xml = getAirDescriptor();
-        args.add( xml.getAbsolutePath() );
-        if ( project.getPackaging().equals( AIR ) )
-        {
-            Set<Artifact> deps = project.getDependencyArtifacts();
-            for ( Artifact artifact : deps )
-            {
-                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
-                {
-                    try
-                    {
-                        FileUtils.copyFileToDirectory( artifact.getFile(), airOutput );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( "Failed to copy " + artifact, e );
-                    }
-                    args.add( new File( airOutput, artifact.getFile().getName() ).getAbsolutePath() );
-                }
-            }
-        }
-        else
-        {
-            args.add( project.getArtifact().getFile().getAbsolutePath() );
-        }
-
-        project.getArtifact().setFile( output );
-
-        return args.toArray( new String[args.size()] );
-    }
-
-    @SuppressWarnings( "unchecked" )
     private File getAirDescriptor()
         throws MojoExecutionException
     {
