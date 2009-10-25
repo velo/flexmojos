@@ -17,15 +17,14 @@
  */
 package org.sonatype.flexmojos.compiler.visitors;
 
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.CodeVisitor;
-import org.objectweb.asm.Constants;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 public class APIClassVisitor
     extends ClassAdapter
-    implements Constants
+    implements Opcodes
 {
 
     public APIClassVisitor( ClassVisitor cv )
@@ -34,11 +33,11 @@ public class APIClassVisitor
     }
 
     @Override
-    public CodeVisitor visitMethod( int access, String name, String desc, String[] exceptions, Attribute attrs )
+    public MethodVisitor visitMethod( int access, String name, String desc, String arg3, String[] exceptions )
     {
         if ( name.equals( "useConsoleLogger" ) && desc.equals( "(ZZZZ)V" ) )
         {
-            CodeVisitor cd = cv.visitMethod( ACC_PUBLIC + ACC_STATIC, "useConsoleLogger", "(ZZZZ)V", null, null );
+            MethodVisitor cd = cv.visitMethod( ACC_PUBLIC + ACC_STATIC, "useConsoleLogger", "(ZZZZ)V", null, null );
             cd.visitFieldInsn( GETSTATIC, "org/sonatype/flexmojos/compiler/CompilerThreadLocal", "logger",
                                "Ljava/lang/ThreadLocal;" );
             cd.visitMethodInsn( INVOKEVIRTUAL, "java/lang/ThreadLocal", "get", "()Ljava/lang/Object;" );
@@ -53,7 +52,7 @@ public class APIClassVisitor
 
         if ( name.equals( "usePathResolver" ) && desc.equals( "(Lflex2/compiler/common/SinglePathResolver;)V" ) )
         {
-            CodeVisitor cd = super.visitMethod( access, name, desc, exceptions, attrs );
+            MethodVisitor cd = super.visitMethod( access, name, desc, arg3, exceptions );
             cd.visitVarInsn( ALOAD, 1 );
             cd.visitFieldInsn( GETSTATIC, "org/sonatype/flexmojos/compiler/CompilerThreadLocal", "pathResolver",
                                "Ljava/lang/ThreadLocal;" );
@@ -66,7 +65,7 @@ public class APIClassVisitor
             return cd;
         }
 
-        return super.visitMethod( access, name, desc, exceptions, attrs );
+        return super.visitMethod( access, name, desc, arg3, exceptions );
     }
 
 }
