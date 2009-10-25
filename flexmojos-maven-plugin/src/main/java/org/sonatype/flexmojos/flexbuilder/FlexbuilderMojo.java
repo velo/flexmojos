@@ -7,6 +7,7 @@
  */
 package org.sonatype.flexmojos.flexbuilder;
 
+import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
@@ -39,7 +40,7 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
 /**
  * Generates Flex Builder configuration files for SWC and SWF projects.
- * 
+ *
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 3.0
  * @extendsPlugin eclipse
@@ -57,7 +58,11 @@ public class FlexbuilderMojo
 
     static final String ACTIONSCRIPT_NATURE = "com.adobe.flexbuilder.project.actionscriptnature";
 
+    static final String FLEXBUILDER_AIR_NATURE = "com.adobe.flexbuilder.apollo.apollonature";
+
     static final String FLEXBUILDER_BUILD_COMMAND = "com.adobe.flexbuilder.project.flexbuilder";
+
+    static final String AIR_BUILD_COMMAND = "com.adobe.flexbuilder.apollo.apollobuilder";
 
     static final String[] SDK_SOURCES = { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
 
@@ -79,21 +84,21 @@ public class FlexbuilderMojo
 
     /**
      * Turn on generation of accessible SWFs.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean accessible;
 
     /**
      * Customize the outputFolderPath of the Eclipse FlexBuilder Compiler.
-     * 
+     *
      * @parameter default-value="bin-debug"
      */
     private String flexBuilderOutputFolderPath;
 
     /**
      * Run the AS3 compiler in strict error checking mode.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean strict;
@@ -101,14 +106,14 @@ public class FlexbuilderMojo
     /**
      * Verifies the RSL loaded has the same digest as the RSL specified when the application was compiled. This is
      * equivalent to using the <code>verify-digests</code> option in the mxmlc compiler.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean verifyDigests;
 
     /**
      * Run the AS3 compiler in a mode that detects legal but potentially incorrect code
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean showWarnings;
@@ -117,7 +122,7 @@ public class FlexbuilderMojo
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
      * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
      * Usage:
-     * 
+     *
      * <pre>
      * &lt;locales&gt;
      *    &lt;locale&gt;en_US&lt;/locale&gt;
@@ -125,7 +130,7 @@ public class FlexbuilderMojo
      *    &lt;locale&gt;es_ES&lt;/locale&gt;
      * &lt;/locales&gt;
      * </pre>
-     * 
+     *
      * @parameter
      * @deprecated
      */
@@ -133,7 +138,7 @@ public class FlexbuilderMojo
 
     /**
      * Default locale for libraries. This is useful to non localized applications, just to define swc.rb locale
-     * 
+     *
      * @parameter default-value="en_US"
      */
     private String defaultLocale;
@@ -141,13 +146,13 @@ public class FlexbuilderMojo
     /**
      * This is the equilvalent of the <code>include-sources</code> option of the compc compiler.<BR>
      * Usage:
-     * 
+     *
      * <pre>
      * &lt;includeSources&gt;
      *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
      * &lt;/includeSources&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     protected File[] includeSources;
@@ -155,27 +160,27 @@ public class FlexbuilderMojo
     /**
      * This is the equilvalent of the <code>include-classes</code> option of the compc compiler.<BR>
      * Usage:
-     * 
+     *
      * <pre>
      * &lt;includeClassses&gt;
      *   &lt;class&gt;foo.Bar&lt;/class&gt;
      * &lt;/includeClasses&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     protected String[] includeClasses;
 
     /**
      * The file to be compiled. The path must be relative to the source folder.
-     * 
+     *
      * @parameter
      */
     protected String sourceFile;
 
     /**
      * Additional application files. The paths must be relative to the source folder.
-     * 
+     *
      * @parameter
      * @alias "applications"
      */
@@ -184,13 +189,13 @@ public class FlexbuilderMojo
     /**
      * List of css files that will be compiled into swfs within Eclipse. The path must be relative to the base directory
      * of the project. Usage:
-     * 
+     *
      * <pre>
      * &lt;buildCssFiles&amp;gt
      *     &lt;path&gt;src/style/main.css&lt;path&gt;
      * &lt;/buildCssFiles&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     protected String[] buildCssFiles;
@@ -206,14 +211,14 @@ public class FlexbuilderMojo
      * Sets the location of the Flex Data Services service configuration file. This is equivalent to using the
      * <code>compiler.services</code> option of the mxmlc and compc compilers. If not define will look inside resources
      * directory for services-config.xml
-     * 
+     *
      * @parameter
      */
     private File services;
 
     /**
      * The greeting to display.
-     * 
+     *
      * @parameter services default-value="true"
      */
     private boolean incremental;
@@ -228,12 +233,12 @@ public class FlexbuilderMojo
 
         String packaging = project.getPackaging();
 
-        if ( SWF.equals( packaging ) || SWC.equals( packaging ) )
+        if ( SWF.equals( packaging ) || SWC.equals( packaging ) || AIR.equals( packaging ) )
         {
             writeAsProperties( packaging, deps );
         }
 
-        if ( SWF.equals( packaging ) )
+        if ( SWF.equals( packaging )  || AIR.equals( packaging ) )
         {
             writeFlexProperties();
         }
@@ -300,9 +305,7 @@ public class FlexbuilderMojo
         {
             if ( ideDependency.isReferencedProject() )
             {
-                String template = IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE; // TODO
-                // http://jira.codehaus.org/browse/MECLIPSE-519
-                String projectName = IdeUtils.getProjectName( template, ideDependency );
+                String projectName = ideDependency.getEclipseProjectName();
                 // /todolist-lib/bin-debug/todolist-lib.swc
                 ideDependency.setFile( new File( "/" + projectName + "/bin-debug/" + projectName + ".swc" ) );
                 ideDependency.setSourceAttachment( new File( "/" + projectName + "/src/main/flex/" ) );
@@ -391,7 +394,8 @@ public class FlexbuilderMojo
                     IdeDependency dep =
                         new IdeDependency( art.getGroupId(), art.getArtifactId(), art.getVersion(),
                                            art.getClassifier(), false, Artifact.SCOPE_TEST.equals( art.getScope() ),
-                                           false, false, false, art.getFile(), art.getType(), false, null, 1 );
+                                           false, false, false, art.getFile(), art.getType(), false, null, 1 ,
+                                           IdeUtils.getProjectName(IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, art));
 
                     if ( useM2Home )
                     {
@@ -461,18 +465,18 @@ public class FlexbuilderMojo
             additionalCompilerArguments += " --incremental ";
         }
 
-        if ( SWF.equals( packaging ) )
+        if ( SWF.equals( packaging ) || AIR.equals( packaging ) )
         {
             File sourceFile =
                 SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), this.sourceFile,
                                                       project.getGroupId(), project.getArtifactId() );
-            
+
             if( sourceFile == null )
             {
-            	throw new MojoExecutionException( "Could not find main application! " +
-            			"(Hint: Try to create a MXML file below your source root)" );
+                throw new MojoExecutionException( "Could not find main application! " +
+                        "(Hint: Try to create a MXML file below your source root)" );
             }
-            
+
             context.put( "mainApplication", sourceFile.getName() );
             getAllApplications().add( 0, sourceFile.getName() );
             context.put( "applications", getAllApplications() );
@@ -551,7 +555,7 @@ public class FlexbuilderMojo
 
     /**
      * Looks for the Flex framework dependency and determines result depending on specified scope.
-     * 
+     *
      * @return "1" if framework is merged into code, or "3" if its a runtime shared library
      * @throws MojoExecutionException if framework dependency can not be found
      */
@@ -642,6 +646,13 @@ public class FlexbuilderMojo
             getProjectnatures().add( LIBRARY_NATURE );
             getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
+
+        if ( AIR.equals( packaging ) )
+        {
+            getProjectnatures().add( APPLICATION_NATURE );
+            getProjectnatures().add( ACTIONSCRIPT_NATURE );
+            getProjectnatures().add( FLEXBUILDER_AIR_NATURE );
+        }
     }
 
     @SuppressWarnings( "unchecked" )
@@ -650,9 +661,14 @@ public class FlexbuilderMojo
     {
         super.fillDefaultClasspathContainers( packaging );
 
-        if ( ( SWF.equals( packaging ) || SWC.equals( packaging ) ) && enableFlexBuilderBuildCommand )
+        if ( ( SWF.equals( packaging ) || SWC.equals( packaging ) || AIR.equals( packaging ) ) && enableFlexBuilderBuildCommand )
         {
             getBuildcommands().add( FLEXBUILDER_BUILD_COMMAND );
+        }
+
+        if ( AIR.equals( packaging ) && enableFlexBuilderBuildCommand )
+        {
+            getBuildcommands().add( AIR_BUILD_COMMAND );
         }
     }
 }
