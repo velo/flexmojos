@@ -536,7 +536,7 @@ public class ApplicationMojo
     {
         // Just a work around
         // TODO https://bugs.adobe.com/jira/browse/SDK-15139
-        flex2.tools.Compiler.mxmlc( args.toArray( new String[args.size()] ) );
+        flex2.tools.Mxmlc.mxmlc( args.toArray( new String[args.size()] ) );
     }
 
     private String toString( List<File> libs )

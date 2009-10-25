@@ -129,20 +129,20 @@ public class PathUtil
         System.out.println( "path = " + getRelativePath( new File( args[0] ), new File( args[1] ) ) );
     }
 
-    public static String getCanonicalPath( File trustedFile )
+    public static String getCanonicalPath( File file )
     {
-        if ( trustedFile == null )
+        if ( file == null )
         {
             return null;
         }
 
         try
         {
-            return trustedFile.getCanonicalPath();
+            return file.getCanonicalPath();
         }
         catch ( IOException e )
         {
-            return trustedFile.getAbsolutePath();
+            return file.getAbsolutePath();
         }
     }
 
@@ -191,9 +191,26 @@ public class PathUtil
         int i = 0;
         for ( String path : paths )
         {
-            files[i++] = new File( path );
+            files[i++] = getCanonicalFile( new File( path ) );
         }
 
         return files;
+    }
+
+    public static File getCanonicalFile( File file )
+    {
+        if ( file == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return file.getCanonicalFile();
+        }
+        catch ( IOException e )
+        {
+            return file.getAbsoluteFile();
+        }
     }
 }

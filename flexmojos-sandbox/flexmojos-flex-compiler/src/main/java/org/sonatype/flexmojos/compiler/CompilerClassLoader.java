@@ -34,7 +34,7 @@ public class CompilerClassLoader
     public Class<?> loadAPI()
         throws ClassNotFoundException
     {
-        final String className = "flex2.compiler.API";
+        final String className = "flex2.compiler.CompilerAPI";
         try
         {
             ClassWriter cw = new ClassWriter( true, true );

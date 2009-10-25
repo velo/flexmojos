@@ -37,11 +37,11 @@
         <configuration>
           <generatorToUse>internal-ifaces</generatorToUse>
           <includeJavaClasses>
+            <include>flex2.tools.DigestRootConfiguration</include>
+            <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
             <include>flex2.tools.ASDocConfiguration</include>
             <include>flex2.tools.CompcConfiguration</include>
             <include>flex2.tools.CommandLineConfiguration</include>
-            <include>flex2.tools.DigestRootConfiguration</include>
-            <include>flex2.tools.Optimizer.OptimizerConfiguration</include>
           </includeJavaClasses>
         </configuration>
         <executions>
@@ -119,7 +119,7 @@
                   <groupId>com.adobe.flex.framework</groupId>
                   <artifactId>playerglobal</artifactId>
                   <version>${flex.sdk.version}</version>
-                  <classifier>9</classifier>
+                  <classifier>10</classifier>
                   <type>swc</type>
                   <destFileName>playerglobal.swc</destFileName>
                 </artifactItem>
@@ -147,6 +147,16 @@
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>mxmlc</artifactId>
+      <version>${flex.sdk.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>digest</artifactId>
+      <version>${flex.sdk.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>optimizer</artifactId>
       <version>${flex.sdk.version}</version>
     </dependency>
 

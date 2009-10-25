@@ -15,28 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * 
- */
 package org.sonatype.flexmojos.compiler.command;
 
-import java.util.List;
-
-import flex2.tools.Compc;
-
-public class CompcCommand
-    implements Command
+public class Result
 {
+    private Exception exception;
 
-    private String[] args;
+    private int exitCode;
 
-    public CompcCommand( List<String> args )
+    public int getExitCode()
     {
-        this.args = args.toArray( new String[args.size()] );
+        return exitCode;
     }
 
-    public void command()
+    public void setExitCode( int exitCode )
     {
-        Compc.compc( args );
+        this.exitCode = exitCode;
+    }
+
+    public Exception getException()
+    {
+        return exception;
+    }
+
+    public void setException( Exception exception )
+    {
+        this.exception = exception;
     }
 }
