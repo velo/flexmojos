@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.flexbuilder;
 
+import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 
@@ -53,7 +54,7 @@ public class AbstractIdeMojo
 
     /**
      * Implies enableM2e=true
-     * 
+     *
      * @parameter default-value="false" expression="${useM2Home}"
      */
     protected boolean useM2Home;
@@ -61,15 +62,15 @@ public class AbstractIdeMojo
     /**
      * List of path elements that form the roots of ActionScript class hierarchies.<BR>
      * Usage:
-     * 
+     *
      * <pre>
      * &lt;sourcePaths&gt;
      *    &lt;path&gt;${baseDir}/src/main/flex&lt;/path&gt;
      * &lt;/sourcePaths&gt;
      * </pre>
-     * 
+     *
      * By default use Maven source and resources folders.
-     * 
+     *
      * @parameter
      */
     protected File[] sourcePaths;
@@ -77,7 +78,7 @@ public class AbstractIdeMojo
     /**
      * When true resources are compiled into Application or Library. When false resources are compiled into separated
      * Application or Library files. If not defined no resourceBundle generation is done
-     * 
+     *
      * @parameter
      * @deprecated
      */
@@ -87,7 +88,7 @@ public class AbstractIdeMojo
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
      * values. This is equivalent to using the <code>compiler.locale</code> option of the mxmlc or compc compilers. <BR>
      * Usage:
-     * 
+     *
      * <pre>
      * &lt;compiledLocales&gt;
      *    &lt;locale&gt;en_US&lt;/locale&gt;
@@ -95,18 +96,18 @@ public class AbstractIdeMojo
      *    &lt;locale&gt;es_ES&lt;/locale&gt;
      * &lt;/compiledLocales&gt;
      * </pre>
-     * 
+     *
      * @parameter
      */
     protected String[] compiledLocales;
 
     /**
      * Define the base path to locate resouce bundle files Accept some special tokens:
-     * 
+     *
      * <pre>
      * {locale}     - replace by locale name
      * </pre>
-     * 
+     *
      * @parameter default-value="${basedir}/src/main/locales/{locale}"
      */
     protected String resourceBundlePath;
@@ -121,7 +122,7 @@ public class AbstractIdeMojo
         throws MojoExecutionException
     {
         String packaging = project.getPackaging();
-        if ( !( SWF.equals( packaging ) || SWC.equals( packaging ) ) )
+        if ( !( SWF.equals( packaging ) || SWC.equals( packaging ) || AIR.equals( packaging ) ) )
         {
             return false;
         }
@@ -190,7 +191,7 @@ public class AbstractIdeMojo
 
         String packaging = project.getPackaging();
 
-        if ( !SWF.equals( packaging ) && !SWC.equals( packaging ) )
+        if ( !SWF.equals( packaging ) && !SWC.equals( packaging ) && !AIR.equals( packaging ) )
         {
             return;
         }

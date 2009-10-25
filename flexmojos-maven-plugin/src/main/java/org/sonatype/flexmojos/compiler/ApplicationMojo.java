@@ -158,7 +158,7 @@ public class ApplicationMojo
         File sourceDirectory = new File( build.getSourceDirectory() );
         if ( !sourceDirectory.exists() )
         {
-            throw new MojoExecutionException( "Unable to found sourceDirectory: " + sourceDirectory );
+            throw new MojoExecutionException( "Unable to find sourceDirectory: " + sourceDirectory );
         }
 
         if ( source == null )
