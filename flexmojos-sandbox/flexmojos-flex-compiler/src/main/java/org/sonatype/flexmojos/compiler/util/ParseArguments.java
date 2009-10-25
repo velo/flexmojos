@@ -14,7 +14,13 @@ import org.sonatype.flexmojos.generator.iface.StringUtil;
 
 public class ParseArguments
 {
-    public static <E> List<String> getArguments( E cfg, Class<? extends E> configClass )
+
+    public static <E> String[] getArguments( E cfg, Class<? extends E> configClass )
+    {
+        return getArgumentsList( cfg, configClass ).toArray( new String[0] );
+    }
+
+    public static <E> List<String> getArgumentsList( E cfg, Class<? extends E> configClass )
     {
         Set<CharSequence> charArgs;
         try

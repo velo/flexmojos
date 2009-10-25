@@ -61,6 +61,7 @@ public class IFaceGeneratorTest
         request.addClass( ASDocConfiguration.class.getName(), null );
         request.addClass( OptimizerConfiguration.class.getName(), null );
         request.addClass( DigestRootConfiguration.class.getName(), null );
+        System.out.println( request.getClasses() );
         request.setClassLoader( Thread.currentThread().getContextClassLoader() );
 
         generator.generate( request );

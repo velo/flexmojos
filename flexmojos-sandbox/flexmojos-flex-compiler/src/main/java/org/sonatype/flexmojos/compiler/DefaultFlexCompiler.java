@@ -1,9 +1,11 @@
 package org.sonatype.flexmojos.compiler;
 
 import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArguments;
+import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArgumentsList;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
@@ -12,12 +14,17 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.sonatype.flexmojos.compiler.command.Command;
-import org.sonatype.flexmojos.compiler.command.CompcCommand;
-import org.sonatype.flexmojos.compiler.command.MxmlcCommand;
+import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.compiler.plexusflexbridge.PlexusLogger;
 import org.sonatype.flexmojos.compiler.plexusflexbridge.PlexusPathResolve;
 import org.sonatype.flexmojos.compiler.plexusflexbridge.PrintStreamPlexusLogger;
 
+import flex2.compiler.util.ThreadLocalToolkit;
+import flex2.tools.ASDoc;
+import flex2.tools.Compc;
+import flex2.tools.DigestTool;
+import flex2.tools.Mxmlc;
+import flex2.tools.Optimizer;
 import flex2.tools.oem.internal.OEMLogAdapter;
 
 @Component( role = FlexCompiler.class )
@@ -44,20 +51,74 @@ public class DefaultFlexCompiler
         this.classLoader = cl;
     }
 
-    public void compileSwc( ICompcConfiguration configuration )
+    public int compileSwc( final ICompcConfiguration configuration )
+        throws Exception
     {
-        execute( new CompcCommand( getArguments( configuration, ICompcConfiguration.class ) ) );
+        return execute( new Command()
+        {
+            public void command()
+            {
+                Compc.compc( getArguments( configuration, ICompcConfiguration.class ) );
+            }
+        } );
     }
 
-    public void compileSwf( ICommandLineConfiguration configuration, File sourceFile )
+    public int compileSwf( ICommandLineConfiguration configuration, File sourceFile )
+        throws Exception
     {
-        List<String> args = getArguments( configuration, ICommandLineConfiguration.class );
+        final List<String> args = getArgumentsList( configuration, ICommandLineConfiguration.class );
         args.add( sourceFile.getAbsolutePath() );
-        execute( new MxmlcCommand( args ) );
+        return execute( new Command()
+        {
+            public void command()
+            {
+                Mxmlc.mxmlc( args.toArray( new String[args.size()] ) );
+            }
+        } );
     }
 
-    private void execute( final Command command )
+    public int asdoc( final IASDocConfiguration configuration )
+        throws Exception
     {
+        return execute( new Command()
+        {
+            public void command()
+            {
+                ASDoc.asdoc( getArguments( configuration, IASDocConfiguration.class ) );
+            }
+        } );
+    }
+
+    public int digest( final IDigestConfiguration configuration )
+        throws Exception
+    {
+        return execute( new Command()
+        {
+            public void command()
+                throws Exception
+            {
+                DigestTool.main( getArguments( configuration, IDigestConfiguration.class ) );
+            }
+        } );
+    }
+
+    public int optimize( final IOptimizerConfiguration configuration )
+        throws Exception
+    {
+        return execute( new Command()
+        {
+            public void command()
+                throws Exception
+            {
+                Optimizer.main( getArguments( configuration, IOptimizerConfiguration.class ) );
+            }
+        } );
+    }
+
+    private int execute( final Command command )
+        throws Exception
+    {
+        final Result r = new Result();
         Thread t = new Thread( new Runnable()
         {
             public void run()
@@ -88,6 +149,10 @@ public class DefaultFlexCompiler
                 {
                     command.command();
                 }
+                catch ( Exception e )
+                {
+                    r.setException( e );
+                }
                 finally
                 {
                     System.setSecurityManager( sm );
@@ -96,6 +161,22 @@ public class DefaultFlexCompiler
                     CompilerThreadLocal.pathResolver.set( null );
                     System.setOut( err );
                     System.setOut( out );
+                }
+
+                r.setExitCode( ThreadLocalToolkit.errorCount() );
+            }
+        } );
+        t.setUncaughtExceptionHandler( new UncaughtExceptionHandler()
+        {
+            public void uncaughtException( Thread t, Throwable e )
+            {
+                if ( e instanceof Exception )
+                {
+                    r.setException( (Exception) e );
+                }
+                else
+                {
+                    r.setException( new Exception( e ) );
                 }
             }
         } );
@@ -109,6 +190,13 @@ public class DefaultFlexCompiler
         catch ( InterruptedException e )
         {
         }
+
+        if ( r.getException() != null )
+        {
+            throw r.getException();
+        }
+
+        return r.getExitCode();
     }
 
 }

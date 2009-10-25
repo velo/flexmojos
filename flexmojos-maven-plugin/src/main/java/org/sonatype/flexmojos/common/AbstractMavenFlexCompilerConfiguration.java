@@ -1,5 +1,11 @@
 package org.sonatype.flexmojos.common;
 
+import static org.sonatype.flexmojos.common.FlexScopes.COMPILE;
+import static org.sonatype.flexmojos.common.FlexScopes.EXTERNAL;
+import static org.sonatype.flexmojos.common.FlexScopes.INTERNAL;
+import static org.sonatype.flexmojos.common.FlexScopes.MERGED;
+import static org.sonatype.flexmojos.common.FlexScopes.THEME;
+
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +27,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
@@ -28,6 +35,7 @@ import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.FrameLabel;
 import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
@@ -57,7 +65,7 @@ public class AbstractMavenFlexCompilerConfiguration
     INamespacesConfiguration
 {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+    protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
     /**
      * The maven project.
@@ -689,6 +697,8 @@ public class AbstractMavenFlexCompilerConfiguration
      *   &lt;/property&gt;
      * &lt;/definesDeclaration&gt;
      * </pre>
+     * 
+     * @parameter
      */
     private Properties defines;
 
@@ -755,6 +765,8 @@ public class AbstractMavenFlexCompilerConfiguration
      *   &lt;lang&gt;range&lt;/lang&gt;
      * &lt;/languageRange&gt;
      * </pre>
+     * 
+     * @parameter
      */
     private Map<String, String> languageRange;
 
@@ -781,6 +793,8 @@ public class AbstractMavenFlexCompilerConfiguration
      *   &lt;manager&gt;???&lt;/manager&gt;
      * &lt;/managers&gt;
      * </pre>
+     * 
+     * @parameter
      */
     private List<String> managers;
 
@@ -847,6 +861,8 @@ public class AbstractMavenFlexCompilerConfiguration
      *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
      * &lt;/keepAs3Metadatas&gt;
      * </pre>
+     * 
+     * @parameter
      */
     private String[] keepAs3Metadatas;
 
@@ -905,6 +921,8 @@ public class AbstractMavenFlexCompilerConfiguration
      *   &lt;/namespace&gt;
      * &lt;/namespaces&gt;
      * </pre>
+     * 
+     * @parameter
      */
     private MavenNamespaces[] namespaces;
 
@@ -939,6 +957,23 @@ public class AbstractMavenFlexCompilerConfiguration
      */
     private File services;
 
+    /**
+     * A list of warnings that should be enabled/disabled
+     * <p>
+     * Equivalent to -compiler.show-actionscript-warnings, -compiler.show-binding-warnings,
+     * -compiler.show-shadowed-device-font-warnings, -compiler.show-unused-type-selector-warnings and -compiler.warn-*
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;compilerWarnings&gt;
+     *   &lt;show-actionscript-warnings&gt;true&lt;/show-actionscript-warnings&gt;
+     *   &lt;warn-bad-nan-comparison&gt;false&lt;/warn-bad-nan-comparison&gt;
+     * &lt;/compilerWarnings&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
     private Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
 
     /**
@@ -990,6 +1025,183 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.verboseStacktraces}"
      */
     private Boolean verboseStacktraces;
+
+    /**
+     * Inclusion/exclusion patterns used to filter resources to be include in the output SWC
+     * <p>
+     * Equivalent to -include-file
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeFiles&gt;
+     *   &lt;includeFile&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;*.xml&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;excluded-*.xml&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/includeFile&gt;
+     * &lt;/includeFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private PatternSet[] includeFiles;
+
+    /**
+     * Inclusion/exclusion patterns used to filter classes to include in the output SWC
+     * <p>
+     * Equivalent to -include-classes
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeClasses&gt;
+     *   &lt;includeClasse&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/includeClasse&gt;
+     * &lt;/includeClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private PatternSet[] includeClasses;
+
+    /**
+     * All classes in the listed namespaces are included in the output SWC
+     * <p>
+     * Equivalent to -include-namespaces
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeNamespaces&gt;
+     *   &lt;includeNamespace&gt;
+     *     &lt;namespace&gt;http://mynamespace.com&lt;/namespace&gt;
+     *   &lt;/includeNamespace&gt;
+     * &lt;/includeNamespaces&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List<String> includeNamespaces;
+
+    /**
+     * A list of directories and source files to include in the output SWC
+     * <p>
+     * Equivalent to -include-sources
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeSources&gt;
+     *   &lt;includeSource&gt;${project.build.sourceDirectory}&lt;/includeSource&gt;
+     * &lt;/includeSources&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] includeSources;
+
+    /**
+     * A list of named stylesheet resources to include in the output SWC
+     * <p>
+     * Equivalent to -include-stylesheet
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeStylesheets&gt;
+     *   &lt;stylesheet&gt;${basedir}/mystyle.css&lt;/stylesheet&gt;
+     * &lt;/includeStylesheets&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] includeStylesheets;
+
+    /**
+     * Specifies the locale for internationalization
+     * <p>
+     * Equivalent to -compiler.locale
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;compilerLocales&gt;
+     *   &lt;locale&gt;en_US&lt;/locale&gt;
+     * &lt;/compilerLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] compilerLocales;
+
+    /**
+     * A list of resource bundles to include in the output SWC
+     * <p>
+     * Equivalent to -include-resource-bundles
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
+     *   &lt;rb&gt;Collections&lt;/rb&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List<String> includeResourceBundles;
+
+    /**
+     * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
+     * <p>
+     * Equivalent to -resource-bundle-list
+     * </p>
+     * 
+     * @parameter expression="${flex.resourceBundleList}"
+     */
+    private File resourceBundleList;
+
+    /**
+     * List of CSS or SWC files to apply as a theme
+     * <p>
+     * Equivalent to -compiler.theme
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;themes&gt;
+     *    &lt;theme&gt;css/main.css&lt;/theme&gt;
+     * &lt;/themes&gt;
+     * </pre>
+     * 
+     * If you are using SWC theme should be better keep it's version controlled, so is advised to use a dependency with
+     * theme scope.<BR>
+     * Like this:
+     * 
+     * <pre>
+     * &lt;dependency&gt;
+     *   &lt;groupId&gt;com.acme&lt;/groupId&gt;
+     *   &lt;artifactId&gt;acme-theme&lt;/artifactId&gt;
+     *   &lt;type&gt;swc&lt;/type&gt;
+     *   &lt;scope&gt;theme&lt;/scope&gt;
+     *   &lt;version&gt;1.0&lt;/version&gt;
+     * &lt;/dependency&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] themes;
 
     public Boolean getBenchmark()
     {
@@ -1074,14 +1286,98 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public List<String> getIncludeClasses()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( includeClasses == null )
+        {
+            return null;
+        }
+
+        List<File> directories = new ArrayList<File>();
+        for ( String sourceRoot : sourcePaths )
+        {
+            directories.add( new File( sourceRoot ) );
+        }
+
+        List<String> classes = new ArrayList<String>();
+
+        for ( Resource resource : resources )
+        {
+            File directory = new File( resource.getDirectory() );
+            if ( !directory.exists() )
+            {
+                continue;
+            }
+
+            for ( PatternSet pattern : includeClasses )
+            {
+                DirectoryScanner scanner = scan( directory, pattern );
+
+                String[] included = scanner.getIncludedFiles();
+                for ( String file : included )
+                {
+                    String classname = file;
+                    classname = classname.replaceAll( "\\.(.)*", "" );
+                    classname = classname.replace( '\\', '.' );
+                    classname = classname.replace( '/', '.' );
+                    classes.add( classname );
+                }
+            }
+        }
+
+        return classes;
+    }
+
+    private DirectoryScanner scan( File directory, PatternSet pattern )
+    {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( directory );
+        scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
+        scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        return scanner;
     }
 
     public File[] getIncludeFile()
     {
-        // TODO Auto-generated method stub
-        return null;
+        PatternSet[] patterns;
+        if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
+        {
+            PatternSet pattern = new PatternSet();
+            pattern.addInclude( "*.*" );
+            patterns = new PatternSet[] { pattern };
+        }
+        else if ( includeFiles == null )
+        {
+            return null;
+        }
+        else
+        {
+            patterns = includeFiles;
+        }
+
+        List<File> files = new ArrayList<File>();
+
+        for ( Resource resource : resources )
+        {
+            File directory = new File( resource.getDirectory() );
+            if ( !directory.exists() )
+            {
+                continue;
+            }
+
+            for ( PatternSet pattern : patterns )
+            {
+                DirectoryScanner scanner = scan( directory, pattern );
+
+                String[] included = scanner.getIncludedFiles();
+                for ( String file : included )
+                {
+                    files.add( new File( directory, file ) );
+                }
+            }
+        }
+
+        return files.toArray( new File[0] );
     }
 
     public Boolean getIncludeLookupOnly()
@@ -1089,28 +1385,28 @@ public class AbstractMavenFlexCompilerConfiguration
         return includeLookupOnly;
     }
 
-    public List getIncludeNamespaces()
+    public List<String> getIncludeNamespaces()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return includeNamespaces;
     }
 
-    public List getIncludeResourceBundles()
+    public List<String> getIncludeResourceBundles()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return includeResourceBundles;
     }
 
     public File[] getIncludeSources()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
+        {
+            return PathUtil.getFiles( sourcePaths );
+        }
+        return includeSources;
     }
 
     public File[] getIncludeStylesheet()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return includeStylesheets;
     }
 
     public List<String> getIncludes()
@@ -1223,7 +1519,6 @@ public class AbstractMavenFlexCompilerConfiguration
         return this;
     }
 
-    @SuppressWarnings( "unchecked" )
     public String[] getContributor()
     {
         if ( this.metadata != null )
@@ -1246,7 +1541,6 @@ public class AbstractMavenFlexCompilerConfiguration
         return contributorsName;
     }
 
-    @SuppressWarnings( "unchecked" )
     public String[] getCreator()
     {
         if ( this.metadata != null )
@@ -1296,8 +1590,7 @@ public class AbstractMavenFlexCompilerConfiguration
             return this.metadata.getLanguage();
         }
 
-        // TODO get from locales
-        return null;
+        return getLocale();
     }
 
     public ILocalizedDescription[] getLocalizedDescription()
@@ -1352,8 +1645,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getResourceBundleList()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return PathUtil.getCanonicalPath( resourceBundleList );
     }
 
     public String getRoot()
@@ -1519,9 +1811,9 @@ public class AbstractMavenFlexCompilerConfiguration
     public File[] getExternalLibraryPath()
     {
         // TODO on swc include compile dependencies too
-        ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, "external" ) ),
-                           MavenUtils.getFiles( getDependencies( null, null, "compile" ) ) );
-        return MavenUtils.getFiles( getDependencies( null, null, "external" ) );
+        ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) ),
+                           MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
+        return MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) );
     }
 
     public IFontsConfiguration getFontsConfiguration()
@@ -1637,7 +1929,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File[] getIncludeLibraries()
     {
-        return MavenUtils.getFiles( getDependencies( null, null, "internal" ) );
+        return MavenUtils.getFiles( getDependencies( null, null, INTERNAL ) );
     }
 
     public Boolean getIncremental()
@@ -1668,13 +1960,12 @@ public class AbstractMavenFlexCompilerConfiguration
     public File[] getLibraryPath()
     {
         // TODO on SWF include compile dependencies too
-        return MavenUtils.getFiles( getDependencies( null, null, "merged" ) );
+        return MavenUtils.getFiles( getDependencies( null, null, MERGED ) );
     }
 
     public String[] getLocale()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return compilerLocales;
     }
 
     public Integer getMemoryUsageFactor()
@@ -1772,10 +2063,15 @@ public class AbstractMavenFlexCompilerConfiguration
         return strict;
     }
 
-    public List getTheme()
+    public List<String> getTheme()
     {
-        // TODO Auto-generated method stub
-        return null;
+        List<String> themes = new ArrayList<String>();
+        if ( this.themes != null )
+        {
+            themes.addAll( PathUtil.getCanonicalPathList( this.themes ) );
+        }
+        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( null, null, THEME ) ) ) );
+        return themes;
     }
 
     public String getTranslationFormat()
@@ -2004,15 +2300,15 @@ public class AbstractMavenFlexCompilerConfiguration
 
         if ( filteredDependencies.isEmpty() )
         {
-            return null;
+            return Collections.emptySet();
         }
 
         return Collections.unmodifiableSet( filteredDependencies );
     }
 
-    @SuppressWarnings( "unchecked" )
     public Set<Artifact> getDependencies()
     {
         return Collections.unmodifiableSet( project.getDependencyArtifacts() );
     }
+
 }

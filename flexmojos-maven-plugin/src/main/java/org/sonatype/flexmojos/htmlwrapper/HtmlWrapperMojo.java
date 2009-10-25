@@ -291,7 +291,7 @@ public class HtmlWrapperMojo
      * @required
      * @readonly
      */
-    private List<?> remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /**
      * An external pom that provides wrapper parameters in place of the current one.
@@ -332,7 +332,6 @@ public class HtmlWrapperMojo
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
-    @SuppressWarnings( "unchecked" )
     private void loadExternalParams()
         throws MojoExecutionException
     {
@@ -401,7 +400,6 @@ public class HtmlWrapperMojo
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
-    @SuppressWarnings( "unchecked" )
     private void rewireForWar()
         throws MojoExecutionException
     {
@@ -626,7 +624,6 @@ public class HtmlWrapperMojo
     /*
      * Copied from CopyMojo... move to org.sonatype.flexmojos.utilities.MavenUtils?
      */
-    @SuppressWarnings( "unchecked" )
     private Artifact findArtifact( MavenProject project, String groupId, String artifactId, String version,
                                    String type, String classifier )
         throws MojoExecutionException
