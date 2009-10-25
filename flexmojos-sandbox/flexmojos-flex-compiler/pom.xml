@@ -4,7 +4,7 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>3.4-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
@@ -36,7 +36,7 @@
           <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
             <artifactId>flexmojos-generator-compiler-iface</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>3.5-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -117,7 +117,7 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-compiler-iface</artifactId>
-      <version>3.4-SNAPSHOT</version>
+      <version>3.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex</groupId>

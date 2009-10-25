@@ -18,7 +18,6 @@
   </parent>
 
   <artifactId>flexmojos-test-harness</artifactId>
-  <version>3.4-SNAPSHOT</version>
 
   <name>Flexmojos Integration Tests</name>
 
