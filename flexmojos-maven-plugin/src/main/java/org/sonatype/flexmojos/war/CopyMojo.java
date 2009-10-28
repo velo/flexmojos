@@ -138,8 +138,7 @@ public class CopyMojo
 
         if ( !"war".equals( packaging ) )
         {
-            getLog().warn( "Unable to copy flex resources to a non war project" );
-            return;
+            getLog().warn( "'copy-flex-resources' was intended to run on war project" );
         }
 
         webappDirectory.mkdirs();
