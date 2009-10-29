@@ -8,13 +8,15 @@
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
+  
+  <name>Flexmojos Flex compiler</name>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>3.3.0</version>
+        <artifactId>flexmojos-generator-mojo</artifactId>
+        <version>4.0-SNAPSHOT</version>
         <configuration>
           <generatorToUse>internal-ifaces</generatorToUse>
           <includeJavaClasses>
@@ -117,7 +119,7 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-compiler-iface</artifactId>
-      <version>4.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex</groupId>
@@ -138,6 +140,11 @@
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>optimizer</artifactId>
+      <version>${flex.sdk.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>asdoc</artifactId>
       <version>${flex.sdk.version}</version>
     </dependency>
 
