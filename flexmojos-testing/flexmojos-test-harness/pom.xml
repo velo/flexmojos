@@ -175,7 +175,7 @@
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-verifier</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <exclusions>
         <exclusion>
           <groupId>junit</groupId>
@@ -222,6 +222,12 @@
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
       <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-generator-mojo</artifactId>
+      <version>${pom.version}</version>
+      <type>maven-plugin</type>
     </dependency>
 
     <dependency>

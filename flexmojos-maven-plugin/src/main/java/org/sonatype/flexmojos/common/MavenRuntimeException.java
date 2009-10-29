@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.common;
 
-
 public class MavenRuntimeException
     extends RuntimeException
 {
@@ -25,6 +24,16 @@ public class MavenRuntimeException
     public MavenRuntimeException( Throwable e )
     {
         super( e );
+    }
+
+    public MavenRuntimeException( String message )
+    {
+        super( message );
+    }
+
+    public MavenRuntimeException( String msg, Throwable e )
+    {
+        super( msg, e );
     }
 
     private static final long serialVersionUID = -9121873468164622710L;

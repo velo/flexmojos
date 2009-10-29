@@ -69,4 +69,9 @@ public class OSUtils
         }
     }
 
+    public static boolean isWindows()
+    {
+        return getOSType().equals( OS.windows );
+    }
+
 }

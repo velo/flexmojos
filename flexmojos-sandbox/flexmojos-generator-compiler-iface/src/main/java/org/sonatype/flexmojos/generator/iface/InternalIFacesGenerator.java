@@ -18,8 +18,10 @@
 package org.sonatype.flexmojos.generator.iface;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ws.jaxme.js.JavaMethod;
@@ -44,7 +46,7 @@ public final class InternalIFacesGenerator
 
     private static final String PACKAGE = "org.sonatype.flexmojos.compiler";
 
-    private static final String SET_PREFIX = "cfg";
+    private static final String CFG_PREFIX = "cfg";
 
     private static final String GET_PREFIX = "get";
 
@@ -103,6 +105,7 @@ public final class InternalIFacesGenerator
     }
 
     private JavaQName getMethods( Class<?> clazz, JavaSourceFactory factory, JavaQName ann, JavaQName arg )
+        throws GenerationException
     {
         JavaQName className = JavaQNameImpl.getInstance( PACKAGE, "I" + clazz.getSimpleName() );
         if ( factory.getJavaSource( className ) != null )
@@ -115,21 +118,23 @@ public final class InternalIFacesGenerator
         js.addExtends( ann );
 
         Method methods[] = clazz.getMethods();
+
         for ( int m = 0; m < methods.length; ++m )
         {
             Method method = methods[m];
 
-            if ( method.getName().startsWith( SET_PREFIX ) )
+            if ( method.getName().startsWith( CFG_PREFIX ) )
             {
                 Class<?>[] pt = method.getParameterTypes();
 
-                if ( ( pt.length > 1 ) && ( pt[0] == ConfigurationValue.class ) )
+                if ( ( pt.length > 1 )
+                    && ( pt[0].getCanonicalName().equals( ConfigurationValue.class.getCanonicalName() ) ) )
                 {
                     // This is an autoconfiguration setter!
 
                     ConfigurationInfo info = createInfo( method );
 
-                    String leafname = method.getName().substring( SET_PREFIX.length() );
+                    String leafname = method.getName().substring( CFG_PREFIX.length() );
                     String name = varname( leafname, null );
 
                     JavaQName type;
@@ -138,39 +143,40 @@ public final class InternalIFacesGenerator
                     {
                         continue;
                     }
+                    else if ( "RuntimeSharedLibraryPath".equals( name ) )
+                    {
+                        // special runtime, default din't worked well
+                        type = JavaQNameImpl.getInstance( String[][].class );
+                    }
                     else if ( args == 1 )
                     {
                         type = JavaQNameImpl.getInstance( getArgType( info, 0 ) );
                     }
                     else if ( args < 0 )
                     {
-                        type = JavaQNameImpl.getInstance( method.getParameterTypes()[1] );
+                        Object argnames;
+                        try
+                        {
+                            Field f = ConfigurationInfo.class.getDeclaredField( "argnames" );
+                            f.setAccessible( true );
+                            argnames = f.get( info );
+                        }
+                        catch ( Exception e )
+                        {
+                            throw new GenerationException( e.getMessage(), e );
+                        }
+                        if ( argnames != null && argnames.getClass().isArray() && ( (Object[]) argnames ).length != 1 )
+                        {
+                            type = generateSubclass( factory, arg, info, name, ( (Object[]) argnames ).length );
+                        }
+                        else
+                        {
+                            type = JavaQNameImpl.getInstance( method.getParameterTypes()[1] );
+                        }
                     }
                     else
                     {
-                        type = JavaQNameImpl.getInstance( PACKAGE, "I" + name );
-
-                        if ( factory.getJavaSource( type ) == null )
-                        {
-                            JavaSource subClass = factory.newJavaSource( type, "public" );
-                            subClass.setType( JavaSource.INTERFACE );
-                            subClass.addExtends( arg );
-
-                            StringBuilder order = new StringBuilder();
-                            order.append( "  String[] ORDER = new String[] {" );
-                            for ( int i = 0; i < args; i++ )
-                            {
-                                Class<?> argType = getArgType( info, i );
-                                String argName = info.getArgName( i );
-                                argName = StringUtil.toCamelCase( argName );
-                                subClass.newJavaMethod( argName, argType );
-
-                                order.append( '"' ).append( argName ).append( '"' ).append( ", " );
-                            }
-                            order.append( " };" );
-
-                            subClass.addRawJavaSource( order.toString() );
-                        }
+                        type = generateSubclass( factory, arg, info, name, args );
                     }
 
                     if ( info.isPath() )
@@ -211,7 +217,38 @@ public final class InternalIFacesGenerator
         return className;
     }
 
+    private JavaQName generateSubclass( JavaSourceFactory factory, JavaQName arg, ConfigurationInfo info, String name,
+                                        int args )
+    {
+        JavaQName type;
+        type = JavaQNameImpl.getInstance( PACKAGE, "I" + name );
+
+        if ( factory.getJavaSource( type ) == null )
+        {
+            JavaSource subClass = factory.newJavaSource( type, "public" );
+            subClass.setType( JavaSource.INTERFACE );
+            subClass.addExtends( arg );
+
+            StringBuilder order = new StringBuilder();
+            order.append( "  String[] ORDER = new String[] {" );
+            for ( int i = 0; i < args; i++ )
+            {
+                Class<?> argType = getArgType( info, i );
+                String argName = info.getArgName( i );
+                argName = StringUtil.toCamelCase( argName );
+                subClass.newJavaMethod( argName, argType );
+
+                order.append( '"' ).append( argName ).append( '"' ).append( ", " );
+            }
+            order.append( " };" );
+
+            subClass.addRawJavaSource( order.toString() );
+        }
+        return type;
+    }
+
     private JavaQName promoteWrappers( JavaQName type )
+        throws GenerationException
     {
         if ( !type.isPrimitive() )
         {
@@ -252,7 +289,7 @@ public final class InternalIFacesGenerator
         }
         else
         {
-            throw new IllegalArgumentException( "Invalid primitive type: " + type );
+            throw new GenerationException( "Invalid primitive type: " + type );
         }
     }
 
@@ -271,15 +308,16 @@ public final class InternalIFacesGenerator
     }
 
     private static ConfigurationInfo createInfo( Method setterMethod )
+        throws GenerationException
     {
         ConfigurationInfo info = null;
 
-        String infoMethodName = GET_PREFIX + setterMethod.getName().substring( SET_PREFIX.length() ) + INFO_SUFFIX;
+        String infoMethodName = GET_PREFIX + setterMethod.getName().substring( CFG_PREFIX.length() ) + INFO_SUFFIX;
         Class<?> cfgClass = setterMethod.getDeclaringClass();
 
         try
         {
-            Method infoMethod = cfgClass.getMethod( infoMethodName, (Class[]) null );
+            Method infoMethod = cfgClass.getMethod( infoMethodName );
 
             if ( !Modifier.isStatic( infoMethod.getModifiers() ) )
             {
@@ -287,39 +325,24 @@ public final class InternalIFacesGenerator
                 infoMethod = null;
             }
 
-            info = (ConfigurationInfo) infoMethod.invoke( null, (Object[]) null );
+            info = (ConfigurationInfo) infoMethod.invoke( null );
 
+        }
+        catch ( NoSuchMethodException e )
+        {
+            // use default configuration
+            info = new ConfigurationInfo();
         }
         catch ( Exception e )
         {
+            System.out.println( Arrays.toString( cfgClass.getMethods() ) );
+            throw new GenerationException( e.getMessage(), e );
         }
 
-        if ( info == null )
-        {
-            info = new ConfigurationInfo();
-        }
         // info.setSetterMethod( setterMethod );
         // info.setGetterMethod( getterMethod );
 
         return info;
-    }
-
-    private Class<?>[] simplify( Class<?>[] args )
-    {
-        Class<?>[] simpleArgs = new Class<?>[args.length];
-        for ( int i = 0; i < args.length; i++ )
-        {
-            Class<?> clazz = args[i];
-            if ( !clazz.isArray() )
-            {
-                simpleArgs[i] = clazz;
-            }
-            else
-            {
-                simpleArgs[i] = clazz.getComponentType();
-            }
-        }
-        return simpleArgs;
     }
 
 }
