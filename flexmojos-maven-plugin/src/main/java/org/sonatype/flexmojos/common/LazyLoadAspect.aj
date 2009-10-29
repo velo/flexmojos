@@ -26,7 +26,10 @@ public aspect LazyLoadAspect
 {
 
     pointcut getters() :
-        execution(public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.get*());
+        execution(public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.get*()) ||
+        execution(public * org.sonatype.flexmojos.compiler.CompcMojo.get*()) ||
+        execution(public * org.sonatype.flexmojos.compiler.MxmlcMojo.get*()) ||
+        execution(public * org.sonatype.flexmojos.compiler.AsdocMojo.get*());
 
     private Map<String, Object> cachedValues = new LinkedHashMap<String, Object>();
 
