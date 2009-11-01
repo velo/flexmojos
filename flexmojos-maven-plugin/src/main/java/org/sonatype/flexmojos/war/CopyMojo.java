@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
@@ -165,8 +166,14 @@ public class CopyMojo
         MavenProject artifactProject = getProject( artifact );
         if ( artifactProject != null )
         {
-            artifactProject.setArtifacts( artifactProject.createArtifacts( artifactFactory, null, null ) );
-            // throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
+            try
+            {
+                artifactProject.setArtifacts( artifactProject.createArtifacts( artifactFactory, null, null ) );
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+                throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
+            }
 
             if ( copyRSL )
             {

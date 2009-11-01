@@ -281,7 +281,7 @@ public class FlexDependencySorter
                 fdkVersion = artifact.getVersion();
             }
         }
-        else if ( fdkVersion == null && MavenExtension.POM.equals( artifact.getType() ) )
+        else if ( fdkVersion == null && FlexExtension.POM.equals( artifact.getType() ) )
         {
             final String artifactId = artifact.getArtifactId();
             for ( String fdkId : FDK_VERSION_ARTIFACTS_IDS )

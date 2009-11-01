@@ -32,6 +32,24 @@ public class MxmlcMojo
     private List<String> fileSpecs;
 
     /**
+     * A list of resource bundles to include in the output SWC
+     * <p>
+     * Equivalent to -include-resource-bundles
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
+     *   &lt;rb&gt;Collections&lt;/rb&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List<String> includeResourceBundles;
+
+    /**
      * DOCME Another, undocumented by adobe
      * <p>
      * Equivalent to -projector
@@ -48,16 +66,6 @@ public class MxmlcMojo
      */
     private String sourceFile;
 
-    public List<String> getFileSpecs()
-    {
-        return fileSpecs;
-    }
-
-    public String getProjector()
-    {
-        return projector;
-    }
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -69,6 +77,21 @@ public class MxmlcMojo
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
+    }
+
+    public List<String> getFileSpecs()
+    {
+        return fileSpecs;
+    }
+
+    public List<String> getIncludeResourceBundles()
+    {
+        return includeResourceBundles;
+    }
+
+    public String getProjector()
+    {
+        return projector;
     }
 
     protected File getSourceFile()

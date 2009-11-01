@@ -132,23 +132,10 @@
 
     <profile>
       <id>release</id>
-      <modules>
-        <module>flexmojos-parent</module>
-        <module>flexmojos-sandbox</module>
-        <module>flexmojos-generator</module>
-        <module>flexmojos-maven-plugin</module>
-        <module>flexmojos-super-poms</module>
-        <module>flexmojos-archetypes</module>
-        <module>flexmojos-testing</module>
-      </modules>
-    </profile>
-
-    <profile>
-      <id>deploy</id>
-      <activation>
+            <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-
+      
       <modules>
         <module>flexmojos-parent</module>
         <module>flexmojos-sandbox</module>
