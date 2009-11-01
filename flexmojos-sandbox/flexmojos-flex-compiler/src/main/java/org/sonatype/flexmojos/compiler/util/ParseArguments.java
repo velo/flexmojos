@@ -20,10 +20,15 @@ package org.sonatype.flexmojos.compiler.util;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.sonatype.flexmojos.compiler.IFlexArgument;
 import org.sonatype.flexmojos.compiler.IFlexConfiguration;
@@ -120,8 +125,54 @@ public class ParseArguments
                         }
 
                         Object argValue = type.getDeclaredMethod( argMethodName ).invoke( iFlexArgument );
+                        if ( argValue == null )
+                        {
+                            continue;
+                        }
+                        else if ( argValue instanceof Collection<?> || argValue.getClass().isArray() )
+                        {
+                            Collection<?> argValues;
+                            if ( argValue.getClass().isArray() )
+                            {
+                                argValues = Arrays.asList( (Object[]) argValue );
+                            }
+                            else
+                            {
+                                argValues = (Collection<?>) argValue;
+                            }
+                            for ( Iterator<?> iterator = argValues.iterator(); iterator.hasNext(); )
+                            {
+                                arg.append( iterator.next().toString() );
+                                if ( iterator.hasNext() )
+                                {
+                                    arg.append( ' ' );
+                                }
+                            }
+                        }
+                        else if ( argValue instanceof Map<?, ?> )
+                        {
+                            Map<?, ?> map = ( (Map<?, ?>) argValue );
+                            Set<?> argValues = map.entrySet();
+                            for ( Iterator<?> iterator = argValues.iterator(); iterator.hasNext(); )
+                            {
+                                Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
+                                arg.append( entry.getKey().toString() );
+                                if ( entry.getValue() != null )
+                                {
+                                    arg.append( ' ' );
+                                    arg.append( entry.getValue().toString() );
+                                }
+                                if ( iterator.hasNext() )
+                                {
+                                    arg.append( ' ' );
+                                }
+                            }
 
-                        arg.append( argValue.toString() );
+                        }
+                        else
+                        {
+                            arg.append( argValue.toString() );
+                        }
                     }
 
                     args.add( parseName( method.getName() ) + " " + arg );

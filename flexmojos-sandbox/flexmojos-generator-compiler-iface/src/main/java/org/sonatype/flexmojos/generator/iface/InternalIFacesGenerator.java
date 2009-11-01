@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ws.jaxme.js.JavaMethod;
 import org.apache.ws.jaxme.js.JavaQName;
@@ -145,8 +146,15 @@ public final class InternalIFacesGenerator
                     }
                     else if ( "RuntimeSharedLibraryPath".equals( name ) )
                     {
-                        // special runtime, default din't worked well
-                        type = JavaQNameImpl.getInstance( String[][].class );
+                        type = generateSubclass( factory, arg, info, name, 2, String.class, Map.class );
+                    }
+                    else if ( "Extension".equals( name ) )
+                    {
+                        type = generateSubclass( factory, arg, info, name, 2, File.class, String[].class );
+                    }
+                    else if ( "Frame".equals( name ) )
+                    {
+                        type = generateSubclass( factory, arg, info, name, 2, String.class, String[].class );
                     }
                     else if ( args == 1 )
                     {
@@ -218,7 +226,7 @@ public final class InternalIFacesGenerator
     }
 
     private JavaQName generateSubclass( JavaSourceFactory factory, JavaQName arg, ConfigurationInfo info, String name,
-                                        int args )
+                                        int args, Class<?>... typeClasses )
     {
         JavaQName type;
         type = JavaQNameImpl.getInstance( PACKAGE, "I" + name );
@@ -233,7 +241,7 @@ public final class InternalIFacesGenerator
             order.append( "  String[] ORDER = new String[] {" );
             for ( int i = 0; i < args; i++ )
             {
-                Class<?> argType = getArgType( info, i );
+                Class<?> argType = getArgType( info, i, typeClasses );
                 String argName = info.getArgName( i );
                 argName = StringUtil.toCamelCase( argName );
                 subClass.newJavaMethod( argName, argType );
@@ -293,8 +301,13 @@ public final class InternalIFacesGenerator
         }
     }
 
-    private Class<?> getArgType( ConfigurationInfo info, int i )
+    private Class<?> getArgType( ConfigurationInfo info, int i, Class<?>... typeClasses )
     {
+        if ( typeClasses != null && i <= typeClasses.length - 1 )
+        {
+            return typeClasses[i];
+        }
+
         Class<?> argType;
         try
         {

@@ -55,6 +55,13 @@ public class CompcMojo
     private Boolean directory;
 
     /**
+     * Automatically include all declared namespaces
+     * 
+     * @parameter default-value="false" expression="${flex.includeAllNamespaces}"
+     */
+    private boolean includeAllNamespaces;
+
+    /**
      * Inclusion/exclusion patterns used to filter classes to include in the output SWC
      * <p>
      * Equivalent to -include-classes
@@ -103,6 +110,16 @@ public class CompcMojo
     private PatternSet[] includeFiles;
 
     /**
+     * If true, manifest entries with lookupOnly=true are included in SWC catalog
+     * <p>
+     * Equivalent to -include-lookup-only
+     * </p>
+     * 
+     * @parameter expression="${flex.includeLookupOnly}"
+     */
+    private Boolean includeLookupOnly;
+
+    /**
      * All classes in the listed namespaces are included in the output SWC
      * <p>
      * Equivalent to -include-namespaces
@@ -118,6 +135,24 @@ public class CompcMojo
      * @parameter
      */
     private List<String> includeNamespaces;
+
+    /**
+     * A list of resource bundles to include in the output SWC
+     * <p>
+     * Equivalent to -include-resource-bundles
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
+     *   &lt;rb&gt;Collections&lt;/rb&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private List<String> includeResourceBundles;
 
     /**
      * A list of directories and source files to include in the output SWC
@@ -164,12 +199,18 @@ public class CompcMojo
      */
     private String root;
 
-    /**
-     * Automatically include all declared namespaces
-     * 
-     * @parameter default-value="false" expression="${flex.includeAllNamespaces}"
-     */
-    private boolean includeAllNamespaces;
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        try
+        {
+            compiler.compileSwc( this );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
 
     public Boolean getComputeDigest()
     {
@@ -234,6 +275,11 @@ public class CompcMojo
         return files.toArray( new File[0] );
     }
 
+    public Boolean getIncludeLookupOnly()
+    {
+        return includeLookupOnly;
+    }
+
     public List<String> getIncludeNamespaces()
     {
         if ( includeNamespaces != null )
@@ -247,6 +293,11 @@ public class CompcMojo
         }
 
         return null;
+    }
+
+    public List<String> getIncludeResourceBundles()
+    {
+        return includeResourceBundles;
     }
 
     public File[] getIncludeSources()
@@ -266,19 +317,6 @@ public class CompcMojo
     public String getRoot()
     {
         return root;
-    }
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        try
-        {
-            compiler.compileSwc( this );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
     }
 
 }

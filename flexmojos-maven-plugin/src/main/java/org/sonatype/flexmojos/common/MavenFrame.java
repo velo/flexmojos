@@ -17,23 +17,22 @@
  */
 package org.sonatype.flexmojos.common;
 
-import org.sonatype.flexmojos.compiler.MavenArtifact;
+import org.sonatype.flexmojos.compiler.IFrame;
 
-public class MavenExtension
+public class MavenFrame
+    implements IFrame
 {
+    private String label;
 
-    private MavenArtifact extensionArtifact;
+    private String[] classNames;
 
-    private String[] parameters;
-
-    public MavenArtifact getExtensionArtifact()
+    public String[] classname()
     {
-        return extensionArtifact;
+        return classNames;
     }
 
-    public String[] getParameters()
+    public String label()
     {
-        return parameters;
+        return label;
     }
-
 }
