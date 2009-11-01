@@ -38,6 +38,23 @@ public class AsdocMojo
 {
 
     /**
+     * Specifies whether to include date with footer
+     * <p>
+     * Equivalent to -date-in-footer
+     * </p>
+     * 
+     * @parameter expression="${flex.dateInFooter}"
+     */
+    private Boolean dateInFooter;
+
+    /**
+     * Automatically document all declared namespaces
+     * 
+     * @parameter default-value="false" expression="${flex.docAllNamespaces}"
+     */
+    private boolean docAllNamespaces;
+
+    /**
      * List of classes to include in the documentation
      * <p>
      * Equivalent to -doc-classes
@@ -96,13 +113,6 @@ public class AsdocMojo
     private File[] docSources;
 
     /**
-     * Automatically document all declared namespaces
-     * 
-     * @parameter default-value="false" expression="${flex.docAllNamespaces}"
-     */
-    private boolean docAllNamespaces;
-
-    /**
      * Path to look for the example files
      * <p>
      * Equivalent to -examples-path
@@ -135,6 +145,27 @@ public class AsdocMojo
     /**
      * DOCME undocumented by adobe
      * <p>
+     * Equivalent to -include-all-for-asdoc
+     * </p>
+     * include-all-only is only for internal use
+     * 
+     * @parameter expression="${flex.includeAllForAsdoc}"
+     */
+    private Boolean includeAllForAsdoc;
+
+    /**
+     * If true, manifest entries with lookupOnly=true are included in SWC catalog
+     * <p>
+     * Equivalent to -include-lookup-only
+     * </p>
+     * 
+     * @parameter expression="${flex.includeLookupOnly}"
+     */
+    private Boolean includeLookupOnly;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
      * Equivalent to -keep-xml
      * </p>
      * 
@@ -153,6 +184,16 @@ public class AsdocMojo
     private Integer leftFramesetWidth;
 
     /**
+     * Report well-formed HTML errors as warnings
+     * <p>
+     * Equivalent to -lenient
+     * </p>
+     * 
+     * @parameter expression="${flex.lenient}"
+     */
+    private Boolean lenient;
+
+    /**
      * Title to be displayed in the title bar
      * <p>
      * Equivalent to -main-title
@@ -165,12 +206,25 @@ public class AsdocMojo
     /**
      * DOCME undocumented by adobe
      * <p>
+     * Equivalent to -restore-builtin-classes
+     * </p>
+     * Restore-builtin-classes is only for internal use
+     * 
+     * @parameter expression="${flex.restoreBuiltinClasses}"
+     */
+    private Boolean restoreBuiltinClasses;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
      * Equivalent to -skip-xsl
      * </p>
      * 
      * @parameter expression="${flex.skipXsl}"
      */
     private Boolean skipXsl;
+
+    private File templatePath;
 
     /**
      * Title to be displayed in the browser window
@@ -182,7 +236,23 @@ public class AsdocMojo
      */
     private String windowTitle;
 
-    private File templatePath;
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        try
+        {
+            compiler.asdoc( this );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+
+    public Boolean getDateInFooter()
+    {
+        return dateInFooter;
+    }
 
     public List<String> getDocClasses()
     {
@@ -235,9 +305,25 @@ public class AsdocMojo
         return excludeDependencies;
     }
 
+    public File[] getExcludeSources()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public String getFooter()
     {
         return footer;
+    }
+
+    public Boolean getIncludeAllForAsdoc()
+    {
+        return includeAllForAsdoc;
+    }
+
+    public Boolean getIncludeLookupOnly()
+    {
+        return includeLookupOnly;
     }
 
     public Boolean getKeepXml()
@@ -250,9 +336,26 @@ public class AsdocMojo
         return leftFramesetWidth;
     }
 
+    public Boolean getLenient()
+    {
+        return lenient;
+    }
+
     public String getMainTitle()
     {
         return mainTitle;
+    }
+
+    public String[] getPackage()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getPackageDescriptionFile()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public IPackagesConfiguration getPackagesConfiguration()
@@ -260,10 +363,9 @@ public class AsdocMojo
         return this;
     }
 
-    public String[] getPackage()
+    public Boolean getRestoreBuiltinClasses()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return restoreBuiltinClasses;
     }
 
     public Boolean getSkipXsl()
@@ -322,55 +424,6 @@ public class AsdocMojo
     public String getWindowTitle()
     {
         return windowTitle;
-    }
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        try
-        {
-            compiler.asdoc( this );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-    }
-
-    public Boolean getDateInFooter()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public File[] getExcludeSources()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getIncludeAllForAsdoc()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getLenient()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getPackageDescriptionFile()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getRestoreBuiltinClasses()
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

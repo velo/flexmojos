@@ -17,20 +17,22 @@
  */
 package org.sonatype.flexmojos.common;
 
-public interface FlexExtension
+import org.sonatype.flexmojos.compiler.IFrame;
+
+public class MavenFrame
+    implements IFrame
 {
-    String AIR = "air";
+    private String label;
 
-    String SWF = "swf";
+    private String[] classNames;
 
-    String SWC = "swc";
+    public String[] classname()
+    {
+        return classNames;
+    }
 
-    String SWZ = "swz";
-
-    String RB_SWC = "rb.swc";
-
-    String ZIP = "zip";
-
-    String POM = "pom";
-
+    public String label()
+    {
+        return label;
+    }
 }

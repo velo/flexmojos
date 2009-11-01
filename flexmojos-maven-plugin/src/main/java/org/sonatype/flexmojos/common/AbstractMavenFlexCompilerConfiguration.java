@@ -43,7 +43,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -53,6 +52,7 @@ import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
 import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
@@ -62,11 +62,11 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
-import org.sonatype.flexmojos.compiler.FrameLabel;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
 import org.sonatype.flexmojos.compiler.IDefaultSize;
 import org.sonatype.flexmojos.compiler.IDefine;
+import org.sonatype.flexmojos.compiler.IExtension;
 import org.sonatype.flexmojos.compiler.IExtensionsConfiguration;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
 import org.sonatype.flexmojos.compiler.IFrame;
@@ -81,22 +81,18 @@ import org.sonatype.flexmojos.compiler.IMetadataConfiguration;
 import org.sonatype.flexmojos.compiler.IMxmlConfiguration;
 import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
+import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
+import org.sonatype.flexmojos.compiler.MavenArtifact;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public abstract class AbstractMavenFlexCompilerConfiguration
     extends AbstractMojo
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration
+    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
-
-    /**
-     * @parameter expression="${plugin.artifacts}"
-     * @readonly
-     */
-    protected List<Artifact> pluginArtifacts;
 
     /**
      * Generate an accessible SWF
@@ -161,6 +157,18 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private Boolean archiveClassesAndAssets;
 
     /**
+     * @component
+     * @readonly
+     */
+    protected ArchiverManager archiverManager;
+
+    /**
+     * @component
+     * @readonly
+     */
+    protected RepositorySystem repositorySystem;
+
+    /**
      * Use the ActionScript 3 class based object model for greater performance and better error reporting. In the class
      * based object model most built-in functions are implemented as fixed methods of classes
      * <p>
@@ -190,6 +198,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.compatibilityVersion}"
      */
     private String compatibilityVersion;
+
+    /**
+     * @component
+     */
+    protected FlexCompiler compiler;
 
     /**
      * Specifies the locale for internationalization
@@ -477,7 +490,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * 
      * @parameter
      */
-    private List<FrameLabel> frames;
+    private MavenFrame[] frames;
 
     /**
      * DOCME Undocumented by adobe
@@ -498,34 +511,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.headlessServer}"
      */
     private Boolean headlessServer;
-
-    /**
-     * If true, manifest entries with lookupOnly=true are included in SWC catalog
-     * <p>
-     * Equivalent to -include-lookup-only
-     * </p>
-     * 
-     * @parameter expression="${flex.includeLookupOnly}"
-     */
-    private Boolean includeLookupOnly;
-
-    /**
-     * A list of resource bundles to include in the output SWC
-     * <p>
-     * Equivalent to -include-resource-bundles
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;includeResourceBundles&gt;
-     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
-     *   &lt;rb&gt;Collections&lt;/rb&gt;
-     * &lt;/includeResourceBundles&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private List<String> includeResourceBundles;
 
     /**
      * A list of symbols to always link in when building a SWF
@@ -715,6 +700,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private File localFontsSnapshot;
 
     /**
+     * Local repository to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${localRepository}"
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
      * Compiler font manager classes, in policy resolution order
      * <p>
      * Equivalent to -compiler.fonts.managers
@@ -842,6 +834,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private String output;
 
     /**
+     * @parameter expression="${plugin.artifacts}"
+     * @readonly
+     */
+    protected List<Artifact> pluginArtifacts;
+
+    /**
      * The maven project.
      * 
      * @parameter expression="${project}"
@@ -859,6 +857,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.rawMetadata}"
      */
     private String rawMetadata;
+
+    /**
+     * List of remote repositories to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    protected List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * @component
+     * @readonly
+     */
+    protected ArtifactResolver resolver;
 
     /**
      * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
@@ -1073,6 +1084,144 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      */
     private Boolean warnings;
 
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -benchmark-compiler-details
+     * </p>
+     * 0 = none, 1 = light, 5 = verbose
+     * 
+     * @parameter expression="${flex.benchmarkCompilerDetails}"
+     */
+    private Integer benchmarkCompilerDetails;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -benchmark-time-filter
+     * </p>
+     * min time of units to log in ms
+     * 
+     * @parameter expression="${flex.benchmarkTimeFilter}"
+     */
+    private Long benchmarkTimeFilter;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.enable-runtime-design-layers
+     * </p>
+     * 
+     * @parameter expression="${flex.enableRuntimeDesignLayers}"
+     */
+    private Boolean enableRuntimeDesignLayers;
+
+    /**
+     * Configure extensions to flex compiler
+     * <p>
+     * Equivalent to -compiler.extensions.extension
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;extensions&gt;
+     *   &lt;extension&gt;
+     *     &lt;extensionArtifact&gt;
+     *       &lt;groupId&gt;org.myproject&lt;/groupId&gt;
+     *       &lt;artifactId&gt;my-extension&lt;/artifactId&gt;
+     *       &lt;version&gt;1.0&lt;/version&gt;
+     *     &lt;/extensionArtifact&gt;
+     *     &lt;parameters&gt;
+     *       &lt;parameter&gt;param1&lt;/parameter&gt;
+     *       &lt;parameter&gt;param2&lt;/parameter&gt;
+     *       &lt;parameter&gt;param3&lt;/parameter&gt;
+     *     &lt;/parameters&gt;
+     *   &lt;/extension&gt;
+     * &lt;/extensions&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenExtension[] extensions;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -framework
+     * </p>
+     * 
+     * @parameter expression="${flex.framework}"
+     */
+    private String framework;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.generate-abstract-syntax-tree
+     * </p>
+     * 
+     * @parameter expression="${flex.generateAbstractSyntaxTree}"
+     */
+    private Boolean generateAbstractSyntaxTree;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.fonts.local-font-paths
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;localFontPaths&gt;
+     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
+     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
+     * &lt;/localFontPaths&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] localFontPaths;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.mxml.qualified-type-selectors
+     * </p>
+     * 
+     * @parameter expression="${flex.qualifiedTypeSelectors}"
+     */
+    private Boolean qualifiedTypeSelectors;
+
+    protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
+    {
+        List<String> classes = new ArrayList<String>();
+
+        for ( File directory : directories )
+        {
+            if ( !directory.exists() )
+            {
+                continue;
+            }
+
+            for ( PatternSet pattern : classesPattern )
+            {
+                DirectoryScanner scanner = scan( directory, pattern );
+
+                String[] included = scanner.getIncludedFiles();
+                for ( String file : included )
+                {
+                    String classname = file;
+                    classname = classname.replaceAll( "\\.(.)*", "" );
+                    classname = classname.replace( '\\', '.' );
+                    classname = classname.replace( '/', '.' );
+                    classes.add( classname );
+                }
+            }
+        }
+
+        return classes;
+    }
+
     public Boolean getAccessible()
     {
         return accessible;
@@ -1111,6 +1260,27 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public Boolean getBenchmark()
     {
         return benchmark;
+    }
+
+    public Integer getBenchmarkCompilerDetails()
+    {
+        if ( benchmarkCompilerDetails == null )
+        {
+            return null;
+        }
+
+        if ( benchmarkCompilerDetails != 0 && benchmarkCompilerDetails != 1 && benchmarkCompilerDetails != 5 )
+        {
+            throw new IllegalArgumentException( "Invalid benchmarck compiler details level: '"
+                + benchmarkCompilerDetails + "', it does accept 0 = none, 1 = light, 5 = verbose" );
+        }
+
+        return benchmarkCompilerDetails;
+    }
+
+    public Long getBenchmarkTimeFilter()
+    {
+        return benchmarkTimeFilter;
     }
 
     public String getCompatibilityVersion()
@@ -1322,9 +1492,69 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return PathUtil.getCanonicalPath( dumpConfig );
     }
 
+    public Boolean getEnableRuntimeDesignLayers()
+    {
+        return enableRuntimeDesignLayers;
+    }
+
     public Boolean getEs()
     {
         return es;
+    }
+
+    public IExtensionsConfiguration getExtensionsConfiguration()
+    {
+        return this;
+    }
+
+    public IExtension[] getExtension()
+    {
+        if ( extensions == null )
+        {
+            return null;
+        }
+
+        IExtension[] extensions = new IExtension[this.extensions.length];
+        for ( int i = 0; i < extensions.length; i++ )
+        {
+            final MavenExtension extension = this.extensions[i];
+
+            if ( extension.getExtensionArtifact() == null )
+            {
+                throw new IllegalArgumentException( "Extension artifact is required!" );
+            }
+
+            extensions[i] = new IExtension()
+            {
+                public String[] parameters()
+                {
+                    return extension.getParameters();
+                }
+
+                public File extension()
+                {
+                    MavenArtifact a = extension.getExtensionArtifact();
+                    Artifact resolvedArtifact =
+                        resolve( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getClassifier(), a.getType() );
+                    return resolvedArtifact.getFile();
+                }
+            };
+        }
+
+        return extensions;
+    }
+
+    public File[] getExternalLibraryPath()
+    {
+        if ( SWC.equals( project.getPackaging() ) )
+        {
+            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) ),
+                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
+        }
+        else
+        {
+            return MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) );
+        }
     }
 
     public List<String> getExterns()
@@ -1342,6 +1572,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return flashType;
     }
 
+    public String getFlexVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
+    }
+
     public IFontsConfiguration getFontsConfiguration()
     {
         return this;
@@ -1349,14 +1585,22 @@ public abstract class AbstractMavenFlexCompilerConfiguration
 
     public IFrame[] getFrame()
     {
-        // TODO
-        // return frames;
-        return null;
+        return frames;
     }
 
     public IFramesConfiguration getFramesConfiguration()
     {
         return this;
+    }
+
+    public String getFramework()
+    {
+        return framework;
+    }
+
+    public Boolean getGenerateAbstractSyntaxTree()
+    {
+        return generateAbstractSyntaxTree;
     }
 
     public Boolean getGenerateFrameLoader()
@@ -1383,16 +1627,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public File[] getIncludeLibraries()
     {
         return MavenUtils.getFiles( getDependencies( null, null, INTERNAL ) );
-    }
-
-    public Boolean getIncludeLookupOnly()
-    {
-        return includeLookupOnly;
-    }
-
-    public List<String> getIncludeResourceBundles()
-    {
-        return includeResourceBundles;
     }
 
     public List<String> getIncludes()
@@ -1475,6 +1709,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public Boolean getLazyInit()
     {
         return lazyInit;
+    }
+
+    public File[] getLibraryPath()
+    {
+        if ( SWC.equals( project.getPackaging() ) )
+        {
+            return MavenUtils.getFiles( getDependencies( null, null, MERGED ) );
+        }
+        else
+        {
+            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, MERGED ) ),
+                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
+        }
     }
 
     public ILicense[] getLicense()
@@ -1573,6 +1820,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return compilerLocales;
     }
 
+    public List<String> getLocalFontPaths()
+    {
+        return PathUtil.getCanonicalPathList( localFontPaths );
+    }
+
     public String getLocalFontsSnapshot()
     {
         if ( localFontsSnapshot != null )
@@ -1585,12 +1837,15 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         {
             url = getClass().getResource( "/fonts/macFonts.ser" );
         }
-        else
+        else if ( MavenUtils.isWindows() )
         {
-            // TODO And linux?!
-            // if(os.contains("windows")) {
             url = getClass().getResource( "/fonts/winFonts.ser" );
         }
+        else
+        {
+            url = getClass().getResource( "/fonts/localFonts.ser" );
+        }
+
         File fontsSer = new File( project.getBuild().getOutputDirectory(), "fonts.ser" );
         try
         {
@@ -1671,6 +1926,22 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return this;
     }
 
+    protected List<String> getNamespacesUri()
+    {
+        if ( getNamespace() == null || getNamespace().length == 0 )
+        {
+            return null;
+        }
+
+        List<String> uris = new ArrayList<String>();
+        for ( INamespace namespace : getNamespace() )
+        {
+            uris.add( namespace.uri() );
+        }
+
+        return uris;
+    }
+
     public Boolean getOptimize()
     {
         return optimize;
@@ -1689,6 +1960,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         }
 
         return getCreator();
+    }
+
+    public Boolean getQualifiedTypeSelectors()
+    {
+        return qualifiedTypeSelectors;
     }
 
     public String getRawMetadata()
@@ -1711,7 +1987,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return runtimeSharedLibraries;
     }
 
-    public String[][] getRuntimeSharedLibraryPath()
+    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
     {
         // TODO Auto-generated method stub
         return null;
@@ -2029,130 +2305,10 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return compilerWarnings.get( "warn-xml-class-has-changed" );
     }
 
-    protected DirectoryScanner scan( File directory, PatternSet pattern )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( directory );
-        scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
-        scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        return scanner;
-    }
-
-    public File[] getExternalLibraryPath()
-    {
-        if ( SWC.equals( project.getPackaging() ) )
-        {
-            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) ),
-                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
-        }
-        else
-        {
-            return MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) );
-        }
-    }
-
-    public File[] getLibraryPath()
-    {
-        if ( SWC.equals( project.getPackaging() ) )
-        {
-            return MavenUtils.getFiles( getDependencies( null, null, MERGED ) );
-        }
-        else
-        {
-            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, MERGED ) ),
-                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
-        }
-    }
-
-    /**
-     * @component
-     */
-    protected FlexCompiler compiler;
-
-    protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
-    {
-        List<String> classes = new ArrayList<String>();
-
-        for ( File directory : directories )
-        {
-            if ( !directory.exists() )
-            {
-                continue;
-            }
-
-            for ( PatternSet pattern : classesPattern )
-            {
-                DirectoryScanner scanner = scan( directory, pattern );
-
-                String[] included = scanner.getIncludedFiles();
-                for ( String file : included )
-                {
-                    String classname = file;
-                    classname = classname.replaceAll( "\\.(.)*", "" );
-                    classname = classname.replace( '\\', '.' );
-                    classname = classname.replace( '/', '.' );
-                    classes.add( classname );
-                }
-            }
-        }
-
-        return classes;
-    }
-
-    protected List<String> getNamespacesUri()
-    {
-        if ( getNamespace() == null || getNamespace().length == 0 )
-        {
-            return null;
-        }
-
-        List<String> uris = new ArrayList<String>();
-        for ( INamespace namespace : getNamespace() )
-        {
-            uris.add( namespace.uri() );
-        }
-
-        return uris;
-    }
-
-    public String getFlexVersion()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
-    }
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected ArtifactResolver resolver;
-
-    /**
-     * Local repository to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${localRepository}"
-     */
-    protected ArtifactRepository localRepository;
-
-    /**
-     * List of remote repositories to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     */
-    protected List<ArtifactRepository> remoteRepositories;
-
     protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
     {
         Artifact artifact =
-            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, classifier, type );
+            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, classifier, type );
         if ( !artifact.isResolved() )
         {
             ArtifactResolutionRequest req = new ArtifactResolutionRequest();
@@ -2164,57 +2320,14 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return artifact;
     }
 
-    /**
-     * @component
-     * @readonly
-     */
-    protected ArchiverManager archiverManager;
-
-    public Integer getBenchmarkCompilerDetails()
+    protected DirectoryScanner scan( File directory, PatternSet pattern )
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Long getBenchmarkTimeFilter()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getFramework()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getEnableRuntimeDesignLayers()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public IExtensionsConfiguration getExtensionsConfiguration()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getGenerateAbstractSyntaxTree()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public List getLocalFontPaths()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Boolean getQualifiedTypeSelectors()
-    {
-        // TODO Auto-generated method stub
-        return null;
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( directory );
+        scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
+        scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        return scanner;
     }
 }

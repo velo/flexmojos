@@ -17,7 +17,23 @@
  */
 package org.sonatype.flexmojos.common;
 
-public interface MavenExtension
+import org.sonatype.flexmojos.compiler.MavenArtifact;
+
+public class MavenExtension
 {
-    String POM = "pom";
+
+    private MavenArtifact extensionArtifact;
+
+    private String[] parameters;
+
+    public MavenArtifact getExtensionArtifact()
+    {
+        return extensionArtifact;
+    }
+
+    public String[] getParameters()
+    {
+        return parameters;
+    }
+
 }
