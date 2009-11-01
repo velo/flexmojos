@@ -28,6 +28,8 @@
   <artifactId>flexmojos-generator-mojo</artifactId>
   <packaging>maven-plugin</packaging>
 
+  <name>Flexmojos Generator Plugin</name>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
