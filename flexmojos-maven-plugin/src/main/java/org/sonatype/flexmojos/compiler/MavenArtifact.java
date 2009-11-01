@@ -10,25 +10,39 @@ package org.sonatype.flexmojos.compiler;
 public class MavenArtifact
 {
 
-    private String groupId;
-
     private String artifactId;
 
+    private String classifier;
+
+    private String groupId;
+
+    private String type;
+
     private String version;
+
+    public String getArtifactId()
+    {
+        return artifactId;
+    }
+
+    public String getClassifier()
+    {
+        return classifier;
+    }
 
     public String getGroupId()
     {
         return groupId;
     }
 
-    public void setGroupId( String groupId )
+    public String getType()
     {
-        this.groupId = groupId;
+        return type;
     }
 
-    public String getArtifactId()
+    public String getVersion()
     {
-        return artifactId;
+        return version;
     }
 
     public void setArtifactId( String artifactId )
@@ -36,9 +50,19 @@ public class MavenArtifact
         this.artifactId = artifactId;
     }
 
-    public String getVersion()
+    public void setClassifier( String classifier )
     {
-        return version;
+        this.classifier = classifier;
+    }
+
+    public void setGroupId( String groupId )
+    {
+        this.groupId = groupId;
+    }
+
+    public void setType( String type )
+    {
+        this.type = type;
     }
 
     public void setVersion( String version )

@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
-  
+
   <name>Flexmojos Flex compiler</name>
 
   <build>
@@ -169,6 +169,10 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
     </dependency>
   </dependencies>
 </project>
