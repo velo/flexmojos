@@ -32,16 +32,22 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -75,6 +81,52 @@ public class FlexbuilderMojo
     static final String AIR_BUILD_COMMAND = "com.adobe.flexbuilder.apollo.apollobuilder";
 
     static final String[] SDK_SOURCES = { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
+    
+    /**
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession sessionContext;
+    
+    /**
+     * LW : needed for expression evaluation Note : needs at least maven 2.0.8 because of MNG-3062 The maven
+     * MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${mojoExecution}"
+     * @required
+     * @readonly
+     */
+    protected MojoExecution execution;
+    
+    /**
+     * defines: specifies a list of define directive key and value pairs. For example, CONFIG::debugging<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;definesDeclaration&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;SOMETHING::aNumber&lt;/name&gt;
+     *     &lt;value&gt;2.2&lt;/value&gt;
+     *   &lt;/property&gt;
+     *   &lt;property&gt;
+     *     &lt;name&gt;SOMETHING::aString&lt;/name&gt;
+     *     &lt;value&gt;&quot;text&quot;&lt;/value&gt;
+     *   &lt;/property&gt;
+     * &lt;/definesDeclaration&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Properties definesDeclaration;
+    
+    /**
+     * Context root to pass to the compiler.
+     * @parameter
+     */
+    private String contextRoot;
 
     /**
      * @parameter default-value="true" expression="${enableFlexBuilderBuildCommand}"
@@ -474,6 +526,34 @@ public class FlexbuilderMojo
         {
             additionalCompilerArguments += " --incremental ";
         }
+        
+		if (contextRoot != null) {
+			additionalCompilerArguments += " -context-root " + contextRoot;
+		}
+
+		if (definesDeclaration != null) {
+			ExpressionEvaluator expressionEvaluator =
+	            new PluginParameterExpressionEvaluator( sessionContext, execution, null, null, project, project.getProperties() );
+			
+			 for ( Object definekey : definesDeclaration.keySet() )
+			 {
+				String defineName = definekey.toString();
+				String value = definesDeclaration.getProperty(defineName);
+				if (value.contains("${")) {
+					// Fix bug in maven which doesn't always evaluate ${}
+					// constructions
+					try {
+						value = (String) expressionEvaluator.evaluate(value);
+					} catch (ExpressionEvaluationException e) {
+						throw new MojoExecutionException("Expression error in "
+								+ defineName, e);
+					}
+				}
+				
+				// Definition values should ben quoted if necessary, so not adding additional quoting here.
+				additionalCompilerArguments += String.format(" -define+=%s,%s", defineName, value);
+			 }
+		}
 
         if ( SWF.equals( packaging ) || AIR.equals( packaging ) )
         {
@@ -512,7 +592,7 @@ public class FlexbuilderMojo
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
-
+    
     private boolean useApolloConfig( IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
