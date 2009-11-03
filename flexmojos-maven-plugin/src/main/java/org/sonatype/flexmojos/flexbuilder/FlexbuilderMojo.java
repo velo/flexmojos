@@ -557,8 +557,10 @@ public class FlexbuilderMojo
                     + "(Hint: Try to create a MXML file below your source root)" );
             }
 
-            context.put( "mainApplication", sourceFile.getName() );
-            getAllApplications().add( 0, sourceFile.getName() );
+            String sourceRelativeToSourcePath = PathUtil.getRelativePath(new File(project.getBuild().getSourceDirectory()), sourceFile);
+            
+            context.put( "mainApplication", sourceRelativeToSourcePath );
+            getAllApplications().add( 0, sourceRelativeToSourcePath );
             context.put( "applications", getAllApplications() );
             context.put( "generateHtmlWrapper", generateHtmlWrapper );
             context.put( "cssfiles", buildCssFiles );
