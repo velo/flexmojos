@@ -69,7 +69,7 @@ public class FlexUnitTest
         }
     }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( expectedExceptions = { VerificationException.class }, timeOut = 180000 )
     public void testFlexUnitExampleForked()
         throws Exception
     {
