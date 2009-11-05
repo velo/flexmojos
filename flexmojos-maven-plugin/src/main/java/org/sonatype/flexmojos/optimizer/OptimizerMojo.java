@@ -27,11 +27,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.lang.reflect.Method;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
@@ -76,6 +76,15 @@ public class OptimizerMojo
      * @readonly
      */
     protected Build build;
+
+    /**
+     * Optimized RSLs strip out any debugging information such as line numbers. This results in a smaller file, which
+     * leads to shorter load times but makes it more difficult to read stacktrace errors as they contain no line
+     * numbers.
+     * 
+     * @parameter default-value="true"
+     */
+    protected boolean optimizeRsls;
 
     /**
      * @component
@@ -132,13 +141,21 @@ public class OptimizerMojo
             {
                 optimizedSWFFile = new File( build.getDirectory(), build.getFinalName() + ".swf" );
             }
+            
+            optimizedSWFFile.getParentFile().mkdirs();
             outputSWF = new FileOutputStream( optimizedSWFFile );
 
             getLog().info( "Original file is: " + originalFile.length() / 1024 + " k bytes" );
+            if ( optimizeRsls )
+            {
+                optimize( inputSWF, outputSWF );
+                getLog().info( "optimized swf is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
+            }
+            else
+            {
+                IOUtil.copy( inputSWF, outputSWF );
+            }
 
-            optimize( inputSWF, outputSWF );
-
-            getLog().info( "optimized swf is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
 
             if ( SWC.equals( packaging ) )
             {
@@ -152,6 +169,10 @@ public class OptimizerMojo
         catch ( FileNotFoundException e )
         {
             // don't expect that
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
             throw new MojoExecutionException( e.getMessage(), e );
         }
         finally
@@ -177,7 +198,7 @@ public class OptimizerMojo
     {
         try
         {
-            Class apiClass;
+            Class<?> apiClass;
             try
             {
                 apiClass = Class.forName( "flex2.tools.WebTierAPI" );
