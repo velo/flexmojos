@@ -25,6 +25,21 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
+/**
+ * <p>
+ * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
+ * </p>
+ * <p>
+ * The Flex Compiler plugin compiles all ActionScript sources. It can compile the source into 'swf' files. The plugin
+ * supports 'swf' packaging.
+ * </p>
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 1.0
+ * @goal compile-swf
+ * @requiresDependencyResolution compile
+ * @phase compile
+ */
 public class MxmlcMojo
     extends AbstractMavenFlexCompilerConfiguration
     implements ICommandLineConfiguration

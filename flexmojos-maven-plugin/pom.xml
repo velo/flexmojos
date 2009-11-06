@@ -312,6 +312,12 @@
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>1.2</version>
     </dependency>
+
+    <dependency><!-- needed on optimizer mojo -->
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <reporting>
