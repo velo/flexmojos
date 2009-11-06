@@ -84,6 +84,7 @@ import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MavenArtifact;
 import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public abstract class AbstractMavenFlexCompilerConfiguration
@@ -1764,39 +1765,8 @@ public abstract class AbstractMavenFlexCompilerConfiguration
 
     public String[] getLoadConfig()
     {
-        if ( loadConfig == null && loadConfigs != null )
-        {
-            return PathUtil.getCanonicalPath( loadConfigs );
-        }
-
-        File configFile;
-        if ( loadConfig != null )
-        {
-            configFile = this.loadConfig;
-        }
-        else
-        {
-            File cfg = new File( configDirectory, "config.xml" );
-            File flexCfg = new File( configDirectory, "flex-config.xml" );
-            File airCfg = new File( configDirectory, "air-config.xml" );
-            if ( cfg.exists() )
-            {
-                configFile = cfg;
-            }
-            else if ( flexCfg.exists() )
-            {
-                configFile = flexCfg;
-            }
-            else if ( airCfg.exists() )
-            {
-                configFile = airCfg;
-            }
-            else
-            {
-                return new String[0];
-            }
-        }
-        return new String[] { PathUtil.getCanonicalPath( configFile ) };
+        return PathUtil.getCanonicalPath( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
+                                                                                      configDirectory ) );
     }
 
     public String[] getLoadExterns()
