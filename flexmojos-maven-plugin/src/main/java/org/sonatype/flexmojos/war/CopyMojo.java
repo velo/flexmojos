@@ -109,6 +109,13 @@ public class CopyMojo
     private boolean stripVersion;
 
     /**
+     * Use final name if/when available
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useFinalName;
+
+    /**
      * @parameter default-value="true"
      */
     private boolean copyRSL;
@@ -346,10 +353,30 @@ public class CopyMojo
     }
 
     private File getDestinationFile( Artifact artifact )
+        throws MojoExecutionException
     {
-        String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-        String version = stripVersion ? "" : "-" + artifact.getVersion();
-        File destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
+        MavenProject pomProject = getProject( artifact );
+        String fileName;
+        if ( !useFinalName )
+        {
+            String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+            String version = stripVersion ? "" : "-" + artifact.getVersion();
+            fileName = artifact.getArtifactId() + version + classifier + "." + SWF;
+        }
+        else
+        {
+            fileName = pomProject.getBuild().getFinalName() + "." + SWF;
+        }
+
+        if ( stripVersion && fileName.contains( artifact.getVersion() ) )
+        {
+            fileName = fileName.replace( artifact.getVersion() + "-", "" );
+            fileName = fileName.replace( "-" + artifact.getVersion(), "" );
+            fileName = fileName.replace( artifact.getVersion(), "" );
+        }
+
+        File destFile = new File( webappDirectory, fileName );
+
         return destFile;
     }
 
