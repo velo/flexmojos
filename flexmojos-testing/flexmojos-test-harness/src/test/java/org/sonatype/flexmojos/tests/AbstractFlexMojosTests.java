@@ -24,12 +24,9 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.building.ModelProcessor;
-import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -58,7 +55,7 @@ public class AbstractFlexMojosTests
 
     @BeforeSuite( alwaysRun = true )
     public static void initFolders()
-        throws Exception
+        throws IOException, PlexusContainerException
     {
         if ( props != null )
         {
@@ -89,26 +86,6 @@ public class AbstractFlexMojosTests
         updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
 
         container = new DefaultPlexusContainer();
-    }
-
-    @BeforeSuite( alwaysRun = true )
-    public static void addEmmaToClasshPath()
-        throws Exception
-    {
-        File repo = new File( getProperty( "fake-repo" ) );
-        File fmParentPom =
-            new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion() + "/flexmojos-parent-"
-                + getFlexmojosVersion() + ".pom" );
-        ModelProcessor builder = container.lookup( ModelProcessor.class );
-        Model pom = builder.read( fmParentPom, null );
-        Dependency emma = new Dependency();
-        emma.setGroupId( "emma" );
-        emma.setArtifactId( "emma" );
-        emma.setVersion( "2.0.5312" );
-        pom.addDependency( emma );
-
-        ModelWriter writer = container.lookup( ModelWriter.class );
-        writer.write( fmParentPom, null, pom );
     }
 
     private static void updateMavenMemory( File mvn, String memString )
@@ -158,7 +135,6 @@ public class AbstractFlexMojosTests
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
-                verifier.getCliOptions().add( "-X" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:go-offline" );
             }

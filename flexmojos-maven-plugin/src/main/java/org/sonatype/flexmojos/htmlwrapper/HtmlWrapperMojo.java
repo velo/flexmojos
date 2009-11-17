@@ -161,8 +161,8 @@ public class HtmlWrapperMojo
     private Map<String, String> parameters;
 
     /**
-     * In the context of a war project, this specifies the external artifact that the wrapper parameters will be
-     * extracted from. Usage:
+     * In the context of a war project, this specifies the external artifact that
+     * the wrapper parameters will be extracted from.  Usage:
      * 
      * <pre>
      *  &lt;wrapperArtifact&gt;
@@ -173,8 +173,9 @@ public class HtmlWrapperMojo
      *  &lt;/wrapperArtifact&gt;
      * </pre>
      * 
-     * Both groupId and artifactId are required, but version and classifier are optional and can be inferred from a
-     * dependency if present (for example when the copy-flex-resources goal is executed).
+     * Both groupId and artifactId are required, but version and classifier are 
+     * optional and can be inferred from a dependency if present (for example when
+     * the copy-flex-resources goal is executed).
      * 
      * @parameter
      */
@@ -209,55 +210,58 @@ public class HtmlWrapperMojo
     private File templateOutputDirectory;
 
     /**
-     * Files to not interpolate while copying files. Usually binary files. Accepts wild cards. By default, many common
-     * binary formats are excluded (see useDefaultBinaryExcludes). Usage:
+     * Files to not interpolate while copying files. Usually binary files. Accepts wild cards. By default, many 
+     * common binary formats are excluded (see useDefaultBinaryExcludes).  Usage:
      * 
      * <pre>
      *  &lt;templateExclusions&gt;
-     *      &lt;String&gt;*&#42;/*.xml&lt;/String&gt;
+     *      &lt;String&gt;**&#047;*.xml&lt;/String&gt;
      *      &lt;String&gt;some-directory/&lt;/String&gt;
-     *      &lt;String&gt;another-directory/*&#42;/*.jsp&lt;/String&gt;
+     *      &lt;String&gt;another-directory/**&#047;*.jsp&lt;/String&gt;
      *  &lt;/templateExclusions&gt;
-     * </pre>
-     * 
-     * In the above, the following applies in order:
-     * <ol>
-     * <li>Exclude all xml files</li>
-     * <li>Exclude everything in the directory 'some-directory'</li>
-     * <li>Exclude all jsp files in the directory 'another-directory'</li>
-     * </ol>
+     *  </pre>
+     *  
+     *  In the above, the following applies in order:
+     *  <ol>
+     *      <li>Exclude all xml files</li>
+     *      <li>Exclude everything in the directory 'some-directory'</li>
+     *      <li>Exclude all jsp files in the directory 'another-directory'</li>
+     *  </ol>
      * 
      * @parameter
      */
     private String[] templateExclusions;
 
     /**
-     * Files to interpolate while copying files. Accepts wild cards. By default includes all files. Any patterns defined
-     * in templateExclusions, the default binaries excludes, or default plexus excludes (svn, cvs, temp files, etc) will
-     * be applied on top of this, so matching a pattern here does not force that file to be wrapped. Usage:
+     * Files to interpolate while copying files. Accepts wild cards. By default
+     * includes all files.  Any patterns defined in templateExclusions, the default 
+     * binaries excludes, or default plexus excludes (svn, cvs, temp files, etc) will
+     * be applied on top of this, so matching a pattern here does not force that file
+     * to be wrapped.  Usage:
      * 
      * <pre>
      *  &lt;templateExclusions&gt;
-     *      &lt;String&gt;*&#42;/*.xml&lt;/String&gt;
+     *      &lt;String&gt;**&#047;*.xml&lt;/String&gt;
      *      &lt;String&gt;some-directory/&lt;/String&gt;
-     *      &lt;String&gt;another-directory/*&#42;/*.jsp&lt;/String&gt;
+     *      &lt;String&gt;another-directory/**&#047;*.jsp&lt;/String&gt;
      *  &lt;/templateExclusions&gt;
-     * </pre>
-     * 
-     * In the above, the following applies in order:
-     * <ol>
-     * <li>Include all xml files</li>
-     * <li>Include everything in the directory 'some-directory'</li>
-     * <li>Include all jsp files in the directory 'another-directory'</li>
-     * </ol>
+     *  </pre>
+     *  
+     *  In the above, the following applies in order:
+     *  <ol>
+     *      <li>Include all xml files</li>
+     *      <li>Include everything in the directory 'some-directory'</li>
+     *      <li>Include all jsp files in the directory 'another-directory'</li>
+     *  </ol>
      * 
      * @parameter
      */
     private String[] templateInclusions;
 
     /**
-     * Controls whether or not common binary file types are excluded by default when choosing what files to wrap. Useful
-     * to set to false if for some reason you decide to name a wrapped file something like "index.exe" or
+     * Controls whether or not common binary file types are excluded by default
+     * when choosing what files to wrap.  Useful to set to false if for some 
+     * reason you decide to name a wrapped file something like "index.exe" or 
      * "html-wrapper.png" for some unanticipated reason.
      * 
      * @parameter default-value="true"
@@ -291,7 +295,7 @@ public class HtmlWrapperMojo
      * @required
      * @readonly
      */
-    private List<ArtifactRepository> remoteRepositories;
+    private List<?> remoteRepositories;
 
     /**
      * An external pom that provides wrapper parameters in place of the current one.
@@ -332,53 +336,52 @@ public class HtmlWrapperMojo
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
+    @SuppressWarnings("unchecked")
     private void loadExternalParams()
         throws MojoExecutionException
     {
         Artifact sourceArtifact;
-        if ( wrapperArtifact != null )
+        if ( wrapperArtifact != null)
         {
             String groupId = wrapperArtifact.get( "groupId" );
             String artifactId = wrapperArtifact.get( "artifactId" );
             String version = wrapperArtifact.get( "version" );
             String classifier = wrapperArtifact.get( "classifier" );
-
-            if ( groupId == null || artifactId == null )
+            
+            if ( groupId == null || artifactId == null)
             {
                 throw new MojoExecutionException(
-                                                  "Both groupId and artifactId are required within the wrapperArtifact configuration " );
+                      "Both groupId and artifactId are required within the wrapperArtifact configuration ");
             }
-
-            // Version is optional at this point
+            
+            //Version is optional at this point
             Artifact swfArtifact = findArtifact( project, groupId, artifactId, version, "swf", classifier );
             if ( swfArtifact != null )
             {
-                // Found matching dependency, so use this as the basis for the target external pom artifact
-                sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "pom",
-                                                                  swfArtifact.getClassifier() );
+                //Found matching dependency, so use this as the basis for the target external pom artifact
+                sourceArtifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, 
+                        swfArtifact.getVersion(), "pom", swfArtifact.getClassifier());
             }
             else
             {
-                // Could not find a matching dependency, so try to build from scratch
+                //Could not find a matching dependency, so try to build from scratch
                 if ( version == null )
                 {
                     throw new MojoExecutionException(
-                                                      "Can't find a matching swf dependency, and no version was provided.  "
-                                                          + "Therefore, no external artifact can be located to wrap" );
+                        "Can't find a matching swf dependency, and no version was provided.  " +
+                        "Therefore, no external artifact can be located to wrap" );
                 }
-
-                sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier );
+                
+                sourceArtifact = artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier);
             }
         }
         else
         {
             throw new MojoExecutionException(
-                                              "The wrapperArtifact configuartion is required when wrapping an external swf " );
+                "The wrapperArtifact configuartion is required when wrapping an external swf ");
         }
 
-        getLog().info( "Wrapping with external artifact:  " + sourceArtifact.toString() );
+        getLog().info( "Wrapping with external artifact:  " + sourceArtifact.toString());
         resolveArtifact( sourceArtifact );
         this.sourceProject = loadProject( sourceArtifact );
 
@@ -400,6 +403,7 @@ public class HtmlWrapperMojo
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
+    @SuppressWarnings("unchecked")
     private void rewireForWar()
         throws MojoExecutionException
     {
@@ -624,11 +628,11 @@ public class HtmlWrapperMojo
     /*
      * Copied from CopyMojo... move to org.sonatype.flexmojos.utilities.MavenUtils?
      */
-    private Artifact findArtifact( MavenProject project, String groupId, String artifactId, String version,
-                                   String type, String classifier )
+    @SuppressWarnings( "unchecked" )
+    private Artifact findArtifact( MavenProject project, String groupId, String artifactId, String version, String type, String classifier  )
         throws MojoExecutionException
     {
-        // Dependencies must be traversed instead of artifacts here because of the execution phase of the mojo
+        //Dependencies must be traversed instead of artifacts here because of the execution phase of the mojo
         List<Dependency> dependencies = project.getDependencies();
         for ( Dependency dependency : dependencies )
         {
@@ -637,24 +641,24 @@ public class HtmlWrapperMojo
             String matchType = dependency.getType();
             if ( groupId.equals( matchGroupId ) && artifactId.equals( matchArtifactId ) && type.equals( matchType ) )
             {
-                if ( version != null )
+                if(version != null)
                 {
                     String matchVersion = dependency.getVersion();
-                    if ( version.equals( matchVersion ) )
+                    if(version.equals( matchVersion ) )
                     {
                         if ( classifier != null )
                         {
                             String matchClassifier = dependency.getClassifier();
-                            if ( classifier.equals( matchClassifier ) )
+                            if( classifier.equals( matchClassifier ) )
                             {
                                 return convertToArtifact( dependency );
                             }
                             else
                             {
-                                getLog().warn(
-                                               "Wrapper found matching artifact with classifier [" + matchClassifier
-                                                   + "], but did not match requested classifier [" + classifier
-                                                   + "] so it is being ignored" );
+                                getLog().warn( 
+                                    "Wrapper found matching artifact with classifier [" + matchClassifier 
+                                    + "], but did not match requested classifier [" + classifier 
+                                    + "] so it is being ignored");
                             }
                         }
                         else
@@ -664,27 +668,31 @@ public class HtmlWrapperMojo
                     }
                     else
                     {
-                        getLog().warn(
-                                       "Wrapper found matching artifact with version [" + matchVersion
-                                           + "], but did not match requested version [" + version
-                                           + "] so it is being ignored" );
+                        getLog().warn( 
+                            "Wrapper found matching artifact with version [" + matchVersion 
+                            + "], but did not match requested version [" + version 
+                            + "] so it is being ignored");
                     }
                 }
                 else
                 {
-                    return convertToArtifact( dependency );
+                    return convertToArtifact(dependency);
                 }
             }
         }
-
+        
         return null;
     }
-
-    private Artifact convertToArtifact( Dependency dependency )
+    
+    private Artifact convertToArtifact(Dependency dependency)
     {
-        return artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                             dependency.getVersion(), dependency.getType(),
-                                                             dependency.getClassifier() );
+        return artifactFactory.createArtifactWithClassifier( 
+                dependency.getGroupId(),
+                dependency.getArtifactId(),
+                dependency.getVersion(),
+                dependency.getType(),
+                dependency.getClassifier()
+            );
     }
 
     /**

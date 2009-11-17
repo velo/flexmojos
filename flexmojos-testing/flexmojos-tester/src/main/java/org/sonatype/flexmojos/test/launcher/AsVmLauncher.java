@@ -80,10 +80,6 @@ public class AsVmLauncher
         {
             runFlashplayer( flashplayerCommand, targetSwf );
         }
-
-        // kill when VM exits
-        Runtime.getRuntime().addShutdownHook( new FlashPlayerShutdownHook( process ) );
-
         getLogger().debug( "[LAUNCHER] Process created " + process );
 
         status = ThreadStatus.STARTED;
@@ -152,7 +148,6 @@ public class AsVmLauncher
         {
             throw new LaunchFlashPlayerException( "Failed to launch Flash Player in headless environment.", e );
         }
-
     }
 
     private StringBuffer consoleLog = new StringBuffer();
@@ -251,6 +246,14 @@ public class AsVmLauncher
                 {
                     errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
                     break;
+                }
+            case 139:
+                if ( OSUtils.isLinux() )
+                {
+                    getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+
+                    status = ThreadStatus.DONE;
+                    return;
                 }
             default:
                 errorMessage = "Unexpected return code " + returnCode;

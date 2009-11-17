@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.idesupport;
+package org.sonatype.flexmojos.flexbuilder;
 
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;

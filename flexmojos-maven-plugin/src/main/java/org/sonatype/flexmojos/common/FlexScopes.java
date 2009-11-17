@@ -16,9 +16,6 @@ package org.sonatype.flexmojos.common;
 
 public interface FlexScopes
 {
-
-    String COMPILE = "compile";
-
     String EXTERNAL = "external";
 
     String INTERNAL = "internal";
@@ -28,7 +25,5 @@ public interface FlexScopes
     String CACHING = "caching";
 
     String RSL = "rsl";
-
-    String THEME = "theme";
 
 }
