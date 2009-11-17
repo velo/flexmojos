@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import org.objectweb.asm.util.ASMifierClassVisitor;
-
-public class DevMain
+package
 {
-    public static void main( String[] args )
-        throws Exception
-    {
-        ASMifierClassVisitor.main( new String[] { API2.class.getName() } );
-    }
+	public class HelloWorld
+	{
+		public function HelloWorld()
+		{
+		}
 
+	}
 }

@@ -168,6 +168,7 @@ public class AbstractFlexMojosTests
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
+                verifier.getCliOptions().add( "-X" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:go-offline" );
             }

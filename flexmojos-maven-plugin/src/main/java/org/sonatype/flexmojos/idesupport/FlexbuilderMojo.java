@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.flexbuilder;
+package org.sonatype.flexmojos.idesupport;
 
 import static org.sonatype.flexmojos.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;

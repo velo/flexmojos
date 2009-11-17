@@ -28,10 +28,10 @@
   </parent>
 
   <groupId>info.rvin.itest</groupId>
-  <artifactId>optimized-flex-library</artifactId>
+  <artifactId>optimized-application</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <packaging>swc</packaging>
+  <packaging>swf</packaging>
 
   <build>
     <plugins>
@@ -42,7 +42,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>create-rsl</goal>
+              <goal>optimize-swf</goal>
             </goals>
           </execution>
         </executions>
