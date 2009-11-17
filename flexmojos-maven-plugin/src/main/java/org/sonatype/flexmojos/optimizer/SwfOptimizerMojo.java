@@ -16,7 +16,7 @@ import org.sonatype.flexmojos.test.util.PathUtil;
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 2.0
- * @goal swf-optimizer
+ * @goal optimize-swf
  * @phase package
  */
 public class SwfOptimizerMojo

@@ -347,11 +347,27 @@ public class CopyMojo
         }
     }
 
-    private File getDestinationFile( Artifact artifact )
+    private File getDestinationFile( Artifact artifact ) throws MojoExecutionException
     {
-        String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-        String version = stripVersion ? "" : "-" + artifact.getVersion();
-        File destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
+        File destFile;
+        String defaultFinalName = artifact.getArtifactId() + "-" + artifact.getVersion();  
+        MavenProject pomProject = getProject( artifact );
+        String finalName = pomProject.getBuild().getFinalName();
+        if ( finalName.equals( defaultFinalName ) )
+        {
+             String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+             String version = stripVersion ? "" : "-" + artifact.getVersion();
+             destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
+        }
+        else
+        {
+    	   if ( stripVersion )
+    	   {
+              getLog().info( "Copying artifact using final name " + finalName + " ignoring strip version" );
+           }
+           destFile = new File( webappDirectory, finalName + "." + SWF );
+        }
+
         return destFile;
     }
 

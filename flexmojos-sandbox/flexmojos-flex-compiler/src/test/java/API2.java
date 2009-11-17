@@ -1,5 +1,3 @@
-package api;
-
 import org.sonatype.flexmojos.compiler.CompilerThreadLocal;
 
 import flex2.compiler.common.LocalFilePathResolver;
@@ -11,8 +9,18 @@ import flex2.compiler.util.URLPathResolver;
 public class API2
 {
 
+    public static void useConsoleLogger( boolean isInfoEnabled, boolean isDebugEnabled, boolean isWarningEnabled,
+                                         boolean isErrorEnabled )
+    {
+        System.out.println( "using logger" );
+
+        ThreadLocalToolkit.setLogger( CompilerThreadLocal.logger.get() );
+    }
+
     public static void usePathResolver( SinglePathResolver resolver )
     {
+        System.out.println( "using resolver" );
+
         PathResolver pathResolver = new PathResolver();
         if ( resolver != null )
         {
@@ -24,4 +32,5 @@ public class API2
 
         pathResolver.addSinglePathResolver( CompilerThreadLocal.pathResolver.get() );
     }
+
 }
