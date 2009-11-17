@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import org.objectweb.asm.util.ASMifierClassVisitor;
+package org.sonatype.flexmojos.idesupport;
 
-public class DevMain
+import org.sonatype.flexmojos.compiler.*;
+import org.apache.maven.plugin.eclipse.EclipsePlugin;
+
+public aspect SwcSwfInherit
 {
-    public static void main( String[] args )
-        throws Exception
-    {
-        ASMifierClassVisitor.main( new String[] { API2.class.getName() } );
-    }
-
+    declare parents : AbstractIdeMojo extends EclipsePlugin;
 }

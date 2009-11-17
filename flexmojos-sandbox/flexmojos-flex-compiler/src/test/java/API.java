@@ -15,18 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package api;
-
-import org.sonatype.flexmojos.compiler.CompilerThreadLocal;
-
 import flex2.compiler.common.LocalFilePathResolver;
 import flex2.compiler.common.PathResolver;
 import flex2.compiler.common.SinglePathResolver;
+import flex2.compiler.util.ConsoleLogger;
 import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.compiler.util.URLPathResolver;
 
-public class API2
+public class API
 {
+    public static void useConsoleLogger( boolean isInfoEnabled, boolean isDebugEnabled, boolean isWarningEnabled,
+                                         boolean isErrorEnabled )
+    {
+        ThreadLocalToolkit.setLogger( new ConsoleLogger( isInfoEnabled, isDebugEnabled, isWarningEnabled,
+                                                         isErrorEnabled ) );
+    }
 
     public static void usePathResolver( SinglePathResolver resolver )
     {
@@ -38,7 +41,5 @@ public class API2
         pathResolver.addSinglePathResolver( LocalFilePathResolver.getSingleton() );
         pathResolver.addSinglePathResolver( URLPathResolver.getSingleton() );
         ThreadLocalToolkit.setPathResolver( pathResolver );
-
-        pathResolver.addSinglePathResolver( CompilerThreadLocal.pathResolver.get() );
     }
 }

@@ -147,7 +147,7 @@ public class SimpleGeneratorMojo
     private boolean outputEnumToBaseOutputDirectory;
 
     /**
-     * @parameter default-value="graniteds1" expression="${generatorToUse}"
+     * @parameter default-value="graniteds2" expression="${generatorToUse}"
      */
     private String generatorToUse;
 
