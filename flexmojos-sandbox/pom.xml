@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -34,8 +34,10 @@
 
   <modules>
     <!-- <module>flexmojos-installer</module> -->
-  	<module>flexmojos-generator-compiler-iface</module>
-  	<module>flexmojos-flex-compiler</module>
+    <!--
+    	<module>flexmojos-generator-compiler-iface</module>
+    	<module>flexmojos-flex-compiler</module>
+    -->
   </modules>
 
 </project>

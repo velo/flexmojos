@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -160,7 +160,7 @@
     <dependency>
       <groupId>emma</groupId>
       <artifactId>emma</artifactId>
-      <version>2.0.5312</version>
+      <version>2.1.5320</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -222,12 +222,6 @@
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
       <version>${pom.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-generator-mojo</artifactId>
-      <version>${pom.version}</version>
-      <type>maven-plugin</type>
     </dependency>
 
     <dependency>
@@ -331,24 +325,5 @@
       <artifactId>hamcrest-all</artifactId>
     </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>skip-test-harness-tests</id>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
 
 </project>

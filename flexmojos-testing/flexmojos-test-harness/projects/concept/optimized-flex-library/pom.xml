@@ -28,8 +28,9 @@
   </parent>
 
   <groupId>info.rvin.itest</groupId>
-  <artifactId>optimized-flex-library</artifactId>
+  <artifactId>simple-flex-library</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <name>Simple Flex Library</name>
 
   <packaging>swc</packaging>
 
@@ -42,7 +43,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>create-rsl</goal>
+              <goal>optimize</goal>
             </goals>
           </execution>
         </executions>

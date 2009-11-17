@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
@@ -74,10 +74,6 @@
     <contributor>
       <name>Ken Wong </name>
       <email>amuro@comcast.net</email>
-    </contributor>
-    <contributor>
-      <name>Marcello Teodori </name>
-      <email>marcello.teodori@jugmilano.it</email>
     </contributor>
   </contributors>
 
@@ -141,7 +137,7 @@
         <artifactId>flex-compiler-oem</artifactId> <version>3.0.0.477</version> </signature> <inclusions> <include>flex2/tools/oem/*</include> </inclusions> </configuration> </execution> </executions> </plugin>
       -->
 
-      <plugin>
+       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0-beta-2-SNAPSHOT</version>
@@ -173,12 +169,11 @@
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
@@ -187,17 +182,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-constraints</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-generator-mojo</artifactId>
-      <version>${pom.version}</version>
-      <type>maven-plugin</type>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-flex-compiler</artifactId>
       <version>${pom.version}</version>
     </dependency>
 
@@ -227,11 +211,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
+      <artifactId>maven-project</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
+      <artifactId>maven-core</artifactId>
     </dependency>
     <dependency> <!-- required by unit tests -->
       <groupId>jaxen</groupId>
@@ -241,6 +225,10 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <classifier>jdk15</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.graniteds</groupId>
+      <artifactId>granite-generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -309,18 +297,6 @@
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>1.2</version>
     </dependency>
-
-    <dependency><!-- needed on optimizer mojo -->
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-archiver</artifactId>
-    </dependency>
-
   </dependencies>
 
   <reporting>

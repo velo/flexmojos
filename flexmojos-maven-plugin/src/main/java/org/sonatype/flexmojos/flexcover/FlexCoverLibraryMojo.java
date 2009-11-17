@@ -33,6 +33,7 @@ package org.sonatype.flexmojos.flexcover;
  * limitations under the License.
  */
 
+
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,7 +47,7 @@ import org.sonatype.flexmojos.compiler.TestLibraryCompilerMojo;
  * @extendsGoal test-compile
  * @goal instrument-swc
  * @phase process-test-classes
- * @requiresDependencyResolution test
+ * @requiresDependencyResolution
  * @requiresProject
  */
 public class FlexCoverLibraryMojo

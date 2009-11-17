@@ -194,6 +194,7 @@ public class SignAirMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private File getAirDescriptor()
         throws MojoExecutionException
     {

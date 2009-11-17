@@ -41,7 +41,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
-import org.sonatype.flexmojos.compiler.ApplicationMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -52,7 +51,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @since 3.0
  * @goal copy-flex-resources
  * @phase process-resources
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  */
 public class CopyMojo
     extends AbstractMojo
@@ -95,7 +94,7 @@ public class CopyMojo
      * @required
      * @readonly
      */
-    private List<ArtifactRepository> remoteRepositories;
+    private List<?> remoteRepositories;
 
     /**
      * The directory where the webapp is built.
@@ -111,6 +110,13 @@ public class CopyMojo
      * @parameter default-value="false"
      */
     private boolean stripVersion;
+
+    /**
+     * Use final name if/when available
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useFinalName;
 
     /**
      * @parameter default-value="true"
@@ -142,8 +148,7 @@ public class CopyMojo
 
         if ( !"war".equals( packaging ) )
         {
-            getLog().warn( "Unable to copy flex resources to a non war project" );
-            return;
+            getLog().warn( "'copy-flex-resources' was intended to run on war project" );
         }
 
         webappDirectory.mkdirs();
@@ -264,7 +269,7 @@ public class CopyMojo
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
         if ( urls == null )
         {
-            urls = ApplicationMojo.DEFAULT_RSL_URLS;
+            urls = AbstractFlexCompilerMojo.DEFAULT_RSL_URLS;
         }
         return urls;
     }
@@ -350,26 +355,30 @@ public class CopyMojo
         }
     }
 
-    private File getDestinationFile( Artifact artifact ) throws MojoExecutionException
+    private File getDestinationFile( Artifact artifact )
+        throws MojoExecutionException
     {
-        File destFile;
-        String defaultFinalName = artifact.getArtifactId() + "-" + artifact.getVersion();  
         MavenProject pomProject = getProject( artifact );
-        String finalName = pomProject.getBuild().getFinalName();
-        if ( finalName.equals( defaultFinalName ) )
+        String fileName;
+        if ( !useFinalName )
         {
-             String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-             String version = stripVersion ? "" : "-" + artifact.getVersion();
-             destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
+            String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+            String version = stripVersion ? "" : "-" + artifact.getVersion();
+            fileName = artifact.getArtifactId() + version + classifier + "." + SWF;
         }
         else
         {
-    	   if ( stripVersion )
-    	   {
-              getLog().info( "Copying artifact using final name " + finalName + " ignoring strip version" );
-           }
-           destFile = new File( webappDirectory, finalName + "." + SWF );
+            fileName = pomProject.getBuild().getFinalName() + "." + SWF;
         }
+
+        if ( stripVersion && fileName.contains( artifact.getVersion() ) )
+        {
+            fileName = fileName.replace( artifact.getVersion() + "-", "" );
+            fileName = fileName.replace( "-" + artifact.getVersion(), "" );
+            fileName = fileName.replace( artifact.getVersion(), "" );
+        }
+
+        File destFile = new File( webappDirectory, fileName );
 
         return destFile;
     }

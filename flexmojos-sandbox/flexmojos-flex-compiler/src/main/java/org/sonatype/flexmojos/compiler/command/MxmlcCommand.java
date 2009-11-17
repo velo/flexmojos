@@ -15,26 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.common;
+/**
+ * 
+ */
+package org.sonatype.flexmojos.compiler.command;
 
-import org.sonatype.flexmojos.compiler.INamespace;
+import java.util.List;
 
-public class MavenNamespaces
-    implements INamespace
+import flex2.tools.Compiler;
+
+public class MxmlcCommand
+    implements Command
 {
 
-    private String manifest;
+    private String[] args;
 
-    private String uri;
-
-    public String manifest()
+    public MxmlcCommand( List<String> args )
     {
-        return manifest;
+        this.args = args.toArray( new String[args.size()] );
     }
 
-    public String uri()
+    public void command()
     {
-        return uri;
+        Compiler.mxmlc( args );
     }
-
 }

@@ -23,27 +23,25 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.0-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
-
-  <name>Flexmojos Flex compiler</name>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-generator-mojo</artifactId>
-        <version>4.0-SNAPSHOT</version>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>3.3.0</version>
         <configuration>
           <generatorToUse>internal-ifaces</generatorToUse>
           <includeJavaClasses>
-            <include>flex2.tools.DigestRootConfiguration</include>
-            <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
             <include>flex2.tools.ASDocConfiguration</include>
             <include>flex2.tools.CompcConfiguration</include>
             <include>flex2.tools.CommandLineConfiguration</include>
+            <include>flex2.tools.DigestRootConfiguration</include>
+            <include>flex2.tools.Optimizer.OptimizerConfiguration</include>
           </includeJavaClasses>
         </configuration>
         <executions>
@@ -57,7 +55,7 @@
           <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
             <artifactId>flexmojos-generator-compiler-iface</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <version>3.5-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -121,7 +119,7 @@
                   <groupId>com.adobe.flex.framework</groupId>
                   <artifactId>playerglobal</artifactId>
                   <version>${flex.sdk.version}</version>
-                  <classifier>10</classifier>
+                  <classifier>9</classifier>
                   <type>swc</type>
                   <destFileName>playerglobal.swc</destFileName>
                 </artifactItem>
@@ -138,7 +136,7 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-compiler-iface</artifactId>
-      <version>${project.version}</version>
+      <version>3.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex</groupId>
@@ -150,25 +148,6 @@
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>mxmlc</artifactId>
       <version>${flex.sdk.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>digest</artifactId>
-      <version>${flex.sdk.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>optimizer</artifactId>
-      <version>${flex.sdk.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>asdoc</artifactId>
-      <version>${flex.sdk.version}</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -177,12 +156,11 @@
     </dependency>
     <dependency>
       <groupId>asm</groupId>
-      <artifactId>asm-commons</artifactId>
+      <artifactId>asm-attrs</artifactId>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm-util</artifactId>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -193,10 +171,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
     </dependency>
   </dependencies>
 </project>

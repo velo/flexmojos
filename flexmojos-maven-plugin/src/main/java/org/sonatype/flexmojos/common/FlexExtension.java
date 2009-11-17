@@ -31,6 +31,4 @@ public interface FlexExtension
 
     String ZIP = "zip";
 
-    String POM = "pom";
-
 }

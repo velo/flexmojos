@@ -15,18 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+/**
+ * 
+ */
+package org.sonatype.flexmojos.compiler.command;
 
-import org.apache.maven.it.Verifier;
-import org.testng.annotations.Test;
+import java.util.List;
 
-public class TransitiveDependenciesTest
-    extends AbstractConceptTest
+import flex2.tools.Compc;
+
+public class CompcCommand
+    implements Command
 {
-    @Test
-    public void testTransitiveDependency()
-        throws Exception
+
+    private String[] args;
+
+    public CompcCommand( List<String> args )
     {
-        Verifier v = standardConceptTester( "transitive-dependencies" );
+        this.args = args.toArray( new String[args.size()] );
+    }
+
+    public void command()
+    {
+        Compc.compc( args );
     }
 }

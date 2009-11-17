@@ -37,26 +37,23 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
-import flex2.compiler.config.ConfigurationBuffer;
-import flex2.tools.oem.Application;
 import flex2.tools.oem.Builder;
+import flex2.tools.oem.Report;
+import flex2.tools.oem.Application;
 import flex2.tools.oem.Configuration;
 import flex2.tools.oem.Library;
 import flex2.tools.oem.Logger;
-import flex2.tools.oem.Report;
 import flex2.tools.oem.internal.OEMConfiguration;
 import flex2.tools.oem.internal.OEMUtil;
+import flex2.compiler.config.ConfigurationBuffer;
 
 public class FlexConfigBuilder
 {
     private static final String LINK_REPORT = "link-report";
-
     private static final String RESOURCE_BUNDLE_REPORT = "resource-bundle-list";
 
     private Namespace namespace;
-
     private Document document;
-
     private Element rootElement;
 
     public FlexConfigBuilder( String config )
@@ -86,7 +83,7 @@ public class FlexConfigBuilder
         parse( builder.getConfiguration(), builder.getLogger(), false );
     }
 
-    public FlexConfigBuilder( Configuration configuration, Logger logger, Boolean isApplication )
+     public FlexConfigBuilder( Configuration configuration, Logger logger, Boolean isApplication )
         throws IOException, JDOMException
     {
         parse( configuration, logger, isApplication );
@@ -111,8 +108,8 @@ public class FlexConfigBuilder
         }
         else
         {
-            tempOEMConfiguration =
-                OEMUtil.getLibraryConfiguration( oemConfiguration.getCompilerOptions(), true, logger, null, null );
+            tempOEMConfiguration = OEMUtil.getLibraryConfiguration( oemConfiguration.getCompilerOptions(), true, logger,
+                                                                    null, null );
         }
         parse( tempOEMConfiguration.cfgbuf );
     }
@@ -179,13 +176,12 @@ public class FlexConfigBuilder
         {
             return;
         }
-
+        
         addText( "output", output.getAbsolutePath() );
     }
 
     /**
      * https://bugs.adobe.com/jira/browse/FCM-15
-     * 
      * @param output output file
      * @param home base path, should be a directory, not a file, or it doesn't make sense
      */
@@ -216,7 +212,7 @@ public class FlexConfigBuilder
 
     public void addList( List<String> list, String rootName, String childName )
     {
-        addList( list.toArray( new String[list.size()] ), rootName, childName );
+        addList( list.toArray( new String[list.size()]), rootName, childName );
     }
 
     public void append( String value, String rootName, String childName )
@@ -246,8 +242,8 @@ public class FlexConfigBuilder
         for ( int i = 0, namesSize = names.size(); i < namesSize; i++ )
         {
             Element element = new Element( "include-file", namespace );
-            addText( element, "name", names.get( i ) );
-            addText( element, "path", paths.get( i ) );
+            addText( element, "name", names.get(i) );
+            addText( element, "path", paths.get(i) );
             rootElement.addContent( element );
         }
     }

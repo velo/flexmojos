@@ -29,7 +29,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-aggregator</artifactId>
-  <version>4.0-SNAPSHOT</version>
+  <version>3.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Aggregator</name>
@@ -42,11 +42,31 @@
     </license>
   </licenses>
 
+  <properties>
+    <!-- need due grid limitations -->
+    <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
+    <flexSnapshotUrl>http://repository.sonatype.org/content/repositories/flexmojos-snapshots</flexSnapshotUrl>
+    <flexSiteUrl>dav:https://sites.sonatype.org/flexmojos</flexSiteUrl>
+  </properties>
+
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
-    <url>http://svn.sonatype.org/flexmojos/trunk</url>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</developerConnection>
+    <url>http://svn.sonatype.org/forge/branches/flexmojos-3.x</url>
   </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>flexmojos-releases</id>
+      <name>flexmojos Release Repository</name>
+      <url>${flexReleaseUrl}</url>
+    </repository>
+    <snapshotRepository>
+      <id>flexmojos-snapshots</id>
+      <name>flexmojos Snapshot Repository</name>
+      <url>${flexSnapshotUrl}</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <build>
     <plugins>
@@ -135,6 +155,7 @@
         <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
+        <module>flexmojos-generator</module>
         <module>flexmojos-testing</module>
       </modules>
       <properties>
@@ -144,10 +165,23 @@
 
     <profile>
       <id>release</id>
-            <activation>
+      <modules>
+        <module>flexmojos-parent</module>
+        <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
+        <module>flexmojos-maven-plugin</module>
+        <module>flexmojos-super-poms</module>
+        <module>flexmojos-archetypes</module>
+        <module>flexmojos-testing</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>deploy</id>
+      <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      
+
       <modules>
         <module>flexmojos-parent</module>
         <module>flexmojos-sandbox</module>

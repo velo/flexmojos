@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>3.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-unittest-parent</artifactId>
@@ -56,7 +56,7 @@
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>playerglobal</artifactId>
       <version>${flex.sdk.version}</version>
-      <classifier>10</classifier>
+      <classifier>9</classifier>
       <type>swc</type>
       <scope>external</scope>
     </dependency>
