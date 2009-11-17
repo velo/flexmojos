@@ -90,13 +90,6 @@ public class IT0014ConceptTest
         assertTrue( "Html Wrapper was not generated.", template.exists() );
     }
 
-    @Test
-    public void testOptimizedFlexLibrary()
-        throws Exception
-    {
-        standardConceptTester( "optimized-flex-library" );
-    }
-
     // TODO depends on have HFCD started
     // @Test(timeOut=120000) public void testRpcHfcdSdk() throws Exception {
     // standardConceptTester("rpc-hfcd-sdk");

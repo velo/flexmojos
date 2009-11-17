@@ -161,11 +161,12 @@
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${pom.version}</version>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
@@ -228,10 +229,6 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <classifier>jdk15</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.graniteds</groupId>
-      <artifactId>granite-generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -306,6 +303,12 @@
       <artifactId>mockito-core</artifactId>
       <scope>compile</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
+    </dependency>
+
   </dependencies>
 
   <reporting>

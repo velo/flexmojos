@@ -11,8 +11,6 @@ import java.util.List;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.sonatype.flexmojos.compiler.command.Command;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.compiler.plexusflexbridge.PlexusLogger;
@@ -30,25 +28,22 @@ import flex2.tools.oem.internal.OEMLogAdapter;
 @Component( role = FlexCompiler.class )
 public class DefaultFlexCompiler
     extends AbstractLogEnabled
-    implements FlexCompiler, Initializable
+    implements FlexCompiler
 {
 
-    private ClassLoader classLoader;
+    private static CompilerClassLoader classloader;
 
-    public void initialize()
-        throws InitializationException
+    static
     {
-        CompilerClassLoader cl = new CompilerClassLoader( getClass().getClassLoader() );
         try
         {
-            cl.loadAPI();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            classloader = new CompilerClassLoader( loader );
         }
-        catch ( ClassNotFoundException e )
+        catch ( Exception e )
         {
-            throw new InitializationException( e.getMessage(), e );
+            throw new RuntimeException( e.getMessage(), e );
         }
-
-        this.classLoader = cl;
     }
 
     public int compileSwc( final ICompcConfiguration configuration )
@@ -57,6 +52,7 @@ public class DefaultFlexCompiler
         return execute( new Command()
         {
             public void command()
+                throws Exception
             {
                 Compc.compc( getArguments( configuration, ICompcConfiguration.class ) );
             }
@@ -124,9 +120,7 @@ public class DefaultFlexCompiler
             public void run()
             {
                 SecurityManager sm = System.getSecurityManager();
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-                Thread.currentThread().setContextClassLoader( classLoader );
                 System.setSecurityManager( new SecurityManager()
                 {
                     public void checkPermission( java.security.Permission perm )
@@ -156,7 +150,6 @@ public class DefaultFlexCompiler
                 finally
                 {
                     System.setSecurityManager( sm );
-                    Thread.currentThread().setContextClassLoader( cl );
                     CompilerThreadLocal.logger.set( null );
                     CompilerThreadLocal.pathResolver.set( null );
                     System.setOut( err );

@@ -131,21 +131,25 @@
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>mxmlc</artifactId>
       <version>${flex.sdk.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>digest</artifactId>
       <version>${flex.sdk.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>optimizer</artifactId>
       <version>${flex.sdk.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>asdoc</artifactId>
       <version>${flex.sdk.version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -154,11 +158,12 @@
     </dependency>
     <dependency>
       <groupId>asm</groupId>
-      <artifactId>asm-attrs</artifactId>
+      <artifactId>asm-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm-util</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
