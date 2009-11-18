@@ -43,7 +43,6 @@ public class ResultHandler
 {
     public static final String ROLE = ResultHandler.class.getName();
 
-    @Configuration( value = "13539" )
     private int testReportPort;
 
     protected List<String> testReportData;
@@ -96,10 +95,11 @@ public class ResultHandler
         getLogger().debug( "[RESULT] Socket buffer " + buffer );
     }
 
-    public void start()
+    public void start(int testPort)
     {
         reset();
 
+        testReportPort = testPort;
         testReportData = new ArrayList<String>();
 
         launch();

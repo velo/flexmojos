@@ -269,7 +269,11 @@ public class FlexUnitMojo
         {
             try
             {
-                List<String> results = testRunner.run( new File( testOutputDirectory, swfName ) );
+                TestRequest testRequest = new TestRequest();
+                testRequest.setTestControlPort( testControlPort );
+                testRequest.setTestPort( testPort );
+                testRequest.setSwf( new File( testOutputDirectory, swfName ) );
+                List<String> results = testRunner.run( testRequest );
                 for ( String result : results )
                 {
                     writeTestReport( result );

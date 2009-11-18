@@ -43,13 +43,10 @@ public class AsVmPing
     extends AbstractSocketThread
 {
 
-    @Configuration( value = "13540" )
     private int testControlPort;
 
-    @Configuration( value = "20000" )
     private int firstConnectionTimeout;
 
-    @Configuration( value = "5000" )
     private int testTimeout;
 
     @Override
@@ -129,10 +126,12 @@ public class AsVmPing
         }
     }
 
-    public void start()
+    public void start(int testControlPort, int firstConnectionTimeout, int testTimeout)
     {
         reset();
-
+        this.testControlPort = testControlPort;
+        this.firstConnectionTimeout = firstConnectionTimeout;
+        this.testTimeout = testTimeout;
         launch();
     }
 
