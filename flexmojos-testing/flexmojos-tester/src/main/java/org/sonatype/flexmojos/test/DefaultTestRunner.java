@@ -26,9 +26,10 @@ public class DefaultTestRunner
     @Requirement( role = AsVmLauncher.class )
     private AsVmLauncher launcher;
 
-    public List<String> run( File swf )
+    public List<String> run( TestRequest testRequest )
         throws TestRunnerException, LaunchFlashPlayerException
     {
+        File swf = testRequest.getSwf();
         if ( swf == null )
         {
             throw new TestRunnerException( "Target SWF not defined" );
@@ -44,10 +45,11 @@ public class DefaultTestRunner
         try
         {
             // Start a thread that pings flashplayer to be sure if it still alive.
-            pinger.start();
+            pinger.start( testRequest.getTestControlPort(), testRequest.getFirstConnectionTimeout(),
+                          testRequest.getTestTimeout() );
 
             // Start a thread that receives the FlexUnit results.
-            resultHandler.start();
+            resultHandler.start( testRequest.getTestPort() );
 
             // Start the browser and run the FlexUnit tests.
             launcher.start( swf );
