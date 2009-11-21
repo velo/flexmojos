@@ -230,6 +230,7 @@ public final class GraniteDsGenerator
         try
         {
             // As3TypeFactory.
+            as3typefactory = request.getExtraOptions().get("as3typefactory");
             if ( as3typefactory == null )
             {
                 as3TypeFactoryImpl = new DefaultAs3TypeFactory();
