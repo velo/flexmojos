@@ -273,6 +273,9 @@ public class FlexUnitMojo
                 testRequest.setTestControlPort( testControlPort );
                 testRequest.setTestPort( testPort );
                 testRequest.setSwf( new File( testOutputDirectory, swfName ) );
+                testRequest.setAllowHeadlessMode( allowHeadlessMode );
+                testRequest.setFlashplayerCommand( flashPlayerCommand );
+
                 List<String> results = testRunner.run( testRequest );
                 for ( String result : results )
                 {

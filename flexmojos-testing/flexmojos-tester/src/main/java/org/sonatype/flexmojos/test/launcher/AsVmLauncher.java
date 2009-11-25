@@ -22,12 +22,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Configuration;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.StreamPumper;
 import org.sonatype.flexmojos.test.AbstractControlledThread;
 import org.sonatype.flexmojos.test.ControlledThread;
+import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.sonatype.flexmojos.test.util.OSUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -43,10 +43,8 @@ public class AsVmLauncher
 
     private Process process;
 
-    @Configuration( value = "true" )
     private boolean allowHeadlessMode;
 
-    @Configuration( value = "${flashplayer.command}" )
     private String flashplayerCommand;
 
     private File log;
@@ -57,10 +55,17 @@ public class AsVmLauncher
      * @param targetSwf the SWF.
      * @throws LaunchFlashPlayerException
      */
-    public void start( File targetSwf )
+    public void start( TestRequest request )
         throws LaunchFlashPlayerException, InvalidSwfException
     {
         reset();
+
+        if ( request == null )
+        {
+            throw new InvalidSwfException( "request is null" );
+        }
+
+        File targetSwf = request.getSwf();
 
         if ( targetSwf == null )
         {
@@ -71,6 +76,9 @@ public class AsVmLauncher
         {
             throw new InvalidSwfException( "targetSwf not found " + targetSwf );
         }
+
+        this.flashplayerCommand = request.getFlashplayerCommand();
+        this.allowHeadlessMode = request.getAllowHeadlessMode();
 
         if ( flashplayerCommand == null || "${flashplayer.command}".equals( flashplayerCommand ) )
         {
