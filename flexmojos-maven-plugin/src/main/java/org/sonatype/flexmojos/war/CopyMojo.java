@@ -163,6 +163,17 @@ public class CopyMojo
                 performSubArtifactsCopy( artifact );
             }
         }
+
+        List<Artifact> airDependencies = getAirArtifacts();
+
+        for ( Artifact artifact : airDependencies )
+        {
+            File sourceFile = artifact.getFile();
+            File destFile = getDestinationFile( artifact );
+
+            copy( sourceFile, destFile );
+        }
+
     }
 
     private void performSubArtifactsCopy( Artifact artifact )
@@ -383,6 +394,11 @@ public class CopyMojo
     private List<Artifact> getSwfArtifacts()
     {
         return getArtifacts( SWF, project );
+    }
+
+    private List<Artifact> getAirArtifacts()
+    {
+        return getArtifacts( AIR, project );
     }
 
     @SuppressWarnings( "unchecked" )
