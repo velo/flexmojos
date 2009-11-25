@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import org.codehaus.plexus.PlexusTestNGCase;
 import org.codehaus.plexus.context.Context;
+import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.util.OSUtils;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -15,16 +16,18 @@ public class AbstractAsVmLauncherTest
 
     protected AsVmLauncher launcher;
 
-    protected static final File VALID_SWF;
+    protected static final TestRequest VALID_SWF;
 
-    protected static final File INVALID_SWF;
+    protected static final TestRequest INVALID_SWF;
 
     static
     {
         try
         {
-            VALID_SWF = new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() );
-            INVALID_SWF = new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() );
+            VALID_SWF = new TestRequest();
+            VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
+            INVALID_SWF = new TestRequest();
+            INVALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() ) );
         }
         catch ( URISyntaxException e )
         {

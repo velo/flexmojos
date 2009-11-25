@@ -52,7 +52,7 @@ public class DefaultTestRunner
             resultHandler.start( testRequest.getTestPort() );
 
             // Start the browser and run the FlexUnit tests.
-            launcher.start( swf );
+            launcher.start( testRequest );
 
             // Wait until the tests are complete.
             while ( true )

@@ -15,6 +15,10 @@ public class TestRequest
 
     private int testTimeout;
 
+    private String flashplayerCommand;
+
+    private boolean allowHeadlessMode;
+
     /**
      * @return the firstConnectionTimeout
      */
@@ -87,5 +91,25 @@ public class TestRequest
     public void setTestTimeout( int testTimeout )
     {
         this.testTimeout = testTimeout;
+    }
+
+    public String getFlashplayerCommand()
+    {
+        return this.flashplayerCommand;
+    }
+
+    public void setFlashplayerCommand( String flashplayerCommand )
+    {
+        this.flashplayerCommand = flashplayerCommand;
+    }
+
+    public boolean getAllowHeadlessMode()
+    {
+        return this.allowHeadlessMode;
+    }
+
+    public void setAllowHeadlessMode( boolean allowHeadlessMode )
+    {
+        this.allowHeadlessMode = allowHeadlessMode;
     }
 }

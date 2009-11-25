@@ -8,6 +8,7 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.util.Arrays;
 
+import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
@@ -89,7 +90,9 @@ public class AsVmLauncherTest
 
         try
         {
-            launcher.start( new File( "not_existing_swf_file.swf" ) );
+            TestRequest request = new TestRequest();
+            request.setSwf( new File( "not_existing_swf_file.swf" ) );
+            launcher.start( request );
             fail();
         }
         catch ( InvalidSwfException e )
