@@ -21,7 +21,11 @@ public class AsVmLauncherTest
     public void launch()
         throws Exception
     {
-        System.out.println( "launch" );
+
+        if ( launcher.useXvfb() )
+        {
+            throw new SkipException( "Skipping for now" );
+        }
 
         launcher.start( VALID_SWF );
 
@@ -45,8 +49,6 @@ public class AsVmLauncherTest
     {
         if ( true )
             throw new SkipException( "Know failure, need more investigation" );
-
-        System.out.println( "stop" );
 
         launcher.start( INVALID_SWF );
 
