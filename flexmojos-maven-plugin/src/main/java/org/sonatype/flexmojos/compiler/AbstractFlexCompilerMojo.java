@@ -57,7 +57,6 @@ import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
-import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
@@ -1710,7 +1709,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             throw new MojoExecutionException( "Invalid player version " + targetPlayer );
         }
 
-        if ( playerGlobalVersion != null )
+        if ( !( playerGlobalVersion == null || ignoreVersionIssues ) )
         {
             if ( !nodes[0].equals( playerGlobalVersion ) )
             {
@@ -1839,6 +1838,11 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         Set<Artifact> dependencies = getDependencyArtifacts();
         for ( Artifact artifact : dependencies )
         {
+            if ( !artifact.getType().equals( "swc" ) )
+            {
+                continue;
+            }
+
             if ( "playerglobal".equals( artifact.getArtifactId() ) || //
                 "airglobal".equals( artifact.getArtifactId() ) )
             {
