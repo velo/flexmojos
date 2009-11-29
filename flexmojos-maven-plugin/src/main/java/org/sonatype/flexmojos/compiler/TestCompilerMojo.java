@@ -113,10 +113,6 @@ public class TestCompilerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         if ( skipTests )
         {
             getLog().warn( "Skipping test phase." );

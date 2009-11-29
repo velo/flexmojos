@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.source;
 
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +18,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import de.java2html.Java2Html;
 
@@ -44,10 +42,6 @@ public class SourceViewMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         File srcDir = new File( project.getBuild().getSourceDirectory() );
         Collection<File> testFiles = FileUtils.listFiles( srcDir, new String[] { "as" }, true );
         for ( File file : testFiles )

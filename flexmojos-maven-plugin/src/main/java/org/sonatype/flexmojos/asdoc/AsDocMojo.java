@@ -714,10 +714,6 @@ public class AsDocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         String packaging = project.getPackaging();
         if ( SWC.equals( packaging ) || SWF.equals( packaging ) )
         {

@@ -143,7 +143,6 @@
         <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
         <module>flexmojos-super-poms</module>
-        <module>flexmojos-generator</module>
         <module>flexmojos-testing</module>
       </modules>
       <properties>
