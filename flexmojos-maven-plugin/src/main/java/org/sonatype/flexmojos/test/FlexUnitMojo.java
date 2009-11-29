@@ -33,7 +33,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -147,10 +146,6 @@ public class FlexUnitMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         setUp();
 
         if ( skip || skipTest )

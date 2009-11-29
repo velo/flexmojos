@@ -41,7 +41,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 import flex2.compiler.swc.Digest;
 import flex2.compiler.swc.Swc;
@@ -94,10 +93,6 @@ public class OptimizerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         String packaging = project.getPackaging();
         getLog().debug( "project.getPackaging = " + packaging );
 
@@ -141,7 +136,7 @@ public class OptimizerMojo
             {
                 optimizedSWFFile = new File( build.getDirectory(), build.getFinalName() + ".swf" );
             }
-            
+
             optimizedSWFFile.getParentFile().mkdirs();
             outputSWF = new FileOutputStream( optimizedSWFFile );
 
@@ -155,7 +150,6 @@ public class OptimizerMojo
             {
                 IOUtil.copy( inputSWF, outputSWF );
             }
-
 
             if ( SWC.equals( packaging ) )
             {

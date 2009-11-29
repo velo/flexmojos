@@ -23,7 +23,6 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * Build a SWC of the test classes for the current project.
@@ -41,10 +40,6 @@ public class TestLibraryCompilerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         File testFolder = new File( build.getTestSourceDirectory() );
 
         if ( testFolder.exists() )

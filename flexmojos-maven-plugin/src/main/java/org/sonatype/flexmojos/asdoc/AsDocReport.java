@@ -30,7 +30,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * Generates documentation for the <code>ActionScript code</code> in the project using the standard Asdoc tool
@@ -91,10 +90,6 @@ public class AsDocReport
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         try
         {
             SiteRendererSink sink = siteRenderer.createSink( getReportOutputDirectory(), getOutputName() + ".html" );

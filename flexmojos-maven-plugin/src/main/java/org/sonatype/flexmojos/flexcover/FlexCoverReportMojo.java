@@ -36,7 +36,6 @@ package org.sonatype.flexmojos.flexcover;
  * under the License.
  */
 
-
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -46,7 +45,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.doxia.sink.Sink;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * Instruments, Tests, and Generates a FlexCover Report.
@@ -182,10 +180,6 @@ public class FlexCoverReportMojo
     public void generate( Sink sink, Locale locale )
         throws MavenReportException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         executeReport( locale );
     }
 

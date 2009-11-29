@@ -44,7 +44,6 @@ import org.sonatype.flexmojos.generator.api.GenerationException;
 import org.sonatype.flexmojos.generator.api.GenerationRequest;
 import org.sonatype.flexmojos.generator.api.Generator;
 import org.sonatype.flexmojos.generator.api.GeneratorFactory;
-import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
  * This goal generate actionscript 3 code based on Java classes. It does uses Granite GAS3.
@@ -186,10 +185,6 @@ public class GeneratorMojo
     public void execute()
         throws MojoExecutionException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
-
         setUp();
 
         GenerationRequest request = new GenerationRequest();

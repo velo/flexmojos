@@ -182,9 +182,6 @@ public abstract class AbstractIrvinMojo
             return;
         }
 
-        getLog().info(
-                       "Flexmojos " + MavenUtils.getFlexMojosVersion()
-                           + " - Apache License (NO WARRANTY) - See COPYRIGHT file" );
         setUp();
         run();
         tearDown();
