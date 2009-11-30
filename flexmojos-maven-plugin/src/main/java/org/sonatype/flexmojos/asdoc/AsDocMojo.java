@@ -44,6 +44,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
@@ -400,6 +401,7 @@ public class AsDocMojo
         throw new MojoExecutionException( "Unable to generate default template." );
     }
 
+    @FlexCompatibility( maxVersion = "4.0.3127" )
     private void makeHelperExecutable( File templates )
         throws MojoExecutionException
     {
