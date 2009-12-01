@@ -407,6 +407,8 @@ public class AsDocMojo
     {
         if ( !MavenUtils.isWindows() )
         {
+            getLog().info( "Making asdoc helper executable due to Flex SDK: " + getCompilerVersion() );
+
             Runtime runtime = Runtime.getRuntime();
             String pathname =
                 String.format( "%s/%s", templates.getAbsolutePath(), "asDocHelper"
