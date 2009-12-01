@@ -83,12 +83,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
         "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
 
-    private static final String COMPATIBILITY_2_0_0 = "2.0.0";
-
-    private static final String COMPATIBILITY_2_0_1 = "2.0.1";
-
-    private static final String COMPATIBILITY_3_0_0 = "3.0.0";
-
     /**
      * license.properties locations get from http://livedocs.adobe.com/flex/3/html/configuring_environment_2.html
      */
@@ -1728,28 +1722,20 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     {
         if ( compatibilityVersion != null )
         {
-            if ( !COMPATIBILITY_2_0_0.equals( compatibilityVersion )
-                && !COMPATIBILITY_2_0_1.equals( compatibilityVersion )
-                && !COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
+            String[] nodes = compatibilityVersion.split( "\\." );
+            if ( nodes == null || nodes.length != 3 )
             {
                 throw new MojoExecutionException( "Invalid compatibility version " + compatibilityVersion );
             }
-            else if ( COMPATIBILITY_2_0_0.equals( compatibilityVersion ) )
+
+            int[] versions = new int[3];
+            for ( int i = 0; i < nodes.length; i++ )
             {
-                configuration.setCompatibilityVersion( 2, 0, 0 );
+                String node = nodes[i];
+                versions[i] = Integer.parseInt( node );
             }
-            else if ( COMPATIBILITY_2_0_1.equals( compatibilityVersion ) )
-            {
-                configuration.setCompatibilityVersion( 2, 0, 1 );
-            }
-            else if ( COMPATIBILITY_3_0_0.equals( compatibilityVersion ) )
-            {
-                configuration.setCompatibilityVersion( 3, 0, 0 );
-            }
-            else
-            {
-                throw new IllegalStateException( "Should never reach this" );
-            }
+
+            configuration.setCompatibilityVersion( versions[0], versions[1], versions[2] );
         }
     }
 
