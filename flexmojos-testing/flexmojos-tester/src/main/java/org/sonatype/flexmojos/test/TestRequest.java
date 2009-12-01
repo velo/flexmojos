@@ -17,7 +17,7 @@ public class TestRequest
 
     private String flashplayerCommand;
 
-    private boolean allowHeadlessMode;
+    private boolean allowHeadlessMode = true;
 
     /**
      * @return the firstConnectionTimeout
