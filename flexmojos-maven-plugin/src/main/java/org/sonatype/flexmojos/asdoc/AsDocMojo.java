@@ -401,7 +401,7 @@ public class AsDocMojo
         throw new MojoExecutionException( "Unable to generate default template." );
     }
 
-    @FlexCompatibility( maxVersion = "4.0.3127" )
+    @FlexCompatibility( maxVersion = "4.0.0.3127" )
     private void makeHelperExecutable( File templates )
         throws MojoExecutionException
     {
