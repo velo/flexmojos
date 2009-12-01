@@ -38,11 +38,10 @@ public class AsVmLauncherTest
     public void launch()
         throws Exception
     {
-
-        if ( launcher.useXvfb() )
-        {
-            throw new SkipException( "Skipping for now" );
-        }
+        // if ( launcher.useXvfb() )
+        // {
+        // throw new SkipException( "Skipping for now" );
+        // }
 
         launcher.start( VALID_SWF );
 
