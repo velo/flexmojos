@@ -57,7 +57,7 @@ public class AbstractIdeMojo
      *
      * @parameter default-value="false" expression="${useM2Home}"
      */
-    protected boolean useM2Home;
+    protected boolean useM2Repo;
 
     /**
      * List of path elements that form the roots of ActionScript class hierarchies.<BR>
@@ -144,7 +144,7 @@ public class AbstractIdeMojo
     {
         super.fillDefaultNatures( packaging );
 
-        if ( enableM2e || useM2Home )
+        if ( enableM2e || useM2Repo )
         {
             getProjectnatures().add( M2ECLIPSE_NATURE );
         }
@@ -156,7 +156,7 @@ public class AbstractIdeMojo
     {
         super.fillDefaultBuilders( packaging );
 
-        if ( enableM2e || useM2Home )
+        if ( enableM2e || useM2Repo )
         {
             getBuildcommands().add( M2ECLIPSE_BUILD_COMMAND );
         }
