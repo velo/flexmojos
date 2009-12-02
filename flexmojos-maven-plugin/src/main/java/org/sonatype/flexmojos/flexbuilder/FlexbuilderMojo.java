@@ -81,7 +81,7 @@ public class FlexbuilderMojo
     static final String AIR_BUILD_COMMAND = "com.adobe.flexbuilder.apollo.apollobuilder";
 
     static final String[] SDK_SOURCES = { "automation", "flex", "framework", "haloclassic", "rpc", "utilities" };
-    
+
     /**
      * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
      * 
@@ -90,7 +90,7 @@ public class FlexbuilderMojo
      * @readonly
      */
     protected MavenSession sessionContext;
-    
+
     /**
      * LW : needed for expression evaluation Note : needs at least maven 2.0.8 because of MNG-3062 The maven
      * MojoExecution needed for ExpressionEvaluation
@@ -100,7 +100,7 @@ public class FlexbuilderMojo
      * @readonly
      */
     protected MojoExecution execution;
-    
+
     /**
      * defines: specifies a list of define directive key and value pairs. For example, CONFIG::debugging<BR>
      * Usage:
@@ -121,9 +121,10 @@ public class FlexbuilderMojo
      * @parameter
      */
     private Properties definesDeclaration;
-    
+
     /**
      * Context root to pass to the compiler.
+     * 
      * @parameter
      */
     private String contextRoot;
@@ -374,35 +375,20 @@ public class FlexbuilderMojo
             }
             else
             {
-
-                String ideDependencyScope = null;
-
-                if ( ideDependency.isSystemScoped() )
-                {
-                    ideDependencyScope = Artifact.SCOPE_SYSTEM;
-                }
-                else if ( ideDependency.isTestDependency() )
-                {
-                    ideDependencyScope = Artifact.SCOPE_TEST;
-                }
-                else if ( ideDependency.isProvided() )
-                {
-                    ideDependencyScope = Artifact.SCOPE_PROVIDED;
-                }
-
                 Artifact art =
-                    artifactFactory.createArtifact( ideDependency.getGroupId(), ideDependency.getArtifactId(),
-                                                    ideDependency.getVersion(), ideDependencyScope,
-                                                    ideDependency.getType() );
+                    artifactFactory.createArtifactWithClassifier( ideDependency.getGroupId(),
+                                                                  ideDependency.getArtifactId(),
+                                                                  ideDependency.getVersion(), ideDependency.getType(),
+                                                                  ideDependency.getClassifier() );
 
                 art = MavenUtils.resolveArtifact( project, art, resolver, localRepository, remoteRepositories );
 
-                if ( useM2Home )
+                if ( useM2Repo )
                 {
                     ideDependency.setFile( new File(
                                                      ideDependency.getFile().getPath().replace(
                                                                                                 localRepository.getBasedir(),
-                                                                                                "${M2_HOME}" ) ) );
+                                                                                                "${M2_REPO}" ) ) );
                 }
                 else
                 {
@@ -459,10 +445,10 @@ public class FlexbuilderMojo
                                            false, false, false, art.getFile(), art.getType(), false, null, 1,
                                            IdeUtils.getProjectName( IdeUtils.PROJECT_NAME_DEFAULT_TEMPLATE, art ) );
 
-                    if ( useM2Home )
+                    if ( useM2Repo )
                     {
                         dep.setFile( new File( dep.getFile().getPath().replace( localRepository.getBasedir(),
-                                                                                "${M2_HOME}" ) ) );
+                                                                                "${M2_REPO}" ) ) );
                     }
 
                     extraRbs.add( dep );
@@ -500,7 +486,7 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
-        context.put( "useM2Home", useM2Home );
+        context.put( "useM2Home", useM2Repo );
         context.put( "dependencies", getDependencies( ideDependencies ) );
         context.put( "mainSources", getMainSources() );
         context.put( "flexBuilderOutputFolderPath", flexBuilderOutputFolderPath );
@@ -526,34 +512,40 @@ public class FlexbuilderMojo
         {
             additionalCompilerArguments += " --incremental ";
         }
-        
-		if (contextRoot != null) {
-			additionalCompilerArguments += " -context-root " + contextRoot;
-		}
 
-		if (definesDeclaration != null) {
-			ExpressionEvaluator expressionEvaluator =
-	            new PluginParameterExpressionEvaluator( sessionContext, execution, null, null, project, project.getProperties() );
-			
-			 for ( Object definekey : definesDeclaration.keySet() )
-			 {
-				String defineName = definekey.toString();
-				String value = definesDeclaration.getProperty(defineName);
-				if (value.contains("${")) {
-					// Fix bug in maven which doesn't always evaluate ${}
-					// constructions
-					try {
-						value = (String) expressionEvaluator.evaluate(value);
-					} catch (ExpressionEvaluationException e) {
-						throw new MojoExecutionException("Expression error in "
-								+ defineName, e);
-					}
-				}
-				
-				// Definition values should ben quoted if necessary, so not adding additional quoting here.
-				additionalCompilerArguments += String.format(" -define+=%s,%s", defineName, value);
-			 }
-		}
+        if ( contextRoot != null )
+        {
+            additionalCompilerArguments += " -context-root " + contextRoot;
+        }
+
+        if ( definesDeclaration != null )
+        {
+            ExpressionEvaluator expressionEvaluator =
+                new PluginParameterExpressionEvaluator( sessionContext, execution, null, null, project,
+                                                        project.getProperties() );
+
+            for ( Object definekey : definesDeclaration.keySet() )
+            {
+                String defineName = definekey.toString();
+                String value = definesDeclaration.getProperty( defineName );
+                if ( value.contains( "${" ) )
+                {
+                    // Fix bug in maven which doesn't always evaluate ${}
+                    // constructions
+                    try
+                    {
+                        value = (String) expressionEvaluator.evaluate( value );
+                    }
+                    catch ( ExpressionEvaluationException e )
+                    {
+                        throw new MojoExecutionException( "Expression error in " + defineName, e );
+                    }
+                }
+
+                // Definition values should ben quoted if necessary, so not adding additional quoting here.
+                additionalCompilerArguments += String.format( " -define+=%s,%s", defineName, value );
+            }
+        }
 
         if ( SWF.equals( packaging ) || AIR.equals( packaging ) )
         {
@@ -567,8 +559,9 @@ public class FlexbuilderMojo
                     + "(Hint: Try to create a MXML file below your source root)" );
             }
 
-            String sourceRelativeToSourcePath = PathUtil.getRelativePath(new File(project.getBuild().getSourceDirectory()), sourceFile);
-            
+            String sourceRelativeToSourcePath =
+                PathUtil.getRelativePath( new File( project.getBuild().getSourceDirectory() ), sourceFile );
+
             context.put( "mainApplication", sourceRelativeToSourcePath );
             getAllApplications().add( 0, sourceRelativeToSourcePath );
             context.put( "applications", getAllApplications() );
@@ -594,7 +587,7 @@ public class FlexbuilderMojo
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
-    
+
     private boolean useApolloConfig( IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
