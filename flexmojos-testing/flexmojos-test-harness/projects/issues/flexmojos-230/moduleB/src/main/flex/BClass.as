@@ -15,22 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.common;
-
-public interface FlexExtension
+package 
 {
-    String AIR = "air";
 
-    String SWF = "swf";
-
-    String SWC = "swc";
-
-    String SWZ = "swz";
-
-    String RB_SWC = "rb.swc";
-
-    String ZIP = "zip";
-
-    String POM = "pom";
-
+	/**
+	 * This is a well documented AS3 class =p
+	 */
+	public class BClass {
+	}
 }

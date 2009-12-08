@@ -17,6 +17,8 @@
  */
 package org.sonatype.flexmojos.asdoc;
 
+import static org.sonatype.flexmojos.common.FlexExtension.AIR;
+import static org.sonatype.flexmojos.common.FlexExtension.POM;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 
@@ -278,22 +280,61 @@ public class AsDocMojo
 
     private Set<Artifact> dependencyArtifacts;
 
+    /**
+     * If true, will treat multi-modules projects as only one project otherwise will generate Asdoc per project
+     * 
+     * @parameter default-value="false" expression="${asdoc.aggregate}"
+     * @since 3.5
+     */
+    protected boolean aggregate;
+
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     * @since 3.5
+     */
+    protected List<MavenProject> reactorProjects;
+
     @SuppressWarnings( "unchecked" )
     protected void setUp()
         throws MojoExecutionException, MojoFailureException
     {
         if ( sourcePaths == null )
         {
-            List<String> sourceRoots = project.getCompileSourceRoots();
-            List<File> sources = new ArrayList<File>();
-            for ( String sourceRoot : sourceRoots )
+            List<MavenProject> projects;
+            if ( aggregate )
             {
-                File source = new File( sourceRoot );
-                if ( source.exists() )
+                projects = new ArrayList<MavenProject>();
+                for ( MavenProject project : this.reactorProjects )
                 {
-                    sources.add( source );
+                    // filter flex projects
+                    if ( SWF.equals( project.getPackaging() ) || SWC.equals( project.getPackaging() )
+                        || AIR.equals( project.getPackaging() ) )
+                    {
+                        projects.add( project );
+                    }
                 }
             }
+            else
+            {
+                projects = Arrays.asList( project );
+            }
+
+            List<File> sources = new ArrayList<File>();
+            for ( MavenProject project : projects )
+            {
+                List<String> sourceRoots = project.getCompileSourceRoots();
+                for ( String sourceRoot : sourceRoots )
+                {
+                    File source = new File( sourceRoot );
+                    if ( source.exists() )
+                    {
+                        sources.add( source );
+                    }
+                }
+            }
+
             sourcePaths = sources.toArray( new File[sources.size()] );
         }
         if ( docSources == null && docClasses == null && docNamespaces == null )
@@ -728,8 +769,14 @@ public class AsDocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            getLog().info( "Skipping asdoc execution, running on aggregate mode." );
+            return;
+        }
+
         String packaging = project.getPackaging();
-        if ( SWC.equals( packaging ) || SWF.equals( packaging ) )
+        if ( SWC.equals( packaging ) || SWF.equals( packaging ) || ( POM.equals( packaging ) && aggregate ) )
         {
             setUp();
             run();
