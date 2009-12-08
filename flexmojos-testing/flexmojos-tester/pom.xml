@@ -5,6 +5,7 @@
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
     <version>3.5-SNAPSHOT</version>
+    <relativePath>../../flexmojos-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-tester</artifactId>
