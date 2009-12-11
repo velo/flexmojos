@@ -270,6 +270,8 @@ public class FlexUnitMojo
                 testRequest.setSwf( new File( testOutputDirectory, swfName ) );
                 testRequest.setAllowHeadlessMode( allowHeadlessMode );
                 testRequest.setFlashplayerCommand( flashPlayerCommand );
+                testRequest.setTestTimeout( testTimeout );
+                testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
 
                 List<String> results = testRunner.run( testRequest );
                 for ( String result : results )
