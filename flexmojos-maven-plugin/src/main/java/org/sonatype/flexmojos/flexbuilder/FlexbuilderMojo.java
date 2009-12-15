@@ -286,6 +286,22 @@ public class FlexbuilderMojo
      */
     private boolean incremental;
 
+    /**
+     * Specifies whether this project should be treated as a Flex or a pure ActionScript project by Flexbuilder. If set
+     * to true:
+     * <ul>
+     * <li>Removes Flex (app/lib) natures from <code>.project</code> file.</li>
+     * <li>Changes exclusions from library path entries in <code>.actionScriptProperties</code> file.</li>
+     * <li>Completly omits creation of the <code>.flexProperties</code> file.</li>
+     * </ul>
+     * If not defined Flexmojos will lockup for com.adobe.flex.framework:framework:swc and set as <i>true</i> if found
+     * or <i>false</i> if not found
+     * 
+     * @parameter
+     */
+    private Boolean pureActionscriptProject;
+
+    @SuppressWarnings( "unchecked" )
     @Override
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
@@ -296,16 +312,23 @@ public class FlexbuilderMojo
 
         String packaging = project.getPackaging();
 
+        Set<Artifact> depArtifacts = project.getDependencyArtifacts();
+        if ( pureActionscriptProject == null )
+        {
+            pureActionscriptProject =
+                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) != null;
+        }
+
         if ( SWF.equals( packaging ) || SWC.equals( packaging ) || AIR.equals( packaging ) )
         {
             writeAsProperties( packaging, deps );
         }
 
-        if ( SWF.equals( packaging ) || AIR.equals( packaging ) )
+        if ( ( SWF.equals( packaging ) || AIR.equals( packaging ) ) && !pureActionscriptProject )
         {
             writeFlexProperties();
         }
-        else if ( SWC.equals( packaging ) )
+        else if ( SWC.equals( packaging ) && !pureActionscriptProject )
         {
             writeFlexLibProperties();
         }
@@ -498,7 +521,8 @@ public class FlexbuilderMojo
         context.put( "showWarnings", showWarnings );
 
         String additionalCompilerArguments = "";
-        if ( ( compiledLocales != null && compiledLocales.length > 0 ) || !SWC.equals( packaging ) )
+        if ( ( compiledLocales != null && compiledLocales.length > 0 )
+            || ( !SWC.equals( packaging ) && !pureActionscriptProject ) )
         {
             additionalCompilerArguments += " -locale " + getPlainLocales();
         }
@@ -585,6 +609,8 @@ public class FlexbuilderMojo
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
+        context.put( "pureActionscriptProject", pureActionscriptProject );
+
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
 
@@ -648,6 +674,11 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
         final Artifact flexArtifact = resolveFlexFrameworkArtifact();
+        if ( flexArtifact == null )
+        {
+            // if we could not determine flex's scope, assume "merge into code" by default
+            return "1";
+        }
         final boolean isRsl = "rsl".equals( flexArtifact.getScope() );
         return isRsl ? "3" : "1";
     }
@@ -676,7 +707,8 @@ public class FlexbuilderMojo
             }
         }
 
-        throw new MojoExecutionException( "Could not find Flex Framework! Not included as dependency!" );
+        getLog().debug( "Could not find Flex Framework as a dependency! Assuming pure ActionScript project." );
+        return null; // just return null if we could not find any flex dependency
     }
 
     private void runVelocity( String templateName, String fileName, VelocityContext context )
@@ -723,13 +755,21 @@ public class FlexbuilderMojo
 
         if ( SWF.equals( packaging ) )
         {
-            getProjectnatures().add( APPLICATION_NATURE );
+            if ( !pureActionscriptProject )
+            {
+                // only add flex-app nature if this is not a pure AS project
+                getProjectnatures().add( APPLICATION_NATURE );
+            }
             getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
 
         if ( SWC.equals( packaging ) )
         {
-            getProjectnatures().add( LIBRARY_NATURE );
+            if ( !pureActionscriptProject )
+            {
+                // only add flex-lib nature if this is not a pure AS project
+                getProjectnatures().add( LIBRARY_NATURE );
+            }
             getProjectnatures().add( ACTIONSCRIPT_NATURE );
         }
 
