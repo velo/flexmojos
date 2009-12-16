@@ -227,14 +227,14 @@ public class ApplicationMojo
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
-        super.tearDown();
-
-        updateSecuritySandbox( getOutput() );
-
         if ( modules != null )
         {
             compileModules();
         }
+
+        super.tearDown();
+
+        updateSecuritySandbox( getOutput() );
     }
 
     protected void compileModules()
