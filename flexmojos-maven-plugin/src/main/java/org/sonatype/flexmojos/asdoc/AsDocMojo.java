@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -799,9 +800,23 @@ public class AsDocMojo
     {
         if ( dependencyArtifacts == null )
         {
-            dependencyArtifacts =
-                MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
-                                                   artifactMetadataSource );
+            if ( aggregate )
+            {
+                dependencyArtifacts = new LinkedHashSet<Artifact>();
+                for ( MavenProject project : this.reactorProjects )
+                {
+                    dependencyArtifacts.addAll( MavenUtils.getDependencyArtifacts( project, resolver, localRepository,
+                                                                                   remoteRepositories,
+                                                                                   artifactMetadataSource,
+                                                                                   artifactFactory ) );
+                }
+            }
+            else
+            {
+                dependencyArtifacts =
+                    MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                                       artifactMetadataSource, artifactFactory );
+            }
         }
         return dependencyArtifacts;
     }

@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -40,14 +41,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -137,15 +131,31 @@ public class MavenUtils
      * @param localRepository artifact repository
      * @param remoteRepositories List of remote repositories
      * @param artifactMetadataSource artifactMetadataSource
+     * @param artifactFactory TODO
      * @return all dependencies from the project
      * @throws MojoExecutionException thrown if an exception occured during artifact resolving
      */
     @SuppressWarnings( "unchecked" )
     public static Set<Artifact> getDependencyArtifacts( MavenProject project, ArtifactResolver resolver,
                                                         ArtifactRepository localRepository, List remoteRepositories,
-                                                        ArtifactMetadataSource artifactMetadataSource )
+                                                        ArtifactMetadataSource artifactMetadataSource,
+                                                        ArtifactFactory artifactFactory )
         throws MojoExecutionException
     {
+        Set<Artifact> artifacts = project.getDependencyArtifacts();
+        if ( artifacts == null )
+        {
+            try
+            {
+                artifacts = project.createArtifacts( artifactFactory, null, null );
+            }
+            catch ( InvalidDependencyVersionException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            project.setDependencyArtifacts( artifacts );
+        }
+
         ArtifactResolutionResult arr;
         try
         {
@@ -246,7 +256,7 @@ public class MavenUtils
      */
     @SuppressWarnings( "unchecked" )
     public static Artifact resolveArtifact( MavenProject project, Artifact artifact, ArtifactResolver resolver,
-                                        ArtifactRepository localRepository, List remoteRepositories )
+                                            ArtifactRepository localRepository, List remoteRepositories )
         throws MojoExecutionException
     {
         try

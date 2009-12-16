@@ -17,10 +17,14 @@
  */
 package 
 {
-
+	import flexunit.framework.TestCase; 
+	
 	/**
 	 * This is a well documented AS3 class =p
 	 */
 	public class AClass {
+
+		public var tc:TestCase;
+
 	}
 }
