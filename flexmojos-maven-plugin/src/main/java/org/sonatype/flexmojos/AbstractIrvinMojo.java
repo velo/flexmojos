@@ -124,7 +124,7 @@ public abstract class AbstractIrvinMojo
         {
             dependencyArtifacts =
                 MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
-                                                   artifactMetadataSource );
+                                                   artifactMetadataSource, artifactFactory );
         }
         return dependencyArtifacts;
     }
