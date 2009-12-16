@@ -246,7 +246,7 @@ public class ApplicationMojo
         }
 
         // restore source paths
-        calculateSourcePaths();
+        configuration.setSourcePath( sourcePaths );
 
         for ( File module : modules )
         {
