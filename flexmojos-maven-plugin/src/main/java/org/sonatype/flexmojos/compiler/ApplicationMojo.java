@@ -217,12 +217,12 @@ public class ApplicationMojo
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
+        super.tearDown();
+
         if ( modules != null )
         {
             compileModules();
         }
-
-        super.tearDown();
 
         updateSecuritySandbox( getOutput() );
     }
@@ -234,6 +234,9 @@ public class ApplicationMojo
         {
             configuration.addExterns( new File[] { linkReportFile } );
         }
+
+        // restore source paths
+        calculateSourcePaths();
 
         for ( File module : modules )
         {

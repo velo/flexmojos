@@ -938,28 +938,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         processLocales();
 
-        if ( sourcePaths == null )
-        {
-            List<String> sourceRoots;
-            if ( project.getExecutionProject() != null )
-            {
-                sourceRoots = project.getExecutionProject().getCompileSourceRoots();
-            }
-            else
-            {
-                sourceRoots = project.getCompileSourceRoots();
-            }
-            List<File> sources = getValidSourceRoots( sourceRoots );
-            if ( compiledLocales != null )
-            {
-                File resourceBundleDirectory = new File( resourceBundlePath );
-                if ( resourceBundleDirectory.getParentFile().exists() )
-                {
-                    sources.add( resourceBundleDirectory );
-                }
-            }
-            sourcePaths = sources.toArray( new File[sources.size()] );
-        }
+        calculateSourcePaths();
 
         if ( configFile == null )
         {
@@ -1042,6 +1021,33 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         // compiler didn't create parent if it doesn't exists
         getOutput().getParentFile().mkdirs();
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected void calculateSourcePaths()
+    {
+        if ( sourcePaths == null )
+        {
+            List<String> sourceRoots;
+            if ( project.getExecutionProject() != null )
+            {
+                sourceRoots = project.getExecutionProject().getCompileSourceRoots();
+            }
+            else
+            {
+                sourceRoots = project.getCompileSourceRoots();
+            }
+            List<File> sources = getValidSourceRoots( sourceRoots );
+            if ( compiledLocales != null )
+            {
+                File resourceBundleDirectory = new File( resourceBundlePath );
+                if ( resourceBundleDirectory.getParentFile().exists() )
+                {
+                    sources.add( resourceBundleDirectory );
+                }
+            }
+            sourcePaths = sources.toArray( new File[sources.size()] );
+        }
     }
 
     @SuppressWarnings( "unchecked" )
@@ -1526,6 +1532,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
+    @SuppressWarnings( "deprecation" )
     private void configureExterns()
         throws MojoExecutionException
     {
