@@ -301,7 +301,6 @@ public class FlexbuilderMojo
      */
     private Boolean pureActionscriptProject;
 
-    @SuppressWarnings( "unchecked" )
     @Override
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
@@ -311,13 +310,6 @@ public class FlexbuilderMojo
         init();
 
         String packaging = project.getPackaging();
-
-        Set<Artifact> depArtifacts = project.getDependencyArtifacts();
-        if ( pureActionscriptProject == null )
-        {
-            pureActionscriptProject =
-                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) != null;
-        }
 
         if ( SWF.equals( packaging ) || SWC.equals( packaging ) || AIR.equals( packaging ) )
         {
@@ -737,10 +729,18 @@ public class FlexbuilderMojo
 
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public boolean setup()
         throws MojoExecutionException
     {
+        Set<Artifact> depArtifacts = project.getDependencyArtifacts();
+        if ( pureActionscriptProject == null )
+        {
+            pureActionscriptProject =
+                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) != null;
+        }
+
         // Just as precaution, in case someone adds a 'source' not in the natural order for strings
         Arrays.sort( SDK_SOURCES );
 
