@@ -20,7 +20,7 @@
             <sourcePath>${project.build.sourceDirectory}</sourcePath>
           </sourcePaths>
           <includeSources>
-            <includeSource>${project.build.sourceDirectory}</includeSource>
+            <includeSource>.</includeSource>
           </includeSources>
         </configuration>
       </plugin>
