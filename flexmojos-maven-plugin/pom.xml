@@ -125,6 +125,7 @@
         <artifactId>flex-compiler-oem</artifactId> <version>3.0.0.477</version> </signature> <inclusions> <include>flex2/tools/oem/*</include> </inclusions> </configuration> </execution> </executions> </plugin>
       -->
 
+      <!--
        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -147,6 +148,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
 
     </plugins>
   </build>
