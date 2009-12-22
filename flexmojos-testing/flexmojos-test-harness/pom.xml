@@ -27,7 +27,7 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${pom.version}/flexmojos-maven-plugin-${pom.version}.jar</flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${project.version}/flexmojos-maven-plugin-${project.version}.jar</flexmojos-maven-plugin>
   </properties>
 
   <build>
@@ -175,137 +175,137 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-maven-plugin</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-parent</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-sandbox</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes-application</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes-library</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-flex-super-pom</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-air-super-pom</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-super-pom-commons</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-testing</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-parent</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-support</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-advancedflex</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-asunit</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-flexunit</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-flexunit4</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-fluint</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-unittest-funit</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>
