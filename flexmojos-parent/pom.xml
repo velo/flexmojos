@@ -270,13 +270,19 @@
 
   <profiles>
     <profile>
-      <id>release</id>
+      <id>skip-test-harness-tests</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.4.3</version>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>failsafe-maven-plugin</artifactId>
             <configuration>
               <skipTests>true</skipTests>
             </configuration>
@@ -544,21 +550,8 @@
         <scope>test</scope>
       </dependency>
       <!--
-        <dependency>
-          <groupId>asm</groupId>
-          <artifactId>asm</artifactId>
-          <version>1.5.1</version>
-        </dependency>
-        <dependency>
-          <groupId>asm</groupId>
-          <artifactId>asm-attrs</artifactId>
-          <version>1.5.1</version>
-        </dependency>
-        <dependency>
-          <groupId>asm</groupId>
-          <artifactId>asm-util</artifactId>
-          <version>1.5.1</version>
-        </dependency>
+        <dependency> <groupId>asm</groupId> <artifactId>asm</artifactId> <version>1.5.1</version> </dependency> <dependency> <groupId>asm</groupId> <artifactId>asm-attrs</artifactId> <version>1.5.1</version> </dependency> <dependency>
+        <groupId>asm</groupId> <artifactId>asm-util</artifactId> <version>1.5.1</version> </dependency>
       -->
       <dependency>
         <groupId>org.mockito</groupId>
