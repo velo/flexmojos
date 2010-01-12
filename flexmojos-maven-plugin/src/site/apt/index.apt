@@ -1,0 +1,62 @@
+~~
+~~ Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+~~ Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+~~
+~~ This program is free software: you can redistribute it and/or modify
+~~ it under the terms of the GNU General Public License as published by
+~~ the Free Software Foundation, either version 3 of the License, or
+~~ (at your option) any later version.
+~~
+~~ This program is distributed in the hope that it will be useful,
+~~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+~~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~~ GNU General Public License for more details.
+~~
+~~ You should have received a copy of the GNU General Public License
+~~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+~~
+
+Introduction
+
+  The Flexmojos Maven Plugin enables you to gain full advantage of Maven
+  in combination with any ActionScript/Flex project. There is no need of additional
+  preparation like setting hardcoded paths or installing any SDK -it works out of 
+  the box just as you are used to be from Maven!
+  
+
+* What is it?
+
+  A collection of maven plugins to allow maven to compile, optimize, and test Flex SWF,
+  Flex SWC, Air SWF, Air SWC and Air package.
+  
+  The main goal is to provide full support to all mxmlc/compc options.
+  
+* Major Features
+
+  * SWF, SWC, AIR and Flex versions
+  
+  * AIR signing and .air file generation
+  
+  * RSL and caching framework support
+  
+  * Modules support
+  
+  * full implementation of MXMLC and COMPC options
+  
+  * Flex 3 and Flex 4
+  
+  * use FLEX-OEM-COMPILER - faster, less memory usage, no need of references to local drive
+  
+  * asdoc support
+  
+  * no setup needed, no environment variables, no changes to flex-configs.xml, no need to point your pom to any absolute path. Just standard maven life style
+  
+  * compatible with several unit testing frameworks: FlexUnit, FUnit, asUnit, AdvancedFlex, fluint and FlexUnit 4
+  
+  * library otimization
+  
+  * html-wrappers generation
+  
+  * code generation using GAS3
+  
+  * WAR generation helper, that copy Flex artifact into WAR
