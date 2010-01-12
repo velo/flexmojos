@@ -125,6 +125,25 @@ public class LibraryMojo
     protected File[] includeSources;
 
     /**
+     * Automatically scans the paths looking for compile units (.as and .mxml files) adding the represented classes with
+     * the <code>include-classes</code> option.
+     * <p>
+     * This option is useful if you want to compile as with <code>includeClasses</code> option without the need to
+     * manually maintain the class list in the pom.
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeAsClasses&gt;
+     *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
+     * &lt;/includeAsClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected File[] includeAsClasses;
+
+    /**
      * Sets the RSL output directory.
      * 
      * @parameter
@@ -217,13 +236,22 @@ public class LibraryMojo
 
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
             && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeSources )
-            && checkNullOrEmpty( includeStylesheet ) && checkNullOrEmpty( includeResourceBundles ) )
+            && checkNullOrEmpty( includeStylesheet ) && checkNullOrEmpty( includeResourceBundles )
+            && checkNullOrEmpty( includeAsClasses ) )
         {
             getLog().warn( "Nothing expecified to include. Assuming source and resources folders." );
             List<File> sourcePaths = new ArrayList<File>( Arrays.asList( this.sourcePaths ) );
             sourcePaths.remove( new File( resourceBundlePath ) );
             includeSources = sourcePaths.toArray( new File[0] );
             includeFiles = listAllResources();
+        }
+
+        if ( !checkNullOrEmpty( includeAsClasses ) )
+        {
+            for ( String includeClass : this.getClassesFromPaths( includeAsClasses ) )
+            {
+                builder.addComponent( includeClass );
+            }
         }
 
         if ( !checkNullOrEmpty( includeClasses ) )
@@ -314,6 +342,51 @@ public class LibraryMojo
             builder.addArchiveFile( "maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml",
                                     new File( project.getBasedir(), "pom.xml" ) );
         }
+    }
+
+    /**
+     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml).
+     * 
+     * @param includeAsClasses The paths to scan looking for classes
+     * @return An array containing the name of the found classes
+     * @throws MojoFailureException
+     */
+    private List<String> getClassesFromPaths( File[] includeAsClasses )
+        throws MojoFailureException
+    {
+
+        List<String> includedFiles = new ArrayList<String>();
+
+        for ( File directory : includeAsClasses )
+        {
+            if ( !directory.isDirectory() )
+            {
+                throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
+            }
+
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.setBasedir( directory );
+            ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
+            ds.addDefaultExcludes();
+            ds.scan();
+
+            if ( !checkNullOrEmpty( ds.getIncludedFiles() ) )
+            {
+                includedFiles.addAll( Arrays.asList( ds.getIncludedFiles() ) );
+            }
+        }
+
+        List<String> sourceClasses = new ArrayList<String>();
+        for ( String includeFile : includedFiles )
+        {
+            // remove extension
+            includeFile = includeFile.substring( 0, includeFile.lastIndexOf( '.' ) );
+            // turn paths into dots
+            includeFile = includeFile.replace( '/', '.' ).replace( '\\', '.' );
+            sourceClasses.add( includeFile );
+        }
+
+        return sourceClasses;
     }
 
     protected void configureIncludeResourceBundles( OEMConfiguration oemConfig )
