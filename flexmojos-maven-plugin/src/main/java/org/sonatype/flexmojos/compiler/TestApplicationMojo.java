@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 3.5
  * @goal test-swf
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  */
 public class TestApplicationMojo
     extends ApplicationMojo
