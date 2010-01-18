@@ -133,8 +133,6 @@ public class TestCompilerMojo
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
-        isSetProjectFile = false;
-
         linkReport = false;
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
@@ -399,16 +397,6 @@ public class TestCompilerMojo
         return locales.toArray( new String[locales.size()] );
     }
 
-    private File[] merge( File[]... filesSets )
-    {
-        List<File> files = new ArrayList<File>();
-        for ( File[] fileSet : filesSets )
-        {
-            files.addAll( Arrays.asList( fileSet ) );
-        }
-        return files.toArray( new File[0] );
-    }
-
     @Override
     protected File getOutput()
     {
@@ -499,6 +487,12 @@ public class TestCompilerMojo
     {
         configuration.setExterns( (File[]) null );
         configuration.setExterns( (String[]) null );
+    }
+
+    @Override
+    protected void attachArtifact()
+    {
+        // do not attach TestRunner
     }
 
 }

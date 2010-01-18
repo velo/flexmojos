@@ -49,8 +49,6 @@ public class TestLibraryCompilerMojo
     public void setUp()
         throws MojoExecutionException, MojoFailureException
     {
-        isSetProjectFile = false;
-
         File outputFolder = new File( build.getTestOutputDirectory() );
         if ( !outputFolder.exists() )
         {
@@ -75,11 +73,8 @@ public class TestLibraryCompilerMojo
     }
 
     @Override
-    protected void tearDown()
-        throws MojoExecutionException, MojoFailureException
+    protected void attachArtifact()
     {
-        super.tearDown();
-
         projectHelper.attachArtifact( project, SWC, "test", getOutput() );
     }
 
