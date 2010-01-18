@@ -307,7 +307,7 @@ public class AsVmLauncher
                 // ignore, process wake up call
             }
 
-            if ( log != null )
+            if ( log != null && log.exists() )
             {
                 try
                 {
