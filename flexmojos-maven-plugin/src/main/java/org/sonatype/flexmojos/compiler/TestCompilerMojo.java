@@ -146,7 +146,6 @@ public class TestCompilerMojo
         isSetProjectFile = false;
 
         linkReport = false;
-        loadExterns = null;
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
         {
@@ -502,6 +501,14 @@ public class TestCompilerMojo
         throws MojoExecutionException
     {
         // reports are ignored on unit tests
+    }
+
+    @Override
+    protected void configureExterns()
+        throws MojoExecutionException
+    {
+        configuration.setExterns( (File[]) null );
+        configuration.setExterns( (String[]) null );
     }
 
 }

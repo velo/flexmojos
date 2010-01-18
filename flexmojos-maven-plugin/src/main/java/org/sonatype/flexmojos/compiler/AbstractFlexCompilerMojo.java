@@ -1537,7 +1537,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     @SuppressWarnings( "deprecation" )
-    private void configureExterns()
+    protected void configureExterns()
         throws MojoExecutionException
     {
         List<File> externsFiles = new ArrayList<File>();
