@@ -37,12 +37,9 @@ public class TestApplicationMojo
 {
 
     @Override
-    public void setUp()
-        throws MojoExecutionException, MojoFailureException
+    protected void attachArtifact()
     {
-        isSetProjectFile = false;
-
-        super.setUp();
+        projectHelper.attachArtifact( project, SWF, "test", getOutput() );
     }
 
     @Override
@@ -52,17 +49,9 @@ public class TestApplicationMojo
         super.configure();
 
         // add test libraries
-        configuration.includeLibraries( getDependenciesPath( "test" ) );
+        configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
     }
 
-    @Override
-    protected void tearDown()
-        throws MojoExecutionException, MojoFailureException
-    {
-        super.tearDown();
-
-        projectHelper.attachArtifact( project, SWF, "test", getOutput() );
-    }
 
     @Override
     protected File getOutput()
