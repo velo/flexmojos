@@ -105,15 +105,6 @@ public class SignAirMojo
      */
     private List<String> includeFiles;
 
-    /**
-     * Plugin classpath.
-     * 
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     * @readonly
-     */
-    protected List<Artifact> pluginArtifacts;
-
     @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
