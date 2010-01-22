@@ -384,9 +384,7 @@ public class CopyMojo
 
         if ( stripVersion && fileName.contains( artifact.getVersion() ) )
         {
-            fileName = fileName.replace( artifact.getVersion() + "-", "" );
             fileName = fileName.replace( "-" + artifact.getVersion(), "" );
-            fileName = fileName.replace( artifact.getVersion(), "" );
         }
 
         File destFile = new File( webappDirectory, fileName );

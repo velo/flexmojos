@@ -320,7 +320,7 @@ public class TestCompilerMojo
                                                getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
                                                getDependenciesPath( "external" ), testFiles ) );
 
-        configuration.setTheme( getThemes() );
+        configureThemes();
     }
 
     @SuppressWarnings( "unchecked" )
