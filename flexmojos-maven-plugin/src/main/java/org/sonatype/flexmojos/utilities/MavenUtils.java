@@ -33,6 +33,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
+import eu.cedarsoft.utils.ZipExtractor;
+
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
  * 
@@ -471,6 +473,45 @@ public class MavenUtils
         }
 
         return getFilesSet( dependencies ).toArray( new File[dependencies.size()] );
+    }
+
+    public static File getSparkCss( Build build, Artifact configs )
+        throws MojoExecutionException
+    {
+        File sparkCss = null;
+        if ( configs != null && configs.getFile().exists() )
+        {
+            ZipExtractor ze;
+
+            File dest = new File( build.getOutputDirectory(), "configs" );
+            dest.mkdirs();
+            try
+            {
+                ze = new ZipExtractor( configs.getFile() );
+                ze.extract( dest );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Unable to extract framework configs", e );
+            }
+
+            sparkCss = new File( dest, "themes/Spark/spark.css" );
+        }
+
+        if ( sparkCss == null || !sparkCss.exists() )
+        {
+            File fontsSer = new File( build.getOutputDirectory(), "spark.css" );
+            fontsSer.getParentFile().mkdirs();
+            try
+            {
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/theme/spark.css" ), fontsSer );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Error copying fonts file.", e );
+            }
+        }
+        return sparkCss;
     }
 
 }

@@ -1619,10 +1619,10 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         resolveRuntimeLibraries();
 
-        configuration.setTheme( getThemes() );
+        configureThemes();
     }
 
-    protected File[] getThemes()
+    protected void configureThemes()
         throws MojoExecutionException, MojoFailureException
     {
         List<File> themeFiles = new ArrayList<File>();
@@ -1638,12 +1638,26 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         themeFiles.addAll( Arrays.asList( getDependenciesPath( "theme" ) ) );
 
-        if ( themeFiles.isEmpty() )
+        if ( !themeFiles.isEmpty() )
         {
-            return null;
+            configuration.setTheme( themeFiles.toArray( new File[0] ) );
+        }
+        else
+        {
+            configuration.setTheme( null );
+            configureSparkCss();
         }
 
-        return themeFiles.toArray( new File[0] );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.11420" )
+    @IgnoreJRERequirement
+    private void configureSparkCss()
+        throws MojoExecutionException
+    {
+        Artifact configs =
+            searchFor( getDependencyArtifacts(), "com.adobe.flex.framework", "framework", null, "zip", "configs" );
+        configuration.setTheme( new File[] { MavenUtils.getSparkCss( build, configs ) } );
     }
 
     @SuppressWarnings( "deprecation" )
