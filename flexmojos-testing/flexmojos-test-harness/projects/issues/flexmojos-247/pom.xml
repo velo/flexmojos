@@ -53,8 +53,10 @@
             <includeNamespace>http://flexmojos.sonatype.org/tests</includeNamespace>
           </includeNamespaces>
           <includeAsClasses>
-            <include>src/main/flex</include>
-          </includeAsClasses>
+            <sources>
+              <directory>src/main/flex</directory>
+            </sources>
+          </includeAsClasses>           
         </configuration>
         <executions>
           <execution>
