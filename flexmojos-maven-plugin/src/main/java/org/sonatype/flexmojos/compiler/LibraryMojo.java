@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -131,17 +132,26 @@ public class LibraryMojo
      * This option is useful if you want to compile as with <code>includeClasses</code> option without the need to
      * manually maintain the class list in the pom.
      * </p>
+     * <p>
+     * Specify <code>includes</code> parameter to include different compile units than the default .as and .mxml ones.
+     * Specify <code>excludes</code> parameter to exclude compile units that would otherwise be included.
+     * </p>
      * Usage:
      * 
      * <pre>
      * &lt;includeAsClasses&gt;
-     *   &lt;sources&gt;${baseDir}/src/main/flex&lt;/sources&gt;
+     *   &lt;sources&gt;
+     *     &lt;directory&gt;${baseDir}/src/main/flex&lt;/directory&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;&#042;&#042;/&#042;Incl.as&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/sources&gt;
      * &lt;/includeAsClasses&gt;
      * </pre>
      * 
      * @parameter
      */
-    protected File[] includeAsClasses;
+    protected FileSet[] includeAsClasses;
 
     /**
      * Sets the RSL output directory.
@@ -234,6 +244,19 @@ public class LibraryMojo
 
         builder.setOutput( getOutput() );
 
+        String[] allResourcesArray = listAllResources();
+        if ( ( includeFiles == null ) || ( includeFiles.length <= 0 ) )
+        {
+            includeFiles = allResourcesArray;
+        }
+        else if ( ( allResourcesArray != null ) && ( allResourcesArray.length > 0 ) )
+        {
+            List<String> tempIncludeFilesList = new ArrayList<String>( includeFiles.length + allResourcesArray.length );
+            tempIncludeFilesList.addAll( Arrays.asList( includeFiles ) );
+            tempIncludeFilesList.addAll( Arrays.asList( allResourcesArray ) );
+            includeFiles = tempIncludeFilesList.toArray( new String[tempIncludeFilesList.size()] );
+        }
+
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
             && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeSources )
             && checkNullOrEmpty( includeStylesheet ) && checkNullOrEmpty( includeResourceBundles )
@@ -248,7 +271,7 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeAsClasses ) )
         {
-            for ( String includeClass : this.getClassesFromPaths( includeAsClasses ) )
+            for ( String includeClass : this.getClassesFromPaths() )
             {
                 builder.addComponent( includeClass );
             }
@@ -345,20 +368,23 @@ public class LibraryMojo
     }
 
     /**
-     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml).
+     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml as a
+     * default).
      * 
      * @param includeAsClasses The paths to scan looking for classes
      * @return An array containing the name of the found classes
      * @throws MojoFailureException
      */
-    private List<String> getClassesFromPaths( File[] includeAsClasses )
+    @SuppressWarnings( "unchecked" )
+    private List<String> getClassesFromPaths()
         throws MojoFailureException
     {
 
         List<String> includedFiles = new ArrayList<String>();
 
-        for ( File directory : includeAsClasses )
+        for ( FileSet fileSet : includeAsClasses )
         {
+            File directory = new File( fileSet.getDirectory() );
             if ( !directory.isDirectory() )
             {
                 throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
@@ -366,7 +392,20 @@ public class LibraryMojo
 
             DirectoryScanner ds = new DirectoryScanner();
             ds.setBasedir( directory );
-            ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
+            List<String> includes = fileSet.getIncludes();
+            if ( ( includes != null ) && ( !includes.isEmpty() ) )
+            {
+                ds.setIncludes( includes.toArray( new String[includes.size()] ) );
+            }
+            else
+            {
+                ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
+            }
+            List<String> excludes = fileSet.getExcludes();
+            if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
+            {
+                ds.setExcludes( excludes.toArray( new String[excludes.size()] ) );
+            }
             ds.addDefaultExcludes();
             ds.scan();
 
@@ -416,6 +455,18 @@ public class LibraryMojo
 
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( resourceDir );
+
+            List<String> includes = resource.getIncludes();
+            if ( ( includes != null ) && ( !includes.isEmpty() ) )
+            {
+                scanner.setIncludes( includes.toArray( new String[includes.size()] ) );
+            }
+            List<String> excludes = resource.getExcludes();
+            if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
+            {
+                scanner.setExcludes( excludes.toArray( new String[excludes.size()] ) );
+            }
+
             scanner.addDefaultExcludes();
             scanner.scan();
             String[] files = scanner.getIncludedFiles();
