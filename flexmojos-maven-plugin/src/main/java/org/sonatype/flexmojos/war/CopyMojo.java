@@ -366,17 +366,18 @@ public class CopyMojo
     private File getDestinationFile( Artifact artifact )
         throws MojoExecutionException
     {
+        String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+
         MavenProject pomProject = getProject( artifact );
         String fileName;
         if ( !useFinalName )
         {
-            String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
             String version = stripVersion ? "" : "-" + artifact.getVersion();
             fileName = artifact.getArtifactId() + version + classifier + "." + SWF;
         }
         else
         {
-            fileName = pomProject.getBuild().getFinalName() + "." + SWF;
+            fileName = pomProject.getBuild().getFinalName() + classifier + "." + SWF;
         }
 
         if ( stripVersion && fileName.contains( artifact.getVersion() ) )
