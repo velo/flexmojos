@@ -31,8 +31,6 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
@@ -366,7 +364,7 @@ public class HtmlWrapperMojo
             {
                 // Found matching dependency, so use this as the basis for the target external pom artifact
                 sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "pom",
+                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "swf",
                                                                   swfArtifact.getClassifier() );
             }
             else
@@ -380,7 +378,7 @@ public class HtmlWrapperMojo
                 }
 
                 sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier );
+                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "swf", classifier );
             }
         }
         else
@@ -390,7 +388,7 @@ public class HtmlWrapperMojo
         }
 
         getLog().info( "Wrapping with external artifact:  " + sourceArtifact.toString() );
-        resolveArtifact( sourceArtifact );
+        MavenUtils.resolveArtifact( project, sourceArtifact, resolver, localRepository, remoteRepositories );
         this.sourceProject = loadProject( sourceArtifact );
 
         // Does source pom contain flexmojos plugin?
@@ -606,29 +604,6 @@ public class HtmlWrapperMojo
         }
     }
 
-    /**
-     * Attempts to find the provided artifact within the current repository path
-     * 
-     * @param artifact
-     * @throws MojoExecutionException
-     */
-    private void resolveArtifact( Artifact artifact )
-        throws MojoExecutionException
-    {
-        try
-        {
-            resolver.resolve( artifact, remoteRepositories, localRepository );
-        }
-        catch ( ArtifactResolutionException ex )
-        {
-            throw new MojoExecutionException( "Could not resolve wrapper source pom artifact:  " + artifact.getId(), ex );
-        }
-        catch ( ArtifactNotFoundException ex )
-        {
-            throw new MojoExecutionException( "Could not find wrapper source pom artifact" + artifact.getId(), ex );
-        }
-    }
-
     /*
      * Copied from CopyMojo... move to org.sonatype.flexmojos.utilities.MavenUtils?
      */
@@ -639,6 +614,7 @@ public class HtmlWrapperMojo
     {
         // Dependencies must be traversed instead of artifacts here because of the execution phase of the mojo
         List<Dependency> dependencies = project.getDependencies();
+
         for ( Dependency dependency : dependencies )
         {
             String matchGroupId = dependency.getGroupId();
