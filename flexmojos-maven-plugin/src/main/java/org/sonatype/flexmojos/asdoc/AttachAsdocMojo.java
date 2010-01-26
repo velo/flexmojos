@@ -8,6 +8,8 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Goal which generates documentation from the ActionScript sources in DITA format.
@@ -65,7 +67,26 @@ public class AttachAsdocMojo
             throw new MojoExecutionException( "Failed to create bundle", e );
         }
 
-        projectHelper.attachArtifact( project, "zip", "asdoc", output );
+        projectHelper.attachArtifact( project, getFileExtention( output ), "asdoc", output );
+    }
+
+    private static String getFileExtention( File file )
+    {
+        String path = file.getAbsolutePath();
+
+        String archiveExt = FileUtils.getExtension( path ).toLowerCase();
+
+        if ( "gz".equals( archiveExt ) || "bz2".equals( archiveExt ) )
+        {
+            String[] tokens = StringUtils.split( path, "." );
+
+            if ( tokens.length > 2 && "tar".equals( tokens[tokens.length - 2].toLowerCase() ) )
+            {
+                archiveExt = "tar." + archiveExt;
+            }
+        }
+
+        return archiveExt;
     }
 
 }
