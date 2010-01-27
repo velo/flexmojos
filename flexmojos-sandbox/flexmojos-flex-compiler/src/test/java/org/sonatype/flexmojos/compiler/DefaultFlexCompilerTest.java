@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.sonatype.flexmojos.compiler.test.MockitoConstraints.RETURNS_NULL;
 
 import java.io.File;
+import java.util.Collections;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
@@ -58,6 +59,7 @@ public class DefaultFlexCompilerTest
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
+        when( compilerCfg.getTheme() ).thenReturn( Collections.emptyList() );
         when( compilerCfg.getFontsConfiguration() ).thenReturn( fontsCfg );
         when( compilerCfg.getExternalLibraryPath() ).thenReturn( new File[] { new File( fdk, "playerglobal.swc" ) } );
         when( fontsCfg.getLocalFontsSnapshot() ).thenReturn( new File( fdk, "localFonts.ser" ).getAbsolutePath() );
@@ -86,6 +88,7 @@ public class DefaultFlexCompilerTest
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( compilerCfg.getFontsConfiguration() ).thenReturn( fontsCfg );
+        when( compilerCfg.getTheme() ).thenReturn( Collections.emptyList() );
         when( compilerCfg.getExternalLibraryPath() ).thenReturn( new File[] { new File( fdk, "playerglobal.swc" ) } );
         when( fontsCfg.getLocalFontsSnapshot() ).thenReturn( new File( fdk, "localFonts.ser" ).getAbsolutePath() );
         compiler.compileSwf( cfg, new File( as3, "main.as" ) );
