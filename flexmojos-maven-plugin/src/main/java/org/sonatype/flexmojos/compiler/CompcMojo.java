@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -13,7 +14,7 @@ import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 
 public class CompcMojo
     extends AbstractMavenFlexCompilerConfiguration
-    implements ICompcConfiguration
+    implements ICompcConfiguration, Mojo
 {
 
     /**

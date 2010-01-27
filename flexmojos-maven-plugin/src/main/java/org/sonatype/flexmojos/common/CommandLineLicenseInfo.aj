@@ -1,11 +1,12 @@
 package org.sonatype.flexmojos.common;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.Mojo;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public aspect CommandLineLicenseInfo
 {
-    pointcut execute() :  target(AbstractMojo) &&
+    pointcut execute() :  (target(AbstractMojo) || target(Mojo) )&&
         execution(void execute() ) ;
 
     before() : execute() {

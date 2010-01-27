@@ -33,7 +33,7 @@ import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
@@ -70,8 +70,7 @@ import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
-public abstract class AbstractMavenFlexCompilerConfiguration
-    extends AbstractMojo
+public class AbstractMavenFlexCompilerConfiguration
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
 {
@@ -120,6 +119,20 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private Boolean advancedAntiAliasing;
 
     /**
+     * If true, a style manager will add style declarations to the local style manager without checking to see if the
+     * parent already has the same style selector with the same properties. If false, a style manager will check the
+     * parent to make sure a style with the same properties does not already exist before adding one locally.<BR>
+     * If there is no local style manager created for this application, then don't check for duplicates. Just use the
+     * old "selector exists" test.
+     * <p>
+     * Equivalent to -compiler.allow-duplicate-style-declaration
+     * </p>
+     * 
+     * @parameter expression="${flex.allowDuplicateDefaultStyleDeclarations}"
+     */
+    private Boolean allowDuplicateDefaultStyleDeclarations;
+
+    /**
      * checks if a source-path entry is a subdirectory of another source-path entry. It helps make the package names of
      * MXML components unambiguous.
      * <p>
@@ -147,12 +160,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     protected ArchiverManager archiverManager;
 
     /**
-     * @component
-     * @readonly
-     */
-    protected RepositorySystem repositorySystem;
-
-    /**
      * Use the ActionScript 3 class based object model for greater performance and better error reporting. In the class
      * based object model most built-in functions are implemented as fixed methods of classes
      * <p>
@@ -172,6 +179,28 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.benchmark}"
      */
     protected Boolean benchmark;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -benchmark-compiler-details
+     * </p>
+     * 0 = none, 1 = light, 5 = verbose
+     * 
+     * @parameter expression="${flex.benchmarkCompilerDetails}"
+     */
+    private Integer benchmarkCompilerDetails;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -benchmark-time-filter
+     * </p>
+     * min time of units to log in ms
+     * 
+     * @parameter expression="${flex.benchmarkTimeFilter}"
+     */
+    private Long benchmarkTimeFilter;
 
     /**
      * Specifies a compatibility version
@@ -415,6 +444,26 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private File dumpConfig;
 
     /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.enable-runtime-design-layers
+     * </p>
+     * 
+     * @parameter expression="${flex.enableRuntimeDesignLayers}"
+     */
+    private Boolean enableRuntimeDesignLayers;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.enable-swc-version-filtering
+     * </p>
+     * 
+     * @parameter expression="${flex.enableSwcVersionFiltering}"
+     */
+    private Boolean enableSwcVersionFiltering;
+
+    /**
      * Use the ECMAScript edition 3 prototype based object model to allow dynamic overriding of prototype properties. In
      * the prototype based object model built-in functions are implemented as dynamic properties of prototype objects
      * <p>
@@ -424,6 +473,34 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.es}"
      */
     private Boolean es;
+
+    /**
+     * Configure extensions to flex compiler
+     * <p>
+     * Equivalent to -compiler.extensions.extension
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;extensions&gt;
+     *   &lt;extension&gt;
+     *     &lt;extensionArtifact&gt;
+     *       &lt;groupId&gt;org.myproject&lt;/groupId&gt;
+     *       &lt;artifactId&gt;my-extension&lt;/artifactId&gt;
+     *       &lt;version&gt;1.0&lt;/version&gt;
+     *     &lt;/extensionArtifact&gt;
+     *     &lt;parameters&gt;
+     *       &lt;parameter&gt;param1&lt;/parameter&gt;
+     *       &lt;parameter&gt;param2&lt;/parameter&gt;
+     *       &lt;parameter&gt;param3&lt;/parameter&gt;
+     *     &lt;/parameters&gt;
+     *   &lt;/extension&gt;
+     * &lt;/extensions&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenExtension[] extensions;
 
     /**
      * A list of symbols to omit from linking when building a SWF
@@ -477,6 +554,26 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private MavenFrame[] frames;
 
     /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -framework
+     * </p>
+     * 
+     * @parameter expression="${flex.framework}"
+     */
+    private String framework;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.generate-abstract-syntax-tree
+     * </p>
+     * 
+     * @parameter expression="${flex.generateAbstractSyntaxTree}"
+     */
+    private Boolean generateAbstractSyntaxTree;
+
+    /**
      * DOCME Undocumented by adobe
      * <p>
      * Equivalent to -generated-frame-loader
@@ -523,6 +620,17 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.incremental}"
      */
     private Boolean incremental;
+
+    /**
+     * Enables the compiled application or module to set styles that only affect itself and its children.<BR>
+     * Allow the user to decide if the compiled application/module should have its own style manager
+     * <p>
+     * Equivalent to -compiler.isolate-styles
+     * </p>
+     * 
+     * @parameter expression="${flex.isolateStyles}"
+     */
+    private Boolean isolateStyles;
 
     /**
      * Disables the pruning of unused CSS type selectors
@@ -674,6 +782,24 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private File[] loadExterns;
 
     /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.fonts.local-font-paths
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;localFontPaths&gt;
+     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
+     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
+     * &lt;/localFontPaths&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private File[] localFontPaths;
+
+    /**
      * Compiler font manager classes, in policy resolution order
      * <p>
      * Equivalent to -compiler.fonts.local-fonts-snapshot
@@ -689,6 +815,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${localRepository}"
      */
     protected ArtifactRepository localRepository;
+
+    /**
+     * Maven logger
+     * 
+     * @readonly
+     */
+    private Log log;
 
     /**
      * Compiler font manager classes, in policy resolution order
@@ -798,6 +931,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     private MavenNamespaces[] namespaces;
 
     /**
+     * Toggle whether trace statements are omitted
+     * <p>
+     * Equivalent to -compiler.omit-trace-statements
+     * </p>
+     * 
+     * @parameter expression="${flex.omitTraceStatements}"
+     */
+    private Boolean omitTraceStatements;
+
+    /**
      * Enable post-link SWF optimization
      * <p>
      * Equivalent to -compiler.optimize
@@ -833,6 +976,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     protected MavenProject project;
 
     /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.mxml.qualified-type-selectors
+     * </p>
+     * 
+     * @parameter expression="${flex.qualifiedTypeSelectors}"
+     */
+    private Boolean qualifiedTypeSelectors;
+
+    /**
      * XML text to store in the SWF metadata (overrides metadata.* configuration)
      * <p>
      * Equivalent to -raw-metadata
@@ -848,6 +1001,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
     protected List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * @component
+     * @readonly
+     */
+    protected RepositorySystem repositorySystem;
 
     /**
      * @component
@@ -1068,114 +1227,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration
      */
     private Boolean warnings;
 
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -benchmark-compiler-details
-     * </p>
-     * 0 = none, 1 = light, 5 = verbose
-     * 
-     * @parameter expression="${flex.benchmarkCompilerDetails}"
-     */
-    private Integer benchmarkCompilerDetails;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -benchmark-time-filter
-     * </p>
-     * min time of units to log in ms
-     * 
-     * @parameter expression="${flex.benchmarkTimeFilter}"
-     */
-    private Long benchmarkTimeFilter;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -compiler.enable-runtime-design-layers
-     * </p>
-     * 
-     * @parameter expression="${flex.enableRuntimeDesignLayers}"
-     */
-    private Boolean enableRuntimeDesignLayers;
-
-    /**
-     * Configure extensions to flex compiler
-     * <p>
-     * Equivalent to -compiler.extensions.extension
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;extensions&gt;
-     *   &lt;extension&gt;
-     *     &lt;extensionArtifact&gt;
-     *       &lt;groupId&gt;org.myproject&lt;/groupId&gt;
-     *       &lt;artifactId&gt;my-extension&lt;/artifactId&gt;
-     *       &lt;version&gt;1.0&lt;/version&gt;
-     *     &lt;/extensionArtifact&gt;
-     *     &lt;parameters&gt;
-     *       &lt;parameter&gt;param1&lt;/parameter&gt;
-     *       &lt;parameter&gt;param2&lt;/parameter&gt;
-     *       &lt;parameter&gt;param3&lt;/parameter&gt;
-     *     &lt;/parameters&gt;
-     *   &lt;/extension&gt;
-     * &lt;/extensions&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private MavenExtension[] extensions;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -framework
-     * </p>
-     * 
-     * @parameter expression="${flex.framework}"
-     */
-    private String framework;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -compiler.generate-abstract-syntax-tree
-     * </p>
-     * 
-     * @parameter expression="${flex.generateAbstractSyntaxTree}"
-     */
-    private Boolean generateAbstractSyntaxTree;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -compiler.fonts.local-font-paths
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;localFontPaths&gt;
-     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
-     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
-     * &lt;/localFontPaths&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private File[] localFontPaths;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
-     * Equivalent to -compiler.mxml.qualified-type-selectors
-     * </p>
-     * 
-     * @parameter expression="${flex.qualifiedTypeSelectors}"
-     */
-    private Boolean qualifiedTypeSelectors;
-
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
     {
         List<String> classes = new ArrayList<String>();
@@ -1224,6 +1275,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public Boolean getAdvancedAntiAliasing()
     {
         return advancedAntiAliasing;
+    }
+
+    public Boolean getAllowDuplicateDefaultStyleDeclarations()
+    {
+        return allowDuplicateDefaultStyleDeclarations;
     }
 
     public Boolean getAllowSourcePathOverlap()
@@ -1481,14 +1537,14 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return enableRuntimeDesignLayers;
     }
 
+    public Boolean getEnableSwcVersionFiltering()
+    {
+        return enableSwcVersionFiltering;
+    }
+
     public Boolean getEs()
     {
         return es;
-    }
-
-    public IExtensionsConfiguration getExtensionsConfiguration()
-    {
-        return this;
     }
 
     public IExtension[] getExtension()
@@ -1510,11 +1566,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration
 
             extensions[i] = new IExtension()
             {
-                public String[] parameters()
-                {
-                    return extension.getParameters();
-                }
-
                 public File extension()
                 {
                     MavenArtifact a = extension.getExtensionArtifact();
@@ -1522,10 +1573,20 @@ public abstract class AbstractMavenFlexCompilerConfiguration
                         resolve( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getClassifier(), a.getType() );
                     return resolvedArtifact.getFile();
                 }
+
+                public String[] parameters()
+                {
+                    return extension.getParameters();
+                }
             };
         }
 
         return extensions;
+    }
+
+    public IExtensionsConfiguration getExtensionsConfiguration()
+    {
+        return this;
     }
 
     public File[] getExternalLibraryPath()
@@ -1625,6 +1686,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public Boolean getIncremental()
     {
         return incremental;
+    }
+
+    public Boolean getIsolateStyles()
+    {
+        return isolateStyles;
     }
 
     public Boolean getKeepAllTypeSelectors()
@@ -1831,6 +1897,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return null;
     }
 
+    public Log getLog()
+    {
+        return this.log;
+    }
+
     public List<String> getManagers()
     {
         return managers;
@@ -1864,6 +1935,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return this;
     }
 
+    public String getMinimumSupportedVersion()
+    {
+        return getMxmlConfiguration().getMinimumSupportedVersion();
+    }
+
     public IMxmlConfiguration getMxmlConfiguration()
     {
         return this;
@@ -1895,6 +1971,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         return uris;
     }
 
+    public Boolean getOmitTraceStatements()
+    {
+        return omitTraceStatements;
+    }
+
     public Boolean getOptimize()
     {
         return optimize;
@@ -1923,6 +2004,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public String getRawMetadata()
     {
         return rawMetadata;
+    }
+
+    public Boolean getReportInvalidStylesAsWarnings()
+    {
+        return compilerWarnings.get( "report-invalid-styles-as-warnings" );
     }
 
     public String getResourceBundleList()
@@ -1979,6 +2065,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration
     public Boolean getShowDeprecationWarnings()
     {
         return compilerWarnings.get( "show-deprecation-warnings" );
+    }
+
+    public Boolean getShowInvalidCssPropertyWarnings()
+    {
+        return compilerWarnings.get( "show-invalid-css-property-warnings" );
     }
 
     public Boolean getShowShadowedDeviceFontWarnings()
@@ -2283,4 +2374,10 @@ public abstract class AbstractMavenFlexCompilerConfiguration
         scanner.scan();
         return scanner;
     }
+
+    public void setLog( Log log )
+    {
+        this.log = log;
+    }
+
 }
