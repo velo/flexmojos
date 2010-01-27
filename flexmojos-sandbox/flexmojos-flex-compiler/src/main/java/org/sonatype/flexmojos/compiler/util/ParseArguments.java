@@ -178,9 +178,17 @@ public class ParseArguments
                     args.add( parseName( method.getName() ) + " " + arg );
                 }
             }
-            else if ( returnType.isArray() )
+            else if ( returnType.isArray() || value instanceof Collection<?> )
             {
-                Object[] values = (Object[]) value;
+                Object[] values;
+                if ( returnType.isArray() )
+                {
+                    values = (Object[]) value;
+                }
+                else
+                {
+                    values = ( (Collection<?>) value ).toArray();
+                }
                 String name = parseName( method.getName() );
                 if ( values.length == 0 )
                 {

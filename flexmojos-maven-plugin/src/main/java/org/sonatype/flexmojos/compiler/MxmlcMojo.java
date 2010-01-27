@@ -20,8 +20,10 @@ package org.sonatype.flexmojos.compiler;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
@@ -42,7 +44,7 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
  */
 public class MxmlcMojo
     extends AbstractMavenFlexCompilerConfiguration
-    implements ICommandLineConfiguration
+    implements ICommandLineConfiguration, Mojo
 {
 
     /**
@@ -131,4 +133,5 @@ public class MxmlcMojo
         return SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile, project.getGroupId(),
                                                      project.getArtifactId() );
     }
+
 }
