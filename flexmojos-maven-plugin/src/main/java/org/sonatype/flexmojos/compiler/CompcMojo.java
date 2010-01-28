@@ -26,8 +26,14 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.classworlds.ClassWorld;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
+
+import flex2.compiler.CompilerAPI;
 
 public class CompcMojo
     extends AbstractMavenFlexCompilerConfiguration
@@ -205,7 +211,7 @@ public class CompcMojo
     {
         try
         {
-            compiler.compileSwc( this );
+            super.getCompiler().compileSwc( this );
         }
         catch ( Exception e )
         {

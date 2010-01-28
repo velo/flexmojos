@@ -58,9 +58,16 @@ import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.flexmojos.bcel.BCELUtil;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -89,7 +96,8 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public class AbstractMavenFlexCompilerConfiguration
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
+    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration,
+    Contextualizable
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -230,11 +238,6 @@ public class AbstractMavenFlexCompilerConfiguration
     private String compatibilityVersion;
 
     /**
-     * @component
-     */
-    protected FlexCompiler compiler;
-
-    /**
      * Specifies the locale for internationalization
      * <p>
      * Equivalent to -compiler.locale
@@ -250,6 +253,8 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter
      */
     private String[] compilerLocales;
+
+    private String[] runtimeLocales;
 
     /**
      * A list of warnings that should be enabled/disabled
@@ -1185,6 +1190,17 @@ public class AbstractMavenFlexCompilerConfiguration
     private File[] themes;
 
     /**
+     * Configures the LocalizationManager's locale, which is used when reporting compile time errors, warnings, and
+     * info. For example, "en" or "ja_JP".
+     * <p>
+     * Equivalent to -tools-locale
+     * </p>
+     * 
+     * @parameter expression="${flex.toolsLocale}" default-value="en_US"
+     */
+    private String toolsLocale;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.translation-format
@@ -1243,6 +1259,8 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.warnings}"
      */
     private Boolean warnings;
+
+    private PlexusContainer container;
 
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
     {
@@ -1853,7 +1871,17 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String[] getLocale()
     {
-        return compilerLocales;
+        if ( compilerLocales != null )
+        {
+            return compilerLocales;
+        }
+
+        if ( SWC.equals( project.getPackaging() ) )
+        {
+            return null;
+        }
+
+        return new String[] { getToolsLocale() };
     }
 
     public List<String> getLocalFontPaths()
@@ -2150,6 +2178,17 @@ public class AbstractMavenFlexCompilerConfiguration
         return project.getName();
     }
 
+    public String getToolsLocale()
+    {
+        if ( toolsLocale == null )
+        {
+            throw new IllegalArgumentException( "Invalid toolsLocale it must be not null and must be in Java format."
+                + "  For example, \"en\" or \"ja_JP\"" );
+        }
+
+        return toolsLocale;
+    }
+
     public String getTranslationFormat()
     {
         return translationFormat;
@@ -2395,6 +2434,26 @@ public class AbstractMavenFlexCompilerConfiguration
     public void setLog( Log log )
     {
         this.log = log;
+    }
+
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
+    public FlexCompiler getCompiler()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "mxmlc", null, "jar", null );
+
+        try
+        {
+            return BCELUtil.initializeCompiler( container, compiler.getFile() );
+        }
+        catch ( InitializationException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
 }

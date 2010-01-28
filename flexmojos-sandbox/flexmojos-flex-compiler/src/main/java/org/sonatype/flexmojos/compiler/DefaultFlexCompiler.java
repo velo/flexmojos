@@ -48,21 +48,6 @@ public class DefaultFlexCompiler
     implements FlexCompiler
 {
 
-    private static CompilerClassLoader classloader;
-
-    static
-    {
-        try
-        {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            classloader = new CompilerClassLoader( loader );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e.getMessage(), e );
-        }
-    }
-
     public int compileSwc( final ICompcConfiguration configuration )
         throws Exception
     {
@@ -149,13 +134,6 @@ public class DefaultFlexCompiler
                     }
                 } );
 
-                CompilerThreadLocal.logger.set( new OEMLogAdapter( new PlexusLogger( getLogger() ) ) );
-                CompilerThreadLocal.pathResolver.set( new PlexusPathResolve() );
-                PrintStream out = System.out;
-                PrintStream err = System.err;
-                System.setOut( new PrintStreamPlexusLogger( getLogger(), Logger.LEVEL_INFO ) );
-                System.setErr( new PrintStreamPlexusLogger( getLogger(), Logger.LEVEL_ERROR ) );
-
                 try
                 {
                     command.command();
@@ -167,10 +145,6 @@ public class DefaultFlexCompiler
                 finally
                 {
                     System.setSecurityManager( sm );
-                    CompilerThreadLocal.logger.set( null );
-                    CompilerThreadLocal.pathResolver.set( null );
-                    System.setOut( err );
-                    System.setOut( out );
                 }
 
                 r.setExitCode( ThreadLocalToolkit.errorCount() );

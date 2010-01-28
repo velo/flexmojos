@@ -54,9 +54,9 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.0.0.12575</flex.sdk.version>
+    <flex.sdk.version>4.0.0.13555</flex.sdk.version>
     <maven.version>3.0-SNAPSHOT</maven.version>
-    <plexus.version>1.4.0</plexus.version>
+    <plexus.version>1.5.3</plexus.version>
   </properties>
 
   <build>
@@ -536,27 +536,18 @@
       </dependency>
 
       <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm</artifactId>
-        <version>3.1</version>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm-commons</artifactId>
-        <version>3.1</version>
-      </dependency>
-      <dependency>
-        <groupId>asm</groupId>
-        <artifactId>asm-util</artifactId>
-        <version>3.1</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>1.7</version>
         <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.bcel</groupId>
+        <artifactId>bcel</artifactId>
+        <version>5.2</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

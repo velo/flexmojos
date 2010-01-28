@@ -15,16 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package bcel.helper;
 
+import flash.localization.LocalizationManager;
 import flex2.compiler.Logger;
-import flex2.compiler.common.SinglePathResolver;
+import flex2.compiler.common.PathResolver;
 
-public class CompilerThreadLocal
+public class Original
 {
-    // I HATE THIS PATTERN
-    public static final ThreadLocal<Logger> logger = new ThreadLocal<Logger>();
+    private static ThreadLocal<Logger> logger = new ThreadLocal<Logger>();
+    private static ThreadLocal<PathResolver> resolver = new ThreadLocal<PathResolver>();
+    private static ThreadLocal<LocalizationManager> localization = new ThreadLocal<LocalizationManager>();
 
-    public static final ThreadLocal<SinglePathResolver> pathResolver = new ThreadLocal<SinglePathResolver>();
+    public static void setPathResolver(PathResolver r)
+    {
+        resolver.set(r);
+    }
 
+    public static void setLogger(Logger logger)
+    {
+        Original.logger.set(logger);
+        if (logger != null)
+        {
+            logger.setLocalizationManager( getLocalizationManager() );
+        }
+    }
+
+    public static LocalizationManager getLocalizationManager()
+    {
+        return localization.get();
+    }
 }

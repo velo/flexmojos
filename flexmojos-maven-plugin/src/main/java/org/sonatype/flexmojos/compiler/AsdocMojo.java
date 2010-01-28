@@ -242,7 +242,7 @@ public class AsdocMojo
     {
         try
         {
-            compiler.asdoc( this );
+            super.getCompiler().asdoc( this );
         }
         catch ( Exception e )
         {
