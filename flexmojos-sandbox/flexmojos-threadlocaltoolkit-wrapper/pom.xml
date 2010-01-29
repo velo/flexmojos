@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-sandbox</artifactId>
+    <version>4.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+
+  <name>Flexmojos Flex compiler</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-generator-mojo</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>generate-threadlocal</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorToUse>thread-local</generatorToUse>
+              <includeJavaClasses>
+                <include>flex2.compiler.util.ThreadLocalToolkit</include>
+              </includeJavaClasses>
+              <baseOutputDirectory>${project.build.outputDirectory}</baseOutputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>5.2</version>
+          </dependency>
+          <dependency>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>mxmlc</artifactId>
+      <version>${flex.sdk.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
