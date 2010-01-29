@@ -170,6 +170,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
       <version>${pom.version}</version>
     </dependency>
@@ -201,11 +206,6 @@
       <type>maven-plugin</type>
     </dependency>
 
-    <dependency>
-      <groupId>com.adobe.flex</groupId>
-      <artifactId>compiler</artifactId>
-      <type>pom</type>
-    </dependency>
     <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>adt</artifactId>

@@ -86,7 +86,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4.3</version>
+          <version>2.5</version>
           <configuration>
             <failIfNoTests>false</failIfNoTests>
             <classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
@@ -125,7 +125,7 @@
         <plugin>
           <groupId>org.sonatype.maven.plugin</groupId>
           <artifactId>emma-maven-plugin</artifactId>
-          <version>1.1</version>
+          <version>1.2-SNAPSHOT</version>
           <executions>
             <execution>
               <phase>process-test-resources</phase>
@@ -266,7 +266,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.4.3</version>
+            <version>2.5</version>
             <configuration>
               <skipTests>true</skipTests>
             </configuration>
