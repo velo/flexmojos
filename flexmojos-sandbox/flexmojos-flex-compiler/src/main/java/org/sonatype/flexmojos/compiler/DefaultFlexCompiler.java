@@ -1,16 +1,14 @@
 package org.sonatype.flexmojos.compiler;
 
-import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArguments;
+ import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArguments;
 import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArgumentsList;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.sonatype.flexmojos.compiler.command.Command;
 import org.sonatype.flexmojos.compiler.command.Result;
 
@@ -20,7 +18,6 @@ import flex2.tools.Compc;
 import flex2.tools.DigestTool;
 import flex2.tools.Mxmlc;
 import flex2.tools.Optimizer;
-import flex2.tools.oem.internal.OEMLogAdapter;
 
 @Component( role = FlexCompiler.class )
 public class DefaultFlexCompiler

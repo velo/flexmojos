@@ -34,35 +34,11 @@
               </includeJavaClasses>
             </configuration>
           </execution>
-          <execution>
-            <id>generate-threadlocal</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <generatorToUse>thread-local</generatorToUse>
-              <includeJavaClasses>
-                <include>flex2.compiler.util.ThreadLocalToolkit</include>
-              </includeJavaClasses>
-              <baseOutputDirectory>${project.build.outputDirectory}</baseOutputDirectory>
-            </configuration>
-          </execution>
         </executions>
         <dependencies>
           <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>5.2</version>
-          </dependency>
-          <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
             <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
             <version>${project.version}</version>
           </dependency>
         </dependencies>
@@ -142,10 +118,24 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-compiler-iface</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
