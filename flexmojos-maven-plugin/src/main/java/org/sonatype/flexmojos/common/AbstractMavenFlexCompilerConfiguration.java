@@ -45,7 +45,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.PatternSet;
@@ -58,16 +57,12 @@ import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
 import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
 import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.flexmojos.bcel.BCELUtil;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -90,14 +85,19 @@ import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MavenArtifact;
+import org.sonatype.flexmojos.compiler.util.ThreadLocalToolkitHelper;
+import org.sonatype.flexmojos.flexbridge.MavenLogger;
+import org.sonatype.flexmojos.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
+import flex2.tools.oem.internal.OEMLogAdapter;
+
 public class AbstractMavenFlexCompilerConfiguration
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration,
-    Contextualizable
+    Initializable
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -1034,7 +1034,7 @@ public class AbstractMavenFlexCompilerConfiguration
      * @component
      * @readonly
      */
-    protected ArtifactResolver resolver;
+    protected FlexCompiler compiler;
 
     /**
      * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
@@ -2415,7 +2415,7 @@ public class AbstractMavenFlexCompilerConfiguration
             req.setArtifact( artifact );
             req.setLocalRepository( localRepository );
             req.setRemoteRepositories( remoteRepositories );
-            resolver.resolve( req );
+            repositorySystem.resolve( req );
         }
         return artifact;
     }
@@ -2436,24 +2436,10 @@ public class AbstractMavenFlexCompilerConfiguration
         this.log = log;
     }
 
-    public void contextualize( Context context )
-        throws ContextException
+    public void initialize()
+        throws InitializationException
     {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+        ThreadLocalToolkitHelper.setMavenLogger( new OEMLogAdapter( new MavenLogger( getLog() ) ) );
+        ThreadLocalToolkitHelper.setMavenResolver( new MavenPathResolver( resources ) );
     }
-
-    public FlexCompiler getCompiler()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "mxmlc", null, "jar", null );
-
-        try
-        {
-            return BCELUtil.initializeCompiler( container, compiler.getFile() );
-        }
-        catch ( InitializationException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
 }

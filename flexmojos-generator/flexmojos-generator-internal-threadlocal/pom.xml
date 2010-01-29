@@ -27,9 +27,9 @@
     <version>4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>flexmojos-generator-compiler-iface</artifactId>
+  <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
 
-  <name>Flexmojos Generator - Internal ifaces generator</name>
+  <name>Flexmojos Generator - Internal Threadlocal generator</name>
 
   <build>
     <plugins>
@@ -37,6 +37,32 @@
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.adobe.flex.compiler</groupId>
+                  <artifactId>mxmlc</artifactId>
+                  <version>${flex.sdk.version}</version>
+                  <type>jar</type>
+                  <destFileName>mxmlc.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -47,21 +73,20 @@
       <version>${pom.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.ws.jaxme</groupId>
-      <artifactId>jaxmejs</artifactId>
-      <version>0.5.2</version>
+      <groupId>org.apache.bcel</groupId>
+      <artifactId>bcel</artifactId>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.adobe.flex</groupId>
-      <artifactId>compiler</artifactId>
-      <version>${flex.sdk.version}</version> 
-      <type>pom</type>
+      <groupId>com.adobe.flex.compiler</groupId>
+      <artifactId>mxmlc</artifactId>
+      <version>${flex.sdk.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

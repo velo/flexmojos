@@ -15,18 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler.plexusflexbridge;
+package org.sonatype.flexmojos.compiler;
 
+import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
-import flex2.compiler.io.VirtualFile;
 
-public class PlexusPathResolve
-    implements SinglePathResolver
+public class CompilerThreadLocal
 {
+    // I HATE THIS PATTERN
+    public static final ThreadLocal<Logger> logger = new ThreadLocal<Logger>();
 
-    public VirtualFile resolve( String path )
-    {
-        return null;
-    }
+    public static final ThreadLocal<SinglePathResolver> pathResolver = new ThreadLocal<SinglePathResolver>();
 
 }
