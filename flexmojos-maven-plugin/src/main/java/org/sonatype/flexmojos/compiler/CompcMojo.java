@@ -194,7 +194,7 @@ public class CompcMojo
     {
         try
         {
-            super.getCompiler().compileSwc( this );
+            compiler.compileSwc( this );
         }
         catch ( Exception e )
         {

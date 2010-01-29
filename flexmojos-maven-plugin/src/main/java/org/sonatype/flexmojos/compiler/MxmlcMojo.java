@@ -88,7 +88,7 @@ public class MxmlcMojo
     {
         try
         {
-            super.getCompiler().compileSwf( this, getSourceFile() );
+            compiler.compileSwf( this, getSourceFile() );
         }
         catch ( Exception e )
         {

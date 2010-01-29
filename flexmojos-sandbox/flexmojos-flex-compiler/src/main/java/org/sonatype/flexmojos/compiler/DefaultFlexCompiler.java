@@ -13,9 +13,6 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.sonatype.flexmojos.compiler.command.Command;
 import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.compiler.plexusflexbridge.PlexusLogger;
-import org.sonatype.flexmojos.compiler.plexusflexbridge.PlexusPathResolve;
-import org.sonatype.flexmojos.compiler.plexusflexbridge.PrintStreamPlexusLogger;
 
 import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.tools.ASDoc;
