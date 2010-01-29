@@ -26,7 +26,8 @@ public class DefaultFlexCompilerTest
         plexus = new DefaultPlexusContainer();
     }
 
-    @Test
+    @Test( enabled = false )
+    // can't test this here anymore
     public void logTest()
         throws Exception
     {

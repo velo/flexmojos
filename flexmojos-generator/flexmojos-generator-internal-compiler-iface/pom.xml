@@ -8,7 +8,7 @@
     <version>4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>flexmojos-generator-compiler-iface</artifactId>
+  <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
 
   <name>Flexmojos Generator - Internal ifaces generator</name>
 

@@ -328,6 +328,12 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.apache.bcel</groupId>
+        <artifactId>bcel</artifactId>
+        <version>5.2</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.adobe.flex</groupId>
         <artifactId>compiler</artifactId>
         <version>${flex.sdk.version}</version>
@@ -529,13 +535,6 @@
         <version>1.7</version>
         <scope>test</scope>
       </dependency>
-
-      <dependency>
-        <groupId>org.apache.bcel</groupId>
-        <artifactId>bcel</artifactId>
-        <version>5.2</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 

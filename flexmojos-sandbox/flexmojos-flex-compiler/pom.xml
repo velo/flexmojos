@@ -16,29 +16,54 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-generator-mojo</artifactId>
-        <version>4.0-SNAPSHOT</version>
-        <configuration>
-          <generatorToUse>internal-ifaces</generatorToUse>
-          <includeJavaClasses>
-            <include>flex2.tools.DigestRootConfiguration</include>
-            <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
-            <include>flex2.tools.ASDocConfiguration</include>
-            <include>flex2.tools.CompcConfiguration</include>
-            <include>flex2.tools.CommandLineConfiguration</include>
-          </includeJavaClasses>
-        </configuration>
+        <version>${project.version}</version>
         <executions>
           <execution>
+            <id>generate-interface</id>
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <generatorToUse>internal-ifaces</generatorToUse>
+              <includeJavaClasses>
+                <include>flex2.tools.DigestRootConfiguration</include>
+                <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
+                <include>flex2.tools.ASDocConfiguration</include>
+                <include>flex2.tools.CompcConfiguration</include>
+                <include>flex2.tools.CommandLineConfiguration</include>
+              </includeJavaClasses>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-threadlocal</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorToUse>thread-local</generatorToUse>
+              <includeJavaClasses>
+                <include>flex2.compiler.util.ThreadLocalToolkit</include>
+              </includeJavaClasses>
+              <baseOutputDirectory>${project.build.outputDirectory}</baseOutputDirectory>
+            </configuration>
           </execution>
         </executions>
         <dependencies>
           <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>5.2</version>
+          </dependency>
+          <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-generator-compiler-iface</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
       </plugin>

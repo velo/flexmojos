@@ -1,36 +1,38 @@
-package org.sonatype.flexmojos.compiler.plexusflexbridge;
+package org.sonatype.flexmojos.flexbridge;
+
+import org.apache.maven.plugin.logging.Log;
 
 import flex2.tools.oem.Logger;
 import flex2.tools.oem.Message;
 
-public class PlexusLogger
+public class MavenLogger
     implements Logger
 {
 
-    private org.codehaus.plexus.logging.Logger logger;
+    private Log log;
 
-    public PlexusLogger( org.codehaus.plexus.logging.Logger logger )
+    public MavenLogger( Log log )
     {
-        this.logger = logger;
+        this.log = log;
     }
 
     public void log( Message message, int errorCode, String source )
     {
         if ( Message.ERROR.equals( message.getLevel() ) )
         {
-            logger.error( getMessage( message, source ) );
+            log.error( getMessage( message, source ) );
         }
         else if ( Message.INFO.equals( message.getLevel() ) )
         {
-            logger.info( getMessage( message, source ) );
+            log.info( getMessage( message, source ) );
         }
         else if ( Message.WARNING.equals( message.getLevel() ) )
         {
-            logger.warn( getMessage( message, source ) );
+            log.warn( getMessage( message, source ) );
         }
         else
         {
-            logger.info( getMessage( message, source ) );
+            log.info( getMessage( message, source ) );
         }
     }
 
