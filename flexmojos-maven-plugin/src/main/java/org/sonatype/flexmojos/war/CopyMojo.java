@@ -376,11 +376,11 @@ public class CopyMojo
         if ( !useFinalName )
         {
             String version = stripVersion ? "" : "-" + artifact.getVersion();
-            fileName = artifact.getArtifactId() + version + classifier + "." + SWF;
+            fileName = artifact.getArtifactId() + version + classifier + "." + artifact.getType();
         }
         else
         {
-            fileName = pomProject.getBuild().getFinalName() + classifier + "." + SWF;
+            fileName = pomProject.getBuild().getFinalName() + classifier + "." + artifact.getType();
         }
 
         if ( stripVersion && fileName.contains( artifact.getVersion() ) )
