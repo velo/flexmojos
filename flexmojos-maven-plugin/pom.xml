@@ -158,6 +158,11 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-flex-compiler</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${pom.version}</version>
     </dependency>
@@ -182,11 +187,6 @@
       <artifactId>flexmojos-generator-mojo</artifactId>
       <version>${pom.version}</version>
       <type>maven-plugin</type>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>${pom.version}</version>
     </dependency>
 
     <dependency>
