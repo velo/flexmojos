@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-flex-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
+
+  <groupId>com.lixar.gridpoitn</groupId>
+  <artifactId>test-flex-modules</artifactId>
+  <packaging>swf</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <classifier>Module2</classifier>
+          <sourceFile>Module2.mxml</sourceFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+ 
+</project>

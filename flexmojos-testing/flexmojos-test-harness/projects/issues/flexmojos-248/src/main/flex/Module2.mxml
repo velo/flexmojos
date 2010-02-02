@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150" creationComplete="kill()">
+    <mx:Script>
+        <![CDATA[
+            private function kill():void
+            {
+                System.exit( 3539 );
+            }
+        ]]>
+    </mx:Script>
+
+</mx:Module>
