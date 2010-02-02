@@ -16,7 +16,7 @@ public class CompileLogger
     implements Logger
 {
 
-    private Log log;
+    private transient Log log;
 
     public CompileLogger( Log log )
     {

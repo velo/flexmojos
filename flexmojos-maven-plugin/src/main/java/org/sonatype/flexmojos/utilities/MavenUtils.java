@@ -86,7 +86,7 @@ public class MavenUtils
      */
     @SuppressWarnings( "unchecked" )
     public static File resolveResourceFile( MavenProject project, String fileName )
-        throws MojoFailureException
+        throws MojoExecutionException
     {
 
         File file = new File( fileName );
@@ -98,7 +98,7 @@ public class MavenUtils
 
         if ( file.isAbsolute() )
         {
-            throw new MojoFailureException( "File " + fileName + " not found" );
+            throw new MojoExecutionException( "File " + fileName + " not found" );
         }
 
         List<Resource> resources = project.getBuild().getResources();
@@ -112,7 +112,7 @@ public class MavenUtils
             }
         }
 
-        throw new MojoFailureException( "File " + fileName + " not found" );
+        throw new MojoExecutionException( "File " + fileName + " not found" );
     }
 
     /**

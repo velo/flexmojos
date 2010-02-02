@@ -125,6 +125,13 @@ public abstract class AbstractIrvinMojo
             dependencyArtifacts =
                 MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
                                                    artifactMetadataSource, artifactFactory );
+            for ( Artifact a : dependencyArtifacts )
+            {
+                if ( FlexExtension.SWC.equals( a.getType() ) )
+                {
+                    a.setFile( MavenUtils.getArtifactFile( a, build ) );
+                }
+            }
         }
         return dependencyArtifacts;
     }
