@@ -475,7 +475,7 @@ public class TestCompilerMojo
     }
 
     @Override
-    protected void writeReport( Report report, String type, boolean attach, String classifier )
+    protected void writeReport( Report report, String type )
         throws MojoExecutionException
     {
     }

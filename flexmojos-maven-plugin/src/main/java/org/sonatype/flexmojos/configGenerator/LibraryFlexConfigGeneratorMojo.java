@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.compiler.FlexConfigBuilder;
 import org.sonatype.flexmojos.compiler.LibraryMojo;
@@ -75,7 +74,7 @@ public class LibraryFlexConfigGeneratorMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         configurationReport = true;
 
