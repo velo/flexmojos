@@ -460,8 +460,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * &lt;/loadExterns&gt;
      * </pre>
      * 
+     * You can also use dependency with type "xml" and classifier "link-report"
+     * 
      * @parameter
-     * @deprecated Use dependency with type "xml" and classifier "link-report"
      */
     protected MavenArtifact[] loadExterns;
 
@@ -1311,7 +1312,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * @throws MojoFailureException
      */
     protected void configure()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         resolveDependencies();
 
@@ -1477,7 +1478,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         else
         {
-            throw new MojoFailureException( "Flex-compiler API change, unable to use suggested 'solutions'!" );
+            throw new MojoExecutionException( "Flex-compiler API change, unable to use suggested 'solutions'!" );
         }
 
         verifyDigests();
@@ -1531,7 +1532,6 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
     }
 
-    @SuppressWarnings( "deprecation" )
     protected void configureExterns()
         throws MojoExecutionException
     {
@@ -1608,7 +1608,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     protected abstract boolean isDebug();
 
     protected void resolveDependencies()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
         configuration.addExternalLibraryPath( getDependenciesPath( EXTERNAL ) );
@@ -1633,7 +1633,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     }
 
     protected void configureThemes()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         List<File> themeFiles = new ArrayList<File>();
 
@@ -1688,7 +1688,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     @FlexCompatibility( minVersion = "3" )
     @IgnoreJRERequirement
     private void setTargetPlayer()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         String playerGlobalVersion = getGlobalArtifact().getClassifier();
         if ( targetPlayer == null && playerGlobalVersion != null )
@@ -1727,9 +1727,9 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             if ( !nodes[0].equals( playerGlobalVersion ) )
             {
-                throw new MojoFailureException(
-                                                "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
-                                                    + targetPlayer + ", player global: " + playerGlobalVersion );
+                throw new MojoExecutionException(
+                                                  "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
+                                                      + targetPlayer + ", player global: " + playerGlobalVersion );
             }
         }
         configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
