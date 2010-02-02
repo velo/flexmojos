@@ -72,7 +72,7 @@ public class TestLibraryCompilerMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         super.configure();
 

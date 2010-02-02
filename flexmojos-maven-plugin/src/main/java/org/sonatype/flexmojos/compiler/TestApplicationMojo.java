@@ -22,7 +22,6 @@ import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Build the SWF including all TEST libraries.
@@ -44,14 +43,13 @@ public class TestApplicationMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         super.configure();
 
         // add test libraries
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ) ) );
     }
-
 
     @Override
     protected File getOutput()

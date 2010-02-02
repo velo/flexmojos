@@ -273,7 +273,7 @@ public class TestCompilerMojo
 
     @Override
     protected void configure()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         compiledLocales = getLocales();
         runtimeLocales = null;
@@ -300,7 +300,7 @@ public class TestCompilerMojo
 
     @Override
     protected void resolveDependencies()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
 
@@ -479,16 +479,15 @@ public class TestCompilerMojo
 
     @Override
     protected void compileModules()
-        throws MojoFailureException, MojoExecutionException
+        throws MojoExecutionException
     {
         // modules are ignored on unit tests
     }
 
     @Override
-    protected void writeReport( Report report, String type )
+    protected void writeReport( Report report, String type, boolean attach, String classifier )
         throws MojoExecutionException
     {
-        // reports are ignored on unit tests
     }
 
     @Override
