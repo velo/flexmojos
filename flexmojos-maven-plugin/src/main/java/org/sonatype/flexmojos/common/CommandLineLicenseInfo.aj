@@ -10,7 +10,7 @@ public aspect CommandLineLicenseInfo
         execution(void execute() ) ;
 
     before() : execute() {
-        AbstractMojo mojo = (AbstractMojo) thisJoinPoint.getThis();
+        Mojo mojo = (Mojo) thisJoinPoint.getThis();
         mojo.getLog().info( "Flexmojos " + MavenUtils.getFlexMojosVersion() );
         mojo.getLog().info( "\t Apache License - Version 2.0 (NO WARRANTY) - See COPYRIGHT file" );
     }

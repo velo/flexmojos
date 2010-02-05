@@ -2,11 +2,10 @@ package org.sonatype.flexmojos.compiler;
 
 import java.io.File;
 import java.util.List;
-
+import static org.mockito.Mockito.*;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 
@@ -20,7 +19,7 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 1.0
+ * @since 4.0
  * @goal compile-swf
  * @requiresDependencyResolution compile
  * @phase compile
@@ -86,13 +85,39 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        int result;
         try
         {
-            compiler.compileSwf( this, getSourceFile() );
+            result = compiler.compileSwf( this, getSourceFile() );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
+        }
+
+        if ( runtimeLocales != null )
+        {
+            for ( String locale : runtimeLocales )
+            {
+                ICommandLineConfiguration cfg = spy( this );
+                ICompilerConfiguration compilerCfg = spy( this.getCompilerConfiguration() );
+                when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
+                when( compilerCfg.getLocale() ).thenReturn( new String[] { locale } );
+                try
+                {
+                    compiler.compileSwf( cfg, null );
+                }
+                catch ( Exception e )
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

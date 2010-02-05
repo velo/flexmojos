@@ -313,39 +313,47 @@ public class MavenUtils
         return path;
     }
 
-    public static Set<File> getFilesSet( Collection<Artifact> dependencies )
+    public static Set<File> getFilesSet( Collection<Artifact>... dependenciesSet )
     {
-        if ( dependencies == null )
+        if ( dependenciesSet == null )
         {
             return null;
         }
 
         Set<File> files = new LinkedHashSet<File>();
-        for ( Artifact artifact : dependencies )
+        for ( Collection<Artifact> dependencies : dependenciesSet )
         {
-            if ( !artifact.isResolved() )
+            if ( dependencies == null )
             {
-                throw new IllegalArgumentException( "Unable to handle unresolved artifact: " + artifact );
+                continue;
             }
 
-            if ( artifact.getFile() == null )
+            for ( Artifact artifact : dependencies )
             {
-                throw new NullPointerException( "Artifact file not defined: " + artifact );
-            }
+                if ( !artifact.isResolved() )
+                {
+                    throw new IllegalArgumentException( "Unable to handle unresolved artifact: " + artifact );
+                }
 
-            files.add( artifact.getFile() );
+                if ( artifact.getFile() == null )
+                {
+                    throw new NullPointerException( "Artifact file not defined: " + artifact );
+                }
+
+                files.add( artifact.getFile() );
+            }
         }
         return files;
     }
 
-    public static File[] getFiles( Collection<Artifact> dependencies )
+    public static File[] getFiles( Collection<Artifact>... dependencies )
     {
         if ( dependencies == null )
         {
             return null;
         }
 
-        return getFilesSet( dependencies ).toArray( new File[dependencies.size()] );
+        return getFilesSet( dependencies ).toArray( new File[0] );
     }
 
 }

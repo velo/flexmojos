@@ -2,6 +2,7 @@ package org.sonatype.flexmojos.compiler;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.model.PatternSet;
@@ -9,15 +10,26 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.classworlds.ClassWorld;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
+import org.sonatype.flexmojos.common.converter.RuledClasses;
 
-import flex2.compiler.CompilerAPI;
-
+/**
+ * <p>
+ * Goal which compiles the Flex sources into a library for either Flex or AIR depending.
+ * </p>
+ * <p>
+ * The Flex Compiler plugin compiles all ActionScript sources. It can compile the source into 'swc' files. The plugin
+ * supports the 'swc' packaging.
+ * </p>
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 4.0
+ * @goal compile-swc
+ * @requiresDependencyResolution compile
+ * @phase compile
+ * @configurator flexmojos
+ */
 public class CompcMojo
     extends AbstractMavenFlexCompilerConfiguration
     implements ICompcConfiguration, Mojo
@@ -60,20 +72,31 @@ public class CompcMojo
      * 
      * <pre>
      * &lt;includeClasses&gt;
-     *   &lt;includeClasse&gt;
+     *   &lt;class&gt;org.sonatype.flexmojos.MyClass&lt;/class&gt;
+     *   &lt;class&gt;org.sonatype.flexmojos.YourClass&lt;/class&gt;
+     *   &lt;classSet&gt;
+     *     &lt;directory&gt;src/main/flex&lt;/directory&gt;
      *     &lt;includes&gt;
      *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
      *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
-     *   &lt;/includeClasse&gt;
+     *   &lt;/classSet&gt;
+     *   &lt;classSet&gt;
+     *     &lt;includes&gt;
+     *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/classSet&gt;
      * &lt;/includeClasses&gt;
      * </pre>
      * 
      * @parameter
      */
-    private PatternSet[] includeClasses;
+    private RuledClasses includeClasses;
 
     /**
      * Inclusion/exclusion patterns used to filter resources to be include in the output SWC
@@ -192,13 +215,19 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        int result;
         try
         {
-            compiler.compileSwc( this );
+            result = compiler.compileSwc( this );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
         }
     }
 
@@ -219,7 +248,18 @@ public class CompcMojo
             return null;
         }
 
-        return filterClasses( includeClasses, getSourcePath() );
+        List<String> classes = new ArrayList<String>();
+        if ( includeClasses.getClasses() != null )
+        {
+            classes.addAll( Arrays.asList( includeClasses.getClasses() ) );
+        }
+
+        if ( includeClasses.getClassSets() != null )
+        {
+            classes.addAll( filterClasses( includeClasses.getClassSets(), getSourcePath() ) );
+        }
+
+        return classes;
     }
 
     public File[] getIncludeFile()

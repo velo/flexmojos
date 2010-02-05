@@ -1,6 +1,6 @@
 package org.sonatype.flexmojos.common;
 
-import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.*;
 import static org.sonatype.flexmojos.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.common.FlexScopes.INTERNAL;
@@ -9,15 +9,19 @@ import static org.sonatype.flexmojos.common.FlexScopes.THEME;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -30,22 +34,19 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
-import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
-import org.apache.maven.shared.artifact.filter.collection.ScopeFilter;
-import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
-import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -68,22 +69,18 @@ import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MavenArtifact;
-import org.sonatype.flexmojos.compiler.util.ThreadLocalToolkitHelper;
-import org.sonatype.flexmojos.flexbridge.MavenLogger;
-import org.sonatype.flexmojos.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
-import flex2.tools.oem.internal.OEMLogAdapter;
-
 public class AbstractMavenFlexCompilerConfiguration
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration,
-    Initializable
+    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+
+    protected static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
     /**
      * Generate an accessible SWF
@@ -221,6 +218,12 @@ public class AbstractMavenFlexCompilerConfiguration
     private String compatibilityVersion;
 
     /**
+     * @component
+     * @readonly
+     */
+    protected FlexCompiler compiler;
+
+    /**
      * Specifies the locale for internationalization
      * <p>
      * Equivalent to -compiler.locale
@@ -236,8 +239,6 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter
      */
     private String[] compilerLocales;
-
-    private String[] runtimeLocales;
 
     /**
      * A list of warnings that should be enabled/disabled
@@ -327,6 +328,14 @@ public class AbstractMavenFlexCompilerConfiguration
      * @parameter expression="${flex.defaultFrameRate}"
      */
     private Integer defaultFrameRate;
+
+    /**
+     * Default value of resourceBundleList used when it is not defined
+     * 
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}-rb.properties"
+     * @readonly
+     */
+    private File defaultResourceBundleList;
 
     /**
      * Default script execution limits (may be overridden by root attributes)
@@ -916,6 +925,17 @@ public class AbstractMavenFlexCompilerConfiguration
     private MavenMetadataConfiguration metadata;
 
     /**
+     * Minimum supported SDK version for this library. This string will always be of the form N.N.N. For example, if
+     * -minimum-supported-version=2, this string is "2.0.0", not "2".
+     * <p>
+     * Equivalent to -compiler.mxml.minimum-supported-version
+     * </p>
+     * 
+     * @parameter expression="${flex.minimumSupportedVersion}"
+     */
+    private String minimumSupportedVersion;
+
+    /**
      * Specify a URI to associate with a manifest of components for use as MXML elements
      * <p>
      * Equivalent to -compiler.namespaces.namespace
@@ -933,7 +953,7 @@ public class AbstractMavenFlexCompilerConfiguration
      * 
      * @parameter
      */
-    private MavenNamespaces[] namespaces;
+    private MavenNamespace[] namespaces;
 
     /**
      * Toggle whether trace statements are omitted
@@ -961,9 +981,11 @@ public class AbstractMavenFlexCompilerConfiguration
      * Equivalent to -output
      * </p>
      * 
-     * @parameter expression="${flex.output}"
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
+     *            expression="${flex.output}"
+     * @required
      */
-    private String output;
+    private File output;
 
     /**
      * @parameter expression="${plugin.artifacts}"
@@ -1014,12 +1036,6 @@ public class AbstractMavenFlexCompilerConfiguration
     protected RepositorySystem repositorySystem;
 
     /**
-     * @component
-     * @readonly
-     */
-    protected FlexCompiler compiler;
-
-    /**
      * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
      * <p>
      * Equivalent to -resource-bundle-list
@@ -1048,6 +1064,23 @@ public class AbstractMavenFlexCompilerConfiguration
      * @readonly
      */
     protected List<Resource> resources;
+
+    /**
+     * Specifies the locales for external internationalization bundles
+     * <p>
+     * No equivalent parameter
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;runtimeLocales&gt;
+     *   &lt;locale&gt;en_US&lt;/locale&gt;
+     * &lt;/runtimeLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] runtimeLocales;
 
     /**
      * A list of runtime shared library URLs to be loaded before the application starts
@@ -1243,8 +1276,6 @@ public class AbstractMavenFlexCompilerConfiguration
      */
     private Boolean warnings;
 
-    private PlexusContainer container;
-
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
     {
         List<String> classes = new ArrayList<String>();
@@ -1258,6 +1289,16 @@ public class AbstractMavenFlexCompilerConfiguration
 
             for ( PatternSet pattern : classesPattern )
             {
+                if ( pattern instanceof FileSet )
+                {
+                    File dir = PathUtil.getCanonicalFile( ( (FileSet) pattern ).getDirectory() );
+                    if ( !ArrayUtils.contains( directories, dir ) )
+                    {
+                        throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
+                            + dir.getAbsolutePath() );
+                    }
+                }
+
                 DirectoryScanner scanner = scan( directory, pattern );
 
                 String[] included = scanner.getIncludedFiles();
@@ -1344,6 +1385,30 @@ public class AbstractMavenFlexCompilerConfiguration
     public String getCompatibilityVersion()
     {
         return compatibilityVersion;
+    }
+
+    protected Collection<Artifact> getCompiledResouceBundles()
+    {
+        if ( this.getLocale() == null )
+        {
+            return null;
+        }
+
+        Collection<Artifact> rbsSwc = new LinkedHashSet<Artifact>();
+
+        Set<Artifact> beacons = getDependencies( null, RB_SWC, null );
+
+        for ( String locale : getLocale() )
+        {
+            for ( Artifact beacon : beacons )
+            {
+                Artifact rbSwc =
+                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale, beacon.getType() );
+                rbsSwc.add( rbSwc );
+            }
+        }
+
+        return rbsSwc;
     }
 
     public ICompilerConfiguration getCompilerConfiguration()
@@ -1485,44 +1550,81 @@ public class AbstractMavenFlexCompilerConfiguration
 
     protected Set<Artifact> getDependencies()
     {
-        return Collections.unmodifiableSet( project.getDependencyArtifacts() );
+        return Collections.unmodifiableSet( project.getArtifacts() );
     }
 
-    @SuppressWarnings( "unchecked" )
     protected Set<Artifact> getDependencies( String classifier, String type, String scope )
     {
         Set<Artifact> dependencies = getDependencies();
-        FilterArtifacts filter = new FilterArtifacts();
 
-        if ( classifier != null )
+        Set<Artifact> filtered = new LinkedHashSet<Artifact>();
+        for ( Artifact artifact : dependencies )
         {
-            filter.addFilter( new ClassifierFilter( classifier, null ) );
-        }
-        if ( type != null )
-        {
-            filter.addFilter( new TypeFilter( type, null ) );
-        }
-        if ( scope != null )
-        {
-            filter.addFilter( new ScopeFilter( scope, null ) );
-        }
+            if ( classifier != null && !classifier.equals( artifact.getClassifier() ) )
+            {
+                continue;
+            }
+            if ( type != null && !type.equals( artifact.getType() ) )
+            {
+                continue;
+            }
+            if ( scope != null && !scope.equals( artifact.getScope() ) )
+            {
+                continue;
+            }
 
-        Set filteredDependencies;
-        try
-        {
-            filteredDependencies = filter.filter( dependencies );
-        }
-        catch ( ArtifactFilterException e )
-        {
-            throw new MavenRuntimeException( e );
+            filtered.add( artifact );
         }
 
-        if ( filteredDependencies.isEmpty() )
+        if ( filtered.isEmpty() )
         {
             return Collections.emptySet();
         }
 
-        return Collections.unmodifiableSet( filteredDependencies );
+        return Collections.unmodifiableSet( filtered );
+    }
+
+    protected Artifact getDependency( String groupId, String artifactId, String version, String classifier,
+                                      String type, String scope )
+    {
+        if ( groupId == null || artifactId == null )
+        {
+            return null;
+        }
+
+        Set<Artifact> dependencies = getDependencies();
+
+        for ( Artifact artifact : dependencies )
+        {
+            if ( !groupId.equals( artifact.getGroupId() ) )
+            {
+                continue;
+            }
+            if ( !artifactId.equals( artifact.getArtifactId() ) )
+            {
+                continue;
+            }
+            if ( version != null && !version.equals( artifact.getVersion() ) )
+            {
+                continue;
+            }
+            if ( classifier != null && !classifier.equals( artifact.getClassifier() ) )
+            {
+                continue;
+            }
+            if ( type != null && !type.equals( artifact.getType() ) )
+            {
+                continue;
+            }
+            if ( scope != null && !scope.equals( artifact.getScope() ) )
+            {
+                continue;
+            }
+
+            return artifact;
+        }
+
+        return null;
     }
 
     public String getDescription()
@@ -1611,12 +1713,12 @@ public class AbstractMavenFlexCompilerConfiguration
     {
         if ( SWC.equals( project.getPackaging() ) )
         {
-            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) ),
-                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
+            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, SWC, EXTERNAL ) ),
+                                               MavenUtils.getFiles( getDependencies( null, SWC, COMPILE ) ) );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( null, null, EXTERNAL ) );
+            return MavenUtils.getFiles( getDependencies( null, SWC, EXTERNAL ) );
         }
     }
 
@@ -1661,6 +1763,27 @@ public class AbstractMavenFlexCompilerConfiguration
         return framework;
     }
 
+    // TODO lazy load here would be awesome
+    protected Artifact getFrameworkConfig()
+    {
+        Artifact frmkCfg = getDependency( FRAMEWORK_GROUP_ID, "framework", null, "configs", "zip", null );
+
+        // not on dependency list, trying to resolve it manually
+        if ( frmkCfg == null )
+        {
+            // it should resolve playerglobal or airglobal, framework can be absent
+            Artifact frmk = getDependency( FRAMEWORK_GROUP_ID, "framework", null, null, null, null );
+
+            if ( frmk == null )
+            {
+                return null;
+            }
+
+            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", frmk.getVersion(), "configs", "zip" );
+        }
+        return frmkCfg;
+    }
+
     public Boolean getGenerateAbstractSyntaxTree()
     {
         return generateAbstractSyntaxTree;
@@ -1689,7 +1812,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public File[] getIncludeLibraries()
     {
-        return MavenUtils.getFiles( getDependencies( null, null, INTERNAL ) );
+        return MavenUtils.getFiles( getDependencies( null, SWC, INTERNAL ) );
     }
 
     public List<String> getIncludes()
@@ -1779,16 +1902,17 @@ public class AbstractMavenFlexCompilerConfiguration
         return lazyInit;
     }
 
+    @SuppressWarnings( "unchecked" )
     public File[] getLibraryPath()
     {
         if ( SWC.equals( project.getPackaging() ) )
         {
-            return MavenUtils.getFiles( getDependencies( null, null, MERGED ) );
+            return MavenUtils.getFiles( getDependencies( null, SWC, MERGED ), getCompiledResouceBundles() );
         }
         else
         {
-            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, null, MERGED ) ),
-                                               MavenUtils.getFiles( getDependencies( null, null, COMPILE ) ) );
+            return MavenUtils.getFiles( getDependencies( null, SWC, MERGED ), getDependencies( null, SWC, COMPILE ),
+                                        getCompiledResouceBundles() );
         }
     }
 
@@ -1965,7 +2089,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getMinimumSupportedVersion()
     {
-        return getMxmlConfiguration().getMinimumSupportedVersion();
+        return this.minimumSupportedVersion;
     }
 
     public IMxmlConfiguration getMxmlConfiguration()
@@ -1975,7 +2099,44 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public INamespace[] getNamespace()
     {
-        return namespaces;
+        List<INamespace> namespaces = new ArrayList<INamespace>();
+        if ( this.namespaces != null )
+        {
+            namespaces.addAll( Arrays.asList( this.namespaces ) );
+        }
+
+        File dir = getUnpackedFrameworkConfig();
+        Reader cfg = null;
+        try
+        {
+            cfg = new FileReader( new File( dir, "flex-config.xml" ) );
+
+            Xpp3Dom dom = Xpp3DomBuilder.build( cfg );
+
+            dom = dom.getChild( "compiler" );
+
+            dom = dom.getChild( "namespaces" );
+
+            Xpp3Dom[] defaultNamespaces = dom.getChildren();
+            for ( Xpp3Dom xpp3Dom : defaultNamespaces )
+            {
+                String uri = xpp3Dom.getChild( "uri" ).getValue();
+                String manifestName = xpp3Dom.getChild( "manifest" ).getValue();
+                File manifest = new File( dir, manifestName );
+
+                namespaces.add( new MavenNamespace( uri, manifest ) );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Unable to retrieve flex default namespaces!", e );
+        }
+        finally
+        {
+            IOUtil.close( cfg );
+        }
+
+        return namespaces.toArray( new INamespace[0] );
     }
 
     public INamespacesConfiguration getNamespacesConfiguration()
@@ -1985,7 +2146,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
     protected List<String> getNamespacesUri()
     {
-        if ( getNamespace() == null || getNamespace().length == 0 )
+        if ( namespaces == null || namespaces.length == 0 )
         {
             return null;
         }
@@ -2011,7 +2172,9 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getOutput()
     {
-        return output;
+        output.getParentFile().mkdirs();
+        project.getArtifact().setFile( output );
+        return PathUtil.getCanonicalPath( output );
     }
 
     public String[] getPublisher()
@@ -2041,7 +2204,23 @@ public class AbstractMavenFlexCompilerConfiguration
 
     public String getResourceBundleList()
     {
-        return PathUtil.getCanonicalPath( resourceBundleList );
+        return PathUtil.getCanonicalPath( getResourceBundleListFile() );
+    }
+
+    protected File getResourceBundleListFile()
+    {
+        if ( resourceBundleList != null )
+        {
+            return resourceBundleList;
+        }
+
+        if ( runtimeLocales == null )
+        {
+            return null;
+        }
+
+        defaultResourceBundleList.getParentFile().mkdirs();
+        return defaultResourceBundleList;
     }
 
     public Boolean getResourceHack()
@@ -2147,7 +2326,7 @@ public class AbstractMavenFlexCompilerConfiguration
         {
             themes.addAll( PathUtil.getCanonicalPathList( this.themes ) );
         }
-        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( null, null, THEME ) ) ) );
+        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( null, SWC, THEME ) ) ) );
         return themes;
     }
 
@@ -2175,6 +2354,30 @@ public class AbstractMavenFlexCompilerConfiguration
     public String getTranslationFormat()
     {
         return translationFormat;
+    }
+
+    // TODO lazy load here would be awesome
+    protected File getUnpackedFrameworkConfig()
+    {
+        Artifact frmkCfg = getFrameworkConfig();
+
+        File cfgZip = frmkCfg.getFile();
+        File dest = new File( project.getBuild().getOutputDirectory(), "configs" );
+        dest.mkdirs();
+
+        try
+        {
+            UnArchiver unzip = archiverManager.getUnArchiver( cfgZip );
+            unzip.setSourceFile( cfgZip );
+            unzip.setDestDirectory( dest );
+            unzip.extract();
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Failed to unpack framework configuration", e );
+        }
+
+        return dest;
     }
 
     public Boolean getUseNetwork()
@@ -2391,7 +2594,7 @@ public class AbstractMavenFlexCompilerConfiguration
     protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
     {
         Artifact artifact =
-            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, classifier, type );
+            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
         if ( !artifact.isResolved() )
         {
             ArtifactResolutionRequest req = new ArtifactResolutionRequest();
@@ -2419,10 +2622,4 @@ public class AbstractMavenFlexCompilerConfiguration
         this.log = log;
     }
 
-    public void initialize()
-        throws InitializationException
-    {
-        ThreadLocalToolkitHelper.setMavenLogger( new OEMLogAdapter( new MavenLogger( getLog() ) ) );
-        ThreadLocalToolkitHelper.setMavenResolver( new MavenPathResolver( resources ) );
-    }
 }

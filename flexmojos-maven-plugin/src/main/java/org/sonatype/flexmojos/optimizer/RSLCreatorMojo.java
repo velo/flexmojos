@@ -78,25 +78,37 @@ public class RSLCreatorMojo
 
         if ( optimizeRsl )
         {
+            int result;
             try
             {
-                compiler.optimize( getOptimizerConfiguration() );
+                result = compiler.optimize( getOptimizerConfiguration() );
             }
             catch ( Exception e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
+            }
+
+            if ( result != 0 )
+            {
+                throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
             }
         }
 
         if ( updateSwcDigest )
         {
+            int result;
             try
             {
-                compiler.digest( getDigestConfiguration() );
+                result = compiler.digest( getDigestConfiguration() );
             }
             catch ( Exception e )
             {
                 throw new MojoExecutionException( e.getMessage(), e );
+            }
+
+            if ( result != 0 )
+            {
+                throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
             }
         }
 

@@ -7,27 +7,50 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.compiler.IFlexArgument;
 import org.sonatype.flexmojos.compiler.IFlexConfiguration;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
-public class ParseArguments
+@Component( role = FlexCompilerArgumentParser.class )
+public class FlexCompilerArgumentParser
+    extends AbstractLogEnabled
 {
 
-    public static <E> String[] getArguments( E cfg, Class<? extends E> configClass )
+    public <E> String[] parseArguments( E cfg, Class<? extends E> configClass )
     {
-        return getArgumentsList( cfg, configClass ).toArray( new String[0] );
+        String[] args = getArgumentsList( cfg, configClass ).toArray( new String[0] );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Compilation arguments:" + toString( args ) );
+        }
+        return args;
     }
 
-    public static <E> List<String> getArgumentsList( E cfg, Class<? extends E> configClass )
+    private CharSequence toString( String[] args )
     {
-        Set<CharSequence> charArgs;
+        StringBuilder sb = new StringBuilder();
+        for ( String arg : args )
+        {
+            if ( arg.startsWith( "-" ) )
+            {
+                sb.append( '\n' );
+            }
+            sb.append( arg );
+            sb.append( ' ' );
+        }
+        return sb;
+    }
+
+    public <E> List<String> getArgumentsList( E cfg, Class<? extends E> configClass )
+    {
+        List<Entry<String, List<String>>> charArgs;
         try
         {
             charArgs = doGetArgs( cfg, configClass );
@@ -38,22 +61,26 @@ public class ParseArguments
         }
 
         List<String> args = new ArrayList<String>();
-        for ( CharSequence charSequence : charArgs )
+        for ( Entry<String, List<String>> arg : charArgs )
         {
-            args.add( "-" + charSequence );
+            args.add( "-" + arg.getName() );
+            if ( arg.getValue() != null )
+            {
+                args.addAll( arg.getValue() );
+            }
         }
         return args;
     }
 
-    private static <E> Set<CharSequence> doGetArgs( E cfg, Class<? extends E> configClass )
+    private <E> List<Entry<String, List<String>>> doGetArgs( E cfg, Class<? extends E> configClass )
         throws Exception
     {
         if ( cfg == null )
         {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
 
-        Set<CharSequence> args = new LinkedHashSet<CharSequence>();
+        List<Entry<String, List<String>>> args = new LinkedList<Entry<String, List<String>>>();
 
         Method[] methods = configClass.getDeclaredMethods();
         for ( Method method : methods )
@@ -74,11 +101,11 @@ public class ParseArguments
 
             if ( value instanceof IFlexConfiguration )
             {
-                Set<CharSequence> subArgs = doGetArgs( value, returnType );
+                List<Entry<String, List<String>>> subArgs = doGetArgs( value, returnType );
                 String configurationName = parseConfigurationName( method.getName() );
-                for ( CharSequence arg : subArgs )
+                for ( Entry<String, List<String>> arg : subArgs )
                 {
-                    args.add( configurationName + "." + arg );
+                    args.add( new Entry<String, List<String>>( configurationName + "." + arg.getName(), arg.getValue() ) );
                 }
             }
             else if ( value instanceof IFlexArgument || value instanceof IFlexArgument[] )
@@ -99,14 +126,9 @@ public class ParseArguments
                 for ( IFlexArgument iFlexArgument : values )
                 {
                     String[] order = (String[]) type.getField( "ORDER" ).get( iFlexArgument );
-                    StringBuilder arg = new StringBuilder();
+                    List<String> subArg = new LinkedList<String>();
                     for ( String argMethodName : order )
                     {
-                        if ( arg.length() != 0 )
-                        {
-                            arg.append( ' ' );
-                        }
-
                         Object argValue = type.getDeclaredMethod( argMethodName ).invoke( iFlexArgument );
                         if ( argValue == null )
                         {
@@ -125,11 +147,7 @@ public class ParseArguments
                             }
                             for ( Iterator<?> iterator = argValues.iterator(); iterator.hasNext(); )
                             {
-                                arg.append( iterator.next().toString() );
-                                if ( iterator.hasNext() )
-                                {
-                                    arg.append( ' ' );
-                                }
+                                subArg.add( iterator.next().toString() );
                             }
                         }
                         else if ( argValue instanceof Map<?, ?> )
@@ -138,27 +156,22 @@ public class ParseArguments
                             Set<?> argValues = map.entrySet();
                             for ( Iterator<?> iterator = argValues.iterator(); iterator.hasNext(); )
                             {
-                                Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
-                                arg.append( entry.getKey().toString() );
+                                java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
+                                subArg.add( entry.getKey().toString() );
                                 if ( entry.getValue() != null )
                                 {
-                                    arg.append( ' ' );
-                                    arg.append( entry.getValue().toString() );
-                                }
-                                if ( iterator.hasNext() )
-                                {
-                                    arg.append( ' ' );
+                                    subArg.add( entry.getValue().toString() );
                                 }
                             }
 
                         }
                         else
                         {
-                            arg.append( argValue.toString() );
+                            subArg.add( argValue.toString() );
                         }
                     }
 
-                    args.add( parseName( method.getName() ) + " " + arg );
+                    args.add( new Entry<String, List<String>>( parseName( method.getName() ), subArg ) );
                 }
             }
             else if ( returnType.isArray() || value instanceof Collection<?> )
@@ -175,21 +188,21 @@ public class ParseArguments
                 String name = parseName( method.getName() );
                 if ( values.length == 0 )
                 {
-                    args.add( name + "=" );
+                    args.add( new Entry<String, List<String>>( name + "=", null ) );
                 }
                 else
                 {
                     String appender = "=";
                     for ( Object object : values )
                     {
-                        args.add( name + appender + object.toString() );
+                        args.add( new Entry<String, List<String>>( name + appender + object.toString(), null ) );
                         appender = "+=";
                     }
                 }
             }
             else
             {
-                args.add( parseName( method.getName() ) + "=" + value.toString() );
+                args.add( new Entry<String, List<String>>( parseName( method.getName() ) + "=" + value.toString(), null ) );
             }
 
         }
