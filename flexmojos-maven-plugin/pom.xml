@@ -138,28 +138,8 @@
       -->
 
       <!--
-       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-beta-2-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <bannedPlugins>
-                  <message>maven-invoker-plugin isn't allowed, add tests on flexmojos-test-harness instead</message>
-                  <excludes>
-                    <exclude>*:maven-invoker-plugin</exclude>
-                  </excludes>
-                </bannedPlugins>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-enforcer-plugin</artifactId> <version>1.0-beta-2-SNAPSHOT</version> <executions> <execution> <goals> <goal>enforce</goal> </goals> <configuration> <rules> <bannedPlugins>
+        <message>maven-invoker-plugin isn't allowed, add tests on flexmojos-test-harness instead</message> <excludes> <exclude>*:maven-invoker-plugin</exclude> </excludes> </bannedPlugins> </rules> </configuration> </execution> </executions> </plugin>
       -->
 
     </plugins>
@@ -173,12 +153,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
-      <version>${pom.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
+      <artifactId>flexmojos-generator-graniteds-2.1.0</artifactId>
       <version>${pom.version}</version>
     </dependency>
     <dependency>
