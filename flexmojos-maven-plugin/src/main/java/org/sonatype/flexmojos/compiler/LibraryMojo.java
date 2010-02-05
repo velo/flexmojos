@@ -384,7 +384,7 @@ public class LibraryMojo
 
         for ( FileSet fileSet : includeAsClasses )
         {
-            File directory = new File( fileSet.getDirectory() );
+            File directory = PathUtil.getFile( fileSet.getDirectory() );
             if ( !directory.isDirectory() )
             {
                 throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );

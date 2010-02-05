@@ -196,4 +196,32 @@ public class PathUtil
 
         return files;
     }
+
+    public static File getFile( String path )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        return getCanonicalFile( new File( path ) );
+    }
+
+    private static File getCanonicalFile( File file )
+    {
+        if ( file == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return file.getCanonicalFile();
+        }
+        catch ( IOException e )
+        {
+            return file.getAbsoluteFile();
+        }
+    }
+
 }
