@@ -1,16 +1,15 @@
 package org.sonatype.flexmojos.compiler;
 
- import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArguments;
-import static org.sonatype.flexmojos.compiler.util.ParseArguments.getArgumentsList;
-
 import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.compiler.command.Command;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.compiler.util.FlexCompilerArgumentParser;
 
 import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.tools.ASDoc;
@@ -24,6 +23,9 @@ public class DefaultFlexCompiler
     extends AbstractLogEnabled
     implements FlexCompiler
 {
+    
+    @Requirement
+    private FlexCompilerArgumentParser parser;
 
     public int compileSwc( final ICompcConfiguration configuration )
         throws Exception
@@ -33,7 +35,7 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                Compc.compc( getArguments( configuration, ICompcConfiguration.class ) );
+                Compc.compc( parser.parseArguments( configuration, ICompcConfiguration.class ) );
             }
         } );
     }
@@ -41,8 +43,11 @@ public class DefaultFlexCompiler
     public int compileSwf( ICommandLineConfiguration configuration, File sourceFile )
         throws Exception
     {
-        final List<String> args = getArgumentsList( configuration, ICommandLineConfiguration.class );
-        args.add( sourceFile.getAbsolutePath() );
+        final List<String> args = parser.getArgumentsList( configuration, ICommandLineConfiguration.class );
+        if ( sourceFile != null )
+        {
+            args.add( sourceFile.getAbsolutePath() );
+        }
         return execute( new Command()
         {
             public void command()
@@ -59,7 +64,7 @@ public class DefaultFlexCompiler
         {
             public void command()
             {
-                ASDoc.asdoc( getArguments( configuration, IASDocConfiguration.class ) );
+                ASDoc.asdoc( parser.parseArguments( configuration, IASDocConfiguration.class ) );
             }
         } );
     }
@@ -72,7 +77,7 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                DigestTool.main( getArguments( configuration, IDigestConfiguration.class ) );
+                DigestTool.main( parser.parseArguments( configuration, IDigestConfiguration.class ) );
             }
         } );
     }
@@ -85,7 +90,7 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                Optimizer.main( getArguments( configuration, IOptimizerConfiguration.class ) );
+                Optimizer.main( parser.parseArguments( configuration, IOptimizerConfiguration.class ) );
             }
         } );
     }

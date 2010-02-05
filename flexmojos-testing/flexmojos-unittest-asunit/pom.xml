@@ -22,6 +22,21 @@
 
   <name>Flexmojos Unit Test support - asunit</name>
 
+  <build>
+    <sourceDirectory>src/main/flex</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <includeClasses>
+            <class>org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener</class>
+          </includeClasses>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

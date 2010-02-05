@@ -20,10 +20,12 @@ public class ThreadLocalToolkitHelper
 
         if ( logger instanceof ConsoleLogger )
         {
+            if ( mavenLogger == null )
+            {
+                throw new IllegalStateException( "ThreadLocalToolkitHelper.mavenLogger was not initialized correctly" );
+            }
             return mavenLogger;
         }
-
-        System.out.println( getClass( logger ) );
 
         return logger;
     }
@@ -32,23 +34,16 @@ public class ThreadLocalToolkitHelper
     {
         invoked = true;
 
-        System.out.println( getClass( r ) );
-
         if ( r != null )
         {
+            if ( mavenResolver == null )
+            {
+                throw new IllegalStateException( "ThreadLocalToolkitHelper.mavenResolver was not initialized correctly" );
+            }
             r.addSinglePathResolver( mavenResolver );
         }
 
         return r;
-    }
-
-    private static String getClass( Object o )
-    {
-        if ( o != null )
-        {
-            return o.getClass().getName();
-        }
-        return null;
     }
 
     public static void setMavenLogger( Logger mavenLogger )

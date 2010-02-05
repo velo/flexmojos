@@ -177,6 +177,12 @@
       <artifactId>flexmojos-maven-plugin</artifactId>
       <version>${pom.version}</version>
       <type>maven-plugin</type>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>maven-compat</artifactId>
+      		<groupId>org.apache.maven</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
