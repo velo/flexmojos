@@ -17,18 +17,20 @@
  */
 package org.sonatype.flexmojos.common;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.Mojo;
-import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.sonatype.flexmojos.compiler.util.ThreadLocalToolkitHelper;
+import org.sonatype.flexmojos.flexbridge.MavenLogger;
+import org.sonatype.flexmojos.flexbridge.MavenPathResolver;
 
-public aspect CommandLineLicenseInfo
+import flex2.tools.oem.internal.OEMLogAdapter;
+
+public aspect InitializeThreadLocalWrapper
 {
-    pointcut execute() :  (target(AbstractMojo) || target(Mojo) )&&
+    pointcut execute() :   target(AbstractMavenFlexCompilerConfiguration)  &&
         execution(void execute() ) ;
 
     before() : execute() {
-        Mojo mojo = (Mojo) thisJoinPoint.getThis();
-        mojo.getLog().info( "Flexmojos " + MavenUtils.getFlexMojosVersion() );
-        mojo.getLog().info( "\t Apache License - Version 2.0 (NO WARRANTY) - See COPYRIGHT file" );
+        AbstractMavenFlexCompilerConfiguration mojo = (AbstractMavenFlexCompilerConfiguration) thisJoinPoint.getThis();
+        ThreadLocalToolkitHelper.setMavenLogger( new OEMLogAdapter( new MavenLogger( mojo.getLog() ) ) );
+        ThreadLocalToolkitHelper.setMavenResolver( new MavenPathResolver( mojo.resources ) );
     }
 }

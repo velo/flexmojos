@@ -54,9 +54,9 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.0.0.13555</flex.sdk.version>
+    <flex.sdk.version>4.0.0.12575</flex.sdk.version>
     <maven.version>3.0-SNAPSHOT</maven.version>
-    <plexus.version>1.5.3</plexus.version>
+    <plexus.version>1.5.4</plexus.version>
   </properties>
 
   <build>

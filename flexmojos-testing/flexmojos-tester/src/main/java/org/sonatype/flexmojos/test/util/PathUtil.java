@@ -213,4 +213,9 @@ public class PathUtil
             return file.getAbsoluteFile();
         }
     }
+
+    public static File getCanonicalFile( String file )
+    {
+        return getCanonicalFile( new File( file ) );
+    }
 }

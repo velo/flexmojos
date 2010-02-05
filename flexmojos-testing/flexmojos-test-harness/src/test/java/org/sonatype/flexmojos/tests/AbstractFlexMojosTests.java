@@ -101,7 +101,7 @@ public class AbstractFlexMojosTests
         container = new DefaultPlexusContainer();
     }
 
-    @BeforeSuite( alwaysRun = true )
+    @BeforeSuite( dependsOnMethods={"initFolders"}, alwaysRun = true )
     public static void addEmmaToClasshPath()
         throws Exception
     {

@@ -15,26 +15,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.common;
+package org.sonatype.flexmojos.compiler.util;
 
-import org.sonatype.flexmojos.compiler.INamespace;
-
-public class MavenNamespaces
-    implements INamespace
+public class Entry<E, F>
 {
 
-    private String manifest;
+    private E name;
 
-    private String uri;
+    private F value;
 
-    public String manifest()
+    public Entry( E name, F value )
     {
-        return manifest;
+        super();
+        this.name = name;
+        this.value = value;
     }
 
-    public String uri()
+    public E getName()
     {
-        return uri;
+        return name;
     }
 
+    public F getValue()
+    {
+        return value;
+    }
+
+    public void setName( E name )
+    {
+        this.name = name;
+    }
+
+    public void setValue( F value )
+    {
+        this.value = value;
+    }
 }

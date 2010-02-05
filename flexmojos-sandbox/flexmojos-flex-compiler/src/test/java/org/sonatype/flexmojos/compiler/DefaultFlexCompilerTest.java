@@ -27,14 +27,25 @@ import java.util.Collections;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.sonatype.flexmojos.compiler.util.ThreadLocalToolkitHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import flex2.compiler.common.SinglePathResolver;
+import flex2.compiler.util.ConsoleLogger;
 
 public class DefaultFlexCompilerTest
 {
 
     private PlexusContainer plexus;
+
+    private File root;
+
+    private File as3;
+
+    private File fdk;
 
     @BeforeClass
     public void init()
@@ -43,56 +54,39 @@ public class DefaultFlexCompilerTest
         plexus = new DefaultPlexusContainer();
     }
 
-    @Test( enabled = false )
-    // can't test this here anymore
-    public void logTest()
+    @BeforeMethod
+    public void initRoots()
         throws Exception
     {
-        DefaultFlexCompiler compiler = (DefaultFlexCompiler) plexus.lookup( FlexCompiler.class );
-        MapLogger logger = new MapLogger();
-        compiler.enableLogging( logger );
+        root = new File( getClass().getResource( "/" ).toURI() );
+        as3 = new File( root, "dummy_as3" );
+        fdk = new File( root, "fdk" );
 
-        compiler.compileSwc( null );
-
-        Assert.assertFalse( logger.getLogs().isEmpty() );
+        ThreadLocalToolkitHelper.setMavenLogger( new ConsoleLogger() );
+        ThreadLocalToolkitHelper.setMavenResolver( mock( SinglePathResolver.class ) );
     }
 
     @Test
     public void compileDummySwc()
         throws Exception
     {
-        File root = new File( getClass().getResource( "/" ).toURI() );
-        File as3 = new File( root, "dummy_as3" );
-        File fdk = new File( root, "fdk" );
         File output = new File( as3, "result.swc" );
 
         DefaultFlexCompiler compiler = (DefaultFlexCompiler) plexus.lookup( FlexCompiler.class );
-        MapLogger logger = new MapLogger();
-        compiler.enableLogging( logger );
 
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
-        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
-        IFontsConfiguration fontsCfg = mock( IFontsConfiguration.class, RETURNS_NULL );
+        ICompilerConfiguration compilerCfg = getBaseCompilerCfg();
         when( cfg.getIncludeSources() ).thenReturn( new File[] { as3 } );
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        when( compilerCfg.getTheme() ).thenReturn( Collections.emptyList() );
-        when( compilerCfg.getFontsConfiguration() ).thenReturn( fontsCfg );
-        when( compilerCfg.getExternalLibraryPath() ).thenReturn( new File[] { new File( fdk, "playerglobal.swc" ) } );
-        when( fontsCfg.getLocalFontsSnapshot() ).thenReturn( new File( fdk, "localFonts.ser" ).getAbsolutePath() );
-        compiler.compileSwc( cfg );
-
-        Assert.assertTrue( output.exists(), logger.getLogs().toString() );
+        Assert.assertEquals( compiler.compileSwc( cfg ), 0 );
     }
 
     @Test
     public void compileDummySwf()
         throws Exception
     {
-        File root = new File( getClass().getResource( "/" ).toURI() );
-        File as3 = new File( root, "dummy_as3" );
-        File fdk = new File( root, "fdk" );
         File output = new File( as3, "result.swf" );
 
         DefaultFlexCompiler compiler = (DefaultFlexCompiler) plexus.lookup( FlexCompiler.class );
@@ -100,17 +94,23 @@ public class DefaultFlexCompilerTest
         compiler.enableLogging( logger );
 
         ICommandLineConfiguration cfg = mock( ICommandLineConfiguration.class, RETURNS_NULL );
-        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
-        IFontsConfiguration fontsCfg = mock( IFontsConfiguration.class, RETURNS_NULL );
+        ICompilerConfiguration compilerCfg = getBaseCompilerCfg();
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        when( compilerCfg.getFontsConfiguration() ).thenReturn( fontsCfg );
-        when( compilerCfg.getTheme() ).thenReturn( Collections.emptyList() );
-        when( compilerCfg.getExternalLibraryPath() ).thenReturn( new File[] { new File( fdk, "playerglobal.swc" ) } );
-        when( fontsCfg.getLocalFontsSnapshot() ).thenReturn( new File( fdk, "localFonts.ser" ).getAbsolutePath() );
-        compiler.compileSwf( cfg, new File( as3, "main.as" ) );
+        Assert.assertEquals( compiler.compileSwf( cfg, new File( as3, "main.as" ) ), 0 );
 
         Assert.assertTrue( output.exists(), logger.getLogs().toString() );
+    }
+
+    private ICompilerConfiguration getBaseCompilerCfg()
+    {
+        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
+        IFontsConfiguration fontsCfg = mock( IFontsConfiguration.class, RETURNS_NULL );
+        when( compilerCfg.getFontsConfiguration() ).thenReturn( fontsCfg );
+        when( fontsCfg.getLocalFontsSnapshot() ).thenReturn( new File( fdk, "localFonts.ser" ).getAbsolutePath() );
+        when( compilerCfg.getExternalLibraryPath() ).thenReturn( new File[] { new File( fdk, "playerglobal.swc" ) } );
+        when( compilerCfg.getTheme() ).thenReturn( Collections.emptyList() );
+        return compilerCfg;
     }
 }

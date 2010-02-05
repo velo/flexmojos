@@ -240,13 +240,19 @@ public class AsdocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        int result;
         try
         {
-            compiler.asdoc( this );
+            result = compiler.asdoc( this );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
         }
     }
 
