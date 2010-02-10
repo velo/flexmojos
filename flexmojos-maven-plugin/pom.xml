@@ -161,6 +161,12 @@
       <artifactId>flexmojos-generator-constraints</artifactId>
       <version>${pom.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-generator-maven-plugin</artifactId>
+      <version>${pom.version}</version>
+      <type>maven-plugin</type>
+    </dependency>
 
     <dependency>
       <groupId>com.adobe.flex</groupId>
@@ -202,10 +208,6 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <classifier>jdk15</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.graniteds</groupId>
-      <artifactId>granite-generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
