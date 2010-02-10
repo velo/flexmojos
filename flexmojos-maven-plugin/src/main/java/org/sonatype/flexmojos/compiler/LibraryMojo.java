@@ -244,19 +244,6 @@ public class LibraryMojo
 
         builder.setOutput( getOutput() );
 
-        String[] allResourcesArray = listAllResources();
-        if ( ( includeFiles == null ) || ( includeFiles.length <= 0 ) )
-        {
-            includeFiles = allResourcesArray;
-        }
-        else if ( ( allResourcesArray != null ) && ( allResourcesArray.length > 0 ) )
-        {
-            List<String> tempIncludeFilesList = new ArrayList<String>( includeFiles.length + allResourcesArray.length );
-            tempIncludeFilesList.addAll( Arrays.asList( includeFiles ) );
-            tempIncludeFilesList.addAll( Arrays.asList( allResourcesArray ) );
-            includeFiles = tempIncludeFilesList.toArray( new String[tempIncludeFilesList.size()] );
-        }
-
         if ( checkNullOrEmpty( includeClasses ) && checkNullOrEmpty( includeFiles )
             && checkNullOrEmpty( includeNamespaces ) && checkNullOrEmpty( includeSources )
             && checkNullOrEmpty( includeStylesheet ) && checkNullOrEmpty( includeResourceBundles )
