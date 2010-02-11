@@ -14,10 +14,12 @@ public aspect UsageMonitor
 
     before() : execute() {
         Mojo mojo = (Mojo) thisJoinPoint.getThis();
-        
-        JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker("Flexmojos",MavenUtils.getFlexMojosVersion(),"UA-3939074-3");
-        FocusPoint focusPoint = new FocusPoint(mojo.getClass().getName());
-        tracker.trackAsynchronously(focusPoint);
+
+        byte[] bytes = new byte[] { 85, 65, 45, 51, 57, 51, 57, 48, 55, 52, 45, 51 };
+        JGoogleAnalyticsTracker tracker =
+            new JGoogleAnalyticsTracker( "Flexmojos", MavenUtils.getFlexMojosVersion(), new String( bytes ) );
+        FocusPoint focusPoint = new FocusPoint( mojo.getClass().getName() );
+        tracker.trackAsynchronously( focusPoint );
     }
 
 }
