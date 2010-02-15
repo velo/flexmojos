@@ -47,6 +47,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.truster.TrustException;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
@@ -324,7 +325,24 @@ public class ApplicationMojo
         args.add( "-include-resource-bundles=" + bundlesString );
         args.add( "-output=" + output.getAbsolutePath() );
         args.add( "-compiler.fonts.local-fonts-snapshot=" + getFontsSnapshot().getAbsolutePath() );
-        args.add( "-load-config=" + ( configFile == null ? "" : configFile.getAbsolutePath() ) );
+        if ( configFile != null )
+        {
+            args.add( "-load-config=" + PathUtil.getCanonicalPath( configFile ) );
+        }
+        else if ( configFiles != null )
+        {
+            String separator = "=";
+            for ( File cfg : configFiles )
+            {
+                args.add( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
+                separator = "+=";
+            }
+        }
+        else
+        {
+            args.add( "-load-config=" );
+        }
+
         args.add( "-external-library-path=" + toString( external ) );
         args.add( "-include-libraries=" + toString( internal ) );
         args.add( "-library-path=" + toString( merged ) );

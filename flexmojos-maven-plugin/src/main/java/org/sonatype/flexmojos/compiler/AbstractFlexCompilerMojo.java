@@ -470,8 +470,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
      * Load a file containing configuration options If not defined, by default will search for one on resources folder.
      * 
      * @parameter
+     * @deprecated Use configFiles instead
      */
     protected File configFile;
+
+    /**
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * 
+     * @parameter
+     */
+    protected File[] configFiles;
 
     /**
      * specifies the version of the player the application is targeting. Features requiring a later version will not be
@@ -1463,6 +1471,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             configuration.setConfiguration( configFile );
         }
+        else if ( configFiles != null )
+        {
+            for ( File cfg : configFiles )
+            {
+                configuration.addConfiguration( cfg );
+            }
+        }
 
         if ( configuration instanceof OEMConfiguration )
         {
@@ -1492,7 +1507,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             commandLineArguments.add( "-include-lookup-only" );
         }
-        if ( configFile == null )
+        if ( configFile == null && configFiles == null )
         {
             commandLineArguments.add( "-load-config=" );
         }
