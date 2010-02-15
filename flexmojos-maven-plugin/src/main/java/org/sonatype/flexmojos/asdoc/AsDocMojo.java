@@ -39,6 +39,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -238,11 +239,19 @@ public class AsDocMojo
     private List<File> libraries;
 
     /**
-     * Load a file containing configuration options
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * 
+     * @parameter
+     * @deprecated Use configFiles instead
+     */
+    protected File configFile;
+
+    /**
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
      * 
      * @parameter
      */
-    private File configFile;
+    protected File[] configFiles;
 
     private File fontsSnapshot;
 
@@ -492,6 +501,15 @@ public class AsDocMojo
         if ( configFile != null )
         {
             args.add( "-load-config=" + configFile.getAbsolutePath() );
+        }
+        else if ( configFiles != null )
+        {
+            String separator = "=";
+            for ( File cfg : configFiles )
+            {
+                args.add( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
+                separator = "+=";
+            }
         }
         else
         {

@@ -291,6 +291,13 @@ public class FlexbuilderMojo
      */
     private Boolean pureActionscriptProject;
 
+    /**
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * 
+     * @parameter
+     */
+    protected File[] configFiles;
+
     @Override
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
@@ -502,26 +509,36 @@ public class FlexbuilderMojo
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
 
-        String additionalCompilerArguments = "";
+        StringBuilder additionalCompilerArguments = new StringBuilder();
         if ( ( compiledLocales != null && compiledLocales.length > 0 )
             || ( !SWC.equals( packaging ) && !pureActionscriptProject ) )
         {
-            additionalCompilerArguments += " -locale " + getPlainLocales();
+            additionalCompilerArguments.append( " -locale " + getPlainLocales() );
         }
 
         if ( services != null )
         {
-            additionalCompilerArguments += " -services " + services.getAbsolutePath();
+            additionalCompilerArguments.append( " -services " + services.getAbsolutePath() );
         }
 
         if ( incremental )
         {
-            additionalCompilerArguments += " --incremental ";
+            additionalCompilerArguments.append( " --incremental " );
         }
 
         if ( contextRoot != null )
         {
-            additionalCompilerArguments += " -context-root " + contextRoot;
+            additionalCompilerArguments.append( " -context-root " + contextRoot );
+        }
+
+        if ( configFiles != null )
+        {
+            String separator = "=";
+            for ( File cfg : configFiles )
+            {
+                additionalCompilerArguments.append( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
+                separator = "+=";
+            }
         }
 
         if ( definesDeclaration != null )
@@ -549,7 +566,7 @@ public class FlexbuilderMojo
                 }
 
                 // Definition values should ben quoted if necessary, so not adding additional quoting here.
-                additionalCompilerArguments += String.format( " -define+=%s,%s", defineName, value );
+                additionalCompilerArguments.append( String.format( " -define+=%s,%s", defineName, value ) );
             }
         }
 
@@ -579,15 +596,15 @@ public class FlexbuilderMojo
             context.put( "mainApplication", project.getArtifactId() + ".as" );
             if ( includeClasses == null && includeSources == null )
             {
-                additionalCompilerArguments += " -include-sources " + plain( getSourceRoots() );
+                additionalCompilerArguments.append( " -include-sources " + plain( getSourceRoots() ) );
             }
             else if ( includeSources != null )
             {
-                additionalCompilerArguments += " -include-sources " + getPlainSources();
+                additionalCompilerArguments.append( " -include-sources " + getPlainSources() );
             }
             context.put( "generateHtmlWrapper", false );
         }
-        context.put( "additionalCompilerArguments", additionalCompilerArguments.trim() );
+        context.put( "additionalCompilerArguments", additionalCompilerArguments.toString() );
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
