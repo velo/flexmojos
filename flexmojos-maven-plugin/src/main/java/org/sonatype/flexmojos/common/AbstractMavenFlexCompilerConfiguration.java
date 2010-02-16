@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.common;
 
-import static org.sonatype.flexmojos.common.FlexExtension.*;
+import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.common.FlexScopes.INTERNAL;
@@ -37,8 +38,11 @@ import org.apache.maven.model.Developer;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -47,6 +51,9 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.hamcrest.Matcher;
+import org.sonatype.flexmojos.common.matcher.ArtifactIdMatcher;
+import org.sonatype.flexmojos.common.matcher.GroupIdMatcher;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -72,8 +79,11 @@ import org.sonatype.flexmojos.compiler.MavenArtifact;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.*;
+import static org.hamcrest.CoreMatchers.*;
+import static ch.lambdaj.Lambda.*;
 
-public class AbstractMavenFlexCompilerConfiguration
+public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
 {
@@ -81,6 +91,10 @@ public class AbstractMavenFlexCompilerConfiguration
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
     protected static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
+
+    private static final Matcher<? extends Artifact> GLOBAL_MATCHER =
+        allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
+                                                                  artifactId( "airglobal" ) ) );
 
     /**
      * Generate an accessible SWF
@@ -1003,6 +1017,13 @@ public class AbstractMavenFlexCompilerConfiguration
     protected MavenProject project;
 
     /**
+     * @component
+     * @readonly
+     * @required
+     */
+    protected MavenProjectHelper projectHelper;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.mxml.qualified-type-selectors
@@ -1276,6 +1297,28 @@ public class AbstractMavenFlexCompilerConfiguration
      */
     private Boolean warnings;
 
+    public abstract int doCompile( CFG cfg )
+        throws Exception;
+
+    protected void executeCompiler( CFG cfg )
+        throws MojoExecutionException, MojoFailureException
+    {
+        int result;
+        try
+        {
+            result = doCompile( cfg );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
+        }
+    }
+
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
     {
         List<String> classes = new ArrayList<String>();
@@ -1396,7 +1439,7 @@ public class AbstractMavenFlexCompilerConfiguration
 
         Collection<Artifact> rbsSwc = new LinkedHashSet<Artifact>();
 
-        Set<Artifact> beacons = getDependencies( null, RB_SWC, null );
+        Set<Artifact> beacons = getDependencies( type( RB_SWC ) );
 
         for ( String locale : getLocale() )
         {
@@ -1548,44 +1591,20 @@ public class AbstractMavenFlexCompilerConfiguration
         return keys.toArray( new IDefine[keys.size()] );
     }
 
-    protected Set<Artifact> getDependencies()
+    public Set<Artifact> getDependencies()
     {
         return Collections.unmodifiableSet( project.getArtifacts() );
     }
 
-    protected Set<Artifact> getDependencies( String classifier, String type, String scope )
+    protected Set<Artifact> getDependencies( Matcher<? extends Artifact>... matchers )
     {
         Set<Artifact> dependencies = getDependencies();
 
-        Set<Artifact> filtered = new LinkedHashSet<Artifact>();
-        for ( Artifact artifact : dependencies )
-        {
-            if ( classifier != null && !classifier.equals( artifact.getClassifier() ) )
-            {
-                continue;
-            }
-            if ( type != null && !type.equals( artifact.getType() ) )
-            {
-                continue;
-            }
-            if ( scope != null && !scope.equals( artifact.getScope() ) )
-            {
-                continue;
-            }
-
-            filtered.add( artifact );
-        }
-
-        if ( filtered.isEmpty() )
-        {
-            return Collections.emptySet();
-        }
-
-        return Collections.unmodifiableSet( filtered );
+        return new LinkedHashSet<Artifact>( filter( allOf( matchers ), dependencies ) );
     }
 
-    protected Artifact getDependency( String groupId, String artifactId, String version, String classifier,
-                                      String type, String scope )
+    protected Artifact getDependency( GroupIdMatcher groupId, ArtifactIdMatcher artifactId,
+                                      Matcher<? extends Artifact>... extraMatchers )
     {
         if ( groupId == null || artifactId == null )
         {
@@ -1593,38 +1612,13 @@ public class AbstractMavenFlexCompilerConfiguration
         }
 
         Set<Artifact> dependencies = getDependencies();
-
-        for ( Artifact artifact : dependencies )
+        List<Artifact> filtered = filter( allOf( groupId, artifactId, allOf( extraMatchers ) ), dependencies );
+        if ( filtered.isEmpty() )
         {
-            if ( !groupId.equals( artifact.getGroupId() ) )
-            {
-                continue;
-            }
-            if ( !artifactId.equals( artifact.getArtifactId() ) )
-            {
-                continue;
-            }
-            if ( version != null && !version.equals( artifact.getVersion() ) )
-            {
-                continue;
-            }
-            if ( classifier != null && !classifier.equals( artifact.getClassifier() ) )
-            {
-                continue;
-            }
-            if ( type != null && !type.equals( artifact.getType() ) )
-            {
-                continue;
-            }
-            if ( scope != null && !scope.equals( artifact.getScope() ) )
-            {
-                continue;
-            }
-
-            return artifact;
+            return null;
         }
 
-        return null;
+        return filtered.get( 0 );
     }
 
     public String getDescription()
@@ -1709,16 +1703,21 @@ public class AbstractMavenFlexCompilerConfiguration
         return this;
     }
 
+    @SuppressWarnings( "unchecked" )
     public File[] getExternalLibraryPath()
     {
-        if ( SWC.equals( project.getPackaging() ) )
+        if ( SWC.equals( getProjectType() ) )
         {
-            return (File[]) ArrayUtils.addAll( MavenUtils.getFiles( getDependencies( null, SWC, EXTERNAL ) ),
-                                               MavenUtils.getFiles( getDependencies( null, SWC, COMPILE ) ) );
+            Matcher<? extends Artifact> swcs = allOf( type( SWC ), // 
+                                                      anyOf( scope( EXTERNAL ), scope( COMPILE ), scope( null ) )//
+                );
+            return MavenUtils.getFiles( getDependencies( anyOf( swcs, GLOBAL_MATCHER ) ) );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( null, SWC, EXTERNAL ) );
+            return MavenUtils.getFiles( getDependencies( anyOf( GLOBAL_MATCHER,// 
+                                                                allOf( type( SWC ), scope( EXTERNAL ) )// 
+            ) ) );
         }
     }
 
@@ -1766,13 +1765,15 @@ public class AbstractMavenFlexCompilerConfiguration
     // TODO lazy load here would be awesome
     protected Artifact getFrameworkConfig()
     {
-        Artifact frmkCfg = getDependency( FRAMEWORK_GROUP_ID, "framework", null, "configs", "zip", null );
+        Artifact frmkCfg =
+            getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ), classifier( "configs" ),
+                           type( "zip" ) );
 
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
         {
             // it should resolve playerglobal or airglobal, framework can be absent
-            Artifact frmk = getDependency( FRAMEWORK_GROUP_ID, "framework", null, null, null, null );
+            Artifact frmk = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ) );
 
             if ( frmk == null )
             {
@@ -1810,9 +1811,10 @@ public class AbstractMavenFlexCompilerConfiguration
         return null;
     }
 
+    @SuppressWarnings( "unchecked" )
     public File[] getIncludeLibraries()
     {
-        return MavenUtils.getFiles( getDependencies( null, SWC, INTERNAL ) );
+        return MavenUtils.getFiles( getDependencies( type( SWC ), scope( INTERNAL ), not( GLOBAL_MATCHER ) ) );
     }
 
     public List<String> getIncludes()
@@ -1905,13 +1907,16 @@ public class AbstractMavenFlexCompilerConfiguration
     @SuppressWarnings( "unchecked" )
     public File[] getLibraryPath()
     {
-        if ( SWC.equals( project.getPackaging() ) )
+        if ( SWC.equals( getProjectType() ) )
         {
-            return MavenUtils.getFiles( getDependencies( null, SWC, MERGED ), getCompiledResouceBundles() );
+            return MavenUtils.getFiles( getDependencies( type( SWC ), scope( MERGED ), not( GLOBAL_MATCHER ) ),
+                                        getCompiledResouceBundles() );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( null, SWC, MERGED ), getDependencies( null, SWC, COMPILE ),
+            return MavenUtils.getFiles( getDependencies( type( SWC ),//
+                                                         anyOf( scope( MERGED ), scope( COMPILE ) ),//
+                                                         not( GLOBAL_MATCHER ) ),//
                                         getCompiledResouceBundles() );
         }
     }
@@ -1960,11 +1965,13 @@ public class AbstractMavenFlexCompilerConfiguration
                                                                                       configDirectory ) );
     }
 
+    @SuppressWarnings( "unchecked" )
     public String[] getLoadExterns()
     {
         if ( loadExterns == null )
         {
-            Set<Artifact> dependencies = getDependencies( FlexClassifier.LINK_REPORT, FlexExtension.ZIP, null );
+            Set<Artifact> dependencies =
+                getDependencies( classifier( FlexClassifier.LINK_REPORT ), type( FlexExtension.ZIP ) );
 
             if ( dependencies.isEmpty() )
             {
@@ -1983,7 +1990,7 @@ public class AbstractMavenFlexCompilerConfiguration
             return compilerLocales;
         }
 
-        if ( SWC.equals( project.getPackaging() ) )
+        if ( SWC.equals( getProjectType() ) )
         {
             return null;
         }
@@ -2152,7 +2159,7 @@ public class AbstractMavenFlexCompilerConfiguration
         }
 
         List<String> uris = new ArrayList<String>();
-        for ( INamespace namespace : getNamespace() )
+        for ( INamespace namespace : namespaces )
         {
             uris.add( namespace.uri() );
         }
@@ -2175,6 +2182,11 @@ public class AbstractMavenFlexCompilerConfiguration
         output.getParentFile().mkdirs();
         project.getArtifact().setFile( output );
         return PathUtil.getCanonicalPath( output );
+    }
+
+    public String getProjectType()
+    {
+        return project.getPackaging();
     }
 
     public String[] getPublisher()
@@ -2326,7 +2338,7 @@ public class AbstractMavenFlexCompilerConfiguration
         {
             themes.addAll( PathUtil.getCanonicalPathList( this.themes ) );
         }
-        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( null, SWC, THEME ) ) ) );
+        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( type( SWC ), scope( THEME ) ) ) ) );
         return themes;
     }
 

@@ -1,11 +1,10 @@
 package org.sonatype.flexmojos.compiler;
 
-import java.io.File;
 
 public interface FlexCompiler
 {
 
-    int compileSwf( ICommandLineConfiguration configuration, File sourceFile )
+    int compileSwf( MxmlcConfigurationHolder cfgHolder )
         throws Exception;
 
     int compileSwc( ICompcConfiguration configuration )
