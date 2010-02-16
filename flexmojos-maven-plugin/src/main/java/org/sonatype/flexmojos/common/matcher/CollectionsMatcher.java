@@ -15,25 +15,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.common.matcher;
 
+import java.util.Collection;
 
-public interface FlexCompiler
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+
+public class CollectionsMatcher
 {
 
-    int compileSwf( MxmlcConfigurationHolder cfgHolder )
-        throws Exception;
+    public static Matcher<Collection<?>> isSize( final int i )
+    {
+        return new TypeSafeMatcher<Collection<?>>()
+        {
+            public boolean matchesSafely( Collection<?> item )
+            {
+                return item != null && item.size() == i;
+            }
 
-    int compileSwc( ICompcConfiguration configuration )
-        throws Exception;
-
-    int asdoc( final IASDocConfiguration configuration )
-        throws Exception;
-
-    int optimize( final IOptimizerConfiguration configuration )
-        throws Exception;
-
-    int digest( final IDigestConfiguration configuration )
-        throws Exception;
+            public void describeTo( Description description )
+            {
+                description.appendText( " collection has " );
+                description.appendValue( i );
+                description.appendText( " items " );
+            }
+        };
+    }
 
 }

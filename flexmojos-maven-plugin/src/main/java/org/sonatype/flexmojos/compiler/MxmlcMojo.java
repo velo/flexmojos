@@ -20,11 +20,16 @@ package org.sonatype.flexmojos.compiler;
 import java.io.File;
 import java.util.List;
 import static org.mockito.Mockito.*;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
+import org.sonatype.flexmojos.common.converter.Module;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
+import static org.sonatype.flexmojos.common.FlexExtension.*;
 
 /**
  * <p>
@@ -40,9 +45,10 @@ import org.sonatype.flexmojos.utilities.SourceFileResolver;
  * @goal compile-swf
  * @requiresDependencyResolution compile
  * @phase compile
+ * @configurator flexmojos
  */
 public class MxmlcMojo
-    extends AbstractMavenFlexCompilerConfiguration
+    extends AbstractMavenFlexCompilerConfiguration<MxmlcConfigurationHolder>
     implements ICommandLineConfiguration, Mojo
 {
 
@@ -95,27 +101,19 @@ public class MxmlcMojo
     /**
      * The file to be compiled. The path must be relative with source folder
      * 
-     * @parameter
+     * @parameter expression="${flex.sourceFile}"
      */
     private String sourceFile;
+
+    /**
+     * @parameter
+     */
+    private Module[] modules;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        int result;
-        try
-        {
-            result = compiler.compileSwf( this, getSourceFile() );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
-        if ( result != 0 )
-        {
-            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
-        }
+        executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ) );
 
         if ( runtimeLocales != null )
         {
@@ -125,17 +123,65 @@ public class MxmlcMojo
                 ICompilerConfiguration compilerCfg = spy( this.getCompilerConfiguration() );
                 when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
                 when( compilerCfg.getLocale() ).thenReturn( new String[] { locale } );
-                try
-                {
-                    compiler.compileSwf( cfg, null );
-                }
-                catch ( Exception e )
-                {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                executeCompiler( new MxmlcConfigurationHolder( cfg, null ) );
             }
         }
+
+        executeModules();
+    }
+
+    private void executeModules()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( modules != null )
+        {
+            for ( Module module : modules )
+            {
+                File moduleSource =
+                    SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), module.getSourceFile() );
+
+                String classifier = FilenameUtils.getBaseName( moduleSource.getName() ).toLowerCase();
+                
+                String moduleFinalName;
+                if ( module.getFinalName() != null )
+                {
+                    moduleFinalName = module.getFinalName();
+                }
+                else
+                {
+                    moduleFinalName =
+                        project.getBuild().getFinalName() + "-" + classifier
+                            + "." + SWF;
+                }
+
+                File moduleOutputPath;
+                if ( module.getDestinationPath() != null )
+                {
+                    moduleOutputPath = new File( project.getBuild().getDirectory(), module.getDestinationPath() );
+                }
+                else
+                {
+                    moduleOutputPath = new File( project.getBuild().getDirectory() );
+                }
+                moduleOutputPath.mkdirs();
+
+                File moduleOutput = new File( moduleOutputPath, moduleFinalName );
+
+                ICommandLineConfiguration cfg = spy( this );
+                ICompilerConfiguration compilerCfg = spy( this.getCompilerConfiguration() );
+                when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
+                when( cfg.getOutput() ).thenReturn( PathUtil.getCanonicalPath( moduleOutput ) );
+                executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ) );
+                
+                projectHelper.attachArtifact( project, SWF, classifier, moduleOutput );
+            }
+        }
+    }
+
+    public int doCompile( MxmlcConfigurationHolder cfg )
+        throws Exception
+    {
+        return compiler.compileSwf( cfg );
     }
 
     public List<String> getFileSpecs()

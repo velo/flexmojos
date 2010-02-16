@@ -25,6 +25,8 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.sonatype.flexmojos.test.util.PathUtil;
+
 public class SourceFileResolver
 {
 
@@ -38,17 +40,33 @@ public class SourceFileResolver
     public static File resolveSourceFile( List<String> sourcePaths, String sourceFileName, String groupId,
                                           String artifactId )
     {
-        List<File> sourceRoots = new ArrayList<File>();
-        for ( String sourcePath : sourcePaths )
+        return resolveSourceFile( sourceFileName, PathUtil.getFilesList( sourcePaths ), groupId, artifactId );
+    }
+
+    public static File resolveSourceFile( List<String> sourcePaths, String sourceFile )
+    {
+        return resolveSourceFile( sourceFile, PathUtil.getFilesList( sourcePaths ) );
+    }
+
+    public static File resolveSourceFile( String sourceFileName, List<File> sourceRoots )
+    {
+        File absoluteSourceFile = new File( sourceFileName );
+        if ( absoluteSourceFile.isAbsolute() )
         {
-            File sourceRoot = new File( sourcePath );
-            if ( sourceRoot.isDirectory() )
-            {
-                sourceRoots.add( sourceRoot );
-            }
+            return absoluteSourceFile;
         }
 
-        return resolveSourceFile( sourceFileName, sourceRoots, groupId, artifactId );
+        for ( File sourceDirectory : sourceRoots )
+        {
+            File sourceFile = new File( sourceDirectory, sourceFileName );
+            if ( !sourceFile.exists() )
+            {
+                continue;
+            }
+            return sourceFile;
+        }
+
+        return null;
     }
 
     /**
@@ -64,23 +82,7 @@ public class SourceFileResolver
 
         if ( sourceFileName != null )
         {
-            File absoluteSourceFile = new File( sourceFileName );
-            if ( absoluteSourceFile.isAbsolute() )
-            {
-                return absoluteSourceFile;
-            }
-
-            for ( File sourceDirectory : sourceRoots )
-            {
-                File sourceFile = new File( sourceDirectory, sourceFileName );
-                if ( !sourceFile.exists() )
-                {
-                    continue;
-                }
-                return sourceFile;
-            }
-
-            return null;
+            return resolveSourceFile( sourceFileName, sourceRoots );
         }
 
         for ( File sourceDirectory : sourceRoots )
@@ -227,4 +229,5 @@ public class SourceFileResolver
             return false;
         }
     }
+
 }

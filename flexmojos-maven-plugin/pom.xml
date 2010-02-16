@@ -239,13 +239,14 @@
       <classifier>jdk15</classifier>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-eclipse-plugin</artifactId>
-      <type>maven-plugin</type>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>maven-project</artifactId>
+      		<groupId>org.apache.maven</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -258,11 +259,6 @@
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <type>maven-plugin</type>
     </dependency>
     <dependency>
       <groupId>de.java2html</groupId>
@@ -300,10 +296,16 @@
       <artifactId>saxon-dom</artifactId>
       <version>9.0</version>
     </dependency>
+
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-common-artifact-filters</artifactId>
-      <version>1.2</version>
+      <groupId>jgoogleanalytics</groupId>
+      <artifactId>jgoogleanalytics</artifactId>
+      <version>0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.lambdaj</groupId>
+      <artifactId>lambdaj</artifactId>
+      <version>2.1</version>
     </dependency>
 
     <dependency><!-- needed on optimizer mojo -->

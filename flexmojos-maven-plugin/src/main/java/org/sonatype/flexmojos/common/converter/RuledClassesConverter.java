@@ -44,16 +44,6 @@ public class RuledClassesConverter
                                      ConfigurationListener listener )
         throws ComponentConfigurationException
     {
-        Object retValue = fromExpression( cfg, expressionEvaluator, type );
-        if ( retValue != null )
-        {
-            return retValue;
-        }
-
-        Class implementation = getClassForImplementationHint( type, cfg, classLoader );
-
-        retValue = instantiateObject( implementation );
-
         RuledClasses rc = new RuledClasses();
         if ( cfg.getChildCount() == 0 )
         {

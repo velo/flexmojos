@@ -130,7 +130,8 @@ public class MavenUtils
      */
     @SuppressWarnings( "unchecked" )
     public static Artifact resolveArtifact( MavenProject project, Artifact artifact, ArtifactResolver resolver,
-                                            ArtifactRepository localRepository, List remoteRepositories )
+                                            ArtifactRepository localRepository,
+                                            List<ArtifactRepository> remoteRepositories )
         throws MojoExecutionException
     {
         try

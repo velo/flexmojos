@@ -180,6 +180,16 @@ public class PathUtil
         return getCanonicalPath( files.toArray( new File[files.size()] ) );
     }
 
+    public static List<File> getFilesList( Collection<String> paths )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        return Arrays.asList( getFiles( paths ) );
+    }
+
     public static File[] getFiles( Collection<String> paths )
     {
         if ( paths == null )

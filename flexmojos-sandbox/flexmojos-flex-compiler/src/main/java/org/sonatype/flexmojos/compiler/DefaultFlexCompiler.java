@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 
@@ -57,13 +56,13 @@ public class DefaultFlexCompiler
         } );
     }
 
-    public int compileSwf( ICommandLineConfiguration configuration, File sourceFile )
+    public int compileSwf( MxmlcConfigurationHolder cfgHolder )
         throws Exception
     {
-        final List<String> args = parser.getArgumentsList( configuration, ICommandLineConfiguration.class );
-        if ( sourceFile != null )
+        final List<String> args = parser.getArgumentsList( cfgHolder.configuration, ICommandLineConfiguration.class );
+        if ( cfgHolder.sourceFile != null )
         {
-            args.add( sourceFile.getAbsolutePath() );
+            args.add( cfgHolder.sourceFile.getAbsolutePath() );
         }
         return execute( new Command()
         {

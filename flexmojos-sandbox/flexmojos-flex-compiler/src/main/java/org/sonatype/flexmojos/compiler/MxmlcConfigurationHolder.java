@@ -15,20 +15,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.source;
+package org.sonatype.flexmojos.compiler;
 
-import org.apache.maven.plugin.source.SourceJarMojo;
+import java.io.File;
 
-/**
- * Goal to create a JAR-package containing all the source files of a Flex project.
- * 
- * @extendsPlugin source
- * @extendsGoal jar
- * @goal sources
- * @phase package
- */
-public class FlexSourcesMojo
-    extends SourceJarMojo
+public final class MxmlcConfigurationHolder
 {
+    ICommandLineConfiguration configuration;
 
+    File sourceFile;
+
+    public MxmlcConfigurationHolder( ICommandLineConfiguration configuration, File sourceFile )
+    {
+        super();
+        this.configuration = configuration;
+        this.sourceFile = sourceFile;
+    }
+
+    public ICommandLineConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    public File getSourceFile()
+    {
+        return sourceFile;
+    }
+
+    public void setConfiguration( ICommandLineConfiguration configuration )
+    {
+        this.configuration = configuration;
+    }
+
+    public void setSourceFile( File sourceFile )
+    {
+        this.sourceFile = sourceFile;
+    }
 }

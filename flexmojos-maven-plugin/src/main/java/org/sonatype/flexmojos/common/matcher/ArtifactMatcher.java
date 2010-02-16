@@ -15,25 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.common.matcher;
 
-
-public interface FlexCompiler
+public class ArtifactMatcher
 {
 
-    int compileSwf( MxmlcConfigurationHolder cfgHolder )
-        throws Exception;
+    public static GroupIdMatcher groupId( String groupId )
+    {
+        return new GroupIdMatcher( groupId );
+    }
 
-    int compileSwc( ICompcConfiguration configuration )
-        throws Exception;
+    public static ArtifactIdMatcher artifactId( String artifactId )
+    {
+        return new ArtifactIdMatcher( artifactId );
+    }
 
-    int asdoc( final IASDocConfiguration configuration )
-        throws Exception;
+    public static VersionMatcher version( String version )
+    {
+        return new VersionMatcher( version );
+    }
 
-    int optimize( final IOptimizerConfiguration configuration )
-        throws Exception;
+    public static TypeMatcher type( String type )
+    {
+        return new TypeMatcher( type );
+    }
 
-    int digest( final IDigestConfiguration configuration )
-        throws Exception;
-
+    public static ClassifierMatcher classifier( String classifier )
+    {
+        return new ClassifierMatcher( classifier );
+    }
+    
+    public static ScopeMatcher scope( String scope)
+    {
+        return new ScopeMatcher( scope );
+    }
 }

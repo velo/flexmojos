@@ -229,9 +229,14 @@ public class AbstractFlexMojosTests
     }
 
     @SuppressWarnings( "unchecked" )
-    protected static File getProject( String projectName )
+    protected static File getProject( String projectName, String... filesToInterpolate )
         throws IOException
     {
+        if ( filesToInterpolate == null || filesToInterpolate.length == 0 )
+        {
+            filesToInterpolate = new String[] { "pom.xml" };
+        }
+
         copyProjectLock.writeLock().lock();
         try
         {
@@ -246,7 +251,7 @@ public class AbstractFlexMojosTests
 
             // projects filtering
             Collection<File> poms =
-                FileUtils.listFiles( destDir, new WildcardFileFilter( "pom.xml" ), TrueFileFilter.INSTANCE );
+                FileUtils.listFiles( destDir, new WildcardFileFilter( filesToInterpolate ), TrueFileFilter.INSTANCE );
             for ( File pom : poms )
             {
                 String pomContent = FileUtils.readFileToString( pom );

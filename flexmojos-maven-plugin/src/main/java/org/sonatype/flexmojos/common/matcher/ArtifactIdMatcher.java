@@ -15,25 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.common.matcher;
 
+import org.apache.maven.artifact.Artifact;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 
-public interface FlexCompiler
+public class ArtifactIdMatcher
+    extends TypeSafeMatcher<Artifact>
 {
 
-    int compileSwf( MxmlcConfigurationHolder cfgHolder )
-        throws Exception;
+    private String artifactId;
 
-    int compileSwc( ICompcConfiguration configuration )
-        throws Exception;
+    ArtifactIdMatcher( String artifactId )
+    {
+        if ( artifactId == null )
+        {
+            throw new IllegalArgumentException( "artifactId must be not null" );
+        }
+        this.artifactId = artifactId;
+    }
 
-    int asdoc( final IASDocConfiguration configuration )
-        throws Exception;
+    @Override
+    public boolean matchesSafely( Artifact a )
+    {
+        return artifactId.equals( a.getArtifactId() );
+    }
 
-    int optimize( final IOptimizerConfiguration configuration )
-        throws Exception;
-
-    int digest( final IDigestConfiguration configuration )
-        throws Exception;
+    public void describeTo( Description msg )
+    {
+        msg.appendText( " artifactId " );
+        msg.appendValue( artifactId );
+    }
 
 }

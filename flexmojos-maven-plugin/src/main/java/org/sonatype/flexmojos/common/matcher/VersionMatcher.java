@@ -15,25 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.compiler;
+package org.sonatype.flexmojos.common.matcher;
 
+import org.apache.maven.artifact.Artifact;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 
-public interface FlexCompiler
+class VersionMatcher
+    extends TypeSafeMatcher<Artifact>
 {
 
-    int compileSwf( MxmlcConfigurationHolder cfgHolder )
-        throws Exception;
+    private String version;
 
-    int compileSwc( ICompcConfiguration configuration )
-        throws Exception;
+    VersionMatcher( String version )
+    {
+        if ( version == null )
+        {
+            throw new IllegalArgumentException( "version must be not null" );
+        }
+        this.version = version;
+    }
 
-    int asdoc( final IASDocConfiguration configuration )
-        throws Exception;
+    @Override
+    public boolean matchesSafely( Artifact a )
+    {
+        return version.equals( a.getVersion() );
+    }
 
-    int optimize( final IOptimizerConfiguration configuration )
-        throws Exception;
-
-    int digest( final IDigestConfiguration configuration )
-        throws Exception;
+    public void describeTo( Description msg )
+    {
+        msg.appendText( " version " );
+        msg.appendValue( version );
+    }
 
 }

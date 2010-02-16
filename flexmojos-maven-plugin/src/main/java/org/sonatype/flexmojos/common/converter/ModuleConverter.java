@@ -17,22 +17,24 @@
  */
 package org.sonatype.flexmojos.common.converter;
 
-import org.apache.maven.model.FileSet;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.converters.AbstractConfigurationConverter;
+import org.codehaus.plexus.component.configurator.converters.ConfigurationConverter;
 import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
-public class FlexmojosConverter
+@Component( role = ConfigurationConverter.class, hint = "Module" )
+public class ModuleConverter
     extends AbstractConfigurationConverter
 {
 
     @SuppressWarnings( "unchecked" )
     public boolean canConvert( Class type )
     {
-        return RuledClasses.class.equals( type );
+        return Module.class.equals( type );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -41,45 +43,39 @@ public class FlexmojosConverter
                                      ConfigurationListener listener )
         throws ComponentConfigurationException
     {
-        RuledClasses rc = new RuledClasses();
-        if ( cfg.getChildCount() == 0 )
+
+        String value;
+        try
+        {
+            value = (String) fromExpression( cfg, expressionEvaluator, String.class );
+        }
+        catch ( ComponentConfigurationException e )
+        {
+            value = null;
+        }
+
+        if ( cfg.getChildCount() == 0 && value == null )
         {
             throw new ComponentConfigurationException( "Invalid configuration it is empty!" );
         }
 
-        PlexusConfiguration[] nodes = cfg.getChildren();
-        for ( PlexusConfiguration node : nodes )
-        {
-            String name = node.getName();
-            if ( !( name.equals( "class" ) || name.equals( "classSet" ) ) )
-            {
-                throw new ComponentConfigurationException( "Invalid configuration: '" + name
-                    + "'. Valid values are 'class' and 'classSet'" );
-            }
-        }
+        Module rc = new Module();
 
-        PlexusConfiguration[] classNodes = cfg.getChildren( "class" );
-        PlexusConfiguration[] setNodes = cfg.getChildren( "classSet" );
-
-        if ( classNodes.length == 0 && setNodes.length == 0 )
+        if ( value != null )
         {
-            return rc;
+            rc.setSourceFile( value );
         }
-
-        String[] classes = new String[classNodes.length];
-        for ( int i = 0; i < classNodes.length; i++ )
+        else
         {
-            classes[i] = (String) fromExpression( classNodes[i], expressionEvaluator, String.class );
+            rc.setDestinationPath( (String) fromExpression( cfg.getChild( "detinationPath" ), expressionEvaluator,
+                                                            String.class ) );
+            rc.setFinalName( (String) fromExpression( cfg.getChild( "finalName" ), expressionEvaluator, String.class ) );
+            rc.setOptimize( Boolean.parseBoolean( (String) fromExpression( cfg.getChild( "optimize" ),
+                                                                           expressionEvaluator, String.class ) ) );
+            rc.setSourceFile( (String) fromExpression( cfg.getChild( "sourceFile" ), expressionEvaluator, String.class ) );
         }
-        rc.setClasses( classes );
-
-        FileSet[] classSets = new FileSet[setNodes.length];
-        for ( int i = 0; i < setNodes.length; i++ )
-        {
-            classSets[i] = (FileSet) fromExpression( setNodes[i], expressionEvaluator, FileSet.class );
-        }
-        rc.setClassSets( classSets );
 
         return rc;
     }
+
 }
