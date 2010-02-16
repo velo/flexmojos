@@ -31,7 +31,7 @@ import org.sonatype.flexmojos.common.converter.RuledClasses;
  * @configurator flexmojos
  */
 public class CompcMojo
-    extends AbstractMavenFlexCompilerConfiguration
+    extends AbstractMavenFlexCompilerConfiguration<ICompcConfiguration>
     implements ICompcConfiguration, Mojo
 {
 
@@ -215,20 +215,13 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        int result;
-        try
-        {
-            result = compiler.compileSwc( this );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+        executeCompiler( this );
+    }
 
-        if ( result != 0 )
-        {
-            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
-        }
+    public int doCompile( ICompcConfiguration cfg )
+        throws Exception
+    {
+        return compiler.compileSwc( this );
     }
 
     public Boolean getComputeDigest()
