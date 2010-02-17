@@ -101,6 +101,13 @@ public class ApplicationMojo
     protected File source;
 
     /**
+     * When true will strip artifact and version information from the built MXML module artifact.
+     *  
+     * @parameter default-value="false"
+     */
+    private boolean stripModuleArtifactInfo;
+    
+    /**
      * When true, flexmojos will register register every compiled SWF files as trusted. These SWF files are assigned to
      * the local-trusted sandbox. They can interact with any other SWF files, and they can load data from anywhere,
      * remote or local. On false nothing is done, so if the file is already trusted it will still as it is.
@@ -258,8 +265,9 @@ public class ApplicationMojo
             setMavenPathResolver( moduleBuilder );
             moduleBuilder.setConfiguration( configuration );
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
+            String moduleArtifactPrefix = stripModuleArtifactInfo ? "" : build.getFinalName() + "-" ;
             File outputModule =
-                new File( build.getDirectory(), build.getFinalName() + "-" + moduleName + "." + project.getPackaging() );
+                new File( build.getDirectory(), moduleArtifactPrefix + moduleName + "." + project.getPackaging() );
             updateSecuritySandbox( outputModule );
 
             moduleBuilder.setOutput( outputModule );
