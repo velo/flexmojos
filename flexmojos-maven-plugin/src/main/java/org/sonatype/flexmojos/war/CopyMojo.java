@@ -112,6 +112,13 @@ public class CopyMojo
     private boolean stripVersion;
 
     /**
+     * When true will strip artifact and version information from the built MXML module artifact.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripModuleArtifactInfo;
+
+    /**
      * Use final name if/when available
      * 
      * @parameter default-value="true"
@@ -376,11 +383,13 @@ public class CopyMojo
         if ( !useFinalName )
         {
             String version = stripVersion ? "" : "-" + artifact.getVersion();
-            fileName = artifact.getArtifactId() + version + classifier + "." + artifact.getType();
+            String artifactPrefix = stripModuleArtifactInfo ? "" : artifact.getArtifactId() + version;
+            fileName = artifactPrefix + classifier + "." + artifact.getType();
         }
         else
         {
-            fileName = pomProject.getBuild().getFinalName() + classifier + "." + artifact.getType();
+            String artifactPrefix = stripModuleArtifactInfo ? "" : pomProject.getBuild().getFinalName();
+            fileName = artifactPrefix + classifier + "." + artifact.getType();
         }
 
         if ( stripVersion && fileName.contains( artifact.getVersion() ) )
