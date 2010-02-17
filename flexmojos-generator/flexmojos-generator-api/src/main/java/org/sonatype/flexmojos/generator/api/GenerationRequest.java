@@ -38,8 +38,18 @@ public class GenerationRequest
     private Map<String, String> templates;
 
     private File transientOutputFolder;
+    
+    private String[] translators;
 
-    public void addClass( String classname, File sourceJar )
+    public String[] getTranslators() {
+		return translators;
+	}
+
+	public void setTranslators(String[] translators) {
+		this.translators = translators;
+	}
+
+	public void addClass( String classname, File sourceJar )
     {
         getClasses().put( classname, sourceJar );
     }

@@ -181,6 +181,14 @@ public class SimpleGeneratorMojo
      * @parameter
      */
     private Map<String, String> templates;
+    
+    /**
+     * A '=' separated list of Strings, format: 
+     * packageToTranslate=packageToReplace
+     * 
+     * @parameter
+     */
+    private String[] translators;
 
     public void execute()
         throws MojoExecutionException
@@ -194,6 +202,7 @@ public class SimpleGeneratorMojo
         request.setPersistentOutputFolder( outputDirectory );
         request.setTemplates( templates );
         request.setTransientOutputFolder( baseOutputDirectory );
+        request.setTranslators(translators);
 
         ClassLoader cl = currentThread().getContextClassLoader();
 
@@ -285,6 +294,10 @@ public class SimpleGeneratorMojo
                 templates.put( "base-bean-template", beanTemplate[0] );
                 templates.put( "bean-template", beanTemplate[1] );
             }
+        }
+        
+        if(translators == null){
+        	translators = new String[0];
         }
     }
 
