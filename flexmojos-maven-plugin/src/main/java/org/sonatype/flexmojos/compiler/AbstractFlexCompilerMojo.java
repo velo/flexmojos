@@ -67,6 +67,7 @@ import org.sonatype.flexmojos.common.FlexClassifier;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.FDKConfigResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 import org.sonatype.flexmojos.utilities.Namespace;
@@ -1510,6 +1511,16 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         if ( configFile == null && configFiles == null )
         {
             commandLineArguments.add( "-load-config=" );
+        }
+
+        if ( configFiles != null )
+        {
+            String separator = "=";
+            for ( File cfg : configFiles )
+            {
+                commandLineArguments.add( "-load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
+                separator = "+=";
+            }
         }
 
         configureMetadataViaCommandLine( commandLineArguments );
