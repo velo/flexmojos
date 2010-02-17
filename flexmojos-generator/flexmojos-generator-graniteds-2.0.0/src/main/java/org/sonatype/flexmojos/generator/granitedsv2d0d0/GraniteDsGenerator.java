@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Generator;
 import org.granite.generator.Output;
 import org.granite.generator.TemplateUri;
@@ -171,6 +172,19 @@ public final class GraniteDsGenerator
     public final void generate( GenerationRequest request )
         throws GenerationException
     {
+    	
+    	// add / create package translators
+    	for(String currentTranslator : request.getTranslators()){
+    		String[] splitTranslator = currentTranslator.split("=");
+    		if(splitTranslator.length != 2){
+    			throw new GenerationException("Invalid format: translators must be in format 'java.package=as3.package'");
+    		}
+    		String java = splitTranslator[0];
+    		String as3 = splitTranslator[1];
+    		
+    		getLogger().info("Adding translator: [" + java + ", " + as3 + "]");
+    		translators.add(new PackageTranslator(java, as3));
+    	}
     	// tide
     	String useTide = request.getExtraOptions().get("tide");
     	if(useTide != null)
@@ -233,7 +247,7 @@ public final class GraniteDsGenerator
             // Create the generator.
             Generator generator = new Generator( configuration );
             generator.add( transformerImpl );
-
+            
             // Call the generator for each class
             getLogger().info( "Calling the generator for each Java class." );
             int count = generateClass( classLoader, generator );
@@ -284,6 +298,7 @@ public final class GraniteDsGenerator
 					continue;
 				}
                 JavaAs3Input input = new JavaAs3Input( classToGenerate, classFile.getValue() );
+                
                 for ( Output<?> output : generator.generate( input ) )
                 {
                     if ( output.isOutdated() )
