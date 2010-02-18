@@ -41,7 +41,6 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <sourceFile>FlightReservation1.mxml</sourceFile>
-          <mergeResourceBundle>true</mergeResourceBundle>
           <resourceBundlePath>${basedir}/locale/{locale}</resourceBundlePath>
           <compiledLocales>
             <locale>en_US</locale>
