@@ -24,7 +24,7 @@ public class Flexmojos166Test
 {
 
     @Test
-    public void disableDefaultLocale()
+    public void cssCompilation()
         throws Exception
     {
         testIssue( "flexmojos-166" );
