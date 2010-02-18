@@ -39,6 +39,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 
@@ -78,11 +79,6 @@ public class SignAirMojo
     private List<Resource> resources;
 
     /**
-     * @parameter default-value="${project.build.finalName}.air"
-     */
-    private String outputName;
-
-    /**
      * @parameter default-value="${basedir}/src/main/resources/descriptor.xml"
      */
     private File descriptorTemplate;
@@ -105,6 +101,20 @@ public class SignAirMojo
      */
     private List<String> includeFiles;
 
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * 
+     * @parameter expression="${flexmojos.classifier}"
+     */
+    private String classifier;
+
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    protected MavenProjectHelper projectHelper;
+
     @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -112,7 +122,9 @@ public class SignAirMojo
         AIRPackager airPackager = new AIRPackager();
         try
         {
-            File output = new File( project.getBuild().getDirectory(), outputName );
+            String c = this.classifier == null ? "" : "-" + this.classifier;
+            File output =
+                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + AIR );
             airPackager.setOutput( output );
             airPackager.setDescriptor( getAirDescriptor() );
 
@@ -180,7 +192,14 @@ public class SignAirMojo
                 airPackager.addSourceWithPath( includeFile, includePath );
             }
 
-            project.getArtifact().setFile( output );
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, output );
+            }
+            else
+            {
+                project.getArtifact().setFile( output );
+            }
 
             final List<Message> messages = new ArrayList<Message>();
 
