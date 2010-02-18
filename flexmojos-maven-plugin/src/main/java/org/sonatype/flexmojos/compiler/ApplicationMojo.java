@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
@@ -102,11 +103,11 @@ public class ApplicationMojo
 
     /**
      * When true will strip artifact and version information from the built MXML module artifact.
-     *  
+     * 
      * @parameter default-value="false"
      */
     private boolean stripModuleArtifactInfo;
-    
+
     /**
      * When true, flexmojos will register register every compiled SWF files as trusted. These SWF files are assigned to
      * the local-trusted sandbox. They can interact with any other SWF files, and they can load data from anywhere,
@@ -129,11 +130,6 @@ public class ApplicationMojo
      * @parameter default-value="en_US"
      */
     private String defaultLocale;
-
-    /**
-     * @parameter default-value="true"
-     */
-    private boolean useDefaultLocale;
 
     /**
      * @component
@@ -159,16 +155,7 @@ public class ApplicationMojo
             throw new MojoExecutionException( "Unable to find sourceDirectory: " + sourceDirectory );
         }
 
-        if ( source == null )
-        {
-            if ( sourceFile == null )
-            {
-                getLog().warn( "Source file was not defined, flexmojos will guess one." );
-            }
-            source =
-                SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile,
-                                                      project.getGroupId(), project.getArtifactId() );
-        }
+        getSource();
 
         if ( source == null )
         {
@@ -211,6 +198,22 @@ public class ApplicationMojo
         super.setUp();
 
         builder.setOutput( getOutput() );
+    }
+
+    private File getSource()
+    {
+        if ( source == null )
+        {
+            if ( sourceFile == null )
+            {
+                getLog().warn( "Source file was not defined, flexmojos will guess one." );
+            }
+            source =
+                SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile,
+                                                      project.getGroupId(), project.getArtifactId() );
+        }
+
+        return source;
     }
 
     protected void configureIncludeResourceBundles( OEMConfiguration oemConfig )
@@ -265,7 +268,7 @@ public class ApplicationMojo
             setMavenPathResolver( moduleBuilder );
             moduleBuilder.setConfiguration( configuration );
             moduleBuilder.setLogger( new CompileLogger( getLog() ) );
-            String moduleArtifactPrefix = stripModuleArtifactInfo ? "" : build.getFinalName() + "-" ;
+            String moduleArtifactPrefix = stripModuleArtifactInfo ? "" : build.getFinalName() + "-";
             File outputModule =
                 new File( build.getDirectory(), moduleArtifactPrefix + moduleName + "." + project.getPackaging() );
             updateSecuritySandbox( outputModule );
@@ -470,11 +473,11 @@ public class ApplicationMojo
     @Override
     protected String getDefaultLocale()
     {
-        if ( useDefaultLocale )
+        if ( "css".equalsIgnoreCase( FilenameUtils.getExtension( getSource().getName() ) ) )
         {
-            return this.defaultLocale;
+            return null;
         }
-        return null;
+        return this.defaultLocale;
     }
 
     protected Configuration getResourceBundleConfiguration( String[] bundlesNames, String locale, File localePath )
