@@ -43,6 +43,8 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -101,7 +103,7 @@ public class AbstractFlexMojosTests
         container = new DefaultPlexusContainer();
     }
 
-    @BeforeSuite( dependsOnMethods={"initFolders"}, alwaysRun = true )
+    @BeforeSuite( dependsOnMethods = { "initFolders" }, alwaysRun = true )
     public static void addEmmaToClasshPath()
         throws Exception
     {
@@ -318,6 +320,43 @@ public class AbstractFlexMojosTests
         }
 
         return configReportDOM;
+    }
+
+    protected void assertSeftExit( File main )
+        throws Exception
+    {
+        Process p = null;
+        try
+        {
+            p = Runtime.getRuntime().exec( new String[] { "flashplayer", main.getCanonicalPath() } );
+            final Process tp = p;
+
+            Thread t = new Thread( new Runnable()
+            {
+
+                public void run()
+                {
+                    try
+                    {
+                        tp.waitFor();
+                    }
+                    catch ( InterruptedException e )
+                    {
+                    }
+                }
+            } );
+
+            t.start();
+
+            t.join( 10000 );
+
+            MatcherAssert.assertThat( p.exitValue(), CoreMatchers.equalTo( 0 ) );
+        }
+        finally
+        {
+            if ( p != null )
+                p.destroy();
+        }
     }
 
 }

@@ -19,18 +19,41 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
-		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>%{flexmojos.version}</version>
-	</parent>
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-flex-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
 
-	<groupId>info.rvin.itest</groupId>
-	<artifactId>hello-world</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <groupId>info.rvin.itest</groupId>
+  <artifactId>hello-world</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-	<packaging>swf</packaging>
+  <packaging>swf</packaging>
+  
+  <properties>
+    <isIt>false</isIt>
+  </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <defines>
+            <property>
+              <name>CFG::IT</name>
+              <value>${isIt}</value>
+            </property>
+          </defines>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
 </project>

@@ -17,22 +17,11 @@
  */
 package org.sonatype.flexmojos.common;
 
-public interface FlexExtension
+import java.util.Map;
+
+public interface Cacheable
 {
-    String AIR = "air";
 
-    String SWF = "swf";
-
-    String SWC = "swc";
-
-    String SWZ = "swz";
-
-    String RB_SWC = "rb.swc";
-
-    String ZIP = "zip";
-
-    String POM = "pom";
-
-    String XML = "xml";
+    public Map<String, Object> getCache();
 
 }

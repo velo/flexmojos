@@ -25,7 +25,7 @@ public class Module
 
     private String finalName;
 
-    private boolean optimize;
+    private boolean optimize = true;
 
     private String sourceFile;
 

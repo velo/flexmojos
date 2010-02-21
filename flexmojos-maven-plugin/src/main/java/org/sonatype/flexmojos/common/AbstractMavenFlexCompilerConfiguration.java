@@ -17,6 +17,10 @@
  */
 package org.sonatype.flexmojos.common;
 
+import static ch.lambdaj.Lambda.filter;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.common.FlexScopes.COMPILE;
@@ -24,6 +28,11 @@ import static org.sonatype.flexmojos.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.common.FlexScopes.THEME;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.artifactId;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.classifier;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.groupId;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.scope;
+import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.type;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -69,8 +78,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
-import org.sonatype.flexmojos.common.matcher.ArtifactIdMatcher;
-import org.sonatype.flexmojos.common.matcher.GroupIdMatcher;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -96,13 +103,12 @@ import org.sonatype.flexmojos.compiler.MavenArtifact;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import static org.sonatype.flexmojos.common.matcher.ArtifactMatcher.*;
-import static org.hamcrest.CoreMatchers.*;
-import static ch.lambdaj.Lambda.*;
+import static org.sonatype.flexmojos.common.FlexExtension.*;
+import static org.sonatype.flexmojos.common.FlexClassifier.*;
 
 public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration
+    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -112,6 +118,25 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     private static final Matcher<? extends Artifact> GLOBAL_MATCHER =
         allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
                                                                   artifactId( "airglobal" ) ) );
+
+    /**
+     * @parameter expression="${project.build.outputDirectory}"
+     * @readonly
+     * @required
+     */
+    protected File outputDirectory;
+
+    /**
+     * @parameter expression="${project.build.directory}"
+     * @readonly
+     * @required
+     */
+    private File targetDirectory;
+
+    public File getTargetDirectory()
+    {
+        return targetDirectory;
+    }
 
     /**
      * Generate an accessible SWF
@@ -237,6 +262,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * @parameter expression="${flex.benchmarkTimeFilter}"
      */
     private Long benchmarkTimeFilter;
+
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * 
+     * @parameter expression="${flex.classifier}"
+     */
+    private String classifier;
 
     /**
      * Specifies a compatibility version
@@ -442,7 +474,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * Usage:
      * 
      * <pre>
-     * &lt;definesDeclaration&gt;
+     * &lt;defines&gt;
      *   &lt;property&gt;
      *     &lt;name&gt;SOMETHING::aNumber&lt;/name&gt;
      *     &lt;value&gt;2.2&lt;/value&gt;
@@ -451,7 +483,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      *     &lt;name&gt;SOMETHING::aString&lt;/name&gt;
      *     &lt;value&gt;&quot;text&quot;&lt;/value&gt;
      *   &lt;/property&gt;
-     * &lt;/definesDeclaration&gt;
+     * &lt;/defines&gt;
      * </pre>
      * 
      * @parameter
@@ -776,8 +808,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * </p>
      * 
      * @parameter expression="${flex.linkReport}"
+     * @readonly
      */
     private File linkReport;
+
+    /**
+     * When true the link report will be attached to maven reactor
+     * 
+     * @parameter expression="${flex.linkReportAttach}"
+     */
+    private boolean linkReportAttach;
 
     /**
      * Load a file containing configuration options.
@@ -1012,9 +1052,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * Equivalent to -output
      * </p>
      * 
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}.${project.packaging}"
-     *            expression="${flex.output}"
+     * @parameter expression="${flex.output}"
      * @required
+     * @readonly
      */
     private File output;
 
@@ -1032,6 +1072,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * @readonly
      */
     protected MavenProject project;
+
+    /**
+     * @parameter expression="${project.packaging}"
+     * @required
+     * @readonly
+     */
+    protected String packaging;
 
     /**
      * @component
@@ -1620,16 +1667,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         return new LinkedHashSet<Artifact>( filter( allOf( matchers ), dependencies ) );
     }
 
-    protected Artifact getDependency( GroupIdMatcher groupId, ArtifactIdMatcher artifactId,
-                                      Matcher<? extends Artifact>... extraMatchers )
+    protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
     {
-        if ( groupId == null || artifactId == null )
-        {
-            return null;
-        }
 
         Set<Artifact> dependencies = getDependencies();
-        List<Artifact> filtered = filter( allOf( groupId, artifactId, allOf( extraMatchers ) ), dependencies );
+        List<Artifact> filtered = filter( allOf( matchers ), dependencies );
         if ( filtered.isEmpty() )
         {
             return null;
@@ -1728,14 +1770,42 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
             Matcher<? extends Artifact> swcs = allOf( type( SWC ), // 
                                                       anyOf( scope( EXTERNAL ), scope( COMPILE ), scope( null ) )//
                 );
-            return MavenUtils.getFiles( getDependencies( anyOf( swcs, GLOBAL_MATCHER ) ) );
+            return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( anyOf( GLOBAL_MATCHER,// 
-                                                                allOf( type( SWC ), scope( EXTERNAL ) )// 
-            ) ) );
+            return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),// 
+                                                         allOf( type( SWC ), scope( EXTERNAL ) ) ), getGlobalArtifact() );
         }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public Collection<Artifact> getGlobalArtifact()
+    {
+        Artifact global = getDependency( GLOBAL_MATCHER );
+        if ( global == null )
+        {
+            throw new IllegalArgumentException(
+                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
+        }
+
+        File dir = new File( outputDirectory, "swcs" );
+        dir.mkdirs();
+
+        File dest = new File( dir, global.getArtifactId() + "." + SWC );
+
+        try
+        {
+            FileUtils.copyFile( global.getFile(), dest );
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+        }
+
+        global.setFile( dest );
+
+        return Collections.singletonList( global );
     }
 
     public List<String> getExterns()
@@ -1932,7 +2002,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         else
         {
             return MavenUtils.getFiles( getDependencies( type( SWC ),//
-                                                         anyOf( scope( MERGED ), scope( COMPILE ) ),//
+                                                         anyOf( scope( MERGED ), scope( COMPILE ), scope( null ) ),//
                                                          not( GLOBAL_MATCHER ) ),//
                                         getCompiledResouceBundles() );
         }
@@ -1973,6 +2043,15 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
 
     public String getLinkReport()
     {
+        File linkReport;
+        if ( linkReportAttach )
+        {
+            linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
+        }
+        else
+        {
+            linkReport = new File( outputDirectory, getFinalName() + "-" + LINK_REPORT + "." + XML );
+        }
         return PathUtil.getCanonicalPath( linkReport );
     }
 
@@ -1987,8 +2066,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     {
         if ( loadExterns == null )
         {
-            Set<Artifact> dependencies =
-                getDependencies( classifier( FlexClassifier.LINK_REPORT ), type( FlexExtension.ZIP ) );
+            Set<Artifact> dependencies = getDependencies( classifier( LINK_REPORT ), type( XML ) );
 
             if ( dependencies.isEmpty() )
             {
@@ -2007,7 +2085,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
             return compilerLocales;
         }
 
-        if ( SWC.equals( getProjectType() ) )
+        if ( runtimeLocales != null || SWC.equals( getProjectType() ) )
         {
             return null;
         }
@@ -2041,7 +2119,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
             url = getClass().getResource( "/fonts/localFonts.ser" );
         }
 
-        File fontsSer = new File( project.getBuild().getOutputDirectory(), "fonts.ser" );
+        File fontsSer = new File( outputDirectory, "fonts.ser" );
         try
         {
             FileUtils.copyURLToFile( url, fontsSer );
@@ -2196,14 +2274,39 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
 
     public String getOutput()
     {
+        if ( output == null )
+        {
+            output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
+        }
+
         output.getParentFile().mkdirs();
-        project.getArtifact().setFile( output );
+
+        if ( getClassifier() != null )
+        {
+            projectHelper.attachArtifact( project, getProjectType(), getClassifier(), output );
+        }
+        else
+        {
+            project.getArtifact().setFile( output );
+        }
+
         return PathUtil.getCanonicalPath( output );
+    }
+
+    public String getFinalName()
+    {
+        String c = getClassifier() == null ? "" : "-" + getClassifier();
+        return project.getBuild().getFinalName() + c;
+    }
+
+    public String getClassifier()
+    {
+        return classifier;
     }
 
     public String getProjectType()
     {
-        return project.getPackaging();
+        return packaging;
     }
 
     public String[] getPublisher()
@@ -2391,7 +2494,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         Artifact frmkCfg = getFrameworkConfig();
 
         File cfgZip = frmkCfg.getFile();
-        File dest = new File( project.getBuild().getOutputDirectory(), "configs" );
+        File dest = new File( outputDirectory, "configs" );
         dest.mkdirs();
 
         try
@@ -2649,6 +2752,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     public void setLog( Log log )
     {
         this.log = log;
+    }
+
+    private Map<String, Object> cache = new LinkedHashMap<String, Object>();
+
+    public Map<String, Object> getCache()
+    {
+        return cache;
     }
 
 }

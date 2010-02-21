@@ -29,6 +29,7 @@ import java.util.Map;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
+import org.sonatype.flexmojos.compiler.IDefine;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
 import org.sonatype.flexmojos.compiler.IFrame;
 import org.sonatype.flexmojos.compiler.IFramesConfiguration;
@@ -89,6 +90,7 @@ public class ParseArgumentsTest
         INamespacesConfiguration namespacesCfg = mock( INamespacesConfiguration.class, RETURNS_NULL );
         INamespace namespace = mock( INamespace.class, RETURNS_NULL );
         INamespace namespace2 = mock( INamespace.class, RETURNS_NULL );
+        IDefine define = mock( IDefine.class, RETURNS_NULL );
 
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( cfg.getMetadataConfiguration() ).thenReturn( metadataCfg );
@@ -114,11 +116,14 @@ public class ParseArgumentsTest
         when( namespace.manifest() ).thenReturn( "mx-manifest.xml" );
         when( namespace2.uri() ).thenReturn( "library://ns.adobe.com/flex/spark" );
         when( namespace2.manifest() ).thenReturn( "spark-manifest.xml" );
+        when( compilerCfg.getDefine() ).thenReturn( new IDefine[] { define } );
+        when( define.name() ).thenReturn( "CFG::AAA" );
+        when( define.value() ).thenReturn( "true" );
 
         List<String> args = parser.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
-        Assert.assertEquals( args.size(), 25, args.toString() );
+        Assert.assertEquals( args.size(), 28, args.toString() );
         Assert.assertTrue( args.contains( "-compiler.accessible=true" ) );
         Assert.assertTrue( args.contains( "-metadata.creator=Marvin" ) );
         Assert.assertTrue( args.contains( "-metadata.creator+=VELO" ) );
@@ -133,6 +138,7 @@ public class ParseArgumentsTest
                                                  "mx-manifest.xml" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace", "library://ns.adobe.com/flex/spark",
                                                  "spark-manifest.xml" ) );
+        assertThat( args, ArrayMatcher.subArray( "-compiler.define", "CFG::AAA", "true" ) );
     }
 
     @Test
