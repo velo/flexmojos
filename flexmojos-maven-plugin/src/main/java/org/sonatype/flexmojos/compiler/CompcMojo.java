@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import static org.sonatype.flexmojos.common.FlexExtension.*;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.Mojo;
@@ -218,7 +218,7 @@ public class CompcMojo
         executeCompiler( this );
     }
 
-    public int doCompile( ICompcConfiguration cfg )
+    public final int doCompile( ICompcConfiguration cfg )
         throws Exception
     {
         return compiler.compileSwc( this );
@@ -340,6 +340,12 @@ public class CompcMojo
     public String getRoot()
     {
         return root;
+    }
+
+    @Override
+    public final String getProjectType()
+    {
+        return SWC;
     }
 
 }

@@ -1,6 +1,8 @@
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.common.FlexExtension.*;
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
 import static org.mockito.Mockito.*;
 
@@ -11,6 +13,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.converter.Module;
 import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.truster.FlashPlayerTruster;
+import org.sonatype.flexmojos.truster.TrustException;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
 import static org.sonatype.flexmojos.common.FlexExtension.*;
 
@@ -93,6 +97,13 @@ public class MxmlcMojo
      */
     private Module[] modules;
 
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private FlashPlayerTruster truster;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -124,7 +135,7 @@ public class MxmlcMojo
                     SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), module.getSourceFile() );
 
                 String classifier = FilenameUtils.getBaseName( moduleSource.getName() ).toLowerCase();
-                
+
                 String moduleFinalName;
                 if ( module.getFinalName() != null )
                 {
@@ -132,39 +143,50 @@ public class MxmlcMojo
                 }
                 else
                 {
-                    moduleFinalName =
-                        project.getBuild().getFinalName() + "-" + classifier
-                            + "." + SWF;
+                    moduleFinalName = project.getBuild().getFinalName() + "-" + classifier + "." + SWF;
                 }
 
-                File moduleOutputPath;
+                File moduleOutputDir;
                 if ( module.getDestinationPath() != null )
                 {
-                    moduleOutputPath = new File( project.getBuild().getDirectory(), module.getDestinationPath() );
+                    moduleOutputDir = new File( project.getBuild().getDirectory(), module.getDestinationPath() );
                 }
                 else
                 {
-                    moduleOutputPath = new File( project.getBuild().getDirectory() );
+                    moduleOutputDir = new File( project.getBuild().getDirectory() );
                 }
-                moduleOutputPath.mkdirs();
+                moduleOutputDir.mkdirs();
 
-                File moduleOutput = new File( moduleOutputPath, moduleFinalName );
+                File moduleOutput = new File( moduleOutputDir, moduleFinalName );
 
-                ICommandLineConfiguration cfg = spy( this );
-                ICompilerConfiguration compilerCfg = spy( this.getCompilerConfiguration() );
-                when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-                when( cfg.getOutput() ).thenReturn( PathUtil.getCanonicalPath( moduleOutput ) );
+                // TODO include the original extern
+                String[] loadExtern = new String[] { getLinkReport() };
+
+                MxmlcMojo cfg = spy( this );
+                when( cfg.getClassifier() ).thenReturn( classifier );
+                when( cfg.getTargetDirectory() ).thenReturn( moduleOutputDir );
+                when( cfg.getFinalName() ).thenReturn( moduleFinalName );
+                if ( module.isOptimize() )
+                {
+                    when( cfg.getLoadExterns() ).thenReturn( loadExtern );
+                }
                 executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ) );
-                
-                projectHelper.attachArtifact( project, SWF, classifier, moduleOutput );
             }
         }
     }
 
-    public int doCompile( MxmlcConfigurationHolder cfg )
+    public final int doCompile( MxmlcConfigurationHolder cfg )
         throws Exception
     {
-        return compiler.compileSwf( cfg );
+        try
+        {
+            return compiler.compileSwf( cfg );
+        }
+        finally
+        {
+            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
+        }
+
     }
 
     public List<String> getFileSpecs()
@@ -186,6 +208,12 @@ public class MxmlcMojo
     {
         return SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile, project.getGroupId(),
                                                      project.getArtifactId() );
+    }
+
+    @Override
+    public final String getProjectType()
+    {
+        return SWF;
     }
 
 }

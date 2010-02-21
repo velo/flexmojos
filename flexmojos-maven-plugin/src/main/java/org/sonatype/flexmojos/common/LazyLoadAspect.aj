@@ -14,7 +14,6 @@
  */
 package org.sonatype.flexmojos.common;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.aspectj.lang.reflect.MethodSignature;
@@ -23,15 +22,16 @@ public aspect LazyLoadAspect
 {
 
     pointcut getters() :
-        ( execution(public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.get*()) ) &&
-             !execution( public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.getLog() ) ||
+        ( execution(public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.get*() )  &&
+             !execution( public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.getLog() ) &&
+             !execution( public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.getCache() )  ) ||
         execution(public * org.sonatype.flexmojos.compiler.CompcMojo.get*()) ||
         execution(public * org.sonatype.flexmojos.compiler.MxmlcMojo.get*()) ||
         execution(public * org.sonatype.flexmojos.compiler.AsdocMojo.get*());
 
-    private Map<String, Object> cachedValues = new LinkedHashMap<String, Object>();
-
     Object around() : getters() {
+        Map<String, Object> cachedValues = ( (Cacheable) thisJoinPoint.getTarget() ).getCache();
+
         MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
         String name = signature.getName();
 
@@ -42,4 +42,5 @@ public aspect LazyLoadAspect
 
         return cachedValues.get( name );
     }
+
 }
