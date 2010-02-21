@@ -102,6 +102,12 @@
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
       <version>1.6.2</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>junit</artifactId>
+      		<groupId>junit</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>javax.persistence</groupId>

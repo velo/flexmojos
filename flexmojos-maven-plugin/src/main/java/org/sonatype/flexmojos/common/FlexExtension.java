@@ -30,4 +30,6 @@ public interface FlexExtension
 
     String POM = "pom";
 
+    String XML = "xml";
+
 }

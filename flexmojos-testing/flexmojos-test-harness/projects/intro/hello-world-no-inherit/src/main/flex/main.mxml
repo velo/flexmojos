@@ -8,6 +8,18 @@
 
 
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-	<mx:Label text="Hello World" />
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="kill()">
+	<mx:Label text="Hello World w/o inherit =D" />
+
+    <mx:Script>
+        <![CDATA[
+            private function kill():void
+            {
+                CFG::IT {
+                  System.exit( 3539 );
+                }
+            }
+        ]]>
+    </mx:Script>
+
 </mx:Application>

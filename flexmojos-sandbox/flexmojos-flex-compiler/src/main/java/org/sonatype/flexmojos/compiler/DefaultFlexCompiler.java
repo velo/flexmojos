@@ -22,7 +22,7 @@ public class DefaultFlexCompiler
     extends AbstractLogEnabled
     implements FlexCompiler
 {
-    
+
     @Requirement
     private FlexCompilerArgumentParser parser;
 
@@ -34,7 +34,9 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                Compc.compc( parser.parseArguments( configuration, ICompcConfiguration.class ) );
+                String[] args = parser.parseArguments( configuration, ICompcConfiguration.class );
+                logArgs( args );
+                Compc.compc( args );
             }
         } );
     }
@@ -42,16 +44,19 @@ public class DefaultFlexCompiler
     public int compileSwf( MxmlcConfigurationHolder cfgHolder )
         throws Exception
     {
-        final List<String> args = parser.getArgumentsList( cfgHolder.configuration, ICommandLineConfiguration.class );
+        final List<String> argsList =
+            parser.getArgumentsList( cfgHolder.configuration, ICommandLineConfiguration.class );
         if ( cfgHolder.sourceFile != null )
         {
-            args.add( cfgHolder.sourceFile.getAbsolutePath() );
+            argsList.add( cfgHolder.sourceFile.getAbsolutePath() );
         }
         return execute( new Command()
         {
             public void command()
             {
-                Mxmlc.mxmlc( args.toArray( new String[args.size()] ) );
+                String[] args = argsList.toArray( new String[argsList.size()] );
+                logArgs( args );
+                Mxmlc.mxmlc( args );
             }
         } );
     }
@@ -63,7 +68,9 @@ public class DefaultFlexCompiler
         {
             public void command()
             {
-                ASDoc.asdoc( parser.parseArguments( configuration, IASDocConfiguration.class ) );
+                String[] args = parser.parseArguments( configuration, IASDocConfiguration.class );
+                logArgs( args );
+                ASDoc.asdoc( args );
             }
         } );
     }
@@ -76,7 +83,9 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                DigestTool.main( parser.parseArguments( configuration, IDigestConfiguration.class ) );
+                String[] args = parser.parseArguments( configuration, IDigestConfiguration.class );
+                logArgs( args );
+                DigestTool.main( args );
             }
         } );
     }
@@ -89,7 +98,9 @@ public class DefaultFlexCompiler
             public void command()
                 throws Exception
             {
-                Optimizer.main( parser.parseArguments( configuration, IOptimizerConfiguration.class ) );
+                String[] args = parser.parseArguments( configuration, IOptimizerConfiguration.class );
+                logArgs( args );
+                Optimizer.main( args );
             }
         } );
     }
@@ -162,6 +173,24 @@ public class DefaultFlexCompiler
         }
 
         return r.getExitCode();
+    }
+
+    private void logArgs( String[] args )
+    {
+        if ( getLogger().isDebugEnabled() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for ( String arg : args )
+            {
+                if ( arg.startsWith( "-" ) )
+                {
+                    sb.append( '\n' );
+                }
+                sb.append( arg );
+                sb.append( ' ' );
+            }
+            getLogger().debug( "Compilation arguments:" + sb );
+        }
     }
 
 }

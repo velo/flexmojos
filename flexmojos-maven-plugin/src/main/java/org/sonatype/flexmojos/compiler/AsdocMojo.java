@@ -226,7 +226,7 @@ public class AsdocMojo
         executeCompiler( this );
     }
 
-    public int doCompile( IASDocConfiguration cfg )
+    public final int doCompile( IASDocConfiguration cfg )
         throws Exception
     {
         return compiler.asdoc( cfg );
@@ -408,5 +408,6 @@ public class AsdocMojo
     {
         return windowTitle;
     }
+
 
 }

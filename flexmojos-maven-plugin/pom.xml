@@ -305,6 +305,12 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>plexus-component-api</artifactId>
+      		<groupId>org.codehaus.plexus</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>

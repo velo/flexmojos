@@ -26,26 +26,7 @@ public class FlexCompilerArgumentParser
     public <E> String[] parseArguments( E cfg, Class<? extends E> configClass )
     {
         String[] args = getArgumentsList( cfg, configClass ).toArray( new String[0] );
-        if ( getLogger().isDebugEnabled() )
-        {
-            getLogger().debug( "Compilation arguments:" + toString( args ) );
-        }
         return args;
-    }
-
-    private CharSequence toString( String[] args )
-    {
-        StringBuilder sb = new StringBuilder();
-        for ( String arg : args )
-        {
-            if ( arg.startsWith( "-" ) )
-            {
-                sb.append( '\n' );
-            }
-            sb.append( arg );
-            sb.append( ' ' );
-        }
-        return sb;
     }
 
     public <E> List<String> getArgumentsList( E cfg, Class<? extends E> configClass )
