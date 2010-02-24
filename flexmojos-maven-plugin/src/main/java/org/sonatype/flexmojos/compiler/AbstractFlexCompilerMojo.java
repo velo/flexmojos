@@ -1707,17 +1707,43 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         throws MojoExecutionException
     {
         String playerGlobalVersion = getGlobalArtifact().getClassifier();
-        if ( targetPlayer == null && playerGlobalVersion != null )
+        if ( playerGlobalVersion == null )
         {
-            targetPlayer = playerGlobalVersion + ".0.0";
-        }
-
-        if ( targetPlayer == null )
-        {
+            getLog().warn( "Player global doesn't cointain classifier" );
             return;
         }
 
-        String[] nodes = targetPlayer.split( "\\." );
+        String[] nodes;
+        if ( targetPlayer == null )
+        {
+            nodes = playerGlobalVersion.split( "\\." );
+            if ( nodes.length < 3 )
+            {
+                nodes = Arrays.copyOf( nodes, 3 );
+            }
+
+            StringBuilder tp = new StringBuilder();
+            for ( int i = 0; i < nodes.length; i++ )
+            {
+                if ( nodes[i] == null )
+                {
+                    nodes[i] = "0";
+                }
+
+                if ( tp.length() != 0 )
+                {
+                    tp.append( '.' );
+                }
+                tp.append( nodes[i] );
+            }
+
+            targetPlayer = tp.toString();
+        }
+        else
+        {
+            nodes = targetPlayer.split( "\\." );
+        }
+
         if ( nodes.length != 3 )
         {
             throw new MojoExecutionException( "Invalid player version " + targetPlayer );
