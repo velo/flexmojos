@@ -1719,17 +1719,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             nodes = playerGlobalVersion.split( "\\." );
             if ( nodes.length < 3 )
             {
-                nodes = Arrays.copyOf( nodes, 3 );
+                String[] temp = new String[3];
+                Arrays.fill( temp, "0" );
+                System.arraycopy( nodes, 0, temp, 0, nodes.length );
+                nodes = temp;
             }
 
             StringBuilder tp = new StringBuilder();
             for ( int i = 0; i < nodes.length; i++ )
             {
-                if ( nodes[i] == null )
-                {
-                    nodes[i] = "0";
-                }
-
                 if ( tp.length() != 0 )
                 {
                     tp.append( '.' );
