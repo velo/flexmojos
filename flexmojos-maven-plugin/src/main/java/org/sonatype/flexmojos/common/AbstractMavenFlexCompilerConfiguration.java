@@ -4,8 +4,10 @@ import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.sonatype.flexmojos.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.common.FlexScopes.INTERNAL;
@@ -86,12 +88,11 @@ import org.sonatype.flexmojos.compiler.MavenArtifact;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
-import static org.sonatype.flexmojos.common.FlexExtension.*;
-import static org.sonatype.flexmojos.common.FlexClassifier.*;
 
 public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable
+    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
+    Cloneable
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -2257,7 +2258,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
 
     public String getOutput()
     {
-        if ( output == null )
+        File output;
+        if ( this.output != null )
+        {
+            output = this.output;
+        }
+        else
         {
             output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
         }
@@ -2744,4 +2750,18 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         return cache;
     }
 
+    @Override
+    public Object clone()
+    {
+        try
+        {
+            Object clone = super.clone();
+            ( (AbstractMavenFlexCompilerConfiguration<?>) clone ).cache = new LinkedHashMap<String, Object>( cache );
+            return clone;
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            throw new IllegalStateException( "The class '" + getClass() + "' is supposed to be clonable", e );
+        }
+    }
 }

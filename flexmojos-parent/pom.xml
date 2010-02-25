@@ -42,7 +42,7 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.0.0.12575</flex.sdk.version>
+    <flex.sdk.version>4.0.0.13875</flex.sdk.version>
     <maven.version>3.0-SNAPSHOT</maven.version>
     <plexus.version>1.5.4</plexus.version>
   </properties>
@@ -341,13 +341,6 @@
       </dependency>
       <dependency>
         <groupId>com.adobe.flex.compiler</groupId>
-        <artifactId>asdoc</artifactId>
-        <version>${flex.sdk.version}</version>
-        <type>zip</type>
-        <classifier>template</classifier>
-      </dependency>
-      <dependency>
-        <groupId>com.adobe.flex</groupId>
         <artifactId>adt</artifactId>
         <version>${flex.sdk.version}</version>
         <scope>provided</scope>
