@@ -1727,7 +1727,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         else
         {
-            playerGlobalVersion = splitVersion( globalVersion );
+            playerGlobalVersion = splitVersion( globalVersion, 3 );
         }
 
         if ( targetPlayer == null )
@@ -1745,7 +1745,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
             targetPlayer = tp.toString();
         }
 
-        int[] versions = splitVersion( targetPlayer );
+        int[] versions = splitVersion( targetPlayer, 3 );
         if ( versions[0] < 9 )
         {
             throw new MojoExecutionException( "Invalid player version " + targetPlayer );
