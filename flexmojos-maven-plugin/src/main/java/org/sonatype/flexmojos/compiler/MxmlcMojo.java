@@ -143,7 +143,7 @@ public class MxmlcMojo
                 }
                 else
                 {
-                    moduleFinalName = project.getBuild().getFinalName() + "-" + classifier + "." + SWF;
+                    moduleFinalName = project.getBuild().getFinalName() + "-" + classifier;
                 }
 
                 File moduleOutputDir;
@@ -162,13 +162,14 @@ public class MxmlcMojo
                 // TODO include the original extern
                 String[] loadExtern = new String[] { getLinkReport() };
 
-                MxmlcMojo cfg = spy( this );
-                when( cfg.getClassifier() ).thenReturn( classifier );
-                when( cfg.getTargetDirectory() ).thenReturn( moduleOutputDir );
-                when( cfg.getFinalName() ).thenReturn( moduleFinalName );
+                MxmlcMojo cfg = (MxmlcMojo) this.clone();
+                cfg.getCache().put( "getClassifier", classifier );
+                cfg.getCache().put( "getTargetDirectory", moduleOutputDir );
+                cfg.getCache().put( "getFinalName", moduleFinalName );
+                cfg.getCache().remove( "getOutput" );
                 if ( module.isOptimize() )
                 {
-                    when( cfg.getLoadExterns() ).thenReturn( loadExtern );
+                    cfg.getCache().put( "getLoadExterns", loadExtern );
                 }
                 executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ) );
             }
