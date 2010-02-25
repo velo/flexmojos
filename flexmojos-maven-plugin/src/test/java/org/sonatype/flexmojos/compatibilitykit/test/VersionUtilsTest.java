@@ -86,4 +86,22 @@ public class VersionUtilsTest
         boolean maxVersionOK = isMaxVersionOK( fdkVersion, splitVersion( "4.0.0.3127" ) );
         Assert.assertFalse( minVersionOK && maxVersionOK );
     }
+
+    @Test
+    public void playerGlobal()
+    {
+        int[] playerGlobalVersion = splitVersion( "10.0", 3 );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.0", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.1", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1.0", 3 ) ) );
+        playerGlobalVersion = splitVersion( "10.1", 3 );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1.0", 3 ) ) );
+    }
 }
