@@ -10,6 +10,8 @@ package org.sonatype.flexmojos.compiler;
 import static org.sonatype.flexmojos.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.common.FlexExtension.SWZ;
+import static org.sonatype.flexmojos.compatibilitykit.VersionUtils.isMinVersionOK;
+import static org.sonatype.flexmojos.compatibilitykit.VersionUtils.splitVersion;
 import static org.sonatype.flexmojos.utilities.MavenUtils.searchFor;
 
 import java.io.BufferedInputStream;
@@ -1706,72 +1708,46 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void setTargetPlayer()
         throws MojoExecutionException
     {
-        String playerGlobalVersion = getGlobalArtifact().getClassifier();
-        if ( playerGlobalVersion == null )
+        String globalVersion = getGlobalArtifact().getClassifier();
+        int[] playerGlobalVersion;
+        if ( globalVersion == null )
         {
             getLog().warn( "Player global doesn't cointain classifier" );
             return;
         }
+        else
+        {
+            playerGlobalVersion = splitVersion( globalVersion );
+        }
 
-        String[] nodes;
         if ( targetPlayer == null )
         {
-            nodes = playerGlobalVersion.split( "\\." );
-            if ( nodes.length < 3 )
-            {
-                String[] temp = new String[3];
-                Arrays.fill( temp, "0" );
-                System.arraycopy( nodes, 0, temp, 0, nodes.length );
-                nodes = temp;
-            }
-
             StringBuilder tp = new StringBuilder();
-            for ( int i = 0; i < nodes.length; i++ )
+            for ( int i = 0; i < playerGlobalVersion.length; i++ )
             {
                 if ( tp.length() != 0 )
                 {
                     tp.append( '.' );
                 }
-                tp.append( nodes[i] );
+                tp.append( playerGlobalVersion[i] );
             }
 
             targetPlayer = tp.toString();
         }
-        else
-        {
-            nodes = targetPlayer.split( "\\." );
-        }
 
-        if ( nodes.length != 3 )
-        {
-            throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-        }
-        int[] versions = new int[nodes.length];
-        for ( int i = 0; i < nodes.length; i++ )
-        {
-            try
-            {
-                versions[i] = Integer.parseInt( nodes[i] );
-            }
-            catch ( NumberFormatException e )
-            {
-                throw new MojoExecutionException( "Invalid player version " + targetPlayer );
-            }
-        }
+        int[] versions = splitVersion( targetPlayer );
         if ( versions[0] < 9 )
         {
             throw new MojoExecutionException( "Invalid player version " + targetPlayer );
         }
 
-        if ( !( playerGlobalVersion == null || ignoreVersionIssues ) )
+        if ( !isMinVersionOK( playerGlobalVersion, versions ) )
         {
-            if ( !nodes[0].equals( playerGlobalVersion ) )
-            {
-                throw new MojoExecutionException(
-                                                  "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
-                                                      + targetPlayer + ", player global: " + playerGlobalVersion );
-            }
+            throw new MojoExecutionException(
+                                              "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
+                                                  + targetPlayer + ", player global: " + playerGlobalVersion );
         }
+
         configuration.setTargetPlayer( versions[0], versions[1], versions[2] );
     }
 
