@@ -755,7 +755,7 @@ public class FlexbuilderMojo
         if ( pureActionscriptProject == null )
         {
             pureActionscriptProject =
-                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) != null;
+                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) == null;
         }
 
         // Just as precaution, in case someone adds a 'source' not in the natural order for strings
