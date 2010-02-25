@@ -56,9 +56,9 @@
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>playerglobal</artifactId>
       <version>${flex.sdk.version}</version>
-      <classifier>10</classifier>
+      <classifier>10.0</classifier>
       <type>swc</type>
-      <scope>external</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
