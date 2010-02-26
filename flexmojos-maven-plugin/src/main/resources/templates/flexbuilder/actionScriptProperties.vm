@@ -104,7 +104,14 @@
 #end
     </applications>
 
-    <modules/>
+    <modules>
+#foreach($module in $moduleFiles)
+		<module application="$mainSources/$mainApplication" 
+			destPath="$module.replace('mxml', 'swf')" 
+			optimize="true" 
+			sourcePath="$mainSources/$module"/>
+#end
+    </modules>
 
     <buildCSSFiles>
 #foreach( $cssfile in $cssfiles )

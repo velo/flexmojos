@@ -298,6 +298,20 @@ public class FlexbuilderMojo
      */
     protected File[] configFiles;
 
+    /**
+     * The list of modules files to be compiled. The path must be relative with source folder.<BR>
+     * This will create a modules entry in .actionScriptProperties Usage:
+     * 
+     * <pre>
+     * &lt;moduleFiles&gt;
+     *   &lt;module&gt;com/acme/AModule.mxml&lt;/module&gt;
+     * &lt;/moduleFiles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] moduleFiles;
+
     @Override
     public void writeConfiguration( IdeDependency[] deps )
         throws MojoExecutionException
@@ -609,6 +623,7 @@ public class FlexbuilderMojo
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         context.put( "pureActionscriptProject", pureActionscriptProject );
+        context.put( "moduleFiles", moduleFiles );
 
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }
