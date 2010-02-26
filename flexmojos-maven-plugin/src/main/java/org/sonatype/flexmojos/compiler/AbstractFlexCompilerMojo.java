@@ -1727,7 +1727,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         }
         else
         {
-            playerGlobalVersion = splitVersion( globalVersion, 3 );
+            playerGlobalVersion = splitVersion( globalVersion );
         }
 
         if ( targetPlayer == null )
@@ -1755,7 +1755,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
         {
             throw new MojoExecutionException(
                                               "TargetPlayer and playerglobal dependency version doesn't match! Target player: "
-                                                  + targetPlayer + ", player global: " + playerGlobalVersion );
+                                                  + targetPlayer + ", player global: " + globalVersion );
         }
 
         configuration.setTargetPlayer( versions[0], versions[1], versions[2] );

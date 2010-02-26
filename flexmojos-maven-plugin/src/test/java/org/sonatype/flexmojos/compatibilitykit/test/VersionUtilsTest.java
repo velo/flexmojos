@@ -103,5 +103,7 @@ public class VersionUtilsTest
         Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.0", 3 ) ) );
         Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1", 3 ) ) );
         Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1.0", 3 ) ) );
+        playerGlobalVersion = splitVersion( "9" );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "9.0.124", 3 ) ) );
     }
 }
