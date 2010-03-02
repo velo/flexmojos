@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
@@ -248,6 +249,16 @@ public class LibraryMojo
 
         if ( !checkNullOrEmpty( includeAsClasses ) )
         {
+            List<String> includedClasses = this.getClassesFromPaths();
+            getLog().info(
+                           "Including " + includedClasses.size()
+                               + " classes to compile with <includeAsClasses> option." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug(
+                                "Classes included with <includeAsClasses> option: "
+                                    + ArrayUtils.toString( includedClasses ) + "." );
+            }
             for ( String includeClass : this.getClassesFromPaths() )
             {
                 builder.addComponent( includeClass );
@@ -361,7 +372,12 @@ public class LibraryMojo
 
         for ( FileSet fileSet : includeAsClasses )
         {
-            File directory = PathUtil.getFile( fileSet.getDirectory() );
+            File directory = new File( fileSet.getDirectory() );
+            if ( !directory.isAbsolute() )
+            {
+                directory = new File( this.project.getBasedir().getPath(), fileSet.getDirectory() );
+            }
+
             if ( !directory.isDirectory() )
             {
                 throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
@@ -378,6 +394,7 @@ public class LibraryMojo
             {
                 ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
             }
+
             List<String> excludes = fileSet.getExcludes();
             if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
             {
