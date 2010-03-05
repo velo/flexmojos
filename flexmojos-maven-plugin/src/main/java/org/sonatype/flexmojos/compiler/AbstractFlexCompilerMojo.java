@@ -1708,7 +1708,15 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private void setTargetPlayer()
         throws MojoExecutionException
     {
-        String globalVersion = getGlobalArtifact().getClassifier();
+        Artifact globalArtifact = getGlobalArtifact();
+        if ( globalArtifact.equals( "airglobal" ) )
+        {
+            // not sure what to do here
+            getLog().warn( "Target player not set, not sure how to behave on air projects" );
+            return;
+        }
+
+        String globalVersion = globalArtifact.getClassifier();
         int[] playerGlobalVersion;
         if ( globalVersion == null )
         {
