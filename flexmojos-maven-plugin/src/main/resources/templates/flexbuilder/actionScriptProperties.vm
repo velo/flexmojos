@@ -39,6 +39,7 @@
             useApolloConfig="$useApolloConfig" 
             verifyDigests="$verifyDigests" 
             warn="$showWarnings"
+            targetPlayerVersion="$targetPlayerVersion"
             >
 
         <compilerSourcePath>
