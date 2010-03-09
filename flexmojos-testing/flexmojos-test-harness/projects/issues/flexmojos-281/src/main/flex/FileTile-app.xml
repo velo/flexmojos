@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<application xmlns="http://ns.adobe.com/air/application/2.0beta2">
+	<id>com.adobe.filetile</id>
+	<filename>air2-1.0-SNAPSHOT</filename>
+	<name>FileTile</name>
+	<version>v1</version>
+	<description>Browse devices that expose themselves as storage volumes. Created by Christian Cantrell.</description>
+	<copyright>Copyright © 2009 Adobe Systems Incorporated. All rights reserved.</copyright>
+
+	<initialWindow>
+		<content>air2-1.0-SNAPSHOT.swf</content>
+		<title>FileTile</title>
+		<systemChrome>none</systemChrome>
+		<transparent>false</transparent>
+		<visible>false</visible>
+		<!-- <minimizable></minimizable> -->
+		<!-- <maximizable></maximizable> -->
+		<resizable>false</resizable>
+		<width>890</width>
+		<height>800</height>
+		<!-- <x></x> -->
+		<!-- <y></y> -->
+		<minSize>890 800</minSize>
+		<!-- <maxSize></maxSize> -->
+	</initialWindow>
+
+	<!-- <installFolder></installFolder> -->
+	<!-- <programMenuFolder></programMenuFolder> -->
+
+</application>
