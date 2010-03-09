@@ -28,9 +28,11 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -38,6 +40,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -170,6 +173,34 @@ public class FlexbuilderMojo
      * @parameter default-value="true"
      */
     private boolean showWarnings;
+
+    /**
+     * Automatically scans the paths looking for compile units (.as and .mxml files) adding the represented classes with
+     * the <code>include-classes</code> option.
+     * <p>
+     * This option is useful if you want to compile as with <code>includeClasses</code> option without the need to
+     * manually maintain the class list in the pom.
+     * </p>
+     * <p>
+     * Specify <code>includes</code> parameter to include different compile units than the default .as and .mxml ones.
+     * Specify <code>excludes</code> parameter to exclude compile units that would otherwise be included.
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeAsClasses&gt;
+     *   &lt;sources&gt;
+     *     &lt;directory&gt;${baseDir}/src/main/flex&lt;/directory&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;&#042;&#042;/&#042;Incl.as&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/sources&gt;
+     * &lt;/includeAsClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected FileSet[] includeAsClasses;
 
     /**
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
@@ -331,7 +362,7 @@ public class FlexbuilderMojo
         {
             writeFlexProperties();
         }
-        else if ( SWC.equals( packaging ) && !pureActionscriptProject )
+        else if ( SWC.equals( packaging ) && pureActionscriptProject != null && !pureActionscriptProject )
         {
             writeFlexLibProperties();
         }
@@ -522,6 +553,7 @@ public class FlexbuilderMojo
         context.put( "useApolloConfig", useApolloConfig( ideDependencies ) );
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
+        context.put( "targetPlayerVersion", targetPlayer );
 
         StringBuilder additionalCompilerArguments = new StringBuilder();
         if ( ( compiledLocales != null && compiledLocales.length > 0 )
@@ -608,14 +640,14 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             context.put( "mainApplication", project.getArtifactId() + ".as" );
-            if ( includeClasses == null && includeSources == null )
-            {
-                additionalCompilerArguments.append( " -include-sources " + plain( getSourceRoots() ) );
-            }
-            else if ( includeSources != null )
-            {
-                additionalCompilerArguments.append( " -include-sources " + getPlainSources() );
-            }
+            // if ( includeClasses == null && includeSources == null )
+            // {
+            // additionalCompilerArguments.append( " -include-sources " + plain( getSourceRoots() ) );
+            // }
+            // else if ( includeSources != null )
+            // {
+            // additionalCompilerArguments.append( " -include-sources " + getPlainSources() );
+            // }
             context.put( "generateHtmlWrapper", false );
         }
         context.put( "additionalCompilerArguments", additionalCompilerArguments.toString() );
@@ -756,11 +788,50 @@ public class FlexbuilderMojo
     public boolean setup()
         throws MojoExecutionException
     {
-        Set<Artifact> depArtifacts = project.getDependencyArtifacts();
+        Set<Artifact> depArtifacts =
+            MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                               artifactMetadataSource, artifactFactory );
         if ( pureActionscriptProject == null )
         {
             pureActionscriptProject =
                 MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) == null;
+        }
+
+        // include the classes
+        if ( !checkNullOrEmpty( includeAsClasses ) )
+        {
+            try
+            {
+                List<String> classes = this.getClassesFromPaths();
+
+                int length = classes.size();
+                if ( includeClasses != null )
+                    length += includeClasses.length;
+
+                String[] tmp = new String[length];
+
+                int i = 0;
+                for ( String includeClass : classes )
+                {
+                    tmp[i] = includeClass;
+                    ++i;
+                }
+
+                // merge explicit classes and scanned classes
+                if ( includeClasses != null )
+                    for ( int j = 0; j < includeClasses.length; j++ )
+                    {
+                        tmp[i] = includeClasses[j];
+                        ++i;
+                    }
+
+                includeClasses = tmp;
+
+            }
+            catch ( MojoFailureException e )
+            {
+                e.printStackTrace();
+            }
         }
 
         // Just as precaution, in case someone adds a 'source' not in the natural order for strings
@@ -820,4 +891,87 @@ public class FlexbuilderMojo
             getBuildcommands().add( AIR_BUILD_COMMAND );
         }
     }
+
+    /**
+     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml as a
+     * default).
+     * 
+     * @param includeAsClasses The paths to scan looking for classes
+     * @return An array containing the name of the found classes
+     * @throws MojoFailureException
+     */
+    @SuppressWarnings( "unchecked" )
+    private List<String> getClassesFromPaths()
+        throws MojoFailureException
+    {
+
+        List<String> includedFiles = new ArrayList<String>();
+
+        for ( FileSet fileSet : includeAsClasses )
+        {
+            File directory = new File( fileSet.getDirectory() );
+            if ( !directory.isAbsolute() )
+            {
+                directory = new File( this.project.getBasedir().getPath(), fileSet.getDirectory() );
+            }
+
+            if ( !directory.isDirectory() )
+            {
+                throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
+            }
+
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.setBasedir( directory );
+            List<String> includes = fileSet.getIncludes();
+            if ( ( includes != null ) && ( !includes.isEmpty() ) )
+            {
+                ds.setIncludes( includes.toArray( new String[includes.size()] ) );
+            }
+            else
+            {
+                ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
+            }
+
+            List<String> excludes = fileSet.getExcludes();
+            if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
+            {
+                ds.setExcludes( excludes.toArray( new String[excludes.size()] ) );
+            }
+            ds.addDefaultExcludes();
+            ds.scan();
+
+            if ( !checkNullOrEmpty( ds.getIncludedFiles() ) )
+            {
+                includedFiles.addAll( Arrays.asList( ds.getIncludedFiles() ) );
+            }
+        }
+
+        List<String> sourceClasses = new ArrayList<String>();
+        for ( String includeFile : includedFiles )
+        {
+            // remove extension
+            includeFile = includeFile.substring( 0, includeFile.lastIndexOf( '.' ) );
+            // turn paths into dots
+            includeFile = includeFile.replace( '/', '.' ).replace( '\\', '.' );
+            sourceClasses.add( includeFile );
+        }
+
+        return sourceClasses;
+    }
+
+    private boolean checkNullOrEmpty( Object[] array )
+    {
+        if ( array == null )
+        {
+            return true;
+        }
+
+        if ( array.length == 0 )
+        {
+            return false;
+        }
+
+        return false;
+    }
+
 }
