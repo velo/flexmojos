@@ -31,7 +31,7 @@
   </licenses>
 
   <properties>
-    <!-- need due grid limitations -->
+    <!-- need due grid limitations  -->
     <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
     <flexSnapshotUrl>http://repository.sonatype.org/content/repositories/flexmojos-snapshots</flexSnapshotUrl>
     <flexSiteUrl>dav:https://sites.sonatype.org/flexmojos</flexSiteUrl>
