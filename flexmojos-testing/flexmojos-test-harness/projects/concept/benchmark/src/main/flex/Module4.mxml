@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="200" height="150" creationComplete="kill()">
+    <mx:Script>
+        <![CDATA[
+            private function kill():void
+            {
+                System.exit( 3539 );
+            }
+        ]]>
+    </mx:Script>
+    <mx:ComboBox x="20" y="23"></mx:ComboBox>
+    <mx:List x="28" y="53"></mx:List>
+
+</mx:Module>

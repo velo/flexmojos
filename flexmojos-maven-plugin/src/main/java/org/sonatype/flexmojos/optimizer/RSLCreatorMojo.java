@@ -81,7 +81,7 @@ public class RSLCreatorMojo
             int result;
             try
             {
-                result = compiler.optimize( getOptimizerConfiguration() );
+                result = compiler.optimize( getOptimizerConfiguration(), true ).getExitCode();
             }
             catch ( Exception e )
             {
@@ -99,7 +99,7 @@ public class RSLCreatorMojo
             int result;
             try
             {
-                result = compiler.digest( getDigestConfiguration() );
+                result = compiler.digest( getDigestConfiguration(), true ).getExitCode();
             }
             catch ( Exception e )
             {
