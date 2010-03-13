@@ -26,7 +26,7 @@ public class DefaultFlexCompiler
     @Requirement
     private FlexCompilerArgumentParser parser;
 
-    public int compileSwc( final ICompcConfiguration configuration )
+    public Result compileSwc( final ICompcConfiguration configuration, boolean sychronize )
         throws Exception
     {
         return execute( new Command()
@@ -38,10 +38,10 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 Compc.compc( args );
             }
-        } );
+        }, sychronize );
     }
 
-    public int compileSwf( MxmlcConfigurationHolder cfgHolder )
+    public Result compileSwf( MxmlcConfigurationHolder cfgHolder, boolean sychronize )
         throws Exception
     {
         final List<String> argsList =
@@ -58,10 +58,10 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 Mxmlc.mxmlc( args );
             }
-        } );
+        }, sychronize );
     }
 
-    public int asdoc( final IASDocConfiguration configuration )
+    public Result asdoc( final IASDocConfiguration configuration, boolean sychronize )
         throws Exception
     {
         return execute( new Command()
@@ -72,10 +72,10 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 ASDoc.asdoc( args );
             }
-        } );
+        }, sychronize );
     }
 
-    public int digest( final IDigestConfiguration configuration )
+    public Result digest( final IDigestConfiguration configuration, boolean sychronize )
         throws Exception
     {
         return execute( new Command()
@@ -87,10 +87,10 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 DigestTool.main( args );
             }
-        } );
+        }, sychronize );
     }
 
-    public int optimize( final IOptimizerConfiguration configuration )
+    public Result optimize( final IOptimizerConfiguration configuration, boolean sychronize )
         throws Exception
     {
         return execute( new Command()
@@ -102,10 +102,10 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 Optimizer.main( args );
             }
-        } );
+        }, sychronize );
     }
 
-    private int execute( final Command command )
+    private Result execute( final Command command, boolean sychronize )
         throws Exception
     {
         final Result r = new Result();
@@ -113,18 +113,18 @@ public class DefaultFlexCompiler
         {
             public void run()
             {
-                SecurityManager sm = System.getSecurityManager();
-
-                System.setSecurityManager( new SecurityManager()
-                {
-                    public void checkPermission( java.security.Permission perm )
-                    {
-                        if ( perm.getName().contains( "exitVM" ) )
-                        {
-                            throw new CompilerSecurityException();
-                        }
-                    }
-                } );
+//                SecurityManager sm = System.getSecurityManager();
+//
+//                System.setSecurityManager( new SecurityManager()
+//                {
+//                    public void checkPermission( java.security.Permission perm )
+//                    {
+//                        if ( perm.getName().contains( "exitVM" ) )
+//                        {
+//                            throw new CompilerSecurityException();
+//                        }
+//                    }
+//                } );
 
                 try
                 {
@@ -136,7 +136,7 @@ public class DefaultFlexCompiler
                 }
                 finally
                 {
-                    System.setSecurityManager( sm );
+//                    System.setSecurityManager( sm );
                 }
 
                 r.setExitCode( ThreadLocalToolkit.errorCount() );
@@ -157,22 +157,21 @@ public class DefaultFlexCompiler
             }
         } );
         t.start();
-        Thread.yield();
+        r.setThread(t);
 
-        try
+        if ( sychronize )
         {
-            t.join();
-        }
-        catch ( InterruptedException e )
-        {
+            Thread.yield();
+            try
+            {
+                t.join();
+            }
+            catch ( InterruptedException e )
+            {
+            }
         }
 
-        if ( r.getException() != null )
-        {
-            throw r.getException();
-        }
-
-        return r.getExitCode();
+        return r;
     }
 
     private void logArgs( String[] args )
@@ -189,7 +188,10 @@ public class DefaultFlexCompiler
                 sb.append( arg );
                 sb.append( ' ' );
             }
-            getLogger().debug( "Compilation arguments:" + sb );
+            synchronized ( getLogger() )
+            {
+                getLogger().debug( "Compilation arguments:" + sb );
+            }
         }
     }
 

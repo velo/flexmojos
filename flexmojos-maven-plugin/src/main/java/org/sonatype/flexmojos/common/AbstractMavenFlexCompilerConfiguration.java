@@ -85,11 +85,12 @@ import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MavenArtifact;
+import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
-public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
+public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends AbstractMavenFlexCompilerConfiguration<CFG, C>>
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
     Cloneable
@@ -115,10 +116,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * @readonly
      * @required
      */
-    private File targetDirectory;
+    protected File targetDirectory;
+
+    /**
+     * When false (faster), Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF).
+     * If true, Thread.join() will be invoked to make the execution synchronous (sequential).
+     * 
+     * @parameter expression="${flex.fullSynchronization}" default-value="false"
+     */
+    protected boolean fullSynchronization;
 
     public File getTargetDirectory()
     {
+        targetDirectory.mkdirs();
         return targetDirectory;
     }
 
@@ -252,7 +262,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * 
      * @parameter expression="${flex.classifier}"
      */
-    private String classifier;
+    protected String classifier;
 
     /**
      * Specifies a compatibility version
@@ -285,7 +295,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * 
      * @parameter
      */
-    private String[] compilerLocales;
+    protected String[] compilerLocales;
 
     /**
      * A list of warnings that should be enabled/disabled
@@ -848,7 +858,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      * 
      * @parameter
      */
-    private File[] loadExterns;
+    protected File[] loadExterns;
 
     /**
      * DOCME undocumented by adobe
@@ -1345,25 +1355,52 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
      */
     private Boolean warnings;
 
-    public abstract int doCompile( CFG cfg )
+    /**
+     * The name of the compiled file
+     * 
+     * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
+     */
+    protected String finalName;
+
+    public abstract Result doCompile( CFG cfg, boolean synchronize )
         throws Exception;
 
-    protected void executeCompiler( CFG cfg )
+    protected Result executeCompiler( CFG cfg, boolean synchronize )
         throws MojoExecutionException, MojoFailureException
     {
-        int result;
+        Result result;
         try
         {
-            result = doCompile( cfg );
+            result = doCompile( cfg, synchronize );
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        if ( result != 0 )
+        if ( synchronize )
         {
-            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
+            checkResult( result );
+        }
+
+        return result;
+    }
+
+    protected void checkResult( Result result )
+        throws MojoFailureException, MojoExecutionException
+    {
+        int exitCode;
+        try
+        {
+            exitCode = result.getExitCode();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        if ( exitCode != 0 )
+        {
+            throw new MojoFailureException( "Got " + exitCode + " errors building project, check logs" );
         }
     }
 
@@ -1776,11 +1813,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         File dir = new File( outputDirectory, "swcs" );
         dir.mkdirs();
 
+        File source = global.getFile();
         File dest = new File( dir, global.getArtifactId() + "." + SWC );
 
         try
         {
-            FileUtils.copyFile( global.getFile(), dest );
+            if ( !PathUtil.getCanonicalFile( source ).equals( PathUtil.getCanonicalFile( dest ) ) )
+            {
+                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                FileUtils.copyFile( source, dest );
+            }
         }
         catch ( IOException e )
         {
@@ -2027,14 +2069,17 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
 
     public String getLinkReport()
     {
-        File linkReport;
+        File linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
         if ( linkReportAttach )
         {
-            linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
-        }
-        else
-        {
-            linkReport = new File( outputDirectory, getFinalName() + "-" + LINK_REPORT + "." + XML );
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Link report is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, LINK_REPORT, linkReport );
+            }
         }
         return PathUtil.getCanonicalPath( linkReport );
     }
@@ -2284,8 +2329,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
 
     public String getFinalName()
     {
-        String c = getClassifier() == null ? "" : "-" + getClassifier();
-        return project.getBuild().getFinalName() + c;
+        if ( finalName == null )
+        {
+            String c = getClassifier() == null ? "" : "-" + getClassifier();
+            return project.getBuild().getFinalName() + c;
+        }
+
+        return finalName;
     }
 
     public String getClassifier()
@@ -2750,13 +2800,14 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG>
         return cache;
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
-    public Object clone()
+    public C clone()
     {
         try
         {
-            Object clone = super.clone();
-            ( (AbstractMavenFlexCompilerConfiguration<?>) clone ).cache = new LinkedHashMap<String, Object>( cache );
+            C clone = (C) super.clone();
+            clone.cache = new LinkedHashMap<String, Object>();
             return clone;
         }
         catch ( CloneNotSupportedException e )

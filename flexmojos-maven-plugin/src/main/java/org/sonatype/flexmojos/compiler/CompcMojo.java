@@ -13,6 +13,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.converter.RuledClasses;
+import org.sonatype.flexmojos.compiler.command.Result;
 
 /**
  * <p>
@@ -31,7 +32,7 @@ import org.sonatype.flexmojos.common.converter.RuledClasses;
  * @configurator flexmojos
  */
 public class CompcMojo
-    extends AbstractMavenFlexCompilerConfiguration<ICompcConfiguration>
+    extends AbstractMavenFlexCompilerConfiguration<ICompcConfiguration, CompcMojo>
     implements ICompcConfiguration, Mojo
 {
 
@@ -215,13 +216,14 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCompiler( this );
+        executeCompiler( this, true );
     }
 
-    public final int doCompile( ICompcConfiguration cfg )
+    @Override
+    public Result doCompile( ICompcConfiguration cfg, boolean synchronize )
         throws Exception
     {
-        return compiler.compileSwc( this );
+        return compiler.compileSwc( this, synchronize );
     }
 
     public Boolean getComputeDigest()

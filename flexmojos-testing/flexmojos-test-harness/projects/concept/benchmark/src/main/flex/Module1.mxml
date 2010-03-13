@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300">
+    <mx:Label y="37" text="Label" horizontalCenter="0"/>
+    <mx:ModuleLoader url="test-flex-modules-0.0.1-SNAPSHOT-module2.swf" borderStyle="solid" y="63" horizontalCenter="0">
+    </mx:ModuleLoader>
+
+</mx:Module>

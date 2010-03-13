@@ -6,8 +6,13 @@ public class Result
 
     private int exitCode;
 
+    private Thread thread;
+
     public int getExitCode()
+        throws Exception
     {
+        checkException();
+
         return exitCode;
     }
 
@@ -16,13 +21,24 @@ public class Result
         this.exitCode = exitCode;
     }
 
-    public Exception getException()
+    public void checkException()
+        throws Exception
     {
-        return exception;
+        thread.join();
+
+        if ( exception != null )
+        {
+            throw exception;
+        }
     }
 
     public void setException( Exception exception )
     {
         this.exception = exception;
+    }
+
+    public void setThread( Thread t )
+    {
+        this.thread = t;
     }
 }

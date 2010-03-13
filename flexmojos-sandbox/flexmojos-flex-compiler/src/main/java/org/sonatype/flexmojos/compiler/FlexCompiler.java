@@ -1,22 +1,23 @@
 package org.sonatype.flexmojos.compiler;
 
+import org.sonatype.flexmojos.compiler.command.Result;
 
 public interface FlexCompiler
 {
 
-    int compileSwf( MxmlcConfigurationHolder cfgHolder )
+    Result compileSwf( MxmlcConfigurationHolder cfgHolder, boolean sychronize )
         throws Exception;
 
-    int compileSwc( ICompcConfiguration configuration )
+    Result compileSwc( ICompcConfiguration configuration, boolean sychronize )
         throws Exception;
 
-    int asdoc( final IASDocConfiguration configuration )
+    Result asdoc( final IASDocConfiguration configuration, boolean sychronize )
         throws Exception;
 
-    int optimize( final IOptimizerConfiguration configuration )
+    Result optimize( final IOptimizerConfiguration configuration, boolean sychronize )
         throws Exception;
 
-    int digest( final IDigestConfiguration configuration )
+    Result digest( final IDigestConfiguration configuration, boolean sychronize )
         throws Exception;
 
 }
