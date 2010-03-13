@@ -68,7 +68,7 @@ public class SwfOptimizerMojo
 
         try
         {
-            compiler.optimize( getOptimizerConfiguration() );
+            compiler.optimize( getOptimizerConfiguration() , true);
         }
         catch ( Exception e )
         {

@@ -190,6 +190,16 @@ public class PathUtil
         return Arrays.asList( getFiles( paths ) );
     }
 
+    public static File[] getFiles( String[] paths )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        return getFiles( Arrays.asList( paths ) );
+    }
+
     public static File[] getFiles( Collection<String> paths )
     {
         if ( paths == null )
@@ -228,4 +238,5 @@ public class PathUtil
     {
         return getCanonicalFile( new File( file ) );
     }
+
 }

@@ -17,11 +17,11 @@
  */
 package org.sonatype.flexmojos.compiler;
 
-import static org.sonatype.flexmojos.common.FlexExtension.*;
+import static org.sonatype.flexmojos.common.FlexExtension.SWF;
+
 import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import static org.mockito.Mockito.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.Mojo;
@@ -29,11 +29,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.converter.Module;
+import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
-import org.sonatype.flexmojos.truster.TrustException;
 import org.sonatype.flexmojos.utilities.SourceFileResolver;
-import static org.sonatype.flexmojos.common.FlexExtension.*;
 
 /**
  * <p>
@@ -52,7 +51,7 @@ import static org.sonatype.flexmojos.common.FlexExtension.*;
  * @configurator flexmojos
  */
 public class MxmlcMojo
-    extends AbstractMavenFlexCompilerConfiguration<MxmlcConfigurationHolder>
+    extends AbstractMavenFlexCompilerConfiguration<MxmlcConfigurationHolder, MxmlcMojo>
     implements ICommandLineConfiguration, Mojo
 {
 
@@ -124,21 +123,32 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ) );
+        executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
 
         if ( runtimeLocales != null )
         {
+            List<Result> results = new ArrayList<Result>();
             for ( String locale : runtimeLocales )
             {
-                ICommandLineConfiguration cfg = spy( this );
-                ICompilerConfiguration compilerCfg = spy( this.getCompilerConfiguration() );
-                when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-                when( compilerCfg.getLocale() ).thenReturn( new String[] { locale } );
-                executeCompiler( new MxmlcConfigurationHolder( cfg, null ) );
+                MxmlcMojo cfg = this.clone();
+                cfg.compilerLocales = new String[] { locale };
+                cfg.classifier = locale;
+                results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, null ), fullSynchronization ) );
             }
+
+            wait( results );
         }
 
         executeModules();
+    }
+
+    private void wait( List<Result> results )
+        throws MojoFailureException, MojoExecutionException
+    {
+        for ( Result result : results )
+        {
+            checkResult( result );
+        }
     }
 
     private void executeModules()
@@ -146,6 +156,8 @@ public class MxmlcMojo
     {
         if ( modules != null )
         {
+            List<Result> results = new ArrayList<Result>();
+
             for ( Module module : modules )
             {
                 File moduleSource =
@@ -172,33 +184,31 @@ public class MxmlcMojo
                 {
                     moduleOutputDir = new File( project.getBuild().getDirectory() );
                 }
-                moduleOutputDir.mkdirs();
-
-                File moduleOutput = new File( moduleOutputDir, moduleFinalName );
 
                 // TODO include the original extern
-                String[] loadExtern = new String[] { getLinkReport() };
+                String[] loadExterns = new String[] { getLinkReport() };
 
-                MxmlcMojo cfg = (MxmlcMojo) this.clone();
-                cfg.getCache().put( "getClassifier", classifier );
-                cfg.getCache().put( "getTargetDirectory", moduleOutputDir );
-                cfg.getCache().put( "getFinalName", moduleFinalName );
-                cfg.getCache().remove( "getOutput" );
+                MxmlcMojo cfg = this.clone();
+                cfg.classifier = classifier;
+                cfg.targetDirectory = moduleOutputDir;
+                cfg.finalName = moduleFinalName;
                 if ( module.isOptimize() )
                 {
-                    cfg.getCache().put( "getLoadExterns", loadExtern );
+                    cfg.loadExterns = PathUtil.getFiles( loadExterns );
                 }
-                executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ) );
+                results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
+
+            wait( results );
         }
     }
 
-    public final int doCompile( MxmlcConfigurationHolder cfg )
+    public final Result doCompile( MxmlcConfigurationHolder cfg, boolean synchronize )
         throws Exception
     {
         try
         {
-            return compiler.compileSwf( cfg );
+            return compiler.compileSwf( cfg, synchronize );
         }
         finally
         {

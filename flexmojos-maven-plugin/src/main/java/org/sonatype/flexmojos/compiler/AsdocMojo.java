@@ -29,12 +29,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.MavenRuntimeException;
+import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.test.util.OSUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 public class AsdocMojo
-    extends AbstractMavenFlexCompilerConfiguration<IASDocConfiguration>
+    extends AbstractMavenFlexCompilerConfiguration<IASDocConfiguration, AsdocMojo>
     implements IASDocConfiguration, IPackagesConfiguration, Mojo
 {
 
@@ -240,13 +241,14 @@ public class AsdocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        executeCompiler( this );
+        executeCompiler( this, true );
     }
 
-    public final int doCompile( IASDocConfiguration cfg )
+    @Override
+    public Result doCompile( IASDocConfiguration cfg, boolean synchronize )
         throws Exception
     {
-        return compiler.asdoc( cfg );
+        return compiler.asdoc( cfg, synchronize );
     }
 
     public Boolean getDateInFooter()
@@ -425,6 +427,5 @@ public class AsdocMojo
     {
         return windowTitle;
     }
-
 
 }
