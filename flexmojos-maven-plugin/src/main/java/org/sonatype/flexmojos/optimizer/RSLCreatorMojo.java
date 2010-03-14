@@ -34,7 +34,6 @@ import org.sonatype.flexmojos.test.util.PathUtil;
  */
 public class RSLCreatorMojo
     extends AbstractOptimizerMojo
-    implements IDigestConfiguration
 {
 
     /**
@@ -76,30 +75,14 @@ public class RSLCreatorMojo
             return;
         }
 
-        if ( optimizeRsl )
-        {
-            int result;
-            try
-            {
-                result = compiler.optimize( getOptimizerConfiguration(), true ).getExitCode();
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( e.getMessage(), e );
-            }
-
-            if ( result != 0 )
-            {
-                throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
-            }
-        }
+        File input = optimize();
 
         if ( updateSwcDigest )
         {
             int result;
             try
             {
-                result = compiler.digest( getDigestConfiguration(), true ).getExitCode();
+                result = compiler.digest( getDigestConfiguration( input ), true ).getExitCode();
             }
             catch ( Exception e )
             {
@@ -117,9 +100,39 @@ public class RSLCreatorMojo
 
     }
 
-    public IDigestConfiguration getDigestConfiguration()
+    protected File optimize( File input )
+        throws MojoFailureException, MojoExecutionException
     {
-        return this;
+        if ( optimizeRsl )
+        {
+            getLog().debug( "Optimizing" );
+            final File output = new File( project.getBuild().getOutputDirectory(), "optimized.swf" );
+            optimize( input, output );
+            input = output;
+        }
+        return input;
+    }
+
+    public IDigestConfiguration getDigestConfiguration( final File input )
+    {
+        return new IDigestConfiguration()
+        {
+
+            public File getSwcPath()
+            {
+                return project.getArtifact().getFile();
+            }
+
+            public Boolean getSigned()
+            {
+                return false;
+            }
+
+            public File getRslFile()
+            {
+                return input;
+            }
+        };
     }
 
     @Override
@@ -147,21 +160,6 @@ public class RSLCreatorMojo
         }
 
         return PathUtil.getCanonicalPath( bkpOriginalFile );
-    }
-
-    public File getRslFile()
-    {
-        return new File( getOutput() );
-    }
-
-    public Boolean getSigned()
-    {
-        return false;
-    }
-
-    public File getSwcPath()
-    {
-        return project.getArtifact().getFile();
     }
 
 }

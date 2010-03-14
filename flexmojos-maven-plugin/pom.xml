@@ -224,10 +224,10 @@
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <exclusions>
-      	<exclusion>
-      		<artifactId>maven-project</artifactId>
-      		<groupId>org.apache.maven</groupId>
-      	</exclusion>
+        <exclusion>
+          <artifactId>maven-project</artifactId>
+          <groupId>org.apache.maven</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -300,15 +300,21 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-archiver</artifactId>
       <exclusions>
-      	<exclusion>
-      		<artifactId>plexus-component-api</artifactId>
-      		<groupId>org.codehaus.plexus</groupId>
-      	</exclusion>
+        <exclusion>
+          <artifactId>plexus-component-api</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-compat</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.apparat</groupId>
+      <artifactId>apparat</artifactId>
+      <version>0.5-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
