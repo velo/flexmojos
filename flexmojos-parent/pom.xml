@@ -126,7 +126,7 @@
         <plugin>
           <groupId>org.sonatype.maven.plugin</groupId>
           <artifactId>emma-maven-plugin</artifactId>
-          <version>1.2-SNAPSHOT</version>
+          <version>1.2</version>
           <executions>
             <execution>
               <phase>process-test-resources</phase>
