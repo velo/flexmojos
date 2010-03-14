@@ -32,7 +32,7 @@ import org.sonatype.flexmojos.test.util.PathUtil;
  * Goal which run post-link SWF optimization on swc files. This goal is used to produce RSL files.
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 2.0
+ * @since 4.0
  * @goal optimize-swf
  * @phase package
  */
@@ -66,15 +66,7 @@ public class SwfOptimizerMojo
             return;
         }
 
-        try
-        {
-            compiler.optimize( getOptimizerConfiguration() , true);
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
+        optimize();
     }
 
     @Override
@@ -109,5 +101,16 @@ public class SwfOptimizerMojo
         File bkpOriginalFile =
             new File( build.getDirectory(), build.getFinalName() + "-" + originalClassifierName + ".swf" );
         return bkpOriginalFile;
+    }
+
+    @Override
+    protected File optimize( File input )
+        throws MojoFailureException, MojoExecutionException
+    {
+        getLog().debug( "Optimizing" );
+        final File output = new File( project.getBuild().getOutputDirectory(), "optimized.swf" );
+        optimize( input, output );
+
+        return output;
     }
 }

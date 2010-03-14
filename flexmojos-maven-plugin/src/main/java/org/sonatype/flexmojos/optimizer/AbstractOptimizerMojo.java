@@ -21,11 +21,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.util.FileUtils;
 import org.mockito.ReturnValues;
 import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
@@ -34,9 +39,15 @@ import org.sonatype.flexmojos.compiler.IOptimizerConfiguration;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.ConfigurationResolver;
 
+import apparat.tools.ApparatConfiguration;
+import apparat.tools.reducer.Reducer.ReducerTool;
+import apparat.tools.stripper.Stripper.StripperTool;
+
 public abstract class AbstractOptimizerMojo
     extends AbstractMojo
 {
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat( "#.##" );
 
     private static final ReturnValues RETURNS_NULL = new ReturnValues()
     {
@@ -147,6 +158,48 @@ public abstract class AbstractOptimizerMojo
      */
     protected MavenProjectHelper projectHelper;
 
+    /**
+     * Use apparat to strip
+     * <p>
+     * Equivalent to apparat stripper
+     * </p>
+     * 
+     * @parameter default-value="true" expression="${flex.strip}"
+     */
+    protected boolean strip;
+
+    /**
+     * Use apparat to reduce the file size of SWFs by making use of the full feature set the Flash Player provides and
+     * which is ignored by the ActionScript compiler.
+     * <p>
+     * Equivalent to apparat reducer
+     * </p>
+     * Reducer will only touch lossless images and not touch you encoded JPEG images
+     * 
+     * @parameter default-value="true" expression="${flex.reduce}"
+     */
+    protected boolean reduce;
+
+    /**
+     * Compression quality from 0.0 to 1.0
+     * <p>
+     * Equivalent to -q
+     * </p>
+     * 
+     * @parameter expression="${flex.quality}"
+     */
+    private Double quality;
+
+    /**
+     * Strength of deblocking filter
+     * <p>
+     * Equivalent to -d
+     * </p>
+     * 
+     * @parameter expression="${flex.deblock}"
+     */
+    private Double deblock;
+
     public Boolean getDebug()
     {
         return debug;
@@ -165,14 +218,14 @@ public abstract class AbstractOptimizerMojo
                                                                                       configDirectory ) );
     }
 
-    public IOptimizerConfiguration getOptimizerConfiguration()
+    public IOptimizerConfiguration getOptimizerConfiguration( File input, File output )
     {
         // mocking real code doesn't seem to be a good idea, but produces a much cleaner code
         IOptimizerConfiguration cfg = mock( IOptimizerConfiguration.class, RETURNS_NULL );
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
-        when( cfg.getInput() ).thenReturn( getInput() );
-        when( cfg.getOutput() ).thenReturn( getOutput() );
+        when( cfg.getInput() ).thenReturn( PathUtil.getCanonicalPath( input ) );
+        when( cfg.getOutput() ).thenReturn( PathUtil.getCanonicalPath( output ) );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( compilerCfg.getDebug() ).thenReturn( getDebug() );
         when( compilerCfg.getKeepAs3Metadata() ).thenReturn( getKeepAs3Metadata() );
@@ -183,5 +236,116 @@ public abstract class AbstractOptimizerMojo
     {
         return PathUtil.getCanonicalPath( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
     }
+
+    protected void optimize( File input, File output )
+        throws MojoFailureException, MojoExecutionException
+    {
+        int result;
+        try
+        {
+            result = compiler.optimize( getOptimizerConfiguration( input, output ), true ).getExitCode();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
+        }
+    }
+
+    protected void reduce( File input, File output )
+    {
+        ReducerTool s = new ReducerTool();
+        ApparatConfiguration cfg = new ApparatConfiguration();
+        cfg.update( "-i", PathUtil.getCanonicalPath( input ) );
+        cfg.update( "-o", PathUtil.getCanonicalPath( output ) );
+
+        if ( quality != null )
+        {
+            cfg.update( "-q", DECIMAL_FORMAT.format( quality ) );
+        }
+
+        if ( deblock != null )
+        {
+            cfg.update( "-d", DECIMAL_FORMAT.format( deblock ) );
+        }
+
+        s.configure( cfg );
+        s.run();
+    }
+
+    protected void strip( File input, File output )
+    {
+        StripperTool s = new StripperTool();
+        ApparatConfiguration cfg = new ApparatConfiguration();
+        cfg.update( "-i", PathUtil.getCanonicalPath( input ) );
+        cfg.update( "-o", PathUtil.getCanonicalPath( output ) );
+        s.configure( cfg );
+        s.run();
+    }
+
+    protected File optimize()
+        throws MojoFailureException, MojoExecutionException
+    {
+        File input = PathUtil.getCanonicalFile( getInput() );
+        double originalSize = input.length();
+        {
+            getLog().debug( "Backuping original file " + input );
+            final File output = new File( project.getBuild().getOutputDirectory(), "original.swf" );
+            try
+            {
+                FileUtils.copyFile( input, output );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            input = output;
+        }
+
+        input = optimize( input );
+
+        if ( reduce )
+        {
+            getLog().debug( "Reducing" );
+            final File output = new File( project.getBuild().getOutputDirectory(), "reduced.swf" );
+            reduce( input, output );
+            input = output;
+        }
+
+        if ( strip )
+        {
+            getLog().debug( "Stripping" );
+            final File output = new File( project.getBuild().getOutputDirectory(), "stripped.swf" );
+            reduce( input, output );
+            input = output;
+        }
+
+        {
+            getLog().debug( "Placing optimized file on target folder" );
+            final File output = PathUtil.getCanonicalFile( getOutput() );
+            try
+            {
+                FileUtils.copyFile( input, output );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+
+            double finalSize = output.length();
+            double rate = ( finalSize / originalSize ) * 100;
+
+            getLog().info( "Optimization result: " + DECIMAL_FORMAT.format( rate ) + "%" );
+
+            return output;
+        }
+    }
+
+    protected abstract File optimize( File input )
+        throws MojoFailureException, MojoExecutionException;
 
 }
