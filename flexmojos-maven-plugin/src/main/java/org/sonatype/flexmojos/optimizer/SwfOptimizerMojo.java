@@ -1,3 +1,10 @@
+/**
+ *  Copyright 2008 Marvin Herman Froeder
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
 package org.sonatype.flexmojos.optimizer;
 
 import static org.sonatype.flexmojos.common.FlexExtension.SWF;
@@ -15,7 +22,7 @@ import org.sonatype.flexmojos.test.util.PathUtil;
  * Goal which run post-link SWF optimization on swc files. This goal is used to produce RSL files.
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 2.0
+ * @since 4.0
  * @goal optimize-swf
  * @phase package
  */
@@ -49,15 +56,7 @@ public class SwfOptimizerMojo
             return;
         }
 
-        try
-        {
-            compiler.optimize( getOptimizerConfiguration() , true);
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
+        optimize();
     }
 
     @Override
@@ -92,5 +91,16 @@ public class SwfOptimizerMojo
         File bkpOriginalFile =
             new File( build.getDirectory(), build.getFinalName() + "-" + originalClassifierName + ".swf" );
         return bkpOriginalFile;
+    }
+
+    @Override
+    protected File optimize( File input )
+        throws MojoFailureException, MojoExecutionException
+    {
+        getLog().debug( "Optimizing" );
+        final File output = new File( project.getBuild().getOutputDirectory(), "optimized.swf" );
+        optimize( input, output );
+
+        return output;
     }
 }

@@ -100,6 +100,21 @@
               <copyPom>true</copyPom>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-apparat</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>com.googlecode.apparat</includeGroupIds>
+              <outputDirectory>${fake-repo}</outputDirectory>
+              <useRepositoryLayout>true</useRepositoryLayout>
+              <generateRepositoryMetadatas>true</generateRepositoryMetadatas>
+              <silent>true</silent>
+              <copyPom>true</copyPom>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -178,10 +193,10 @@
       <version>${pom.version}</version>
       <type>maven-plugin</type>
       <exclusions>
-      	<exclusion>
-      		<artifactId>maven-compat</artifactId>
-      		<groupId>org.apache.maven</groupId>
-      	</exclusion>
+        <exclusion>
+          <artifactId>maven-compat</artifactId>
+          <groupId>org.apache.maven</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -324,6 +339,19 @@
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-all</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.apparat</groupId>
+      <artifactId>apparat</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.apparat</groupId>
+      <artifactId>apparat-aggregator</artifactId>
+      <version>0.5-SNAPSHOT</version>
+      <type>pom</type>
+    </dependency>
+
   </dependencies>
 
   <profiles>
