@@ -141,29 +141,6 @@
         <artifactId>flex-compiler-oem</artifactId> <version>3.0.0.477</version> </signature> <inclusions> <include>flex2/tools/oem/*</include> </inclusions> </configuration> </execution> </executions> </plugin>
       -->
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-beta-2-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <bannedPlugins>
-                  <message>maven-invoker-plugin isn't allowed, add tests on flexmojos-test-harness instead</message>
-                  <excludes>
-                    <exclude>*:maven-invoker-plugin</exclude>
-                  </excludes>
-                </bannedPlugins>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
 
@@ -338,4 +315,42 @@
     </plugins>
   </reporting>
 
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>false</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>1.0-beta-2-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <bannedPlugins>
+                      <message>maven-invoker-plugin isn't allowed here, add tests on flexmojos-test-harness instead</message>
+                      <excludes>
+                        <exclude>*:maven-invoker-plugin</exclude>
+                      </excludes>
+                    </bannedPlugins>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
