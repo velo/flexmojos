@@ -326,7 +326,6 @@
     <dependency>
       <groupId>com.googlecode.apparat</groupId>
       <artifactId>apparat</artifactId>
-      <version>0.5-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
