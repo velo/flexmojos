@@ -343,12 +343,11 @@
     <dependency>
       <groupId>com.googlecode.apparat</groupId>
       <artifactId>apparat</artifactId>
-      <version>0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.apparat</groupId>
       <artifactId>apparat-aggregator</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${apparat.version}</version>
       <type>pom</type>
     </dependency>
 

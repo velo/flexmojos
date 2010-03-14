@@ -45,6 +45,7 @@
     <flex.sdk.version>4.0.0.13875</flex.sdk.version>
     <maven.version>3.0-SNAPSHOT</maven.version>
     <plexus.version>1.5.4</plexus.version>
+    <apparat.version>0.5-FLEXMOJOS-r385</apparat.version>
   </properties>
 
   <build>
@@ -230,9 +231,8 @@
 
   <distributionManagement>
     <site>
-      <id>flexmojos-site</id>
-      <name>flexmojos site</name>
-      <url>dav:https://sites.sonatype.org/flexmojos</url>
+      <id>flexmojos</id>
+      <url>dav:http://repository.sonatype.org/content/sites/flexmojos-site/</url>
     </site>
   </distributionManagement>
 
@@ -526,6 +526,12 @@
         <artifactId>mockito-core</artifactId>
         <version>1.7</version>
         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.googlecode.apparat</groupId>
+        <artifactId>apparat</artifactId>
+        <version>${apparat.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
