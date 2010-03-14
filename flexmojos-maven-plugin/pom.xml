@@ -159,38 +159,38 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <!--<dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-constraints</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-mojo</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <type>maven-plugin</type>
     </dependency>
 
