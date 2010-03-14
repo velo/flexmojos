@@ -139,7 +139,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
