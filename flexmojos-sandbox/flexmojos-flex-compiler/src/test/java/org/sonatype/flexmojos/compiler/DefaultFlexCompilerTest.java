@@ -63,7 +63,7 @@ public class DefaultFlexCompilerTest
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        Assert.assertEquals( compiler.compileSwc( cfg ), 0 );
+        Assert.assertEquals( compiler.compileSwc( cfg, true ).getExitCode(), 0 );
     }
 
     @Test
@@ -81,7 +81,9 @@ public class DefaultFlexCompilerTest
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        Assert.assertEquals( compiler.compileSwf( new MxmlcConfigurationHolder( cfg, new File( as3, "main.as" ) ) ), 0 );
+        Assert.assertEquals(
+                             compiler.compileSwf( new MxmlcConfigurationHolder( cfg, new File( as3, "main.as" ) ), true ).getExitCode(),
+                             0 );
 
         Assert.assertTrue( output.exists(), logger.getLogs().toString() );
     }
