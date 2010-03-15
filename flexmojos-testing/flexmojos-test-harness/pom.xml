@@ -159,6 +159,18 @@
   </build>
 
   <dependencies>
+        <dependency>
+          <groupId>org.sonatype.flexmojos</groupId>
+          <artifactId>flexmojos-maven-plugin</artifactId>
+          <version>${project.version}</version>
+          <type>maven-plugin</type>
+          <exclusions>
+            <exclusion>
+              <artifactId>maven-compat</artifactId>
+              <groupId>org.apache.maven</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
 
     <dependency>
       <groupId>emma</groupId>
@@ -212,18 +224,6 @@
         </property>
       </activation>
       <dependencies>
-        <dependency>
-          <groupId>org.sonatype.flexmojos</groupId>
-          <artifactId>flexmojos-maven-plugin</artifactId>
-          <version>${project.version}</version>
-          <type>maven-plugin</type>
-          <exclusions>
-            <exclusion>
-              <artifactId>maven-compat</artifactId>
-              <groupId>org.apache.maven</groupId>
-            </exclusion>
-          </exclusions>
-        </dependency>
         <dependency>
           <groupId>org.sonatype.flexmojos</groupId>
           <artifactId>flexmojos-parent</artifactId>
