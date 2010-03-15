@@ -198,6 +198,20 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.apparat</groupId>
+      <artifactId>apparat</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.apparat</groupId>
+      <artifactId>apparat-aggregator</artifactId>
+      <version>${apparat.version}</version>
+      <type>pom</type>
+    </dependency>
   </dependencies>
 
 
@@ -358,22 +372,9 @@
           <version>${project.version}</version>
           <type>swc</type>
         </dependency>
-        <dependency>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-all</artifactId>
-        </dependency>
-
-        <dependency>
-          <groupId>com.googlecode.apparat</groupId>
-          <artifactId>apparat</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.googlecode.apparat</groupId>
-          <artifactId>apparat-aggregator</artifactId>
-          <version>${apparat.version}</version>
-          <type>pom</type>
-        </dependency>
       </dependencies>
     </profile>
   </profiles>
+
+
 </project>
