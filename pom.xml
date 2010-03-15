@@ -29,7 +29,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-aggregator</artifactId>
-  <version>4.0-pre-alpha-1</version>
+  <version>4.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Aggregator</name>
@@ -43,9 +43,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1</developerConnection>
-    <url>http://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1</url>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
+    <url>http://svn.sonatype.org/flexmojos/trunk</url>
   </scm>
 
   <build>
