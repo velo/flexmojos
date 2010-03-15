@@ -17,7 +17,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-pre-alpha-1</version>
+  <version>4.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -224,9 +224,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1/trunk</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1/trunk</developerConnection>
-    <url>http://svn.sonatype.org/flexmojos/tags/flexmojos-aggregator-4.0-pre-alpha-1</url>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk</developerConnection>
+    <url>http://svn.sonatype.org/flexmojos/trunk</url>
   </scm>
 
   <distributionManagement>
