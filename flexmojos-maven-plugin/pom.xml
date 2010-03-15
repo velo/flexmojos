@@ -224,8 +224,8 @@
       <type>maven-plugin</type>
     </dependency>
     <dependency>
-      <groupId>de.java2html</groupId>
-      <artifactId>java2html</artifactId>
+      <groupId>com.uwyn</groupId>
+      <artifactId>jhighlight</artifactId>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>
