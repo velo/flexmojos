@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
   <!--
 
@@ -13,7 +14,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>4.0-pre-alpha-1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -226,6 +227,18 @@
       <dependencies>
         <dependency>
           <groupId>org.sonatype.flexmojos</groupId>
+          <artifactId>flexmojos-maven-plugin</artifactId>
+          <version>${project.version}</version>
+          <type>maven-plugin</type>
+          <exclusions>
+            <exclusion>
+              <artifactId>maven-compat</artifactId>
+              <groupId>org.apache.maven</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.sonatype.flexmojos</groupId>
           <artifactId>flexmojos-parent</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -366,3 +379,4 @@
 
 
 </project>
+
