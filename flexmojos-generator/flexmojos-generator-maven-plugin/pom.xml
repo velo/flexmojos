@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-generator</artifactId>
-    <version>3.6-SNAPSHOT</version>
+    <version>3.6</version>
   </parent>
 
   <artifactId>flexmojos-generator-maven-plugin</artifactId>

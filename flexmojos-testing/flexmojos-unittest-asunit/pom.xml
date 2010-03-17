@@ -18,6 +18,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-asunit</artifactId>
+  <version>3.6</version>
   <packaging>swc</packaging>
 
   <name>Flexmojos Unit Test support - asunit</name>
