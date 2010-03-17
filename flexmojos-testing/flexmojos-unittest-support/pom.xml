@@ -30,6 +30,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
+  <version>3.6</version>
 
   <packaging>swc</packaging>
 
