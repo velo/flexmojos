@@ -292,13 +292,6 @@
               <skipTests>true</skipTests>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>failsafe-maven-plugin</artifactId>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>
