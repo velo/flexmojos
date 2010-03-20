@@ -3,7 +3,7 @@ package org.sonatype.flexmojos.tests.issues;
 import java.io.File;
 
 import org.hamcrest.MatcherAssert;
-import org.sonatype.flexmojos.common.matcher.FileMatcher;
+import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
 public class Flexmojos248Test
