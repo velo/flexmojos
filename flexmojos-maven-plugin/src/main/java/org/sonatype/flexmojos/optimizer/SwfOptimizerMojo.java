@@ -15,7 +15,7 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.flexmojos.common.MavenRuntimeException;
+import org.sonatype.flexmojos.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**
