@@ -17,18 +17,19 @@
  */
 package org.sonatype.flexmojos.compiler;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static org.sonatype.flexmojos.common.FlexExtension.*;
+
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.converter.RuledClasses;
 import org.sonatype.flexmojos.compiler.command.Result;
 

@@ -27,9 +27,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -115,39 +112,6 @@ public class MavenUtils
         }
 
         throw new MojoFailureException( "File " + fileName + " not found" );
-    }
-
-    /**
-     * Use the resolver to resolve the given artifact in the local or remote repositories.
-     * 
-     * @param project Active project
-     * @param artifact Artifact to be resolved
-     * @param resolver ArtifactResolver to use for resolving the artifact
-     * @param localRepository ArtifactRepository
-     * @param remoteRepositories List of remote artifact repositories
-     * @throws MojoExecutionException thrown if an exception occured during artifact resolving
-     * @return resolved artifact
-     */
-    @SuppressWarnings( "unchecked" )
-    public static Artifact resolveArtifact( MavenProject project, Artifact artifact, ArtifactResolver resolver,
-                                            ArtifactRepository localRepository,
-                                            List<ArtifactRepository> remoteRepositories )
-        throws MojoExecutionException
-    {
-        try
-        {
-            // Maven 3 should take care of it
-            // artifact = project.replaceWithActiveArtifact( artifact );
-            if ( !artifact.isResolved() )
-            {
-                resolver.resolve( artifact, remoteRepositories, localRepository );
-            }
-            return artifact;
-        }
-        catch ( AbstractArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
     }
 
     /**

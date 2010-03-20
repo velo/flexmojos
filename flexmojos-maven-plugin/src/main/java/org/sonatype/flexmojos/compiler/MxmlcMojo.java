@@ -27,7 +27,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.common.converter.Module;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.test.util.PathUtil;

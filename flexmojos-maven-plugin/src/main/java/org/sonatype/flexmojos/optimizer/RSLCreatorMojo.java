@@ -30,8 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.IOUtil;
-import org.sonatype.flexmojos.common.MavenRuntimeException;
 import org.sonatype.flexmojos.compiler.IDigestConfiguration;
+import org.sonatype.flexmojos.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**

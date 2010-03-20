@@ -26,16 +26,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
@@ -59,18 +59,9 @@ public class CopyMojo
 
     /**
      * @component
+     * @readonly
      */
-    private MavenProjectBuilder mavenProjectBuilder;
-
-    /**
-     * @component
-     */
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     */
-    private ArtifactResolver resolver;
+    protected RepositorySystem repositorySystem;
 
     /**
      * The maven project.
@@ -127,6 +118,11 @@ public class CopyMojo
      */
     private boolean skip;
 
+    /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -167,15 +163,6 @@ public class CopyMojo
         MavenProject artifactProject = getProject( artifact );
         if ( artifactProject != null )
         {
-            try
-            {
-                artifactProject.setArtifacts( artifactProject.createArtifacts( artifactFactory, null, null ) );
-            }
-            catch ( InvalidDependencyVersionException e )
-            {
-                throw new MojoExecutionException( "Error resolving artifacts " + artifact, e );
-            }
-
             if ( copyRSL )
             {
                 performRslCopy( artifactProject );
@@ -212,9 +199,8 @@ public class CopyMojo
             }
 
             rslArtifact =
-                artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
+                repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
                                                               rslArtifact.getVersion(), extension, null );
-            rslArtifact = replaceWithResolvedArtifact( rslArtifact );
 
             File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
             File sourceFile = rslArtifact.getFile();
@@ -240,7 +226,6 @@ public class CopyMojo
 
         for ( Artifact artifact : deps )
         {
-            artifact = replaceWithResolvedArtifact( artifact );
             copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
         }
     }
@@ -312,7 +297,7 @@ public class CopyMojo
         List<Artifact> artifacts = new ArrayList<Artifact>();
         for ( String locale : runtimeLocales )
         {
-            artifacts.add( artifactFactory.createArtifactWithClassifier( artifactProject.getGroupId(),
+            artifacts.add( repositorySystem.createArtifactWithClassifier( artifactProject.getGroupId(),
                                                                          artifactProject.getArtifactId(),
                                                                          artifactProject.getVersion(), SWF, locale ) );
         }
@@ -324,9 +309,11 @@ public class CopyMojo
     {
         try
         {
-            MavenProject pomProject =
-                mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
-            return pomProject;
+            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+            request.setLocalRepository( localRepository );
+            request.setRemoteRepositories( remoteRepositories );
+            request.setResolveDependencies( true );
+            return projectBuilder.build( artifact, request ).getProject();
         }
         catch ( ProjectBuildingException e )
         {
@@ -408,9 +395,4 @@ public class CopyMojo
         return sample;
     }
 
-    private Artifact replaceWithResolvedArtifact( Artifact artifact )
-        throws MojoExecutionException
-    {
-        return MavenUtils.resolveArtifact( project, artifact, resolver, localRepository, remoteRepositories );
-    }
 }

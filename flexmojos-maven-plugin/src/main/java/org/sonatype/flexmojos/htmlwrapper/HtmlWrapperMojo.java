@@ -29,20 +29,20 @@ import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.RepositorySystem;
 import org.sonatype.flexmojos.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -277,17 +277,13 @@ public class HtmlWrapperMojo
     /**
      * @component
      */
-    private MavenProjectBuilder mavenProjectBuilder;
+    private ProjectBuilder projectBuilder;
 
     /**
      * @component
+     * @readonly
      */
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     */
-    private ArtifactResolver resolver;
+    protected RepositorySystem repositorySystem;
 
     /**
      * @parameter expression="${localRepository}"
@@ -365,7 +361,7 @@ public class HtmlWrapperMojo
             {
                 // Found matching dependency, so use this as the basis for the target external pom artifact
                 sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "pom",
+                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "pom",
                                                                   swfArtifact.getClassifier() );
             }
             else
@@ -379,7 +375,7 @@ public class HtmlWrapperMojo
                 }
 
                 sourceArtifact =
-                    artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier );
+                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier );
             }
         }
         else
@@ -617,17 +613,14 @@ public class HtmlWrapperMojo
     private void resolveArtifact( Artifact artifact )
         throws MojoExecutionException
     {
-        try
+        if ( !artifact.isResolved() )
         {
-            resolver.resolve( artifact, remoteRepositories, localRepository );
-        }
-        catch ( ArtifactResolutionException ex )
-        {
-            throw new MojoExecutionException( "Could not resolve wrapper source pom artifact:  " + artifact.getId(), ex );
-        }
-        catch ( ArtifactNotFoundException ex )
-        {
-            throw new MojoExecutionException( "Could not find wrapper source pom artifact" + artifact.getId(), ex );
+            ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+            req.setArtifact( artifact );
+            req.setLocalRepository( localRepository );
+            req.setRemoteRepositories( remoteRepositories );
+            //FIXME need to check isSuccess
+            repositorySystem.resolve( req ).isSuccess();
         }
     }
 
@@ -692,7 +685,7 @@ public class HtmlWrapperMojo
 
     private Artifact convertToArtifact( Dependency dependency )
     {
-        return artifactFactory.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
+        return repositorySystem.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
                                                              dependency.getVersion(), dependency.getType(),
                                                              dependency.getClassifier() );
     }
@@ -709,7 +702,11 @@ public class HtmlWrapperMojo
     {
         try
         {
-            return mavenProjectBuilder.buildFromRepository( artifact, remoteRepositories, localRepository );
+            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+            request.setLocalRepository( localRepository );
+            request.setRemoteRepositories( remoteRepositories );
+            request.setResolveDependencies( true );
+            return projectBuilder.build( artifact, request ).getProject();
         }
         catch ( ProjectBuildingException ex )
         {

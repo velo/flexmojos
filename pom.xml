@@ -131,6 +131,7 @@
       <id>minimal</id>
       <modules>
         <module>flexmojos-parent</module>
+        <module>flexmojos-common-matchers</module>
         <module>flexmojos-sandbox</module>
         <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
@@ -144,12 +145,13 @@
 
     <profile>
       <id>release</id>
-            <activation>
+      <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      
+
       <modules>
         <module>flexmojos-parent</module>
+        <module>flexmojos-common-matchers</module>
         <module>flexmojos-sandbox</module>
         <module>flexmojos-generator</module>
         <module>flexmojos-maven-plugin</module>
