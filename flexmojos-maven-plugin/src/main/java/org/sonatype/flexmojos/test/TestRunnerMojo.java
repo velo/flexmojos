@@ -51,7 +51,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @requiresDependencyResolution test
  * @phase test
  */
-public class FlexUnitMojo
+public class TestRunnerMojo
     extends AbstractIrvinMojo
 {
 

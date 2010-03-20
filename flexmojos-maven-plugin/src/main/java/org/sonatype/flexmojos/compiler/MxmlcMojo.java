@@ -123,6 +123,12 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( !PathUtil.exist( getSourcePath() ) )
+        {
+            getLog().warn( "Skipping compiler, source path doesn't exist." );
+            return;
+        }
+
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
 
         if ( runtimeLocales != null )
@@ -140,15 +146,6 @@ public class MxmlcMojo
         }
 
         executeModules();
-    }
-
-    private void wait( List<Result> results )
-        throws MojoFailureException, MojoExecutionException
-    {
-        for ( Result result : results )
-        {
-            checkResult( result );
-        }
     }
 
     private void executeModules()

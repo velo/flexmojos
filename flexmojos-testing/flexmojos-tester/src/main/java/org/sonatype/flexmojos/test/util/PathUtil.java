@@ -239,4 +239,21 @@ public class PathUtil
         return getCanonicalFile( new File( file ) );
     }
 
+    public static boolean exist( File... files )
+    {
+        if ( files == null )
+        {
+            return false;
+        }
+
+        for ( File file : files )
+        {
+            if ( !file.exists() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

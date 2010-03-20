@@ -40,8 +40,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
-import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
-import org.sonatype.flexmojos.compiler.ApplicationMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -264,7 +262,7 @@ public class CopyMojo
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
         if ( urls == null )
         {
-            urls = ApplicationMojo.DEFAULT_RSL_URLS;
+            // TODO urls = ApplicationMojo.DEFAULT_RSL_URLS;
         }
         return urls;
     }
@@ -297,7 +295,7 @@ public class CopyMojo
             CompileConfigurationLoader.getCompilerPluginSetting( artifactProject, "runtimeLocaleOutputPath" );
         if ( runtimeLocaleOutputPath == null )
         {
-            runtimeLocaleOutputPath = AbstractFlexCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
+            // TODO runtimeLocaleOutputPath = AbstractFlexCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
         return runtimeLocaleOutputPath;
     }
@@ -350,25 +348,26 @@ public class CopyMojo
         }
     }
 
-    private File getDestinationFile( Artifact artifact ) throws MojoExecutionException
+    private File getDestinationFile( Artifact artifact )
+        throws MojoExecutionException
     {
         File destFile;
-        String defaultFinalName = artifact.getArtifactId() + "-" + artifact.getVersion();  
+        String defaultFinalName = artifact.getArtifactId() + "-" + artifact.getVersion();
         MavenProject pomProject = getProject( artifact );
         String finalName = pomProject.getBuild().getFinalName();
         if ( finalName.equals( defaultFinalName ) )
         {
-             String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-             String version = stripVersion ? "" : "-" + artifact.getVersion();
-             destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
+            String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
+            String version = stripVersion ? "" : "-" + artifact.getVersion();
+            destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
         }
         else
         {
-    	   if ( stripVersion )
-    	   {
-              getLog().info( "Copying artifact using final name " + finalName + " ignoring strip version" );
-           }
-           destFile = new File( webappDirectory, finalName + "." + SWF );
+            if ( stripVersion )
+            {
+                getLog().info( "Copying artifact using final name " + finalName + " ignoring strip version" );
+            }
+            destFile = new File( webappDirectory, finalName + "." + SWF );
         }
 
         return destFile;

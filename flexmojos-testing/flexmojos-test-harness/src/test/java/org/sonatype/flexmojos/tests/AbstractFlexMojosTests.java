@@ -37,9 +37,11 @@ import org.apache.maven.it.Verifier;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.ModelProcessor;
+import org.apache.maven.model.io.ModelParseException;
 import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -108,9 +110,15 @@ public class AbstractFlexMojosTests
         throws Exception
     {
         File repo = new File( getProperty( "fake-repo" ) );
-        File fmParentPom =
-            new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion() + "/flexmojos-parent-"
-                + getFlexmojosVersion() + ".pom" );
+        addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion()
+            + "/flexmojos-parent-" + getFlexmojosVersion() + ".pom" ) );
+        addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-maven-plugin/" + getFlexmojosVersion()
+                           + "/flexmojos-maven-plugin-" + getFlexmojosVersion() + ".pom" ) );
+    }
+
+    private static void addEmma( File fmParentPom )
+        throws ComponentLookupException, IOException, ModelParseException
+    {
         ModelProcessor builder = container.lookup( ModelProcessor.class );
         Model pom = builder.read( fmParentPom, null );
         Dependency emma = new Dependency();

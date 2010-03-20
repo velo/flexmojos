@@ -146,11 +146,6 @@
           <artifactId>maven-plugin-plugin</artifactId>
           <version>2.5.1</version>
         </plugin>
-        <plugin>
-          <groupId>org.jvnet</groupId>
-          <artifactId>animal-sniffer</artifactId>
-          <version>1.2</version>
-        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -175,6 +170,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
+        <version>3.0-beta-1-SNAPSHOT</version>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -240,13 +236,6 @@
     <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk</developerConnection>
     <url>http://svn.sonatype.org/flexmojos/trunk</url>
   </scm>
-
-  <distributionManagement>
-    <site>
-      <id>flexmojos</id>
-      <url>dav:http://repository.sonatype.org/content/sites/flexmojos-site/</url>
-    </site>
-  </distributionManagement>
 
   <mailingLists>
     <mailingList>
@@ -537,11 +526,6 @@
             <artifactId>junit</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.jvnet</groupId>
-        <artifactId>animal-sniffer-annotation</artifactId>
-        <version>1.0</version>
       </dependency>
 
       <dependency>

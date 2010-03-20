@@ -22,14 +22,16 @@ import static org.hamcrest.collection.IsCollectionContaining.hasItems;
 import static org.hamcrest.text.StringContains.containsString;
 import static org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.FRAMEWORK_GROUP_ID;
 import static org.sonatype.flexmojos.common.matcher.FileMatcher.withAbsolutePath;
-
+import static org.mockito.Mockito.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
@@ -39,6 +41,7 @@ import org.sonatype.flexmojos.common.matcher.CollectionsMatcher;
 import org.sonatype.flexmojos.compiler.AsdocMojo;
 import org.sonatype.flexmojos.compiler.CompcMojo;
 import org.sonatype.flexmojos.compiler.MxmlcMojo;
+import org.sonatype.flexmojos.test.TestCompilerMojo;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -100,6 +103,8 @@ public class DependencyFilteringTest
         flexArtifacts.add( createArtifact( "d", "rpc-merged", "1.0", "merged", "swc", null ) );
         flexArtifacts.add( createArtifact( "d", "framework-rb", "1.0", "internal", "rb.swc", null ) );
         flexArtifacts.add( createArtifact( "d", "rpc-rb", "1.0", null, "rb.swc", null ) );
+        flexArtifacts.add( createArtifact( "d", "framework-test", "1.0", "test", "swc", null ) );
+        flexArtifacts.add( createArtifact( "d", "rpc-test", "1.0", "test", "swc", null ) );
 
         airArtifacts = new LinkedHashSet<Artifact>( flexArtifacts );
 
@@ -116,7 +121,18 @@ public class DependencyFilteringTest
 
         classifier = classifier == null ? "" : "-" + classifier;
 
-        a.setFile( new File( artifactId + classifier + "-" + version + "." + type ) );
+        File f = new File( "target/swcs", artifactId + classifier + "-" + version + "." + type );
+        f.getParentFile().mkdirs();
+        try
+        {
+            f.createNewFile();
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( f.getAbsolutePath(), e );
+        }
+
+        a.setFile( f );
         return a;
     }
 
@@ -134,7 +150,7 @@ public class DependencyFilteringTest
             @Override
             public String getToolsLocale()
             {
-                return "??";
+                return "xx";
             }
 
             @Override
@@ -144,7 +160,9 @@ public class DependencyFilteringTest
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
         };
-        c.outputDirectory = new File("target/temp");
+        c.setLog( mock( Log.class ) );
+
+        c.outputDirectory = new File( "target/temp" );
 
         validate( c, "playerglobal.swc" );
     }
@@ -161,7 +179,9 @@ public class DependencyFilteringTest
                 return flexArtifacts;
             }
         };
-        c.outputDirectory = new File("target/temp");
+        c.setLog( mock( Log.class ) );
+
+        c.outputDirectory = new File( "target/temp" );
 
         List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
         MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 5 ) );
@@ -187,7 +207,7 @@ public class DependencyFilteringTest
             @Override
             public String getToolsLocale()
             {
-                return "??";
+                return "xx";
             }
 
             @Override
@@ -198,7 +218,9 @@ public class DependencyFilteringTest
             }
 
         };
-        c.outputDirectory = new File("target/temp");
+        c.setLog( mock( Log.class ) );
+
+        c.outputDirectory = new File( "target/temp" );
         c.packaging = "air";
 
         validate( c, "airglobal.swc" );
@@ -207,7 +229,30 @@ public class DependencyFilteringTest
     @Test
     public void test()
     {
-        Assert.fail();
+        TestCompilerMojo c = new TestCompilerMojo()
+        {
+            @Override
+            public Set<Artifact> getDependencies()
+            {
+                return flexArtifacts;
+            }
+        };
+        c.setLog( mock( Log.class ) );
+
+        c.outputDirectory = new File( "target/temp" );
+
+        List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 1 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "playerglobal.swc" ) ) ) );
+
+        deps = Arrays.asList( c.getIncludeLibraries() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 6 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-external" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-external" ) ),//
+                                                  withAbsolutePath( containsString( "framework-internal" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-internal" ) ),//
+                                                  withAbsolutePath( containsString( "framework-test" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-test" ) ) ) );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -223,8 +268,8 @@ public class DependencyFilteringTest
         MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 6 ) );
         MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-merged" ) ),//
                                                   withAbsolutePath( containsString( "rpc-merged" ) ),//
-                                                  withAbsolutePath( containsString( "framework-rb-??" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-rb-??" ) ),//
+                                                  withAbsolutePath( containsString( "framework-rb-xx" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-rb-xx" ) ),//
                                                   withAbsolutePath( containsString( "framework-compile" ) ),//
                                                   withAbsolutePath( containsString( "rpc-compile" ) ) ) );
 
