@@ -31,4 +31,5 @@ public interface FlexScopes
 
     String THEME = "theme";
 
+    String TEST = "test";
 }

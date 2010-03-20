@@ -100,7 +100,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     protected static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
-    private static final Matcher<? extends Artifact> GLOBAL_MATCHER =
+    protected static final Matcher<? extends Artifact> GLOBAL_MATCHER =
         allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
                                                                   artifactId( "airglobal" ) ) );
 
@@ -2813,6 +2813,15 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         catch ( CloneNotSupportedException e )
         {
             throw new IllegalStateException( "The class '" + getClass() + "' is supposed to be clonable", e );
+        }
+    }
+
+    protected void wait( List<Result> results )
+        throws MojoFailureException, MojoExecutionException
+    {
+        for ( Result result : results )
+        {
+            checkResult( result );
         }
     }
 }
