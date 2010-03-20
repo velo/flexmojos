@@ -220,11 +220,9 @@ public class FileMatcher
     {
         return new TypeSafeMatcher<File>()
         {
-            File fileTested;
 
             public boolean matchesSafely( File item )
             {
-                fileTested = item;
                 return path.matches( item.getAbsolutePath() );
             }
 
