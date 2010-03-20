@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.apache.maven.it.Verifier;
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.flexmojos.utilities.MavenUtils;
+import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
