@@ -121,7 +121,28 @@
             <phase>deploy</phase>
             <goals>
               <goal>site</goal>
+              <goal>jar</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.sonatype.maven.plugins</groupId>
+        <artifactId>maven-upload-plugin</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>publish-site</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>upload-file</goal>
+            </goals>
+            <configuration>
+              <serverId>forge</serverId>
+              <repositoryUrl>http://repository.sonatype.org/service/local/repositories/flexmojos-site/content-compressed</repositoryUrl>
+              <file>target/${project.artifactId}-${project.version}-site.jar</file>
+              <repositoryPath>${project.version}</repositoryPath>
+            </configuration>
           </execution>
         </executions>
       </plugin>
