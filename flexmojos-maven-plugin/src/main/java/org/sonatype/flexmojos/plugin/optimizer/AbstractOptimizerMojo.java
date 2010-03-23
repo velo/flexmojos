@@ -265,12 +265,12 @@ public abstract class AbstractOptimizerMojo
 
         if ( quality != null )
         {
-            cfg.update( "-q", DECIMAL_FORMAT.format( quality ) );
+            cfg.update( "-q", String.valueOf( quality ) );
         }
 
         if ( deblock != null )
         {
-            cfg.update( "-d", DECIMAL_FORMAT.format( deblock ) );
+            cfg.update( "-d", String.valueOf( deblock ) );
         }
 
         s.configure( cfg );
