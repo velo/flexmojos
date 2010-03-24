@@ -1,6 +1,6 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
- import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
@@ -12,7 +12,7 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
@@ -63,6 +63,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.AnyOf;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
 import org.sonatype.flexmojos.compiler.IDefaultSize;
@@ -2510,7 +2511,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         {
             themes.addAll( PathUtil.getCanonicalPathList( this.themes ) );
         }
-        themes.addAll( PathUtil.getCanonicalPathList( MavenUtils.getFiles( getDependencies( type( SWC ), scope( THEME ) ) ) ) );
+        themes.addAll( PathUtil.getCanonicalPathList( //
+        MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
+                                              scope( THEME ) ) ) ) );
         return themes;
     }
 
