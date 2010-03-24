@@ -32,4 +32,6 @@ public interface FlexExtension
 
     String XML = "xml";
 
+    String CSS = "css";
+
 }
