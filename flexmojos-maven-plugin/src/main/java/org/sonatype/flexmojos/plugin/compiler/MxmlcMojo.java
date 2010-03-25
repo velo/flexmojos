@@ -93,6 +93,11 @@ public class MxmlcMojo
     private List<String> includeResourceBundles;
 
     /**
+     * @parameter
+     */
+    private Module[] modules;
+
+    /**
      * DOCME Another, undocumented by adobe
      * <p>
      * Equivalent to -projector
@@ -110,16 +115,37 @@ public class MxmlcMojo
     private String sourceFile;
 
     /**
-     * @parameter
-     */
-    private Module[] modules;
-
-    /**
      * @component
      * @required
      * @readonly
      */
     private FlashPlayerTruster truster;
+
+    /**
+     * When true, flexmojos will register register every compiled SWF files as trusted. These SWF files are assigned to
+     * the local-trusted sandbox. They can interact with any other SWF files, and they can load data from anywhere,
+     * remote or local. On false nothing is done, so if the file is already trusted it will still as it is.
+     * 
+     * @parameter default-value="true" expression="${updateSecuritySandbox}"
+     */
+    private boolean updateSecuritySandbox;
+
+    public final Result doCompile( MxmlcConfigurationHolder cfg, boolean synchronize )
+        throws Exception
+    {
+        try
+        {
+            return compiler.compileSwf( cfg, synchronize );
+        }
+        finally
+        {
+            if ( isUpdateSecuritySandbox() )
+            {
+                truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
+            }
+        }
+
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -138,20 +164,13 @@ public class MxmlcMojo
             for ( String locale : runtimeLocales )
             {
                 MxmlcMojo cfg = this.clone();
-                cfg.compilerLocales = new String[] { locale };
-                cfg.classifier = locale;
+                configureResourceBundle( locale, cfg );
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, null ), fullSynchronization ) );
             }
 
             wait( results );
         }
 
-        executeModules();
-    }
-
-    private void executeModules()
-        throws MojoExecutionException, MojoFailureException
-    {
         if ( modules != null )
         {
             List<Result> results = new ArrayList<Result>();
@@ -201,20 +220,6 @@ public class MxmlcMojo
         }
     }
 
-    public final Result doCompile( MxmlcConfigurationHolder cfg, boolean synchronize )
-        throws Exception
-    {
-        try
-        {
-            return compiler.compileSwf( cfg, synchronize );
-        }
-        finally
-        {
-            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
-        }
-
-    }
-
     public List<String> getFileSpecs()
     {
         return fileSpecs;
@@ -230,16 +235,21 @@ public class MxmlcMojo
         return projector;
     }
 
+    @Override
+    public final String getProjectType()
+    {
+        return SWF;
+    }
+
     protected File getSourceFile()
     {
         return SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile, project.getGroupId(),
                                                      project.getArtifactId() );
     }
 
-    @Override
-    public final String getProjectType()
+    public boolean isUpdateSecuritySandbox()
     {
-        return SWF;
+        return updateSecuritySandbox;
     }
 
 }

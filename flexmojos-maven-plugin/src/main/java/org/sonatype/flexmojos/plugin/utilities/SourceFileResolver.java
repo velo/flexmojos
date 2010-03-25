@@ -66,7 +66,8 @@ public class SourceFileResolver
             return sourceFile;
         }
 
-        return null;
+        throw new IllegalArgumentException( "Source file '" + sourceFileName + "' not found at source roots: "
+            + sourceRoots );
     }
 
     /**

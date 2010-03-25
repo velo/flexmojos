@@ -27,6 +27,7 @@ import java.util.List;
 /**
  * this class provides functions used to generate a relative path from two absolute paths
  * 
+ * @author Marvin H. Froeder
  * @author David M. Howard
  */
 public class PathUtil
@@ -248,6 +249,24 @@ public class PathUtil
 
         for ( File file : files )
         {
+            if ( !file.exists() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean exist( List<String> paths )
+    {
+        if ( paths == null )
+        {
+            return false;
+        }
+
+        for ( String path : paths )
+        {
+            File file = getCanonicalFile( path );
             if ( !file.exists() )
             {
                 return false;

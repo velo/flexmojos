@@ -17,7 +17,7 @@
  */
 package org.sonatype.flexmojos.plugin.test;
 
- import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
@@ -33,8 +33,12 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
+import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
+import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
@@ -65,14 +69,27 @@ public class TestCompilerMojo
      * @required
      * @readonly
      */
-    private List<String> sourcePaths;
+    private List<String> testCompileSourceRoots;
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( !PathUtil.exist( testCompileSourceRoots ) )
+        {
+            getLog().warn( "Skipping compiler, test source path doesn't exist." );
+            return;
+        }
+
+        executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
+    }
 
     @Override
     public File[] getSourcePath()
     {
-        return PathUtil.getFiles( sourcePaths );
+        return PathUtil.getFiles( testCompileSourceRoots );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public File[] getIncludeLibraries()
     {
@@ -82,6 +99,7 @@ public class TestCompilerMojo
                                                      not( GLOBAL_MATCHER ) ) );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public File[] getExternalLibraryPath()
     {
@@ -100,6 +118,7 @@ public class TestCompilerMojo
         return null;
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
     {
@@ -108,5 +127,18 @@ public class TestCompilerMojo
                                                             scope( null ) ),//
                                                      not( GLOBAL_MATCHER ) ),//
                                     getCompiledResouceBundles() );
+    }
+
+    @Override
+    public String[] getLocale()
+    {
+        return CollectionUtils.merge( runtimeLocales, super.getLocale() ).toArray( new String[0] );
+    }
+
+    @Override
+    public boolean isUpdateSecuritySandbox()
+    {
+        // not optional for tests, flexmojos needs sandbox security disabled
+        return true;
     }
 }

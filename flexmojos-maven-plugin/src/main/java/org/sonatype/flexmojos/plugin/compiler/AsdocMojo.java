@@ -35,6 +35,18 @@ import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.test.util.OSUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
+/**
+ * <p>
+ * Goal which generates documentation from the ActionScript sources.
+ * </p>
+ * 
+ * @author Marvin Herman Froeder (velo.br@gmail.com)
+ * @since 4.0
+ * @goal asdoc
+ * @requiresDependencyResolution compile
+ * @phase process-sources
+ * @configurator flexmojos
+ */
 public class AsdocMojo
     extends AbstractMavenFlexCompilerConfiguration<IASDocConfiguration, AsdocMojo>
     implements IASDocConfiguration, IPackagesConfiguration, Mojo
