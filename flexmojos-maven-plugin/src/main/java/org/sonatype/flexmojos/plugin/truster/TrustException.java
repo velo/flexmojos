@@ -2,7 +2,7 @@ package org.sonatype.flexmojos.plugin.truster;
 
 
 public class TrustException
-    extends Exception
+    extends RuntimeException
 {
 
     private static final long serialVersionUID = 3938690139697545739L;

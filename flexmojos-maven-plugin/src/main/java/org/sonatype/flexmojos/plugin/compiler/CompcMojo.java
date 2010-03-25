@@ -153,24 +153,6 @@ public class CompcMojo
     private List<String> includeNamespaces;
 
     /**
-     * A list of resource bundles to include in the output SWC
-     * <p>
-     * Equivalent to -include-resource-bundles
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;includeResourceBundles&gt;
-     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
-     *   &lt;rb&gt;Collections&lt;/rb&gt;
-     * &lt;/includeResourceBundles&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private List<String> includeResourceBundles;
-
-    /**
      * A list of directories and source files to include in the output SWC
      * <p>
      * Equivalent to -include-sources
@@ -215,17 +197,31 @@ public class CompcMojo
      */
     private String root;
 
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        executeCompiler( this, true );
-    }
-
     @Override
     public Result doCompile( ICompcConfiguration cfg, boolean synchronize )
         throws Exception
     {
-        return compiler.compileSwc( this, synchronize );
+        return compiler.compileSwc( cfg, synchronize );
+    }
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+
+        executeCompiler( this, true );
+
+        if ( runtimeLocales != null )
+        {
+            List<Result> results = new ArrayList<Result>();
+            for ( String locale : runtimeLocales )
+            {
+                CompcMojo cfg = this.clone();
+                configureResourceBundle( locale, cfg );
+                results.add( executeCompiler( cfg, fullSynchronization ) );
+            }
+
+            wait( results );
+        }
     }
 
     public Boolean getComputeDigest()
@@ -341,15 +337,15 @@ public class CompcMojo
         return includeStylesheets;
     }
 
-    public String getRoot()
-    {
-        return root;
-    }
-
     @Override
     public final String getProjectType()
     {
         return SWC;
+    }
+
+    public String getRoot()
+    {
+        return root;
     }
 
 }

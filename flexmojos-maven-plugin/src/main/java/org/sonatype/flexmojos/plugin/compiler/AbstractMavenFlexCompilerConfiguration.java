@@ -10,14 +10,16 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.CSS;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
+import static org.sonatype.flexmojos.plugin.utilities.CollectionUtils.merge;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -63,7 +65,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.AnyOf;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
 import org.sonatype.flexmojos.compiler.IDefaultSize;
@@ -96,6 +97,7 @@ import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenLogger;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
+import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -117,34 +119,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected static final Matcher<? extends Artifact> GLOBAL_MATCHER =
         allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
                                                                   artifactId( "airglobal" ) ) );
-
-    /**
-     * @parameter expression="${project.build.outputDirectory}"
-     * @readonly
-     * @required
-     */
-    protected File outputDirectory;
-
-    /**
-     * @parameter expression="${project.build.directory}"
-     * @readonly
-     * @required
-     */
-    protected File targetDirectory;
-
-    /**
-     * When false (faster), Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF).
-     * If true, Thread.join() will be invoked to make the execution synchronous (sequential).
-     * 
-     * @parameter expression="${flex.fullSynchronization}" default-value="false"
-     */
-    protected boolean fullSynchronization;
-
-    public File getTargetDirectory()
-    {
-        targetDirectory.mkdirs();
-        return targetDirectory;
-    }
 
     /**
      * Generate an accessible SWF
@@ -270,6 +244,8 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.benchmarkTimeFilter}"
      */
     private Long benchmarkTimeFilter;
+
+    private Map<String, Object> cache = new LinkedHashMap<String, Object>();
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
@@ -606,6 +582,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private String[] externs;
 
     /**
+     * The name of the compiled file
+     * 
+     * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
+     */
+    protected String finalName;
+
+    /**
      * Enables FlashType for embedded fonts, which provides greater clarity for small fonts
      * <p>
      * Equivalent to -compiler.fonts.flash-type
@@ -649,6 +632,14 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private String framework;
 
     /**
+     * When false (faster) Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF). If
+     * true, Thread.join() will be invoked to make the execution synchronous (sequential).
+     * 
+     * @parameter expression="${flex.fullSynchronization}" default-value="false"
+     */
+    protected boolean fullSynchronization;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.generate-abstract-syntax-tree
@@ -677,6 +668,24 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.headlessServer}"
      */
     private Boolean headlessServer;
+
+    /**
+     * A list of resource bundles to include in the output SWC
+     * <p>
+     * Equivalent to -include-resource-bundles
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeResourceBundles&gt;
+     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
+     *   &lt;rb&gt;Collections&lt;/rb&gt;
+     * &lt;/includeResourceBundles&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected List<String> includeResourceBundles;
 
     /**
      * A list of symbols to always link in when building a SWF
@@ -808,17 +817,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter
      */
     private Map<String, String> licenses;
-
-    /**
-     * Output a XML-formatted report of all definitions linked into the application
-     * <p>
-     * Equivalent to -link-report
-     * </p>
-     * 
-     * @parameter expression="${flex.linkReport}"
-     * @readonly
-     */
-    private File linkReport;
 
     /**
      * When true the link report will be attached to maven reactor
@@ -1067,6 +1065,20 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private File output;
 
     /**
+     * @parameter expression="${project.build.outputDirectory}"
+     * @readonly
+     * @required
+     */
+    protected File outputDirectory;
+
+    /**
+     * @parameter expression="${project.packaging}"
+     * @required
+     * @readonly
+     */
+    protected String packaging;
+
+    /**
      * @parameter expression="${plugin.artifacts}"
      * @readonly
      */
@@ -1080,13 +1092,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @readonly
      */
     protected MavenProject project;
-
-    /**
-     * @parameter expression="${project.packaging}"
-     * @required
-     * @readonly
-     */
-    protected String packaging;
 
     /**
      * @component
@@ -1224,7 +1229,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @required
      * @readonly
      */
-    private List<String> sourcePaths;
+    private List<String> compileSourceRoots;
 
     /**
      * Statically link the libraries specified by the -runtime-shared-libraries-path option.
@@ -1255,6 +1260,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.swcChecksum}"
      */
     private Boolean swcChecksum;
+
+    /**
+     * @parameter expression="${project.build.directory}"
+     * @readonly
+     * @required
+     */
+    protected File targetDirectory;
 
     /**
      * Specifies the version of the player the application is targeting. Features requiring a later version will not be
@@ -1369,12 +1381,50 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      */
     private Boolean warnings;
 
-    /**
-     * The name of the compiled file
-     * 
-     * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
-     */
-    protected String finalName;
+    protected void checkResult( Result result )
+        throws MojoFailureException, MojoExecutionException
+    {
+        int exitCode;
+        try
+        {
+            exitCode = result.getExitCode();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        if ( exitCode != 0 )
+        {
+            throw new MojoFailureException( "Got " + exitCode + " errors building project, check logs" );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public C clone()
+    {
+        try
+        {
+            C clone = (C) super.clone();
+            clone.cache = new LinkedHashMap<String, Object>();
+            return clone;
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            throw new IllegalStateException( "The class '" + getClass() + "' is supposed to be clonable", e );
+        }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected void configureResourceBundle( String locale, AbstractMavenFlexCompilerConfiguration<?, ?> cfg )
+    {
+        cfg.compilerLocales = new String[] { locale };
+        cfg.classifier = locale;
+        cfg.includeResourceBundles = CollectionUtils.merge( getResourceBundleListContent(), includeResourceBundles );
+        cfg.getCache().put( "getExternalLibraryPath",
+                            merge( cfg.getIncludeLibraries(), cfg.getExternalLibraryPath() ).toArray( new File[0] ) );
+        cfg.getCache().put( "getIncludeLibraries", new File[0] );
+    }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
         throws Exception;
@@ -1398,24 +1448,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return result;
-    }
-
-    protected void checkResult( Result result )
-        throws MojoFailureException, MojoExecutionException
-    {
-        int exitCode;
-        try
-        {
-            exitCode = result.getExitCode();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "Got " + exitCode + " errors building project, check logs" );
-        }
     }
 
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
@@ -1522,6 +1554,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Long getBenchmarkTimeFilter()
     {
         return benchmarkTimeFilter;
+    }
+
+    public Map<String, Object> getCache()
+    {
+        return cache;
+    }
+
+    public String getClassifier()
+    {
+        return classifier;
     }
 
     public String getCompatibilityVersion()
@@ -1814,40 +1856,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
     }
 
-    @SuppressWarnings( "unchecked" )
-    public Collection<Artifact> getGlobalArtifact()
-    {
-        Artifact global = getDependency( GLOBAL_MATCHER );
-        if ( global == null )
-        {
-            throw new IllegalArgumentException(
-                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
-        }
-
-        File dir = new File( outputDirectory, "swcs" );
-        dir.mkdirs();
-
-        File source = global.getFile();
-        File dest = new File( dir, global.getArtifactId() + "." + SWC );
-
-        try
-        {
-            if ( !PathUtil.getCanonicalFile( source ).equals( PathUtil.getCanonicalFile( dest ) ) )
-            {
-                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
-                FileUtils.copyFile( source, dest );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
-        }
-
-        global.setFile( dest );
-
-        return Collections.singletonList( global );
-    }
-
     public List<String> getExterns()
     {
         if ( externs == null )
@@ -1856,6 +1864,17 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return Arrays.asList( externs );
+    }
+
+    public String getFinalName()
+    {
+        if ( finalName == null )
+        {
+            String c = getClassifier() == null ? "" : "-" + getClassifier();
+            return project.getBuild().getFinalName() + c;
+        }
+
+        return finalName;
     }
 
     public Boolean getFlashType()
@@ -1920,6 +1939,40 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Boolean getGenerateFrameLoader()
     {
         return generateFrameLoader;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public Collection<Artifact> getGlobalArtifact()
+    {
+        Artifact global = getDependency( GLOBAL_MATCHER );
+        if ( global == null )
+        {
+            throw new IllegalArgumentException(
+                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
+        }
+
+        File dir = new File( outputDirectory, "swcs" );
+        dir.mkdirs();
+
+        File source = global.getFile();
+        File dest = new File( dir, global.getArtifactId() + "." + SWC );
+
+        try
+        {
+            if ( !PathUtil.getCanonicalFile( source ).equals( PathUtil.getCanonicalFile( dest ) ) )
+            {
+                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                FileUtils.copyFile( source, dest );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+        }
+
+        global.setFile( dest );
+
+        return Collections.singletonList( global );
     }
 
     public Boolean getHeadlessServer()
@@ -2204,6 +2257,16 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return managers;
     }
 
+    public Logger getMavenLogger()
+    {
+        return new OEMLogAdapter( new MavenLogger( getLog() ) );
+    }
+
+    public SinglePathResolver getMavenPathResolver()
+    {
+        return new MavenPathResolver( resources );
+    }
+
     public String getMaxCachedFonts()
     {
         if ( maxCachedFonts == null )
@@ -2341,22 +2404,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return PathUtil.getCanonicalPath( output );
     }
 
-    public String getFinalName()
-    {
-        if ( finalName == null )
-        {
-            String c = getClassifier() == null ? "" : "-" + getClassifier();
-            return project.getBuild().getFinalName() + c;
-        }
-
-        return finalName;
-    }
-
-    public String getClassifier()
-    {
-        return classifier;
-    }
-
     public String getProjectType()
     {
         return packaging;
@@ -2392,6 +2439,30 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return PathUtil.getCanonicalPath( getResourceBundleListFile() );
     }
 
+    protected List<String> getResourceBundleListContent()
+    {
+        String bundles;
+        try
+        {
+            bundles = FileUtils.fileRead( getResourceBundleListFile() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenRuntimeException( e );
+        }
+
+        return Arrays.asList( bundles.substring( 10 ).split( " " ) );
+    }
+
+    /**
+     * File content sample:
+     * 
+     * <pre>
+     * bundles = containers core effects skins styles
+     * </pre>
+     * 
+     * @return bundle list file
+     */
     protected File getResourceBundleListFile()
     {
         if ( resourceBundleList != null )
@@ -2481,7 +2552,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public File[] getSourcePath()
     {
-        return PathUtil.getFiles( sourcePaths );
+        return PathUtil.getFiles( compileSourceRoots );
     }
 
     public Boolean getStaticLinkRuntimeSharedLibraries()
@@ -2497,6 +2568,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Boolean getSwcChecksum()
     {
         return swcChecksum;
+    }
+
+    public File getTargetDirectory()
+    {
+        targetDirectory.mkdirs();
+        return targetDirectory;
     }
 
     public String getTargetPlayer()
@@ -2810,29 +2887,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         this.log = log;
     }
 
-    private Map<String, Object> cache = new LinkedHashMap<String, Object>();
-
-    public Map<String, Object> getCache()
-    {
-        return cache;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public C clone()
-    {
-        try
-        {
-            C clone = (C) super.clone();
-            clone.cache = new LinkedHashMap<String, Object>();
-            return clone;
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            throw new IllegalStateException( "The class '" + getClass() + "' is supposed to be clonable", e );
-        }
-    }
-
     protected void wait( List<Result> results )
         throws MojoFailureException, MojoExecutionException
     {
@@ -2840,15 +2894,5 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         {
             checkResult( result );
         }
-    }
-
-    public SinglePathResolver getMavenPathResolver()
-    {
-        return new MavenPathResolver( resources );
-    }
-
-    public Logger getMavenLogger()
-    {
-        return new OEMLogAdapter( new MavenLogger( getLog() ) );
     }
 }
