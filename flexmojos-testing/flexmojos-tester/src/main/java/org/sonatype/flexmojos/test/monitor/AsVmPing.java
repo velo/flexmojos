@@ -12,7 +12,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Configuration;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.test.ThreadStatus;
 
@@ -26,13 +25,10 @@ public class AsVmPing
     extends AbstractSocketThread
 {
 
-    @Configuration( value = "13540" )
     private int testControlPort;
 
-    @Configuration( value = "20000" )
     private int firstConnectionTimeout;
 
-    @Configuration( value = "5000" )
     private int testTimeout;
 
     @Override
@@ -86,7 +82,7 @@ public class AsVmPing
                     }
                 }
             }
-            catch ( SocketTimeoutException e )
+            catch ( SocketException e )
             {
                 errorCount++;
                 if ( errorCount >= 3 )
@@ -97,25 +93,15 @@ public class AsVmPing
                     return;
                 }
             }
-            catch ( SocketException e )
-            {
-                if ( !e.getMessage().contains( "Broken pipe" ) )
-                {
-                    throw e;
-                }
-                else
-                {
-                    // Broken pipe is not a real error :D
-                    return;
-                }
-            }
         }
     }
 
-    public void start()
+    public void start(int testControlPort, int firstConnectionTimeout, int testTimeout)
     {
         reset();
-
+        this.testControlPort = testControlPort;
+        this.firstConnectionTimeout = firstConnectionTimeout;
+        this.testTimeout = testTimeout;
         launch();
     }
 

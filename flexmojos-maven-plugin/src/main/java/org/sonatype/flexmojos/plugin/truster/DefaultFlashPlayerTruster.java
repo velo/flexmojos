@@ -21,7 +21,7 @@ public class DefaultFlashPlayerTruster
         throws TrustException
     {
 
-        String trustedPath = PathUtil.getCanonicalPath( trustedFile );
+        String trustedPath = PathUtil.getCanonicalPath( trustedFile.getParentFile() );
 
         File mavenCfg = new File( getTrustDir(), "maven.cfg" );
         if ( !mavenCfg.exists() )

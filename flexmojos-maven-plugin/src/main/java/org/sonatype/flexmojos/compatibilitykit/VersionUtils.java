@@ -7,8 +7,25 @@
  */
 package org.sonatype.flexmojos.compatibilitykit;
 
+import java.util.Arrays;
+
 public class VersionUtils
 {
+
+    public static int[] splitVersion( String version, int size )
+    {
+        int[] versions = splitVersion( version );
+
+        if ( versions.length != size )
+        {
+            int[] temp = new int[size];
+            Arrays.fill( temp, 0 );
+            System.arraycopy( versions, 0, temp, 0, Math.min( versions.length, size ) );
+            versions = temp;
+        }
+
+        return versions;
+    }
 
     public static int[] splitVersion( String version )
     {

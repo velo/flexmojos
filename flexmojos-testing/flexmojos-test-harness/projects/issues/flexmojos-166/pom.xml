@@ -17,7 +17,7 @@
         <version>%{flexmojos.version}</version>
         <extensions>true</extensions>
         <configuration>
-          <useDefaultLocale>false</useDefaultLocale>
+          <sourceFile>Ice.css</sourceFile>
         </configuration>
       </plugin>
     </plugins>
