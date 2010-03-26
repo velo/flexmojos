@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.component.annotations.Component;
@@ -60,7 +62,8 @@ public class DefaultFlashPlayerTruster
         {
             // Load maven.cfg
             FileReader input = new FileReader( mavenCfg );
-            String cfg = IOUtils.toString( input );
+            String text = IOUtils.toString( input );
+            List<String> cfg = Arrays.asList( text.split( "\n" ) );
             input.close();
 
             if ( cfg.contains( trustedPath ) )
@@ -73,17 +76,17 @@ public class DefaultFlashPlayerTruster
                 getLogger().info( "Updating Flash Player Trust directory " + trustedPath );
             }
 
-            if ( !cfg.endsWith( "\n" ) )
+            if ( !text.endsWith( "\n" ) )
             {
-                cfg = cfg + '\n';
+                text = text + '\n';
             }
 
             // add builder folder
-            cfg = cfg + trustedPath + '\n';
+            text = text + trustedPath + '\n';
 
             // Save maven.cfg
             FileWriter output = new FileWriter( mavenCfg );
-            IOUtils.write( cfg, output );
+            IOUtils.write( text, output );
             output.flush();
             output.close();
 
