@@ -1,0 +1,3 @@
+A file that is excluded from the wrapping process by matching a patterns in templateExclusions.
+
+This should not be replaced in the output:  ${title}
