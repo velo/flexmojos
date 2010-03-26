@@ -936,6 +936,13 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
     private File output;
 
     /**
+     * Wether to print the compiler configuration in the build log or not.
+     *
+     * @parameter default-value="true"
+     */
+    protected boolean printCompilerConfiguration;
+
+    /**
      * Construct instance
      */
     public AbstractFlexCompilerMojo()
@@ -1289,7 +1296,7 @@ public abstract class AbstractFlexCompilerMojo<E extends Builder>
 
         builder.setConfiguration( configuration );
 
-        build( builder, true );
+        build( builder, printCompilerConfiguration );
     }
 
     /**
