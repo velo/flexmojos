@@ -22,9 +22,9 @@
 
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-parent</artifactId>
+    <artifactId>flexmojos-testing</artifactId>
     <version>3.7-SNAPSHOT</version>
-    <relativePath>../../flexmojos-parent/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-tester</artifactId>
