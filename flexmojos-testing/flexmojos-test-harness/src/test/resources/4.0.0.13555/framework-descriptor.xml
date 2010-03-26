@@ -43,7 +43,7 @@
 
   <defaults>
     <groupId>com.adobe.flex.framework</groupId>
-    <version>4.0.0.12575</version>
+    <version>4.0.0.13555</version>
   </defaults>
 
   <artifacts>
@@ -51,52 +51,27 @@
     <artifact>
       <artifactId>framework</artifactId>
       <type>swf</type>
-      <location>frameworks/rsls/framework_4.0.0.12575.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>framework</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/framework_4.0.0.12575.swz</location>
+      <location>frameworks/rsls/framework_4.0.0.13555.swf</location>
     </artifact>
     <artifact>
       <artifactId>osmf</artifactId>
       <type>swf</type>
-      <location>frameworks/rsls/osmf_4.0.0.12575.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>osmf</artifactId>
-      <type>swf</type>
-      <location>frameworks/rsls/osmf_4.0.0.12575.swz</location>
+      <location>frameworks/rsls/osmf_flex.4.0.0.13495.swf</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
       <type>swf</type>
-      <location>frameworks/rsls/rpc_4.0.0.12575.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>rpc</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/rpc_4.0.0.12575.swz</location>
+      <location>frameworks/rsls/rpc_4.0.0.13555.swf</location>
     </artifact>
     <artifact>
       <artifactId>spark</artifactId>
       <type>swf</type>
-      <location>frameworks/rsls/spark_4.0.0.12575.swf</location>
+      <location>frameworks/rsls/spark_4.0.0.13555.swf</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/spark_4.0.0.12575.swz</location>
-    </artifact>
-    <artifact>
-      <artifactId>textLayout</artifactId>
+      <artifactId>text-layout</artifactId>
       <type>swf</type>
-      <location>frameworks/rsls/textLayout_1.0.0.565.swf</location>
-    </artifact>
-    <artifact>
-      <artifactId>textLayout</artifactId>
-      <type>swz</type>
-      <location>frameworks/rsls/textLayout_1.0.0.565.swz</location>
+      <location>frameworks/rsls/textLayout_1.0.0.590.swf</location>
     </artifact>
     <artifact>
       <artifactId>applicationupdater</artifactId>
@@ -159,7 +134,7 @@
       <location>frameworks/projects/sparkskins/src</location>
     </artifact>
     <artifact>
-      <artifactId>textLayout</artifactId>
+      <artifactId>text-layout</artifactId>
       <type>jar</type>
       <classifier>sources</classifier>
       <location>frameworks/projects/textLayout/src</location>
@@ -186,32 +161,88 @@
     -->
 
     <artifact>
-      <artifactId>flex-framework</artifactId>
+      <artifactId>automation-framework</artifactId>
       <type>pom</type>
       <dependencies>
         <dependency>
-          <artifactId>flash-integration</artifactId>
+          <artifactId>automation</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>flex</artifactId>
+          <artifactId>automation-agent</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>framework</artifactId>
+          <artifactId>automation-air</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>framework</artifactId>
-          <type>zip</type>
-          <classifier>configs</classifier>
+          <artifactId>automation-airspark</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>automation-dmv</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>automation-flashflexkit</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>automation-spark</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>qtp</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>qtp-air</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>automation-agent</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>automation</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>qtp</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>qtp-air</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+      </dependencies>
+    </artifact>
+
+    <artifact>
+      <artifactId>common-framework</artifactId>
+      <type>pom</type>
+      <dependencies>
+<!-- FLEXMOJOS-243 
+Flex 4 requires a certain RSL loading order to avoid runtime errors (see 4.0.0.10845 flex-config.xml):
+1. textLayout
+2. osmf
+3. framework
+4. spark
+5. sparkskins
+6. rpc
+7. datavisualization
+-->      
+        <dependency>
+          <artifactId>text-layout</artifactId>
+          <type>swc</type>
         </dependency>
         <dependency>
           <artifactId>osmf</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>rpc</artifactId>
+          <artifactId>framework</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
@@ -223,20 +254,49 @@
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>textLayout</artifactId>
+          <artifactId>rpc</artifactId>
           <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>datavisualization</artifactId>
+          <type>swc</type>
+        </dependency>
+
+        <dependency>
+          <artifactId>flash-integration</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>flex</artifactId>
+          <type>swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>framework</artifactId>
+          <type>zip</type>
+          <classifier>configs</classifier>
         </dependency>
         <dependency>
           <artifactId>utilities</artifactId>
           <type>swc</type>
         </dependency>
         <dependency>
-          <artifactId>playerglobal</artifactId>
-          <classifier>10</classifier>
-          <type>swc</type>
+          <artifactId>datavisualization</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>flash-integration</artifactId>
+          <type>rb.swc</type>
         </dependency>
         <dependency>
           <artifactId>framework</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>osmf</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>playerglobal</artifactId>
           <type>rb.swc</type>
         </dependency>
         <dependency>
@@ -246,6 +306,25 @@
         <dependency>
           <artifactId>spark</artifactId>
           <type>rb.swc</type>
+        </dependency>
+        <dependency>
+          <artifactId>text-layout</artifactId>
+          <type>rb.swc</type>
+        </dependency>
+      </dependencies>
+    </artifact>
+    <artifact>
+      <artifactId>flex-framework</artifactId>
+      <type>pom</type>
+      <dependencies>
+        <dependency>
+          <artifactId>common-framework</artifactId>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <artifactId>playerglobal</artifactId>
+          <classifier>10</classifier>
+          <type>swc</type>
         </dependency>
       </dependencies>
     </artifact>
@@ -254,45 +333,8 @@
       <type>pom</type>
       <dependencies>
         <dependency>
-          <artifactId>flash-integration</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>flex</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>framework</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>framework</artifactId>
-          <type>zip</type>
-          <classifier>configs</classifier>
-        </dependency>
-        <dependency>
-          <artifactId>osmf</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>rpc</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>spark</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>sparkskins</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>textLayout</artifactId>
-          <type>swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>utilities</artifactId>
-          <type>swc</type>
+          <artifactId>common-framework</artifactId>
+          <type>pom</type>
         </dependency>
         <dependency>
           <artifactId>airframework</artifactId>
@@ -322,23 +364,13 @@
           <artifactId>airframework</artifactId>
           <type>rb.swc</type>
         </dependency>
-        <dependency>
-          <artifactId>airspark</artifactId>
-          <type>rb.swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>framework</artifactId>
-          <type>rb.swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>rpc</artifactId>
-          <type>rb.swc</type>
-        </dependency>
-        <dependency>
-          <artifactId>spark</artifactId>
-          <type>rb.swc</type>
-        </dependency>
       </dependencies>
+    </artifact>
+    
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/datavisualization.swc</location>
     </artifact>
     
     <artifact>
@@ -395,7 +427,7 @@
     </artifact>
 
     <artifact>
-      <artifactId>textLayout</artifactId>
+      <artifactId>text-layout</artifactId>
       <type>swc</type>
       <location>frameworks/libs/textLayout.swc</location>
     </artifact>
@@ -408,15 +440,9 @@
 
     <artifact>
       <artifactId>playerglobal</artifactId>
-      <classifier>9</classifier>
-      <type>swc</type>
-      <location>frameworks/libs/player/9/playerglobal.swc</location>
-    </artifact>
-    <artifact>
-      <artifactId>playerglobal</artifactId>
       <classifier>10</classifier>
       <type>swc</type>
-      <location>frameworks/libs/player/10/playerglobal.swc</location>
+      <location>frameworks/libs/player/10.0/playerglobal.swc</location>
     </artifact>
     <artifact>
       <artifactId>playerglobal</artifactId>
@@ -427,6 +453,12 @@
       <artifactId>airframework</artifactId>
       <type>swc</type>
       <location>frameworks/libs/air/airframework.swc</location>
+    </artifact>
+
+    <artifact>
+      <artifactId>airglobal</artifactId>
+      <type>swc</type>
+      <location>frameworks/libs/air/airglobal.swc</location>
     </artifact>
 
     <artifact>
@@ -445,6 +477,13 @@
       <artifactId>applicationupdater_ui</artifactId>
       <type>swc</type>
       <location>frameworks/libs/air/applicationupdater_ui.swc</location>
+    </artifact>
+
+    <artifact>
+      <artifactId>applicationupdater_ui</artifactId>
+      <classifier>flex3</classifier>
+      <type>swc</type>
+      <location>frameworks/libs/air/flex3/applicationupdater_ui3.swc</location>
     </artifact>
 
     <artifact>
@@ -483,9 +522,44 @@ zh_TW
       <location>frameworks/locale/en_US/airspark_rb.swc</location>
     </artifact>
     <artifact>
+      <artifactId>automation-agent</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/datavisualization_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>flash-integration</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/flash-integration_rb.swc</location>
+    </artifact>
+    <artifact>
       <artifactId>framework</artifactId>
       <type>rb.swc</type>
       <location>frameworks/locale/en_US/framework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>osmf</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/osmf_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>playerglobal</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/playerglobal_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>qtp-air</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/qtp_air_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -496,6 +570,11 @@ zh_TW
       <artifactId>spark</artifactId>
       <type>rb.swc</type>
       <location>frameworks/locale/en_US/spark_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>text-layout</artifactId>
+      <type>rb.swc</type>
+      <location>frameworks/locale/en_US/textLayout_rb.swc</location>
     </artifact>
     <!-- en US locales -->
     <artifact>
@@ -511,10 +590,58 @@ zh_TW
       <location>frameworks/locale/en_US/airspark_rb.swc</location>
     </artifact>
     <artifact>
+      <artifactId>automation-agent</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/datavisualization_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>flash-integration</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/flash-integration_rb.swc</location>
+    </artifact>
+    <artifact>
       <artifactId>framework</artifactId>
       <type>rb.swc</type>
       <classifier>en_US</classifier>
       <location>frameworks/locale/en_US/framework_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>osmf</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/osmf_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>playerglobal</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/playerglobal_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>qtp-air</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/qtp_air_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>rpc</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
+      <location>frameworks/locale/en_US/rpc_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>spark</artifactId>
@@ -523,11 +650,12 @@ zh_TW
       <location>frameworks/locale/en_US/spark_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>rpc</artifactId>
+      <artifactId>text-layout</artifactId>
       <type>rb.swc</type>
       <classifier>en_US</classifier>
-      <location>frameworks/locale/en_US/rpc_rb.swc</location>
+      <location>frameworks/locale/en_US/textLayout_rb.swc</location>
     </artifact>
+
     <!-- da_DK locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -536,10 +664,22 @@ zh_TW
       <location>frameworks/locale/da_DK/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>da_DK</classifier>
-      <location>frameworks/locale/da_DK/airspark_rb.swc</location>
+      <location>frameworks/locale/da_DK/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>da_DK</classifier>
+      <location>frameworks/locale/da_DK/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>da_DK</classifier>
+      <location>frameworks/locale/da_DK/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -548,17 +688,18 @@ zh_TW
       <location>frameworks/locale/da_DK/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>da_DK</classifier>
-      <location>frameworks/locale/da_DK/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>da_DK</classifier>
       <location>frameworks/locale/da_DK/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>da_DK</classifier>
+      <location>frameworks/locale/da_DK/spark_rb.swc</location>
+    </artifact>
+
     <!-- de_DE locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -567,10 +708,22 @@ zh_TW
       <location>frameworks/locale/de_DE/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>de_DE</classifier>
-      <location>frameworks/locale/de_DE/airspark_rb.swc</location>
+      <location>frameworks/locale/de_DE/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>de_DE</classifier>
+      <location>frameworks/locale/de_DE/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>de_DE</classifier>
+      <location>frameworks/locale/de_DE/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -579,10 +732,10 @@ zh_TW
       <location>frameworks/locale/de_DE/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
+      <artifactId>playerglobal</artifactId>
       <type>rb.swc</type>
       <classifier>de_DE</classifier>
-      <location>frameworks/locale/de_DE/spark_rb.swc</location>
+      <location>frameworks/locale/de_DE/playerglobal_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -590,6 +743,13 @@ zh_TW
       <classifier>de_DE</classifier>
       <location>frameworks/locale/de_DE/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>de_DE</classifier>
+      <location>frameworks/locale/de_DE/spark_rb.swc</location>
+    </artifact>
+
     <!-- es_ES locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -598,10 +758,22 @@ zh_TW
       <location>frameworks/locale/es_ES/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>es_ES</classifier>
-      <location>frameworks/locale/es_ES/airspark_rb.swc</location>
+      <location>frameworks/locale/es_ES/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>es_ES</classifier>
+      <location>frameworks/locale/es_ES/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>es_ES</classifier>
+      <location>frameworks/locale/es_ES/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -610,17 +782,18 @@ zh_TW
       <location>frameworks/locale/es_ES/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>es_ES</classifier>
-      <location>frameworks/locale/es_ES/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>es_ES</classifier>
       <location>frameworks/locale/es_ES/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>es_ES</classifier>
+      <location>frameworks/locale/es_ES/spark_rb.swc</location>
+    </artifact>
+
     <!-- fi_FI locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -629,10 +802,22 @@ zh_TW
       <location>frameworks/locale/fi_FI/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>fi_FI</classifier>
-      <location>frameworks/locale/fi_FI/airspark_rb.swc</location>
+      <location>frameworks/locale/fi_FI/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>fi_FI</classifier>
+      <location>frameworks/locale/fi_FI/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>fi_FI</classifier>
+      <location>frameworks/locale/fi_FI/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -641,17 +826,18 @@ zh_TW
       <location>frameworks/locale/fi_FI/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>fi_FI</classifier>
-      <location>frameworks/locale/fi_FI/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>fi_FI</classifier>
       <location>frameworks/locale/fi_FI/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>fi_FI</classifier>
+      <location>frameworks/locale/fi_FI/spark_rb.swc</location>
+    </artifact>
+
     <!-- fr_FR locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -660,10 +846,22 @@ zh_TW
       <location>frameworks/locale/fr_FR/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>fr_FR</classifier>
-      <location>frameworks/locale/fr_FR/airspark_rb.swc</location>
+      <location>frameworks/locale/fr_FR/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>fr_FR</classifier>
+      <location>frameworks/locale/fr_FR/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>fr_FR</classifier>
+      <location>frameworks/locale/fr_FR/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -672,10 +870,10 @@ zh_TW
       <location>frameworks/locale/fr_FR/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
+      <artifactId>playerglobal</artifactId>
       <type>rb.swc</type>
       <classifier>fr_FR</classifier>
-      <location>frameworks/locale/fr_FR/spark_rb.swc</location>
+      <location>frameworks/locale/fr_FR/playerglobal_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -683,6 +881,13 @@ zh_TW
       <classifier>fr_FR</classifier>
       <location>frameworks/locale/fr_FR/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>fr_FR</classifier>
+      <location>frameworks/locale/fr_FR/spark_rb.swc</location>
+    </artifact>
+
     <!-- it_IT locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -691,10 +896,22 @@ zh_TW
       <location>frameworks/locale/it_IT/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>it_IT</classifier>
-      <location>frameworks/locale/it_IT/airspark_rb.swc</location>
+      <location>frameworks/locale/it_IT/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>it_IT</classifier>
+      <location>frameworks/locale/it_IT/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>it_IT</classifier>
+      <location>frameworks/locale/it_IT/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -703,17 +920,18 @@ zh_TW
       <location>frameworks/locale/it_IT/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>it_IT</classifier>
-      <location>frameworks/locale/it_IT/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>it_IT</classifier>
       <location>frameworks/locale/it_IT/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>it_IT</classifier>
+      <location>frameworks/locale/it_IT/spark_rb.swc</location>
+    </artifact>
+
     <!-- ja_JP locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -722,10 +940,22 @@ zh_TW
       <location>frameworks/locale/ja_JP/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>ja_JP</classifier>
-      <location>frameworks/locale/ja_JP/airspark_rb.swc</location>
+      <location>frameworks/locale/ja_JP/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>ja_JP</classifier>
+      <location>frameworks/locale/ja_JP/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>ja_JP</classifier>
+      <location>frameworks/locale/ja_JP/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -734,10 +964,10 @@ zh_TW
       <location>frameworks/locale/ja_JP/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
+      <artifactId>playerglobal</artifactId>
       <type>rb.swc</type>
       <classifier>ja_JP</classifier>
-      <location>frameworks/locale/ja_JP/spark_rb.swc</location>
+      <location>frameworks/locale/ja_JP/playerglobal_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -745,6 +975,13 @@ zh_TW
       <classifier>ja_JP</classifier>
       <location>frameworks/locale/ja_JP/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>ja_JP</classifier>
+      <location>frameworks/locale/ja_JP/spark_rb.swc</location>
+    </artifact>
+
     <!-- ko_KR locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -753,10 +990,22 @@ zh_TW
       <location>frameworks/locale/ko_KR/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>ko_KR</classifier>
-      <location>frameworks/locale/ko_KR/airspark_rb.swc</location>
+      <location>frameworks/locale/ko_KR/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>ko_KR</classifier>
+      <location>frameworks/locale/ko_KR/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>ko_KR</classifier>
+      <location>frameworks/locale/ko_KR/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -765,17 +1014,18 @@ zh_TW
       <location>frameworks/locale/ko_KR/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>ko_KR</classifier>
-      <location>frameworks/locale/ko_KR/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>ko_KR</classifier>
       <location>frameworks/locale/ko_KR/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>ko_KR</classifier>
+      <location>frameworks/locale/ko_KR/spark_rb.swc</location>
+    </artifact>
+
     <!-- nb_NO locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -784,10 +1034,22 @@ zh_TW
       <location>frameworks/locale/nb_NO/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>nb_NO</classifier>
-      <location>frameworks/locale/nb_NO/airspark_rb.swc</location>
+      <location>frameworks/locale/nb_NO/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>nb_NO</classifier>
+      <location>frameworks/locale/nb_NO/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>nb_NO</classifier>
+      <location>frameworks/locale/nb_NO/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -796,17 +1058,18 @@ zh_TW
       <location>frameworks/locale/nb_NO/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>nb_NO</classifier>
-      <location>frameworks/locale/nb_NO/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>nb_NO</classifier>
       <location>frameworks/locale/nb_NO/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>nb_NO</classifier>
+      <location>frameworks/locale/nb_NO/spark_rb.swc</location>
+    </artifact>
+
     <!-- nl_NL locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -815,10 +1078,22 @@ zh_TW
       <location>frameworks/locale/nl_NL/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>nl_NL</classifier>
-      <location>frameworks/locale/nl_NL/airspark_rb.swc</location>
+      <location>frameworks/locale/nl_NL/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>nl_NL</classifier>
+      <location>frameworks/locale/nl_NL/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>nl_NL</classifier>
+      <location>frameworks/locale/nl_NL/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -827,17 +1102,18 @@ zh_TW
       <location>frameworks/locale/nl_NL/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>nl_NL</classifier>
-      <location>frameworks/locale/nl_NL/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>nl_NL</classifier>
       <location>frameworks/locale/nl_NL/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>nl_NL</classifier>
+      <location>frameworks/locale/nl_NL/spark_rb.swc</location>
+    </artifact>
+
     <!-- pt_BR locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -846,10 +1122,22 @@ zh_TW
       <location>frameworks/locale/pt_BR/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>pt_BR</classifier>
-      <location>frameworks/locale/pt_BR/airspark_rb.swc</location>
+      <location>frameworks/locale/pt_BR/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>pt_BR</classifier>
+      <location>frameworks/locale/pt_BR/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>pt_BR</classifier>
+      <location>frameworks/locale/pt_BR/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -858,17 +1146,18 @@ zh_TW
       <location>frameworks/locale/pt_BR/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>pt_BR</classifier>
-      <location>frameworks/locale/pt_BR/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>pt_BR</classifier>
       <location>frameworks/locale/pt_BR/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>pt_BR</classifier>
+      <location>frameworks/locale/pt_BR/spark_rb.swc</location>
+    </artifact>
+
     <!-- ru_RU locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -877,10 +1166,22 @@ zh_TW
       <location>frameworks/locale/ru_RU/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>ru_RU</classifier>
-      <location>frameworks/locale/ru_RU/airspark_rb.swc</location>
+      <location>frameworks/locale/ru_RU/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>ru_RU</classifier>
+      <location>frameworks/locale/ru_RU/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>ru_RU</classifier>
+      <location>frameworks/locale/ru_RU/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -889,10 +1190,10 @@ zh_TW
       <location>frameworks/locale/ru_RU/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
+      <artifactId>playerglobal</artifactId>
       <type>rb.swc</type>
       <classifier>ru_RU</classifier>
-      <location>frameworks/locale/ru_RU/spark_rb.swc</location>
+      <location>frameworks/locale/ru_RU/playerglobal_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -900,6 +1201,13 @@ zh_TW
       <classifier>ru_RU</classifier>
       <location>frameworks/locale/ru_RU/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>ru_RU</classifier>
+      <location>frameworks/locale/ru_RU/spark_rb.swc</location>
+    </artifact>
+
     <!-- sv_SE locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -908,10 +1216,22 @@ zh_TW
       <location>frameworks/locale/sv_SE/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>sv_SE</classifier>
-      <location>frameworks/locale/sv_SE/airspark_rb.swc</location>
+      <location>frameworks/locale/sv_SE/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>sv_SE</classifier>
+      <location>frameworks/locale/sv_SE/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>sv_SE</classifier>
+      <location>frameworks/locale/sv_SE/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -920,17 +1240,18 @@ zh_TW
       <location>frameworks/locale/sv_SE/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>sv_SE</classifier>
-      <location>frameworks/locale/sv_SE/spark_rb.swc</location>
-    </artifact>
-    <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>sv_SE</classifier>
       <location>frameworks/locale/sv_SE/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>sv_SE</classifier>
+      <location>frameworks/locale/sv_SE/spark_rb.swc</location>
+    </artifact>
+
     <!-- zh_CN locales -->
     <artifact>
       <artifactId>airframework</artifactId>
@@ -939,10 +1260,22 @@ zh_TW
       <location>frameworks/locale/zh_CN/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>zh_CN</classifier>
-      <location>frameworks/locale/zh_CN/airspark_rb.swc</location>
+      <location>frameworks/locale/zh_CN/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_CN</classifier>
+      <location>frameworks/locale/zh_CN/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_CN</classifier>
+      <location>frameworks/locale/zh_CN/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
@@ -951,10 +1284,10 @@ zh_TW
       <location>frameworks/locale/zh_CN/framework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>spark</artifactId>
+      <artifactId>playerglobal</artifactId>
       <type>rb.swc</type>
       <classifier>zh_CN</classifier>
-      <location>frameworks/locale/zh_CN/spark_rb.swc</location>
+      <location>frameworks/locale/zh_CN/playerglobal_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
@@ -962,36 +1295,56 @@ zh_TW
       <classifier>zh_CN</classifier>
       <location>frameworks/locale/zh_CN/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_CN</classifier>
+      <location>frameworks/locale/zh_CN/spark_rb.swc</location>
+    </artifact>
+
     <!-- zh_TW locales -->
     <artifact>
       <artifactId>airframework</artifactId>
       <type>rb.swc</type>
       <classifier>zh_TW</classifier>
-      <location>frameworks/locale/zh_TW/airframework_rb.swc</location>
+      <location>frameworks/locale/zh_tw/airframework_rb.swc</location>
     </artifact>
     <artifact>
-      <artifactId>airspark</artifactId>
+      <artifactId>automation-agent</artifactId>
       <type>rb.swc</type>
       <classifier>zh_TW</classifier>
-      <location>frameworks/locale/zh_TW/airspark_rb.swc</location>
+      <location>frameworks/locale/zh_tw/automation_agent_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>automation</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_TW</classifier>
+      <location>frameworks/locale/zh_tw/automation_rb.swc</location>
+    </artifact>
+    <artifact>
+      <artifactId>datavisualization</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_TW</classifier>
+      <location>frameworks/locale/zh_tw/datavisualization_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>framework</artifactId>
       <type>rb.swc</type>
       <classifier>zh_TW</classifier>
-      <location>frameworks/locale/zh_TW/framework_rb.swc</location>
-    </artifact>
-    <artifact>
-      <artifactId>spark</artifactId>
-      <type>rb.swc</type>
-      <classifier>zh_TW</classifier>
-      <location>frameworks/locale/zh_TW/spark_rb.swc</location>
+      <location>frameworks/locale/zh_tw/framework_rb.swc</location>
     </artifact>
     <artifact>
       <artifactId>rpc</artifactId>
       <type>rb.swc</type>
       <classifier>zh_TW</classifier>
-      <location>frameworks/locale/zh_TW/rpc_rb.swc</location>
+      <location>frameworks/locale/zh_tw/rpc_rb.swc</location>
     </artifact>
+    <artifact>
+      <artifactId>spark</artifactId>
+      <type>rb.swc</type>
+      <classifier>zh_TW</classifier>
+      <location>frameworks/locale/zh_tw/spark_rb.swc</location>
+    </artifact>
+
   </artifacts>
 </mapping>

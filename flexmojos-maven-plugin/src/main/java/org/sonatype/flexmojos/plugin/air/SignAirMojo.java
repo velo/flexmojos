@@ -20,6 +20,7 @@ package org.sonatype.flexmojos.plugin.air;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.test.util.PathUtil.getCanonicalPath;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,15 +28,19 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 
 import com.adobe.air.AIRPackager;
@@ -69,9 +74,9 @@ public class SignAirMojo
     private MavenProject project;
 
     /**
-     * @parameter default-value="${project.build.finalName}.air"
+     * @parameter expression="${project.build.resources}"
      */
-    private String outputName;
+    private List<Resource> resources;
 
     /**
      * @parameter default-value="${basedir}/src/main/resources/descriptor.xml"
@@ -90,13 +95,25 @@ public class SignAirMojo
     private File airOutput;
 
     /**
-     * Plugin classpath.
+     * Include specified files in AIR package.
      * 
-     * @parameter expression="${plugin.artifacts}"
+     * @parameter
+     */
+    private List<String> includeFiles;
+
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * 
+     * @parameter expression="${flexmojos.classifier}"
+     */
+    private String classifier;
+
+    /**
+     * @component
      * @required
      * @readonly
      */
-    protected List<Artifact> pluginClasspath;
+    protected MavenProjectHelper projectHelper;
 
     @SuppressWarnings( "unchecked" )
     public void execute()
@@ -105,7 +122,9 @@ public class SignAirMojo
         AIRPackager airPackager = new AIRPackager();
         try
         {
-            File output = new File( project.getBuild().getDirectory(), outputName );
+            String c = this.classifier == null ? "" : "-" + this.classifier;
+            File output =
+                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + AIR );
             airPackager.setOutput( output );
             airPackager.setDescriptor( getAirDescriptor() );
 
@@ -116,7 +135,8 @@ public class SignAirMojo
             airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
             airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
 
-            if ( project.getPackaging().equals( AIR ) )
+            String packaging = project.getPackaging();
+            if ( AIR.equals( packaging ) )
             {
                 Set<Artifact> deps = project.getDependencyArtifacts();
                 for ( Artifact artifact : deps )
@@ -130,34 +150,67 @@ public class SignAirMojo
                     }
                 }
             }
-            else
+            else if ( SWF.equals( packaging ) )
             {
                 File source = project.getArtifact().getFile();
                 String path = source.getName();
                 getLog().debug( "  adding source " + source + " with path " + path );
                 airPackager.addSourceWithPath( source, path );
             }
-
-            String path = project.getBuild().getFinalName() + "." + SWF;
-            File source = new File( project.getBuild().getDirectory(), path );
-            if ( source.exists() )
+            else
             {
-                getLog().debug( "  adding source " + source + " with path " + path );
-                airPackager.addSourceWithPath( source, path );
+                throw new MojoFailureException( "Unexpected project packaging " + packaging );
             }
 
-            project.getArtifact().setFile( output );
+            if ( includeFiles == null )
+            {
+                includeFiles = listAllResources();
+            }
+
+            for ( final String includePath : includeFiles )
+            {
+                if ( includePath == null )
+                {
+                    throw new MojoFailureException( "Cannot include a null file" );
+                }
+
+                // get file from output directory to allow filtered resources
+                File includeFile = new File( project.getBuild().getOutputDirectory(), includePath );
+                if ( !includeFile.exists() )
+                {
+                    throw new MojoFailureException( "Unable to find resource: " + includePath );
+                }
+
+                // don't include the app descriptor or the cert
+                if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
+                    || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+                {
+                    continue;
+                }
+
+                getLog().debug( "  adding source " + includeFile + " with path " + includePath );
+                airPackager.addSourceWithPath( includeFile, includePath );
+            }
+
+            if ( classifier != null )
+            {
+                projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, output );
+            }
+            else
+            {
+                project.getArtifact().setFile( output );
+            }
 
             final List<Message> messages = new ArrayList<Message>();
 
             airPackager.setListener( new Listener()
             {
-                public void message( Message message )
+                public void message( final Message message )
                 {
                     messages.add( message );
                 }
 
-                public void progress( int soFar, int total )
+                public void progress( final int soFar, final int total )
                 {
                     getLog().info( "  completed " + soFar + " of " + total );
                 }
@@ -167,7 +220,7 @@ public class SignAirMojo
 
             if ( messages.size() > 0 )
             {
-                for ( Message message : messages )
+                for ( final Message message : messages )
                 {
                     getLog().error( "  " + message.errorDescription );
                 }
@@ -194,6 +247,7 @@ public class SignAirMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private File getAirDescriptor()
         throws MojoExecutionException
     {
@@ -227,4 +281,27 @@ public class SignAirMojo
         }
         return dest;
     }
+
+    /**
+     * @see org.sonatype.flexmojos.compiler.LibraryMojo.listAllResources()
+     */
+    @SuppressWarnings( "unchecked" )
+    private List<String> listAllResources()
+    {
+        List<String> inclusions = new ArrayList<String>();
+        for ( Resource resource : resources )
+        {
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setBasedir( resource.getDirectory() );
+            scanner.setIncludes( (String[]) resource.getIncludes().toArray( new String[0] ) );
+            scanner.setExcludes( (String[]) resource.getExcludes().toArray( new String[0] ) );
+            scanner.addDefaultExcludes();
+            scanner.scan();
+
+            inclusions.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
+        }
+
+        return inclusions;
+    }
+
 }

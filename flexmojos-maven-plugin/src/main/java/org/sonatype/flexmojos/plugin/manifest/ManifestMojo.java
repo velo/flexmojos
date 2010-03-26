@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -47,6 +48,7 @@ public class ManifestMojo
 
     /**
      * @parameter default-value="${project.compileSourceRoots}"
+     * @readonly
      */
     private List<String> compileSourceRoots;
 
@@ -67,6 +69,7 @@ public class ManifestMojo
 
     /**
      * @parameter default-value="${project.basedir}"
+     * @readonly
      */
     private File basedir;
 
@@ -94,6 +97,11 @@ public class ManifestMojo
 
             String classname = fileName.replace( '/', '.' ).replace( '\\', '.' );
             String name = FilenameUtils.getExtension( classname );
+            if ( StringUtils.isEmpty( name ) )
+            {
+                name = classname;
+            }
+
             Xpp3Dom component = new Xpp3Dom( "component" );
             component.setAttribute( "id", name );
             component.setAttribute( "class", classname );

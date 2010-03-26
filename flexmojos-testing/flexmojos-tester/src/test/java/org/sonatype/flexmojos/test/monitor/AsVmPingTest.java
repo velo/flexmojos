@@ -44,6 +44,8 @@ public class AsVmPingTest
     private AsVmPing ping;
 
     private int port;
+    private int firstConnectionTimeout;
+    private int testTimeout;
 
     @BeforeMethod
     public void setUp()
@@ -55,9 +57,8 @@ public class AsVmPingTest
         port = ss.getLocalPort();
         ss.close();
 
-        set( ping, "testControlPort", port );
-        set( ping, "firstConnectionTimeout", 5000 );
-        set( ping, "testTimeout", 1000 );
+        this.firstConnectionTimeout = 5000;
+        this.testTimeout = 1000;
     }
 
     @AfterMethod
@@ -71,7 +72,7 @@ public class AsVmPingTest
     public void checkConnectTimeout()
         throws Exception
     {
-        ping.start();
+        ping.start(port, firstConnectionTimeout, testTimeout);
 
         do
         {
@@ -90,7 +91,7 @@ public class AsVmPingTest
         set( ping, "firstConnectionTimeout", 500000 );
         set( ping, "testTimeout", 100000 );
 
-        ping.start();
+        ping.start(port, firstConnectionTimeout, testTimeout);
 
         do
         {
@@ -135,7 +136,7 @@ public class AsVmPingTest
     {
         set( ping, "firstConnectionTimeout", 500000 );
 
-        ping.start();
+        ping.start(port, firstConnectionTimeout, testTimeout);
 
         do
         {

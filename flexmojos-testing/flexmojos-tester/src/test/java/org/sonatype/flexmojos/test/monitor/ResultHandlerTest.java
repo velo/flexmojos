@@ -74,7 +74,7 @@ public class ResultHandlerTest
     public void stopNoResults()
         throws Exception
     {
-        result.start();
+        result.start(port);
 
         do
         {
@@ -101,7 +101,7 @@ public class ResultHandlerTest
     public void sendResult()
         throws Exception
     {
-        result.start();
+        result.start(port);
 
         do
         {

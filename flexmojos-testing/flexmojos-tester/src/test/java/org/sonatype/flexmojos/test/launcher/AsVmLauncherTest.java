@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.util.Arrays;
 
+import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
@@ -37,7 +38,10 @@ public class AsVmLauncherTest
     public void launch()
         throws Exception
     {
-        System.out.println( "launch" );
+        // if ( launcher.useXvfb() )
+        // {
+        // throw new SkipException( "Skipping for now" );
+        // }
 
         launcher.start( VALID_SWF );
 
@@ -61,8 +65,6 @@ public class AsVmLauncherTest
     {
         if ( true )
             throw new SkipException( "Know failure, need more investigation" );
-
-        System.out.println( "stop" );
 
         launcher.start( INVALID_SWF );
 
@@ -106,7 +108,9 @@ public class AsVmLauncherTest
 
         try
         {
-            launcher.start( new File( "not_existing_swf_file.swf" ) );
+            TestRequest request = new TestRequest();
+            request.setSwf( new File( "not_existing_swf_file.swf" ) );
+            launcher.start( request );
             fail();
         }
         catch ( InvalidSwfException e )

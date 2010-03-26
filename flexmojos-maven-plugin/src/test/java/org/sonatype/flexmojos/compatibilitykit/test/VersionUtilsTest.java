@@ -37,11 +37,14 @@ public class VersionUtilsTest
         Assert.assertTrue( Arrays.equals( new int[] { 3, 1 }, splitVersion( "3.1" ) ) );
         Assert.assertTrue( Arrays.equals( new int[] { 4 }, splitVersion( "4" ) ) );
         Assert.assertTrue( Arrays.equals( new int[] { 3, 0, 1, 1092 }, splitVersion( "3.0.1.1092-flexcover" ) ) );
+        Assert.assertTrue( Arrays.equals( new int[] { 4, 0 }, splitVersion( "4.0-SNAPSHOT" ) ) );
     }
 
     @Test
     public void testMinVersion()
     {
+        Assert.assertTrue( isMinVersionOK( splitVersion( "3.0.0" ), splitVersion( "" ) ) );
+
         Assert.assertTrue( isMinVersionOK( splitVersion( "2.0.1" ), splitVersion( "2.0.0" ) ) );
         Assert.assertTrue( isMinVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "2" ) ) );
         Assert.assertTrue( isMinVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "3" ) ) );
@@ -61,6 +64,8 @@ public class VersionUtilsTest
     @Test
     public void testMaxVersion()
     {
+        Assert.assertTrue( isMaxVersionOK( splitVersion( "3.0.0" ), splitVersion( "" ) ) );
+
         Assert.assertFalse( isMaxVersionOK( splitVersion( "2.0.1" ), splitVersion( "2.0.0" ) ) );
         Assert.assertFalse( isMaxVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "2" ) ) );
         Assert.assertTrue( isMaxVersionOK( splitVersion( "3.0.0.477" ), splitVersion( "3" ) ) );
@@ -71,5 +76,34 @@ public class VersionUtilsTest
 
         Assert.assertFalse( isMaxVersionOK( splitVersion( "4.0.0-SNAPSHOT" ), splitVersion( "3.1" ) ) );
         Assert.assertTrue( isMaxVersionOK( splitVersion( "3.1" ), splitVersion( "4.0.0-SNAPSHOT" ) ) );
+    }
+
+    @Test
+    public void combined()
+    {
+        int[] fdkVersion = splitVersion( "4.0.0.10485" );
+        boolean minVersionOK = isMinVersionOK( fdkVersion, splitVersion( "" ) );
+        boolean maxVersionOK = isMaxVersionOK( fdkVersion, splitVersion( "4.0.0.3127" ) );
+        Assert.assertFalse( minVersionOK && maxVersionOK );
+    }
+
+    @Test
+    public void playerGlobal()
+    {
+        int[] playerGlobalVersion = splitVersion( "10.0", 3 );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.0", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.1", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1", 3 ) ) );
+        Assert.assertFalse( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1.0", 3 ) ) );
+        playerGlobalVersion = splitVersion( "10.1", 3 );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.0.0", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1", 3 ) ) );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "10.1.0", 3 ) ) );
+        playerGlobalVersion = splitVersion( "9" );
+        Assert.assertTrue( isMinVersionOK( playerGlobalVersion, splitVersion( "9.0.124", 3 ) ) );
     }
 }

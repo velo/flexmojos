@@ -35,7 +35,6 @@
   <name>Flexmojos Unit Test support - asunit</name>
 
   <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>

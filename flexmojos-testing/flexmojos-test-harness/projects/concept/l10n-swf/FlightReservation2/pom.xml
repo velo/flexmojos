@@ -40,7 +40,6 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
-          <mergeResourceBundle>false</mergeResourceBundle>
           <resourceBundlePath>${basedir}/locale/{locale}</resourceBundlePath>
           <runtimeLocales>
             <locale>en_US</locale>
