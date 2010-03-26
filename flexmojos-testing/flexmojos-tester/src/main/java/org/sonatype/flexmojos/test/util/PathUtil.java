@@ -208,6 +208,16 @@ public class PathUtil
         return files;
     }
 
+    public static File getFile( String path )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        return getCanonicalFile( new File( path ) );
+    }
+
     public static File getCanonicalFile( File file )
     {
         if ( file == null )

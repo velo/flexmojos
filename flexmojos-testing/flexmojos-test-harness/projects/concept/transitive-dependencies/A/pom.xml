@@ -42,7 +42,6 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
-          <ignoreVersionIssues>true</ignoreVersionIssues>
         </configuration>
       </plugin>
     </plugins>
