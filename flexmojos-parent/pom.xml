@@ -49,7 +49,7 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.0.0.13875</flex.sdk.version>
+    <flex.sdk.version>4.0.0.14159</flex.sdk.version>
     <maven.version>3.0-alpha-7</maven.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>0.5-FLEXMOJOS-r385</apparat.version>

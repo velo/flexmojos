@@ -304,7 +304,20 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * 
      * @parameter
      */
-    private Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
+    private Map<String, String> compilerWarnings = new LinkedHashMap<String, String>();
+
+    /**
+     * The maven compile source roots
+     * <p>
+     * Equivalent to -compiler.source-path
+     * </p>
+     * List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> compileSourceRoots;
 
     /**
      * The maven configuration directory
@@ -1219,19 +1232,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private File signatureDirectory;
 
     /**
-     * The maven compile source roots
-     * <p>
-     * Equivalent to -compiler.source-path
-     * </p>
-     * List of path elements that form the roots of ActionScript class
-     * 
-     * @parameter expression="${project.compileSourceRoots}"
-     * @required
-     * @readonly
-     */
-    private List<String> compileSourceRoots;
-
-    /**
      * Statically link the libraries specified by the -runtime-shared-libraries-path option.
      * <p>
      * Equivalent to -static-link-runtime-shared-libraries
@@ -1598,6 +1598,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public ICompilerConfiguration getCompilerConfiguration()
     {
         return this;
+    }
+
+    public Map<String, Boolean> getCompilerWarnings()
+    {
+        Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
+
+        Set<Entry<String, String>> warns = this.compilerWarnings.entrySet();
+        for ( Entry<String, String> entry : warns )
+        {
+            compilerWarnings.put( entry.getKey(), Boolean.valueOf( entry.getValue() ) );
+        }
+
+        return compilerWarnings;
     }
 
     public Boolean getConservative()
@@ -2314,6 +2327,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         File dir = getUnpackedFrameworkConfig();
+
+        if ( dir == null )
+        {
+            return this.namespaces;
+        }
+
         Reader cfg = null;
         try
         {
@@ -2431,7 +2450,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public Boolean getReportInvalidStylesAsWarnings()
     {
-        return compilerWarnings.get( "report-invalid-styles-as-warnings" );
+        return getCompilerWarnings().get( "report-invalid-styles-as-warnings" );
     }
 
     public String getResourceBundleList()
@@ -2512,37 +2531,37 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public Boolean getShowActionscriptWarnings()
     {
-        return compilerWarnings.get( "show-actionscript-warnings" );
+        return getCompilerWarnings().get( "show-actionscript-warnings" );
     }
 
     public Boolean getShowBindingWarnings()
     {
-        return compilerWarnings.get( "show-binding-warnings" );
+        return getCompilerWarnings().get( "show-binding-warnings" );
     }
 
     public Boolean getShowDependencyWarnings()
     {
-        return compilerWarnings.get( "show-dependency-warnings" );
+        return getCompilerWarnings().get( "show-dependency-warnings" );
     }
 
     public Boolean getShowDeprecationWarnings()
     {
-        return compilerWarnings.get( "show-deprecation-warnings" );
+        return getCompilerWarnings().get( "show-deprecation-warnings" );
     }
 
     public Boolean getShowInvalidCssPropertyWarnings()
     {
-        return compilerWarnings.get( "show-invalid-css-property-warnings" );
+        return getCompilerWarnings().get( "show-invalid-css-property-warnings" );
     }
 
     public Boolean getShowShadowedDeviceFontWarnings()
     {
-        return compilerWarnings.get( "show-shadowed-device-font-warnings" );
+        return getCompilerWarnings().get( "show-shadowed-device-font-warnings" );
     }
 
     public Boolean getShowUnusedTypeSelectorWarnings()
     {
-        return compilerWarnings.get( "show-unused-type-selector-warnings" );
+        return getCompilerWarnings().get( "show-unused-type-selector-warnings" );
     }
 
     public File getSignatureDirectory()
@@ -2552,7 +2571,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public File[] getSourcePath()
     {
-        return PathUtil.getFiles( compileSourceRoots );
+        return PathUtil.getExistingFiles( compileSourceRoots );
     }
 
     public Boolean getStaticLinkRuntimeSharedLibraries()
@@ -2625,6 +2644,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     {
         Artifact frmkCfg = getFrameworkConfig();
 
+        if ( frmkCfg == null )
+        {
+            return null;
+        }
+
         File cfgZip = frmkCfg.getFile();
         File dest = new File( outputDirectory, "configs" );
         dest.mkdirs();
@@ -2672,117 +2696,117 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public Boolean getWarnArrayTostringChanges()
     {
-        return compilerWarnings.get( "warn-array-tostring-changes" );
+        return getCompilerWarnings().get( "warn-array-tostring-changes" );
     }
 
     public Boolean getWarnAssignmentWithinConditional()
     {
-        return compilerWarnings.get( "warn-assignment-within-conditional" );
+        return getCompilerWarnings().get( "warn-assignment-within-conditional" );
     }
 
     public Boolean getWarnBadArrayCast()
     {
-        return compilerWarnings.get( "warn-bad-array-cast" );
+        return getCompilerWarnings().get( "warn-bad-array-cast" );
     }
 
     public Boolean getWarnBadBoolAssignment()
     {
-        return compilerWarnings.get( "warn-bad-bool-assignment" );
+        return getCompilerWarnings().get( "warn-bad-bool-assignment" );
     }
 
     public Boolean getWarnBadDateCast()
     {
-        return compilerWarnings.get( "warn-bad-date-cast" );
+        return getCompilerWarnings().get( "warn-bad-date-cast" );
     }
 
     public Boolean getWarnBadEs3TypeMethod()
     {
-        return compilerWarnings.get( "warn-bad-es3-type-method" );
+        return getCompilerWarnings().get( "warn-bad-es3-type-method" );
     }
 
     public Boolean getWarnBadEs3TypeProp()
     {
-        return compilerWarnings.get( "warn-bad-es3-type-prop" );
+        return getCompilerWarnings().get( "warn-bad-es3-type-prop" );
     }
 
     public Boolean getWarnBadNanComparison()
     {
-        return compilerWarnings.get( "warn-bad-nan-comparison" );
+        return getCompilerWarnings().get( "warn-bad-nan-comparison" );
     }
 
     public Boolean getWarnBadNullAssignment()
     {
-        return compilerWarnings.get( "warn-bad-null-assignment" );
+        return getCompilerWarnings().get( "warn-bad-null-assignment" );
     }
 
     public Boolean getWarnBadNullComparison()
     {
-        return compilerWarnings.get( "warn-bad-null-comparison" );
+        return getCompilerWarnings().get( "warn-bad-null-comparison" );
     }
 
     public Boolean getWarnBadUndefinedComparison()
     {
-        return compilerWarnings.get( "warn-bad-undefined-comparison" );
+        return getCompilerWarnings().get( "warn-bad-undefined-comparison" );
     }
 
     public Boolean getWarnBooleanConstructorWithNoArgs()
     {
-        return compilerWarnings.get( "warn-boolean-constructor-with-no-args" );
+        return getCompilerWarnings().get( "warn-boolean-constructor-with-no-args" );
     }
 
     public Boolean getWarnChangesInResolve()
     {
-        return compilerWarnings.get( "warn-changes-in-resolve" );
+        return getCompilerWarnings().get( "warn-changes-in-resolve" );
     }
 
     public Boolean getWarnClassIsSealed()
     {
-        return compilerWarnings.get( "warn-class-is-sealed" );
+        return getCompilerWarnings().get( "warn-class-is-sealed" );
     }
 
     public Boolean getWarnConstNotInitialized()
     {
-        return compilerWarnings.get( "warn-const-not-initialized" );
+        return getCompilerWarnings().get( "warn-const-not-initialized" );
     }
 
     public Boolean getWarnConstructorReturnsValue()
     {
-        return compilerWarnings.get( "warn-constructor-returns-value" );
+        return getCompilerWarnings().get( "warn-constructor-returns-value" );
     }
 
     public Boolean getWarnDeprecatedEventHandlerError()
     {
-        return compilerWarnings.get( "warn-deprecated-event-handler-error" );
+        return getCompilerWarnings().get( "warn-deprecated-event-handler-error" );
     }
 
     public Boolean getWarnDeprecatedFunctionError()
     {
-        return compilerWarnings.get( "warn-deprecated-function-error" );
+        return getCompilerWarnings().get( "warn-deprecated-function-error" );
     }
 
     public Boolean getWarnDeprecatedPropertyError()
     {
-        return compilerWarnings.get( "warn-deprecated-property-error" );
+        return getCompilerWarnings().get( "warn-deprecated-property-error" );
     }
 
     public Boolean getWarnDuplicateArgumentNames()
     {
-        return compilerWarnings.get( "warn-duplicate-argument-names" );
+        return getCompilerWarnings().get( "warn-duplicate-argument-names" );
     }
 
     public Boolean getWarnDuplicateVariableDef()
     {
-        return compilerWarnings.get( "warn-duplicate-variable-def" );
+        return getCompilerWarnings().get( "warn-duplicate-variable-def" );
     }
 
     public Boolean getWarnForVarInChanges()
     {
-        return compilerWarnings.get( "warn-for-var-in-changes" );
+        return getCompilerWarnings().get( "warn-for-var-in-changes" );
     }
 
     public Boolean getWarnImportHidesClass()
     {
-        return compilerWarnings.get( "warn-import-hides-class" );
+        return getCompilerWarnings().get( "warn-import-hides-class" );
     }
 
     public Boolean getWarnings()
@@ -2792,67 +2816,67 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public Boolean getWarnInstanceOfChanges()
     {
-        return compilerWarnings.get( "warn-instance-of-changes" );
+        return getCompilerWarnings().get( "warn-instance-of-changes" );
     }
 
     public Boolean getWarnInternalError()
     {
-        return compilerWarnings.get( "warn-internal-error" );
+        return getCompilerWarnings().get( "warn-internal-error" );
     }
 
     public Boolean getWarnLevelNotSupported()
     {
-        return compilerWarnings.get( "warn-level-not-supported" );
+        return getCompilerWarnings().get( "warn-level-not-supported" );
     }
 
     public Boolean getWarnMissingNamespaceDecl()
     {
-        return compilerWarnings.get( "warn-missing-namespace-decl" );
+        return getCompilerWarnings().get( "warn-missing-namespace-decl" );
     }
 
     public Boolean getWarnNegativeUintLiteral()
     {
-        return compilerWarnings.get( "warn-negative-uint-literal" );
+        return getCompilerWarnings().get( "warn-negative-uint-literal" );
     }
 
     public Boolean getWarnNoConstructor()
     {
-        return compilerWarnings.get( "warn-no-constructor" );
+        return getCompilerWarnings().get( "warn-no-constructor" );
     }
 
     public Boolean getWarnNoExplicitSuperCallInConstructor()
     {
-        return compilerWarnings.get( "warn-no-explicit-super-call-in-constructor" );
+        return getCompilerWarnings().get( "warn-no-explicit-super-call-in-constructor" );
     }
 
     public Boolean getWarnNoTypeDecl()
     {
-        return compilerWarnings.get( "warn-no-type-decl" );
+        return getCompilerWarnings().get( "warn-no-type-decl" );
     }
 
     public Boolean getWarnNumberFromStringChanges()
     {
-        return compilerWarnings.get( "warn-number-from-string-changes" );
+        return getCompilerWarnings().get( "warn-number-from-string-changes" );
     }
 
     public Boolean getWarnScopingChangeInThis()
     {
-        return compilerWarnings.get( "warn-scoping-change-in-this" );
+        return getCompilerWarnings().get( "warn-scoping-change-in-this" );
     }
 
     public Boolean getWarnSlowTextFieldAddition()
     {
-        return compilerWarnings.get( "warn-slow-text-field-addition" );
+        return getCompilerWarnings().get( "warn-slow-text-field-addition" );
     }
 
     public Boolean getWarnUnlikelyFunctionValue()
     {
-        return compilerWarnings.get( "warn-unlikely-function-value" );
+        return getCompilerWarnings().get( "warn-unlikely-function-value" );
     }
 
     public Boolean getWarnXmlClassHasChanged()
     {
-        return compilerWarnings.get( "warn-xml-class-has-changed" );
+        return getCompilerWarnings().get( "warn-xml-class-has-changed" );
     }
 
     protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )

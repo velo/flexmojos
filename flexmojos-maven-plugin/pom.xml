@@ -245,6 +245,12 @@
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-source-plugin</artifactId>
       <type>maven-plugin</type>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>maven-project</artifactId>
+      		<groupId>org.apache.maven</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.uwyn</groupId>
