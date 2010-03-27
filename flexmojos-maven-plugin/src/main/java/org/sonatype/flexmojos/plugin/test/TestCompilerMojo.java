@@ -342,7 +342,7 @@ public class TestCompilerMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    private Artifact getFlexmojosUnittestFrameworkIntegrationLibrary()
+    protected Artifact getFlexmojosUnittestFrameworkIntegrationLibrary()
     {
 
         if ( getDependency( groupId( "com.adobe.flexunit" ), artifactId( "flexunit" ),
@@ -382,10 +382,10 @@ public class TestCompilerMojo
         }
     }
 
-    private Artifact getFlexmojosTestArtifact( String artifactId )
+    protected Artifact getFlexmojosTestArtifact( String artifactId )
     {
         Artifact artifact =
-            super.resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), null, "swc" );
+            resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), null, "swc" );
 
         return artifact;
     }
