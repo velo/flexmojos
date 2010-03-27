@@ -44,6 +44,13 @@
     <maven>${maven.version}</maven>
   </prerequisites>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>forge-snapshots</id>
+      <url>http://repository.sonatype.org/content/repositories/flexmojos-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <licenses>
     <license>
       <name>ASF</name>
@@ -170,7 +177,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-1-SNAPSHOT</version>
+        <version>3.0-beta-1-FLEXMOJOS-r911589</version>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
