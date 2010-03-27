@@ -22,12 +22,12 @@ public aspect LazyLoadAspect
 {
 
     pointcut getters() :
-        ( execution(public * org.sonatype.flexmojos.plugin.common.AbstractMavenFlexCompilerConfiguration.get*() )  &&
-             !execution( public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.getLog() ) &&
-             !execution( public * org.sonatype.flexmojos.common.AbstractMavenFlexCompilerConfiguration.getCache() )  ) ||
-        execution(public * org.sonatype.flexmojos.compiler.CompcMojo.get*()) ||
-        execution(public * org.sonatype.flexmojos.compiler.MxmlcMojo.get*()) ||
-        execution(public * org.sonatype.flexmojos.compiler.AsdocMojo.get*());
+        ( execution(public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.get*() )  &&
+             !execution( public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.getLog() ) &&
+             !execution( public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.getCache() )  ) ||
+        execution(public * org.sonatype.flexmojos.plugin.compiler.CompcMojo.get*()) ||
+        execution(public * org.sonatype.flexmojos.plugin.compiler.MxmlcMojo.get*()) ||
+        execution(public * org.sonatype.flexmojos.plugin.compiler.AsdocMojo.get*());
 
     Object around() : getters() {
         Map<String, Object> cachedValues = ( (Cacheable) thisJoinPoint.getTarget() ).getCache();

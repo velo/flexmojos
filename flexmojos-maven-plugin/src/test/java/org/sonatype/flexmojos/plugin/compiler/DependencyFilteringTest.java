@@ -87,7 +87,7 @@ public class DependencyFilteringTest
         flexArtifacts.add( createArtifact( "d", "rpc-merged", "1.0", "merged", "swc", null ) );
         flexArtifacts.add( createArtifact( "d", "framework-rb", "1.0", "internal", "rb.swc", null ) );
         flexArtifacts.add( createArtifact( "d", "rpc-rb", "1.0", null, "rb.swc", null ) );
-        flexArtifacts.add( createArtifact( "d", "framework-test", "1.0", "test", "swc", null ) );
+        flexArtifacts.add( createArtifact( "com.adobe.flexunit", "flexunit", "4.0", "test", "swc", null ) );
         flexArtifacts.add( createArtifact( "d", "rpc-test", "1.0", "test", "swc", null ) );
 
         airArtifacts = new LinkedHashSet<Artifact>( flexArtifacts );
@@ -210,6 +210,7 @@ public class DependencyFilteringTest
         validate( c, "airglobal.swc" );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Test
     public void test()
     {
@@ -233,6 +234,8 @@ public class DependencyFilteringTest
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
+            
+            
         };
         c.setLog( mock( Log.class ) );
 
@@ -243,10 +246,12 @@ public class DependencyFilteringTest
         MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "playerglobal.swc" ) ) ) );
 
         deps = Arrays.asList( c.getIncludeLibraries() );
-        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 4 ) );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 6 ) );
         MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-internal" ) ),//
                                                   withAbsolutePath( containsString( "rpc-internal" ) ),//
-                                                  withAbsolutePath( containsString( "framework-test" ) ),//
+                                                  withAbsolutePath( containsString( "flexunit" ) ),//
+                                                  withAbsolutePath( containsString( "flexmojos-unittest-flexunit4" ) ),//
+                                                  withAbsolutePath( containsString( "flexmojos-unittest-support" ) ),//
                                                   withAbsolutePath( containsString( "rpc-test" ) ) ) );
 
         deps = Arrays.asList( c.getLibraryPath() );

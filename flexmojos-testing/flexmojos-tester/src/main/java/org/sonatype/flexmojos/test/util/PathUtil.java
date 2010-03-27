@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -206,6 +207,26 @@ public class PathUtil
         }
 
         return files;
+    }
+
+    public static File[] getExistingFiles( Collection<String> paths )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        List<File> files = new ArrayList<File>( getFilesList( paths ) );
+        for ( Iterator<File> iterator = files.iterator(); iterator.hasNext(); )
+        {
+            File file = (File) iterator.next();
+            if ( !file.exists() )
+            {
+                iterator.remove();
+            }
+        }
+
+        return files.toArray( new File[0] );
     }
 
     public static File getFile( String path )
