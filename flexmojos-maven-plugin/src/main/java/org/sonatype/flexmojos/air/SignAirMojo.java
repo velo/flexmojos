@@ -49,6 +49,7 @@ import com.adobe.air.Message;
 
 /**
  * @goal sign-air
+ * @phase package
  * @requiresDependencyResolution compile
  * @author Marvin Froeder
  */
