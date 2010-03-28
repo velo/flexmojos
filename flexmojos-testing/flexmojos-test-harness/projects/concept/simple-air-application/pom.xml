@@ -27,10 +27,38 @@
 	</parent>
 
 	<groupId>info.rvin.itest</groupId>
-	<artifactId>simple-library</artifactId>
+	<artifactId>simple-air-application</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>Simple Flex Library</name>
+	<name>Simple AIR application</name>
 
 	<packaging>swf</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>%{flexmojos.version}</version>
+				<configuration>
+					<descriptorTemplate>src/main/resources/main-app.xml</descriptorTemplate>
+					<storepass>flexmojos</storepass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sign-air</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>adt</artifactId>
+						<version>%{flex.sdk.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
