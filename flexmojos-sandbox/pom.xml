@@ -33,6 +33,7 @@
     <!-- <module>flexmojos-installer</module> -->
   	<module>flexmojos-flex-compiler</module>
   	<module>flexmojos-threadlocaltoolkit-wrapper</module>
+  	<module>flexmojos-flex3-compatibility-layer</module>
   </modules>
 
 </project>
