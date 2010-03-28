@@ -423,17 +423,6 @@
         <type>maven-plugin</type>
       </dependency>
       <dependency>
-        <groupId>org.graniteds</groupId>
-        <artifactId>granite-generator</artifactId>
-        <version>1.1.0</version>
-        <exclusions>
-          <exclusion>
-            <groupId>ant</groupId>
-            <artifactId>ant</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>eu.cedarsoft.utils</groupId>
         <artifactId>zip</artifactId>
         <version>1.1</version>

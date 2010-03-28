@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -18,6 +17,4 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-	<mx:Label text="Hello World" />
-</mx:Application>
+<mx:Label xmlns:mx="http://www.adobe.com/2006/mxml" text="Hello World"/>
