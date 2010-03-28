@@ -33,4 +33,13 @@
 
   <packaging>swf</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>info.rvin.itest</groupId>
+      <artifactId>simple-air-swc</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>swc</type>
+    </dependency>
+  </dependencies>
+
 </project>
