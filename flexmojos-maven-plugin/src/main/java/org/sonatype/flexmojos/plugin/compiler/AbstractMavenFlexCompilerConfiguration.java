@@ -65,6 +65,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
+import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
+import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
 import org.sonatype.flexmojos.compiler.IDefaultSize;
@@ -109,7 +111,7 @@ import flex2.tools.oem.internal.OEMLogAdapter;
 public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends AbstractMavenFlexCompilerConfiguration<CFG, C>>
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
-    Cloneable
+    Cloneable, FlexMojo
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
@@ -1895,12 +1897,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return flashType;
     }
 
-    public String getFlexVersion()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
-    }
-
     public IFontsConfiguration getFontsConfiguration()
     {
         return this;
@@ -2199,7 +2195,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             return null;
         }
 
-        return new String[] { getToolsLocale() };
+        return new String[] { toolsLocale };
     }
 
     public List<String> getLocalFontPaths()
@@ -2623,6 +2619,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return project.getName();
     }
 
+    @FlexCompatibility( minVersion = "4.0.0" )
     public String getToolsLocale()
     {
         if ( toolsLocale == null )
@@ -2918,5 +2915,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         {
             checkResult( result );
         }
+    }
+
+    public String getCompilerVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
     }
 }
