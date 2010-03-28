@@ -251,19 +251,21 @@
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${project.version}</version>
-      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
       <version>${project.version}</version>
-      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-graniteds-2.0.0</artifactId>
       <version>${project.version}</version>
-      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>

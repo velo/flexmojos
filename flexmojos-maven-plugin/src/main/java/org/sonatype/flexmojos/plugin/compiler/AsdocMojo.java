@@ -396,7 +396,7 @@ public class AsdocMojo
         }
 
         File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
-        Artifact template = resolve( "com.adobe.flex.compiler", "asdoc", getFlexVersion(), "template", "zip" );
+        Artifact template = resolve( "com.adobe.flex.compiler", "asdoc", getCompilerVersion(), "template", "zip" );
         try
         {
             UnArchiver unarchiver = archiverManager.getUnArchiver( "tar.gz" );

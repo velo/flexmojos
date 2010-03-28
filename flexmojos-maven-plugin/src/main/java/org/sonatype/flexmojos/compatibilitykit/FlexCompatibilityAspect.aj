@@ -26,10 +26,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 public aspect FlexCompatibilityAspect
 {
 
-    pointcut compatibilityMethods() : call(@FlexCompatibility * *(*)) 
-                            || call(@FlexCompatibility * *());
+    pointcut compatibilityMethods() : execution(@FlexCompatibility *  *(*)) 
+                            || execution(@FlexCompatibility *  *());
 
-    void around() : compatibilityMethods() {
+    String around() : compatibilityMethods() {
         FlexMojo mojo = (FlexMojo) thisJoinPoint.getTarget();
         MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
         int[] fdkVersion = splitVersion( mojo.getCompilerVersion() );
@@ -40,13 +40,14 @@ public aspect FlexCompatibilityAspect
         if ( isMinVersionOK( fdkVersion, splitVersion( minVersion ) )
             && isMaxVersionOK( fdkVersion, splitVersion( maxVersion ) ) )
         {
-            proceed();
+            return proceed();
         }
         else
         {
             mojo.getLog().debug(
                                  "Skiping method " + signature.getName() + ".\n" + "Min version: " + minVersion
                                      + " Max version: " + maxVersion + " Current version: " + mojo.getCompilerVersion() );
+            return null;
         }
     }
 }
