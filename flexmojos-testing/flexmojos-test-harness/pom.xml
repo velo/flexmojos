@@ -252,6 +252,11 @@
     </dependency>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-flex2-compatibility-layer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
       <version>${project.version}</version>
     </dependency>

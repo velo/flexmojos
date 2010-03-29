@@ -9,7 +9,7 @@
 
   <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
 
-  <name>Flexmojos Flex compiler</name>
+  <name>Flexmojos ThreadLocalToolkit wrapper</name>
 
   <build>
     <plugins>
