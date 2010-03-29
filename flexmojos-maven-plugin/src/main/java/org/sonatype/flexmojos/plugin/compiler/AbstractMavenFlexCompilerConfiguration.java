@@ -2074,7 +2074,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public ILanguageRange[] getLanguageRange()
     {
-        if ( licenses == null )
+        if ( languageRange == null )
         {
             return null;
         }
