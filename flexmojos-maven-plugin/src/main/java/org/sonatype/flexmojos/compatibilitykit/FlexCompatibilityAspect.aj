@@ -29,7 +29,7 @@ public aspect FlexCompatibilityAspect
     pointcut compatibilityMethods() : execution(@FlexCompatibility *  *(*)) 
                             || execution(@FlexCompatibility *  *());
 
-    String around() : compatibilityMethods() {
+    Object around() : compatibilityMethods() {
         FlexMojo mojo = (FlexMojo) thisJoinPoint.getTarget();
         MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
         int[] fdkVersion = splitVersion( mojo.getCompilerVersion() );

@@ -370,6 +370,11 @@ public class SimpleGeneratorMojo
 
         for ( String wildCard : wildCards )
         {
+            if ( className.equals( wildCard ) )
+            {
+                return true;
+            }
+
             if ( SelectorUtils.matchPath( wildCard, className ) )
             {
                 return true;
@@ -403,7 +408,6 @@ public class SimpleGeneratorMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     private List<String> getClasspath()
         throws MojoExecutionException
     {

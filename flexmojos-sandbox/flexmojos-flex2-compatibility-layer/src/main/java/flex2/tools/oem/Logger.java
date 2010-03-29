@@ -15,25 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+package flex2.tools.oem;
 
-import org.testng.annotations.Test;
-
-public class DowngradeTest
-    extends AbstractConceptTest
+public interface Logger
 {
-
-    @Test
-    public void flex3()
-        throws Exception
-    {
-        standardConceptTester( "downgrade-sdk" );
-    }
-
-    @Test
-    public void flex2()
-        throws Exception
-    {
-        standardConceptTester( "downgrade-sdk2" );
-    }
+    void log( Message paramMessage, int paramInt, String paramString );
 }

@@ -15,25 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.testng.annotations.Test;
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.util.BCELifier;
 
-public class DowngradeTest
-    extends AbstractConceptTest
+import flex2.tools.Compc;
+
+public class BCELPrint
 {
-
-    @Test
-    public void flex3()
+    public static void main( String[] args )
         throws Exception
     {
-        standardConceptTester( "downgrade-sdk" );
-    }
+        Class<?> clazz = Compc.class;
+        String classname = clazz.getName();
+        String classFile = "/" + classname.replace( '.', '/' ) + ".class";
+        InputStream in = BCELPrint.class.getResourceAsStream( classFile );
 
-    @Test
-    public void flex2()
-        throws Exception
-    {
-        standardConceptTester( "downgrade-sdk2" );
+        ClassParser p = new ClassParser( in, "flex2.tool.Compc" );
+        JavaClass jc = p.parse();
+
+        BCELifier b = new BCELifier( jc, System.out );
+        b.start();
     }
 }
