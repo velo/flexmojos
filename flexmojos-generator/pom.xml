@@ -28,5 +28,6 @@
     <module>flexmojos-generator-mojo</module>
     <module>flexmojos-generator-internal-compiler-iface</module>
     <module>flexmojos-generator-internal-threadlocal</module>
+    <module>flexmojos-generator-internal-flex2</module>
   </modules>
 </project>

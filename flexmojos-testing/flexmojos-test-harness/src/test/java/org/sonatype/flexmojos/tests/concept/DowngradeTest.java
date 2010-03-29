@@ -12,4 +12,11 @@ public class DowngradeTest
     {
         standardConceptTester( "downgrade-sdk" );
     }
+
+    @Test
+    public void flex2()
+        throws Exception
+    {
+        standardConceptTester( "downgrade-sdk2" );
+    }
 }
