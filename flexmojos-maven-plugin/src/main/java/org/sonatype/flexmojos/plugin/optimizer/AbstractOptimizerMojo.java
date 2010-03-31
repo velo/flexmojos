@@ -69,16 +69,6 @@ public abstract class AbstractOptimizerMojo
     protected File configDirectory;
 
     /**
-     * Generates a movie that is suitable for debugging
-     * <p>
-     * Equivalent to -compiler.debug
-     * </p>
-     * 
-     * @parameter expression="${flex.debug}"
-     */
-    protected Boolean debug;
-
-    /**
      * Keep the specified metadata in the SWF
      * <p>
      * Equivalent to -compiler.keep-as3-metadata
@@ -190,11 +180,6 @@ public abstract class AbstractOptimizerMojo
      */
     private Double deblock;
 
-    public Boolean getDebug()
-    {
-        return debug;
-    }
-
     public abstract String getInput();
 
     public String[] getKeepAs3Metadata()
@@ -217,7 +202,6 @@ public abstract class AbstractOptimizerMojo
         when( cfg.getInput() ).thenReturn( PathUtil.getCanonicalPath( input ) );
         when( cfg.getOutput() ).thenReturn( PathUtil.getCanonicalPath( output ) );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        when( compilerCfg.getDebug() ).thenReturn( getDebug() );
         when( compilerCfg.getKeepAs3Metadata() ).thenReturn( getKeepAs3Metadata() );
         return cfg;
     }
