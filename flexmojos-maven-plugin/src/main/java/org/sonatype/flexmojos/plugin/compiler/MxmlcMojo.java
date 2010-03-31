@@ -14,9 +14,9 @@ import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
-import org.sonatype.flexmojos.plugin.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 
 /**
  * <p>

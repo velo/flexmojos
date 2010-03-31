@@ -57,4 +57,9 @@ public class OSUtils
         return getOSType().equals( OS.windows );
     }
 
+    public static boolean isMacOS()
+    {
+        return getOSType().equals( OS.mac );
+    }
+
 }
