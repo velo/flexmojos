@@ -200,7 +200,7 @@ public class CopyMojo
 
             rslArtifact =
                 repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
-                                                              rslArtifact.getVersion(), extension, null );
+                                                               rslArtifact.getVersion(), extension, null );
 
             File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
             File sourceFile = rslArtifact.getFile();
@@ -236,7 +236,7 @@ public class CopyMojo
         for ( int i = 0; i < rslUrls.length; i++ )
         {
             String rsl = replaceContextRoot( rslUrls[i] );
-            rsl = MavenUtils.getRslUrl( rsl, artifact, extension );
+            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, null );
             rsls[i] = new File( rsl ).getAbsoluteFile();
         }
         return rsls;
@@ -298,8 +298,8 @@ public class CopyMojo
         for ( String locale : runtimeLocales )
         {
             artifacts.add( repositorySystem.createArtifactWithClassifier( artifactProject.getGroupId(),
-                                                                         artifactProject.getArtifactId(),
-                                                                         artifactProject.getVersion(), SWF, locale ) );
+                                                                          artifactProject.getArtifactId(),
+                                                                          artifactProject.getVersion(), SWF, locale ) );
         }
         return artifacts;
     }

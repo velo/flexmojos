@@ -26,15 +26,20 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
+import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.CSS;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWZ;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
 import static org.sonatype.flexmojos.plugin.utilities.CollectionUtils.merge;
 
@@ -132,6 +137,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 {
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+
+    protected static final String[] DEFAULT_RSL_URLS =
+        new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
     protected static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
@@ -534,7 +542,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * 
      * @parameter expression="${flex.dumpConfig}"
      */
-    private File dumpConfig;
+    private boolean dumpConfigAttach;
 
     /**
      * DOCME undocumented by adobe
@@ -1117,6 +1125,32 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected List<Artifact> pluginArtifacts;
 
     /**
+     * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
+     * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
+     * file is not required, then set it to an empty string. Accept some special tokens:
+     * 
+     * <pre>
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
+     * </pre>
+     * 
+     * <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;policyFileUrls&gt;
+     *   &lt;url&gt;/{contextRoot}/rsl/policy-{artifactId}-{version}.xml&lt;/url&gt;
+     * &lt;/policyFileUrls&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] policyFileUrls;
+
+    /**
      * The maven project.
      * 
      * @parameter expression="${project}"
@@ -1196,6 +1230,31 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected List<Resource> resources;
 
     /**
+     * rslUrls array of URLs. The first RSL URL in the list is the primary RSL. The remaining RSL URLs will only be
+     * loaded if the primary RSL fails to load. Accept some special tokens:
+     * 
+     * <pre>
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
+     * </pre>
+     * 
+     * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;rslUrls&gt;
+     *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{version}.{extension}&lt;/url&gt;
+     * &lt;/rslUrls&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] rslUrls;
+
+    /**
      * Specifies the locales for external internationalization bundles
      * <p>
      * No equivalent parameter
@@ -1211,24 +1270,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter
      */
     protected String[] runtimeLocales;
-
-    /**
-     * A list of runtime shared library URLs to be loaded before the application starts
-     * <p>
-     * Equivalent to -runtime-shared-libraries
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;runtimeSharedLibraries&gt;
-     *   &lt;runtimeSharedLibrary&gt;???&lt;/runtimeSharedLibrary&gt;
-     *   &lt;runtimeSharedLibrary&gt;???&lt;/runtimeSharedLibrary&gt;
-     * &lt;/runtimeSharedLibraries&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] runtimeSharedLibraries;
 
     /**
      * Path to Flex Data Services configuration file
@@ -1399,6 +1440,46 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.warnings}"
      */
     private Boolean warnings;
+
+    protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
+                                                               String[] policyFileUrls )
+    {
+        getLog().debug( "runtime libraries: id: " + artifact.getArtifactId() );
+
+        String scope = artifact.getScope();
+        final String extension;
+        if ( CACHING.equals( scope ) )
+        {
+            extension = SWZ;
+        }
+        else
+        {
+            extension = SWF;
+        }
+
+        Map<String, String> paths = new LinkedHashMap<String, String>();
+        for ( int i = 0; i < rslUrls.length; i++ )
+        {
+            String rsl = rslUrls[i];
+            String policy;
+            if ( i < policyFileUrls.length )
+            {
+                policy = policyFileUrls[i];
+            }
+            else
+            {
+                policy = null;
+            }
+
+            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, contextRoot );
+            policy = MavenUtils.interpolateRslUrl( policy, artifact, extension, contextRoot );
+
+            getLog().debug( "RSL url: " + rsl + " - " + policy );
+            paths.put( rsl, policy );
+        }
+
+        return paths;
+    }
 
     protected void checkResult( Result result )
         throws MojoFailureException, MojoExecutionException
@@ -1619,6 +1700,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return this;
     }
 
+    public String getCompilerVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
+    }
+
     public Map<String, Boolean> getCompilerWarnings()
     {
         Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
@@ -1811,6 +1898,18 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public String getDumpConfig()
     {
+        File dumpConfig = new File( getTargetDirectory(), getFinalName() + "-" + CONFIGS + "." + XML );
+        if ( dumpConfigAttach )
+        {
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Config dump is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, CONFIGS, dumpConfig );
+            }
+        }
         return PathUtil.getCanonicalPath( dumpConfig );
     }
 
@@ -1876,15 +1975,21 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     {
         if ( SWC.equals( getProjectType() ) )
         {
-            Matcher<? extends Artifact> swcs = allOf( type( SWC ), // 
-                                                      anyOf( scope( EXTERNAL ), scope( COMPILE ), scope( null ) )//
+            Matcher<? extends Artifact> swcs =
+                allOf( type( SWC ), // 
+                       anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ), scope( null ) )//
                 );
             return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),// 
-                                                         allOf( type( SWC ), scope( EXTERNAL ) ) ), getGlobalArtifact() );
+            return MavenUtils.getFiles(
+                                        getDependencies(
+                                                         not( GLOBAL_MATCHER ),// 
+                                                         allOf(
+                                                                type( SWC ),// 
+                                                                anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ) ) ) ),
+                                        getGlobalArtifact() );
         }
     }
 
@@ -2436,6 +2541,15 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return PathUtil.getCanonicalPath( output );
     }
 
+    public String[] getPolicyFileUrls()
+    {
+        if ( policyFileUrls == null )
+        {
+            return new String[0];
+        }
+        return policyFileUrls;
+    }
+
     public String getProjectType()
     {
         return packaging;
@@ -2516,15 +2630,69 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return resourceHack;
     }
 
-    public String[] getRuntimeSharedLibraries()
+    public String[] getRslUrls()
     {
-        return runtimeSharedLibraries;
+        if ( rslUrls == null )
+        {
+            return DEFAULT_RSL_URLS;
+        }
+        return rslUrls;
     }
 
+    public final String[] getRuntimeSharedLibraries()
+    {
+        // Set<Artifact> dependencies = getDependencies( not( GLOBAL_MATCHER ),//
+        // anyOf( scope( RSL ), scope( CACHING ), scope( EXTERNAL ) ) );
+        //
+        // return PathUtil.getCanonicalPath( MavenUtils.getFiles( dependencies ) );
+        return null;
+    }
+
+    @SuppressWarnings( "unchecked" )
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
     {
-        // TODO Auto-generated method stub
-        return null;
+        // get all the rsl dependencies
+        Set<Artifact> dependencies = getDependencies( not( GLOBAL_MATCHER ),//
+                                                      anyOf( scope( RSL ), scope( CACHING ), scope( EXTERNAL ) ) );
+
+        if ( dependencies.isEmpty() )
+        {
+            return null;
+        }
+
+        final String[] rslUrls = getRslUrls();
+        final String[] policyFileUrls = getPolicyFileUrls();
+
+        // not sure if all this validation are required
+        if ( rslUrls.length < policyFileUrls.length //
+            && policyFileUrls.length != 0 //
+            && rslUrls.length != policyFileUrls.length //
+            && rslUrls.length != policyFileUrls.length - 1 )
+        {
+            throw new IllegalArgumentException(
+                                                "The number of elements on RSL Urls and Policy File Urls doesn't match: "
+                                                    + rslUrls.length + "/" + rslUrls.length );
+        }
+
+        List<IRuntimeSharedLibraryPath> rsls = new ArrayList<IRuntimeSharedLibraryPath>();
+        for ( final Artifact artifact : dependencies )
+        {
+
+            rsls.add( new IRuntimeSharedLibraryPath()
+            {
+                public String pathElement()
+                {
+                    return artifact.getFile().getAbsolutePath();
+                }
+
+                public Map<String, String> rslUrl()
+                {
+                    return calculateRuntimeLibraryPath( artifact, rslUrls, policyFileUrls );
+                }
+            } );
+        }
+
+        return rsls.toArray( new IRuntimeSharedLibraryPath[rsls.size()] );
     }
 
     public String getServices()
@@ -2932,11 +3100,5 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         {
             checkResult( result );
         }
-    }
-
-    public String getCompilerVersion()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
     }
 }

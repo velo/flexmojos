@@ -27,6 +27,8 @@
 
   <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
 
+  <name>Flexmojos Flex3 compatibility layer</name>
+
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex</groupId>

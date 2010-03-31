@@ -397,12 +397,6 @@ public class TestCompilerMojo
     }
 
     @Override
-    public String[] getRuntimeSharedLibraries()
-    {
-        return null;
-    }
-
-    @Override
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
     {
         return null;
