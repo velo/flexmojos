@@ -261,12 +261,30 @@ public class MavenUtils
         return sample;
     }
 
-    public static String getRslUrl( String sample, Artifact artifact, String extension )
+    public static String interpolateRslUrl( String baseUrl, Artifact artifact, String extension, String contextRoot )
     {
-        String url = replaceArtifactCoordinatesTokens( sample, artifact );
-        url = url.replace( "{extension}", extension );
+        if ( baseUrl == null )
+        {
+            return null;
+        }
 
-        return url;
+        if ( contextRoot == null || "".equals( contextRoot ) )
+        {
+            baseUrl = baseUrl.replace( "{contextRoot}/", "" );
+        }
+        else
+        {
+            baseUrl = baseUrl.replace( "{contextRoot}", contextRoot );
+        }
+
+        baseUrl = replaceArtifactCoordinatesTokens( baseUrl, artifact );
+
+        if ( extension != null )
+        {
+            baseUrl = baseUrl.replace( "{extension}", extension );
+        }
+
+        return baseUrl;
     }
 
     public static String getRuntimeLocaleOutputPath( String sample, Artifact artifact, String locale, String extension )

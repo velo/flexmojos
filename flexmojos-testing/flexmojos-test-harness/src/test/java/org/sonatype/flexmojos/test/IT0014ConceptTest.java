@@ -74,13 +74,6 @@ public class IT0014ConceptTest
     }
 
     @Test
-    public void testHelloCaching()
-        throws Exception
-    {
-        standardConceptTester( "hello-cachingframework" );
-    }
-
-    @Test
     public void testHtmlTemplateApplication()
         throws Exception
     {
