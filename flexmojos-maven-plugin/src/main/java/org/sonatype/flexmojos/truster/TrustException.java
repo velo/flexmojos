@@ -15,16 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.truster;
+package org.sonatype.flexmojos.truster;
 
-import java.io.File;
 
-public interface FlashPlayerTruster
+public class TrustException
+    extends RuntimeException
 {
 
-    void updateSecuritySandbox( File trustedFile )
-        throws TrustException;
+    private static final long serialVersionUID = 3938690139697545739L;
 
-    File getTrustDir();
+    public TrustException( String msg, Exception cause )
+    {
+        super( msg, cause );
+    }
 
 }

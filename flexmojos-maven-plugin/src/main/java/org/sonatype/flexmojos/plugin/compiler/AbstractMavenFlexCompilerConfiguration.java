@@ -110,6 +110,7 @@ import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.license.LicenseCalculator;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
@@ -840,6 +841,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.lazyInit}"
      */
     private Boolean lazyInit;
+
+    /**
+     * @component
+     */
+    private LicenseCalculator licenseCalculator;
+
+    /**
+     * When true flexmojos will automatically lookup for licenses folling this documentation
+     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html#140756
+     * 
+     * @parameter default-value="true" expression="${flex.licenseLocalLookup}"
+     */
+    private boolean licenseLocalLookup;
 
     /**
      * Specifies a product and a serial number
@@ -2234,13 +2248,37 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public ILicense[] getLicense()
     {
-        if ( licenses == null )
+        try
+        {
+            Class.forName( "flex.license.License" );
+        }
+        catch ( ClassNotFoundException e )
+        {
+            getLog().warn(
+                           "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
+                               + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
+            return null;
+        }
+
+        Map<String, String> licenses = new LinkedHashMap<String, String>();
+
+        if ( licenseLocalLookup )
+        {
+            licenses.putAll( licenseCalculator.getInstalledLicenses() );
+        }
+
+        if ( this.licenses != null )
+        {
+            licenses.putAll( this.licenses );
+        }
+
+        if ( licenses.isEmpty() )
         {
             return null;
         }
 
+        Set<Entry<String, String>> entries = licenses.entrySet();
         List<ILicense> keys = new ArrayList<ILicense>();
-        Set<Entry<String, String>> entries = this.licenses.entrySet();
         for ( final Entry<String, String> entry : entries )
         {
             keys.add( new ILicense()
