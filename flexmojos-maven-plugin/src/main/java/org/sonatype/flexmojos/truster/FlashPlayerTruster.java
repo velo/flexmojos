@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.plugin.truster;
+package org.sonatype.flexmojos.truster;
 
 import java.io.File;
 

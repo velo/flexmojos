@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.codehaus.plexus.util.IOUtil;
-import org.sonatype.flexmojos.plugin.truster.FlashPlayerTruster;
+import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.testng.annotations.Test;
 
 public class Issue0069Test
