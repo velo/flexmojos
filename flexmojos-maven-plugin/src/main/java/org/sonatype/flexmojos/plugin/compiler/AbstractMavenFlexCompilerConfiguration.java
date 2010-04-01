@@ -282,23 +282,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected org.sonatype.flexmojos.compiler.FlexCompiler compiler;
 
     /**
-     * Specifies the locale for internationalization
-     * <p>
-     * Equivalent to -compiler.locale
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;compilerLocales&gt;
-     *   &lt;locale&gt;en_US&lt;/locale&gt;
-     * &lt;/compilerLocales&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    protected String[] compilerLocales;
-
-    /**
      * A list of warnings that should be enabled/disabled
      * <p>
      * Equivalent to -compiler.show-actionscript-warnings, -compiler.show-binding-warnings,
@@ -910,6 +893,51 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected File[] loadExterns;
 
     /**
+     * Specifies the locale for internationalization
+     * <p>
+     * Equivalent to -compiler.locale
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;compilerLocales&gt;
+     *   &lt;locale&gt;en_US&lt;/locale&gt;
+     * &lt;/compilerLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] localesCompiled;
+
+    /**
+     * Specifies the locales for external internationalization bundles
+     * <p>
+     * No equivalent parameter
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;runtimeLocales&gt;
+     *   &lt;locale&gt;en_US&lt;/locale&gt;
+     * &lt;/runtimeLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] localesRuntime;
+
+    /**
+     * Define the base path to locate resouce bundle files Accept some special tokens:
+     * 
+     * <pre>
+     * {locale}     - replace by locale name
+     * </pre>
+     * 
+     * @parameter default-value="${basedir}/src/main/locales/{locale}"
+     */
+    protected File localesSourcePath;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.fonts.local-font-paths
@@ -1252,23 +1280,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private String[] rslUrls;
 
     /**
-     * Specifies the locales for external internationalization bundles
-     * <p>
-     * No equivalent parameter
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;runtimeLocales&gt;
-     *   &lt;locale&gt;en_US&lt;/locale&gt;
-     * &lt;/runtimeLocales&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    protected String[] runtimeLocales;
-
-    /**
      * Path to Flex Data Services configuration file
      * <p>
      * Equivalent to -compiler.services
@@ -1515,7 +1526,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     @SuppressWarnings( "unchecked" )
     protected void configureResourceBundle( String locale, AbstractMavenFlexCompilerConfiguration<?, ?> cfg )
     {
-        cfg.compilerLocales = new String[] { locale };
+        cfg.localesCompiled = new String[] { locale };
         cfg.classifier = locale;
         cfg.includeResourceBundles = CollectionUtils.merge( getResourceBundleListContent(), includeResourceBundles );
         cfg.getCache().put( "getExternalLibraryPath",
@@ -2328,12 +2339,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public String[] getLocale()
     {
-        if ( compilerLocales != null )
+        if ( localesCompiled != null )
         {
-            return compilerLocales;
+            return localesCompiled;
         }
 
-        if ( runtimeLocales != null || SWC.equals( getProjectType() ) )
+        if ( localesRuntime != null || SWC.equals( getProjectType() ) )
         {
             return null;
         }
@@ -2637,7 +2648,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             return resourceBundleList;
         }
 
-        if ( runtimeLocales == null )
+        if ( localesRuntime == null )
         {
             return null;
         }
@@ -2773,7 +2784,19 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public File[] getSourcePath()
     {
-        return PathUtil.getExistingFiles( compileSourceRoots );
+        List<File> files = new ArrayList<File>();
+
+        files.addAll( PathUtil.getExistingFilesList( compileSourceRoots ) );
+
+        if ( localesCompiled != null )
+        {
+            if ( localesSourcePath.getParentFile().exists() )
+            {
+                files.add( localesSourcePath );
+            }
+        }
+
+        return files.toArray( new File[0] );
     }
 
     public Boolean getStaticLinkRuntimeSharedLibraries()
