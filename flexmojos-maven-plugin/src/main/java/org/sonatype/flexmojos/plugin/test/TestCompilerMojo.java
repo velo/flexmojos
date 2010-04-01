@@ -59,14 +59,35 @@ public class TestCompilerMojo
     extends MxmlcMojo
 {
 
+    private static final String ONCE = "once";
+
     /**
-     * The maven test resources
+     * Files to exclude from testing. If not defined, assumes no exclusions
      * 
-     * @parameter expression="${project.build.testResources}"
-     * @required
-     * @readonly
+     * @parameter
      */
-    protected List<Resource> testResources;
+    private String[] excludeTestFiles;
+
+    /**
+     * Option to specify the forking mode. Can be "once" or "always". Always fork flashplayer per test class.
+     * 
+     * @parameter default-value="once" expression="${forkMode}"
+     */
+    private String forkMode;
+
+    /**
+     * File to be tested. If not defined assumes Test*.as and *Test.as
+     * 
+     * @parameter
+     */
+    private String[] includeTestFiles;
+
+    /**
+     * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
+     * 
+     * @parameter expression="${maven.test.skip}"
+     */
+    private boolean skipTests;
 
     /**
      * The maven compile source roots
@@ -82,45 +103,18 @@ public class TestCompilerMojo
     private List<String> testCompileSourceRoots;
 
     /**
+     * Socket connect port for flex/java communication to control if flashplayer is alive
+     * 
+     * @parameter default-value="13540" expression="${testControlPort}"
+     */
+    private int testControlPort;
+
+    /**
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
     private File testOutputDirectory;
-
-    private static final String ONCE = "once";
-
-    /**
-     * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
-     * 
-     * @parameter expression="${maven.test.skip}"
-     */
-    private boolean skipTests;
-
-    /**
-     * @parameter
-     */
-    private File testRunnerTemplate;
-
-    /**
-     * File to be tested. If not defined assumes Test*.as and *Test.as
-     * 
-     * @parameter
-     */
-    private String[] includeTestFiles;
-
-    /**
-     * Files to exclude from testing. If not defined, assumes no exclusions
-     * 
-     * @parameter
-     */
-    private String[] excludeTestFiles;
-
-    /**
-     * @parameter expression="${project.build.testSourceDirectory}"
-     * @readonly
-     */
-    private File testSourceDirectory;
 
     /**
      * Socket connect port for flex/java communication to transfer tests results
@@ -130,18 +124,56 @@ public class TestCompilerMojo
     private int testPort;
 
     /**
-     * Socket connect port for flex/java communication to control if flashplayer is alive
+     * The maven test resources
      * 
-     * @parameter default-value="13540" expression="${testControlPort}"
+     * @parameter expression="${project.build.testResources}"
+     * @required
+     * @readonly
      */
-    private int testControlPort;
+    protected List<Resource> testResources;
 
     /**
-     * Option to specify the forking mode. Can be "once" or "always". Always fork flashplayer per test class.
-     * 
-     * @parameter default-value="once" expression="${forkMode}"
+     * @parameter
      */
-    private String forkMode;
+    private File testRunnerTemplate;
+
+    /**
+     * @parameter expression="${project.build.testSourceDirectory}"
+     * @readonly
+     */
+    private File testSourceDirectory;
+
+    private void buildTest( String testFilename, List<? extends String> testClasses )
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( testClasses == null || testClasses.isEmpty() )
+        {
+            return;
+        }
+
+        getLog().info( "Compiling test class: " + testClasses );
+
+        File testMxml;
+        try
+        {
+            testMxml = generateTester( testClasses, testFilename );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Unable to generate tester class.", e );
+        }
+
+        TestCompilerMojo cfg = this.clone();
+        cfg.finalName = testFilename;
+
+        executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
+    }
+
+    @Override
+    public TestCompilerMojo clone()
+    {
+        return (TestCompilerMojo) super.clone();
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -198,40 +230,6 @@ public class TestCompilerMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public File[] getExternalLibraryPath()
-    {
-        return MavenUtils.getFiles( getGlobalArtifact() );
-    }
-
-    private List<String> getTestClasses()
-    {
-        getLog().debug(
-                        "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
-                            + " but " + Arrays.toString( excludeTestFiles ) );
-
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setIncludes( includeTestFiles );
-        scanner.setExcludes( excludeTestFiles );
-        scanner.addDefaultExcludes();
-        scanner.setBasedir( testSourceDirectory );
-        scanner.scan();
-
-        getLog().debug( "Test files: " + Arrays.toString( scanner.getIncludedFiles() ) );
-        List<String> testClasses = new ArrayList<String>();
-        for ( String testClass : scanner.getIncludedFiles() )
-        {
-            int endPoint = testClass.lastIndexOf( '.' );
-            testClass = testClass.substring( 0, endPoint ); // remove extension
-            testClass = testClass.replace( '/', '.' ); // Unix OS
-            testClass = testClass.replace( '\\', '.' ); // Windows OS
-            testClasses.add( testClass );
-        }
-        getLog().debug( "Test classes: " + testClasses );
-        return testClasses;
-    }
-
     private File generateTester( List<? extends String> testClasses, String testFilename )
         throws Exception
     {
@@ -275,53 +273,25 @@ public class TestCompilerMojo
         return testSourceFile;
     }
 
-    private InputStream getTemplate()
-        throws MojoExecutionException
+    @Override
+    public Boolean getDebug()
     {
-        if ( testRunnerTemplate == null )
-        {
-            return getClass().getResourceAsStream( "/templates/test/TestRunner.vm" );
-        }
-        else if ( !testRunnerTemplate.exists() )
-        {
-            throw new MojoExecutionException( "Template file not found: " + testRunnerTemplate );
-        }
-        else
-        {
-            try
-            {
-                return new FileInputStream( testRunnerTemplate );
-            }
-            catch ( FileNotFoundException e )
-            {
-                // Never should happen
-                throw new MojoExecutionException( "Error reading template file", e );
-            }
-        }
+        return true;
     }
 
     @SuppressWarnings( "unchecked" )
     @Override
-    public File[] getIncludeLibraries()
+    public File[] getExternalLibraryPath()
     {
-        return MavenUtils.getFiles(
-                                    getDependencies( type( SWC ),// 
-                                                     anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
-                                                            scope( TEST ) ),//
-                                                     not( GLOBAL_MATCHER ) ),
-                                    Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
-                                    Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ) );
+        return MavenUtils.getFiles( getGlobalArtifact() );
     }
 
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public File[] getLibraryPath()
+    protected Artifact getFlexmojosTestArtifact( String artifactId )
     {
-        return MavenUtils.getFiles( getDependencies( type( SWC ),//
-                                                     anyOf( scope( MERGED ), scope( EXTERNAL ), scope( COMPILE ),
-                                                            scope( null ) ),//
-                                                     not( GLOBAL_MATCHER ) ),//
-                                    getCompiledResouceBundles() );
+        Artifact artifact =
+            resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), null, "swc" );
+
+        return artifact;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -365,96 +335,28 @@ public class TestCompilerMojo
         }
     }
 
-    protected Artifact getFlexmojosTestArtifact( String artifactId )
-    {
-        Artifact artifact =
-            resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), null, "swc" );
-
-        return artifact;
-    }
-
+    @SuppressWarnings( "unchecked" )
     @Override
-    public String[] getLocale()
+    public File[] getIncludeLibraries()
     {
-        return CollectionUtils.merge( runtimeLocales, super.getLocale() ).toArray( new String[0] );
+        return MavenUtils.getFiles(
+                                    getDependencies( type( SWC ),// 
+                                                     anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
+                                                            scope( TEST ) ),//
+                                                     not( GLOBAL_MATCHER ) ),
+                                    Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
+                                    Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ) );
     }
 
+    @SuppressWarnings( "unchecked" )
     @Override
-    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    public File[] getLibraryPath()
     {
-        return null;
-    }
-
-    private void buildTest( String testFilename, List<? extends String> testClasses )
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( testClasses == null || testClasses.isEmpty() )
-        {
-            return;
-        }
-
-        getLog().info( "Compiling test class: " + testClasses );
-
-        File testMxml;
-        try
-        {
-            testMxml = generateTester( testClasses, testFilename );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Unable to generate tester class.", e );
-        }
-
-        TestCompilerMojo cfg = this.clone();
-        cfg.finalName = testFilename;
-
-        executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
-    }
-
-    @Override
-    public TestCompilerMojo clone()
-    {
-        return (TestCompilerMojo) super.clone();
-    }
-
-    public SinglePathResolver getMavenPathResolver()
-    {
-        List<Resource> resources = new ArrayList<Resource>();
-        resources.addAll( this.resources );
-        resources.addAll( this.testResources );
-        return new MavenPathResolver( resources );
-    }
-
-    @Override
-    protected File getSourceFile()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public File[] getSourcePath()
-    {
-        return PathUtil.getFiles( testCompileSourceRoots );
-    }
-
-    @Override
-    public File getTargetDirectory()
-    {
-        testOutputDirectory.mkdirs();
-        return testOutputDirectory;
-    }
-
-    @Override
-    public boolean isUpdateSecuritySandbox()
-    {
-        // not optional for tests, flexmojos needs sandbox security disabled
-        return true;
-    }
-
-    @Override
-    public String getOutput()
-    {
-        return PathUtil.getCanonicalPath( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
+        return MavenUtils.getFiles( getDependencies( type( SWC ),//
+                                                     anyOf( scope( MERGED ), scope( EXTERNAL ), scope( COMPILE ),
+                                                            scope( null ) ),//
+                                                     not( GLOBAL_MATCHER ) ),//
+                                    getCompiledResouceBundles() );
     }
 
     @Override
@@ -470,8 +372,111 @@ public class TestCompilerMojo
     }
 
     @Override
-    public Boolean getDebug()
+    public String[] getLocale()
     {
+        return CollectionUtils.merge( localesRuntime, super.getLocale() ).toArray( new String[0] );
+    }
+
+    public SinglePathResolver getMavenPathResolver()
+    {
+        List<Resource> resources = new ArrayList<Resource>();
+        resources.addAll( this.resources );
+        resources.addAll( this.testResources );
+        return new MavenPathResolver( resources );
+    }
+
+    @Override
+    public String getOutput()
+    {
+        return PathUtil.getCanonicalPath( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
+    }
+
+    @Override
+    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    @Override
+    protected File getSourceFile()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public File[] getSourcePath()
+    {
+        List<File> files = new ArrayList<File>();
+
+        files.addAll( PathUtil.getExistingFilesList( testCompileSourceRoots ) );
+        files.addAll( Arrays.asList( super.getSourcePath() ) );
+
+        return files.toArray( new File[0] );
+    }
+
+    @Override
+    public File getTargetDirectory()
+    {
+        testOutputDirectory.mkdirs();
+        return testOutputDirectory;
+    }
+
+    private InputStream getTemplate()
+        throws MojoExecutionException
+    {
+        if ( testRunnerTemplate == null )
+        {
+            return getClass().getResourceAsStream( "/templates/test/TestRunner.vm" );
+        }
+        else if ( !testRunnerTemplate.exists() )
+        {
+            throw new MojoExecutionException( "Template file not found: " + testRunnerTemplate );
+        }
+        else
+        {
+            try
+            {
+                return new FileInputStream( testRunnerTemplate );
+            }
+            catch ( FileNotFoundException e )
+            {
+                // Never should happen
+                throw new MojoExecutionException( "Error reading template file", e );
+            }
+        }
+    }
+
+    private List<String> getTestClasses()
+    {
+        getLog().debug(
+                        "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
+                            + " but " + Arrays.toString( excludeTestFiles ) );
+
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setIncludes( includeTestFiles );
+        scanner.setExcludes( excludeTestFiles );
+        scanner.addDefaultExcludes();
+        scanner.setBasedir( testSourceDirectory );
+        scanner.scan();
+
+        getLog().debug( "Test files: " + Arrays.toString( scanner.getIncludedFiles() ) );
+        List<String> testClasses = new ArrayList<String>();
+        for ( String testClass : scanner.getIncludedFiles() )
+        {
+            int endPoint = testClass.lastIndexOf( '.' );
+            testClass = testClass.substring( 0, endPoint ); // remove extension
+            testClass = testClass.replace( '/', '.' ); // Unix OS
+            testClass = testClass.replace( '\\', '.' ); // Windows OS
+            testClasses.add( testClass );
+        }
+        getLog().debug( "Test classes: " + testClasses );
+        return testClasses;
+    }
+
+    @Override
+    public boolean isUpdateSecuritySandbox()
+    {
+        // not optional for tests, flexmojos needs sandbox security disabled
         return true;
     }
 }

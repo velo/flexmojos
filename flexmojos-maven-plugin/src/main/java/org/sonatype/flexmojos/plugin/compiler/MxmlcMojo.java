@@ -141,10 +141,10 @@ public class MxmlcMojo
 
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
 
-        if ( runtimeLocales != null )
+        if ( localesRuntime != null )
         {
             List<Result> results = new ArrayList<Result>();
-            for ( String locale : runtimeLocales )
+            for ( String locale : localesRuntime )
             {
                 MxmlcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );
