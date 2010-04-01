@@ -219,7 +219,7 @@ public class PathUtil
         return files;
     }
 
-    public static File[] getExistingFiles( Collection<String> paths )
+    public static List<File> getExistingFilesList( Collection<String> paths )
     {
         if ( paths == null )
         {
@@ -236,7 +236,17 @@ public class PathUtil
             }
         }
 
-        return files.toArray( new File[0] );
+        return files;
+    }
+
+    public static File[] getExistingFiles( Collection<String> paths )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        return getExistingFilesList( paths ).toArray( new File[0] );
     }
 
     public static File getFile( String path )

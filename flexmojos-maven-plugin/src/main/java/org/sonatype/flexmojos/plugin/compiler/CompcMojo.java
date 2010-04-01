@@ -227,10 +227,10 @@ public class CompcMojo
 
         executeCompiler( this, true );
 
-        if ( runtimeLocales != null )
+        if ( localesRuntime != null )
         {
             List<Result> results = new ArrayList<Result>();
-            for ( String locale : runtimeLocales )
+            for ( String locale : localesRuntime )
             {
                 CompcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );
