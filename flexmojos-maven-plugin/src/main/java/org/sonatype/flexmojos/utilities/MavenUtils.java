@@ -230,7 +230,9 @@ public class MavenUtils
     public static File getArtifactFile( Artifact a, Build build )
         throws MojoExecutionException
     {
-        File dest = new File( build.getOutputDirectory(), "libraries/" + a.getArtifactId() + ".swc" );
+        File dest =
+            new File( build.getOutputDirectory(), "libraries/" + a.getArtifactId()
+                + ( a.getClassifier() != null ? ( "-" + a.getClassifier() ) : "" ) + ".swc" );
         if ( !dest.exists() )
         {
             try
