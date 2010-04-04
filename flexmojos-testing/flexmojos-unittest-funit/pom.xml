@@ -30,7 +30,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-funit</artifactId>
-  <version>3.6</version>
+  <version>3.6.1-SNAPSHOT</version>
   <packaging>swc</packaging>
 
   <name>Flexmojos Unit Test support - funit</name>
