@@ -311,7 +311,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @required
      * @readonly
      */
-    private List<String> compileSourceRoots;
+    protected List<String> compileSourceRoots;
 
     /**
      * The maven configuration directory
@@ -2344,9 +2344,15 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             return localesCompiled;
         }
 
-        if ( localesRuntime != null || SWC.equals( getProjectType() ) )
+        //if there are runtime locales, no need for compiled locales
+        if ( localesRuntime != null )
         {
             return null;
+        }
+
+        if ( SWC.equals( getProjectType() ) )
+        {
+            return new String[] {};
         }
 
         return new String[] { toolsLocale };
