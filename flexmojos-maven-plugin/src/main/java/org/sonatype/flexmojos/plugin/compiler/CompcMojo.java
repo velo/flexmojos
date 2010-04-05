@@ -33,6 +33,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.RuledClasses;
+import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**
  * <p>
@@ -224,6 +225,11 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( !PathUtil.exist( compileSourceRoots ))
+        {
+            getLog().warn( "Skipping compiler, source path doesn't exist." );
+            return;
+        }
 
         executeCompiler( this, true );
 
