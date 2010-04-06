@@ -103,6 +103,13 @@ public class SignAirMojo
     private List<String> includeFiles;
 
     /**
+     * Strip artifact version during copy of dependencies.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripVersion;
+
+    /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      * 
      * @parameter expression="${flexmojos.classifier}"
@@ -146,6 +153,10 @@ public class SignAirMojo
                     {
                         File source = artifact.getFile();
                         String path = source.getName();
+                        if ( stripVersion && path.contains( artifact.getVersion() ) )
+                        {
+                            path = path.replace( "-" + artifact.getVersion(), "" );
+                        }
                         getLog().debug( "  adding source " + source + " with path " + path );
                         airPackager.addSourceWithPath( source, path );
                     }
