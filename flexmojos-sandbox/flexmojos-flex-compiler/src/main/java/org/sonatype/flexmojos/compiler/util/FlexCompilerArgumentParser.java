@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.batik.css.engine.value.css2.SrcManager;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.compiler.IFlexArgument;
@@ -91,40 +90,40 @@ public class FlexCompilerArgumentParser
                     args.add( new Entry<String, List<String>>( configurationName + "." + arg.getName(), arg.getValue() ) );
                 }
             }
-//            else if ( value instanceof IRuntimeSharedLibraryPath || value instanceof IRuntimeSharedLibraryPath[] )
-//            {
-//                IRuntimeSharedLibraryPath[] values;
-//                Class<?> type = returnType;
-//                if ( type.isArray() )
-//                {
-//                    values = (IRuntimeSharedLibraryPath[]) value;
-//                }
-//                else
-//                {
-//                    values = new IRuntimeSharedLibraryPath[] { (IRuntimeSharedLibraryPath) value };
-//                }
-//
-//                for ( IRuntimeSharedLibraryPath arg : values )
-//                {
-//                    StringBuilder sb = new StringBuilder();
-//                    sb.append( arg.pathElement() );
-//
-//                    Set<java.util.Map.Entry<String, String>> urls = arg.rslUrl().entrySet();
-//                    for ( java.util.Map.Entry<String, String> entry : urls )
-//                    {
-//                        sb.append( ',' );
-//                        sb.append( entry.getKey() );
-//
-//                        if ( entry.getValue() != null )
-//                        {
-//                            sb.append( ',' );
-//                            sb.append( entry.getValue() );
-//                        }
-//                    }
-//
-//                    args.add( new Entry<String, List<String>>( parseName( method.getName() ) + "=" + sb, null ) );
-//                }
-//            }
+            else if ( value instanceof IRuntimeSharedLibraryPath || value instanceof IRuntimeSharedLibraryPath[] )
+            {
+                IRuntimeSharedLibraryPath[] values;
+                Class<?> type = returnType;
+                if ( type.isArray() )
+                {
+                    values = (IRuntimeSharedLibraryPath[]) value;
+                }
+                else
+                {
+                    values = new IRuntimeSharedLibraryPath[] { (IRuntimeSharedLibraryPath) value };
+                }
+
+                for ( IRuntimeSharedLibraryPath arg : values )
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append( arg.pathElement() );
+
+                    Set<java.util.Map.Entry<String, String>> urls = arg.rslUrl().entrySet();
+                    for ( java.util.Map.Entry<String, String> entry : urls )
+                    {
+                        sb.append( ',' );
+                        sb.append( entry.getKey() );
+
+                        if ( entry.getValue() != null )
+                        {
+                            sb.append( ',' );
+                            sb.append( entry.getValue() );
+                        }
+                    }
+
+                    args.add( new Entry<String, List<String>>( parseName( method.getName() ) + "=" + sb, null ) );
+                }
+            }
             else if ( value instanceof IFlexArgument || value instanceof IFlexArgument[] )
             {
                 IFlexArgument[] values;
