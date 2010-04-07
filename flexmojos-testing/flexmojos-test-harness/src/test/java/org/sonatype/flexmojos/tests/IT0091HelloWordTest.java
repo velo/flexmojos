@@ -9,6 +9,8 @@ package org.sonatype.flexmojos.tests;
 
 import java.io.File;
 
+import org.hamcrest.MatcherAssert;
+import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
 public class IT0091HelloWordTest
@@ -37,6 +39,18 @@ public class IT0091HelloWordTest
         File main = new File( target, "hello-world-no-inherit-1.0-SNAPSHOT.swf" );
 
         assertSeftExit( main );
+    }
+
+    @Test
+    public void asdoc()
+        throws Exception
+    {
+        String dir = test( getProject( "intro/hello-world-no-inherit" ), "flexmojos:asdoc" ).getBasedir();
+
+        File target = new File( dir, "target" );
+        File asdoc = new File( target, "asdoc" );
+
+        MatcherAssert.assertThat( asdoc, FileMatcher.exists() );
     }
 
 }

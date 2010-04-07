@@ -9,6 +9,7 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit
 {
 	import flexunit.framework.*; 
 	
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
@@ -23,7 +24,10 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit
 			 this._socketReporter = socketReporter;
 		}
 		
-		public function run(tests:Array):int {
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
+
     		var result:TestResult = new TestResult();
 	        result.addListener(this);
 

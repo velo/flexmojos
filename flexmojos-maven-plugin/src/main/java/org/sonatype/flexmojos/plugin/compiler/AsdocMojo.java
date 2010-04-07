@@ -379,6 +379,8 @@ public class AsdocMojo
         }
 
         File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
+        templateOutput.mkdirs();
+
         Artifact template = resolve( "com.adobe.flex.compiler", "asdoc", getCompilerVersion(), "template", "zip" );
         try
         {
@@ -422,6 +424,13 @@ public class AsdocMojo
     public String getWindowTitle()
     {
         return windowTitle;
+    }
+
+    public String getOutput()
+    {
+        File output = new File( getTargetDirectory(), "asdoc" );
+        output.mkdirs();
+        return PathUtil.getCanonicalPath( output );
     }
 
 }

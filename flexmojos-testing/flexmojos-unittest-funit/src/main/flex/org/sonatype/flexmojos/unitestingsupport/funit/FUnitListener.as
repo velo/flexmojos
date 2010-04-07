@@ -16,6 +16,7 @@ package org.sonatype.flexmojos.unitestingsupport.funit
 	import funit.core.TestSuite;
 	import funit.core.TestSuiteResult;
 
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
@@ -31,8 +32,9 @@ package org.sonatype.flexmojos.unitestingsupport.funit
 			 this._socketReporter = socketReporter;
 		}
 
-		public function run(tests:Array):int
-		{
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
 
 			var testCount:int=0;
 
