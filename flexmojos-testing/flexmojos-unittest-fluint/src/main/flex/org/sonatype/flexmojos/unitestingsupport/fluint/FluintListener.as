@@ -12,6 +12,7 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 	import net.digitalprimates.fluint.ui.TestRunner;
 
 
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
@@ -43,8 +44,10 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 			this._socketReporter = socketReporter;
 		}
 
-		public function run(tests:Array):int
-		{
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
+
 			var listener:FluintListener=new FluintListener(tests,_socketReporter);
 			return listener.runTests();
 		}

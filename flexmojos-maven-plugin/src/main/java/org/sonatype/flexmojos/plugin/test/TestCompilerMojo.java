@@ -323,6 +323,10 @@ public class TestCompilerMojo
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-funit" );
         }
+        else if ( getDependency( groupId( "com.adobe.mustella" ), artifactId( "mustella" ) ) != null )
+        {
+            return getFlexmojosTestArtifact( "flexmojos-unittest-mustella" );
+        }
         else
         {
             if ( getLog().isDebugEnabled() )
@@ -340,12 +344,12 @@ public class TestCompilerMojo
     public File[] getIncludeLibraries()
     {
         return MavenUtils.getFiles(
+                                    Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
+                                    Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
                                     getDependencies( type( SWC ),// 
                                                      anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
                                                             scope( TEST ) ),//
-                                                     not( GLOBAL_MATCHER ) ),
-                                    Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
-                                    Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ) );
+                                                     not( GLOBAL_MATCHER ) ) );
     }
 
     @SuppressWarnings( "unchecked" )

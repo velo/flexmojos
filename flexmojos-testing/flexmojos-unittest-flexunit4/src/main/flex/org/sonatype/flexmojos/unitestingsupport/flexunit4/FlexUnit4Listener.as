@@ -12,6 +12,8 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 	import org.flexunit.runner.notification.Failure;
 	import org.flexunit.runner.notification.IRunListener;
 	import org.flexunit.runners.model.TestClass;
+
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 	import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
@@ -31,8 +33,10 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 			 this._socketReporter = socketReporter;
 		}
 
-		public function run(tests:Array):int
-		{
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
+
 			var listener:FlexUnit4Listener = new FlexUnit4Listener(_socketReporter);
 			var flexUnitCore:FlexUnitCore = new FlexUnitCore();
 			

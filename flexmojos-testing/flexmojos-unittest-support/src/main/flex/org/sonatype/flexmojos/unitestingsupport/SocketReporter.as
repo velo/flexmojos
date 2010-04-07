@@ -7,286 +7,290 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-	import flash.events.DataEvent;
-	import flash.events.Event;
-	import flash.net.XMLSocket;
-	import flash.utils.Dictionary;
-	import flash.utils.getDefinitionByName;
-	import flash.utils.describeType;
+    import flash.events.DataEvent;
+    import flash.events.Event;
+    import flash.net.XMLSocket;
+    import flash.utils.Dictionary;
+    import flash.utils.getDefinitionByName;
 
-	import mx.binding.utils.BindingUtils;
-	import mx.utils.ObjectUtil;
+    import mx.binding.utils.BindingUtils;
 
-	import org.sonatype.flexmojos.test.monitor.CommConstraints;
-	import org.sonatype.flexmojos.test.report.ErrorReport;
-	import org.sonatype.flexmojos.test.report.TestCaseReport;
-	import org.sonatype.flexmojos.test.report.TestMethodReport;
+    import org.sonatype.flexmojos.test.monitor.CommConstraints;
+    import org.sonatype.flexmojos.test.report.ErrorReport;
+    import org.sonatype.flexmojos.test.report.TestCaseReport;
+    import org.sonatype.flexmojos.test.report.TestMethodReport;
 
-	public class SocketReporter
-	{
+    public class SocketReporter
+    {
 
-		[Inspectable]
-		public var port:uint=1024;
+        [Inspectable]
+        public var port:uint = 1024;
 
-		[Inspectable]
-		public var server:String="127.0.0.1";
+        [Inspectable]
+        public var server:String = "127.0.0.1";
 
-		private var socket:XMLSocket;
+        private var socket:XMLSocket;
 
-		private var reports:Dictionary=new Dictionary();
+        private var reports:Dictionary = new Dictionary();
 
-		[Bindable]
-		public var totalTestCount:int=0;
+        [Bindable]
+        public var totalTestCount:int = 0;
 
-		[Bindable]
-		public var numTestsRun:int=0;
+        [Bindable]
+        public var numTestsRun:int = 0;
 
-		private var closeController:CloseController=CloseController.getInstance();
+        private var closeController:CloseController = CloseController.getInstance();
 
-		/**
-		 * Called when an error occurs.
-		 * @param test the Test that generated the error.
-		 * @param error the Error.
-		 */
-		public function addError(testName:String, methodName:String, error:ErrorReport):void
-		{
-			// Increment error count.
-			var report:TestCaseReport=getReport(testName);
-			report.errors++;
+        /**
+         * Called when an error occurs.
+         * @param test the Test that generated the error.
+         * @param error the Error.
+         */
+        public function addError( testName:String, methodName:String, error:ErrorReport ):void
+        {
+            // Increment error count.
+            var report:TestCaseReport = getReport( testName );
+            report.errors++;
 
-			// Add the error to the method.
-			var methodObject:TestMethodReport=report.getMethod(methodName);
-			methodObject.error=error;
-		}
+            // Add the error to the method.
+            var methodObject:TestMethodReport = report.getMethod( methodName );
+            methodObject.error = error;
+        }
 
-		/**
-		 * Add the currently executing method on a Test to the internal report
-		 * model.
-		 * @param test the Test.
-		 */
-		public function addMethod(testName:String, methodName:String):void
-		{
-			var reportObject:TestCaseReport=getReport(testName);
-			reportObject.getMethod(methodName);
-			reportObject.tests++;
-		}
+        /**
+         * Add the currently executing method on a Test to the internal report
+         * model.
+         * @param test the Test.
+         */
+        public function addMethod( testName:String, methodName:String ):void
+        {
+            var reportObject:TestCaseReport = getReport( testName );
+            reportObject.getMethod( methodName );
+            reportObject.tests++;
+        }
 
-		/**
-		 * Called when a failure occurs.
-		 * @param test the Test that generated the failure.
-		 * @param error the failure.
-		 */
-		public function addFailure(testName:String, methodName:String, failure:ErrorReport):void
-		{
-			// Increment failure count.
-			var report:TestCaseReport=getReport(testName);
-			report.failures++;
+        /**
+         * Called when a failure occurs.
+         * @param test the Test that generated the failure.
+         * @param error the failure.
+         */
+        public function addFailure( testName:String, methodName:String, failure:ErrorReport ):void
+        {
+            // Increment failure count.
+            var report:TestCaseReport = getReport( testName );
+            report.failures++;
 
-			// Add the failure to the method.
-			var methodObject:TestMethodReport=report.getMethod(methodName);
-			methodObject.failure=failure;
-		}
+            // Add the failure to the method.
+            var methodObject:TestMethodReport = report.getMethod( methodName );
+            methodObject.failure = failure;
+        }
 
-		public function testFinished(testName:String, timeTaken:int=0):void
-		{
-			var reportObject:TestCaseReport=reports[testName];
-			reportObject.time=timeTaken;
+        public function testFinished( testName:String, timeTaken:int = 0 ):void
+        {
+            var reportObject:TestCaseReport = reports[ testName ];
+            reportObject.time = timeTaken;
 
-			// If we have finished running all the tests send the results.
-			++numTestsRun;
-		}
+            // If we have finished running all the tests send the results.
+            ++numTestsRun;
+        }
 
 
-		/**
-		 * Return the report Object from the internal report model for the
-		 * currently executing Test.
-		 * @param Test the test.
-		 */
-		public function getReport(testName:String):TestCaseReport
-		{
-			var reportObject:TestCaseReport;
+        /**
+         * Return the report Object from the internal report model for the
+         * currently executing Test.
+         * @param Test the test.
+         */
+        public function getReport( testName:String ):TestCaseReport
+        {
+            var reportObject:TestCaseReport;
 
-			// Check we have a report Object for the executing Test, if not
-			// create a new one.
-			if (reports[testName])
-			{
-				reportObject=reports[testName];
-			}
-			else
-			{
-				reportObject=new TestCaseReport();
-				reportObject.name=testName;
+            // Check we have a report Object for the executing Test, if not
+            // create a new one.
+            if ( reports[ testName ] )
+            {
+                reportObject = reports[ testName ];
+            }
+            else
+            {
+                reportObject = new TestCaseReport();
+                reportObject.name = testName;
 
-				reports[testName]=reportObject;
-			}
+                reports[ testName ] = reportObject;
+            }
 
-			return reportObject;
-		}
+            return reportObject;
+        }
 
-		/**
-		 * Sends the results. This sends the reports back to the controlling Ant
-		 * task using an XMLSocket.
-		 */
-		private function sendResults():void
-		{
-			// Open an XML socket.
-			socket=new XMLSocket();
-			socket.addEventListener(Event.CONNECT, handleConnect);
-			socket.addEventListener(DataEvent.DATA, dataHandler);
-			socket.connect(server, port);
-		}
+        /**
+         * Sends the results. This sends the reports back to the controlling Ant
+         * task using an XMLSocket.
+         */
+        private function sendResults():void
+        {
+            // Open an XML socket.
+            socket = new XMLSocket();
+            socket.addEventListener( Event.CONNECT, handleConnect );
+            socket.addEventListener( DataEvent.DATA, dataHandler );
+            socket.connect( server, port );
+        }
 
-		private function handleConnect(event:Event):void
-		{
-			for (var className:String in reports)
-			{
-				var testReport:TestCaseReport=reports[className];
-				// Create the XML report.
-				var xml:XML=testReport.toXml();
+        private function handleConnect( event:Event ):void
+        {
+            for ( var className:String in reports )
+            {
+                var testReport:TestCaseReport = reports[ className ];
+                // Create the XML report.
+                var xml:XML = testReport.toXml();
 
-				var xmlString:String=xml.toXMLString();
+                var xmlString:String = xml.toXMLString();
 
-				// Send the XML report.
-				socket.send(xmlString);
-			}
+                // Send the XML report.
+                socket.send( xmlString );
+            }
 
-			// Send the end of reports terminator.
-			socket.send(CommConstraints.END_OF_TEST_RUN);
-		}
+            // Send the end of reports terminator.
+            socket.send( CommConstraints.END_OF_TEST_RUN );
+        }
 
-		/**
-		 * Event listener to handle data received on the socket.
-		 * @param event the DataEvent.
-		 */
-		private function dataHandler(event:DataEvent):void
-		{
-			var data:String=event.data;
+        /**
+         * Event listener to handle data received on the socket.
+         * @param event the DataEvent.
+         */
+        private function dataHandler( event:DataEvent ):void
+        {
+            var data:String = event.data;
 
-			// If we received an acknowledgement finish-up.			
-			if (data == CommConstraints.ACK_OF_TEST_RESULT)
-			{
-				exit();
-			}
-		}
+            // If we received an acknowledgement finish-up.			
+            if ( data == CommConstraints.ACK_OF_TEST_RESULT )
+            {
+                exit();
+            }
+        }
 
-		/**
-		 * Exit the test runner and enabling to close the player.
-		 */
-		private function exit():void
-		{
-			// Close the socket.
-			if (socket)
-			{
-				socket.close();
-			}
+        /**
+         * Exit the test runner and enabling to close the player.
+         */
+        private function exit():void
+        {
+            // Close the socket.
+            if ( socket )
+            {
+                socket.close();
+            }
 
-			// Enabling to close flashplayer
-			closeController.canClose=true;
-		}
+            // Enabling to close flashplayer
+            closeController.canClose = true;
+        }
 
-		private function formatQualifiedClassName(className:String):String
-		{
-			var pattern:RegExp=/::/;
+        private function formatQualifiedClassName( className:String ):String
+        {
+            var pattern:RegExp = /::/;
 
-			return className.replace(pattern, ".");
-		}
+            return className.replace( pattern, "." );
+        }
 
-		public function runTests(tests:Array):void
-		{
-			var def:*=null;
+        public function runTests( testApplication:ITestApplication ):void
+        {
+            var def:* = null;
 
-			//flexunit supported
-			if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener")) != null)
-			{
-				trace("Running tests using Flexunit");
-			}
+            //flexunit supported
+            if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener" ) ) != null )
+            {
+                trace( "Running tests using Flexunit" );
+            }
 
-			//flexunit4 supported
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit4.FlexUnit4Listener")) != null)
-			{
-				trace("Running tests using Flexunit4");
-			}
+            //flexunit4 supported
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.flexunit4.FlexUnit4Listener" ) ) != null )
+            {
+                trace( "Running tests using Flexunit4" );
+            }
 
-			//funit supported			
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener")) != null)
-			{
-				trace("Running tests using FUnit");
-			}
+            //funit supported			
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener" ) ) != null )
+            {
+                trace( "Running tests using FUnit" );
+            }
 
-			//fluint supported
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener")) != null)
-			{
-				trace("Running tests using Fluint");
-			}
+            //fluint supported
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener" ) ) != null )
+            {
+                trace( "Running tests using Fluint" );
+            }
 
-			//asunit supported
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener")) != null)
-			{
-				trace("Running tests using asunit");
-			}
+            //asunit supported
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener" ) ) != null )
+            {
+                trace( "Running tests using asunit" );
+            }
 
-			//advancedflex supported
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener")) != null)
-			{
-				trace("Running tests using Advanced Flex tests");
-			}
+            //advancedflex supported
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener" ) ) != null )
+            {
+                trace( "Running tests using Advanced Flex tests" );
+            }
 
-			//not found
-			else
-			{
-				trace("No test runner found, exiting");
-				exit();
-			}
+            //mustella
+            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.mustella.MustellaListener" ) ) != null )
+            {
+                trace( "Running tests using Mustella" );
+            }
 
-			var runner:UnitTestRunner=new def();
-			runner.socketReporter=this;
-			totalTestCount=runner.run(tests);
-			trace("Running " + totalTestCount + " tests");
+            //not found
+            else
+            {
+                trace( "No test runner found, exiting" );
+                exit();
+            }
 
-			if (totalTestCount == 0)
-			{
-				trace("No tests to run, exiting");
-				exit();
-			}
-		}
+            var runner:UnitTestRunner = new def();
+            runner.socketReporter = this;
+            totalTestCount = runner.run( testApplication );
+            trace( "Running " + totalTestCount + " tests" );
 
-		private function tryGetDefinitionByName(classname:String):Class
-		{
-			try
-			{
-				return getDefinitionByName(classname) as Class;
-			}
-			catch (e:ReferenceError)
-			{
-			}
-			return null;
-		}
+            if ( totalTestCount == 0 )
+            {
+                trace( "No tests to run, exiting" );
+                exit();
+            }
+        }
 
-		private static var instance:SocketReporter;
+        private function tryGetDefinitionByName( classname:String ):Class
+        {
+            try
+            {
+                return getDefinitionByName( classname ) as Class;
+            }
+            catch ( e:ReferenceError )
+            {
+            }
+            return null;
+        }
 
-		public static function getInstance():SocketReporter
-		{
-			if (instance == null)
-			{
-				instance=new SocketReporter();
+        private static var instance:SocketReporter;
 
-				var checkIsDone:Function=function(e:*):void
-					{
-						if (instance.totalTestCount == 0)
-						{
-							return;
-						}
-						if (instance.totalTestCount == instance.numTestsRun)
-						{
-							instance.sendResults();
-						}
-					};
+        public static function getInstance():SocketReporter
+        {
+            if ( instance == null )
+            {
+                instance = new SocketReporter();
 
-				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
-				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");
-			}
-			return instance;
-		}
+                var checkIsDone:Function = function( e:* ):void
+                    {
+                        if ( instance.totalTestCount == 0 )
+                        {
+                            return;
+                        }
+                        if ( instance.totalTestCount == instance.numTestsRun )
+                        {
+                            instance.sendResults();
+                        }
+                    };
 
-	}
+                BindingUtils.bindSetter( checkIsDone, instance, "numTestsRun" );
+                BindingUtils.bindSetter( checkIsDone, instance, "totalTestCount" );
+            }
+            return instance;
+        }
+
+    }
 }

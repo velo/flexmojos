@@ -14,6 +14,7 @@ package org.sonatype.flexmojos.unitestingsupport.asunit
 	import asunit.framework.TestSuite;
 	import asunit.framework.TestListener;
 	
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
@@ -28,7 +29,9 @@ package org.sonatype.flexmojos.unitestingsupport.asunit
 			 this._socketReporter = socketReporter;
 		}
 		
-		public function run(tests:Array):int {
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
 
 			var countTestCases:int;
 			

@@ -49,5 +49,8 @@
       </modules>
     </profile>
   </profiles>
+  <modules>
+  	<module>flexmojos-unittest-mustella</module>
+  </modules>
 
 </project>
