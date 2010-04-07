@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -84,6 +84,13 @@ public class SignAirMojo
      * @parameter
      */
     private List<String> includeFiles;
+
+    /**
+     * Include specified files or directories in AIR package.
+     * 
+     * @parameter
+     */
+    private FileSet[] includeFileSets;
 
     /**
      * Strip artifact version during copy of dependencies.
@@ -157,34 +164,31 @@ public class SignAirMojo
                 throw new MojoFailureException( "Unexpected project packaging " + packaging );
             }
 
-            if ( includeFiles == null )
+            if ( includeFiles == null && includeFileSets == null )
             {
-                includeFiles = listAllResources();
+                includeFileSets = resources.toArray( new FileSet[0] );
             }
 
             for ( final String includePath : includeFiles )
             {
-                if ( includePath == null )
-                {
-                    throw new MojoFailureException( "Cannot include a null file" );
-                }
+                String directory = project.getBuild().getOutputDirectory();
+                addSourceWithPath( airPackager, directory, includePath );
+            }
 
-                // get file from output directory to allow filtered resources
-                File includeFile = new File( project.getBuild().getOutputDirectory(), includePath );
-                if ( !includeFile.exists() )
-                {
-                    throw new MojoFailureException( "Unable to find resource: " + includePath );
-                }
+            for ( FileSet set : includeFileSets )
+            {
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir( set.getDirectory() );
+                scanner.setIncludes( (String[]) set.getIncludes().toArray( new String[0] ) );
+                scanner.setExcludes( (String[]) set.getExcludes().toArray( new String[0] ) );
+                scanner.addDefaultExcludes();
+                scanner.scan();
 
-                // don't include the app descriptor or the cert
-                if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
-                    || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+                String[] files = scanner.getIncludedFiles();
+                for ( String path : files )
                 {
-                    continue;
+                    addSourceWithPath( airPackager, set.getDirectory(), path );
                 }
-
-                getLog().debug( "  adding source " + includeFile + " with path " + includePath );
-                airPackager.addSourceWithPath( includeFile, includePath );
             }
 
             if ( classifier != null )
@@ -246,6 +250,32 @@ public class SignAirMojo
         }
     }
 
+    private void addSourceWithPath( AIRPackager airPackager, String directory, String includePath )
+        throws MojoFailureException
+    {
+        if ( includePath == null )
+        {
+            throw new MojoFailureException( "Cannot include a null file" );
+        }
+
+        // get file from output directory to allow filtered resources
+        File includeFile = new File( directory, includePath );
+        if ( !includeFile.isFile() )
+        {
+            throw new MojoFailureException( "Include files only accept files as parameters: " + includePath );
+        }
+
+        // don't include the app descriptor or the cert
+        if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
+            || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+        {
+            return;
+        }
+
+        getLog().debug( "  adding source " + includeFile + " with path " + includePath );
+        airPackager.addSourceWithPath( includeFile, includePath );
+    }
+
     @SuppressWarnings( "unchecked" )
     private File getAirDescriptor()
         throws MojoExecutionException
@@ -279,28 +309,6 @@ public class SignAirMojo
             throw new MojoExecutionException( "Failed to copy air template", e );
         }
         return dest;
-    }
-
-    /**
-     * @see org.sonatype.flexmojos.compiler.LibraryMojo.listAllResources()
-     */
-    @SuppressWarnings( "unchecked" )
-    private List<String> listAllResources()
-    {
-        List<String> inclusions = new ArrayList<String>();
-        for ( Resource resource : resources )
-        {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( resource.getDirectory() );
-            scanner.setIncludes( (String[]) resource.getIncludes().toArray( new String[0] ) );
-            scanner.setExcludes( (String[]) resource.getExcludes().toArray( new String[0] ) );
-            scanner.addDefaultExcludes();
-            scanner.scan();
-
-            inclusions.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
-        }
-
-        return inclusions;
     }
 
 }
