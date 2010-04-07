@@ -17,47 +17,76 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-	import mx.core.Application;
-	import mx.events.FlexEvent;
-	
-	public class TestApplication extends Application
-	{
-		
-		private var tests:Array;
-		
-		private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+    import mx.core.Application;
+    import mx.events.FlexEvent;
 
-		private static var controlSocket:ControlSocket = ControlSocket.getInstance();
-		
-		public function set port(port:int):void {
-			socketReporter.port = port;
-		}
+    public class TestApplication extends Application implements ITestApplication
+    {
 
-		public function set controlPort(port:int):void {
-			controlSocket.port = port;
-		}
-		
-		public function TestApplication()
-		{
-			this.tests = new Array();
-			
-			addEventListener(FlexEvent.CREATION_COMPLETE, runTests);
-		}
-		
-		private function runTests(e:*):void
-		{
-			controlSocket.connect();
-			socketReporter.runTests(this.tests);
-		}
+        private var _componentUnderTest:*;
 
-		/**
-		 * Test to be run
-		 * @param test the Test to run.
-		 */
-		public function addTest( test:Class ) : void
-    	{
-    	    tests.push(test);
-    	    trace("Testing "+test);
-		}
-	}
+        private var _tests:Array;
+
+        private static var socketReporter:SocketReporter = SocketReporter.getInstance();
+
+        private static var controlSocket:ControlSocket = ControlSocket.getInstance();
+
+        public function set port( port:int ):void
+        {
+            socketReporter.port = port;
+        }
+
+        public function set controlPort( port:int ):void
+        {
+            controlSocket.port = port;
+        }
+
+        public function TestApplication()
+        {
+            this._tests = new Array();
+
+            addEventListener( FlexEvent.CREATION_COMPLETE, runTests );
+        }
+
+        private function runTests( e:* ):void
+        {
+            controlSocket.connect();
+            socketReporter.runTests( this );
+        }
+
+        /**
+         * Test to be run
+         * @param test the Test to run.
+         */
+        public function addTest( test:Class ):void
+        {
+            _tests.push( test );
+            trace( "Testing " + test );
+        }
+
+        public function get tests():Array
+        {
+            return this._tests;
+        }
+
+        public function get componentUnderTest():*
+        {
+            return _componentUnderTest;
+        }
+
+        public function set componentUnderTest( cmp:* ):void
+        {
+            if ( this._componentUnderTest != null )
+            {
+                removeChild( this._componentUnderTest );
+                this._componentUnderTest = null;
+            }
+
+            if ( cmp != null )
+            {
+                this._componentUnderTest = cmp;
+                addChild( this._componentUnderTest );
+            }
+        }
+    }
 }

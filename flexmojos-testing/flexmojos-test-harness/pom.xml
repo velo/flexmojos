@@ -302,6 +302,12 @@
       <version>${project.version}</version>
       <type>swc</type>
     </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-unittest-mustella</artifactId>
+      <version>${project.version}</version>
+      <type>swc</type>
+    </dependency>
 
     <dependency>
       <groupId>emma</groupId>
@@ -350,8 +356,7 @@
       <id>non-release</id>
       <activation>
         <property>
-          <name>performRelease</name>
-          <value>false</value>
+          <name>!performRelease</name>
         </property>
       </activation>
       <dependencies>

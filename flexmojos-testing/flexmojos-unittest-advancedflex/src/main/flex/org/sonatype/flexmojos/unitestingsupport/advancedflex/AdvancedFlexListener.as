@@ -17,46 +17,50 @@
  */
 package org.sonatype.flexmojos.unitestingsupport.advancedflex
 {
-	import advancedflex.debugger.aut.framework.*;
-	
-	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
-	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
-	import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
+    import advancedflex.debugger.aut.framework.*;
 
-	public class AdvancedFlexListener implements UnitTestRunner
-	{
-		
-		private var _socketReporter:SocketReporter;
-		
-		public function set socketReporter(socketReporter:SocketReporter):void {
-			 this._socketReporter = socketReporter;
-		}
-		
-		public function run(tests:Array):int {
+    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
+    import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
+    import org.sonatype.flexmojos.unitestingsupport.UnitTestRunner;
+    import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
 
-			var suite:TestSuite = new TestSuite();
-			
-			var testsCount:int = 0;
-			
-			for each (var test:Class in tests)
-			{
-				var testCase:* = new test();
-				if(testCase is TestCase)
-				{
-					suite.addTest( testCase );
-					testsCount++;
-				}
-			}
-	        
-	        //suite will crash if launched without tests
-	        //http://code.google.com/p/advancedflex/issues/detail?id=1
-	        if(testsCount != 0) 
-	        {
-	    	    suite.startTest( new ProtectedConsole(ClassnameUtil.getClassName(test), _socketReporter) );
-	        }
-    	    
-    	    return testsCount;
-		}		
+    public class AdvancedFlexListener implements UnitTestRunner
+    {
 
-	}
+        private var _socketReporter:SocketReporter;
+
+        public function set socketReporter( socketReporter:SocketReporter ):void
+        {
+            this._socketReporter = socketReporter;
+        }
+
+        public function run( testApp:ITestApplication ):int
+        {
+            var tests:Array = testApp.tests;
+
+            var suite:TestSuite = new TestSuite();
+
+            var testsCount:int = 0;
+
+            for each ( var test:Class in tests )
+            {
+                var testCase:* = new test();
+                if ( testCase is TestCase )
+                {
+                    suite.addTest( testCase );
+                    testsCount++;
+                }
+            }
+
+            //suite will crash if launched without tests
+            //http://code.google.com/p/advancedflex/issues/detail?id=1
+            if ( testsCount != 0 )
+            {
+                suite.startTest( new ProtectedConsole( ClassnameUtil.getClassName( test ), _socketReporter ) );
+            }
+
+            return testsCount;
+        }
+
+    }
 }

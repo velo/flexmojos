@@ -18,14 +18,16 @@
 /**
  * @author Marvin Froeder
  */
-package org.sonatype.flexmojos.unitestingsupport {
-	
-	public interface UnitTestRunner {
+package org.sonatype.flexmojos.unitestingsupport
+{
 
-		function run(tests:Array):int;
-		
-		function set socketReporter(socketReporter:SocketReporter):void;
-				
-	}
+    public interface UnitTestRunner
+    {
+
+        function run( testApp:ITestApplication ):int;
+
+        function set socketReporter( socketReporter:SocketReporter ):void;
+
+    }
 
 }
