@@ -208,6 +208,10 @@ public class SignAirMojo
             {
                 projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, output );
             }
+            else if ( SWF.equals( packaging ) )
+            {
+                projectHelper.attachArtifact( project, AIR, output );
+            }
             else
             {
                 project.getArtifact().setFile( output );
