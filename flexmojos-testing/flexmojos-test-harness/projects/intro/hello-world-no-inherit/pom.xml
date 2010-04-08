@@ -49,13 +49,13 @@
 	<repositories>
 		<repository>
 			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<url>http://repository.sonatype.org/content/groups/flexgroup/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<url>http://repository.sonatype.org/content/groups/flexgroup/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
