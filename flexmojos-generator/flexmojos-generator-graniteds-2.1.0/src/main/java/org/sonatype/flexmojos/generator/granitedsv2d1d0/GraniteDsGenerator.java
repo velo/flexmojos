@@ -24,7 +24,10 @@ import static org.granite.generator.template.StandardTemplateUris.ENTITY;
 import static org.granite.generator.template.StandardTemplateUris.ENTITY_BASE;
 import static org.granite.generator.template.StandardTemplateUris.ENUM;
 import static org.granite.generator.template.StandardTemplateUris.INTERFACE;
+import static org.granite.generator.template.StandardTemplateUris.REMOTE;
+import static org.granite.generator.template.StandardTemplateUris.REMOTE_BASE;
 import static org.granite.generator.template.StandardTemplateUris.TIDE_ENTITY_BASE;
+import static org.granite.generator.template.StandardTemplateUris.TIDE_REMOTE_BASE;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -95,6 +98,8 @@ public final class GraniteDsGenerator
     private TemplateUri[] beanTemplateUris;
 
     private TemplateUri[] enumTemplateUris;
+    
+    private TemplateUri[] remoteTemplateUris;
 
     private Map<String, File> classes;
 
@@ -164,6 +169,26 @@ public final class GraniteDsGenerator
 
         return createTemplateUris( baseTemplateUri, templateUri );
     }
+    
+    private TemplateUri[] initializeRemoteTemplateURIs( String[] remoteTemplate )
+    {
+        String baseTemplateUri = REMOTE_BASE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        String templateUri = REMOTE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        if ( getStringIndex1( remoteTemplate ) != null )
+        {
+            templateUri = getStringIndex1( remoteTemplate );
+        }
+        if ( getStringIndex0( remoteTemplate ) != null )
+        {
+            baseTemplateUri = getStringIndex0( remoteTemplate );
+        }
+        else if ( tide )
+        {
+            baseTemplateUri = TIDE_REMOTE_BASE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        }
+        
+        return createTemplateUris( baseTemplateUri, templateUri );
+    }
 
     private String getStringIndex0( String[] a )
     {
@@ -221,6 +246,9 @@ public final class GraniteDsGenerator
 
         String[] beanTemplate = getTemplate( request, "bean-template" );
         beanTemplateUris = initializeBeanTemplateURIs( beanTemplate );
+        
+        String[] remoteTemplate = getTemplate( request, "remote-template" );
+        remoteTemplateUris = initializeRemoteTemplateURIs( remoteTemplate );
 
         classes = request.getClasses();
         if ( classes.isEmpty() )
@@ -431,6 +459,8 @@ public final class GraniteDsGenerator
                     return enumTemplateUris;
                 case BEAN:
                     return beanTemplateUris;
+                case REMOTE_DESTINATION:
+                    return remoteTemplateUris;
                 default:
                     throw new IllegalArgumentException( "Unknown template kind: " + kind + " / " + clazz );
             }
