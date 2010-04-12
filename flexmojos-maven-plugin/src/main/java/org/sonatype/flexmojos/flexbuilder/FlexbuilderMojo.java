@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -331,6 +332,25 @@ public class FlexbuilderMojo
      * @parameter
      */
     private Boolean pureActionscriptProject;
+    
+    /**
+     * @parameter default-value="true" expression="${autoExtractRSLs}"
+     */
+    boolean autoExtractRSLs;
+    
+    /**
+     * Customize the RLSs deployment path/URL for RSL Libraries.
+     * 
+     * @parameter default-value=""
+     */
+    private String rslUrlDirectory;
+    
+    /**
+     * Target Flex Builder version for the flexbuilder goal.
+     * 
+     * @parameter default-value="3"
+     */
+    private String flexBuilderVersion;
 
     /**
      * Load a file containing configuration options If not defined, by default will search for one on resources folder.
@@ -564,6 +584,7 @@ public class FlexbuilderMojo
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
         context.put( "targetPlayerVersion", targetPlayer );
+        context.put( "flexBuilderVersion", flexBuilderVersion);
 
         StringBuilder additionalCompilerArguments = new StringBuilder();
         if ( ( compiledLocales != null && compiledLocales.length > 0 )
@@ -666,6 +687,30 @@ public class FlexbuilderMojo
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         context.put( "pureActionscriptProject", pureActionscriptProject );
         context.put( "moduleFiles", moduleFiles );
+        
+        if(!pureActionscriptProject) 
+        {
+	        context.put("autoExtractRSLs", autoExtractRSLs);
+	        
+	        if(rslUrlDirectory == null || rslUrlDirectory.equals("/") || rslUrlDirectory.equals("\\"))
+	        	rslUrlDirectory = "";
+	        else {
+	        	rslUrlDirectory = rslUrlDirectory.replace('\\', '/');
+	        	
+	        	if(!rslUrlDirectory.endsWith("/"))
+	        		rslUrlDirectory = rslUrlDirectory.concat("/");
+	        }
+	        
+	        context.put("rslUrlDirectory", rslUrlDirectory);
+        }
+        HashMap<String, Artifact> artifactsMap = new HashMap<String, Artifact>();
+        Set<Artifact> artifacts = project.getArtifacts();
+        
+        for(Artifact artifact:artifacts) {
+        	artifactsMap.put(artifact.getArtifactId(), artifact);
+        }
+        
+        context.put( "artifactsMap", artifactsMap);
 
         runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
     }

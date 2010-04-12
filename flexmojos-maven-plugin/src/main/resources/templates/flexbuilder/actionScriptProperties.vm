@@ -32,8 +32,13 @@
             htmlGenerate="$generateHtmlWrapper" 
             htmlHistoryManagement="true" 
             htmlPlayerVersion="$targetPlayer" 
-            htmlPlayerVersionCheck="true" 
-            outputFolderPath="$flexBuilderOutputFolderPath" 
+            htmlPlayerVersionCheck="true"
+#if($flexBuilderVersion.equals("4") && !$flexBuilderOutputFolderPath.equals("bin-debug")) 
+			outputFolderLocation="$flexBuilderOutputFolderPath"
+			outputFolderPath="bin-debug"            
+#else
+			outputFolderPath="$flexBuilderOutputFolderPath"
+#end 
             sourceFolderPath="$mainSources" 
             strict="$strict" 
             useApolloConfig="$useApolloConfig" 
@@ -55,18 +60,40 @@
         <libraryPath
                 defaultLinkType="$libraryPathDefaultLinkType">
 
-#foreach ($artifact in $dependencies)
-			<!-- artifact: $artifact -->
+#foreach ($dependency in $dependencies)
+
+#set( $artifact = $artifactsMap.get($dependency.getArtifactId()) )
+
+#if ($dependency.getGroupId().equals( "com.adobe.flex.framework" ))
+			<!-- artifact: $dependency -->
             <libraryPathEntry 
                     kind="3" 
-                    linkType="1" 
-                    path="$artifact.getFile().getPath().replaceAll('\\', '/')"
-#if ($artifact.getSourceAttachment())
-                    sourcepath="$artifact.getSourceAttachment().getPath().replaceAll('\\', '/')"
+                    path="$dependency.getFile().getPath().replaceAll('\\', '/')"
+#if ($dependency.getSourceAttachment())
+                    sourcepath="$dependency.getSourceAttachment().getPath().replaceAll('\\', '/')"
+#end
+                    useDefaultLinkType="true"
+                    />
+#else
+			<!-- artifact: $dependency -->
+            <libraryPathEntry 
+                    kind="3"
+#if ($artifact.getScope().equals("rsl") && $pureActionscriptProject == false)
+					linkType="3"
+					autoExtract="$autoExtractRSLs"
+					rslUrl="$rslUrlDirectory$dependency.getArtifactId().concat(".swf")"
+#elseif ($artifact.getScope().equals("external"))
+					linkType="2"
+#else
+					linkType="1"
+#end				
+					path="$dependency.getFile().getPath().replaceAll('\\', '/')"	
+#if ($dependency.getSourceAttachment())
+                    sourcepath="$dependency.getSourceAttachment().getPath().replaceAll('\\', '/')"
 #end
                     useDefaultLinkType="false"
                     />
-
+#end
 #end
 
 #if ($pureActionscriptProject == false)
