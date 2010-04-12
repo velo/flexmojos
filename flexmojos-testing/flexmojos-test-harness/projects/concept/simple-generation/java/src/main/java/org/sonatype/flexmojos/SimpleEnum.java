@@ -15,33 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+package org.sonatype.flexmojos;
 
-import org.testng.annotations.Test;
-
-public class GeneratorTest
-    extends AbstractConceptTest
-{
-
-    @Test( groups = { "generator" }, enabled = false )
-    public void testGenerationGranite1()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds1" );
-    }
-
-    @Test( groups = { "generator" }, enabled = false )
-    public void testGenerationGranite2()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds2" );
-    }
-
-    @Test( groups = { "generator" } )
-    public void testGenerationGranite21()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation" );
-    }
+public enum SimpleEnum {
+    
+    ENUM_1, ENUM_2;
 
 }

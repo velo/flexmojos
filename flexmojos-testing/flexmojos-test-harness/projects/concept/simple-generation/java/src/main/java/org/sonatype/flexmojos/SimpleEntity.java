@@ -15,33 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+package org.sonatype.flexmojos;
 
-import org.testng.annotations.Test;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-public class GeneratorTest
-    extends AbstractConceptTest
-{
+@Entity
+public class SimpleEntity {
 
-    @Test( groups = { "generator" }, enabled = false )
-    public void testGenerationGranite1()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds1" );
+    @Column
+    private String name;
+    @Column
+    private Double value;
+    
+    public SimpleEntity() {
     }
 
-    @Test( groups = { "generator" }, enabled = false )
-    public void testGenerationGranite2()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation", "-DgeneratorToUse=graniteds2" );
+    public String getName() {
+        return name;
     }
-
-    @Test( groups = { "generator" } )
-    public void testGenerationGranite21()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation" );
+    
+    public void setName(String name) {
+        this.name = name;
     }
-
+    
+    public Double getValue() {
+        return value;
+    }
+    
+    public void setValue(Double value) {
+        this.value = value;
+    }
+    
 }
