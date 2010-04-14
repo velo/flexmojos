@@ -16,6 +16,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 public class TestCaseReport
 {
 
+    private List<TestCoverageReport> coverage;
+
+    private Xpp3Dom dom;
+
     private int errors;
 
     private int failures;
@@ -28,11 +32,22 @@ public class TestCaseReport
 
     private double time;
 
-    private Xpp3Dom dom;
-
     public TestCaseReport( Xpp3Dom dom )
     {
         this.dom = dom;
+    }
+
+    public List<TestCoverageReport> getCoverage()
+    {
+        if ( this.coverage == null )
+        {
+            this.coverage = new ArrayList<TestCoverageReport>();
+            for ( Xpp3Dom child : dom.getChildren( "coverage" ) )
+            {
+                coverage.add( new TestCoverageReport( child ) );
+            }
+        }
+        return coverage;
     }
 
     public int getErrors()
@@ -71,6 +86,11 @@ public class TestCaseReport
     public double getTime()
     {
         return Double.parseDouble( dom.getAttribute( "time" ) );
+    }
+
+    public void setCoverage( List<TestCoverageReport> coverage )
+    {
+        throw new UnsupportedOperationException();
     }
 
     public void setErrors( int errors )

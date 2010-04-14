@@ -52,7 +52,7 @@
     <flex.sdk.version>4.0.0.14159</flex.sdk.version>
     <maven.version>3.0-alpha-7</maven.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>0.5-FLEXMOJOS-r385</apparat.version>
+    <apparat.version>1.0-SNAPSHOT</apparat.version>
   </properties>
 
   <build>
@@ -529,6 +529,11 @@
         <groupId>com.googlecode.apparat</groupId>
         <artifactId>apparat</artifactId>
         <version>${apparat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sourceforge.cobertura</groupId>
+        <artifactId>cobertura</artifactId>
+        <version>1.9.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
