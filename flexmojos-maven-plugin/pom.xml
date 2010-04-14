@@ -281,6 +281,11 @@
       <groupId>com.googlecode.apparat</groupId>
       <artifactId>apparat</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>net.sourceforge.cobertura</groupId>
+      <artifactId>cobertura</artifactId>
+    </dependency>
   </dependencies>
 
   <reporting>

@@ -28,7 +28,7 @@ public class FlexUnitTest
         File testDir = getProject( "/concept/flexunit-example" );
         try
         {
-            test( testDir, "install" );
+            test( testDir, "install", "-Dflex.checkCoverage=true", "-Dapparat.thread=false");
         }
         finally
         {
@@ -59,7 +59,7 @@ public class FlexUnitTest
         }
     }
 
-    @Test( expectedExceptions = { VerificationException.class } )
+    @Test( expectedExceptions = { VerificationException.class }, enabled = false )
     public void testFlexUnitExampleForked()
         throws Exception
     {

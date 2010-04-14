@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,8 @@ import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
+import apparat.tools.ApparatConfiguration;
+import apparat.tools.coverage.Coverage.CoverageTool;
 import flex2.compiler.common.SinglePathResolver;
 
 /**
@@ -143,6 +146,14 @@ public class TestCompilerMojo
      */
     private File testSourceDirectory;
 
+    /**
+     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
+     * this.
+     * 
+     * @parameter expression="${flex.checkCoverage}"
+     */
+    public boolean checkCoverage;
+
     private void buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
     {
@@ -167,6 +178,30 @@ public class TestCompilerMojo
         cfg.finalName = testFilename;
 
         executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
+
+        if ( checkCoverage )
+        {
+            insturmentSwf( cfg.getOutput() );
+        }
+        else
+        {
+            getLog().debug( "Code was not instrumented" );
+        }
+    }
+
+    protected void insturmentSwf( String testMxml )
+    {
+        getLog().debug( "Instrumenting code to test coverage mode " + System.getProperty( "apparat.threads" ) );
+
+        ApparatConfiguration cfg = new ApparatConfiguration();
+        getLog().debug( "-i " + testMxml );
+        cfg.update( "-i", testMxml );
+        getLog().debug( "-s " + project.getBuild().getSourceDirectory() );
+        cfg.update( "-s", project.getBuild().getSourceDirectory() );
+
+        CoverageTool c = new CoverageTool();
+        c.configure( cfg );
+        c.run();
     }
 
     @Override
@@ -343,7 +378,11 @@ public class TestCompilerMojo
     @Override
     public File[] getIncludeLibraries()
     {
+        Collection<Artifact> coverage =
+            (Collection<Artifact>) ( checkCoverage ? Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-test-coverage" ) )
+                            : Collections.emptyList() );
         return MavenUtils.getFiles(
+                                    coverage,
                                     Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
                                     getDependencies( type( SWC ),// 
@@ -361,12 +400,6 @@ public class TestCompilerMojo
                                                             scope( null ) ),//
                                                      not( GLOBAL_MATCHER ) ),//
                                     getCompiledResouceBundles() );
-    }
-
-    @Override
-    public String getLinkReport()
-    {
-        return null;
     }
 
     @Override
