@@ -39,6 +39,8 @@ import com.adobe.air.Message;
 public class SignAirMojo
     extends AbstractMojo
 {
+    
+    private static String TIMESTAMP_NONE = "none";
 
     /**
      * The type of keystore, determined by the keystore implementation.
@@ -105,6 +107,13 @@ public class SignAirMojo
      * @parameter expression="${flexmojos.classifier}"
      */
     private String classifier;
+    
+    /**
+     * The URL for the timestamp server. If 'none', no timestamp will be used.
+     * 
+     * @parameter
+     */
+    private String timestampURL;
 
     /**
      * @component
@@ -132,6 +141,9 @@ public class SignAirMojo
             airPackager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
             airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
             airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
+            if ( this.timestampURL != null ) {
+                airPackager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
+            }
 
             String packaging = project.getPackaging();
             if ( AIR.equals( packaging ) )
