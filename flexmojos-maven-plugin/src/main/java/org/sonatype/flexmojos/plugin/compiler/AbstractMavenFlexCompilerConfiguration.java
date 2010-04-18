@@ -2871,7 +2871,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return project.getName();
     }
 
-    @FlexCompatibility( minVersion = "4.0.0" )
+    @FlexCompatibility( minVersion = "4.0.0.13007" )
     public String getToolsLocale()
     {
         if ( toolsLocale == null )
