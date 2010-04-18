@@ -10,6 +10,7 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
@@ -394,6 +395,14 @@ public class AsdocMojo
             throw new MavenRuntimeException( "Unable to unpack asdoc template", e );
         }
 
+        makeAsdocExecutable( templateOutput );
+
+        return PathUtil.getCanonicalPath( templateOutput );
+    }
+
+    @FlexCompatibility( maxVersion = "4.0.0.3127" )
+    private void makeAsdocExecutable( File templateOutput )
+    {
         // must use chmod to make asdoc executable
         if ( !OSUtils.isWindows() )
         {
@@ -417,8 +426,6 @@ public class AsdocMojo
                 throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
             }
         }
-
-        return PathUtil.getCanonicalPath( templateOutput );
     }
 
     public String getWindowTitle()
