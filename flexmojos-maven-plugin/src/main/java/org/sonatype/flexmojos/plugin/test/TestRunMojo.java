@@ -1,7 +1,6 @@
 package org.sonatype.flexmojos.plugin.test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -156,9 +155,9 @@ public class TestRunMojo
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
      * this.
      * 
-     * @parameter expression="${flex.checkCoverage}"
+     * @parameter expression="${flex.coverage}"
      */
-    public boolean checkCoverage;
+    private boolean coverage;
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -167,32 +166,34 @@ public class TestRunMojo
      * @parameter default-value="${project.build.directory}/flexmojos/cobertura.ser"
      * @readonly
      */
-    public File coverageData;
+    private File coverageData;
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
      * this.
      * 
-     * @parameter default-value="${project.build.directory}/site/cobertura" expression="${flex.reportDestinationDir}"
+     * @parameter default-value="${project.build.directory}/site/flexmojos" expression="${flex.reportDestinationDir}"
      */
-    public File reportDestinationDir;
+    private File coverageReportDestinationDir;
 
     /**
      * @readonly
      */
-    private ProjectData projectData;
+    private ProjectData coverageProjectData;
 
     /**
      * The coverage report format. Can be 'html', 'xml' and/or 'summaryXml'. Default value is 'html'.
      * 
      * @parameter
      */
-    private List<String> formats = Collections.singletonList( "html" );
+    private List<String> coverageReportFormat = Collections.singletonList( "html" );
 
     /**
+     * Encoding used to generate coverage report
+     * 
      * @parameter expression="${project.build.sourceEncoding}"
      */
-    private String encoding;
+    private String coverageReportEncoding;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -274,7 +275,7 @@ public class TestRunMojo
             IOUtil.close( writer );
         }
 
-        if ( checkCoverage )
+        if ( coverage )
         {
             List<TestCoverageReport> covers = report.getCoverage();
             for ( TestCoverageReport testCoverageReport : covers )
@@ -286,7 +287,7 @@ public class TestRunMojo
                 cn = cn.substring( 0, cn.indexOf( '.' ) );
                 cn = cn.replace( '/', '.' ).replace( '\\', '.' ).replace( ';', '.' );
 
-                ClassData classData = this.projectData.getOrCreateClassData( cn );
+                ClassData classData = this.coverageProjectData.getOrCreateClassData( cn );
                 for ( Integer touch : testCoverageReport.getTouchs() )
                 {
                     classData.touch( touch );
@@ -323,9 +324,9 @@ public class TestRunMojo
         scan.setBasedir( testOutputDirectory );
         scan.scan();
 
-        if ( checkCoverage )
+        if ( coverage )
         {
-            this.projectData = ProjectData.getGlobalProjectData();
+            this.coverageProjectData = ProjectData.getGlobalProjectData();
         }
 
         try
@@ -367,9 +368,9 @@ public class TestRunMojo
         }
         finally
         {
-            if ( checkCoverage )
+            if ( coverage )
             {
-                CoverageDataFileHandler.saveCoverageData( projectData, coverageData );
+                CoverageDataFileHandler.saveCoverageData( coverageProjectData, coverageData );
 
                 FileFinder finder = new FileFinder()
                 {
@@ -388,20 +389,22 @@ public class TestRunMojo
                 ComplexityCalculator complexity = new ComplexityCalculator( finder );
                 try
                 {
-                    if ( formats.contains( "html" ) )
+                    if ( coverageReportFormat.contains( "html" ) )
                     {
-                        if(StringUtils.isEmpty( encoding )) {
-                            encoding = "UTF-8";
+                        if ( StringUtils.isEmpty( coverageReportEncoding ) )
+                        {
+                            coverageReportEncoding = "UTF-8";
                         }
-                        new HTMLReport( projectData, reportDestinationDir, finder, complexity, encoding );
+                        new HTMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity,
+                                        coverageReportEncoding );
                     }
-                    else if ( formats.contains( "xml" ) )
+                    else if ( coverageReportFormat.contains( "xml" ) )
                     {
-                        new XMLReport( projectData, reportDestinationDir, finder, complexity );
+                        new XMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
                     }
-                    else if ( formats.contains( "summaryXml" ) )
+                    else if ( coverageReportFormat.contains( "summaryXml" ) )
                     {
-                        new SummaryXMLReport( projectData, reportDestinationDir, finder, complexity );
+                        new SummaryXMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
                     }
                 }
                 catch ( Exception e )
