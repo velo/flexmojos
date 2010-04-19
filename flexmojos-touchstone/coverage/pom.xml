@@ -68,4 +68,45 @@
     </dependency>
   </dependencies>
 
+<profiles>
+    <profile>
+      <id>site</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>site</goal>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.sonatype.maven.plugins</groupId>
+            <artifactId>maven-upload-plugin</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <executions>
+              <execution>
+                <id>publish-site</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>upload-file</goal>
+                </goals>
+                <configuration>
+                  <serverId>forge</serverId>
+                  <repositoryUrl>http://repository.sonatype.org/service/local/repositories/flexmojos-site/content-compressed</repositoryUrl>
+                  <file>target/${project.artifactId}-${project.version}-site.jar</file>
+                  <repositoryPath>flexmojos/sample</repositoryPath>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+</profiles>
 </project>
