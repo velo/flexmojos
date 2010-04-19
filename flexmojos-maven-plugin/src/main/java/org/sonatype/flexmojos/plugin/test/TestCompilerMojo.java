@@ -150,9 +150,9 @@ public class TestCompilerMojo
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
      * this.
      * 
-     * @parameter expression="${flex.checkCoverage}"
+     * @parameter expression="${flex.coverage}"
      */
-    public boolean checkCoverage;
+    private boolean coverage;
 
     private void buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
@@ -179,7 +179,7 @@ public class TestCompilerMojo
 
         executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
 
-        if ( checkCoverage )
+        if ( coverage )
         {
             insturmentSwf( cfg.getOutput() );
         }
@@ -378,11 +378,11 @@ public class TestCompilerMojo
     @Override
     public File[] getIncludeLibraries()
     {
-        Collection<Artifact> coverage =
-            (Collection<Artifact>) ( checkCoverage ? Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-test-coverage" ) )
+        Collection<Artifact> coverArtifact =
+            (Collection<Artifact>) ( coverage ? Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-test-coverage" ) )
                             : Collections.emptyList() );
         return MavenUtils.getFiles(
-                                    coverage,
+                                    coverArtifact,
                                     Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
                                     getDependencies( type( SWC ),// 
