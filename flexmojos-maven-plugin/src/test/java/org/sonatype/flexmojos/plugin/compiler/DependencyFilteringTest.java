@@ -132,12 +132,6 @@ public class DependencyFilteringTest
             }
 
             @Override
-            public String getToolsLocale()
-            {
-                return "en_US";
-            }
-
-            @Override
             protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
@@ -145,6 +139,7 @@ public class DependencyFilteringTest
             }
         };
         c.setLog( mock( Log.class ) );
+        c.toolsLocale = "en_US";
 
         c.outputDirectory = new File( "target/temp" );
 
@@ -189,12 +184,6 @@ public class DependencyFilteringTest
             }
 
             @Override
-            public String getToolsLocale()
-            {
-                return "en_US";
-            }
-
-            @Override
             protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
@@ -206,6 +195,7 @@ public class DependencyFilteringTest
 
         c.outputDirectory = new File( "target/temp" );
         c.packaging = "air";
+        c.toolsLocale = "en_US";
 
         validate( c, "airglobal.swc" );
     }
@@ -223,21 +213,15 @@ public class DependencyFilteringTest
             }
 
             @Override
-            public String getToolsLocale()
-            {
-                return "en_US";
-            }
-
-            @Override
             protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
             
-            
         };
         c.setLog( mock( Log.class ) );
+        c.toolsLocale = "en_US";
 
         c.outputDirectory = new File( "target/temp" );
 
