@@ -150,7 +150,7 @@ public class SourceFileResolverTest
         MatcherAssert.assertThat( rfile, CoreMatchers.equalTo( file ) );
     }
 
-    @Test
+    @Test(expectedExceptions={IllegalArgumentException.class})
     public void notResolve()
     {
         File file = SourceFileResolver.resolveSourceFile( "NotResolve.mxml", getDir( "notresolve" ), null, null );
@@ -184,7 +184,7 @@ public class SourceFileResolverTest
         MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
     }
 
-    @Test
+    @Test(expectedExceptions={IllegalArgumentException.class})
     public void notResolveNamedMultipleRoots()
     {
         File file =
