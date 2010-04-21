@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.plugin.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +28,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.sonatype.flexmojos.generator.iface.StringUtil;
+import org.sonatype.flexmojos.plugin.utilities.ApparatUtil;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
@@ -280,14 +283,8 @@ public class TestRunMojo
             List<TestCoverageReport> covers = report.getCoverage();
             for ( TestCoverageReport testCoverageReport : covers )
             {
-                // F:\4.x\flexmojos-aggregator\flexmojos-testing\flexmojos-test-harness\target\projects\concept\flexunit-example_testFlexUnitExample\src;com\adobe\example;Calculator.as
-                String cn = testCoverageReport.getClassname();
-                // com\adobe\example;Calculator.as
-                cn = cn.substring( cn.indexOf( ';' ) + 1 );
-                cn = cn.substring( 0, cn.indexOf( '.' ) );
-                cn = cn.replace( '/', '.' ).replace( '\\', '.' ).replace( ';', '.' );
-
-                ClassData classData = this.coverageProjectData.getOrCreateClassData( cn );
+                ClassData classData =
+                    this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( testCoverageReport.getClassname() ) );
                 for ( Integer touch : testCoverageReport.getTouchs() )
                 {
                     classData.touch( touch );
@@ -326,7 +323,12 @@ public class TestRunMojo
 
         if ( coverage )
         {
-            this.coverageProjectData = ProjectData.getGlobalProjectData();
+            if ( !coverageData.exists() )
+            {
+                throw new MojoExecutionException( "Coverage file not found.",
+                                                  new FileNotFoundException( coverageData.getAbsolutePath() ) );
+            }
+            this.coverageProjectData = CoverageDataFileHandler.loadCoverageData( coverageData );
         }
 
         try
