@@ -45,19 +45,19 @@ package org.sonatype.flexmojos.test.report
 
         public function toXml():XML
         {
-            var genxml:XML = <coverage 
-                    classname = { classname }
-                    />;
+            var genxml:String = "<coverage classname =\""+ classname + "\">";
 
             for each ( var line:int in touchs )
             {
-                var touchXml:XML = <touch>{ line} 
-                    </touch>;
-
-                genxml = genxml.appendChild( touchXml );
+//                var touchXml:XML = <touch>{ line} 
+//                    </touch>;
+//                genxml = genxml.appendChild( touchXml );
+genxml += "<touch>" + line + "</touch>";
             }
-
-            return genxml;
+            
+            genxml += "</coverage>";
+            
+            return XML(genxml);
         }
 
     }
