@@ -16,5 +16,15 @@ package com.adobe.example
 		{
 			return numberOne * numberTwo;
 		}
+
+		public function divide(
+			numberOne : Number, 
+			numberTwo : Number ) : Number
+		{
+			if(numberTwo == 0) {
+				throw new Error("ZERO division");
+			}
+			return numberOne / numberTwo;
+		}
 	}
 }
