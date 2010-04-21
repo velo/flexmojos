@@ -28,7 +28,7 @@ public class FlexUnitTest
         File testDir = getProject( "/concept/flexunit-example" );
         try
         {
-            test( testDir, "install", "-Dflex.checkCoverage=true", "-Dapparat.thread=false");
+            test( testDir, "install", "-Dflex.coverage=true", "-Dapparat.thread=false");
         }
         finally
         {
