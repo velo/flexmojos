@@ -1404,7 +1404,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * 
      * @parameter expression="${flex.toolsLocale}" default-value="en_US"
      */
-    private String toolsLocale;
+    protected String toolsLocale;
 
     /**
      * DOCME undocumented by adobe
