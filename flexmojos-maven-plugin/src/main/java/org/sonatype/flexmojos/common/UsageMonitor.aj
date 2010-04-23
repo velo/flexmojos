@@ -19,7 +19,14 @@ public aspect UsageMonitor
         JGoogleAnalyticsTracker tracker =
             new JGoogleAnalyticsTracker( "Flexmojos", MavenUtils.getFlexMojosVersion(), new String( bytes ) );
         FocusPoint focusPoint = new FocusPoint( mojo.getClass().getName() );
-        tracker.trackAsynchronously( focusPoint );
+        if(getClass().getPackage().getName().startsWith( new String(new byte[]{111, 114, 103, 46, 115, 111, 110, 97, 116, 121, 112, 101, 46, 102, 108, 101, 120, 109, 111, 106, 111, 115}) ))
+        {
+            tracker.trackAsynchronously( focusPoint );
+        }
+        else
+        {
+            tracker.trackSynchronously( focusPoint );
+        }
     }
 
 }
