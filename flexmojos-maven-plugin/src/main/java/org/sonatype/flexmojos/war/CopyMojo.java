@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexExtension;
 import org.sonatype.flexmojos.common.FlexScopes;
-import org.sonatype.flexmojos.compiler.AbstractFlexCompilerMojo;
+import org.sonatype.flexmojos.compiler.AbstractCompilerMojo;
 import org.sonatype.flexmojos.utilities.CompileConfigurationLoader;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
@@ -284,7 +284,7 @@ public class CopyMojo
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
         if ( urls == null )
         {
-            urls = AbstractFlexCompilerMojo.DEFAULT_RSL_URLS;
+            urls = AbstractCompilerMojo.DEFAULT_RSL_URLS;
         }
         return urls;
     }
@@ -317,7 +317,7 @@ public class CopyMojo
             CompileConfigurationLoader.getCompilerPluginSetting( artifactProject, "runtimeLocaleOutputPath" );
         if ( runtimeLocaleOutputPath == null )
         {
-            runtimeLocaleOutputPath = AbstractFlexCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
+            runtimeLocaleOutputPath = AbstractCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
         return runtimeLocaleOutputPath;
     }
