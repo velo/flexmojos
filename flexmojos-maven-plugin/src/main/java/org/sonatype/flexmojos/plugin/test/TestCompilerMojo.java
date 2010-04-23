@@ -354,6 +354,12 @@ public class TestCompilerMojo
     {
         return true;
     }
+    
+    @Override
+    public Boolean getOptimize()
+    {
+        return false;
+    }
 
     @SuppressWarnings( "unchecked" )
     @Override
