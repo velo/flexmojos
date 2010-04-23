@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.sonatype.flexmojos.common.FlexClassifier;
-import org.sonatype.flexmojos.compiler.ApplicationMojo;
+import org.sonatype.flexmojos.compiler.SwfMojo;
 import org.sonatype.flexmojos.compiler.FlexConfigBuilder;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -40,10 +40,10 @@ import flex2.tools.oem.internal.OEMConfiguration;
  * @since 3.3
  */
 public class ApplicationFlexConfigGeneratorMojo
-    extends ApplicationMojo
+    extends SwfMojo
 {
     @Override
-    protected void build( Application builder, boolean printConfigurations )
+    protected void callCompiler( Application builder, boolean printConfigurations )
         throws MojoExecutionException
     {
         // we need open issue "feature request", but currently we use workaround
