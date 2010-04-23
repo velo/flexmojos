@@ -1,9 +1,22 @@
 /**
- *  Copyright 2008 Marvin Herman Froeder
- *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ *   Copyright 2008 Marvin Herman Froeder
+ * -->
+ * <!--
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * -->
  *
+ * <!--
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * -->
+ *
+ * <!--
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.sonatype.flexmojos.configGenerator;
 
@@ -14,7 +27,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.sonatype.flexmojos.common.FlexClassifier;
-import org.sonatype.flexmojos.compiler.ApplicationMojo;
+import org.sonatype.flexmojos.compiler.SwfMojo;
 import org.sonatype.flexmojos.compiler.FlexConfigBuilder;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -30,10 +43,10 @@ import flex2.tools.oem.internal.OEMConfiguration;
  * @since 3.3
  */
 public class ApplicationFlexConfigGeneratorMojo
-    extends ApplicationMojo
+    extends SwfMojo
 {
     @Override
-    protected void build( Application builder, boolean printConfigurations )
+    protected void callCompiler( Application builder, boolean printConfigurations )
         throws MojoExecutionException
     {
         // we need open issue "feature request", but currently we use workaround
