@@ -67,10 +67,10 @@
       <name>Marcello Teodori</name>
       <email>marcello.teodori@gmail.com</email>
     </contributor>
-	<contributor>
-	  <name>Nordin Haouari</name>
-	  <email>nordin.haouari@gmail.com</email>
-	</contributor>
+    <contributor>
+      <name>Nordin Haouari</name>
+      <email>nordin.haouari@gmail.com</email>
+    </contributor>
   </contributors>
 
   <build>
@@ -276,7 +276,10 @@
     <dependency>
       <groupId>jgoogleanalytics</groupId>
       <artifactId>jgoogleanalytics</artifactId>
-      <version>0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
     </dependency>
   </dependencies>
 
