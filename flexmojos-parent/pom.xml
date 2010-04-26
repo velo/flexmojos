@@ -49,10 +49,10 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.0.0.14159</flex.sdk.version>
-    <maven.version>3.0-alpha-7</maven.version>
+    <flex.sdk.version>4.1.0.15646</flex.sdk.version>
+    <maven.version>3.0-beta-1</maven.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0-SNAPSHOT</apparat.version>
+    <apparat.version>1.0-FLEXMOJOS-r418</apparat.version>
   </properties>
 
   <build>
@@ -169,7 +169,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.0-beta-1-FLEXMOJOS-r911589</version>
+        <version>3.0-beta-1-SNAPSHOT</version>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -486,7 +486,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-archiver</artifactId>
-        <version>1.0-alpha-9</version>
+        <version>1.0-alpha-12</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.izpack</groupId>
@@ -529,6 +529,11 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>jgoogleanalytics</groupId>
+        <artifactId>jgoogleanalytics</artifactId>
+        <version>0.2</version>
+      </dependency>
       <dependency>
         <groupId>com.googlecode.apparat</groupId>
         <artifactId>apparat</artifactId>
