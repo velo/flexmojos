@@ -264,7 +264,6 @@
     <dependency>
       <groupId>jgoogleanalytics</groupId>
       <artifactId>jgoogleanalytics</artifactId>
-      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.lambdaj</groupId>
