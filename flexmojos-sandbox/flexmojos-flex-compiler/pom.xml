@@ -4,7 +4,7 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.0-SNAPSHOT</version>
+    <version>4.0-alpha-2</version>
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
