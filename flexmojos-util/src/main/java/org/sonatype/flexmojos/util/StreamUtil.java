@@ -15,41 +15,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes;
+package org.sonatype.flexmojos.util;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.SocketException;
+import java.util.Arrays;
 
-import org.sonatype.flexmojos.compiler.INamespace;
-import org.sonatype.flexmojos.util.PathUtil;
-
-public class MavenNamespace
-    implements INamespace
+public class StreamUtil
 {
 
-    private String uri;
-
-    private File manifest;
-
-    public MavenNamespace()
+    public static String readAvailable( InputStream in )
+        throws IOException
     {
-        super();
-    }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        in.skip( 0 );
 
-    public MavenNamespace( String uri, File manifest )
-    {
-        super();
-        this.uri = uri;
-        this.manifest = manifest;
-    }
+        int available = in.available();
 
-    public String manifest()
-    {
-        return PathUtil.getCanonicalPath( manifest );
-    }
+        byte[] buffer = new byte[available];
+        try
+        {
+            in.read( buffer );
+        }
+        catch ( SocketException e )
+        {
+            System.out.println( available );
+            System.out.println( Arrays.toString( buffer ) );
+        }
+        out.write( buffer );
 
-    public String uri()
-    {
-        return uri;
+        out.flush();
+        out.close();
+        return new String( out.toByteArray() );
     }
 
 }

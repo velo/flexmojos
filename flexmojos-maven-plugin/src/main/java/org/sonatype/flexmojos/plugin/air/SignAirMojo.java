@@ -17,10 +17,10 @@
  */
 package org.sonatype.flexmojos.plugin.air;
 
+import static org.sonatype.flexmojos.util.PathUtil.*;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.test.util.PathUtil.getCanonicalPath;
 
 import java.io.File;
 import java.io.FileInputStream;

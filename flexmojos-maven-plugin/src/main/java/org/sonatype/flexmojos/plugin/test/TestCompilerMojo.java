@@ -44,10 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.cobertura.coveragedata.ClassData;
-import net.sourceforge.cobertura.coveragedata.CoverageDataFileHandler;
-import net.sourceforge.cobertura.coveragedata.ProjectData;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -59,14 +55,10 @@ import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
-import org.sonatype.flexmojos.plugin.utilities.ApparatUtil;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
-import apparat.tools.ApparatConfiguration;
-import apparat.tools.coverage.CoverageObserver;
-import apparat.tools.coverage.Coverage.CoverageTool;
 import flex2.compiler.common.SinglePathResolver;
 
 /**
@@ -177,20 +169,6 @@ public class TestCompilerMojo
      */
     private boolean coverage;
 
-    /**
-     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
-     * this.
-     * 
-     * @parameter default-value="${project.build.directory}/flexmojos/cobertura.ser"
-     * @readonly
-     */
-    private File coverageData;
-
-    /**
-     * @readonly
-     */
-    private ProjectData coverageProjectData;
-
     private void buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
     {
@@ -215,51 +193,6 @@ public class TestCompilerMojo
         cfg.finalName = testFilename;
 
         executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
-
-        if ( coverage )
-        {
-            insturmentSwf( cfg.getOutput() );
-        }
-        else
-        {
-            getLog().debug( "Code was not instrumented" );
-        }
-    }
-
-    protected void insturmentSwf( String testMxml )
-    {
-        this.coverageProjectData = ProjectData.getGlobalProjectData();
-
-        getLog().debug( "Instrumenting code to test coverage mode " + System.getProperty( "apparat.threads" ) );
-
-        ApparatConfiguration cfg = new ApparatConfiguration();
-        getLog().debug( "-i " + testMxml );
-        cfg.update( "-i", testMxml );
-        getLog().debug( "-s " + project.getBuild().getSourceDirectory() );
-        cfg.update( "-s", project.getBuild().getSourceDirectory() );
-
-        CoverageTool c = new CoverageTool();
-        c.configure( cfg );
-        c.addObserver( new CoverageObserver()
-        {
-            public void instrument( String file, int line )
-            {
-                ClassData classData = coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( file ) );
-                classData.addLine( line, null, null );
-            }
-        } );
-        if(getLog().isDebugEnabled()) {
-            c.addObserver( new CoverageObserver()
-            {
-                public void instrument( String file, int line )
-                {
-                    getLog().debug( "Instrumenting " + ApparatUtil.toClassname( file ) + ":" + line );
-                }
-            } );
-        }
-        c.run();
-
-        CoverageDataFileHandler.saveCoverageData( coverageProjectData, coverageData );
     }
 
     @Override

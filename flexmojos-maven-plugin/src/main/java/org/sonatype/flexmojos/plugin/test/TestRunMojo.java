@@ -18,7 +18,6 @@
 package org.sonatype.flexmojos.plugin.test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,27 +25,18 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.cobertura.coveragedata.ClassData;
-import net.sourceforge.cobertura.coveragedata.CoverageDataFileHandler;
-import net.sourceforge.cobertura.coveragedata.ProjectData;
-import net.sourceforge.cobertura.reporting.ComplexityCalculator;
-import net.sourceforge.cobertura.reporting.html.HTMLReport;
-import net.sourceforge.cobertura.reporting.xml.SummaryXMLReport;
-import net.sourceforge.cobertura.reporting.xml.XMLReport;
-import net.sourceforge.cobertura.util.FileFinder;
-import net.sourceforge.cobertura.util.Source;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.sonatype.flexmojos.generator.iface.StringUtil;
-import org.sonatype.flexmojos.plugin.utilities.ApparatUtil;
+import org.sonatype.flexmojos.coverage.CoverageReportException;
+import org.sonatype.flexmojos.coverage.CoverageReportRequest;
+import org.sonatype.flexmojos.coverage.CoverageReporter;
+import org.sonatype.flexmojos.coverage.CoverageReporterManager;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
@@ -180,26 +170,26 @@ public class TestRunMojo
     private boolean coverage;
 
     /**
-     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
-     * this.
+     * Location to save temporary files from coverage framework
      * 
-     * @parameter default-value="${project.build.directory}/flexmojos/cobertura.ser"
+     * @parameter default-value="${project.build.directory}/flexmojos"
      * @readonly
      */
-    private File coverageData;
+    private File coverageDataDirectory;
 
     /**
-     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
-     * this.
+     * Framework that will be used to produce the coverage report. Accepts "emma" and "cobertura"
+     * 
+     * @parameter expression="${flex.coverageProvider}" default-value="emma"
+     */
+    private String coverageProvider;
+
+    /**
+     * Location to write coverage report
      * 
      * @parameter default-value="${project.build.directory}/site/flexmojos" expression="${flex.reportDestinationDir}"
      */
     private File coverageReportDestinationDir;
-
-    /**
-     * @readonly
-     */
-    private ProjectData coverageProjectData;
 
     /**
      * The coverage report format. Can be 'html', 'xml' and/or 'summaryXml'. Default value is 'html'.
@@ -214,6 +204,11 @@ public class TestRunMojo
      * @parameter expression="${project.build.sourceEncoding}"
      */
     private String coverageReportEncoding;
+
+    /**
+     * @component
+     */
+    private CoverageReporterManager coverageReporterManager;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -245,9 +240,10 @@ public class TestRunMojo
      * Write a test report to disk.
      * 
      * @param reportString the report to write.
+     * @return
      * @throws MojoExecutionException
      */
-    private void writeTestReport( final String reportString )
+    private TestCaseReport writeTestReport( final String reportString )
         throws MojoExecutionException
     {
         // Parse the report.
@@ -295,20 +291,6 @@ public class TestRunMojo
             IOUtil.close( writer );
         }
 
-        if ( coverage )
-        {
-            List<TestCoverageReport> covers = report.getCoverage();
-            for ( TestCoverageReport testCoverageReport : covers )
-            {
-                ClassData classData =
-                    this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( testCoverageReport.getClassname() ) );
-                for ( Integer touch : testCoverageReport.getTouchs() )
-                {
-                    classData.touch( touch );
-                }
-            }
-        }
-
         // Pretty print the document to disk.
         // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
         // writer.write( document );
@@ -327,6 +309,7 @@ public class TestRunMojo
         this.numErrors += report.getErrors();
         this.numFailures += report.getFailures();
 
+        return report;
     }
 
     protected void run()
@@ -338,14 +321,17 @@ public class TestRunMojo
         scan.setBasedir( testOutputDirectory );
         scan.scan();
 
+        CoverageReporter reporter = null;
         if ( coverage )
         {
-            if ( !coverageData.exists() )
+            try
             {
-                throw new MojoExecutionException( "Coverage file not found.",
-                                                  new FileNotFoundException( coverageData.getAbsolutePath() ) );
+                reporter = coverageReporterManager.getReporter( coverageProvider );
             }
-            this.coverageProjectData = CoverageDataFileHandler.loadCoverageData( coverageData );
+            catch ( CoverageReportException e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
         }
 
         try
@@ -355,19 +341,34 @@ public class TestRunMojo
             {
                 try
                 {
+                    File swf = new File( testOutputDirectory, swfName );
+
                     TestRequest testRequest = new TestRequest();
                     testRequest.setTestControlPort( testControlPort );
                     testRequest.setTestPort( testPort );
-                    testRequest.setSwf( new File( testOutputDirectory, swfName ) );
+                    testRequest.setSwf( swf );
                     testRequest.setAllowHeadlessMode( allowHeadlessMode );
                     testRequest.setFlashplayerCommand( flashPlayerCommand );
                     testRequest.setTestTimeout( testTimeout );
                     testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
 
+                    if ( coverage )
+                    {
+                        reporter.instrument( swf, new File( project.getBuild().getSourceDirectory() ) );
+                    }
+
                     List<String> results = testRunner.run( testRequest );
                     for ( String result : results )
                     {
-                        writeTestReport( result );
+                        TestCaseReport report = writeTestReport( result );
+                        if ( coverage )
+                        {
+                            List<TestCoverageReport> coverageResult = report.getCoverage();
+                            for ( TestCoverageReport testCoverageReport : coverageResult )
+                            {
+                                reporter.addResult( testCoverageReport.getClassname(), testCoverageReport.getTouchs() );
+                            }
+                        }
                     }
                 }
                 catch ( TestRunnerException e )
@@ -389,48 +390,18 @@ public class TestRunMojo
         {
             if ( coverage )
             {
-                CoverageDataFileHandler.saveCoverageData( coverageProjectData, coverageData );
-
-                FileFinder finder = new FileFinder()
-                {
-                    public Source getSource( String fileName )
-                    {
-                        Source source = super.getSource( fileName.replace( ".java", ".as" ) );
-                        if ( source == null )
-                        {
-                            source = super.getSource( fileName.replace( ".java", ".mxml" ) );
-                        }
-                        return source;
-                    }
-                };
-                finder.addSourceDirectory( project.getBuild().getSourceDirectory() );
-
-                ComplexityCalculator complexity = new ComplexityCalculator( finder );
+                CoverageReportRequest request =
+                    new CoverageReportRequest( coverageDataDirectory, coverageReportFormat, coverageReportEncoding,
+                                               coverageReportDestinationDir,
+                                               new File( project.getBuild().getSourceDirectory() ) );
                 try
                 {
-                    if ( coverageReportFormat.contains( "html" ) )
-                    {
-                        if ( StringUtils.isEmpty( coverageReportEncoding ) )
-                        {
-                            coverageReportEncoding = "UTF-8";
-                        }
-                        new HTMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity,
-                                        coverageReportEncoding );
-                    }
-                    else if ( coverageReportFormat.contains( "xml" ) )
-                    {
-                        new XMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
-                    }
-                    else if ( coverageReportFormat.contains( "summaryXml" ) )
-                    {
-                        new SummaryXMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
-                    }
+                    reporter.generateReport( request );
                 }
-                catch ( Exception e )
+                catch ( CoverageReportException e )
                 {
-                    throw new MojoExecutionException( "Unable to write coverage report", e );
+                    throw new MojoExecutionException( e.getMessage(), e );
                 }
-
             }
 
         }

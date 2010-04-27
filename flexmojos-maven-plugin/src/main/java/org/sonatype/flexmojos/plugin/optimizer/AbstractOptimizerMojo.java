@@ -37,7 +37,7 @@ import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IOptimizerConfiguration;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 import apparat.tools.ApparatConfiguration;
 import apparat.tools.reducer.Reducer.ReducerTool;

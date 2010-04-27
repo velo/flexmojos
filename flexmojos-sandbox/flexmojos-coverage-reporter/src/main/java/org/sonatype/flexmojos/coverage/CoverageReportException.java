@@ -15,41 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.test.util;
+package org.sonatype.flexmojos.coverage;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-import java.util.Arrays;
-
-import org.codehaus.plexus.util.StringOutputStream;
-
-public class StreamUtil
+public class CoverageReportException
+    extends Exception
 {
 
-    public static String readAvailable( InputStream in )
-        throws IOException
+    private static final long serialVersionUID = 5536698162379992541L;
+
+    public CoverageReportException( String message, Throwable cause )
     {
-        StringOutputStream out = new StringOutputStream();
-        in.skip( 0 );
+        super( message, cause );
+    }
 
-        int available = in.available();
-
-        byte[] buffer = new byte[available];
-        try
-        {
-            in.read( buffer );
-        }
-        catch ( SocketException e )
-        {
-            System.out.println( available );
-            System.out.println( Arrays.toString( buffer ) );
-        }
-        out.write( buffer );
-
-        out.flush();
-        out.close();
-        return out.toString();
+    public CoverageReportException( String message )
+    {
+        this(message, null);
     }
 
 }

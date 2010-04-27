@@ -15,41 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes;
+package org.sonatype.flexmojos.coverage.util;
 
-import java.io.File;
 
-import org.sonatype.flexmojos.compiler.INamespace;
-import org.sonatype.flexmojos.util.PathUtil;
-
-public class MavenNamespace
-    implements INamespace
+public class ApparatUtil
 {
 
-    private String uri;
-
-    private File manifest;
-
-    public MavenNamespace()
+    public static String toClassname( String apparatClassname)
     {
-        super();
-    }
-
-    public MavenNamespace( String uri, File manifest )
-    {
-        super();
-        this.uri = uri;
-        this.manifest = manifest;
-    }
-
-    public String manifest()
-    {
-        return PathUtil.getCanonicalPath( manifest );
-    }
-
-    public String uri()
-    {
-        return uri;
+        // F:\4.x\flexmojos-aggregator\flexmojos-testing\flexmojos-test-harness\target\projects\concept\flexunit-example_testFlexUnitExample\src;com\adobe\example;Calculator.as
+        String cn = apparatClassname;
+        // com\adobe\example;Calculator.as
+        cn = cn.substring( cn.indexOf( ';' ) + 1 );
+        cn = cn.substring( 0, cn.indexOf( '.' ) );
+        cn = cn.replace( '/', '.' ).replace( '\\', '.' ).replace( ';', '.' );
+        return cn;
     }
 
 }

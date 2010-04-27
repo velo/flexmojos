@@ -32,7 +32,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.compiler.IDigestConfiguration;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * Goal which run post-link SWF optimization on swc files. This goal is used to produce RSL files.

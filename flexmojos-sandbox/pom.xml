@@ -38,6 +38,7 @@
   	<module>flexmojos-threadlocaltoolkit-wrapper</module>
   	<module>flexmojos-flex3-compatibility-layer</module>
   	<module>flexmojos-flex2-compatibility-layer</module>
+  	<module>flexmojos-coverage-reporter</module>
   </modules>
 
 </project>

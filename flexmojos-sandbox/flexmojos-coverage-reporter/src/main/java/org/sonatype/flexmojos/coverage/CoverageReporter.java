@@ -15,41 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes;
+package org.sonatype.flexmojos.coverage;
 
 import java.io.File;
 
-import org.sonatype.flexmojos.compiler.INamespace;
-import org.sonatype.flexmojos.util.PathUtil;
-
-public class MavenNamespace
-    implements INamespace
+public interface CoverageReporter
 {
 
-    private String uri;
+    void instrument( File swf, File... sourcePaths );
+    
+    void generateReport( CoverageReportRequest request )
+        throws CoverageReportException;
 
-    private File manifest;
-
-    public MavenNamespace()
-    {
-        super();
-    }
-
-    public MavenNamespace( String uri, File manifest )
-    {
-        super();
-        this.uri = uri;
-        this.manifest = manifest;
-    }
-
-    public String manifest()
-    {
-        return PathUtil.getCanonicalPath( manifest );
-    }
-
-    public String uri()
-    {
-        return uri;
-    }
+    void addResult( String classname, Integer[] touchs );
 
 }

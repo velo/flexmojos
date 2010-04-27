@@ -15,41 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes;
+package org.sonatype.flexmojos.coverage;
 
-import java.io.File;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-import org.sonatype.flexmojos.compiler.INamespace;
-import org.sonatype.flexmojos.util.PathUtil;
-
-public class MavenNamespace
-    implements INamespace
+@Component( role = CoverageReporterManager.class )
+public class CoverageReporterManager
 {
 
-    private String uri;
+    @Requirement
+    private PlexusContainer container;
 
-    private File manifest;
-
-    public MavenNamespace()
+    public CoverageReporter getReporter( String provider )
+        throws CoverageReportException
     {
-        super();
-    }
-
-    public MavenNamespace( String uri, File manifest )
-    {
-        super();
-        this.uri = uri;
-        this.manifest = manifest;
-    }
-
-    public String manifest()
-    {
-        return PathUtil.getCanonicalPath( manifest );
-    }
-
-    public String uri()
-    {
-        return uri;
+        try
+        {
+            return container.lookup( CoverageReporter.class, provider );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new CoverageReportException( "Invalid coverage provider: " + provider, e );
+        }
     }
 
 }

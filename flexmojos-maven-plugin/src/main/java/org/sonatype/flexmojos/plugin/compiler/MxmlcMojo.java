@@ -32,8 +32,8 @@ import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
-import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * <p>
@@ -93,6 +93,21 @@ public class MxmlcMojo
     private List<String> includeResourceBundles;
 
     /**
+     * The list of modules files to be compiled.
+     * 
+     * <pre>
+     * <modules>
+     *   <module>Module1.mxml</module>
+     *   <module>Module2.mxml</module>
+     *   <module>
+     *     <sourceFile>Module3.mxml</sourceFile>
+     *     <optimize>false</optimize>
+     *     <finalName>MyModule</finalName>
+     *     <destinationPath>dir1/dir2</destinationPath>
+     *   </module>
+     * </modules>
+     * </pre>
+     * 
      * @parameter
      */
     private Module[] modules;
@@ -150,7 +165,7 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !PathUtil.exist( compileSourceRoots ))
+        if ( !PathUtil.exist( compileSourceRoots ) )
         {
             getLog().warn( "Skipping compiler, source path doesn't exist." );
             return;
