@@ -946,6 +946,14 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     private Warning warnings;
 
     /**
+     * If true, flexmojos will try to sort the runtime shared libraries using their dependencies lists to figure out
+     * which RSLs must be loaded first
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean autoSortRsls;
+
+    /**
      * Construct instance
      */
     public AbstractCompilerMojo()
@@ -1147,7 +1155,10 @@ public abstract class AbstractCompilerMojo<E extends Builder>
         throws MojoExecutionException
     {
         List<Artifact> rsls = getDependencyArtifacts( RSL, CACHING );
-        rslsSort( rsls );
+        if ( autoSortRsls )
+        {
+            rslsSort( rsls );
+        }
 
         for ( Artifact artifact : rsls )
         {
