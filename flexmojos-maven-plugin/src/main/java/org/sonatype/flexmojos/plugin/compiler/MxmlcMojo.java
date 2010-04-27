@@ -76,7 +76,7 @@ public class MxmlcMojo
     private List<String> includeResourceBundles;
 
     /**
-     * The list of modules files to be compiled.
+     * The list of modules to be compiled.
      * 
      * <pre>
      * <modules>
