@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.test.util;
+package org.sonatype.flexmojos.util;
 
 public class OSUtils
 {

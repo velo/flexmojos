@@ -19,8 +19,8 @@ import org.sonatype.flexmojos.test.AbstractControlledThread;
 import org.sonatype.flexmojos.test.ControlledThread;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.ThreadStatus;
-import org.sonatype.flexmojos.test.util.OSUtils;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.OSUtils;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * ActionScript runtime launcher. This class is used to launch the application that runs unit tests.

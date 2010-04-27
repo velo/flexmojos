@@ -108,7 +108,7 @@ import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;

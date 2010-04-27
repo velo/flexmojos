@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.RuledClasses;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * <p>

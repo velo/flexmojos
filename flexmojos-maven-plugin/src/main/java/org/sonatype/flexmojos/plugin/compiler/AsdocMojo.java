@@ -16,8 +16,8 @@ import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
-import org.sonatype.flexmojos.test.util.OSUtils;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.OSUtils;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * <p>

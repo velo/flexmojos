@@ -3,7 +3,7 @@ package org.sonatype.flexmojos.plugin.compiler.attributes;
 import java.io.File;
 
 import org.sonatype.flexmojos.compiler.INamespace;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 public class MavenNamespace
     implements INamespace
