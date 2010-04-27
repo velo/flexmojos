@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 @Component( role = FlashPlayerTruster.class )
 public class DefaultFlashPlayerTruster

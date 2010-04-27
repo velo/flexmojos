@@ -16,7 +16,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
-import org.sonatype.flexmojos.test.util.PathUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * Goal which run post-link SWF optimization on swc files. This goal is used to produce RSL files.

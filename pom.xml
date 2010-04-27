@@ -119,6 +119,7 @@
       <id>minimal</id>
       <modules>
         <module>flexmojos-parent</module>
+        <module>flexmojos-util</module>
         <module>flexmojos-common-matchers</module>
         <module>flexmojos-sandbox</module>
         <module>flexmojos-generator</module>
@@ -139,6 +140,7 @@
 
       <modules>
         <module>flexmojos-parent</module>
+        <module>flexmojos-util</module>
         <module>flexmojos-common-matchers</module>
         <module>flexmojos-sandbox</module>
         <module>flexmojos-generator</module>

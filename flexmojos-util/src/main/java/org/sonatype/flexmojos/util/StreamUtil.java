@@ -1,11 +1,10 @@
-package org.sonatype.flexmojos.test.util;
+package org.sonatype.flexmojos.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.util.Arrays;
-
-import org.codehaus.plexus.util.StringOutputStream;
 
 public class StreamUtil
 {
@@ -13,7 +12,7 @@ public class StreamUtil
     public static String readAvailable( InputStream in )
         throws IOException
     {
-        StringOutputStream out = new StringOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         in.skip( 0 );
 
         int available = in.available();
@@ -32,7 +31,7 @@ public class StreamUtil
 
         out.flush();
         out.close();
-        return out.toString();
+        return new String( out.toByteArray() );
     }
 
 }

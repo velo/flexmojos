@@ -145,6 +145,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-coverage-reporter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-mojo</artifactId>
       <version>${project.version}</version>
       <type>maven-plugin</type>
@@ -281,10 +286,6 @@
       <artifactId>apparat</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>net.sourceforge.cobertura</groupId>
-      <artifactId>cobertura</artifactId>
-    </dependency>
   </dependencies>
 
   <reporting>
