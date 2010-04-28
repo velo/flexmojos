@@ -213,25 +213,31 @@ public class SignAirMojo
                 includeFileSets = resources.toArray( new FileSet[0] );
             }
 
-            for ( final String includePath : includeFiles )
+            if ( includeFiles != null )
             {
-                String directory = project.getBuild().getOutputDirectory();
-                addSourceWithPath( airPackager, directory, includePath );
+                for ( final String includePath : includeFiles )
+                {
+                    String directory = project.getBuild().getOutputDirectory();
+                    addSourceWithPath( airPackager, directory, includePath );
+                }
             }
 
-            for ( FileSet set : includeFileSets )
+            if ( includeFileSets != null )
             {
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( set.getDirectory() );
-                scanner.setIncludes( (String[]) set.getIncludes().toArray( new String[0] ) );
-                scanner.setExcludes( (String[]) set.getExcludes().toArray( new String[0] ) );
-                scanner.addDefaultExcludes();
-                scanner.scan();
-
-                String[] files = scanner.getIncludedFiles();
-                for ( String path : files )
+                for ( FileSet set : includeFileSets )
                 {
-                    addSourceWithPath( airPackager, set.getDirectory(), path );
+                    DirectoryScanner scanner = new DirectoryScanner();
+                    scanner.setBasedir( set.getDirectory() );
+                    scanner.setIncludes( (String[]) set.getIncludes().toArray( new String[0] ) );
+                    scanner.setExcludes( (String[]) set.getExcludes().toArray( new String[0] ) );
+                    scanner.addDefaultExcludes();
+                    scanner.scan();
+
+                    String[] files = scanner.getIncludedFiles();
+                    for ( String path : files )
+                    {
+                        addSourceWithPath( airPackager, set.getDirectory(), path );
+                    }
                 }
             }
 
