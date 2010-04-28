@@ -43,7 +43,7 @@ final class Gas3Listener
 
     public void error( String message )
     {
-        error( message, null );
+        this.log.error( message );
     }
 
     public void error( String message, Throwable e )
@@ -53,7 +53,7 @@ final class Gas3Listener
 
     public void info( String message )
     {
-        info( message, null );
+        this.log.info( message );
     }
 
     public void info( String message, Throwable e )
@@ -63,7 +63,7 @@ final class Gas3Listener
 
     public void warn( String message )
     {
-        warn( message, null );
+        this.log.warn( message );
     }
 
     public void warn( String message, Throwable e )
@@ -74,13 +74,11 @@ final class Gas3Listener
     public void generating( Input<?> input, Output<?> output )
     {
         info( "  Generating: " + output.getDescription() );
-
     }
 
     public void skipping( Input<?> input, Output<?> output )
     {
         info( "  Skipping: " + output.getDescription() );
-
     }
 
 }
