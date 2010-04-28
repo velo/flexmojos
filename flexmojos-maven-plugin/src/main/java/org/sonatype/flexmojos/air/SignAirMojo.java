@@ -28,12 +28,15 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.transform.SnapshotTransformation;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -139,6 +142,11 @@ public class SignAirMojo
      * @readonly
      */
     protected MavenProjectHelper projectHelper;
+
+    // /**
+    // * @component role="org.apache.maven.artifact.transform.ArtifactTransformation" hint="snapshot"
+    // */
+    // private SnapshotTransformation snapshotTransformation;
 
     /**
      * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
@@ -345,11 +353,25 @@ public class SignAirMojo
             output = project.getArtifact().getFile();
         }
 
+        String version;
+        if ( project.getArtifact().isSnapshot() )
+        {
+            String timestamp = SnapshotTransformation.getUtcDateFormatter().format( new Date() );
+            version = project.getVersion().replace( "SNAPSHOT", timestamp );
+        }
+        else
+        {
+            version = project.getVersion();
+        }
+
         File dest = new File( airOutput, project.getBuild().getFinalName() + "-descriptor.xml" );
         try
         {
-            FileInterpolationUtil.copyFile( descriptorTemplate, dest, Collections.singletonMap( "output",
-                                                                                                output.getName() ) );
+            Map<String, String> props = new HashMap<String, String>();
+            props.put( "output", output.getName() );
+            props.put( "version", version );
+
+            FileInterpolationUtil.copyFile( descriptorTemplate, dest, props );
 
             if ( flexbuilderCompatibility )
             {
