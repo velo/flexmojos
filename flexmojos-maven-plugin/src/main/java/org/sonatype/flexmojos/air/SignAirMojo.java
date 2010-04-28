@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
@@ -56,7 +57,7 @@ import com.adobe.air.Message;
 public class SignAirMojo
     extends AbstractMojo
 {
-    
+
     private static String TIMESTAMP_NONE = "none";
 
     /**
@@ -124,7 +125,7 @@ public class SignAirMojo
      * @parameter expression="${flexmojos.classifier}"
      */
     private String classifier;
-    
+
     /**
      * The URL for the timestamp server. If 'none', no timestamp will be used.
      * 
@@ -138,6 +139,16 @@ public class SignAirMojo
      * @readonly
      */
     protected MavenProjectHelper projectHelper;
+
+    /**
+     * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
+     * prefer to reinvent wheel, so more work to all of us.<BR>
+     * I wonder why people has to be so creative, what is wrong with using something similar to what the rest of the
+     * world uses?! =(
+     * 
+     * @parameter expression="${flexmojos.flexbuilderCompatibility}"
+     */
+    private boolean flexbuilderCompatibility;
 
     @SuppressWarnings( "unchecked" )
     public void execute()
@@ -158,7 +169,8 @@ public class SignAirMojo
             airPackager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
             airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
             airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
-            if ( this.timestampURL != null ) {
+            if ( this.timestampURL != null )
+            {
                 airPackager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
             }
 
@@ -332,11 +344,22 @@ public class SignAirMojo
         {
             FileInterpolationUtil.copyFile( descriptorTemplate, dest, Collections.singletonMap( "output",
                                                                                                 output.getName() ) );
+
+            if ( flexbuilderCompatibility )
+            {
+                // Workaround Flexbuilder/Flashbuilder weridness
+                String str = FileUtils.readFileToString( dest );
+                str =
+                    str.replace( "[This value will be overwritten by Flex Builder in the output app.xml]",
+                                 output.getName() );
+                FileUtils.writeStringToFile( dest, str );
+            }
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Failed to copy air template", e );
         }
+
         return dest;
     }
 
