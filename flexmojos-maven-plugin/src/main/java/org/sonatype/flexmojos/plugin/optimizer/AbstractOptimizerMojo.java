@@ -189,7 +189,7 @@ public abstract class AbstractOptimizerMojo
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getCanonicalPath( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
+        return PathUtil.getCanonicalPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
                                                                                       configDirectory ) );
     }
 
