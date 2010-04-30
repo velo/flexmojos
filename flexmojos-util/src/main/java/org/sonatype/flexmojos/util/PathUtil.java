@@ -138,16 +138,16 @@ public class PathUtil
         }
     }
 
-    public static List<String> getCanonicalPathList( File[] files )
+    public static List<String> getCanonicalPathsList( File[] files )
     {
         if ( files == null )
         {
             return null;
         }
-        return Arrays.asList( getCanonicalPath( files ) );
+        return Arrays.asList( getCanonicalPaths( files ) );
     }
 
-    public static String[] getCanonicalPath( File[] files )
+    public static String[] getCanonicalPaths( File ...files )
     {
         if ( files == null )
         {
@@ -181,14 +181,14 @@ public class PathUtil
         return paths.toString();
     }
 
-    public static String[] getCanonicalPath( Collection<File> files )
+    public static String[] getCanonicalPaths( Collection<File> files )
     {
         if ( files == null )
         {
             return null;
         }
 
-        return getCanonicalPath( files.toArray( new File[files.size()] ) );
+        return getCanonicalPaths( files.toArray( new File[files.size()] ) );
     }
 
     public static List<File> getFilesList( Collection<String> paths )
@@ -201,7 +201,7 @@ public class PathUtil
         return Arrays.asList( getFiles( paths ) );
     }
 
-    public static File[] getFiles( String[] paths )
+    public static File[] getFiles( String... paths )
     {
         if ( paths == null )
         {

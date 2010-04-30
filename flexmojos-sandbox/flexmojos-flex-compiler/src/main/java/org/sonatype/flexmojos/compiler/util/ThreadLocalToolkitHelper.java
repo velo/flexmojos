@@ -3,7 +3,6 @@ package org.sonatype.flexmojos.compiler.util;
 import flex2.compiler.Logger;
 import flex2.compiler.common.PathResolver;
 import flex2.compiler.common.SinglePathResolver;
-import flex2.compiler.util.ConsoleLogger;
 
 public class ThreadLocalToolkitHelper
 {
@@ -18,7 +17,7 @@ public class ThreadLocalToolkitHelper
     {
         invoked = true;
 
-        if ( logger instanceof ConsoleLogger )
+        if ( "flex2.compiler.util.ConsoleLogger".equals( logger.getClass().getName() ) )
         {
             if ( mavenLogger == null )
             {
