@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.coverage;
+package org.sonatype.flexmojos.coverage.cobertura;
 
 import java.io.File;
 import java.util.List;
@@ -34,6 +34,10 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.flexmojos.coverage.AbstractCoverageReporter;
+import org.sonatype.flexmojos.coverage.CoverageReportException;
+import org.sonatype.flexmojos.coverage.CoverageReportRequest;
+import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.util.ApparatUtil;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -119,7 +123,7 @@ public class CoberturaCoverageReport
             throw new CoverageReportException( "Unable to write coverage report", e );
         }
 
-        CoverageDataFileHandler.saveCoverageData( coverageProjectData, dataDirectory );
+        CoverageDataFileHandler.saveCoverageData( coverageProjectData, new File(dataDirectory, "cobertura.ser") );
     }
 
     public void addResult( String classname, Integer[] touchs )

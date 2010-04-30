@@ -180,7 +180,7 @@ public class TestRunMojo
     /**
      * Framework that will be used to produce the coverage report. Accepts "emma" and "cobertura"
      * 
-     * @parameter expression="${flex.coverageProvider}" default-value="emma"
+     * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
      */
     private String coverageProvider;
 

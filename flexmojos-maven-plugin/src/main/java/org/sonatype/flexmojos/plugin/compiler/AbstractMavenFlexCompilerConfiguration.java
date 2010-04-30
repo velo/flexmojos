@@ -1835,7 +1835,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public List<String> getDefaultsCssFiles()
     {
-        return PathUtil.getCanonicalPathList( defaultsCssFiles );
+        return PathUtil.getCanonicalPathsList( defaultsCssFiles );
     }
 
     public String getDefaultsCssUrl()
@@ -2333,7 +2333,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getCanonicalPath( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
+        return PathUtil.getCanonicalPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
                                                                                       configDirectory ) );
     }
 
@@ -2349,9 +2349,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
                 return null;
             }
 
-            return PathUtil.getCanonicalPath( MavenUtils.getFilesSet( dependencies ) );
+            return PathUtil.getCanonicalPaths( MavenUtils.getFilesSet( dependencies ) );
         }
-        return PathUtil.getCanonicalPath( loadExterns );
+        return PathUtil.getCanonicalPaths( loadExterns );
     }
 
     public String[] getLocale()
@@ -2377,7 +2377,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public List<String> getLocalFontPaths()
     {
-        return PathUtil.getCanonicalPathList( localFontPaths );
+        return PathUtil.getCanonicalPathsList( localFontPaths );
     }
 
     public String getLocalFontsSnapshot()
@@ -2853,9 +2853,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         List<String> themes = new ArrayList<String>();
         if ( this.themes != null )
         {
-            themes.addAll( PathUtil.getCanonicalPathList( this.themes ) );
+            themes.addAll( PathUtil.getCanonicalPathsList( this.themes ) );
         }
-        themes.addAll( PathUtil.getCanonicalPathList( //
+        themes.addAll( PathUtil.getCanonicalPathsList( //
         MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
                                               scope( THEME ) ) ) ) );
         return themes;
