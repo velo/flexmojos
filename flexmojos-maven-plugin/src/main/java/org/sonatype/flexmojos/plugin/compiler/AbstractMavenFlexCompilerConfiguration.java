@@ -1523,15 +1523,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     protected void configureResourceBundle( String locale, AbstractMavenFlexCompilerConfiguration<?, ?> cfg )
     {
         cfg.localesCompiled = new String[] { locale };
         cfg.classifier = locale;
-        cfg.includeResourceBundles = CollectionUtils.merge( getResourceBundleListContent(), includeResourceBundles );
-        cfg.getCache().put( "getExternalLibraryPath",
-                            merge( cfg.getIncludeLibraries(), cfg.getExternalLibraryPath() ).toArray( new File[0] ) );
-        cfg.getCache().put( "getIncludeLibraries", new File[0] );
+        cfg.includeResourceBundles = includeResourceBundles;
+        cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
+        cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( getDependencies( type( RB_SWC ) ) ) );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -2317,7 +2315,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public String[] getLoadConfig()
     {
         return PathUtil.getCanonicalPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
-                                                                                      configDirectory ) );
+                                                                                       configDirectory ) );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -2344,10 +2342,10 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             return localesCompiled;
         }
 
-        //if there are runtime locales, no need for compiled locales
+        // if there are runtime locales, no need for compiled locales
         if ( localesRuntime != null )
         {
-            return null;
+            return new String[] {};
         }
 
         if ( SWC.equals( getProjectType() ) )
