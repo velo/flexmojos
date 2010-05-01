@@ -156,7 +156,7 @@ public class SignAirMojo
      * 
      * @parameter expression="${flexmojos.flexbuilderCompatibility}"
      */
-    private boolean flexbuilderCompatibility;
+    private boolean flexBuilderCompatibility;
 
     @SuppressWarnings( "unchecked" )
     public void execute()
@@ -373,7 +373,7 @@ public class SignAirMojo
 
             FileInterpolationUtil.copyFile( descriptorTemplate, dest, props );
 
-            if ( flexbuilderCompatibility )
+            if ( flexBuilderCompatibility )
             {
                 // Workaround Flexbuilder/Flashbuilder weridness
                 String str = FileUtils.readFileToString( dest );
