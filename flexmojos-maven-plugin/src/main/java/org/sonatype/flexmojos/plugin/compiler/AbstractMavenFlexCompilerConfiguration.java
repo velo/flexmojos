@@ -24,7 +24,6 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
-import static org.sonatype.flexmojos.plugin.utilities.CollectionUtils.merge;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -105,7 +104,6 @@ import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenLogger;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
-import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -1554,6 +1552,24 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return result;
+    }
+    
+    protected FileSet[] as3ClassesFileSet(File...files ) {
+        if(files == null) {
+            return null;
+        }
+        
+        List<FileSet> sets = new ArrayList<FileSet>();
+        for ( File file : files )
+        {
+            FileSet fs = new FileSet();
+            fs.setDirectory( PathUtil.getCanonicalPath( file ) );
+            fs.addInclude( "**/*.as" );
+            fs.addInclude( "**/*.mxml" );
+            sets.add( fs  );
+        }
+        
+        return sets.toArray( new FileSet[0] );
     }
 
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
