@@ -249,10 +249,21 @@ public class TestCompilerMojo
 
         StringBuilder imports = new StringBuilder();
 
-        for ( String testClass : testClasses )
+        File[] sp = getSourcePath();
+        List<String> projectClasses = filterClasses( as3ClassesFileSet( sp ), sp );
+        for ( String testClass : projectClasses )
         {
             imports.append( "import " );
             imports.append( testClass );
+            imports.append( "; " );
+            if ( testClass.indexOf( '.' ) != -1 )
+            {
+                imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
+            }
+            else
+            {
+                imports.append( testClass );
+            }
             imports.append( ";" );
             imports.append( '\n' );
         }
@@ -287,7 +298,7 @@ public class TestCompilerMojo
     {
         return true;
     }
-    
+
     @Override
     public Boolean getOptimize()
     {
