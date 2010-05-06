@@ -1464,6 +1464,24 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      */
     private Boolean warnings;
 
+    protected FileSet[] as3ClassesFileSet(File...files ) {
+        if(files == null) {
+            return null;
+        }
+        
+        List<FileSet> sets = new ArrayList<FileSet>();
+        for ( File file : files )
+        {
+            FileSet fs = new FileSet();
+            fs.setDirectory( PathUtil.getCanonicalPath( file ) );
+            fs.addInclude( "**/*.as" );
+            fs.addInclude( "**/*.mxml" );
+            sets.add( fs  );
+        }
+        
+        return sets.toArray( new FileSet[0] );
+    }
+
     protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
                                                                String[] policyFileUrls )
     {
@@ -1549,7 +1567,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
         throws Exception;
-
+    
     protected Result executeCompiler( CFG cfg, boolean synchronize )
         throws MojoExecutionException, MojoFailureException
     {
@@ -1569,24 +1587,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return result;
-    }
-    
-    protected FileSet[] as3ClassesFileSet(File...files ) {
-        if(files == null) {
-            return null;
-        }
-        
-        List<FileSet> sets = new ArrayList<FileSet>();
-        for ( File file : files )
-        {
-            FileSet fs = new FileSet();
-            fs.setDirectory( PathUtil.getCanonicalPath( file ) );
-            fs.addInclude( "**/*.as" );
-            fs.addInclude( "**/*.mxml" );
-            sets.add( fs  );
-        }
-        
-        return sets.toArray( new FileSet[0] );
     }
 
     protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
@@ -2121,15 +2121,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
                                                 "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
         }
 
-        File dir = new File( outputDirectory, "swcs" );
-        dir.mkdirs();
-
         File source = global.getFile();
-        File dest = new File( dir, global.getArtifactId() + "." + SWC );
+        File dest = new File( source.getParentFile(), global.getArtifactId() + "." + SWC );
 
         try
         {
-            if ( !PathUtil.getCanonicalFile( source ).equals( PathUtil.getCanonicalFile( dest ) ) )
+            if ( !dest.exists()  )
             {
                 getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
                 FileUtils.copyFile( source, dest );
