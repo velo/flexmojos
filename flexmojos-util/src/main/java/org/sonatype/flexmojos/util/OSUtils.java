@@ -44,7 +44,7 @@ public class OSUtils
         return OS.other;
     }
 
-    public static String getPlatformDefaultCommand()
+    public static String getPlatformDefaultFlashPlayer()
     {
         switch ( getOSType() )
         {
@@ -57,6 +57,17 @@ public class OSUtils
         }
     }
 
+    public static String getPlatformDefaultAdl()
+    {
+        switch ( getOSType() )
+        {
+            case windows:
+                return "adl.exe";
+            default:
+                return "adl";
+        }
+    }
+    
     public static boolean isLinux()
     {
         switch ( getOSType() )

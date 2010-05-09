@@ -17,12 +17,12 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-    import flash.system.fscommand;
+    import flash.desktop.NativeApplication;
 
-    import mx.core.Application;
+    import mx.core.WindowedApplication;
     import mx.events.FlexEvent;
 
-    public class TestApplication extends Application implements ITestApplication
+    public class TestAirApplication extends WindowedApplication implements ITestApplication
     {
 
         private var _componentUnderTest:*;
@@ -43,7 +43,7 @@ package org.sonatype.flexmojos.unitestingsupport
             controlSocket.port = port;
         }
 
-        public function TestApplication()
+        public function TestAirApplication()
         {
             this._tests = new Array();
 
@@ -91,10 +91,9 @@ package org.sonatype.flexmojos.unitestingsupport
             }
         }
 
-
         public function killApplication():void
         {
-            fscommand( "quit" );
+            NativeApplication.nativeApplication.exit()
         }
 
     }

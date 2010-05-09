@@ -71,7 +71,7 @@ public class AbstractAsVmLauncherTest
     {
         super.customizeContext( context );
 
-        context.put( "flashplayer.command", OSUtils.getPlatformDefaultCommand() );
+        context.put( "flashplayer.command", OSUtils.getPlatformDefaultFlashPlayer() );
     }
 
 }

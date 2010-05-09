@@ -17,77 +17,87 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-	import flash.events.DataEvent;
-	import flash.events.Event;
-	import flash.events.ProgressEvent;
-	import flash.net.Socket;
+    import flash.events.DataEvent;
+    import flash.events.Event;
+    import flash.events.ProgressEvent;
+    import flash.net.Socket;
     import flash.system.fscommand;
 
     import org.sonatype.flexmojos.test.monitor.CommConstraints;
-	
-	public class ControlSocket
-	{
 
-		[Inspectable]
-		public var port:uint = 1024;
-		
-		[Inspectable]
-		public var server:String = "127.0.0.1";
-		
-    	private var socket:Socket;
+    public class ControlSocket
+    {
 
-    	private var closeController:CloseController = CloseController.getInstance();
+        [Inspectable]
+        public var port:uint = 1024;
 
-		public function connect():void
-		{
-			socket = new Socket();
-			socket.addEventListener( ProgressEvent.SOCKET_DATA, dataHandler );
-			socket.addEventListener( Event.CLOSE, exitFP );
-   	   		socket.connect( server, port );
-		}
-		
-		private function exitFP( event:* ):void
-		{
-			//Exiting
-			trace("Exiting");
-			fscommand("quit");
-		}
+        [Inspectable]
+        public var server:String = "127.0.0.1";
 
-		/**
-		 * Event listener to handle data received on the socket.
-		 * @param event the DataEvent.
-		 */
-		private function dataHandler( event:* ):void
-		{
-						
-			var data:String = socket.readUTFBytes( socket.bytesAvailable );
-			trace("Data handler received data: " + data);
-			
-			var status:String = CommConstraints.STATUS + CommConstraints.EOL;
+        private var socket:Socket;
 
-			if ( data == status )
-			{
-				if ( closeController.canClose ) {
-					trace("Replying FINISHED");
-					socket.writeUTFBytes( CommConstraints.FINISHED + CommConstraints.EOL );
-					socket.flush();
-				} else {
-					trace("Replying OK");
-					socket.writeUTFBytes( CommConstraints.OK + CommConstraints.EOL );
-					socket.flush();
-				}
-				
-   			}
-		}
-		
-		private static var instance:ControlSocket;
-		
-		public static function getInstance():ControlSocket {
-			if(instance == null) {
-				instance = new ControlSocket();
-			}
-			return instance;
-		}
+        private var closeController:CloseController = CloseController.getInstance();
 
-	}
+        private var exitFunction:Function;
+
+        public function connect( testApplication:ITestApplication ):void
+        {
+            exitFunction = testApplication.killApplication;
+
+
+            socket = new Socket();
+            socket.addEventListener( ProgressEvent.SOCKET_DATA, dataHandler );
+            socket.addEventListener( Event.CLOSE, exitFP );
+            socket.connect( server, port );
+        }
+
+        private function exitFP( event:* ):void
+        {
+            //Exiting
+            trace( "Exiting" );
+            exitFunction();
+        }
+
+        /**
+         * Event listener to handle data received on the socket.
+         * @param event the DataEvent.
+         */
+        private function dataHandler( event:* ):void
+        {
+
+            var data:String = socket.readUTFBytes( socket.bytesAvailable );
+            trace( "Data handler received data: " + data );
+
+            var status:String = CommConstraints.STATUS + CommConstraints.EOL;
+
+            if ( data == status )
+            {
+                if ( closeController.canClose )
+                {
+                    trace( "Replying FINISHED" );
+                    socket.writeUTFBytes( CommConstraints.FINISHED + CommConstraints.EOL );
+                    socket.flush();
+                }
+                else
+                {
+                    trace( "Replying OK" );
+                    socket.writeUTFBytes( CommConstraints.OK + CommConstraints.EOL );
+                    socket.flush();
+                }
+
+            }
+        }
+
+        private static var instance:ControlSocket;
+
+        public static function getInstance():ControlSocket
+        {
+            if ( instance == null )
+            {
+                instance = new ControlSocket();
+            }
+            return instance;
+        }
+
+    }
 }

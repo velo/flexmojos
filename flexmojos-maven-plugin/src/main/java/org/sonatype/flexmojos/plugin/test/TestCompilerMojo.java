@@ -466,11 +466,15 @@ public class TestCompilerMojo
         return testOutputDirectory;
     }
 
-    private InputStream getTemplate()
+    public InputStream getTemplate()
         throws MojoExecutionException
     {
         if ( testRunnerTemplate == null )
         {
+            if ( getIsAirProject() )
+            {
+                return getClass().getResourceAsStream( "/templates/test/Air-TestRunner.vm" );
+            }
             return getClass().getResourceAsStream( "/templates/test/TestRunner.vm" );
         }
         else if ( !testRunnerTemplate.exists() )

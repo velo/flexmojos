@@ -22,9 +22,17 @@ import java.io.File;
 public class TestRequest
 {
 
+    private String adlCommand;
+
+    private boolean allowHeadlessMode = true;
+
     private int firstConnectionTimeout;
 
+    private String flashplayerCommand;
+
     private File swf;
+
+    private File swfDescriptor;
 
     private int testControlPort;
 
@@ -32,92 +40,11 @@ public class TestRequest
 
     private int testTimeout;
 
-    private String flashplayerCommand;
+    private boolean useAirDebugLauncher;
 
-    private boolean allowHeadlessMode = true;
-
-    /**
-     * @return the firstConnectionTimeout
-     */
-    public int getFirstConnectionTimeout()
+    public String getAdlCommand()
     {
-        return firstConnectionTimeout;
-    }
-
-    public File getSwf()
-    {
-        return swf;
-    }
-
-    /**
-     * @return the testControlPort
-     */
-    public int getTestControlPort()
-    {
-        return testControlPort;
-    }
-
-    /**
-     * @return the testPort
-     */
-    public int getTestPort()
-    {
-        return testPort;
-    }
-
-    /**
-     * @return the testTimeout
-     */
-    public int getTestTimeout()
-    {
-        return testTimeout;
-    }
-
-    /**
-     * @param firstConnectionTimeout the firstConnectionTimeout to set
-     */
-    public void setFirstConnectionTimeout( int firstConnectionTimeout )
-    {
-        this.firstConnectionTimeout = firstConnectionTimeout;
-    }
-
-    public void setSwf( File swf )
-    {
-        this.swf = swf;
-    }
-
-    /**
-     * @param testControlPort the testControlPort to set
-     */
-    public void setTestControlPort( int testControlPort )
-    {
-        this.testControlPort = testControlPort;
-    }
-
-    /**
-     * @param testPort the testPort to set
-     */
-    public void setTestPort( int testPort )
-    {
-        this.testPort = testPort;
-    }
-
-    /**
-     * @param testTimeout the testTimeout to set
-     */
-    public void setTestTimeout( int testTimeout )
-    {
-        this.testTimeout = testTimeout;
-    }
-
-    public String getFlashplayerCommand()
-    {
-        return this.flashplayerCommand;
-    }
-
-    public void setFlashplayerCommand( String flashplayerCommand )
-    {
-        this.flashplayerCommand = flashplayerCommand;
+        return adlCommand;
     }
 
     public boolean getAllowHeadlessMode()
@@ -125,8 +52,93 @@ public class TestRequest
         return this.allowHeadlessMode;
     }
 
+    public int getFirstConnectionTimeout()
+    {
+        return firstConnectionTimeout;
+    }
+
+    public String getFlashplayerCommand()
+    {
+        return this.flashplayerCommand;
+    }
+
+    public File getSwf()
+    {
+        return swf;
+    }
+
+    public File getSwfDescriptor()
+    {
+        return swfDescriptor;
+    }
+
+    public int getTestControlPort()
+    {
+        return testControlPort;
+    }
+
+    public int getTestPort()
+    {
+        return testPort;
+    }
+
+    public int getTestTimeout()
+    {
+        return testTimeout;
+    }
+
+    public boolean getUseAirDebugLauncher()
+    {
+        return useAirDebugLauncher;
+    }
+
+    public void setAdlCommand( String adlCommand )
+    {
+        this.adlCommand = adlCommand;
+    }
+
     public void setAllowHeadlessMode( boolean allowHeadlessMode )
     {
         this.allowHeadlessMode = allowHeadlessMode;
+    }
+
+    public void setFirstConnectionTimeout( int firstConnectionTimeout )
+    {
+        this.firstConnectionTimeout = firstConnectionTimeout;
+    }
+
+    public void setFlashplayerCommand( String flashplayerCommand )
+    {
+        this.flashplayerCommand = flashplayerCommand;
+    }
+
+    public void setSwf( File swf )
+    {
+        this.swf = swf;
+    }
+
+    public void setSwfDescriptor( File swfDescriptor )
+    {
+        this.swfDescriptor = swfDescriptor;
+    }
+
+    public void setTestControlPort( int testControlPort )
+    {
+        this.testControlPort = testControlPort;
+    }
+
+    public void setTestPort( int testPort )
+    {
+        this.testPort = testPort;
+    }
+
+    public void setTestTimeout( int testTimeout )
+    {
+        this.testTimeout = testTimeout;
+    }
+
+    public void setUseAirDebugLauncher( boolean useAirDebugLauncher )
+    {
+        this.useAirDebugLauncher = useAirDebugLauncher;
     }
 }

@@ -140,7 +140,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     protected static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
-    protected static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
+    public static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
     protected static final Matcher<? extends Artifact> GLOBAL_MATCHER =
         allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
@@ -1464,11 +1464,13 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      */
     private Boolean warnings;
 
-    protected FileSet[] as3ClassesFileSet(File...files ) {
-        if(files == null) {
+    protected FileSet[] as3ClassesFileSet( File... files )
+    {
+        if ( files == null )
+        {
             return null;
         }
-        
+
         List<FileSet> sets = new ArrayList<FileSet>();
         for ( File file : files )
         {
@@ -1476,9 +1478,9 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             fs.setDirectory( PathUtil.getCanonicalPath( file ) );
             fs.addInclude( "**/*.as" );
             fs.addInclude( "**/*.mxml" );
-            sets.add( fs  );
+            sets.add( fs );
         }
-        
+
         return sets.toArray( new FileSet[0] );
     }
 
@@ -1567,7 +1569,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
         throws Exception;
-    
+
     protected Result executeCompiler( CFG cfg, boolean synchronize )
         throws MojoExecutionException, MojoFailureException
     {
@@ -2126,7 +2128,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
         try
         {
-            if ( !dest.exists()  )
+            if ( !dest.exists() )
             {
                 getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
                 FileUtils.copyFile( source, dest );
@@ -3153,6 +3155,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             repositorySystem.resolve( req ).isSuccess();
         }
         return artifact;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public boolean getIsAirProject()
+    {
+        return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "airglobal" ), type( SWC ) ) != null;
     }
 
     protected DirectoryScanner scan( File directory, PatternSet pattern )
