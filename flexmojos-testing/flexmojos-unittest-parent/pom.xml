@@ -36,11 +36,17 @@
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>playerglobal</artifactId>
+      <artifactId>airglobal</artifactId>
       <version>${flex.sdk.version}</version>
-      <classifier>10.0</classifier>
       <type>swc</type>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>airframework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>

@@ -11,5 +11,7 @@ package org.sonatype.flexmojos.unitestingsupport
         function set componentUnderTest( cmp:* ):void;
 
         function addTest( test:Class ):void;
+
+        function killApplication():void;
     }
 }

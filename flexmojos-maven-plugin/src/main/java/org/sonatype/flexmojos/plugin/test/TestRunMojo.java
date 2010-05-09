@@ -1,31 +1,46 @@
 package org.sonatype.flexmojos.plugin.test;
 
+import static ch.lambdaj.Lambda.filter;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.sonatype.flexmojos.coverage.CoverageReportException;
 import org.sonatype.flexmojos.coverage.CoverageReportRequest;
 import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
+import org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -40,7 +55,7 @@ import org.sonatype.flexmojos.test.report.TestCoverageReport;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 1.0
  * @goal test-run
- * @requiresDependencyResolution
+ * @requiresDependencyResolution test
  * @phase test
  */
 public class TestRunMojo
@@ -63,23 +78,30 @@ public class TestRunMojo
     /**
      * Socket connect port for flex/java communication to transfer tests results
      * 
-     * @parameter default-value="13539" expression="${testPort}"
+     * @parameter default-value="13539" expression="${flex.testPort}"
      */
     private int testPort;
 
     /**
      * Socket connect port for flex/java communication to control if flashplayer is alive
      * 
-     * @parameter default-value="13540" expression="${testControlPort}"
+     * @parameter default-value="13540" expression="${flex.testControlPort}"
      */
     private int testControlPort;
 
     /**
      * Can be of type <code>&lt;argument&gt;</code>
      * 
-     * @parameter expression="${flashPlayer.command}"
+     * @parameter expression="${flex.flashPlayer.command}"
      */
     private String flashPlayerCommand;
+
+    /**
+     * Can be of type <code>&lt;argument&gt;</code>
+     * 
+     * @parameter expression="${flex.adl.command}"
+     */
+    private String adlCommand;
 
     /**
      * @parameter expression="${project.build.testOutputDirectory}"
@@ -120,7 +142,7 @@ public class TestRunMojo
     /**
      * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
      * 
-     * @parameter default-value="true" expression="${allowHeadlessMode}"
+     * @parameter default-value="true" expression="${flex.allowHeadlessMode}"
      */
     private boolean allowHeadlessMode;
 
@@ -128,14 +150,14 @@ public class TestRunMojo
      * Timeout for the first connection on ping Thread. That means how much time flexmojos will wait for Flashplayer be
      * loaded at first time.
      * 
-     * @parameter default-value="20000" expression="${firstConnectionTimeout}"
+     * @parameter default-value="20000" expression="${flex.firstConnectionTimeout}"
      */
     private int firstConnectionTimeout;
 
     /**
      * Test timeout to wait for socket responding
      * 
-     * @parameter default-value="2000" expression="${testTimeout}"
+     * @parameter default-value="2000" expression="${flex.testTimeout}"
      */
     private int testTimeout;
 
@@ -295,6 +317,15 @@ public class TestRunMojo
         return report;
     }
 
+    @SuppressWarnings( "unchecked" )
+    public boolean getIsAirProject()
+    {
+        return !filter(
+                        allOf( groupId( AbstractMavenFlexCompilerConfiguration.FRAMEWORK_GROUP_ID ),
+                               artifactId( "airglobal" ), type( SWC ) ),//
+                        project.getArtifacts() ).isEmpty();
+    }
+
     protected void run()
         throws MojoExecutionException, MojoFailureException
     {
@@ -331,9 +362,20 @@ public class TestRunMojo
                     testRequest.setTestPort( testPort );
                     testRequest.setSwf( swf );
                     testRequest.setAllowHeadlessMode( allowHeadlessMode );
-                    testRequest.setFlashplayerCommand( flashPlayerCommand );
                     testRequest.setTestTimeout( testTimeout );
                     testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
+
+                    boolean isAirProject = getIsAirProject();
+                    testRequest.setUseAirDebugLauncher( isAirProject );
+                    if ( isAirProject )
+                    {
+                        testRequest.setAdlCommand( adlCommand );
+                        testRequest.setSwfDescriptor( getSwfDescriptor( swf ) );
+                    }
+                    else
+                    {
+                        testRequest.setFlashplayerCommand( flashPlayerCommand );
+                    }
 
                     if ( coverage )
                     {
@@ -387,6 +429,39 @@ public class TestRunMojo
                 }
             }
 
+        }
+    }
+
+    private File getSwfDescriptor( File swf )
+        throws MojoExecutionException
+    {
+        Reader reader = null;
+        FileWriter writer = null;
+        try
+        {
+            reader =
+                new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
+
+            Map<String, String> variables = new LinkedHashMap<String, String>();
+            variables.put( "swf", swf.getName() );
+
+            InterpolationFilterReader filterReader = new InterpolationFilterReader( reader, variables );
+
+            File destFile = new File( swf.getParentFile(), FilenameUtils.getBaseName( swf.getName() ) + ".xml" );
+            writer = new FileWriter( destFile );
+
+            IOUtil.copy( filterReader, writer );
+
+            return destFile;
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Fail to create test air descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+            IOUtil.close( writer );
         }
     }
 

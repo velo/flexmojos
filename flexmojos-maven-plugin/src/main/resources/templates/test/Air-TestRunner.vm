@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--can't use velocity, got:
+java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for deserialization-->
+<unitestingsupport:TestAirApplication 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:unitestingsupport="org.sonatype.flexmojos.unitestingsupport.*"
+	layout="absolute"
+	initialize="init()" 
+	port="$port" 
+	controlPort="$controlPort" 
+	>
+	
+	<mx:Script>
+		<![CDATA[
+
+$imports
+
+			private function init():void {
+$testClasses
+			}
+		]]>
+	</mx:Script>
+
+</unitestingsupport:TestAirApplication>
