@@ -35,9 +35,9 @@ public class AsVmLauncher
 
     private boolean allowHeadlessMode;
 
-    private String flashplayerCommand;
-
     private File log;
+
+    private String asvmCommand;
 
     /**
      * Run the SWF that contains the FlexUnit tests.
@@ -55,38 +55,54 @@ public class AsVmLauncher
             throw new InvalidSwfException( "request is null" );
         }
 
-        File targetSwf = request.getSwf();
+        File targetFile;
+        if ( request.getUseAirDebugLauncher() )
+        {
+            targetFile = request.getSwfDescriptor();
 
-        if ( targetSwf == null )
+            asvmCommand = request.getAdlCommand();
+
+            if ( asvmCommand == null )
+            {
+                asvmCommand = OSUtils.getPlatformDefaultAdl();
+            }
+        }
+        else
+        {
+            targetFile = request.getSwf();
+
+            asvmCommand = request.getFlashplayerCommand();
+
+            if ( asvmCommand == null )
+            {
+                asvmCommand = OSUtils.getPlatformDefaultFlashPlayer();
+            }
+        }
+
+        allowHeadlessMode = request.getAllowHeadlessMode();
+
+        if ( targetFile == null )
         {
             throw new InvalidSwfException( "targetSwf is null" );
         }
 
-        if ( !targetSwf.exists() )
+        if ( !targetFile.exists() )
         {
-            throw new InvalidSwfException( "targetSwf not found " + targetSwf );
-        }
-
-        this.flashplayerCommand = request.getFlashplayerCommand();
-        this.allowHeadlessMode = request.getAllowHeadlessMode();
-
-        if ( flashplayerCommand == null || "${flashplayer.command}".equals( flashplayerCommand ) )
-        {
-            flashplayerCommand = OSUtils.getPlatformDefaultCommand();
+            throw new InvalidSwfException( "targetSwf not found " + targetFile );
         }
 
         getLogger().debug( "[LAUNCHER] ASVmLauncher starting" );
-
-        getLogger().debug( "[LAUNCHER] exec: " + flashplayerCommand + " - " + targetSwf );
-
+        getLogger().debug( "[LAUNCHER] exec: " + asvmCommand + " - " + targetFile );
         getLogger().debug( "[LAUNCHER] Creating process" );
+
+        String target = PathUtil.getCanonicalPath( targetFile );
         if ( useXvfb() )
         {
-            runFlashplayerHeadless( flashplayerCommand, targetSwf );
+            runFlashplayerHeadless( asvmCommand, target );
         }
         else
         {
-            runFlashplayer( flashplayerCommand, targetSwf );
+            runFlashplayer( asvmCommand, target );
         }
 
         // kill when VM exits
@@ -104,13 +120,13 @@ public class AsVmLauncher
         return allowHeadlessMode && OSUtils.isLinux() && GraphicsEnvironment.isHeadless();
     }
 
-    private void runFlashplayer( String flashPlayer, File targetSwf )
+    private void runFlashplayer( String asvmCommand, String targetFile )
         throws LaunchFlashPlayerException
     {
         getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
         try
         {
-            process = Runtime.getRuntime().exec( new String[] { flashPlayer, PathUtil.getCanonicalPath( targetSwf ) } );
+            process = Runtime.getRuntime().exec( new String[] { asvmCommand, targetFile } );
         }
         catch ( IOException e )
         {
@@ -118,7 +134,7 @@ public class AsVmLauncher
         }
     }
 
-    private void runFlashplayerHeadless( String flashPlayer, File targetSwf )
+    private void runFlashplayerHeadless( String asvmCommand, String targetFile )
         throws LaunchFlashPlayerException
     {
         getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
@@ -153,8 +169,8 @@ public class AsVmLauncher
         {
             process =
                 Runtime.getRuntime().exec(
-                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), flashPlayer,
-                                               PathUtil.getCanonicalPath( targetSwf ) } );
+                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), asvmCommand,
+                                               targetFile } );
         }
         catch ( IOException e )
         {
@@ -300,7 +316,7 @@ public class AsVmLauncher
                 getLogger().debug( "[LAUNCHER] killing Xvfb" );
                 Runtime.getRuntime().exec( new String[] { "killall", "Xvfb" } ).waitFor();
                 Runtime.getRuntime().exec( new String[] { "killall", "xvfb-run" } ).waitFor();
-                Runtime.getRuntime().exec( new String[] { "killall", new File( flashplayerCommand ).getName() } ).waitFor();
+                Runtime.getRuntime().exec( new String[] { "killall", new File( asvmCommand ).getName() } ).waitFor();
             }
             catch ( IOException e )
             {
