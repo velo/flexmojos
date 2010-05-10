@@ -21,26 +21,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-air-super-pom</artifactId>
+    <version>%{flexmojos.version}</version>
+  </parent>
+
   <groupId>info.rvin.itest</groupId>
-  <artifactId>simple-air</artifactId>
+  <artifactId>simplify-air</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>air</module>
-    <module>swf</module>
-    <module>swc</module>
-  </modules>
+  <packaging>air</packaging>
 
   <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>%{flexmojos.version}</version>
-        <extensions>true</extensions>
+        <configuration>
+          <storepass>flexmojos</storepass>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
@@ -65,13 +66,20 @@
   </build>
 
   <dependencies>
-    <!-- Air SDK dependencies -->
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>air-framework</artifactId>
       <version>3.2.0.3958</version>
       <type>pom</type>
     </dependency>
-  </dependencies>
 
+    <dependency>
+      <groupId>com.adobe.flexunit</groupId>
+      <artifactId>flexunit</artifactId>
+      <version>4.0-rc-1</version>
+      <type>swc</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
 </project>

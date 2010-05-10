@@ -29,6 +29,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -116,7 +117,6 @@ public class SignAirMojo
      */
     protected MavenProjectHelper projectHelper;
 
-    @SuppressWarnings( "unchecked" )
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -139,17 +139,8 @@ public class SignAirMojo
             String packaging = project.getPackaging();
             if ( AIR.equals( packaging ) )
             {
-                Set<Artifact> deps = project.getDependencyArtifacts();
-                for ( Artifact artifact : deps )
-                {
-                    if ( SWF.equals( artifact.getType() ) )
-                    {
-                        File source = artifact.getFile();
-                        String path = source.getName();
-                        getLog().debug( "  adding source " + source + " with path " + path );
-                        airPackager.addSourceWithPath( source, path );
-                    }
-                }
+                appendArtifacts( airPackager, project.getDependencyArtifacts() );
+                appendArtifacts( airPackager, project.getAttachedArtifacts() );
             }
             else if ( SWF.equals( packaging ) )
             {
@@ -248,27 +239,24 @@ public class SignAirMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
+    private void appendArtifacts( AIRPackager airPackager, Collection<Artifact> deps )
+    {
+        for ( Artifact artifact : deps )
+        {
+            if ( SWF.equals( artifact.getType() ) )
+            {
+                File source = artifact.getFile();
+                String path = source.getName();
+                getLog().debug( "  adding source " + source + " with path " + path );
+                airPackager.addSourceWithPath( source, path );
+            }
+        }
+    }
+
     private File getAirDescriptor()
         throws MojoExecutionException
     {
-        File output = null;
-        if ( project.getPackaging().equals( AIR ) )
-        {
-            Set<Artifact> deps = project.getDependencyArtifacts();
-            for ( Artifact artifact : deps )
-            {
-                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
-                {
-                    output = artifact.getFile();
-                    break;
-                }
-            }
-        }
-        else
-        {
-            output = project.getArtifact().getFile();
-        }
+        File output = getOutput();
 
         File dest = new File( airOutput, project.getBuild().getFinalName() + "-descriptor.xml" );
         try
@@ -283,10 +271,38 @@ public class SignAirMojo
         return dest;
     }
 
+    private File getOutput()
+    {
+        File output = null;
+        if ( project.getPackaging().equals( AIR ) )
+        {
+            List<Artifact> attach = project.getAttachedArtifacts();
+            for ( Artifact artifact : attach )
+            {
+                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+                {
+                    return artifact.getFile();
+                }
+            }
+            Set<Artifact> deps = project.getDependencyArtifacts();
+            for ( Artifact artifact : deps )
+            {
+                if ( SWF.equals( artifact.getType() ) || SWC.equals( artifact.getType() ) )
+                {
+                    return artifact.getFile();
+                }
+            }
+        }
+        else
+        {
+            output = project.getArtifact().getFile();
+        }
+        return output;
+    }
+
     /**
      * @see org.sonatype.flexmojos.compiler.LibraryMojo.listAllResources()
      */
-    @SuppressWarnings( "unchecked" )
     private List<String> listAllResources()
     {
         List<String> inclusions = new ArrayList<String>();

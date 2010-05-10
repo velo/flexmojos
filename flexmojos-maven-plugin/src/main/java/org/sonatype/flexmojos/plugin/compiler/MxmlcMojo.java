@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 
 import java.io.File;
@@ -169,6 +170,11 @@ public class MxmlcMojo
         {
             getLog().warn( "Skipping compiler, source path doesn't exist." );
             return;
+        }
+
+        if ( AIR.equals( project.getArtifact().getType() ) )
+        {
+            classifier = "application";
         }
 
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );

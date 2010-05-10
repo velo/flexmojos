@@ -19,8 +19,7 @@ package org.sonatype.flexmojos.tests.issues;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class Flexmojos230Test
