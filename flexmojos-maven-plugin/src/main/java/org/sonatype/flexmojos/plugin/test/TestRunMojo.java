@@ -17,13 +17,6 @@
  */
 package org.sonatype.flexmojos.plugin.test;
 
-import static ch.lambdaj.Lambda.filter;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,10 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
@@ -50,14 +42,13 @@ import org.sonatype.flexmojos.coverage.CoverageReportException;
 import org.sonatype.flexmojos.coverage.CoverageReportRequest;
 import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
-import org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
-import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -76,21 +67,13 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @phase test
  */
 public class TestRunMojo
-    extends AbstractMojo
+    extends AbstractMavenMojo
+    implements Mojo
 {
 
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elapsed: {3} sec";
 
     private boolean failures = false;
-
-    /**
-     * The maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
 
     /**
      * Socket connect port for flex/java communication to transfer tests results
@@ -332,15 +315,6 @@ public class TestRunMojo
         this.numFailures += report.getFailures();
 
         return report;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public boolean getIsAirProject()
-    {
-        return !filter(
-                        allOf( groupId( AbstractMavenFlexCompilerConfiguration.FRAMEWORK_GROUP_ID ),
-                               artifactId( "airglobal" ), type( SWC ) ),//
-                        project.getArtifacts() ).isEmpty();
     }
 
     protected void run()

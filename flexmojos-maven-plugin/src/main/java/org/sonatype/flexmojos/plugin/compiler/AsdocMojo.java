@@ -17,19 +17,32 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static ch.lambdaj.Lambda.filter;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
+import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
@@ -52,6 +65,13 @@ public class AsdocMojo
     extends AbstractMavenFlexCompilerConfiguration<IASDocConfiguration, AsdocMojo>
     implements IASDocConfiguration, IPackagesConfiguration, Mojo
 {
+
+    /**
+     * If true, will treat multi-modules projects as only one project otherwise will generate Asdoc per project
+     * 
+     * @parameter default-value="false" expression="${flex.asdoc.aggregate}"
+     */
+    protected boolean aggregate;
 
     /**
      * Specifies whether to include date with footer
@@ -252,9 +272,48 @@ public class AsdocMojo
      */
     private String windowTitle;
 
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    protected List<MavenProject> reactorProjects;
+
+    @Override
+    public File[] getSourcePath()
+    {
+        if ( aggregate )
+        {
+            List<File> files = new ArrayList<File>();
+
+            for ( MavenProject p : reactorProjects )
+            {
+                files.addAll( PathUtil.getExistingFilesList( p.getCompileSourceRoots() ) );
+            }
+
+            return files.toArray( new File[0] );
+        }
+        else
+        {
+            return super.getSourcePath();
+        }
+    }
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            getLog().info( "Skipping asdoc execution, aggregate mode active." );
+            return;
+        }
+
+        if ( !PathUtil.exist( getSourcePath() ) )
+        {
+            getLog().warn( "Skipping asdoc, source path doesn't exist." );
+            return;
+        }
+
         executeCompiler( this, true );
     }
 
@@ -457,4 +516,54 @@ public class AsdocMojo
         return PathUtil.getCanonicalPath( output );
     }
 
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public File[] getExternalLibraryPath()
+    {
+        return MavenUtils.getFiles( getGlobalArtifact() );
+    }
+
+    @Override
+    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    @Override
+    public File[] getIncludeLibraries()
+    {
+        return null;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public File[] getLibraryPath()
+    {
+        if ( aggregate )
+        {
+            Set<File> deps = new LinkedHashSet<File>();
+
+            for ( MavenProject p : reactorProjects )
+            {
+
+                ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+                req.setArtifact( p.getArtifact() );
+                req.setResolveTransitively( true );
+                req.setLocalRepository( localRepository );
+                req.setRemoteRepositories( remoteRepositories );
+                req.setManagedVersionMap( p.getManagedVersionMap() );
+
+                ArtifactResolutionResult res = repositorySystem.resolve( req );
+
+                deps.addAll( MavenUtils.getFilesSet( filter( allOf( type( SWC ), not( GLOBAL_MATCHER ) ),
+                                                             res.getArtifacts() ) ) );
+            }
+
+            return deps.toArray( new File[0] );
+        }
+        else
+        {
+            return MavenUtils.getFiles( getDependencies( type( SWC ) ) );
+        }
+    }
 }

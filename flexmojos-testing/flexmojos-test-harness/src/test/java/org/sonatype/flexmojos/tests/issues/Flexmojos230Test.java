@@ -30,7 +30,7 @@ public class Flexmojos230Test
     public void regularAsdoc()
         throws Exception
     {
-        String baseDir = testIssue( "flexmojos-230", "-Dasdoc.aggregate=false" ).getBasedir();
+        String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=false" ).getBasedir();
         File asdoc = new File( baseDir, "target/asdoc" );
         Assert.assertFalse( asdoc.exists() );
 
@@ -52,7 +52,7 @@ public class Flexmojos230Test
     public void aggregatedAsdoc()
         throws Exception
     {
-        String baseDir = testIssue( "flexmojos-230", "-Dasdoc.aggregate=true" ).getBasedir();
+        String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=true" ).getBasedir();
         File target = new File( baseDir, "target" );
         Assert.assertTrue( target.exists() );
 
