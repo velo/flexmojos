@@ -3,12 +3,12 @@
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
 						layout="absolute" xmlns:local="*"
 						showFlexChrome="false"
-						backgroundColor="#333333">
+						>
 	
 	<mx:Script>
 		<![CDATA[
-			import flash.filesystem.StorageVolumeInfo;
-			import flash.events.StorageVolumeChangeEvent;
+			import flash.filesystem.StorageVolumeInfo;StorageVolumeInfo;
+			import flash.events.StorageVolumeChangeEvent;StorageVolumeChangeEvent;
 		]]>
 	</mx:Script>
 	<mx:Label text="Hello World" />

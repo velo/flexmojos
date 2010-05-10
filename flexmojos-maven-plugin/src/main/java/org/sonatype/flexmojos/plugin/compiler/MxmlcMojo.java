@@ -155,7 +155,7 @@ public class MxmlcMojo
             return;
         }
 
-        if ( AIR.equals( project.getArtifact().getType() ) )
+        if ( AIR.equals( packaging ) )
         {
             classifier = "application";
         }

@@ -137,11 +137,15 @@ public class DependencyFilteringTest
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
+
+            @Override
+            public File getOutputDirectory()
+            {
+                return new File( "target/temp" );
+            }
         };
         c.setLog( mock( Log.class ) );
         c.toolsLocale = "en_US";
-
-        c.outputDirectory = new File( "target/temp" );
 
         validate( c, "playerglobal.swc" );
     }
@@ -157,10 +161,14 @@ public class DependencyFilteringTest
             {
                 return flexArtifacts;
             }
+
+            @Override
+            public File getOutputDirectory()
+            {
+                return new File( "target/temp" );
+            }
         };
         c.setLog( mock( Log.class ) );
-
-        c.outputDirectory = new File( "target/temp" );
 
         List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
         MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 5 ) );
@@ -190,11 +198,20 @@ public class DependencyFilteringTest
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
 
+            @Override
+            public File getOutputDirectory()
+            {
+                return new File( "target/temp" );
+            }
+            
+            @Override
+            public String getProjectType()
+            {
+                return "air";
+            }
         };
         c.setLog( mock( Log.class ) );
 
-        c.outputDirectory = new File( "target/temp" );
-        c.packaging = "air";
         c.toolsLocale = "en_US";
 
         validate( c, "airglobal.swc" );
@@ -218,12 +235,15 @@ public class DependencyFilteringTest
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
             }
-            
+
+            @Override
+            public File getOutputDirectory()
+            {
+                return new File( "target/temp" );
+            }
         };
         c.setLog( mock( Log.class ) );
         c.toolsLocale = "en_US";
-
-        c.outputDirectory = new File( "target/temp" );
 
         List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
         MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 1 ) );

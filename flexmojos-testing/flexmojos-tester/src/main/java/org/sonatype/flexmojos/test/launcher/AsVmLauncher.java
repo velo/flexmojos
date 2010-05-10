@@ -31,13 +31,199 @@ public class AsVmLauncher
     implements ControlledThread
 {
 
-    private Process process;
+    private class ConsoleConsumer
+        implements StreamConsumer
+    {
+
+        private String prefix;
+
+        public ConsoleConsumer( String prefix )
+        {
+            this.prefix = prefix;
+        }
+
+        public void consumeLine( String line )
+        {
+            if ( "\n".equals( line ) )
+            {
+                return;
+            }
+
+            getLogger().debug( prefix + line );
+            consoleLog.append( prefix ).append( line ).append( '\n' );
+        }
+
+    }
 
     private boolean allowHeadlessMode;
 
+    private String asvmCommand;
+
+    private StringBuffer consoleLog = new StringBuffer();
+
     private File log;
 
-    private String asvmCommand;
+    private Process process;
+
+    public String getConsoleOutput()
+    {
+        return this.consoleLog.toString();
+    }
+
+    private void processExitCode( int returnCode )
+    {
+
+        String errorMessage = null;
+
+        switch ( returnCode )
+        {
+            case 0:
+                getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+
+                status = ThreadStatus.DONE;
+                return;
+            case 2:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: No command run was specified.";
+                    break;
+                }
+            case 3:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: The xauth command is not available.";
+                    break;
+                }
+            case 4:
+                if ( useXvfb() )
+                {
+                    errorMessage =
+                        "Xvfb-run error: Temporary directory already exists. This may indicate a race condition.";
+                    break;
+                }
+            case 5:
+                if ( useXvfb() )
+                {
+                    errorMessage =
+                        "Xvfb-run error: A problem was encountered while cleanning up the temporary directory.";
+                    break;
+                }
+            case 6:
+                if ( useXvfb() )
+                {
+                    errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
+                    break;
+                }
+            case 139:
+                if ( OSUtils.isLinux() )
+                {
+                    getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+
+                    status = ThreadStatus.DONE;
+                    return;
+                }
+            default:
+                errorMessage = "Unexpected return code " + returnCode;
+        }
+
+        getLogger().debug( "[LAUNCHER] " + errorMessage );
+
+        status = ThreadStatus.ERROR;
+        error = new Error( errorMessage );
+    }
+
+    @Override
+    protected void reset()
+    {
+        super.reset();
+
+        process = null;
+        consoleLog = new StringBuffer();
+    }
+
+    public void run()
+    {
+        status = ThreadStatus.RUNNING;
+
+        getLogger().debug( "[LAUNCHER] Output pumpers ON" );
+
+        try
+        {
+            getLogger().debug( "[LAUNCHER] Waiting for flashplayer termination" );
+            int returnCode = process.waitFor();
+            getLogger().debug( "[LAUNCHER] Flashplayer closed" );
+
+            processExitCode( returnCode );
+            return;
+        }
+        catch ( InterruptedException e )
+        {
+            getLogger().debug( "[LAUNCHER] Process run error: " + e.getMessage() );
+
+            status = ThreadStatus.ERROR;
+            error = new Error( "Error while executing external command, process killed.", e );
+        }
+    }
+
+    private void runFlashplayer( String asvmCommand, String targetFile )
+        throws LaunchFlashPlayerException
+    {
+        getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
+        try
+        {
+            process = Runtime.getRuntime().exec( new String[] { asvmCommand, targetFile } );
+            new StreamPumper( process.getInputStream(), new ConsoleConsumer( "[SYSOUT]: " ) ).start();
+            new StreamPumper( process.getErrorStream(), new ConsoleConsumer( "[SYSERR]: " ) ).start();
+        }
+        catch ( IOException e )
+        {
+            throw new LaunchFlashPlayerException( "Failed to launch Flash Player.", e );
+        }
+    }
+
+    private void runFlashplayerHeadless( String asvmCommand, String targetFile )
+        throws LaunchFlashPlayerException
+    {
+        getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
+
+        try
+        {
+            FileUtils.forceDelete( "/tmp/.X99-lock" );
+        }
+        catch ( IOException e )
+        {
+            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
+        }
+        try
+        {
+            FileUtils.forceDelete( "/tmp/.X11-unix" );
+        }
+        catch ( IOException e )
+        {
+            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
+        }
+
+        try
+        {
+            log = File.createTempFile( "xvfbrun", "flashplayer" );
+        }
+        catch ( IOException e )
+        {
+            throw new LaunchFlashPlayerException( "Failed to create xvfb-run error-file!", e );
+        }
+
+        try
+        {
+            process =
+                Runtime.getRuntime().exec(
+                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), asvmCommand,
+                                               targetFile } );
+        }
+        catch ( IOException e )
+        {
+            throw new LaunchFlashPlayerException( "Failed to launch Flash Player in headless environment.", e );
+        }
+    }
 
     /**
      * Run the SWF that contains the FlexUnit tests.
@@ -115,184 +301,6 @@ public class AsVmLauncher
         launch();
     }
 
-    protected boolean useXvfb()
-    {
-        return allowHeadlessMode && OSUtils.isLinux() && GraphicsEnvironment.isHeadless();
-    }
-
-    private void runFlashplayer( String asvmCommand, String targetFile )
-        throws LaunchFlashPlayerException
-    {
-        getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
-        try
-        {
-            process = Runtime.getRuntime().exec( new String[] { asvmCommand, targetFile } );
-        }
-        catch ( IOException e )
-        {
-            throw new LaunchFlashPlayerException( "Failed to launch Flash Player.", e );
-        }
-    }
-
-    private void runFlashplayerHeadless( String asvmCommand, String targetFile )
-        throws LaunchFlashPlayerException
-    {
-        getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
-
-        try
-        {
-            FileUtils.forceDelete( "/tmp/.X99-lock" );
-        }
-        catch ( IOException e )
-        {
-            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
-        }
-        try
-        {
-            FileUtils.forceDelete( "/tmp/.X11-unix" );
-        }
-        catch ( IOException e )
-        {
-            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
-        }
-
-        try
-        {
-            log = File.createTempFile( "xvfbrun", "flashplayer" );
-        }
-        catch ( IOException e )
-        {
-            throw new LaunchFlashPlayerException( "Failed to create xvfb-run error-file!", e );
-        }
-
-        try
-        {
-            process =
-                Runtime.getRuntime().exec(
-                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), asvmCommand,
-                                               targetFile } );
-        }
-        catch ( IOException e )
-        {
-            throw new LaunchFlashPlayerException( "Failed to launch Flash Player in headless environment.", e );
-        }
-    }
-
-    private StringBuffer consoleLog = new StringBuffer();
-
-    private class ConsoleConsumer
-        implements StreamConsumer
-    {
-
-        private String prefix;
-
-        public ConsoleConsumer( String prefix )
-        {
-            this.prefix = prefix;
-        }
-
-        public void consumeLine( String line )
-        {
-            if ( "\n".equals( line ) )
-            {
-                return;
-            }
-
-            getLogger().debug( prefix + line );
-            consoleLog.append( prefix ).append( line ).append( '\n' );
-        }
-
-    }
-
-    public void run()
-    {
-        status = ThreadStatus.RUNNING;
-
-        new StreamPumper( process.getInputStream(), new ConsoleConsumer( "[SYSOUT]: " ) ).start();
-        new StreamPumper( process.getErrorStream(), new ConsoleConsumer( "[SYSERR]: " ) ).start();
-
-        getLogger().debug( "[LAUNCHER] Output pumpers ON" );
-
-        try
-        {
-            getLogger().debug( "[LAUNCHER] Waiting for flashplayer termination" );
-            int returnCode = process.waitFor();
-            getLogger().debug( "[LAUNCHER] Flashplayer closed" );
-
-            processExitCode( returnCode );
-            return;
-        }
-        catch ( InterruptedException e )
-        {
-            getLogger().debug( "[LAUNCHER] Process run error: " + e.getMessage() );
-
-            status = ThreadStatus.ERROR;
-            error = new Error( "Error while executing external command, process killed.", e );
-        }
-    }
-
-    private void processExitCode( int returnCode )
-    {
-
-        String errorMessage = null;
-
-        switch ( returnCode )
-        {
-            case 0:
-                getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
-
-                status = ThreadStatus.DONE;
-                return;
-            case 2:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: No command run was specified.";
-                    break;
-                }
-            case 3:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: The xauth command is not available.";
-                    break;
-                }
-            case 4:
-                if ( useXvfb() )
-                {
-                    errorMessage =
-                        "Xvfb-run error: Temporary directory already exists. This may indicate a race condition.";
-                    break;
-                }
-            case 5:
-                if ( useXvfb() )
-                {
-                    errorMessage =
-                        "Xvfb-run error: A problem was encountered while cleanning up the temporary directory.";
-                    break;
-                }
-            case 6:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
-                    break;
-                }
-            case 139:
-                if ( OSUtils.isLinux() )
-                {
-                    getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
-
-                    status = ThreadStatus.DONE;
-                    return;
-                }
-            default:
-                errorMessage = "Unexpected return code " + returnCode;
-        }
-
-        getLogger().debug( "[LAUNCHER] " + errorMessage );
-
-        status = ThreadStatus.ERROR;
-        error = new Error( errorMessage );
-    }
-
     public void stop()
     {
 
@@ -345,18 +353,9 @@ public class AsVmLauncher
 
     }
 
-    public String getConsoleOutput()
+    protected boolean useXvfb()
     {
-        return this.consoleLog.toString();
-    }
-
-    @Override
-    protected void reset()
-    {
-        super.reset();
-
-        process = null;
-        consoleLog = new StringBuffer();
+        return allowHeadlessMode && OSUtils.isLinux() && GraphicsEnvironment.isHeadless();
     }
 
 }

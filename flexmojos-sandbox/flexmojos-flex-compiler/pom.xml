@@ -28,7 +28,7 @@
               <includeJavaClasses>
                 <include>flex2.tools.DigestRootConfiguration</include>
                 <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
-                <include>flex2.tools.SwcDependencies$DependencyConfiguration</include>
+                <!-- <include>flex2.tools.SwcDependencies$DependencyConfiguration</include> -->
                 <include>flex2.tools.ASDocConfiguration</include>
                 <include>flex2.tools.CompcConfiguration</include>
                 <include>flex2.tools.CommandLineConfiguration</include>
