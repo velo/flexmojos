@@ -12,4 +12,11 @@ public class AirTest
     {
         standardConceptTester( "simple-air" );
     }
+    
+    @Test
+    public void simplify()
+    throws Exception
+    {
+        standardConceptTester( "simplify-air" );
+    }
 }
