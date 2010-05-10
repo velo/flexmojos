@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -23,6 +24,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+
+import scala.actors.threadpool.Arrays;
 
 /**
  * Utility class to help get information from Maven objects like files, source paths, resolve dependencies, etc.
@@ -329,6 +332,16 @@ public class MavenUtils
         return files;
     }
 
+    public static File[] getFiles( Artifact... dependencies )
+    {
+        if ( dependencies == null )
+        {
+            return null;
+        }
+        
+        return getFilesSet( Arrays.asList( dependencies ) ).toArray( new File[0] );
+    }
+    
     public static File[] getFiles( Collection<Artifact>... dependencies )
     {
         if ( dependencies == null )

@@ -296,6 +296,10 @@ public class PathUtil
         {
             return false;
         }
+        if ( files.length == 0)
+        {
+            return false;
+        }
 
         for ( File file : files )
         {

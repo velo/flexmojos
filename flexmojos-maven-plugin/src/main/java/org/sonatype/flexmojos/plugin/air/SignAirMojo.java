@@ -1,9 +1,9 @@
 package org.sonatype.flexmojos.plugin.air;
 
-import static org.sonatype.flexmojos.util.PathUtil.*;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.util.PathUtil.getCanonicalPath;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,21 +11,26 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.repository.legacy.resolver.transform.SnapshotTransformation;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
+import org.sonatype.flexmojos.util.PathUtil;
 
 import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
@@ -40,6 +45,8 @@ import com.adobe.air.Message;
 public class SignAirMojo
     extends AbstractMojo
 {
+
+    private static String TIMESTAMP_NONE = "none";
 
     /**
      * The type of keystore, determined by the keystore implementation.
@@ -87,6 +94,20 @@ public class SignAirMojo
     private List<String> includeFiles;
 
     /**
+     * Include specified files or directories in AIR package.
+     * 
+     * @parameter
+     */
+    private FileSet[] includeFileSets;
+
+    /**
+     * Strip artifact version during copy of dependencies.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripVersion;
+
+    /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      * 
      * @parameter expression="${flexmojos.classifier}"
@@ -94,11 +115,28 @@ public class SignAirMojo
     private String classifier;
 
     /**
+     * The URL for the timestamp server. If 'none', no timestamp will be used.
+     * 
+     * @parameter
+     */
+    private String timestampURL;
+
+    /**
      * @component
      * @required
      * @readonly
      */
     protected MavenProjectHelper projectHelper;
+
+    /**
+     * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
+     * prefer to reinvent wheel, so more work to all of us.<BR>
+     * I wonder why people has to be so creative, what is wrong with using something similar to what the rest of the
+     * world uses?! =(
+     * 
+     * @parameter expression="${flexmojos.flexbuilderCompatibility}"
+     */
+    private boolean flexBuilderCompatibility;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -118,6 +156,10 @@ public class SignAirMojo
             airPackager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
             airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
             airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
+            if ( this.timestampURL != null )
+            {
+                airPackager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
+            }
 
             String packaging = project.getPackaging();
             if ( AIR.equals( packaging ) )
@@ -137,39 +179,46 @@ public class SignAirMojo
                 throw new MojoFailureException( "Unexpected project packaging " + packaging );
             }
 
-            if ( includeFiles == null )
+            if ( includeFiles == null && includeFileSets == null )
             {
-                includeFiles = listAllResources();
+                includeFileSets = resources.toArray( new FileSet[0] );
             }
 
-            for ( final String includePath : includeFiles )
+            if ( includeFiles != null )
             {
-                if ( includePath == null )
+                for ( final String includePath : includeFiles )
                 {
-                    throw new MojoFailureException( "Cannot include a null file" );
+                    String directory = project.getBuild().getOutputDirectory();
+                    addSourceWithPath( airPackager, directory, includePath );
                 }
+            }
 
-                // get file from output directory to allow filtered resources
-                File includeFile = new File( project.getBuild().getOutputDirectory(), includePath );
-                if ( !includeFile.exists() )
+            if ( includeFileSets != null )
+            {
+                for ( FileSet set : includeFileSets )
                 {
-                    throw new MojoFailureException( "Unable to find resource: " + includePath );
-                }
+                    DirectoryScanner scanner = new DirectoryScanner();
+                    scanner.setBasedir( set.getDirectory() );
+                    scanner.setIncludes( (String[]) set.getIncludes().toArray( new String[0] ) );
+                    scanner.setExcludes( (String[]) set.getExcludes().toArray( new String[0] ) );
+                    scanner.addDefaultExcludes();
+                    scanner.scan();
 
-                // don't include the app descriptor or the cert
-                if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
-                    || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
-                {
-                    continue;
+                    String[] files = scanner.getIncludedFiles();
+                    for ( String path : files )
+                    {
+                        addSourceWithPath( airPackager, set.getDirectory(), path );
+                    }
                 }
-
-                getLog().debug( "  adding source " + includeFile + " with path " + includePath );
-                airPackager.addSourceWithPath( includeFile, includePath );
             }
 
             if ( classifier != null )
             {
                 projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, output );
+            }
+            else if ( SWF.equals( packaging ) )
+            {
+                projectHelper.attachArtifact( project, AIR, output );
             }
             else
             {
@@ -230,10 +279,40 @@ public class SignAirMojo
             {
                 File source = artifact.getFile();
                 String path = source.getName();
+                if ( stripVersion && path.contains( artifact.getVersion() ) )
+                {
+                    path = path.replace( "-" + artifact.getVersion(), "" );
+                }
                 getLog().debug( "  adding source " + source + " with path " + path );
                 airPackager.addSourceWithPath( source, path );
             }
         }
+    }
+
+    private void addSourceWithPath( AIRPackager airPackager, String directory, String includePath )
+        throws MojoFailureException
+    {
+        if ( includePath == null )
+        {
+            throw new MojoFailureException( "Cannot include a null file" );
+        }
+
+        // get file from output directory to allow filtered resources
+        File includeFile = new File( directory, includePath );
+        if ( !includeFile.isFile() )
+        {
+            throw new MojoFailureException( "Include files only accept files as parameters: " + includePath );
+        }
+
+        // don't include the app descriptor or the cert
+        if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
+            || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+        {
+            return;
+        }
+
+        getLog().debug( "  adding source " + includeFile + " with path " + includePath );
+        airPackager.addSourceWithPath( includeFile, includePath );
     }
 
     private File getAirDescriptor()
@@ -241,16 +320,41 @@ public class SignAirMojo
     {
         File output = getOutput();
 
+        String version;
+        if ( project.getArtifact().isSnapshot() )
+        {
+            String timestamp = SnapshotTransformation.getUtcDateFormatter().format( new Date() );
+            version = project.getVersion().replace( "SNAPSHOT", timestamp );
+        }
+        else
+        {
+            version = project.getVersion();
+        }
+
         File dest = new File( airOutput, project.getBuild().getFinalName() + "-descriptor.xml" );
         try
         {
-            FileInterpolationUtil.copyFile( descriptorTemplate, dest, Collections.singletonMap( "output",
-                                                                                                output.getName() ) );
+            Map<String, String> props = new HashMap<String, String>();
+            props.put( "output", output.getName() );
+            props.put( "version", version );
+
+            FileInterpolationUtil.copyFile( descriptorTemplate, dest, props );
+
+            if ( flexBuilderCompatibility )
+            {
+                // Workaround Flexbuilder/Flashbuilder weirdness
+                String str = FileUtils.fileRead( dest );
+                str =
+                    str.replace( "[This value will be overwritten by Flex Builder in the output app.xml]",
+                                 output.getName() );
+                FileUtils.fileWrite( PathUtil.getCanonicalPath( dest ), str );
+            }
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Failed to copy air template", e );
         }
+
         return dest;
     }
 
@@ -281,27 +385,6 @@ public class SignAirMojo
             output = project.getArtifact().getFile();
         }
         return output;
-    }
-
-    /**
-     * @see org.sonatype.flexmojos.compiler.LibraryMojo.listAllResources()
-     */
-    private List<String> listAllResources()
-    {
-        List<String> inclusions = new ArrayList<String>();
-        for ( Resource resource : resources )
-        {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( resource.getDirectory() );
-            scanner.setIncludes( (String[]) resource.getIncludes().toArray( new String[0] ) );
-            scanner.setExcludes( (String[]) resource.getExcludes().toArray( new String[0] ) );
-            scanner.addDefaultExcludes();
-            scanner.scan();
-
-            inclusions.addAll( Arrays.asList( scanner.getIncludedFiles() ) );
-        }
-
-        return inclusions;
     }
 
 }

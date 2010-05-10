@@ -1,12 +1,9 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
@@ -31,8 +28,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,24 +41,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
-import org.apache.maven.model.FileSet;
-import org.apache.maven.model.PatternSet;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.repository.RepositorySystem;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -93,6 +75,7 @@ import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.license.LicenseCalculator;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
@@ -113,21 +96,11 @@ import flex2.compiler.common.SinglePathResolver;
 import flex2.tools.oem.internal.OEMLogAdapter;
 
 public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends AbstractMavenFlexCompilerConfiguration<CFG, C>>
+    extends AbstractMavenMojo
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
     Cloneable, FlexMojo
 {
-
-    protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
-
-    protected static final String[] DEFAULT_RSL_URLS =
-        new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
-
-    public static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
-
-    protected static final Matcher<? extends Artifact> GLOBAL_MATCHER =
-        allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ), anyOf( artifactId( "playerglobal" ),
-                                                                  artifactId( "airglobal" ) ) );
 
     /**
      * Generate an accessible SWF
@@ -204,12 +177,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.archiveClassesAndAssets}"
      */
     private Boolean archiveClassesAndAssets;
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected ArchiverManager archiverManager;
 
     /**
      * Use the ActionScript 3 class based object model for greater performance and better error reporting. In the class
@@ -310,15 +277,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @readonly
      */
     protected List<String> compileSourceRoots;
-
-    /**
-     * The maven configuration directory
-     * 
-     * @parameter expression="${basedir}/src/main/config"
-     * @required
-     * @readonly
-     */
-    protected File configDirectory;
 
     /**
      * DOCME undocumented by adobe
@@ -964,20 +922,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private File localFontsSnapshot;
 
     /**
-     * Local repository to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${localRepository}"
-     */
-    protected ArtifactRepository localRepository;
-
-    /**
-     * Maven logger
-     * 
-     * @readonly
-     */
-    private Log log;
-
-    /**
      * Compiler font manager classes, in policy resolution order
      * <p>
      * Equivalent to -compiler.fonts.managers
@@ -1128,26 +1072,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private File output;
 
     /**
-     * @parameter expression="${project.build.outputDirectory}"
-     * @readonly
-     * @required
-     */
-    protected File outputDirectory;
-
-    /**
-     * @parameter expression="${project.packaging}"
-     * @required
-     * @readonly
-     */
-    protected String packaging;
-
-    /**
-     * @parameter expression="${plugin.artifacts}"
-     * @readonly
-     */
-    protected List<Artifact> pluginArtifacts;
-
-    /**
      * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
      * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
      * file is not required, then set it to an empty string. Accept some special tokens:
@@ -1174,22 +1098,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private String[] policyFileUrls;
 
     /**
-     * The maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
-     * @component
-     * @readonly
-     * @required
-     */
-    protected MavenProjectHelper projectHelper;
-
-    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.mxml.qualified-type-selectors
@@ -1208,19 +1116,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.rawMetadata}"
      */
     private String rawMetadata;
-
-    /**
-     * List of remote repositories to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     */
-    protected List<ArtifactRepository> remoteRepositories;
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected RepositorySystem repositorySystem;
 
     /**
      * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
@@ -1242,15 +1137,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.resourceHack}"
      */
     private Boolean resourceHack;
-
-    /**
-     * The maven resources
-     * 
-     * @parameter expression="${project.build.resources}"
-     * @required
-     * @readonly
-     */
-    protected List<Resource> resources;
 
     /**
      * rslUrls array of URLs. The first RSL URL in the list is the primary RSL. The remaining RSL URLs will only be
@@ -1447,84 +1333,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      */
     private Boolean warnings;
 
-    protected FileSet[] as3ClassesFileSet( File... files )
-    {
-        if ( files == null )
-        {
-            return null;
-        }
-
-        List<FileSet> sets = new ArrayList<FileSet>();
-        for ( File file : files )
-        {
-            FileSet fs = new FileSet();
-            fs.setDirectory( PathUtil.getCanonicalPath( file ) );
-            fs.addInclude( "**/*.as" );
-            fs.addInclude( "**/*.mxml" );
-            sets.add( fs );
-        }
-
-        return sets.toArray( new FileSet[0] );
-    }
-
-    protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
-                                                               String[] policyFileUrls )
-    {
-        getLog().debug( "runtime libraries: id: " + artifact.getArtifactId() );
-
-        String scope = artifact.getScope();
-        final String extension;
-        if ( CACHING.equals( scope ) )
-        {
-            extension = SWZ;
-        }
-        else
-        {
-            extension = SWF;
-        }
-
-        Map<String, String> paths = new LinkedHashMap<String, String>();
-        for ( int i = 0; i < rslUrls.length; i++ )
-        {
-            String rsl = rslUrls[i];
-            String policy;
-            if ( i < policyFileUrls.length )
-            {
-                policy = policyFileUrls[i];
-            }
-            else
-            {
-                policy = null;
-            }
-
-            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, contextRoot );
-            policy = MavenUtils.interpolateRslUrl( policy, artifact, extension, contextRoot );
-
-            getLog().debug( "RSL url: " + rsl + " - " + policy );
-            paths.put( rsl, policy );
-        }
-
-        return paths;
-    }
-
-    protected void checkResult( Result result )
-        throws MojoFailureException, MojoExecutionException
-    {
-        int exitCode;
-        try
-        {
-            exitCode = result.getExitCode();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "Got " + exitCode + " errors building project, check logs" );
-        }
-    }
-
     @SuppressWarnings( "unchecked" )
     @Override
     public C clone()
@@ -1541,6 +1349,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     protected void configureResourceBundle( String locale, AbstractMavenFlexCompilerConfiguration<?, ?> cfg )
     {
         cfg.localesCompiled = new String[] { locale };
@@ -1572,46 +1381,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return result;
-    }
-
-    protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
-    {
-        List<String> classes = new ArrayList<String>();
-
-        for ( File directory : directories )
-        {
-            if ( !directory.exists() )
-            {
-                continue;
-            }
-
-            for ( PatternSet pattern : classesPattern )
-            {
-                if ( pattern instanceof FileSet )
-                {
-                    File dir = PathUtil.getCanonicalFile( ( (FileSet) pattern ).getDirectory() );
-                    if ( !ArrayUtils.contains( directories, dir ) )
-                    {
-                        throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
-                            + dir.getAbsolutePath() );
-                    }
-                }
-
-                DirectoryScanner scanner = scan( directory, pattern );
-
-                String[] included = scanner.getIncludedFiles();
-                for ( String file : included )
-                {
-                    String classname = file;
-                    classname = classname.replaceAll( "\\.(.)*", "" );
-                    classname = classname.replace( '\\', '.' );
-                    classname = classname.replace( '/', '.' );
-                    classes.add( classname );
-                }
-            }
-        }
-
-        return classes;
     }
 
     public Boolean getAccessible()
@@ -1695,6 +1464,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return compatibilityVersion;
     }
 
+    @SuppressWarnings( "unchecked" )
     protected Collection<Artifact> getCompiledResouceBundles()
     {
         if ( this.getLocale() == null )
@@ -1875,31 +1645,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return keys.toArray( new IDefine[keys.size()] );
     }
 
-    public Set<Artifact> getDependencies()
-    {
-        return Collections.unmodifiableSet( project.getArtifacts() );
-    }
-
-    protected Set<Artifact> getDependencies( Matcher<? extends Artifact>... matchers )
-    {
-        Set<Artifact> dependencies = getDependencies();
-
-        return new LinkedHashSet<Artifact>( filter( allOf( matchers ), dependencies ) );
-    }
-
-    protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
-    {
-
-        Set<Artifact> dependencies = getDependencies();
-        List<Artifact> filtered = filter( allOf( matchers ), dependencies );
-        if ( filtered.isEmpty() )
-        {
-            return null;
-        }
-
-        return filtered.get( 0 );
-    }
-
     public String getDescription()
     {
         if ( this.metadata != null )
@@ -2061,29 +1806,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public String getFramework()
     {
         return framework;
-    }
-
-    // TODO lazy load here would be awesome
-    protected Artifact getFrameworkConfig()
-    {
-        Artifact frmkCfg =
-            getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ), classifier( "configs" ),
-                           type( "zip" ) );
-
-        // not on dependency list, trying to resolve it manually
-        if ( frmkCfg == null )
-        {
-            // it should resolve playerglobal or airglobal, framework can be absent
-            Artifact frmk = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ) );
-
-            if ( frmk == null )
-            {
-                return null;
-            }
-
-            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", frmk.getVersion(), "configs", "zip" );
-        }
-        return frmkCfg;
     }
 
     public Boolean getGenerateAbstractSyntaxTree()
@@ -2397,7 +2119,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             url = getClass().getResource( "/fonts/localFonts.ser" );
         }
 
-        File fontsSer = new File( outputDirectory, "fonts.ser" );
+        File fontsSer = new File( getOutputDirectory(), "fonts.ser" );
         try
         {
             FileUtils.copyURLToFile( url, fontsSer );
@@ -2427,11 +2149,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return null;
-    }
-
-    public Log getLog()
-    {
-        return this.log;
     }
 
     public List<String> getManagers()
@@ -2884,34 +2601,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return translationFormat;
     }
 
-    // TODO lazy load here would be awesome
-    protected File getUnpackedFrameworkConfig()
-    {
-        Artifact frmkCfg = getFrameworkConfig();
 
-        if ( frmkCfg == null )
-        {
-            return null;
-        }
-
-        File cfgZip = frmkCfg.getFile();
-        File dest = new File( outputDirectory, "configs" );
-        dest.mkdirs();
-
-        try
-        {
-            UnArchiver unzip = archiverManager.getUnArchiver( cfgZip );
-            unzip.setSourceFile( cfgZip );
-            unzip.setDestDirectory( dest );
-            unzip.extract();
-        }
-        catch ( Exception e )
-        {
-            throw new MavenRuntimeException( "Failed to unpack framework configuration", e );
-        }
-
-        return dest;
-    }
 
     public Boolean getUseNetwork()
     {
@@ -3124,50 +2814,42 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
     }
 
-    protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
+    protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
+                                                               String[] policyFileUrls )
     {
-        Artifact artifact =
-            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
-        if ( !artifact.isResolved() )
+        getLog().debug( "runtime libraries: id: " + artifact.getArtifactId() );
+
+        String scope = artifact.getScope();
+        final String extension;
+        if ( CACHING.equals( scope ) )
         {
-            ArtifactResolutionRequest req = new ArtifactResolutionRequest();
-            req.setArtifact( artifact );
-            req.setLocalRepository( localRepository );
-            req.setRemoteRepositories( remoteRepositories );
-            // FIXME need to check isSuccess
-            repositorySystem.resolve( req ).isSuccess();
+            extension = SWZ;
         }
-        return artifact;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public boolean getIsAirProject()
-    {
-        return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "airglobal" ), type( SWC ) ) != null;
-    }
-
-    protected DirectoryScanner scan( File directory, PatternSet pattern )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( directory );
-        scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
-        scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        return scanner;
-    }
-
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
-
-    protected void wait( List<Result> results )
-        throws MojoFailureException, MojoExecutionException
-    {
-        for ( Result result : results )
+        else
         {
-            checkResult( result );
+            extension = SWF;
         }
-    }
-}
+
+        Map<String, String> paths = new LinkedHashMap<String, String>();
+        for ( int i = 0; i < rslUrls.length; i++ )
+        {
+            String rsl = rslUrls[i];
+            String policy;
+            if ( i < policyFileUrls.length )
+            {
+                policy = policyFileUrls[i];
+            }
+            else
+            {
+                policy = null;
+            }
+
+            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, contextRoot );
+            policy = MavenUtils.interpolateRslUrl( policy, artifact, extension, contextRoot );
+
+            getLog().debug( "RSL url: " + rsl + " - " + policy );
+            paths.put( rsl, policy );
+        }
+
+        return paths;
+    }}
