@@ -2561,6 +2561,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return targetPlayer;
     }
 
+    @SuppressWarnings( "unchecked" )
     public List<String> getTheme()
     {
         List<String> themes = new ArrayList<String>();
