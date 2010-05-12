@@ -18,6 +18,7 @@
 package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
 
 import org.apache.maven.model.FileSet;
+import org.apache.maven.model.PatternSet;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
@@ -27,7 +28,7 @@ import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLoo
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
-@Component(role=ConfigurationConverter.class, hint="RuledClasses")
+@Component( role = ConfigurationConverter.class, hint = "RuledClasses" )
 public class RuledClassesConverter
     extends AbstractConfigurationConverter
 {
@@ -76,10 +77,24 @@ public class RuledClassesConverter
         }
         rc.setClasses( classes );
 
-        FileSet[] classSets = new FileSet[setNodes.length];
+        PatternSet[] classSets = new PatternSet[setNodes.length];
         for ( int i = 0; i < setNodes.length; i++ )
         {
-            classSets[i] = (FileSet) fromExpression( setNodes[i], expressionEvaluator, FileSet.class );
+            PatternSet f = new PatternSet();
+
+            PlexusConfiguration includes = setNodes[i].getChild( "includes" );
+            for ( PlexusConfiguration include : includes.getChildren(  ) )
+            {
+                f.addInclude( (String) fromExpression( include, expressionEvaluator, String.class ) );
+            }
+
+            PlexusConfiguration excludes = setNodes[i].getChild( "excludes" );
+            for ( PlexusConfiguration exclude : excludes.getChildren() )
+            {
+                f.addExclude( (String) fromExpression( exclude, expressionEvaluator, String.class ) );
+            }
+
+            classSets[i] = f;
         }
         rc.setClassSets( classSets );
 

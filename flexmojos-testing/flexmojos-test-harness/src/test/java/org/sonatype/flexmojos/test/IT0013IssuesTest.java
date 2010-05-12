@@ -65,30 +65,6 @@ public class IT0013IssuesTest
     }
 
     @Test( expectedExceptions = { VerificationException.class } )
-    public void issue15()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0015" );
-        try
-        {
-            test( testDir, "install" );
-        }
-        finally
-        {
-            File reportDir = new File( testDir, "target/surefire-reports" );
-            assertEquals( 2, reportDir.listFiles().length );
-
-            File reportFile = new File( reportDir, "TEST-com.adobe.example.TestCalculator.xml" );
-            TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
-
-            assertEquals( "com.adobe.example.TestCalculator", report.getName() );
-            assertEquals( 2, report.getTests() );
-            assertEquals( 1, report.getErrors() );
-        }
-
-    }
-
-    @Test( expectedExceptions = { VerificationException.class } )
     public void issue27()
         throws Exception
     {

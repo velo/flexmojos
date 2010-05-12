@@ -18,11 +18,12 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsCollectionContaining.hasItems;
 import static org.hamcrest.text.StringContains.containsString;
 import static org.mockito.Mockito.mock;
 import static org.sonatype.flexmojos.matcher.file.FileMatcher.withAbsolutePath;
-import static org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.FRAMEWORK_GROUP_ID;
+import static org.sonatype.flexmojos.plugin.AbstractMavenMojo.FRAMEWORK_GROUP_ID;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,10 +40,6 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.matcher.collection.CollectionsMatcher;
-import org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration;
-import org.sonatype.flexmojos.plugin.compiler.AsdocMojo;
-import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
-import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.test.TestCompilerMojo;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -137,6 +134,7 @@ public class DependencyFilteringTest
         return a;
     }
 
+    @SuppressWarnings( "unchecked" )
     @Test
     public void swf()
     {
@@ -164,7 +162,28 @@ public class DependencyFilteringTest
         c.setLog( mock( Log.class ) );
         c.toolsLocale = "en_US";
 
-        validate( c, "playerglobal.swc" );
+        List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 3 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-external" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-external" ) ),//
+                                                  withAbsolutePath( containsString( "playerglobal.swc" ) ) ) );
+
+        deps = Arrays.asList( c.getLibraryPath() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 6 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-merged" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-merged" ) ),//
+                                                  withAbsolutePath( containsString( "framework-rb-en_US" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-rb-en_US" ) ),//
+                                                  withAbsolutePath( containsString( "framework-compile" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-compile" ) ) ) );
+
+        MatcherAssert.assertThat( deps, not( hasItems( withAbsolutePath( containsString( "playerglobal.swc" ) ) ) ) );
+
+        deps = Arrays.asList( c.getIncludeLibraries() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 2 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-internal" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-internal" ) ) ) );
+
     }
 
     @SuppressWarnings( "unchecked" )
@@ -197,8 +216,9 @@ public class DependencyFilteringTest
 
     }
 
+    @SuppressWarnings( "unchecked" )
     @Test
-    public void air()
+    public void asdoc()
     {
         AsdocMojo c = new AsdocMojo()
         {
@@ -220,7 +240,7 @@ public class DependencyFilteringTest
             {
                 return new File( "target/temp" );
             }
-            
+
             @Override
             public String getProjectType()
             {
@@ -231,7 +251,28 @@ public class DependencyFilteringTest
 
         c.toolsLocale = "en_US";
 
-        validate( c, "airglobal.swc" );
+        List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 1 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "airglobal.swc" ) ) ) );
+
+        deps = Arrays.asList( c.getLibraryPath() );
+        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 10 ) );
+        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-internal" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-internal" ) ),//
+                                                  withAbsolutePath( containsString( "framework-external" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-external" ) ),//
+                                                  withAbsolutePath( containsString( "framework-merged" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-merged" ) ),//
+                                                  withAbsolutePath( containsString( "framework-rb-en_US" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-rb-en_US" ) ),//
+                                                  withAbsolutePath( containsString( "framework-compile" ) ),//
+                                                  withAbsolutePath( containsString( "rpc-compile" ) ) ) );
+
+        MatcherAssert.assertThat( deps, not( hasItems( withAbsolutePath( containsString( "airglobal.swc" ) ) ) ) );
+
+        MatcherAssert.assertThat( c.getIncludeLibraries(), nullValue() );
+        MatcherAssert.assertThat( c.getRuntimeSharedLibraries(), nullValue() );
+        MatcherAssert.assertThat( c.getRuntimeSharedLibraryPath(), nullValue() );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -287,30 +328,4 @@ public class DependencyFilteringTest
                                                   withAbsolutePath( containsString( "rpc-compile" ) ) ) );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private void validate( AbstractMavenFlexCompilerConfiguration c, String globalDep )
-    {
-        List<File> deps = Arrays.asList( c.getExternalLibraryPath() );
-        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 3 ) );
-        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-external" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-external" ) ),//
-                                                  withAbsolutePath( containsString( globalDep ) ) ) );
-
-        deps = Arrays.asList( c.getLibraryPath() );
-        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 6 ) );
-        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-merged" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-merged" ) ),//
-                                                  withAbsolutePath( containsString( "framework-rb-en_US" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-rb-en_US" ) ),//
-                                                  withAbsolutePath( containsString( "framework-compile" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-compile" ) ) ) );
-
-        MatcherAssert.assertThat( deps, not( hasItems( withAbsolutePath( containsString( globalDep ) ) ) ) );
-
-        deps = Arrays.asList( c.getIncludeLibraries() );
-        MatcherAssert.assertThat( deps, CollectionsMatcher.isSize( 2 ) );
-        MatcherAssert.assertThat( deps, hasItems( withAbsolutePath( containsString( "framework-internal" ) ),//
-                                                  withAbsolutePath( containsString( "rpc-internal" ) ) ) );
-
-    }
 }
