@@ -141,7 +141,8 @@
             <xml>org.sonatype.flexmojos:flexmojos-flex2-compatibility-layer:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-flex3-compatibility-layer:${project.version}</xml>
             
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc:air</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc:flex</xml>
             <xml>org.sonatype.flexmojos:flexmojos-test-coverage:${project.version}:swc</xml>
             <xml>org.sonatype.flexmojos:flexmojos-unittest-flexunit:${project.version}:swc</xml>
             <xml>org.sonatype.flexmojos:flexmojos-unittest-flexunit4:${project.version}:swc</xml>

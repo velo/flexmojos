@@ -63,6 +63,14 @@ public class TestCompilerMojo
     private static final String ONCE = "once";
 
     /**
+     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
+     * this.
+     * 
+     * @parameter expression="${flex.coverage}"
+     */
+    private boolean coverage;
+
+    /**
      * Files to exclude from testing. If not defined, assumes no exclusions
      * 
      * @parameter
@@ -143,14 +151,6 @@ public class TestCompilerMojo
      * @readonly
      */
     private File testSourceDirectory;
-
-    /**
-     * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
-     * this.
-     * 
-     * @parameter expression="${flex.coverage}"
-     */
-    private boolean coverage;
 
     private void buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
@@ -299,12 +299,6 @@ public class TestCompilerMojo
         return true;
     }
 
-    @Override
-    public Boolean getOptimize()
-    {
-        return false;
-    }
-
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getExternalLibraryPath()
@@ -314,8 +308,13 @@ public class TestCompilerMojo
 
     protected Artifact getFlexmojosTestArtifact( String artifactId )
     {
+        return getFlexmojosTestArtifact( artifactId, null );
+    }
+
+    protected Artifact getFlexmojosTestArtifact( String artifactId, String classifier )
+    {
         Artifact artifact =
-            resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), null, "swc" );
+            resolve( "org.sonatype.flexmojos", artifactId, MavenUtils.getFlexMojosVersion(), classifier, "swc" );
 
         return artifact;
     }
@@ -365,6 +364,11 @@ public class TestCompilerMojo
         }
     }
 
+    private Artifact getFlexmojosUnittestSupport()
+    {
+        return getFlexmojosTestArtifact( "flexmojos-unittest-support", getIsAirProject() ? "air" : "flex" );
+    }
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getIncludeLibraries()
@@ -372,9 +376,7 @@ public class TestCompilerMojo
         Collection<Artifact> coverArtifact =
             (Collection<Artifact>) ( coverage ? Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-test-coverage" ) )
                             : Collections.emptyList() );
-        return MavenUtils.getFiles(
-                                    coverArtifact,
-                                    Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-unittest-support" ) ),
+        return MavenUtils.getFiles( coverArtifact, Collections.singletonList( getFlexmojosUnittestSupport() ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
                                     getDependencies( type( SWC ),// 
                                                      anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
@@ -411,6 +413,12 @@ public class TestCompilerMojo
         resources.addAll( this.resources );
         resources.addAll( this.testResources );
         return new MavenPathResolver( resources );
+    }
+
+    @Override
+    public Boolean getOptimize()
+    {
+        return false;
     }
 
     @Override

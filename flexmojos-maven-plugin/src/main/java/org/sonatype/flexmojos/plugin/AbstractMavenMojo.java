@@ -40,12 +40,11 @@ import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.util.PathUtil;
 
-public abstract class AbstractMavenMojo 
+public abstract class AbstractMavenMojo
+    implements Mojo
 {
 
     private static final String AIR_GLOBAL = "airglobal";
-
-    private static final String PLAYER_GLOBAL = "playerglobal";
 
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
@@ -56,41 +55,14 @@ public abstract class AbstractMavenMojo
 
     protected static final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
+    private static final String PLAYER_GLOBAL = "playerglobal";
+
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
     {
         return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),// 
                       anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );
     }
-
-    /**
-     * Local repository to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${localRepository}"
-     * @readonly
-     */
-    protected ArtifactRepository localRepository;
-
-    /**
-     * List of remote repositories to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @readonly
-     */
-    protected List<ArtifactRepository> remoteRepositories;
-
-    /**
-     * Maven logger
-     * 
-     * @readonly
-     */
-    Log log;
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected RepositorySystem repositorySystem;
 
     /**
      * @component
@@ -106,6 +78,28 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     protected File configDirectory;
+
+    /**
+     * Local repository to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${localRepository}"
+     * @readonly
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
+     * Maven logger
+     * 
+     * @readonly
+     */
+    Log log;
+
+    /**
+     * @parameter expression="${project.build.outputDirectory}"
+     * @readonly
+     * @required
+     */
+    private File outputDirectory;
 
     /**
      * @parameter expression="${project.packaging}"
@@ -137,6 +131,20 @@ public abstract class AbstractMavenMojo
     protected MavenProjectHelper projectHelper;
 
     /**
+     * List of remote repositories to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     */
+    protected List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * @component
+     * @readonly
+     */
+    protected RepositorySystem repositorySystem;
+
+    /**
      * The maven resources
      * 
      * @parameter expression="${project.build.resources}"
@@ -144,6 +152,13 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     protected List<Resource> resources;
+
+    /**
+     * Skips lexmojos goal execution
+     * 
+     * @parameter expression="${flexmojos.skip}"
+     */
+    protected boolean skip;
 
     public AbstractMavenMojo()
     {
@@ -228,27 +243,6 @@ public abstract class AbstractMavenMojo
         return classes;
     }
 
-    public Log getLog()
-    {
-        return this.log;
-    }
-
-    protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
-    {
-        Artifact artifact =
-            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
-        if ( !artifact.isResolved() )
-        {
-            ArtifactResolutionRequest req = new ArtifactResolutionRequest();
-            req.setArtifact( artifact );
-            req.setLocalRepository( localRepository );
-            req.setRemoteRepositories( remoteRepositories );
-            // FIXME need to check isSuccess
-            repositorySystem.resolve( req ).isSuccess();
-        }
-        return artifact;
-    }
-
     public Set<Artifact> getDependencies()
     {
         return Collections.unmodifiableSet( project.getArtifacts() );
@@ -274,38 +268,8 @@ public abstract class AbstractMavenMojo
         return filtered.get( 0 );
     }
 
-    @SuppressWarnings( "unchecked" )
-    public boolean getIsAirProject()
-    {
-        return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
-    }
-
-    protected DirectoryScanner scan( File directory, PatternSet pattern )
-    {
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( directory );
-        scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
-        scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        return scanner;
-    }
-
-    public void setLog( Log log )
-    {
-        this.log = log;
-    }
-
-    protected void wait( List<Result> results )
-        throws MojoFailureException, MojoExecutionException
-    {
-        for ( Result result : results )
-        {
-            checkResult( result );
-        }
-    }
-
     // TODO lazy load here would be awesome
+    @SuppressWarnings( "unchecked" )
     protected Artifact getFrameworkConfig()
     {
         Artifact frmkCfg =
@@ -328,12 +292,16 @@ public abstract class AbstractMavenMojo
         return frmkCfg;
     }
 
-    /**
-     * @parameter expression="${project.build.outputDirectory}"
-     * @readonly
-     * @required
-     */
-    private File outputDirectory;
+    @SuppressWarnings( "unchecked" )
+    public boolean getIsAirProject()
+    {
+        return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
+    }
+
+    public Log getLog()
+    {
+        return this.log;
+    }
 
     public File getOutputDirectory()
     {
@@ -368,5 +336,57 @@ public abstract class AbstractMavenMojo
         }
 
         return dest;
+    }
+
+    public boolean isSkip()
+    {
+        return skip;
+    }
+
+    protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
+    {
+        Artifact artifact =
+            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+        if ( !artifact.isResolved() )
+        {
+            ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+            req.setArtifact( artifact );
+            req.setLocalRepository( localRepository );
+            req.setRemoteRepositories( remoteRepositories );
+            // FIXME need to check isSuccess
+            repositorySystem.resolve( req ).isSuccess();
+        }
+        return artifact;
+    }
+
+    protected DirectoryScanner scan( File directory, PatternSet pattern )
+    {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( directory );
+        if ( !pattern.getIncludes().isEmpty() )
+        {
+            scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
+        }
+        if ( !pattern.getExcludes().isEmpty() )
+        {
+            scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
+        }
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        return scanner;
+    }
+
+    public void setLog( Log log )
+    {
+        this.log = log;
+    }
+
+    protected void wait( List<Result> results )
+        throws MojoFailureException, MojoExecutionException
+    {
+        for ( Result result : results )
+        {
+            checkResult( result );
+        }
     }
 }

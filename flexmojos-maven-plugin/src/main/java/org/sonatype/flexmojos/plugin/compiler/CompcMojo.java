@@ -79,7 +79,6 @@ public class CompcMojo
      *   &lt;class&gt;org.sonatype.flexmojos.MyClass&lt;/class&gt;
      *   &lt;class&gt;org.sonatype.flexmojos.YourClass&lt;/class&gt;
      *   &lt;classSet&gt;
-     *     &lt;directory&gt;src/main/flex&lt;/directory&gt;
      *     &lt;includes&gt;
      *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
      *     &lt;/includes&gt;

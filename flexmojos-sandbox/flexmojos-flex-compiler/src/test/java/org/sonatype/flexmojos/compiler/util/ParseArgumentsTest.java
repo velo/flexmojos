@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonatype.flexmojos.compiler.test.MockitoConstraints.RETURNS_NULL;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class ParseArgumentsTest
         INamespace namespace2 = mock( INamespace.class, RETURNS_NULL );
         IDefine define = mock( IDefine.class, RETURNS_NULL );
 
+        when( cfg.getIncludeClasses() ).thenReturn( Arrays.asList( "AClass", "BClass" ) );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( cfg.getMetadataConfiguration() ).thenReturn( metadataCfg );
         when( compilerCfg.getAccessible() ).thenReturn( true );
@@ -106,14 +108,17 @@ public class ParseArgumentsTest
         List<String> args = parser.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
-        Assert.assertEquals( args.size(), 24, args.toString() );
+        Assert.assertEquals( args.size(), 25, args.toString() );
+        Assert.assertTrue( args.contains( "-include-classes=AClass,BClass" ) );
         Assert.assertTrue( args.contains( "-compiler.accessible=true" ) );
         Assert.assertTrue( args.contains( "-metadata.creator=Marvin" ) );
         Assert.assertTrue( args.contains( "-metadata.creator+=VELO" ) );
         Assert.assertTrue( args.contains( "-metadata.creator+=Froeder" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.fonts.languages.language-range", "Thai", "U+0E01-0E5B" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.fonts.languages.language-range", "ptBR", "U+0A0C-0EAA" ) );
-        assertThat( args, ArrayMatcher.subArray( "-runtime-shared-library-path=MyLibrary.swc,http://a.com/rsls/MyLibrary.swf,http://a.com/rsls/crossdomain.xml,MyLibrary.swf" ) );
+        assertThat(
+                    args,
+                    ArrayMatcher.subArray( "-runtime-shared-library-path=MyLibrary.swc,http://a.com/rsls/MyLibrary.swf,http://a.com/rsls/crossdomain.xml,MyLibrary.swf" ) );
         assertThat( args, ArrayMatcher.subArray( "-frames.frame", "my-frame", "org.package.1", "org.package.2" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace", "http://www.adobe.com/2006/mxml",
                                                  "mx-manifest.xml" ) );

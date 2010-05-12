@@ -3,8 +3,10 @@ package org.sonatype.flexmojos.plugin.compiler;
 import static ch.lambdaj.Lambda.filter;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
@@ -522,6 +525,8 @@ public class AsdocMojo
     @Override
     public File[] getLibraryPath()
     {
+        Matcher<? extends Artifact>[] filter =
+            new Matcher[] { type( SWC ), not( scope( TEST ) ), not( GLOBAL_MATCHER ) };
         if ( aggregate )
         {
             Set<File> deps = new LinkedHashSet<File>();
@@ -538,15 +543,16 @@ public class AsdocMojo
 
                 ArtifactResolutionResult res = repositorySystem.resolve( req );
 
-                deps.addAll( MavenUtils.getFilesSet( filter( allOf( type( SWC ), not( GLOBAL_MATCHER ) ),
-                                                             res.getArtifacts() ) ) );
+                deps.addAll( MavenUtils.getFilesSet( filter( allOf( filter ), res.getArtifacts() ) ) );
             }
+            
+            deps.addAll( MavenUtils.getFilesSet( getCompiledResouceBundles() ) );
 
             return deps.toArray( new File[0] );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( type( SWC ) ) );
+            return MavenUtils.getFiles( getDependencies( filter ), getCompiledResouceBundles() );
         }
     }
 }

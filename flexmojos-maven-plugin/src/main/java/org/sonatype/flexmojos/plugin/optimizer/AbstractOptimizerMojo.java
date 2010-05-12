@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.apache.maven.model.Build;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -26,6 +25,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IOptimizerConfiguration;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -34,7 +34,7 @@ import apparat.tools.reducer.Reducer.ReducerTool;
 import apparat.tools.stripper.Stripper.StripperTool;
 
 public abstract class AbstractOptimizerMojo
-    extends AbstractMojo
+    extends AbstractMavenMojo
 {
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat( "#.##" );

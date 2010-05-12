@@ -1,20 +1,20 @@
 package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
 
-import org.apache.maven.model.FileSet;
+import org.apache.maven.model.PatternSet;
 
 public class RuledClasses
 {
 
     private String[] classes;
 
-    private FileSet[] classSets;
+    private PatternSet[] classSets;
 
-    public FileSet[] getClassSets()
+    public PatternSet[] getClassSets()
     {
         return classSets;
     }
 
-    public void setClassSets( FileSet[] classSets )
+    public void setClassSets( PatternSet[] classSets )
     {
         this.classSets = classSets;
     }
