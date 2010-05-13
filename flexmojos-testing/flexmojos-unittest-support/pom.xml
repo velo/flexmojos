@@ -48,7 +48,6 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
               <includeClasses>
                 <include>org.sonatype.flexmojos.test.report.*</include>
               </includeClasses>
@@ -60,7 +59,6 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
               <generatorToUse>constraints</generatorToUse>
               <includeClasses>
                 <include>org.sonatype.flexmojos.test.monitor.CommConstraints</include>
@@ -73,7 +71,6 @@
               <goal>compile-swc</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
               <classifier>air</classifier>
               <includeClasses>
                 <classSet>
@@ -90,7 +87,6 @@
               <goal>compile-swc</goal>
             </goals>
             <configuration>
-              <skip>false</skip>
               <classifier>flex</classifier>
               <includeClasses>
                 <classSet>
@@ -103,7 +99,14 @@
           </execution>
         </executions>
         <configuration>
-          <skip>true</skip>
+          <includeClasses>
+            <classSet>
+              <excludes>
+                <exclude>org/sonatype/flexmojos/unitestingsupport/TestApplication.as</exclude>
+                <exclude>org/sonatype/flexmojos/unitestingsupport/TestAirApplication.as</exclude>
+              </excludes>
+            </classSet>
+          </includeClasses>
         </configuration>
       </plugin>
     </plugins>
