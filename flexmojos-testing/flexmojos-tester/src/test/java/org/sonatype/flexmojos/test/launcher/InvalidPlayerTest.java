@@ -36,7 +36,7 @@ public class InvalidPlayerTest
         context.put( "flashplayer.command", "invalid_flash_player" );
     }
 
-    @Test( timeOut = 20000 )
+    @Test( timeOut = 20000, enabled = false )
     public void invalidPlayer()
         throws Exception
     {

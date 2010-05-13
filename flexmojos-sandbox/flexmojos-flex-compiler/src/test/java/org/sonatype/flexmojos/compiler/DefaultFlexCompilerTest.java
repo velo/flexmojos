@@ -58,7 +58,7 @@ public class DefaultFlexCompilerTest
     public void initRoots()
         throws Exception
     {
-        root = new File( getClass().getResource( "/" ).toURI() );
+        root = new File( "" ).getCanonicalFile();
         as3 = new File( root, "dummy_as3" );
         fdk = new File( root, "fdk" );
 
