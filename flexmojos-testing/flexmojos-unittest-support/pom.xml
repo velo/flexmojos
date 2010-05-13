@@ -36,9 +36,9 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <includeClasses>
+              <includeJavaClasses>
                 <include>org.sonatype.flexmojos.test.report.*</include>
-              </includeClasses>
+              </includeJavaClasses>
             </configuration>
           </execution>
           <execution>
@@ -48,9 +48,9 @@
             </goals>
             <configuration>
               <generatorToUse>constraints</generatorToUse>
-              <includeClasses>
+              <includeJavaClasses>
                 <include>org.sonatype.flexmojos.test.monitor.CommConstraints</include>
-              </includeClasses>
+              </includeJavaClasses>
             </configuration>
           </execution>
           <execution>

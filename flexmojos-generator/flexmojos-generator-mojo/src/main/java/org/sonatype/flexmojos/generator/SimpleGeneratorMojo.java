@@ -66,22 +66,6 @@ public class SimpleGeneratorMojo
      * File to generate as3 file. If not defined assumes all classes must be included
      * 
      * @parameter
-     * @deprecated
-     */
-    private String[] includeClasses;
-
-    /**
-     * File to exclude from as3 generation. If not defined, assumes no exclusions
-     * 
-     * @parameter
-     * @deprecated
-     */
-    private String[] excludeClasses;
-
-    /**
-     * File to generate as3 file. If not defined assumes all classes must be included
-     * 
-     * @parameter
      */
     private String[] includeJavaClasses;
 
@@ -213,19 +197,7 @@ public class SimpleGeneratorMojo
     {
         if ( includeJavaClasses == null )
         {
-            if ( includeClasses != null )
-            {
-                includeJavaClasses = includeClasses;
-            }
-            else
-            {
-                includeJavaClasses = new String[] { "*" };
-            }
-        }
-
-        if ( excludeJavaClasses == null )
-        {
-            excludeJavaClasses = excludeClasses;
+            includeJavaClasses = new String[] { "*" };
         }
 
         if ( !outputDirectory.exists() )
