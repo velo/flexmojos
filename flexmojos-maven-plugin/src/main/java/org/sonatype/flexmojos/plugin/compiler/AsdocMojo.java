@@ -18,7 +18,6 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.model.PatternSet;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,6 +30,7 @@ import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
+import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -98,7 +98,7 @@ public class AsdocMojo
      * 
      * @parameter
      */
-    private PatternSet[] docClasses;
+    private SimplifiablePattern docClasses;
 
     /**
      * List of namespaces to include in the documentation
@@ -300,7 +300,7 @@ public class AsdocMojo
             return;
         }
 
-        executeCompiler( this, true );
+        wait( executeCompiler( this, true ) );
     }
 
     @Override
@@ -322,7 +322,12 @@ public class AsdocMojo
             return null;
         }
 
-        return filterClasses( docClasses, getSourcePath() );
+        List<String> classes = new ArrayList<String>();
+
+        classes.addAll( docClasses.getIncludes() );
+        classes.addAll( filterClasses( docClasses.getPatterns(), getSourcePath() ) );
+
+        return classes;
     }
 
     public List<String> getDocNamespaces()
@@ -545,7 +550,7 @@ public class AsdocMojo
 
                 deps.addAll( MavenUtils.getFilesSet( filter( allOf( filter ), res.getArtifacts() ) ) );
             }
-            
+
             deps.addAll( MavenUtils.getFilesSet( getCompiledResouceBundles() ) );
 
             return deps.toArray( new File[0] );

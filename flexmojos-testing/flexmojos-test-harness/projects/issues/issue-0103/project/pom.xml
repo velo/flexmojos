@@ -36,9 +36,9 @@
 				<artifactId>flexmojos-maven-plugin</artifactId>
 				<configuration>
 				    <includeFiles>
-				        <includeFile>${basedir}/src/main/resources/resourceRoot.txt</includeFile>
-				        <includeFile>aFolder/onFolder.txt</includeFile>
-				        <includeFile>atBase.txt</includeFile>
+				        <include>${basedir}/src/main/resources/resourceRoot.txt</include>
+				        <include>aFolder/onFolder.txt</include>
+				        <include>${basedir}/atBase.txt</include>
 				    </includeFiles>
 				</configuration>
 			</plugin>

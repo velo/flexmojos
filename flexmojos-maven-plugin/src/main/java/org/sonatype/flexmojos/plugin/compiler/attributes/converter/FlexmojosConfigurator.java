@@ -16,13 +16,13 @@ public class FlexmojosConfigurator
     extends BasicComponentConfigurator
     implements ComponentConfigurator
 {
-    
-    @Requirement(role=ConfigurationConverter.class, hint="RuledClasses")
-    private RuledClassesConverter ruledClassesConverter;
 
-    @Requirement(role=ConfigurationConverter.class, hint="Module")
+    @Requirement( role = ConfigurationConverter.class, hint = SimplifiablePatternConverter.ID )
+    private SimplifiablePatternConverter ruledClassesConverter;
+
+    @Requirement( role = ConfigurationConverter.class, hint = ModuleConverter.ID )
     private ModuleConverter moduleConverter;
-    
+
     public void configureComponent( Object component, PlexusConfiguration configuration,
                                     ExpressionEvaluator expressionEvaluator, ClassRealm containerRealm,
                                     ConfigurationListener listener )

@@ -170,7 +170,7 @@ public final class InternalIFacesGenerator
                         type = generateSubclass( factory, arg, info, name, args );
                     }
 
-                    if ( info.isPath() )
+                    if ( info.isPath() && args <= 1 )
                     {
                         type = JavaQNameImpl.getInstance( File.class );
                     }

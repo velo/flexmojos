@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
@@ -36,6 +38,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.hamcrest.text.StringStartsWith;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
+import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
@@ -152,14 +155,9 @@ public class TestCompilerMojo
      */
     private File testSourceDirectory;
 
-    private void buildTest( String testFilename, List<? extends String> testClasses )
+    private Result buildTest( String testFilename, List<? extends String> testClasses )
         throws MojoExecutionException, MojoFailureException
     {
-        if ( testClasses == null || testClasses.isEmpty() )
-        {
-            return;
-        }
-
         getLog().info( "Compiling test class: " + testClasses );
 
         File testMxml;
@@ -175,7 +173,7 @@ public class TestCompilerMojo
         TestCompilerMojo cfg = this.clone();
         cfg.finalName = testFilename;
 
-        executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), true );
+        return executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), fullSynchronization );
     }
 
     @Override
@@ -223,19 +221,28 @@ public class TestCompilerMojo
         }
 
         List<String> testClasses = getTestClasses();
+        if ( testClasses == null || testClasses.isEmpty() )
+        {
+            getLog().warn( "Skipping test compiler, no test class found." );
+            return;
+        }
 
         if ( ONCE.equals( forkMode ) )
         {
             String testFilename = "TestRunner";
-            buildTest( testFilename, testClasses );
+            checkResult( buildTest( testFilename, testClasses ) );
         }
         else
         {
+            List<Result> results = new ArrayList<Result>();
+
             for ( String testClass : testClasses )
             {
                 String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
-                buildTest( testFilename, Collections.singletonList( testClass ) );
+                results.add( buildTest( testFilename, Collections.singletonList( testClass ) ) );
             }
+
+            wait( results );
         }
     }
 
@@ -402,9 +409,15 @@ public class TestCompilerMojo
     }
 
     @Override
+    public String[] getLocalesRuntime()
+    {
+        return null;
+    }
+
+    @Override
     public String[] getLocale()
     {
-        return CollectionUtils.merge( localesRuntime, super.getLocale() ).toArray( new String[0] );
+        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
     }
 
     public SinglePathResolver getMavenPathResolver()
@@ -442,7 +455,7 @@ public class TestCompilerMojo
     @Override
     public File[] getSourcePath()
     {
-        List<File> files = new ArrayList<File>();
+        Set<File> files = new LinkedHashSet<File>();
 
         files.addAll( PathUtil.getExistingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
