@@ -15,35 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
+package org.sonatype.flexmojos.tests.issues;
 
-import org.apache.maven.model.PatternSet;
+import java.io.File;
 
-public class RuledClasses
+import org.testng.annotations.Test;
+
+public class Issue0027Test
+    extends AbstractIssueTest
 {
 
-    private String[] classes;
-
-    private PatternSet[] classSets;
-
-    public PatternSet[] getClassSets()
+    @Test
+    public void issue27()
+        throws Exception
     {
-        return classSets;
-    }
-
-    public void setClassSets( PatternSet[] classSets )
-    {
-        this.classSets = classSets;
-    }
-
-    public String[] getClasses()
-    {
-        return classes;
-    }
-
-    public void setClasses( String[] classes )
-    {
-        this.classes = classes;
+        File testDir = getProject( "/issues/issue-0027" );
+        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
 }

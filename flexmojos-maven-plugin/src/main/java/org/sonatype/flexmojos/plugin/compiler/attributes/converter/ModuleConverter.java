@@ -26,10 +26,12 @@ import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLoo
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
-@Component( role = ConfigurationConverter.class, hint = "Module" )
+@Component( role = ConfigurationConverter.class, hint = ModuleConverter.ID )
 public class ModuleConverter
     extends AbstractConfigurationConverter
 {
+
+    public static final String ID = "Module";
 
     @SuppressWarnings( "unchecked" )
     public boolean canConvert( Class type )

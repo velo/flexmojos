@@ -21,18 +21,19 @@ import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.model.PatternSet;
-import org.apache.maven.model.Resource;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
+import org.sonatype.flexmojos.compiler.IIncludeFile;
+import org.sonatype.flexmojos.compiler.IIncludeStylesheet;
 import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.RuledClasses;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenIncludeStylesheet;
+import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
 import org.sonatype.flexmojos.util.PathUtil;
 
 /**
@@ -93,30 +94,30 @@ public class CompcMojo
      * 
      * <pre>
      * &lt;includeClasses&gt;
-     *   &lt;class&gt;org.sonatype.flexmojos.MyClass&lt;/class&gt;
-     *   &lt;class&gt;org.sonatype.flexmojos.YourClass&lt;/class&gt;
-     *   &lt;classSet&gt;
+     *   &lt;include&gt;org.sonatype.flexmojos.MyClass&lt;/include&gt;
+     *   &lt;include&gt;org.sonatype.flexmojos.YourClass&lt;/include&gt;
+     *   &lt;scan&gt;
      *     &lt;includes&gt;
-     *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
+     *       &lt;include&gt;com.mycompany.*&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
-     *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
+     *       &lt;exclude&gt;com.mycompany.ui.*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
-     *   &lt;/classSet&gt;
-     *   &lt;classSet&gt;
+     *   &lt;/scan&gt;
+     *   &lt;scan&gt;
      *     &lt;includes&gt;
-     *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
+     *       &lt;include&gt;org.mycompany.*&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
-     *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
+     *       &lt;exclude&gt;org.mycompany.ui.*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
-     *   &lt;/classSet&gt;
+     *   &lt;/scan&gt;
      * &lt;/includeClasses&gt;
      * </pre>
      * 
      * @parameter
      */
-    private RuledClasses includeClasses;
+    private SimplifiablePattern includeClasses;
 
     /**
      * Inclusion/exclusion patterns used to filter resources to be include in the output SWC
@@ -127,20 +128,22 @@ public class CompcMojo
      * 
      * <pre>
      * &lt;includeFiles&gt;
-     *   &lt;includeFile&gt;
+     *   &lt;include&gt;afile.xml&lt;/include&gt;
+     *   &lt;include&gt;b.txt&lt;/include&gt;
+     *   &lt;scan&gt;
      *     &lt;includes&gt;
-     *       &lt;include&gt;*.xml&lt;/include&gt;
+     *       &lt;include&gt;**\/*.rxml&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
-     *       &lt;exclude&gt;excluded-*.xml&lt;/exclude&gt;
+     *       &lt;exclude&gt;private/*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
-     *   &lt;/includeFile&gt;
+     *   &lt;/scan&gt;
      * &lt;/includeFiles&gt;
      * </pre>
      * 
      * @parameter
      */
-    private PatternSet[] includeFiles;
+    private SimplifiablePattern includeFiles;
 
     /**
      * If true, manifest entries with lookupOnly=true are included in SWC catalog
@@ -201,7 +204,7 @@ public class CompcMojo
      * 
      * @parameter
      */
-    private File[] includeStylesheets;
+    private MavenIncludeStylesheet[] includeStylesheets;
 
     /**
      * DOCME Guess what, undocumented by adobe. Looks like it was overwritten by source paths
@@ -224,18 +227,18 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !PathUtil.exist( compileSourceRoots ))
+        if ( !( PathUtil.exist( getSourcePath() ) || getIncludeFile() == null ) )
         {
-            getLog().warn( "Skipping compiler, source path doesn't exist." );
+            getLog().warn( "Skipping compiler, nothing available to be included on swc." );
             return;
         }
 
         executeCompiler( this, true );
 
-        if ( localesRuntime != null )
+        if ( getLocalesRuntime() != null )
         {
             List<Result> results = new ArrayList<Result>();
-            for ( String locale : localesRuntime )
+            for ( String locale : getLocalesRuntime() )
             {
                 CompcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );
@@ -264,27 +267,21 @@ public class CompcMojo
         }
 
         List<String> classes = new ArrayList<String>();
-        if ( includeClasses.getClasses() != null )
-        {
-            classes.addAll( Arrays.asList( includeClasses.getClasses() ) );
-        }
 
-        if ( includeClasses.getClassSets() != null )
-        {
-            classes.addAll( filterClasses( includeClasses.getClassSets(), getSourcePath() ) );
-        }
+        classes.addAll( includeClasses.getIncludes() );
+        classes.addAll( filterClasses( includeClasses.getPatterns(), getSourcePath() ) );
 
         return classes;
     }
 
-    public File[] getIncludeFile()
+    public IIncludeFile[] getIncludeFile()
     {
-        PatternSet[] patterns;
+        List<IIncludeFile> files = new ArrayList<IIncludeFile>();
+
+        List<FileSet> patterns = new ArrayList<FileSet>();
         if ( includeFiles == null && includeNamespaces == null && includeSources == null && includeClasses == null )
         {
-            PatternSet pattern = new PatternSet();
-            pattern.addInclude( "*.*" );
-            patterns = new PatternSet[] { pattern };
+            patterns.addAll( resources );
         }
         else if ( includeFiles == null )
         {
@@ -292,32 +289,54 @@ public class CompcMojo
         }
         else
         {
-            patterns = includeFiles;
+            patterns.addAll( includeFiles.getPatterns() );
+
+            for ( final String path : includeFiles.getIncludes() )
+            {
+                final File file = PathUtil.getCanonicalFile( path, getResourcesTargetDirectories() );
+
+                files.add( new IIncludeFile()
+                {
+
+                    public String path()
+                    {
+                        return file.getAbsolutePath();
+                    }
+
+                    public String name()
+                    {
+                        return path;
+                    }
+                } );
+            }
         }
 
-        List<File> files = new ArrayList<File>();
-
-        for ( Resource resource : resources )
+        for ( FileSet pattern : patterns )
         {
-            File directory = new File( resource.getDirectory() );
-            if ( !directory.exists() )
+            final DirectoryScanner scan = scan( pattern );
+            if ( scan == null )
             {
                 continue;
             }
 
-            for ( PatternSet pattern : patterns )
+            for ( final String file : scan.getIncludedFiles() )
             {
-                DirectoryScanner scanner = scan( directory, pattern );
-
-                String[] included = scanner.getIncludedFiles();
-                for ( String file : included )
+                files.add( new IIncludeFile()
                 {
-                    files.add( new File( directory, file ) );
-                }
+                    public String path()
+                    {
+                        return PathUtil.getCanonicalFile( file, scan.getBasedir() ).getAbsolutePath();
+                    }
+
+                    public String name()
+                    {
+                        return file;
+                    }
+                } );
             }
         }
 
-        return files.toArray( new File[0] );
+        return files.toArray( new IIncludeFile[0] );
     }
 
     public Boolean getIncludeLookupOnly()
@@ -354,9 +373,38 @@ public class CompcMojo
         return includeSources;
     }
 
-    public File[] getIncludeStylesheet()
+    public IIncludeStylesheet[] getIncludeStylesheet()
     {
-        return includeStylesheets;
+        if ( includeStylesheets == null )
+        {
+            return null;
+        }
+
+        IIncludeStylesheet[] is = new IIncludeStylesheet[includeStylesheets.length];
+        for ( int i = 0; i < includeStylesheets.length; i++ )
+        {
+            final MavenIncludeStylesheet ss = includeStylesheets[i];
+            is[i] = new IIncludeStylesheet()
+            {
+
+                public String path()
+                {
+                    return PathUtil.getCanonicalFile( ss.getName(), getResourcesTargetDirectories() ).getAbsolutePath();
+                }
+
+                public String name()
+                {
+                    if ( ss.getName() != null )
+                    {
+                        return ss.getName();
+                    }
+
+                    return ss.getPath();
+                }
+            };
+        }
+
+        return is;
     }
 
     @Override

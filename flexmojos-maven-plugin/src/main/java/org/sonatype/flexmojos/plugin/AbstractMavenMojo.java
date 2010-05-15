@@ -30,6 +30,8 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -86,6 +88,13 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     protected ArchiverManager archiverManager;
+
+    /**
+     * @parameter expression="${basedir}"
+     * @required
+     * @readonly
+     */
+    private File basedir;
 
     /**
      * The maven configuration directory
@@ -177,12 +186,19 @@ public abstract class AbstractMavenMojo
      */
     protected boolean skip;
 
+    /**
+     * @parameter expression="${project.build.directory}"
+     * @readonly
+     * @required
+     */
+    protected File targetDirectory;
+
     public AbstractMavenMojo()
     {
         super();
     }
 
-    protected FileSet[] as3ClassesFileSet( File... files )
+    protected List<FileSet> as3ClassesFileSet( File... files )
     {
         if ( files == null )
         {
@@ -199,7 +215,7 @@ public abstract class AbstractMavenMojo
             sets.add( fs );
         }
 
-        return sets.toArray( new FileSet[0] );
+        return sets;
     }
 
     protected void checkResult( Result result )
@@ -220,44 +236,83 @@ public abstract class AbstractMavenMojo
         }
     }
 
-    protected List<String> filterClasses( PatternSet[] classesPattern, File[] directories )
+    protected List<String> filterClasses( List<FileSet> classesPattern, File[] directories )
     {
-        List<String> classes = new ArrayList<String>();
+        directories = PathUtil.getExistingFiles( directories );
 
-        for ( File directory : directories )
+        Set<String> includedFiles = new LinkedHashSet<String>();
+        for ( FileSet pattern : classesPattern )
         {
-            if ( !directory.exists() )
+            pattern.setIncludes( toFilePattern( pattern.getIncludes() ) );
+            pattern.setExcludes( toFilePattern( pattern.getExcludes() ) );
+
+            if ( pattern.getDirectory() == null )
             {
-                continue;
+                for ( File dir : directories )
+                {
+                    includedFiles.addAll( Arrays.asList( scan( pattern, dir ).getIncludedFiles() ) );
+                }
             }
-
-            for ( PatternSet pattern : classesPattern )
+            else
             {
-                if ( pattern instanceof FileSet )
+                File dir = PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() );
+                if ( !ArrayUtils.contains( directories, dir ) )
                 {
-                    File dir = PathUtil.getCanonicalFile( ( (FileSet) pattern ).getDirectory() );
-                    if ( !ArrayUtils.contains( directories, dir ) )
-                    {
-                        throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
-                            + dir.getAbsolutePath() );
-                    }
+                    throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
+                        + dir.getAbsolutePath() );
                 }
 
-                DirectoryScanner scanner = scan( directory, pattern );
-
-                String[] included = scanner.getIncludedFiles();
-                for ( String file : included )
-                {
-                    String classname = file;
-                    classname = classname.replaceAll( "\\.(.)*", "" );
-                    classname = classname.replace( '\\', '.' );
-                    classname = classname.replace( '/', '.' );
-                    classes.add( classname );
-                }
+                includedFiles.addAll( Arrays.asList( scan( pattern, dir ).getIncludedFiles() ) );
             }
         }
 
+        List<String> classes = new ArrayList<String>();
+        for ( String file : includedFiles )
+        {
+            String classname = file;
+            classname = classname.replaceAll( "\\.(.)*", "" );
+            classname = classname.replace( '\\', '.' );
+            classname = classname.replace( '/', '.' );
+            classes.add( classname );
+        }
+
         return classes;
+    }
+
+    protected Collection<File> filterFiles( List<FileSet> patterns, List<File> directories )
+    {
+        directories = PathUtil.getExistingFilesList( directories );
+        
+        Set<File> includedFiles = new LinkedHashSet<File>();
+        for ( FileSet pattern : patterns )
+        {
+            if ( pattern.getDirectory() == null )
+            {
+                for ( File dir : directories )
+                {
+                    DirectoryScanner scan = scan( pattern, dir );
+                    includedFiles.addAll( PathUtil.getCanonicalFiles( scan.getIncludedFiles(), dir ) );
+                }
+            }
+            else
+            {
+                File dir = PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() );
+                if ( !directories.contains( dir ) )
+                {
+                    throw new IllegalArgumentException( "Pattern does point to an invalid directory: "
+                        + dir.getAbsolutePath() );
+                }
+
+                includedFiles.addAll( PathUtil.getCanonicalFiles( scan( pattern, dir ).getIncludedFiles(), dir ) );
+            }
+        }
+
+        return includedFiles;
+    }
+
+    protected File getBasedir()
+    {
+        return basedir;
     }
 
     public Set<Artifact> getDependencies()
@@ -323,7 +378,13 @@ public abstract class AbstractMavenMojo
     public File getOutputDirectory()
     {
         outputDirectory.mkdirs();
-        return outputDirectory;
+        return PathUtil.getCanonicalFile( outputDirectory );
+    }
+
+    public File getTargetDirectory()
+    {
+        targetDirectory.mkdirs();
+        return PathUtil.getCanonicalFile( targetDirectory );
     }
 
     // TODO lazy load here would be awesome
@@ -376,8 +437,18 @@ public abstract class AbstractMavenMojo
         return artifact;
     }
 
-    protected DirectoryScanner scan( File directory, PatternSet pattern )
+    protected DirectoryScanner scan( FileSet pattern )
     {
+        return scan( pattern, PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() ) );
+    }
+
+    protected DirectoryScanner scan( PatternSet pattern, File directory )
+    {
+        if ( !directory.exists() )
+        {
+            return null;
+        }
+
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( directory );
         if ( !pattern.getIncludes().isEmpty() )
@@ -393,9 +464,35 @@ public abstract class AbstractMavenMojo
         return scanner;
     }
 
+    protected DirectoryScanner scan( Resource resource )
+    {
+        File dir;
+        if ( resource.getTargetPath() != null )
+        {
+            dir = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
+        }
+        else
+        {
+            dir = PathUtil.getCanonicalFile( resource.getDirectory(), getBasedir() );
+        }
+
+        return scan( resource, dir );
+    }
+
     public void setLog( Log log )
     {
         this.log = log;
+    }
+
+    private List<String> toFilePattern( List<String> classesIncludes )
+    {
+        List<String> fileIncludes = new ArrayList<String>();
+        for ( String classInclude : classesIncludes )
+        {
+            fileIncludes.add( classInclude.replace( '.', File.separatorChar ) + ".as" );
+            fileIncludes.add( classInclude.replace( '.', File.separatorChar ) + ".mxml" );
+        }
+        return fileIncludes;
     }
 
     protected void wait( List<Result> results )
@@ -405,5 +502,38 @@ public abstract class AbstractMavenMojo
         {
             checkResult( result );
         }
+    }
+
+    protected void wait( Result... results )
+        throws MojoFailureException, MojoExecutionException
+    {
+        for ( Result result : results )
+        {
+            checkResult( result );
+        }
+    }
+
+    protected List<File> getResourcesTargetDirectories()
+    {
+        List<File> directories = new ArrayList<File>();
+        for ( Resource resource : resources )
+        {
+            File directory;
+            if ( resource.getTargetPath() != null )
+            {
+                directory = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
+            }
+            else
+            {
+                directory = getOutputDirectory();
+            }
+            if ( !directory.isDirectory() )
+            {
+                continue;
+            }
+
+            directories.add( directory );
+        }
+        return directories;
     }
 }

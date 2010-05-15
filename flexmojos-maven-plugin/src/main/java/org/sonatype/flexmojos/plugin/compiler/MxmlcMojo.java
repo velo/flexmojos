@@ -166,7 +166,7 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !PathUtil.exist( compileSourceRoots ) )
+        if ( !PathUtil.exist( getSourcePath() ) )
         {
             getLog().warn( "Skipping compiler, source path doesn't exist." );
             return;
@@ -179,10 +179,10 @@ public class MxmlcMojo
 
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
 
-        if ( localesRuntime != null )
+        if ( getLocalesRuntime() != null )
         {
             List<Result> results = new ArrayList<Result>();
-            for ( String locale : localesRuntime )
+            for ( String locale : getLocalesRuntime() )
             {
                 MxmlcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );

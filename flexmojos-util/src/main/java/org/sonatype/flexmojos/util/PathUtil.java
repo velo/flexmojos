@@ -157,7 +157,7 @@ public class PathUtil
         return Arrays.asList( getCanonicalPaths( files ) );
     }
 
-    public static String[] getCanonicalPaths( File ...files )
+    public static String[] getCanonicalPaths( File... files )
     {
         if ( files == null )
         {
@@ -245,17 +245,7 @@ public class PathUtil
             return null;
         }
 
-        List<File> files = new ArrayList<File>( getFilesList( paths ) );
-        for ( Iterator<File> iterator = files.iterator(); iterator.hasNext(); )
-        {
-            File file = (File) iterator.next();
-            if ( !file.exists() )
-            {
-                iterator.remove();
-            }
-        }
-
-        return files;
+        return getExistingFilesList( getFilesList( paths ) );
     }
 
     public static File[] getExistingFiles( Collection<String> paths )
@@ -306,7 +296,7 @@ public class PathUtil
         {
             return false;
         }
-        if ( files.length == 0)
+        if ( files.length == 0 )
         {
             return false;
         }
@@ -337,6 +327,111 @@ public class PathUtil
             }
         }
         return true;
+    }
+
+    public static File getCanonicalFile( String path, File basedir )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        File file = new File( path );
+        if ( !file.isAbsolute() )
+        {
+            file = new File( basedir, path );
+        }
+
+        try
+        {
+            return file.getCanonicalFile();
+        }
+        catch ( IOException e )
+        {
+            return file.getAbsoluteFile();
+        }
+    }
+
+    public static Collection<? extends File> getCanonicalFiles( String[] paths, File basedir )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        return getCanonicalFiles( Arrays.asList( paths ), basedir );
+    }
+
+    public static Collection<? extends File> getCanonicalFiles( List<String> paths, File basedir )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        List<File> files = new ArrayList<File>();
+        for ( String path : paths )
+        {
+            files.add( getCanonicalFile( path, basedir ) );
+        }
+
+        return files;
+    }
+
+    public static List<File> getExistingFilesList( List<File> files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+
+        files = new ArrayList<File>( files );
+        for ( Iterator<File> iterator = files.iterator(); iterator.hasNext(); )
+        {
+            File file = (File) iterator.next();
+            if ( !file.exists() )
+            {
+                iterator.remove();
+            }
+        }
+
+        return files;
+    }
+
+    public static File[] getExistingFiles( File[] files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+
+        return getExistingFilesList( Arrays.asList( files ) ).toArray( new File[0] );
+    }
+
+    public static File getCanonicalFile( String path, List<File> basedirs )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        File file = new File( path );
+
+        if ( file.isAbsolute() )
+        {
+            return file;
+        }
+
+        for ( File basedir : basedirs )
+        {
+            file = getCanonicalFile( path, basedir );
+            if ( file.exists() )
+            {
+                return file;
+            }
+        }
+
+        return null;
     }
 
 }

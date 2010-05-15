@@ -79,6 +79,12 @@ public class RSLCreatorMojo
     {
         getLog().debug( "project.getPackaging = " + packaging );
 
+        if ( project.getArtifact().getFile() == null )
+        {
+            getLog().warn( "Skipping RSL creator, no SWC attached to this project." );
+            return;
+        }
+
         if ( !SWC.equals( packaging ) )
         {
             getLog().warn( "RSL creator mojo can only be used on SWC projects." );
