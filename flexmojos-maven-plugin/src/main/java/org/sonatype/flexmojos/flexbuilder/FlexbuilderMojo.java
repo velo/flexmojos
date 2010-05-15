@@ -28,7 +28,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -39,11 +38,9 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.apache.maven.plugin.ide.IdeUtils;
@@ -51,7 +48,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -124,14 +120,14 @@ public class FlexbuilderMojo
      * 
      * @parameter
      */
-    private Properties definesDeclaration;
+    protected Properties definesDeclaration;
 
     /**
      * Context root to pass to the compiler.
      * 
      * @parameter
      */
-    private String contextRoot;
+    protected String contextRoot;
 
     /**
      * @parameter default-value="true" expression="${enableFlexBuilderBuildCommand}"
@@ -141,7 +137,7 @@ public class FlexbuilderMojo
     /**
      * @parameter default-value="false" expression="${generateHtmlWrapper}"
      */
-    private boolean generateHtmlWrapper;
+    protected boolean generateHtmlWrapper; // LL changed to protected
 
     /* start duplicated */
     /**
@@ -184,34 +180,6 @@ public class FlexbuilderMojo
      * @parameter default-value="true"
      */
     private boolean showWarnings;
-
-    /**
-     * Automatically scans the paths looking for compile units (.as and .mxml files) adding the represented classes with
-     * the <code>include-classes</code> option.
-     * <p>
-     * This option is useful if you want to compile as with <code>includeClasses</code> option without the need to
-     * manually maintain the class list in the pom.
-     * </p>
-     * <p>
-     * Specify <code>includes</code> parameter to include different compile units than the default .as and .mxml ones.
-     * Specify <code>excludes</code> parameter to exclude compile units that would otherwise be included.
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;includeAsClasses&gt;
-     *   &lt;sources&gt;
-     *     &lt;directory&gt;${baseDir}/src/main/flex&lt;/directory&gt;
-     *     &lt;excludes&gt;
-     *       &lt;exclude&gt;&#042;&#042;/&#042;Incl.as&lt;/exclude&gt;
-     *     &lt;/excludes&gt;
-     *   &lt;/sources&gt;
-     * &lt;/includeAsClasses&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    protected FileSet[] includeAsClasses;
 
     /**
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
@@ -309,7 +277,7 @@ public class FlexbuilderMojo
      * 
      * @parameter
      */
-    private File services;
+    protected File services;
 
     /**
      * The greeting to display.
@@ -332,46 +300,6 @@ public class FlexbuilderMojo
      * @parameter
      */
     private Boolean pureActionscriptProject;
-    
-    /**
-     * @parameter default-value="true" expression="${autoExtractRSLs}"
-     */
-    boolean autoExtractRSLs;
-    
-    /**
-     * Customize the RLSs deployment path/URL for RSL Libraries.
-     * 
-     * @parameter default-value=""
-     */
-    private String rslUrlDirectory;
-    
-    /**
-     * Target Flex Builder version for the flexbuilder goal.
-     * 
-     * @parameter default-value="3"
-     */
-    private String flexBuilderVersion;
-
-    /**
-     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
-     * 
-     * @parameter
-     */
-    protected File[] configFiles;
-
-    /**
-     * The list of modules files to be compiled. The path must be relative with source folder.<BR>
-     * This will create a modules entry in .actionScriptProperties Usage:
-     * 
-     * <pre>
-     * &lt;moduleFiles&gt;
-     *   &lt;module&gt;com/acme/AModule.mxml&lt;/module&gt;
-     * &lt;/moduleFiles&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private String[] moduleFiles;
 
     @Override
     public void writeConfiguration( IdeDependency[] deps )
@@ -392,7 +320,7 @@ public class FlexbuilderMojo
         {
             writeFlexProperties();
         }
-        else if ( SWC.equals( packaging ) && pureActionscriptProject != null && !pureActionscriptProject )
+        else if ( SWC.equals( packaging ) && !pureActionscriptProject )
         {
             writeFlexLibProperties();
         }
@@ -401,6 +329,7 @@ public class FlexbuilderMojo
 
     @SuppressWarnings( "unchecked" )
     private void init()
+    	throws MojoExecutionException
     {
         if ( services == null )
         {
@@ -415,24 +344,51 @@ public class FlexbuilderMojo
                 }
             }
         }
+        
+        // LL
+        if( definesDeclaration != null )
+        {
+        	cleanDefinesDeclaration();
+        }
 
     }
 
-    private void writeFlexLibProperties()
-        throws MojoExecutionException
+    // LL
+    protected VelocityContext getFlexLibPropertiesContext()
     {
         VelocityContext context = new VelocityContext();
         context.put( "flexClasses", includeClasses );
-
-        runVelocity( "/templates/flexbuilder/flexLibProperties.vm", ".flexLibProperties", context );
+        return context;
+    }
+    
+    // LL
+    protected String getFlexLibPropertiesTemplate()
+    {
+    	return "/templates/flexbuilder/flexLibProperties.vm";
+    }
+    
+    private void writeFlexLibProperties()
+    	throws MojoExecutionException
+    {
+    	runVelocity( getFlexLibPropertiesTemplate(), ".flexLibProperties", getFlexLibPropertiesContext() );
+    }
+    
+    // LL
+    protected VelocityContext getFlexPropertiesContext()
+    {
+    	return new VelocityContext();
+    }
+    
+    // LL
+    protected String getFlexPropertiesTemplate()
+    {
+    	return "/templates/flexbuilder/flexProperties.vm";
     }
 
     private void writeFlexProperties()
         throws MojoExecutionException
     {
-        VelocityContext context = new VelocityContext();
-
-        runVelocity( "/templates/flexbuilder/flexProperties.vm", ".flexProperties", context );
+        runVelocity( getFlexPropertiesTemplate(), ".flexProperties", getFlexPropertiesContext() );
     }
 
     /**
@@ -569,7 +525,7 @@ public class FlexbuilderMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    private void writeAsProperties( String packaging, IdeDependency[] ideDependencies )
+    protected VelocityContext getAsPropertiesContext( String packaging, IdeDependency[] ideDependencies )
         throws MojoExecutionException
     {
         VelocityContext context = new VelocityContext();
@@ -583,43 +539,32 @@ public class FlexbuilderMojo
         context.put( "useApolloConfig", useApolloConfig( ideDependencies ) );
         context.put( "verifyDigests", verifyDigests );
         context.put( "showWarnings", showWarnings );
-        context.put( "targetPlayerVersion", targetPlayer );
-        context.put( "flexBuilderVersion", flexBuilderVersion);
 
-        StringBuilder additionalCompilerArguments = new StringBuilder();
+        String additionalCompilerArguments = "";
         if ( ( compiledLocales != null && compiledLocales.length > 0 )
             || ( !SWC.equals( packaging ) && !pureActionscriptProject ) )
         {
-            additionalCompilerArguments.append( " -locale " + getPlainLocales() );
+            additionalCompilerArguments += " -locale " + getPlainLocales();
         }
 
         if ( services != null )
         {
-            additionalCompilerArguments.append( " -services " + services.getAbsolutePath() );
+            additionalCompilerArguments += " -services " + services.getAbsolutePath();
         }
 
         if ( incremental )
         {
-            additionalCompilerArguments.append( " --incremental " );
+            additionalCompilerArguments += " --incremental ";
         }
 
         if ( contextRoot != null )
         {
-            additionalCompilerArguments.append( " -context-root " + contextRoot );
-        }
-
-        if ( configFiles != null )
-        {
-            String separator = "=";
-            for ( File cfg : configFiles )
-            {
-                additionalCompilerArguments.append( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
-                separator = "+=";
-            }
+            additionalCompilerArguments += " -context-root " + contextRoot;
         }
 
         if ( definesDeclaration != null )
         {
+        	/* LL moved to "cleanDefinesDeclaration"
             ExpressionEvaluator expressionEvaluator =
                 new PluginParameterExpressionEvaluator( sessionContext, execution, null, null, project,
                                                         project.getProperties() );
@@ -643,8 +588,18 @@ public class FlexbuilderMojo
                 }
 
                 // Definition values should ben quoted if necessary, so not adding additional quoting here.
-                additionalCompilerArguments.append( String.format( " -define+=%s,%s", defineName, value ) );
+                additionalCompilerArguments += String.format( " -define+=%s,%s", defineName, value );
             }
+            */
+        	
+        	for ( Object definekey : definesDeclaration.keySet() )
+			{
+				String defineName = definekey.toString();
+				String value = definesDeclaration.getProperty(defineName);
+				
+				// Definition values should ben quoted if necessary, so not adding additional quoting here.
+				additionalCompilerArguments += String.format(" -define+=%s,%s", defineName, value);
+			}
         }
 
         if ( SWF.equals( packaging ) || AIR.equals( packaging ) )
@@ -671,48 +626,33 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             context.put( "mainApplication", project.getArtifactId() + ".as" );
-            // if ( includeClasses == null && includeSources == null )
-            // {
-            // additionalCompilerArguments.append( " -include-sources " + plain( getSourceRoots() ) );
-            // }
-            // else if ( includeSources != null )
-            // {
-            // additionalCompilerArguments.append( " -include-sources " + getPlainSources() );
-            // }
+            if ( includeClasses == null && includeSources == null )
+            {
+                additionalCompilerArguments += " -include-sources " + plain( getSourceRoots() );
+            }
+            else if ( includeSources != null )
+            {
+                additionalCompilerArguments += " -include-sources " + getPlainSources();
+            }
             context.put( "generateHtmlWrapper", false );
         }
-        context.put( "additionalCompilerArguments", additionalCompilerArguments.toString() );
+        context.put( "additionalCompilerArguments", additionalCompilerArguments.trim() );
         context.put( "sources", getRelativeSources() );
         context.put( "PROJECT_FRAMEWORKS", "${PROJECT_FRAMEWORKS}" ); // flexbuilder required
         context.put( "libraryPathDefaultLinkType", getLibraryPathDefaultLinkType() ); // change flex framework linkage
         context.put( "pureActionscriptProject", pureActionscriptProject );
-        context.put( "moduleFiles", moduleFiles );
-        
-        if(!pureActionscriptProject) 
-        {
-	        context.put("autoExtractRSLs", autoExtractRSLs);
-	        
-	        if(rslUrlDirectory == null || rslUrlDirectory.equals("/") || rslUrlDirectory.equals("\\"))
-	        	rslUrlDirectory = "";
-	        else {
-	        	rslUrlDirectory = rslUrlDirectory.replace('\\', '/');
-	        	
-	        	if(!rslUrlDirectory.endsWith("/"))
-	        		rslUrlDirectory = rslUrlDirectory.concat("/");
-	        }
-	        
-	        context.put("rslUrlDirectory", rslUrlDirectory);
-        }
-        HashMap<String, Artifact> artifactsMap = new HashMap<String, Artifact>();
-        Set<Artifact> artifacts = project.getArtifacts();
-        
-        for(Artifact artifact:artifacts) {
-        	artifactsMap.put(artifact.getArtifactId(), artifact);
-        }
-        
-        context.put( "artifactsMap", artifactsMap);
-
-        runVelocity( "/templates/flexbuilder/actionScriptProperties.vm", ".actionScriptProperties", context );
+        return context;
+    }
+    
+    protected String getAsPropertiesTemplate()
+    {
+    	return "/templates/flexbuilder/actionScriptProperties.vm";
+    }
+    
+    private void writeAsProperties( String packaging, IdeDependency[] ideDependencies )
+        throws MojoExecutionException
+    {
+    	runVelocity( getAsPropertiesTemplate(), ".actionScriptProperties", getAsPropertiesContext( packaging, ideDependencies ) );
     }
 
     private boolean useApolloConfig( IdeDependency[] ideDependencies )
@@ -812,7 +752,7 @@ public class FlexbuilderMojo
         return null; // just return null if we could not find any flex dependency
     }
 
-    private void runVelocity( String templateName, String fileName, VelocityContext context )
+    protected void runVelocity( String templateName, String fileName, VelocityContext context )
         throws MojoExecutionException
     {
 
@@ -843,50 +783,11 @@ public class FlexbuilderMojo
     public boolean setup()
         throws MojoExecutionException
     {
-        Set<Artifact> depArtifacts =
-            MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
-                                               artifactMetadataSource, artifactFactory );
+        Set<Artifact> depArtifacts = project.getDependencyArtifacts();
         if ( pureActionscriptProject == null )
         {
             pureActionscriptProject =
-                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) == null;
-        }
-
-        // include the classes
-        if ( !checkNullOrEmpty( includeAsClasses ) )
-        {
-            try
-            {
-                List<String> classes = this.getClassesFromPaths();
-
-                int length = classes.size();
-                if ( includeClasses != null )
-                    length += includeClasses.length;
-
-                String[] tmp = new String[length];
-
-                int i = 0;
-                for ( String includeClass : classes )
-                {
-                    tmp[i] = includeClass;
-                    ++i;
-                }
-
-                // merge explicit classes and scanned classes
-                if ( includeClasses != null )
-                    for ( int j = 0; j < includeClasses.length; j++ )
-                    {
-                        tmp[i] = includeClasses[j];
-                        ++i;
-                    }
-
-                includeClasses = tmp;
-
-            }
-            catch ( MojoFailureException e )
-            {
-                e.printStackTrace();
-            }
+                MavenUtils.searchFor( depArtifacts, "com.adobe.flex.framework", "framework", null, "swc", null ) != null;
         }
 
         // Just as precaution, in case someone adds a 'source' not in the natural order for strings
@@ -946,87 +847,39 @@ public class FlexbuilderMojo
             getBuildcommands().add( AIR_BUILD_COMMAND );
         }
     }
-
-    /**
-     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml as a
-     * default).
-     * 
-     * @param includeAsClasses The paths to scan looking for classes
-     * @return An array containing the name of the found classes
-     * @throws MojoFailureException
-     */
-    @SuppressWarnings( "unchecked" )
-    private List<String> getClassesFromPaths()
-        throws MojoFailureException
+    
+    //LL
+    protected void cleanDefinesDeclaration()
+    	throws MojoExecutionException
     {
+    	Properties clean = new Properties();
+    	
+    	ExpressionEvaluator expressionEvaluator =
+    		new PluginParameterExpressionEvaluator( sessionContext, execution, null, null, project,
+                                                    project.getProperties() );
 
-        List<String> includedFiles = new ArrayList<String>();
-
-        for ( FileSet fileSet : includeAsClasses )
-        {
-            File directory = new File( fileSet.getDirectory() );
-            if ( !directory.isAbsolute() )
-            {
-                directory = new File( this.project.getBasedir().getPath(), fileSet.getDirectory() );
-            }
-
-            if ( !directory.isDirectory() )
-            {
-                throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
-            }
-
-            DirectoryScanner ds = new DirectoryScanner();
-            ds.setBasedir( directory );
-            List<String> includes = fileSet.getIncludes();
-            if ( ( includes != null ) && ( !includes.isEmpty() ) )
-            {
-                ds.setIncludes( includes.toArray( new String[includes.size()] ) );
-            }
-            else
-            {
-                ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
-            }
-
-            List<String> excludes = fileSet.getExcludes();
-            if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
-            {
-                ds.setExcludes( excludes.toArray( new String[excludes.size()] ) );
-            }
-            ds.addDefaultExcludes();
-            ds.scan();
-
-            if ( !checkNullOrEmpty( ds.getIncludedFiles() ) )
-            {
-                includedFiles.addAll( Arrays.asList( ds.getIncludedFiles() ) );
-            }
-        }
-
-        List<String> sourceClasses = new ArrayList<String>();
-        for ( String includeFile : includedFiles )
-        {
-            // remove extension
-            includeFile = includeFile.substring( 0, includeFile.lastIndexOf( '.' ) );
-            // turn paths into dots
-            includeFile = includeFile.replace( '/', '.' ).replace( '\\', '.' );
-            sourceClasses.add( includeFile );
-        }
-
-        return sourceClasses;
+    	for ( Object definekey : definesDeclaration.keySet() )
+    	{
+    		String defineName = definekey.toString();
+    		String value = definesDeclaration.getProperty( defineName );
+    		if ( value.contains( "${" ) )
+    		{
+    			// Fix bug in maven which doesn't always evaluate ${}
+    			// constructions
+    			try
+    			{
+    				value = (String) expressionEvaluator.evaluate( value );
+    			}
+    			catch ( ExpressionEvaluationException e )
+    			{
+    				throw new MojoExecutionException( "Expression error in " + defineName, e );
+    			}
+    		}
+	
+    		// Definition values should ben quoted if necessary, so not adding additional quoting here.
+    		clean.put(defineName, value);
+    	}
+	    
+    	definesDeclaration = clean;
     }
-
-    private boolean checkNullOrEmpty( Object[] array )
-    {
-        if ( array == null )
-        {
-            return true;
-        }
-
-        if ( array.length == 0 )
-        {
-            return false;
-        }
-
-        return false;
-    }
-
 }

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<actionScriptProperties 
+        mainApplicationPath="$mainApplication"
+#if($version >= 6 && $projectUUID)
+		projectUUID="$projectUUID"
+#end
+        version="$version"
+        >
+
+    <compiler
+#if( $flexSDK != "default" )
+			flexSDK="$flexSDK"
+#end 
+            additionalCompilerArguments="$!additionalCompilerArguments"
+            copyDependentFiles="true" 
+            enableModuleDebug="true" 
+            generateAccessible="$accessible" 
+            htmlExpressInstall="true" 
+            htmlGenerate="$generateHtmlWrapper" 
+            htmlHistoryManagement="true"
+#if($version < 6)
+            htmlPlayerVersion="$targetPlayer"
+#elseif($useApolloConfig && $version >= 6)
+			targetPlayerVersion="0.0.0"
+#elseif(!$useApolloConfig && $version >=6)
+			targetPlayerVersion="$targetPlayer"
+#end
+            htmlPlayerVersionCheck="true" 
+            outputFolderPath="$flexBuilderOutputFolderPath" 
+            sourceFolderPath="$mainSources" 
+            strict="$strict" 
+            useApolloConfig="$useApolloConfig" 
+            verifyDigests="$verifyDigests" 
+            warn="$showWarnings"
+#if($version >= 6)
+			autoRSLOrdering="true"
+			includeNetmodSwc="true"
+			useDebugRSLSwfs="true"
+#end
+            >
+
+        <compilerSourcePath>
+#foreach ($path in $sources)
+            <compilerSourcePathEntry 
+                    kind="1" 
+                    linkType="1" 
+                    path="$path"
+                    />
+#end 
+        </compilerSourcePath>
+
+        <libraryPath
+                defaultLinkType="$libraryPathDefaultLinkType">
+
+#foreach ($artifact in $dependencies)
+			<!-- artifact: $artifact -->
+            <libraryPathEntry
+#if($artifact.getScope() == "rsl")
+					autoExtract="true"
+					rslUrl="$artifact.getFile().getName().replaceAll('swc', 'swf')"
+#end 
+                    kind="3" 
+                    linkType="$artifact.getLinkType()" 
+                    path="$artifact.getPath()"
+#if($artifact.getSourcePath())
+                    sourcepath="$artifact.getSourcePath()"
+#end
+                    useDefaultLinkType="false"
+                    />
+
+#end
+
+		</libraryPath>
+
+
+        <sourceAttachmentPath>
+#foreach ($artifact in $dependencies)
+#if ($artifact.getSourcePath())
+            <sourceAttachmentPathEntry
+                kind="3"
+                linkType="$artifact.getLinkType()"
+                path="$artifact.getPath()"
+                sourcepath="$artifact.getSourcePath()"
+                useDefaultLinkType="false" />
+#end 
+#end        
+        </sourceAttachmentPath>
+
+    </compiler>
+
+    <applications>
+#foreach ($application in $applications)
+        <application 
+                path="$application"
+                />
+#end
+    </applications>
+
+    <modules/>
+    
+    <buildCSSFiles>
+#foreach( $cssfile in $cssfiles )
+		<buildCSSFileEntry destPath="$flexBuilderOutputFolderPath" sourcePath="$cssfile" />
+#end
+    </buildCSSFiles>
+
+</actionScriptProperties>

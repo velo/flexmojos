@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+
+	<compiler>
+	
+#if( $accessible )
+		<accessible>$accessible</accessible>
+#end
+		
+#if( $allowSourcePathOverlap )
+		<allow-source-path-overlap>$allowSourcePathOverlap</allow-source-path-overlap>
+#end
+
+#if( $contextRoot )
+		<context-root>$contextRoot</context-root>
+#end
+
+#foreach( $defKey in $defines.keySet() )
+		<define>
+			<name>$defKey</name>
+			<value>$defines.getProperty($defKey)</value>
+		</define>
+#end
+
+		<keep-as3-metadata>
+#foreach( $metadata in $metadatas )
+			<name>$metadata</name>
+#end
+		</keep-as3-metadata>
+
+		<namespaces>
+#foreach( $namespace in $namespaces )
+			<namespace>
+				<uri>$namespace.getUri()</uri>
+				<manifest>$namespace.getManifest()</manifest>
+			</namespace>
+#end
+		</namespaces>
+		
+		<theme>
+#foreach( $theme in $themes )
+			<filename>$theme</filename>
+#end
+		</theme>
+		
+#if( $services )
+		<services>$services</services>
+#end				
+	</compiler>
+	
+#if( $defaultBackgroundColor )
+	<default-background-color>$defaultBackgroundColor</default-background-color>
+#end
+	
+#if( $defaultFrameRate )
+	<default-frame-rate>$defaultFrameRate</default-frame-rate>
+#end 
+	
+#if( $scriptMaxRecursionDepth || $scriptMaxExecutionTime  )
+	<default-script-limits>
+#if( $scriptMaxRecursionDepth )
+		<max-recursion-depth>$scriptMaxRecursionDepth</max-recursion-depth>
+#end
+#if( $scriptMaxExecutionTime )
+		<max-execution-time>$scriptMaxExecutionTime</max-execution-time>
+#end
+	</default-script-limits>
+#end
+	
+#if( $defaultSizeWidth || $defaultSizeHeight )
+	<default-size>
+#if( $defaultSizeWidth )
+		<width>$defaultSizeWidth</width>
+#end
+#if( $defaultSizeHeight )
+		<height>$defaultSizeHeight</height>
+#end
+	</default-size>
+#end
+
+## TODO include all metadata that Flex Mojos supports.
+	<metadata>
+#if( $metadata )
+#if( $metadata.contributor )
+			<contributor>$metadata.contributor</contributor>
+#end
+#if( $metadata.creator )
+			<contributor>$metadata.creator</contributor>
+#end
+#if( $metadata.date )
+			<contributor>$metadata.date</contributor>
+#end
+#if( $metadata.language )
+			<contributor>$metadata.language</contributor>
+#end
+#end
+	</metadata>
+	
+</flex-config>
