@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexProperties
+	flexServerType="0"
+	toolCompile="true"
+	useServerFlexSDK="false"
+#if($version >= 6)
+	enableServiceManager="false"
+	flexServerFeatures="0"
+#end
+#if($version < 6)
+	version="1"
+#else
+	version="2"
+#end
+	/>

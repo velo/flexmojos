@@ -13,19 +13,13 @@
             htmlGenerate="$generateHtmlWrapper" 
             htmlHistoryManagement="true" 
             htmlPlayerVersion="$targetPlayer" 
-            htmlPlayerVersionCheck="true"
-#if($flexBuilderVersion.equals("4") && !$flexBuilderOutputFolderPath.equals("bin-debug")) 
-			outputFolderLocation="$flexBuilderOutputFolderPath"
-			outputFolderPath="bin-debug"            
-#else
-			outputFolderPath="$flexBuilderOutputFolderPath"
-#end 
+            htmlPlayerVersionCheck="true" 
+            outputFolderPath="$flexBuilderOutputFolderPath" 
             sourceFolderPath="$mainSources" 
             strict="$strict" 
             useApolloConfig="$useApolloConfig" 
             verifyDigests="$verifyDigests" 
             warn="$showWarnings"
-            targetPlayerVersion="$targetPlayerVersion"
             >
 
         <compilerSourcePath>
@@ -41,40 +35,18 @@
         <libraryPath
                 defaultLinkType="$libraryPathDefaultLinkType">
 
-#foreach ($dependency in $dependencies)
-
-#set( $artifact = $artifactsMap.get($dependency.getArtifactId()) )
-
-#if ($dependency.getGroupId().equals( "com.adobe.flex.framework" ))
-			<!-- artifact: $dependency -->
+#foreach ($artifact in $dependencies)
+			<!-- artifact: $artifact -->
             <libraryPathEntry 
                     kind="3" 
-                    path="$dependency.getFile().getPath().replaceAll('\\', '/')"
-#if ($dependency.getSourceAttachment())
-                    sourcepath="$dependency.getSourceAttachment().getPath().replaceAll('\\', '/')"
-#end
-                    useDefaultLinkType="true"
-                    />
-#else
-			<!-- artifact: $dependency -->
-            <libraryPathEntry 
-                    kind="3"
-#if ($artifact.getScope().equals("rsl") && $pureActionscriptProject == false)
-					linkType="3"
-					autoExtract="$autoExtractRSLs"
-					rslUrl="$rslUrlDirectory$dependency.getArtifactId().concat(".swf")"
-#elseif ($artifact.getScope().equals("external"))
-					linkType="2"
-#else
-					linkType="1"
-#end				
-					path="$dependency.getFile().getPath().replaceAll('\\', '/')"	
-#if ($dependency.getSourceAttachment())
-                    sourcepath="$dependency.getSourceAttachment().getPath().replaceAll('\\', '/')"
+                    linkType="1" 
+                    path="$artifact.getFile().getPath().replaceAll('\\', '/')"
+#if ($artifact.getSourceAttachment())
+                    sourcepath="$artifact.getSourceAttachment().getPath().replaceAll('\\', '/')"
 #end
                     useDefaultLinkType="false"
                     />
-#end
+
 #end
 
 #if ($pureActionscriptProject == false)
@@ -132,14 +104,7 @@
 #end
     </applications>
 
-    <modules>
-#foreach($module in $moduleFiles)
-		<module application="$mainSources/$mainApplication" 
-			destPath="$module.replace('mxml', 'swf')" 
-			optimize="true" 
-			sourcePath="$mainSources/$module"/>
-#end
-    </modules>
+    <modules/>
 
     <buildCSSFiles>
 #foreach( $cssfile in $cssfiles )
