@@ -7,14 +7,9 @@
  */
 package org.sonatype.flexmojos.test;
 
-import static org.testng.AssertJUnit.assertEquals;
-
 import java.io.File;
-import java.io.FileReader;
 
 import org.apache.maven.it.VerificationException;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
@@ -36,30 +31,11 @@ public class IT0013IssuesTest
         testIssue( "issue-0011" );
     }
 
-    @Test
-    public void issue13()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0013" );
-        test( testDir, "install" );
-
-        File reportDir = new File( testDir, "target/surefire-reports" );
-        assertEquals( 2, reportDir.listFiles().length );
-    }
-
     @Test( expectedExceptions = { VerificationException.class } )
     public void issue14()
         throws Exception
     {
         testIssue( "issue-0014" );
-    }
-
-    @Test( expectedExceptions = { VerificationException.class } )
-    public void issue27()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0027" );
-        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 
     @Test
@@ -131,14 +107,6 @@ public class IT0013IssuesTest
         throws Exception
     {
         testIssue( "issue-0070" );
-    }
-
-    @Test
-    public void issue103()
-        throws Exception
-    {
-        testIssue( "issue-0103/project" );
-        // TODO check SWC content
     }
 
 }

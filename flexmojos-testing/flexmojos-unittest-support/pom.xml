@@ -61,11 +61,11 @@
             <configuration>
               <classifier>air</classifier>
               <includeClasses>
-                <classSet>
+                <scan>
                   <excludes>
-                    <exclude>org/sonatype/flexmojos/unitestingsupport/TestApplication.as</exclude>
+                    <exclude>org.sonatype.flexmojos.unitestingsupport.TestApplication</exclude>
                   </excludes>
-                </classSet>
+                </scan>
               </includeClasses>
             </configuration>
           </execution>
@@ -77,23 +77,23 @@
             <configuration>
               <classifier>flex</classifier>
               <includeClasses>
-                <classSet>
+                <scan>
                   <excludes>
-                    <exclude>org/sonatype/flexmojos/unitestingsupport/TestAirApplication.as</exclude>
+                    <exclude>org.sonatype.flexmojos.unitestingsupport.TestAirApplication</exclude>
                   </excludes>
-                </classSet>
+                </scan>
               </includeClasses>
             </configuration>
           </execution>
         </executions>
         <configuration>
           <includeClasses>
-            <classSet>
+            <scan>
               <excludes>
-                <exclude>org/sonatype/flexmojos/unitestingsupport/TestApplication.as</exclude>
-                <exclude>org/sonatype/flexmojos/unitestingsupport/TestAirApplication.as</exclude>
+                <exclude>org.sonatype.flexmojos.unitestingsupport.TestApplication</exclude>
+                <exclude>org.sonatype.flexmojos.unitestingsupport.TestAirApplication</exclude>
               </excludes>
-            </classSet>
+            </scan>
           </includeClasses>
         </configuration>
       </plugin>

@@ -203,20 +203,22 @@ public class FlexCompilerArgumentParser
                     values = ( (Collection<?>) value ).toArray();
                 }
                 String name = parseName( method.getName() );
-                if("include-classes".equals( name )) {
-                    StringBuilder classes = new StringBuilder();
-                    for ( Object vl : values )
-                    {
-                        if(classes.length() != 0){
-                            classes.append( "," );
-                        }
-                     classes.append( vl );   
-                    }
-                    args.add( new Entry<String, List<String>>( name + "=" + classes, null ) );
-                } else {
                 if ( values.length == 0 )
                 {
                     args.add( new Entry<String, List<String>>( name + "=", null ) );
+                }
+                else if ( "include-classes".equals( name ) )
+                {
+                    StringBuilder classes = new StringBuilder();
+                    for ( Object vl : values )
+                    {
+                        if ( classes.length() != 0 )
+                        {
+                            classes.append( "," );
+                        }
+                        classes.append( vl );
+                    }
+                    args.add( new Entry<String, List<String>>( name + "=" + classes, null ) );
                 }
                 else
                 {
@@ -226,7 +228,6 @@ public class FlexCompilerArgumentParser
                         args.add( new Entry<String, List<String>>( name + appender + object.toString(), null ) );
                         appender = "+=";
                     }
-                }
                 }
             }
             else

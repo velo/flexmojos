@@ -41,7 +41,7 @@ public class DefaultFlexCompilerTest
     public void initRoots()
         throws Exception
     {
-        root = new File( "" ).getCanonicalFile();
+        root = new File( "target/test-classes" ).getCanonicalFile();
         as3 = new File( root, "dummy_as3" );
         fdk = new File( root, "fdk" );
 

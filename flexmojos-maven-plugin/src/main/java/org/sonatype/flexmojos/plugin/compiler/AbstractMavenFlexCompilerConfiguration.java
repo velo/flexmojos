@@ -276,7 +276,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @required
      * @readonly
      */
-    protected List<String> compileSourceRoots;
+    private List<String> compileSourceRoots;
 
     /**
      * DOCME undocumented by adobe
@@ -863,7 +863,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * 
      * @parameter
      */
-    protected String[] localesCompiled;
+    private String[] localesCompiled;
 
     /**
      * Specifies the locales for external internationalization bundles
@@ -880,7 +880,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * 
      * @parameter
      */
-    protected String[] localesRuntime;
+    private String[] localesRuntime;
 
     /**
      * Define the base path to locate resouce bundle files Accept some special tokens:
@@ -1214,13 +1214,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private Boolean swcChecksum;
 
     /**
-     * @parameter expression="${project.build.directory}"
-     * @readonly
-     * @required
-     */
-    protected File targetDirectory;
-
-    /**
      * Specifies the version of the player the application is targeting. Features requiring a later version will not be
      * compiled into the application. The minimum value supported is "9.0.0".
      * <p>
@@ -1332,6 +1325,46 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      * @parameter expression="${flex.warnings}"
      */
     private Boolean warnings;
+
+    protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
+                                                               String[] policyFileUrls )
+    {
+        getLog().debug( "runtime libraries: id: " + artifact.getArtifactId() );
+
+        String scope = artifact.getScope();
+        final String extension;
+        if ( CACHING.equals( scope ) )
+        {
+            extension = SWZ;
+        }
+        else
+        {
+            extension = SWF;
+        }
+
+        Map<String, String> paths = new LinkedHashMap<String, String>();
+        for ( int i = 0; i < rslUrls.length; i++ )
+        {
+            String rsl = rslUrls[i];
+            String policy;
+            if ( i < policyFileUrls.length )
+            {
+                policy = policyFileUrls[i];
+            }
+            else
+            {
+                policy = null;
+            }
+
+            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, contextRoot );
+            policy = MavenUtils.interpolateRslUrl( policy, artifact, extension, contextRoot );
+
+            getLog().debug( "RSL url: " + rsl + " - " + policy );
+            paths.put( rsl, policy );
+        }
+
+        return paths;
+    }
 
     @SuppressWarnings( "unchecked" )
     @Override
@@ -2080,7 +2113,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         // if there are runtime locales, no need for compiled locales
-        if ( localesRuntime != null )
+        if ( getLocalesRuntime() != null )
         {
             return new String[] {};
         }
@@ -2091,6 +2124,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         }
 
         return new String[] { toolsLocale };
+    }
+
+    public String[] getLocalesRuntime()
+    {
+        return localesRuntime;
     }
 
     public List<String> getLocalFontPaths()
@@ -2384,7 +2422,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
             return resourceBundleList;
         }
 
-        if ( localesRuntime == null )
+        if ( getLocalesRuntime() == null )
         {
             return null;
         }
@@ -2550,12 +2588,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return swcChecksum;
     }
 
-    public File getTargetDirectory()
-    {
-        targetDirectory.mkdirs();
-        return targetDirectory;
-    }
-
     public String getTargetPlayer()
     {
         return targetPlayer;
@@ -2597,12 +2629,12 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return toolsLocale;
     }
 
+
+
     public String getTranslationFormat()
     {
         return translationFormat;
     }
-
-
 
     public Boolean getUseNetwork()
     {
@@ -2813,44 +2845,4 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Boolean getWarnXmlClassHasChanged()
     {
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
-    }
-
-    protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
-                                                               String[] policyFileUrls )
-    {
-        getLog().debug( "runtime libraries: id: " + artifact.getArtifactId() );
-
-        String scope = artifact.getScope();
-        final String extension;
-        if ( CACHING.equals( scope ) )
-        {
-            extension = SWZ;
-        }
-        else
-        {
-            extension = SWF;
-        }
-
-        Map<String, String> paths = new LinkedHashMap<String, String>();
-        for ( int i = 0; i < rslUrls.length; i++ )
-        {
-            String rsl = rslUrls[i];
-            String policy;
-            if ( i < policyFileUrls.length )
-            {
-                policy = policyFileUrls[i];
-            }
-            else
-            {
-                policy = null;
-            }
-
-            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, contextRoot );
-            policy = MavenUtils.interpolateRslUrl( policy, artifact, extension, contextRoot );
-
-            getLog().debug( "RSL url: " + rsl + " - " + policy );
-            paths.put( rsl, policy );
-        }
-
-        return paths;
     }}
