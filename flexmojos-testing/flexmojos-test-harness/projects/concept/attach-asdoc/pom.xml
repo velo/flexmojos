@@ -41,8 +41,11 @@
         <executions>
           <execution>
             <goals>
-              <goal>attach-asdoc</goal>
+              <goal>asdoc</goal>
             </goals>
+            <configuration>
+              <attach>true</attach>
+            </configuration>
           </execution>
         </executions>
       </plugin>
