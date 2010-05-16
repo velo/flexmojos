@@ -210,7 +210,7 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !( PathUtil.exist( getSourcePath() ) || getIncludeFile() == null ) )
+        if ( !( PathUtil.exist( getSourcePath() ) || getIncludeFile() != null ) )
         {
             getLog().warn( "Skipping compiler, nothing available to be included on swc." );
             return;
