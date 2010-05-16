@@ -22,7 +22,10 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IASDocConfiguration;
@@ -52,12 +55,38 @@ public class AsdocMojo
     implements IASDocConfiguration, IPackagesConfiguration, Mojo
 {
 
+    private static String getFileExtention( File file )
+    {
+        String path = file.getAbsolutePath();
+
+        String archiveExt = FileUtils.getExtension( path ).toLowerCase();
+
+        if ( "gz".equals( archiveExt ) || "bz2".equals( archiveExt ) )
+        {
+            String[] tokens = StringUtils.split( path, "." );
+
+            if ( tokens.length > 2 && "tar".equals( tokens[tokens.length - 2].toLowerCase() ) )
+            {
+                archiveExt = "tar." + archiveExt;
+            }
+        }
+
+        return archiveExt;
+    }
+
     /**
      * If true, will treat multi-modules projects as only one project otherwise will generate Asdoc per project
      * 
      * @parameter default-value="false" expression="${flex.asdoc.aggregate}"
      */
-    protected boolean aggregate;
+    private boolean aggregate;
+
+    /**
+     * If true, bundles the asdoc documentation for main code into a zip using the standard Asdoc Tool.
+     * 
+     * @parameter default-value="true" expression="${flex.asdoc.attach}"
+     */
+    private boolean attach;
 
     /**
      * Specifies whether to include date with footer
@@ -226,6 +255,20 @@ public class AsdocMojo
     private String mainTitle;
 
     /**
+     * The filename of bundled asdoc
+     * 
+     * @parameter default-value="${project.build.directory}/${project.build.finalName}-asdoc.zip"
+     */
+    private File output;
+
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     */
+    private List<MavenProject> reactorProjects;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -restore-builtin-classes
@@ -258,31 +301,22 @@ public class AsdocMojo
      */
     private String windowTitle;
 
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     */
-    protected List<MavenProject> reactorProjects;
+    private void attachAsdoc()
+        throws Exception
+    {
+        Archiver archiver = archiverManager.getArchiver( output );
+        archiver.addDirectory( new File( getOutput() ) );
+        archiver.setDestFile( output );
+        archiver.createArchive();
+
+        projectHelper.attachArtifact( project, getFileExtention( output ), "asdoc", output );
+    }
 
     @Override
-    public File[] getSourcePath()
+    public Result doCompile( IASDocConfiguration cfg, boolean synchronize )
+        throws Exception
     {
-        if ( aggregate )
-        {
-            List<File> files = new ArrayList<File>();
-
-            for ( MavenProject p : reactorProjects )
-            {
-                files.addAll( PathUtil.getExistingFilesList( p.getCompileSourceRoots() ) );
-            }
-
-            return files.toArray( new File[0] );
-        }
-        else
-        {
-            return super.getSourcePath();
-        }
+        return compiler.asdoc( cfg, synchronize );
     }
 
     public void execute()
@@ -301,13 +335,17 @@ public class AsdocMojo
         }
 
         wait( executeCompiler( this, true ) );
-    }
-
-    @Override
-    public Result doCompile( IASDocConfiguration cfg, boolean synchronize )
-        throws Exception
-    {
-        return compiler.asdoc( cfg, synchronize );
+        if ( attach )
+        {
+            try
+            {
+                attachAsdoc();
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Failed to create asdoc bundle", e );
+            }
+        }
     }
 
     public Boolean getDateInFooter()
@@ -377,6 +415,13 @@ public class AsdocMojo
         return null;
     }
 
+    @SuppressWarnings( "unchecked" )
+    @Override
+    public File[] getExternalLibraryPath()
+    {
+        return MavenUtils.getFiles( getGlobalArtifact() );
+    }
+
     public String getFooter()
     {
         return footer;
@@ -385,6 +430,12 @@ public class AsdocMojo
     public Boolean getIncludeAllForAsdoc()
     {
         return includeAllForAsdoc;
+    }
+
+    @Override
+    public File[] getIncludeLibraries()
+    {
+        return null;
     }
 
     public Boolean getIncludeLookupOnly()
@@ -405,125 +456,6 @@ public class AsdocMojo
     public Boolean getLenient()
     {
         return lenient;
-    }
-
-    public String getMainTitle()
-    {
-        return mainTitle;
-    }
-
-    public String[] getPackage()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getPackageDescriptionFile()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public IPackagesConfiguration getPackagesConfiguration()
-    {
-        return this;
-    }
-
-    public Boolean getRestoreBuiltinClasses()
-    {
-        return restoreBuiltinClasses;
-    }
-
-    public Boolean getSkipXsl()
-    {
-        return skipXsl;
-    }
-
-    public String getTemplatesPath()
-    {
-        if ( templatePath != null )
-        {
-            return PathUtil.getCanonicalPath( templatePath );
-        }
-
-        File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
-        templateOutput.mkdirs();
-
-        Artifact template = resolve( "com.adobe.flex.compiler", "asdoc", getCompilerVersion(), "template", "zip" );
-        try
-        {
-            UnArchiver unarchiver = archiverManager.getUnArchiver( "zip" );
-            unarchiver.setDestDirectory( templateOutput );
-            unarchiver.setSourceFile( template.getFile() );
-            unarchiver.extract();
-        }
-        catch ( Exception e )
-        {
-            throw new MavenRuntimeException( "Unable to unpack asdoc template", e );
-        }
-
-        makeAsdocExecutable( templateOutput );
-
-        return PathUtil.getCanonicalPath( templateOutput );
-    }
-
-    @FlexCompatibility( maxVersion = "4.0.0.3127" )
-    private void makeAsdocExecutable( File templateOutput )
-    {
-        // must use chmod to make asdoc executable
-        if ( !OSUtils.isWindows() )
-        {
-            Runtime runtime = Runtime.getRuntime();
-            String pathname =
-                String.format( "%s/%s", templateOutput.getAbsolutePath(), "asDocHelper"
-                    + ( MavenUtils.isLinux() ? ".linux" : "" ) );
-            String[] statements = new String[] { "chmod", "u+x", pathname };
-            try
-            {
-                Process p = runtime.exec( statements );
-                int result = p.waitFor();
-                if ( 0 != result )
-                {
-                    throw new MavenRuntimeException( String.format( "Unable to execute %s. Return value = %d",
-                                                                    Arrays.asList( statements ), result ) );
-                }
-            }
-            catch ( Exception e )
-            {
-                throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
-            }
-        }
-    }
-
-    public String getWindowTitle()
-    {
-        return windowTitle;
-    }
-
-    public String getOutput()
-    {
-        File output = new File( getTargetDirectory(), "asdoc" );
-        output.mkdirs();
-        return PathUtil.getCanonicalPath( output );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @Override
-    public File[] getExternalLibraryPath()
-    {
-        return MavenUtils.getFiles( getGlobalArtifact() );
-    }
-
-    @Override
-    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
-    {
-        return null;
-    }
-
-    @Override
-    public File[] getIncludeLibraries()
-    {
-        return null;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -559,5 +491,137 @@ public class AsdocMojo
         {
             return MavenUtils.getFiles( getDependencies( filter ), getCompiledResouceBundles() );
         }
+    }
+
+    public String getMainTitle()
+    {
+        return mainTitle;
+    }
+
+    public final String getOutput()
+    {
+        File output = new File( getTargetDirectory(), "asdoc" );
+        output.mkdirs();
+        return PathUtil.getCanonicalPath( output );
+    }
+
+    public String[] getPackage()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getPackageDescriptionFile()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public IPackagesConfiguration getPackagesConfiguration()
+    {
+        return this;
+    }
+
+    public Boolean getRestoreBuiltinClasses()
+    {
+        return restoreBuiltinClasses;
+    }
+
+    @Override
+    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    public Boolean getSkipXsl()
+    {
+        return skipXsl;
+    }
+
+    @Override
+    public File[] getSourcePath()
+    {
+        if ( aggregate )
+        {
+            List<File> files = new ArrayList<File>();
+
+            for ( MavenProject p : reactorProjects )
+            {
+                files.addAll( PathUtil.getExistingFilesList( p.getCompileSourceRoots() ) );
+            }
+
+            return files.toArray( new File[0] );
+        }
+        else
+        {
+            return super.getSourcePath();
+        }
+    }
+
+    public String getTemplatesPath()
+    {
+        if ( templatePath != null )
+        {
+            return PathUtil.getCanonicalPath( templatePath );
+        }
+
+        File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
+        templateOutput.mkdirs();
+
+        Artifact template = resolve( "com.adobe.flex.compiler", "asdoc", getCompilerVersion(), "template", "zip" );
+        try
+        {
+            UnArchiver unarchiver = archiverManager.getUnArchiver( "zip" );
+            unarchiver.setDestDirectory( templateOutput );
+            unarchiver.setSourceFile( template.getFile() );
+            unarchiver.extract();
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Unable to unpack asdoc template", e );
+        }
+
+        makeAsdocExecutable( templateOutput );
+
+        return PathUtil.getCanonicalPath( templateOutput );
+    }
+
+    public String getWindowTitle()
+    {
+        return windowTitle;
+    }
+
+    @FlexCompatibility( maxVersion = "4.0.0.3127" )
+    private void makeAsdocExecutable( File templateOutput )
+    {
+        // must use chmod to make asdoc executable
+        if ( !OSUtils.isWindows() )
+        {
+            Runtime runtime = Runtime.getRuntime();
+            String pathname =
+                String.format( "%s/%s", templateOutput.getAbsolutePath(), "asDocHelper"
+                    + ( MavenUtils.isLinux() ? ".linux" : "" ) );
+            String[] statements = new String[] { "chmod", "u+x", pathname };
+            try
+            {
+                Process p = runtime.exec( statements );
+                int result = p.waitFor();
+                if ( 0 != result )
+                {
+                    throw new MavenRuntimeException( String.format( "Unable to execute %s. Return value = %d",
+                                                                    Arrays.asList( statements ), result ) );
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
+            }
+        }
+    }
+
+    @Override
+    public final String getDumpConfig()
+    {
+        return null;
     }
 }
