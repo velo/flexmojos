@@ -48,6 +48,7 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -274,22 +275,27 @@ public class TestCompilerMojo
         StringBuilder imports = new StringBuilder();
 
         File[] sp = getSourcePath();
-        List<String> projectClasses = filterClasses( as3ClassesFileSet( sp ), sp );
-        for ( String testClass : projectClasses )
+        List<FileSet> sets = as3ClassesFileSet( sp );
+        for ( FileSet fileset : sets )
         {
-            imports.append( "import " );
-            imports.append( testClass );
-            imports.append( "; " );
-            if ( testClass.indexOf( '.' ) != -1 )
+            DirectoryScanner scan = scan( fileset );
+            for ( String testFile : scan.getIncludedFiles() )
             {
-                imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
-            }
-            else
-            {
+                String testClass = toClass( testFile );
+                imports.append( "import " );
                 imports.append( testClass );
+                imports.append( "; " );
+                if ( testClass.indexOf( '.' ) != -1 )
+                {
+                    imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
+                }
+                else
+                {
+                    imports.append( testClass );
+                }
+                imports.append( ";" );
+                imports.append( '\n' );
             }
-            imports.append( ";" );
-            imports.append( '\n' );
         }
 
         StringBuilder classes = new StringBuilder();

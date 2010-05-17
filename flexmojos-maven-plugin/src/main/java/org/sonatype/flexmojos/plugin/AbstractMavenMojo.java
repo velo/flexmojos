@@ -267,16 +267,22 @@ public abstract class AbstractMavenMojo
         }
 
         List<String> classes = new ArrayList<String>();
-        for ( String file : includedFiles )
+        for ( String filename : includedFiles )
         {
-            String classname = file;
-            classname = classname.replaceAll( "\\.(.)*", "" );
-            classname = classname.replace( '\\', '.' );
-            classname = classname.replace( '/', '.' );
+            String classname = toClass( filename );
             classes.add( classname );
         }
 
         return classes;
+    }
+
+    protected String toClass( String filename )
+    {
+        String classname = filename;
+        classname = classname.replaceAll( "\\.(.)*", "" );
+        classname = classname.replace( '\\', '.' );
+        classname = classname.replace( '/', '.' );
+        return classname;
     }
 
     protected Collection<File> filterFiles( List<FileSet> patterns, List<File> directories )
