@@ -52,12 +52,14 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -66,6 +68,7 @@ import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.jvnet.animal_sniffer.IgnoreJRERequirement;
 import org.sonatype.flexmojos.AbstractIrvinMojo;
 import org.sonatype.flexmojos.common.FlexClassifier;
@@ -134,6 +137,14 @@ public abstract class AbstractCompilerMojo<E extends Builder>
      * @parameter default-value="true"
      */
     private boolean as3;
+
+    /**
+     * If true, flexmojos will try to sort the runtime shared libraries using their dependencies lists to figure out
+     * which RSLs must be loaded first
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean autoSortRsls;
 
     /**
      * Builder to be used by compiler
@@ -423,6 +434,34 @@ public abstract class AbstractCompilerMojo<E extends Builder>
      * @parameter default-value="false" expression="${ignore.version.issues}"
      */
     private boolean ignoreVersionIssues;
+
+    /**
+     * Automatically scans the paths looking for compile units (.as and .mxml files) adding the represented classes with
+     * the <code>include-classes</code> option.
+     * <p>
+     * This option is useful if you want to compile as with <code>includeClasses</code> option without the need to
+     * manually maintain the class list in the pom.
+     * </p>
+     * <p>
+     * Specify <code>includes</code> parameter to include different compile units than the default .as and .mxml ones.
+     * Specify <code>excludes</code> parameter to exclude compile units that would otherwise be included.
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;includeAsClasses&gt;
+     *   &lt;sources&gt;
+     *     &lt;directory&gt;${baseDir}/src/main/flex&lt;/directory&gt;
+     *     &lt;excludes&gt;
+     *       &lt;exclude&gt;&#042;&#042;/&#042;Incl.as&lt;/exclude&gt;
+     *     &lt;/excludes&gt;
+     *   &lt;/sources&gt;
+     * &lt;/includeAsClasses&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected FileSet[] includeAsClasses;
 
     /**
      * if true, manifest entries with lookupOnly=true are included in SWC catalog. default is false. This exists only so
@@ -946,14 +985,6 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     private Warning warnings;
 
     /**
-     * If true, flexmojos will try to sort the runtime shared libraries using their dependencies lists to figure out
-     * which RSLs must be loaded first
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean autoSortRsls;
-
-    /**
      * Construct instance
      */
     public AbstractCompilerMojo()
@@ -1194,6 +1225,21 @@ public abstract class AbstractCompilerMojo<E extends Builder>
 
     }
 
+    protected boolean checkNullOrEmpty( Object[] array )
+    {
+        if ( array == null )
+        {
+            return true;
+        }
+
+        if ( array.length == 0 )
+        {
+            return false;
+        }
+
+        return false;
+    }
+
     /**
      * Setup builder configuration
      * 
@@ -1337,6 +1383,24 @@ public abstract class AbstractCompilerMojo<E extends Builder>
         {
             configuration.setIncludes( includes );
         }
+        if ( includeAsClasses != null && includeAsClasses.length > 0 )
+        {
+            try
+            {
+                String[] includeAsClasses = getClassesFromPaths();
+                if ( includes != null && includes.length > 0 )
+                {
+                    includeAsClasses = (String[]) ArrayUtils.addAll( includeAsClasses, includes );
+                }
+
+                configuration.setIncludes( includeAsClasses );
+            }
+            catch ( MojoFailureException mojoFailureException )
+            {
+                throw new MojoExecutionException( "Failed finding classes to include.", mojoFailureException );
+            }
+        }
+
         if ( externs != null && externs.length > 0 )
         {
             configuration.setExterns( externs );
@@ -1655,6 +1719,73 @@ public abstract class AbstractCompilerMojo<E extends Builder>
                 configBuilder.addSourcePath( resourceDirectory );
             }
         }
+    }
+
+    /**
+     * Scan the passed paths looking for Actionscript classes (namely compilation units ending in .as or .mxml as a
+     * default).
+     * 
+     * @param includeAsClasses The paths to scan looking for classes
+     * @return An array containing the name of the found classes
+     * @throws MojoFailureException
+     */
+    @SuppressWarnings( "unchecked" )
+    protected String[] getClassesFromPaths()
+        throws MojoFailureException
+    {
+
+        List<String> includedFiles = new ArrayList<String>();
+
+        for ( FileSet fileSet : includeAsClasses )
+        {
+            File directory = new File( fileSet.getDirectory() );
+            if ( !directory.isAbsolute() )
+            {
+                directory = new File( this.project.getBasedir().getPath(), fileSet.getDirectory() );
+            }
+
+            if ( !directory.isDirectory() )
+            {
+                throw new MojoFailureException( "Source folder not found: " + PathUtil.getCanonicalPath( directory ) );
+            }
+
+            DirectoryScanner ds = new DirectoryScanner();
+            ds.setBasedir( directory );
+            List<String> includes = fileSet.getIncludes();
+            if ( ( includes != null ) && ( !includes.isEmpty() ) )
+            {
+                ds.setIncludes( includes.toArray( new String[includes.size()] ) );
+            }
+            else
+            {
+                ds.setIncludes( new String[] { "**/*.as", "**/*.mxml" } );
+            }
+
+            List<String> excludes = fileSet.getExcludes();
+            if ( ( excludes != null ) && ( !excludes.isEmpty() ) )
+            {
+                ds.setExcludes( excludes.toArray( new String[excludes.size()] ) );
+            }
+            ds.addDefaultExcludes();
+            ds.scan();
+
+            if ( !checkNullOrEmpty( ds.getIncludedFiles() ) )
+            {
+                includedFiles.addAll( Arrays.asList( ds.getIncludedFiles() ) );
+            }
+        }
+
+        List<String> sourceClasses = new ArrayList<String>();
+        for ( String includeFile : includedFiles )
+        {
+            // remove extension
+            includeFile = includeFile.substring( 0, includeFile.lastIndexOf( '.' ) );
+            // turn paths into dots
+            includeFile = includeFile.replace( '/', '.' ).replace( '\\', '.' );
+            sourceClasses.add( includeFile );
+        }
+
+        return sourceClasses.toArray( new String[0] );
     }
 
     public String getCompilerVersion()
