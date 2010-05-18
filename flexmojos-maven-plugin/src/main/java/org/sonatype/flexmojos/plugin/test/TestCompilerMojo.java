@@ -274,28 +274,22 @@ public class TestCompilerMojo
 
         StringBuilder imports = new StringBuilder();
 
-        File[] sp = getSourcePath();
-        List<FileSet> sets = as3ClassesFileSet( sp );
-        for ( FileSet fileset : sets )
+        for ( String testFile : testClasses )
         {
-            DirectoryScanner scan = scan( fileset );
-            for ( String testFile : scan.getIncludedFiles() )
+            String testClass = toClass( testFile );
+            imports.append( "import " );
+            imports.append( testClass );
+            imports.append( "; " );
+            if ( testClass.indexOf( '.' ) != -1 )
             {
-                String testClass = toClass( testFile );
-                imports.append( "import " );
-                imports.append( testClass );
-                imports.append( "; " );
-                if ( testClass.indexOf( '.' ) != -1 )
-                {
-                    imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
-                }
-                else
-                {
-                    imports.append( testClass );
-                }
-                imports.append( ";" );
-                imports.append( '\n' );
+                imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
             }
+            else
+            {
+                imports.append( testClass );
+            }
+            imports.append( ";" );
+            imports.append( '\n' );
         }
 
         StringBuilder classes = new StringBuilder();
@@ -414,6 +408,26 @@ public class TestCompilerMojo
                                                      not( GLOBAL_MATCHER ) ) );
     }
 
+    @Override
+    public List<String> getIncludes()
+    {
+        List<String> includes = new ArrayList<String>();
+        
+        File[] sp = getSourcePath();
+        List<FileSet> sets = as3ClassesFileSet( sp );
+        for ( FileSet fileset : sets )
+        {
+            DirectoryScanner scan = scan( fileset );
+            for ( String testFile : scan.getIncludedFiles() )
+            {
+                String include = toClass( testFile );
+                includes.add(include);
+            }
+        }    
+        
+        return includes;
+    }
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
@@ -432,15 +446,15 @@ public class TestCompilerMojo
     }
 
     @Override
-    public String[] getLocalesRuntime()
-    {
-        return null;
-    }
-
-    @Override
     public String[] getLocale()
     {
         return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
+    }
+
+    @Override
+    public String[] getLocalesRuntime()
+    {
+        return null;
     }
 
     public SinglePathResolver getMavenPathResolver()
