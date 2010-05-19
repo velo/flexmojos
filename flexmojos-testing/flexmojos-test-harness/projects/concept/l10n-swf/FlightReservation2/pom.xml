@@ -29,10 +29,10 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <resourceBundlePath>${basedir}/locale/{locale}</resourceBundlePath>
-          <runtimeLocales>
+          <localesRuntime>
             <locale>en_US</locale>
             <locale>ja_JP</locale>
-          </runtimeLocales>
+          </localesRuntime>
         </configuration>
       </plugin>
     </plugins>

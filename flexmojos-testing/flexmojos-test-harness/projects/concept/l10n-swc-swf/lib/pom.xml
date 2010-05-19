@@ -37,10 +37,10 @@
 				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
 				<configuration>
-					<runtimeLocales>
+					<localesRuntime>
 						<locale>en_US</locale>
 						<locale>ja_JP</locale>
-					</runtimeLocales>
+					</localesRuntime>
 				</configuration>
 			</plugin>
 		</plugins>

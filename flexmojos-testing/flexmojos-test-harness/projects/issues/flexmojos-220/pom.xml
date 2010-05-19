@@ -30,9 +30,9 @@
           <moduleFiles>
             <file>module/module.mxml</file>
           </moduleFiles>
-          <runtimeLocales>
+          <localesRuntime>
             <locale>en_US</locale>
-          </runtimeLocales>
+          </localesRuntime>
         </configuration>
       </plugin>
     </plugins>

@@ -38,9 +38,9 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <compiledLocales>
+                    <localesCompiled>
                         <locale>en_US</locale>
-                    </compiledLocales>
+                    </localesCompiled>
                 </configuration>
             </plugin>
         </plugins>

@@ -17,20 +17,18 @@ package org.sonatype.flexmojos.plugin.compiler.lazyload;
 import java.util.Map;
 
 import org.aspectj.lang.reflect.MethodSignature;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 
 public aspect LazyLoadAspect
 {
 
     pointcut getters() :
-        ( execution(public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.get*() )  &&
-             !execution( public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.getLog() ) &&
-             !execution( public * org.sonatype.flexmojos.plugin.compiler.AbstractMavenFlexCompilerConfiguration.getCache() )  ) ||
-        execution(public * org.sonatype.flexmojos.plugin.compiler.CompcMojo.get*()) ||
-        execution(public * org.sonatype.flexmojos.plugin.compiler.MxmlcMojo.get*()) ||
-        execution(public * org.sonatype.flexmojos.plugin.compiler.AsdocMojo.get*());
+        target (AbstractMavenMojo) && ( execution( * get*() )  &&
+             !execution(  * getLog() ) &&
+             !execution(  * getCache() )  );
 
     Object around() : getters() {
-        Map<String, Object> cachedValues = ( (Cacheable) thisJoinPoint.getTarget() ).getCache();
+        Map<String, Object> cachedValues = ( (AbstractMavenMojo) thisJoinPoint.getTarget() ).getCache();
 
         MethodSignature signature = (MethodSignature) thisJoinPoint.getSignature();
         String name = signature.getName();
