@@ -274,9 +274,8 @@ public class TestCompilerMojo
 
         StringBuilder imports = new StringBuilder();
 
-        for ( String testFile : testClasses )
+        for ( String testClass : testClasses )
         {
-            String testClass = toClass( testFile );
             imports.append( "import " );
             imports.append( testClass );
             imports.append( "; " );
