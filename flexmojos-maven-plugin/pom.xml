@@ -363,9 +363,9 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>com.sonatype.maven.plugins</groupId>
+            <groupId>org.sonatype.plugins</groupId>
             <artifactId>maven-upload-plugin</artifactId>
-            <version>0.0.1-FLEXMOJOS-11</version>
+            <version>0.0.1</version>
             <executions>
               <execution>
                 <id>publish-site</id>
