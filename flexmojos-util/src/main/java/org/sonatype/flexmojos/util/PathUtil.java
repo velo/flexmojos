@@ -303,12 +303,12 @@ public class PathUtil
 
         for ( File file : files )
         {
-            if ( !file.exists() )
+            if ( file.exists() )
             {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public static boolean exist( List<String> paths )

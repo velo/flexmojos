@@ -68,7 +68,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @configurator flexmojos
  */
 public class AsdocMojo
-    extends AbstractMavenFlexCompilerConfiguration<IASDocConfiguration, AsdocMojo>
+    extends AbstractFlexCompilerMojo<IASDocConfiguration, AsdocMojo>
     implements IASDocConfiguration, IPackagesConfiguration, Mojo
 {
 

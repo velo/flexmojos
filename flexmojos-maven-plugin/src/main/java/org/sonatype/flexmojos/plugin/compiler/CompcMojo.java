@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
 import java.io.File;
@@ -53,7 +54,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @configurator flexmojos
  */
 public class CompcMojo
-    extends AbstractMavenFlexCompilerConfiguration<ICompcConfiguration, CompcMojo>
+    extends AbstractFlexCompilerMojo<ICompcConfiguration, CompcMojo>
     implements ICompcConfiguration, Mojo
 {
 
@@ -242,6 +243,7 @@ public class CompcMojo
             {
                 CompcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );
+                cfg.getCache().put( "getProjectType", RB_SWC );
                 results.add( executeCompiler( cfg, fullSynchronization ) );
             }
 

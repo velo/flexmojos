@@ -112,7 +112,7 @@ import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
 import flex2.tools.oem.internal.OEMLogAdapter;
 
-public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends AbstractMavenFlexCompilerConfiguration<CFG, C>>
+public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompilerMojo<CFG, C>>
     extends AbstractMavenMojo
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
@@ -238,7 +238,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
      */
     private Long benchmarkTimeFilter;
 
-    private Map<String, Object> cache = new LinkedHashMap<String, Object>();
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
@@ -1077,18 +1076,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     private Boolean optimize;
 
     /**
-     * The filename of the SWF movie to create
-     * <p>
-     * Equivalent to -output
-     * </p>
-     * 
-     * @parameter expression="${flex.output}"
-     * @required
-     * @readonly
-     */
-    private File output;
-
-    /**
      * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
      * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
      * file is not required, then set it to an empty string. Accept some special tokens:
@@ -1400,13 +1387,14 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     }
 
     @SuppressWarnings( "unchecked" )
-    protected void configureResourceBundle( String locale, AbstractMavenFlexCompilerConfiguration<?, ?> cfg )
+    protected void configureResourceBundle( String locale, AbstractFlexCompilerMojo<?, ?> cfg )
     {
         cfg.localesCompiled = new String[] { locale };
+        cfg.localesRuntime = null;
         cfg.classifier = locale;
-        cfg.includeResourceBundles = includeResourceBundles;
+        cfg.includeResourceBundles = getResourceBundleListContent();
         cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
-        cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( getDependencies( type( RB_SWC ) ) ) );
+        cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -1497,11 +1485,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Long getBenchmarkTimeFilter()
     {
         return benchmarkTimeFilter;
-    }
-
-    public Map<String, Object> getCache()
-    {
-        return cache;
     }
 
     public String getClassifier()
@@ -2145,6 +2128,23 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public String[] getLocalesRuntime()
     {
+        if ( localesRuntime == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            File rbBeacon = new File( getTargetDirectory(), getFinalName() + "." + RB_SWC );
+            FileUtils.copyURLToFile( getClass().getResource( "/rb.swc" ), rbBeacon );
+            getLog().info( "Installing resource bundle beacon: " + rbBeacon );
+            projectHelper.attachArtifact( project, RB_SWC, rbBeacon );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenRuntimeException( "Failed to create beacon resource bundle", e );
+        }
+
         return localesRuntime;
     }
 
@@ -2340,16 +2340,7 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     public String getOutput()
     {
-        File output;
-        if ( this.output != null )
-        {
-            output = this.output;
-        }
-        else
-        {
-            output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
-        }
-
+        File output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
         output.getParentFile().mkdirs();
 
         if ( getClassifier() != null )
@@ -2410,6 +2401,11 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
 
     protected List<String> getResourceBundleListContent()
     {
+        if ( !getResourceBundleListFile().exists() )
+        {
+            return null;
+        }
+
         String bundles;
         try
         {
@@ -2646,8 +2642,6 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
         return toolsLocale;
     }
 
-
-
     public String getTranslationFormat()
     {
         return translationFormat;
@@ -2862,4 +2856,5 @@ public abstract class AbstractMavenFlexCompilerConfiguration<CFG, C extends Abst
     public Boolean getWarnXmlClassHasChanged()
     {
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
-    }}
+    }
+}

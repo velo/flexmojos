@@ -33,8 +33,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -57,10 +59,11 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
+import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.util.PathUtil;
 
 public abstract class AbstractMavenMojo
-    implements Mojo
+    implements Mojo, Cacheable
 {
 
     private static final String AIR_GLOBAL = "airglobal";
@@ -276,19 +279,10 @@ public abstract class AbstractMavenMojo
         return classes;
     }
 
-    protected String toClass( String filename )
-    {
-        String classname = filename;
-        classname = classname.replaceAll( "\\.(.)*", "" );
-        classname = classname.replace( '\\', '.' );
-        classname = classname.replace( '/', '.' );
-        return classname;
-    }
-
     protected Collection<File> filterFiles( List<FileSet> patterns, List<File> directories )
     {
         directories = PathUtil.getExistingFilesList( directories );
-        
+
         Set<File> includedFiles = new LinkedHashSet<File>();
         for ( FileSet pattern : patterns )
         {
@@ -385,6 +379,30 @@ public abstract class AbstractMavenMojo
     {
         outputDirectory.mkdirs();
         return PathUtil.getCanonicalFile( outputDirectory );
+    }
+
+    protected List<File> getResourcesTargetDirectories()
+    {
+        List<File> directories = new ArrayList<File>();
+        for ( Resource resource : resources )
+        {
+            File directory;
+            if ( resource.getTargetPath() != null )
+            {
+                directory = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
+            }
+            else
+            {
+                directory = getOutputDirectory();
+            }
+            if ( !directory.isDirectory() )
+            {
+                continue;
+            }
+
+            directories.add( directory );
+        }
+        return directories;
     }
 
     public File getTargetDirectory()
@@ -490,6 +508,15 @@ public abstract class AbstractMavenMojo
         this.log = log;
     }
 
+    protected String toClass( String filename )
+    {
+        String classname = filename;
+        classname = classname.replaceAll( "\\.(.)*", "" );
+        classname = classname.replace( '\\', '.' );
+        classname = classname.replace( '/', '.' );
+        return classname;
+    }
+
     private List<String> toFilePattern( List<String> classesIncludes )
     {
         List<String> fileIncludes = new ArrayList<String>();
@@ -519,27 +546,11 @@ public abstract class AbstractMavenMojo
         }
     }
 
-    protected List<File> getResourcesTargetDirectories()
-    {
-        List<File> directories = new ArrayList<File>();
-        for ( Resource resource : resources )
-        {
-            File directory;
-            if ( resource.getTargetPath() != null )
-            {
-                directory = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
-            }
-            else
-            {
-                directory = getOutputDirectory();
-            }
-            if ( !directory.isDirectory() )
-            {
-                continue;
-            }
+    protected Map<String, Object> cache = new LinkedHashMap<String, Object>();
 
-            directories.add( directory );
-        }
-        return directories;
+    public Map<String, Object> getCache()
+    {
+        return cache;
     }
+
 }

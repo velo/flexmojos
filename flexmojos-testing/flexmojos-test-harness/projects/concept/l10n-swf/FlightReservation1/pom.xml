@@ -42,10 +42,10 @@
         <configuration>
           <sourceFile>FlightReservation1.mxml</sourceFile>
           <resourceBundlePath>${basedir}/locale/{locale}</resourceBundlePath>
-          <compiledLocales>
+          <localesCompiled>
             <locale>en_US</locale>
             <locale>ja_JP</locale>
-          </compiledLocales>
+          </localesCompiled>
         </configuration>
       </plugin>
     </plugins>

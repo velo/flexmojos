@@ -17,7 +17,7 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 
 import java.io.File;
@@ -36,6 +36,8 @@ import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.util.PathUtil;
 
+import scala.actors.threadpool.Arrays;
+
 /**
  * <p>
  * Goal which compiles the Flex sources into an application for either Flex or AIR depending on the package type.
@@ -53,7 +55,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @configurator flexmojos
  */
 public class MxmlcMojo
-    extends AbstractMavenFlexCompilerConfiguration<MxmlcConfigurationHolder, MxmlcMojo>
+    extends AbstractFlexCompilerMojo<MxmlcConfigurationHolder, MxmlcMojo>
     implements ICommandLineConfiguration, Mojo
 {
 
@@ -74,24 +76,6 @@ public class MxmlcMojo
      * @parameter
      */
     private List<String> fileSpecs;
-
-    /**
-     * A list of resource bundles to include in the output SWC
-     * <p>
-     * Equivalent to -include-resource-bundles
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;includeResourceBundles&gt;
-     *   &lt;rb&gt;SharedResources&lt;/rb&gt;
-     *   &lt;rb&gt;Collections&lt;/rb&gt;
-     * &lt;/includeResourceBundles&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private List<String> includeResourceBundles;
 
     /**
      * The list of modules to be compiled.
@@ -168,7 +152,7 @@ public class MxmlcMojo
     {
         if ( !PathUtil.exist( getSourcePath() ) )
         {
-            getLog().warn( "Skipping compiler, source path doesn't exist." );
+            getLog().warn( "Skipping compiler, source path doesn't exist. " + Arrays.toString( getSourcePath() ) );
             return;
         }
 
