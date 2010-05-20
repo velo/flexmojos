@@ -69,7 +69,7 @@ public class ModuleConverter
         }
         else
         {
-            rc.setDestinationPath( (String) fromExpression( cfg.getChild( "detinationPath" ), expressionEvaluator,
+            rc.setDestinationPath( (String) fromExpression( cfg.getChild( "destinationPath" ), expressionEvaluator,
                                                             String.class ) );
             rc.setFinalName( (String) fromExpression( cfg.getChild( "finalName" ), expressionEvaluator, String.class ) );
             rc.setOptimize( Boolean.parseBoolean( (String) fromExpression( cfg.getChild( "optimize" ),
