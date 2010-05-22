@@ -43,6 +43,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
@@ -98,6 +99,8 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     private File basedir;
+
+    protected Map<String, Object> cache = new LinkedHashMap<String, Object>();
 
     /**
      * The maven configuration directory
@@ -181,6 +184,15 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     protected List<Resource> resources;
+
+    /**
+     * The Maven Session Object
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession session;
 
     /**
      * Skips lexmojos goal execution
@@ -315,6 +327,11 @@ public abstract class AbstractMavenMojo
         return basedir;
     }
 
+    public Map<String, Object> getCache()
+    {
+        return cache;
+    }
+
     public Set<Artifact> getDependencies()
     {
         return Collections.unmodifiableSet( project.getArtifacts() );
@@ -403,6 +420,11 @@ public abstract class AbstractMavenMojo
             directories.add( directory );
         }
         return directories;
+    }
+
+    public MavenSession getSession()
+    {
+        return session;
     }
 
     public File getTargetDirectory()
@@ -544,13 +566,6 @@ public abstract class AbstractMavenMojo
         {
             checkResult( result );
         }
-    }
-
-    protected Map<String, Object> cache = new LinkedHashMap<String, Object>();
-
-    public Map<String, Object> getCache()
-    {
-        return cache;
     }
 
 }
