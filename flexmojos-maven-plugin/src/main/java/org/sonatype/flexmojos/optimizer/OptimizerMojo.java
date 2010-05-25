@@ -33,6 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,6 +42,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
+import org.sonatype.flexmojos.MavenMojo;
 
 import flex2.compiler.swc.Digest;
 import flex2.compiler.swc.Swc;
@@ -58,16 +60,8 @@ import flex2.compiler.swc.SwcGroup;
  */
 public class OptimizerMojo
     extends AbstractMojo
+    implements MavenMojo
 {
-
-    /**
-     * The maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
 
     /**
      * @parameter expression="${project.build}"
@@ -75,6 +69,15 @@ public class OptimizerMojo
      * @readonly
      */
     protected Build build;
+
+    /**
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession context;
 
     /**
      * Optimized RSLs strip out any debugging information such as line numbers. This results in a smaller file, which
@@ -86,9 +89,61 @@ public class OptimizerMojo
     protected boolean optimizeRsls;
 
     /**
+     * The maven project.
+     * 
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
      * @component
      */
     protected MavenProjectHelper projectHelper;
+
+    private File backupOriginalSWF( File originalFile )
+        throws MojoExecutionException
+    {
+        File bkpOriginalFile = new File( build.getOutputDirectory(), "orig-library.swf" );
+        try
+        {
+            FileUtils.copyFile( originalFile, bkpOriginalFile );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to backup SWF file.", e );
+        }
+
+        getLog().debug( "attaching original swf" );
+        projectHelper.attachArtifact( project, SWF, "original", bkpOriginalFile );
+        return bkpOriginalFile;
+    }
+
+    private Digest computeDigest( File optimizedSwf )
+        throws MojoExecutionException
+    {
+        getLog().debug( "Computing optimized swf digest" );
+        InputStream input = null;
+        byte[] bytes;
+        try
+        {
+            input = new FileInputStream( optimizedSwf );
+            bytes = IOUtil.toByteArray( input );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error reading optimized SWF", e );
+        }
+        finally
+        {
+            IOUtil.close( input );
+        }
+
+        Digest d = new Digest();
+        getLog().debug( d.computeDigest( bytes ) );
+        return d;
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -187,6 +242,30 @@ public class OptimizerMojo
         }
     }
 
+    public MavenSession getSession()
+    {
+        return context;
+    }
+
+    private ZipFile newZipFile( File originalFile )
+        throws MojoExecutionException
+    {
+        ZipFile zipFile = null;
+        try
+        {
+            zipFile = new ZipFile( originalFile );
+        }
+        catch ( ZipException e )
+        {
+            throw new MojoExecutionException( "Invalid SWC file, is not a valid ZIP file.", e );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read SWC file. " + originalFile, e );
+        }
+        return zipFile;
+    }
+
     private void optimize( InputStream inputSWF, OutputStream outputSWF )
         throws MojoExecutionException
     {
@@ -232,43 +311,6 @@ public class OptimizerMojo
         return inputSWF;
     }
 
-    private File backupOriginalSWF( File originalFile )
-        throws MojoExecutionException
-    {
-        File bkpOriginalFile = new File( build.getOutputDirectory(), "orig-library.swf" );
-        try
-        {
-            FileUtils.copyFile( originalFile, bkpOriginalFile );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to backup SWF file.", e );
-        }
-
-        getLog().debug( "attaching original swf" );
-        projectHelper.attachArtifact( project, SWF, "original", bkpOriginalFile );
-        return bkpOriginalFile;
-    }
-
-    private ZipFile newZipFile( File originalFile )
-        throws MojoExecutionException
-    {
-        ZipFile zipFile = null;
-        try
-        {
-            zipFile = new ZipFile( originalFile );
-        }
-        catch ( ZipException e )
-        {
-            throw new MojoExecutionException( "Invalid SWC file, is not a valid ZIP file.", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read SWC file. " + originalFile, e );
-        }
-        return zipFile;
-    }
-
     @SuppressWarnings( "unchecked" )
     private void updateDigest( File optimizedSWF, File originalFile )
         throws MojoExecutionException
@@ -296,31 +338,6 @@ public class OptimizerMojo
             swc.close();
         }
 
-    }
-
-    private Digest computeDigest( File optimizedSwf )
-        throws MojoExecutionException
-    {
-        getLog().debug( "Computing optimized swf digest" );
-        InputStream input = null;
-        byte[] bytes;
-        try
-        {
-            input = new FileInputStream( optimizedSwf );
-            bytes = IOUtil.toByteArray( input );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error reading optimized SWF", e );
-        }
-        finally
-        {
-            IOUtil.close( input );
-        }
-
-        Digest d = new Digest();
-        getLog().debug( d.computeDigest( bytes ) );
-        return d;
     }
 
 }
