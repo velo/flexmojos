@@ -56,7 +56,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.FileSet;
@@ -216,15 +215,6 @@ public abstract class AbstractCompilerMojo<E extends Builder>
      * @parameter default-value="false" expression="${configurationReport}"
      */
     protected boolean configurationReport;
-
-    /**
-     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
-     * 
-     * @parameter expression="${session}"
-     * @required
-     * @readonly
-     */
-    protected MavenSession context;
 
     /**
      * Sets the context root path so that the compiler can replace <code>{context.root}</code> tokens for service

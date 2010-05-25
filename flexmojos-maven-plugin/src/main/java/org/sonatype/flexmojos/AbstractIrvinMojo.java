@@ -30,6 +30,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -45,7 +46,54 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  */
 public abstract class AbstractIrvinMojo
     extends AbstractMojo
+    implements MavenMojo
 {
+
+    /**
+     * @component
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * @component
+     */
+    protected ArtifactMetadataSource artifactMetadataSource;
+
+    /**
+     * @parameter expression="${project.build}"
+     * @required
+     * @readonly
+     */
+    protected Build build;
+
+    /**
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession context;
+
+    // dependency artifactes
+    private Set<Artifact> dependencyArtifacts;
+
+    /**
+     * Local repository to be used by the plugin to resolve dependencies.
+     * 
+     * @parameter expression="${localRepository}"
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
+     * @component
+     */
+    protected MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * @parameter expression="${plugin.artifacts}"
+     */
+    protected List<Artifact> pluginArtifacts;
 
     /**
      * The maven project.
@@ -57,43 +105,9 @@ public abstract class AbstractIrvinMojo
     protected MavenProject project;
 
     /**
-     * @parameter expression="${project.build}"
-     * @required
-     * @readonly
-     */
-    protected Build build;
-
-    /**
      * @component
      */
     protected MavenProjectHelper projectHelper;
-
-    /**
-     * @component
-     */
-    protected ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     */
-    protected ArtifactResolver resolver;
-
-    /**
-     * @component
-     */
-    protected ArtifactMetadataSource artifactMetadataSource;
-
-    /**
-     * @component
-     */
-    protected MavenProjectBuilder mavenProjectBuilder;
-
-    /**
-     * Local repository to be used by the plugin to resolve dependencies.
-     * 
-     * @parameter expression="${localRepository}"
-     */
-    protected ArtifactRepository localRepository;
 
     /**
      * List of remote repositories to be used by the plugin to resolve dependencies.
@@ -104,9 +118,9 @@ public abstract class AbstractIrvinMojo
     protected List remoteRepositories;
 
     /**
-     * @parameter expression="${plugin.artifacts}"
+     * @component
      */
-    protected List<Artifact> pluginArtifacts;
+    protected ArtifactResolver resolver;
 
     /**
      * @parameter default-value="false" expression="${flexmojos.skip}"
@@ -121,8 +135,22 @@ public abstract class AbstractIrvinMojo
         super();
     }
 
-    // dependency artifactes
-    private Set<Artifact> dependencyArtifacts;
+    /**
+     * Executes plugin
+     */
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( skip )
+        {
+            getLog().info( "Skipping Flexmojos execution" );
+            return;
+        }
+
+        setUp();
+        run();
+        tearDown();
+    }
 
     /**
      * Returns Set of dependency artifacts which are resolved for the project.
@@ -180,31 +208,10 @@ public abstract class AbstractIrvinMojo
         return artifacts;
     }
 
-    /**
-     * Executes plugin
-     */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    public MavenSession getSession()
     {
-        if ( skip )
-        {
-            getLog().info( "Skipping Flexmojos execution" );
-            return;
-        }
-
-        setUp();
-        run();
-        tearDown();
+        return context;
     }
-
-    /**
-     * Perform setup before plugin is run.
-     * 
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
-     */
-    protected abstract void setUp()
-        throws MojoExecutionException, MojoFailureException;
 
     /**
      * Perform plugin functionality
@@ -216,6 +223,15 @@ public abstract class AbstractIrvinMojo
         throws MojoExecutionException, MojoFailureException;
 
     /**
+     * Perform setup before plugin is run.
+     * 
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    protected abstract void setUp()
+        throws MojoExecutionException, MojoFailureException;
+
+    /**
      * Perform (cleanup) actions after plugin has run
      * 
      * @throws MojoExecutionException
@@ -223,5 +239,4 @@ public abstract class AbstractIrvinMojo
      */
     protected abstract void tearDown()
         throws MojoExecutionException, MojoFailureException;
-
 }

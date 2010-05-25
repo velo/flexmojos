@@ -41,6 +41,7 @@ import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
@@ -50,6 +51,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.sonatype.flexmojos.MavenMojo;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.test.util.PathUtil;
@@ -70,29 +72,16 @@ import flex2.tools.ASDoc;
  */
 public class AsDocMojo
     extends AbstractMojo
-    implements FlexMojo
+    implements FlexMojo, MavenMojo
 {
 
     /**
-     * The maven project.
+     * If true, will treat multi-modules projects as only one project otherwise will generate Asdoc per project
      * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
+     * @parameter default-value="false" expression="${asdoc.aggregate}"
+     * @since 3.5
      */
-    protected MavenProject project;
-
-    /**
-     * @parameter expression="${project.build}"
-     * @required
-     * @readonly
-     */
-    protected Build build;
-
-    /**
-     * @component
-     */
-    protected MavenProjectHelper projectHelper;
+    protected boolean aggregate;
 
     /**
      * @component
@@ -102,33 +91,47 @@ public class AsDocMojo
     /**
      * @component
      */
-    protected ArtifactResolver resolver;
-
-    /**
-     * @component
-     */
     protected ArtifactMetadataSource artifactMetadataSource;
 
     /**
-     * @component
+     * @parameter expression="${project.build}"
+     * @required
+     * @readonly
      */
-    protected MavenProjectBuilder mavenProjectBuilder;
+    protected Build build;
 
     /**
-     * @parameter expression="${localRepository}"
+     * specifies a compatibility version. e.g. compatibility 2.0.1
+     * 
+     * @parameter
      */
-    protected ArtifactRepository localRepository;
+    private String compatibilityVersion;
 
     /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * 
+     * @parameter
+     * @deprecated Use configFiles instead
      */
-    @SuppressWarnings( "unchecked" )
-    protected List remoteRepositories;
+    protected File configFile;
 
     /**
-     * @parameter expression="${plugin.artifacts}"
+     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * 
+     * @parameter
      */
-    private List<Artifact> pluginArtifacts;
+    protected File[] configFiles;
+
+    /**
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    protected MavenSession context;
+
+    private Set<Artifact> dependencyArtifacts;
 
     /**
      * A list of classes to document. These classes must be in the source path. This is the default option. This option
@@ -148,23 +151,6 @@ public class AsDocMojo
      * @parameter
      */
     private Namespace[] docNamespaces;
-
-    /**
-     * Specify a URI to associate with a manifest of components for use as MXML elements.<BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;namespaces&gt;
-     *  &lt;namespace&gt;
-     *   &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
-     *   &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
-     *  &lt;/namespace&gt;
-     * &lt;/namespaces&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private Namespace[] namespaces;
 
     /**
      * A list of files that should be documented. If a directory name is in the list, it is recursively searched. This
@@ -192,12 +178,23 @@ public class AsDocMojo
      */
     private boolean excludeDependencies;
 
+    private File fontsSnapshot;
+
     /**
      * The text that appears at the bottom of the HTML pages in the output documentation.
      * 
      * @parameter
      */
     private String footer;
+
+    /**
+     * Sets the compiler when it runs on a server without a display. This is equivalent to using the
+     * <code>compiler.headless-server</code> option of the mxmlc or compc compilers. that value determines if the
+     * compiler is running on a server without a display.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean headlessServer;
 
     /**
      * An integer that changes the width of the left frameset of the documentation. You can change this size to
@@ -208,12 +205,44 @@ public class AsDocMojo
     private int leftFramesetWidth;
 
     /**
+	 *
+	 */
+    private List<File> libraries;
+
+    /**
+     * @parameter expression="${localRepository}"
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
      * The text that appears at the top of the HTML pages in the output documentation. The default value is
      * "API Documentation".
      * 
      * @parameter default-value="API Documentation"
      */
     private String mainTitle;
+
+    /**
+     * @component
+     */
+    protected MavenProjectBuilder mavenProjectBuilder;
+
+    /**
+     * Specify a URI to associate with a manifest of components for use as MXML elements.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;namespaces&gt;
+     *  &lt;namespace&gt;
+     *   &lt;uri&gt;http://www.adobe.com/2006/mxml&lt;/uri&gt;
+     *   &lt;manifest&gt;${basedir}/manifest.xml&lt;/manifest&gt;
+     *  &lt;/namespace&gt;
+     * &lt;/namespaces&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private Namespace[] namespaces;
 
     /**
      * The output directory for the generated documentation.
@@ -231,6 +260,51 @@ public class AsDocMojo
     private Map<String, String> packageDescriptions;
 
     /**
+     * @parameter expression="${plugin.artifacts}"
+     */
+    private List<Artifact> pluginArtifacts;
+
+    /**
+     * The maven project.
+     * 
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
+
+    /**
+     * @component
+     */
+    protected MavenProjectHelper projectHelper;
+
+    /**
+     * @parameter expression="${reactorProjects}"
+     * @required
+     * @readonly
+     * @since 3.5
+     */
+    protected List<MavenProject> reactorProjects;
+
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     */
+    @SuppressWarnings( "unchecked" )
+    protected List remoteRepositories;
+
+    /**
+     * @component
+     */
+    protected ArtifactResolver resolver;
+
+    /**
+     * List of path elements that form the roots of ActionScript class hierarchies.
+     * 
+     * @parameter
+     */
+    protected File[] sourcePaths;
+
+    /**
      * The path to the ASDoc template directory. The default is the asdoc/templates directory in the ASDoc installation
      * directory. This directory contains all the HTML, CSS, XSL, and image files used for generating the output.
      * 
@@ -246,68 +320,423 @@ public class AsDocMojo
      */
     private String windowTitle;
 
-    /**
-	 *
-	 */
-    private List<File> libraries;
+    private void addCompatibility( List<String> args )
+    {
+        if ( compatibilityVersion != null )
+        {
+            args.add( "-compiler.mxml.compatibility-version=" + compatibilityVersion );
+        }
+    }
+
+    private void addDefines( List<String> args )
+    {
+        // Read defines from flex-compiler
+        Xpp3Dom defines = CompileConfigurationLoader.getCompilerPluginConfiguration( project, "defines" );
+        if ( defines == null || defines.getChildren() == null || defines.getChildren().length == 0 )
+        {
+            return;
+        }
+
+        for ( Xpp3Dom define : defines.getChildren() )
+        {
+            args.add( "-compiler.define+=" + define.getName() + "," + define.getValue() );
+        }
+
+    }
+
+    private void addDocClasses( List<String> args )
+    {
+        if ( docClasses == null || docClasses.length == 0 )
+        {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for ( String docClass : docClasses )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-doc-classes=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( docClass );
+        }
+        args.add( sb.toString() );
+    }
+
+    private void addDocNamespaces( List<String> args )
+    {
+        if ( docNamespaces == null || docNamespaces.length == 0 )
+        {
+            return;
+        }
+
+        // -compiler.namespaces.namespace <uri> <manifest>
+        // alias -namespace
+        // Specify a URI to associate with a manifest of components for use as
+        // MXML elements (repeatable)
+
+        for ( Namespace namespace : docNamespaces )
+        {
+            args.add( "-compiler.namespaces.namespace" );
+            args.add( namespace.getUri() );
+            args.add( namespace.getManifest().getAbsolutePath() );
+        }
+
+        // -doc-namespaces [uri] [...]
+        // alias -dn
+        // (repeatable)
+        StringBuilder sb = new StringBuilder();
+        for ( Namespace namespace : docNamespaces )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-doc-namespaces=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( namespace.getUri() );
+        }
+        args.add( sb.toString() );
+    }
+
+    private void addDocSources( List<String> args )
+    {
+        if ( docSources == null || docSources.length == 0 )
+        {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for ( File docs : docSources )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-doc-sources=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( docs.getAbsolutePath() );
+        }
+        args.add( sb.toString() );
+    }
+
+    private void addExcludeClasses( List<String> args )
+    {
+        if ( excludeClasses == null || excludeClasses.length == 0 )
+        {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for ( String excludeClass : excludeClasses )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-exclude-classes=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( excludeClass );
+        }
+
+        args.add( sb.toString() );
+    }
+
+    protected void addExtraArgs( List<String> args )
+    {
+        // meant to be overwritten
+    }
+
+    private void addFooter( List<String> args )
+    {
+        if ( footer != null )
+        {
+            args.add( "-footer" );
+            args.add( footer );
+        }
+    }
+
+    private void addLibraries( List<String> args )
+    {
+        if ( libraries == null || libraries.size() == 0 )
+        {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for ( File lib : libraries )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-library-path=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( lib.getAbsolutePath() );
+        }
+
+        args.add( sb.toString() );
+    }
+
+    private void addNamespaces( List<String> args )
+    {
+        if ( namespaces == null || namespaces.length == 0 )
+        {
+            return;
+        }
+
+        // -compiler.namespaces.namespace <uri> <manifest>
+        // alias -namespace
+        // Specify a URI to associate with a manifest of components for use as
+        // MXML elements (repeatable)
+
+        for ( Namespace namespace : namespaces )
+        {
+            args.add( "-compiler.namespaces.namespace" );
+            args.add( namespace.getUri() );
+            args.add( namespace.getManifest().getAbsolutePath() );
+        }
+    }
+
+    private void addPackageDescriptions( List<String> args )
+    {
+        if ( packageDescriptions == null )
+        {
+            return;
+        }
+
+        for ( String pack : packageDescriptions.keySet() )
+        {
+            args.add( "-packages.package" );
+            args.add( pack );
+            args.add( packageDescriptions.get( pack ) );
+        }
+    }
+
+    private void addSourcePath( List<String> args )
+    {
+        if ( sourcePaths == null || sourcePaths.length == 0 )
+        {
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for ( File path : sourcePaths )
+        {
+            if ( sb.length() == 0 )
+            {
+                sb.append( "-source-path=" );
+            }
+            else
+            {
+                sb.append( ',' );
+            }
+
+            sb.append( path.getAbsolutePath() );
+        }
+        args.add( sb.toString() );
+    }
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( aggregate && !project.isExecutionRoot() )
+        {
+            getLog().info( "Skipping asdoc execution, running on aggregate mode." );
+            return;
+        }
+
+        String packaging = project.getPackaging();
+        if ( SWC.equals( packaging ) || SWF.equals( packaging ) || ( POM.equals( packaging ) && aggregate ) )
+        {
+            setUp();
+            run();
+            tearDown();
+        }
+        else
+        {
+            getLog().warn( "Invalid packaging for asdoc generation " + packaging );
+        }
+    }
+
+    private File generateDefaultTemplate()
+        throws MojoExecutionException
+    {
+        File templates = new File( build.getDirectory(), "templates" );
+        templates.mkdirs();
+        for ( Artifact artifact : pluginArtifacts )
+        {
+            if ( "template".equals( artifact.getClassifier() ) )
+            {
+                try
+                {
+                    ZipExtractor ze = new ZipExtractor( artifact.getFile() );
+                    ze.extract( templates );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "An error happens when trying to extract AsDoc Template.", e );
+                }
+                makeHelperExecutable( templates );
+                return templates;
+            }
+        }
+
+        throw new MojoExecutionException( "Unable to generate default template." );
+    }
+
+    public String getCompilerVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
+    }
 
     /**
-     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
+     * Returns Set of dependency artifacts which are resolved for the project.
      * 
-     * @parameter
-     * @deprecated Use configFiles instead
+     * @return Set of dependency artifacts.
+     * @throws MojoExecutionException
      */
-    protected File configFile;
+    protected Set<Artifact> getDependencyArtifacts()
+        throws MojoExecutionException
+    {
+        if ( dependencyArtifacts == null )
+        {
+            if ( aggregate )
+            {
+                dependencyArtifacts = new LinkedHashSet<Artifact>();
+                for ( MavenProject project : this.reactorProjects )
+                {
+                    dependencyArtifacts.addAll( MavenUtils.getDependencyArtifacts( project, resolver, localRepository,
+                                                                                   remoteRepositories,
+                                                                                   artifactMetadataSource,
+                                                                                   artifactFactory ) );
+                }
+            }
+            else
+            {
+                dependencyArtifacts =
+                    MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
+                                                       artifactMetadataSource, artifactFactory );
+            }
+        }
+        return dependencyArtifacts;
+    }
 
-    /**
-     * Load a file containing configuration options If not defined, by default will search for one on resources folder.
-     * 
-     * @parameter
-     */
-    protected File[] configFiles;
+    public MavenSession getSession()
+    {
+        return context;
+    }
 
-    private File fontsSnapshot;
+    @FlexCompatibility( maxVersion = "4.0.0.3127" )
+    private void makeHelperExecutable( File templates )
+        throws MojoExecutionException
+    {
+        if ( !MavenUtils.isWindows() )
+        {
+            getLog().info( "Making asdoc helper executable due to Flex SDK: " + getCompilerVersion() );
 
-    /**
-     * specifies a compatibility version. e.g. compatibility 2.0.1
-     * 
-     * @parameter
-     */
-    private String compatibilityVersion;
+            Runtime runtime = Runtime.getRuntime();
+            String pathname =
+                String.format( "%s/%s", templates.getAbsolutePath(), "asDocHelper"
+                    + ( MavenUtils.isLinux() ? ".linux" : "" ) );
+            String[] statements = new String[] { "chmod", "u+x", pathname };
+            try
+            {
+                Process p = runtime.exec( statements );
+                int result = p.waitFor();
+                if ( 0 != result )
+                {
+                    throw new MojoExecutionException( String.format( "Unable to execute %s. Return value = %d",
+                                                                     Arrays.asList( statements ), result ) );
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
+            }
+        }
+    }
 
-    /**
-     * List of path elements that form the roots of ActionScript class hierarchies.
-     * 
-     * @parameter
-     */
-    protected File[] sourcePaths;
+    protected void run()
+        throws MojoExecutionException, MojoFailureException
+    {
+        List<String> args = new ArrayList<String>();
 
-    /**
-     * Sets the compiler when it runs on a server without a display. This is equivalent to using the
-     * <code>compiler.headless-server</code> option of the mxmlc or compc compilers. that value determines if the
-     * compiler is running on a server without a display.
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean headlessServer;
+        addNamespaces( args );
+        addDocSources( args );
+        addDocClasses( args );
+        addDocNamespaces( args );
+        addSourcePath( args );
+        addLibraries( args );
+        addCompatibility( args );
+        addPackageDescriptions( args );
+        addDefines( args );
+        addExcludeClasses( args );
+        addFooter( args );
+        args.add( "-templates-path=" + templatesPath.getAbsolutePath() );
+        args.add( "-window-title=" + windowTitle );
+        args.add( "-main-title=" + mainTitle );
+        args.add( "-left-frameset-width=" + leftFramesetWidth );
+        args.add( "-exclude-dependencies=" + excludeDependencies );
+        args.add( "-compiler.fonts.local-fonts-snapshot=" + fontsSnapshot.getAbsolutePath() );
+        if ( headlessServer )
+        {
+            args.add( "-compiler.headless-server=true" );
+        }
+        if ( configFile != null )
+        {
+            args.add( "-load-config=" + configFile.getAbsolutePath() );
+        }
+        else if ( configFiles != null )
+        {
+            String separator = "=";
+            for ( File cfg : configFiles )
+            {
+                args.add( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
+                separator = "+=";
+            }
+        }
+        else
+        {
+            args.add( "-load-config=" );
+        }
+        if ( outputDirectory != null )
+        {
+            args.add( "-output=" + outputDirectory.getAbsolutePath() );
+        }
 
-    private Set<Artifact> dependencyArtifacts;
+        addExtraArgs( args );
 
-    /**
-     * If true, will treat multi-modules projects as only one project otherwise will generate Asdoc per project
-     * 
-     * @parameter default-value="false" expression="${asdoc.aggregate}"
-     * @since 3.5
-     */
-    protected boolean aggregate;
+        getLog().info( args.toString() );
 
-    /**
-     * @parameter expression="${reactorProjects}"
-     * @required
-     * @readonly
-     * @since 3.5
-     */
-    protected List<MavenProject> reactorProjects;
+        // I hate this, waiting for asdoc-oem
+        // https://bugs.adobe.com/jira/browse/SDK-15405
+        ASDoc.asdoc( args.toArray( new String[args.size()] ) );
+
+        int errorCount = ThreadLocalToolkit.errorCount();
+        if ( errorCount > 0 )
+        {
+            throw new MojoExecutionException( "Error compiling!" );
+        }
+    }
 
     @SuppressWarnings( "unchecked" )
     protected void setUp()
@@ -429,422 +858,9 @@ public class AsDocMojo
         }
     }
 
-    private File generateDefaultTemplate()
-        throws MojoExecutionException
-    {
-        File templates = new File( build.getDirectory(), "templates" );
-        templates.mkdirs();
-        for ( Artifact artifact : pluginArtifacts )
-        {
-            if ( "template".equals( artifact.getClassifier() ) )
-            {
-                try
-                {
-                    ZipExtractor ze = new ZipExtractor( artifact.getFile() );
-                    ze.extract( templates );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "An error happens when trying to extract AsDoc Template.", e );
-                }
-                makeHelperExecutable( templates );
-                return templates;
-            }
-        }
-
-        throw new MojoExecutionException( "Unable to generate default template." );
-    }
-
-    @FlexCompatibility( maxVersion = "4.0.0.3127" )
-    private void makeHelperExecutable( File templates )
-        throws MojoExecutionException
-    {
-        if ( !MavenUtils.isWindows() )
-        {
-            getLog().info( "Making asdoc helper executable due to Flex SDK: " + getCompilerVersion() );
-
-            Runtime runtime = Runtime.getRuntime();
-            String pathname =
-                String.format( "%s/%s", templates.getAbsolutePath(), "asDocHelper"
-                    + ( MavenUtils.isLinux() ? ".linux" : "" ) );
-            String[] statements = new String[] { "chmod", "u+x", pathname };
-            try
-            {
-                Process p = runtime.exec( statements );
-                int result = p.waitFor();
-                if ( 0 != result )
-                {
-                    throw new MojoExecutionException( String.format( "Unable to execute %s. Return value = %d",
-                                                                     Arrays.asList( statements ), result ) );
-                }
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
-            }
-        }
-    }
-
-    protected void run()
-        throws MojoExecutionException, MojoFailureException
-    {
-        List<String> args = new ArrayList<String>();
-
-        addNamespaces( args );
-        addDocSources( args );
-        addDocClasses( args );
-        addDocNamespaces( args );
-        addSourcePath( args );
-        addLibraries( args );
-        addCompatibility( args );
-        addPackageDescriptions( args );
-        addDefines( args );
-        addExcludeClasses( args );
-        addFooter( args );
-        args.add( "-templates-path=" + templatesPath.getAbsolutePath() );
-        args.add( "-window-title=" + windowTitle );
-        args.add( "-main-title=" + mainTitle );
-        args.add( "-left-frameset-width=" + leftFramesetWidth );
-        args.add( "-exclude-dependencies=" + excludeDependencies );
-        args.add( "-compiler.fonts.local-fonts-snapshot=" + fontsSnapshot.getAbsolutePath() );
-        if ( headlessServer )
-        {
-            args.add( "-compiler.headless-server=true" );
-        }
-        if ( configFile != null )
-        {
-            args.add( "-load-config=" + configFile.getAbsolutePath() );
-        }
-        else if ( configFiles != null )
-        {
-            String separator = "=";
-            for ( File cfg : configFiles )
-            {
-                args.add( " -load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
-                separator = "+=";
-            }
-        }
-        else
-        {
-            args.add( "-load-config=" );
-        }
-        if ( outputDirectory != null )
-        {
-            args.add( "-output=" + outputDirectory.getAbsolutePath() );
-        }
-
-        addExtraArgs( args );
-
-        getLog().info( args.toString() );
-
-        // I hate this, waiting for asdoc-oem
-        // https://bugs.adobe.com/jira/browse/SDK-15405
-        ASDoc.asdoc( args.toArray( new String[args.size()] ) );
-
-        int errorCount = ThreadLocalToolkit.errorCount();
-        if ( errorCount > 0 )
-        {
-            throw new MojoExecutionException( "Error compiling!" );
-        }
-    }
-
-    protected void addExtraArgs( List<String> args )
-    {
-        // meant to be overwritten
-    }
-
-    private void addDocNamespaces( List<String> args )
-    {
-        if ( docNamespaces == null || docNamespaces.length == 0 )
-        {
-            return;
-        }
-
-        // -compiler.namespaces.namespace <uri> <manifest>
-        // alias -namespace
-        // Specify a URI to associate with a manifest of components for use as
-        // MXML elements (repeatable)
-
-        for ( Namespace namespace : docNamespaces )
-        {
-            args.add( "-compiler.namespaces.namespace" );
-            args.add( namespace.getUri() );
-            args.add( namespace.getManifest().getAbsolutePath() );
-        }
-
-        // -doc-namespaces [uri] [...]
-        // alias -dn
-        // (repeatable)
-        StringBuilder sb = new StringBuilder();
-        for ( Namespace namespace : docNamespaces )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-doc-namespaces=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( namespace.getUri() );
-        }
-        args.add( sb.toString() );
-    }
-
-    private void addDocClasses( List<String> args )
-    {
-        if ( docClasses == null || docClasses.length == 0 )
-        {
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for ( String docClass : docClasses )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-doc-classes=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( docClass );
-        }
-        args.add( sb.toString() );
-    }
-
-    private void addExcludeClasses( List<String> args )
-    {
-        if ( excludeClasses == null || excludeClasses.length == 0 )
-        {
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for ( String excludeClass : excludeClasses )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-exclude-classes=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( excludeClass );
-        }
-
-        args.add( sb.toString() );
-    }
-
-    private void addFooter( List<String> args )
-    {
-        if ( footer != null )
-        {
-            args.add( "-footer" );
-            args.add( footer );
-        }
-    }
-
-    private void addPackageDescriptions( List<String> args )
-    {
-        if ( packageDescriptions == null )
-        {
-            return;
-        }
-
-        for ( String pack : packageDescriptions.keySet() )
-        {
-            args.add( "-packages.package" );
-            args.add( pack );
-            args.add( packageDescriptions.get( pack ) );
-        }
-    }
-
-    private void addDefines( List<String> args )
-    {
-        // Read defines from flex-compiler
-        Xpp3Dom defines = CompileConfigurationLoader.getCompilerPluginConfiguration( project, "defines" );
-        if ( defines == null || defines.getChildren() == null || defines.getChildren().length == 0 )
-        {
-            return;
-        }
-
-        for ( Xpp3Dom define : defines.getChildren() )
-        {
-            args.add( "-compiler.define+=" + define.getName() + "," + define.getValue() );
-        }
-
-    }
-
-    private void addCompatibility( List<String> args )
-    {
-        if ( compatibilityVersion != null )
-        {
-            args.add( "-compiler.mxml.compatibility-version=" + compatibilityVersion );
-        }
-    }
-
-    private void addLibraries( List<String> args )
-    {
-        if ( libraries == null || libraries.size() == 0 )
-        {
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for ( File lib : libraries )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-library-path=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( lib.getAbsolutePath() );
-        }
-
-        args.add( sb.toString() );
-    }
-
-    private void addSourcePath( List<String> args )
-    {
-        if ( sourcePaths == null || sourcePaths.length == 0 )
-        {
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for ( File path : sourcePaths )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-source-path=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( path.getAbsolutePath() );
-        }
-        args.add( sb.toString() );
-    }
-
-    private void addDocSources( List<String> args )
-    {
-        if ( docSources == null || docSources.length == 0 )
-        {
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for ( File docs : docSources )
-        {
-            if ( sb.length() == 0 )
-            {
-                sb.append( "-doc-sources=" );
-            }
-            else
-            {
-                sb.append( ',' );
-            }
-
-            sb.append( docs.getAbsolutePath() );
-        }
-        args.add( sb.toString() );
-    }
-
-    private void addNamespaces( List<String> args )
-    {
-        if ( namespaces == null || namespaces.length == 0 )
-        {
-            return;
-        }
-
-        // -compiler.namespaces.namespace <uri> <manifest>
-        // alias -namespace
-        // Specify a URI to associate with a manifest of components for use as
-        // MXML elements (repeatable)
-
-        for ( Namespace namespace : namespaces )
-        {
-            args.add( "-compiler.namespaces.namespace" );
-            args.add( namespace.getUri() );
-            args.add( namespace.getManifest().getAbsolutePath() );
-        }
-    }
-
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
 
-    }
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( aggregate && !project.isExecutionRoot() )
-        {
-            getLog().info( "Skipping asdoc execution, running on aggregate mode." );
-            return;
-        }
-
-        String packaging = project.getPackaging();
-        if ( SWC.equals( packaging ) || SWF.equals( packaging ) || ( POM.equals( packaging ) && aggregate ) )
-        {
-            setUp();
-            run();
-            tearDown();
-        }
-        else
-        {
-            getLog().warn( "Invalid packaging for asdoc generation " + packaging );
-        }
-    }
-
-    /**
-     * Returns Set of dependency artifacts which are resolved for the project.
-     * 
-     * @return Set of dependency artifacts.
-     * @throws MojoExecutionException
-     */
-    protected Set<Artifact> getDependencyArtifacts()
-        throws MojoExecutionException
-    {
-        if ( dependencyArtifacts == null )
-        {
-            if ( aggregate )
-            {
-                dependencyArtifacts = new LinkedHashSet<Artifact>();
-                for ( MavenProject project : this.reactorProjects )
-                {
-                    dependencyArtifacts.addAll( MavenUtils.getDependencyArtifacts( project, resolver, localRepository,
-                                                                                   remoteRepositories,
-                                                                                   artifactMetadataSource,
-                                                                                   artifactFactory ) );
-                }
-            }
-            else
-            {
-                dependencyArtifacts =
-                    MavenUtils.getDependencyArtifacts( project, resolver, localRepository, remoteRepositories,
-                                                       artifactMetadataSource, artifactFactory );
-            }
-        }
-        return dependencyArtifacts;
-    }
-
-    public String getCompilerVersion()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
     }
 }

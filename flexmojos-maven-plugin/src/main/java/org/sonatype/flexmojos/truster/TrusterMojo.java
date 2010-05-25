@@ -22,9 +22,11 @@ package org.sonatype.flexmojos.truster;
 
 import java.io.File;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.flexmojos.MavenMojo;
 
 /**
  * Write a file entry onto flashplayer trust file
@@ -36,12 +38,17 @@ import org.apache.maven.plugin.MojoFailureException;
  */
 public class TrusterMojo
     extends AbstractMojo
+    implements MavenMojo
 {
 
     /**
-     * @component
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
      */
-    private FlashPlayerTruster truster;
+    protected MavenSession context;
 
     /**
      * Files that should be included on flashplayer trust
@@ -50,6 +57,11 @@ public class TrusterMojo
      * @required
      */
     private File[] filesToTrust;
+
+    /**
+     * @component
+     */
+    private FlashPlayerTruster truster;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -65,6 +77,11 @@ public class TrusterMojo
                 throw new MojoExecutionException( e.getMessage(), e );
             }
         }
+    }
+
+    public MavenSession getSession()
+    {
+        return context;
     }
 
 }

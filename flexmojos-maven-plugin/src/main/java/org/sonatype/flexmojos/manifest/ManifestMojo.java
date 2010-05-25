@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,6 +39,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
+import org.sonatype.flexmojos.MavenMojo;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
 /**
@@ -47,7 +49,14 @@ import org.sonatype.flexmojos.test.util.PathUtil;
  */
 public class ManifestMojo
     extends AbstractMojo
+    implements MavenMojo
 {
+
+    /**
+     * @parameter default-value="${project.basedir}"
+     * @readonly
+     */
+    private File basedir;
 
     /**
      * @parameter default-value="${project.compileSourceRoots}"
@@ -56,9 +65,13 @@ public class ManifestMojo
     private List<String> compileSourceRoots;
 
     /**
-     * @parameter
+     * LW : needed for expression evaluation The maven MojoExecution needed for ExpressionEvaluation
+     * 
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
      */
-    private String[] manifestIncludes;
+    protected MavenSession context;
 
     /**
      * @parameter
@@ -66,15 +79,28 @@ public class ManifestMojo
     private String[] manifestExcludes;
 
     /**
+     * @parameter
+     */
+    private String[] manifestIncludes;
+
+    /**
      * @parameter default-value="${project.build.directory}/manifest.xml"
      */
     private File outputFile;
 
-    /**
-     * @parameter default-value="${project.basedir}"
-     * @readonly
-     */
-    private File basedir;
+    private String[] addDefaultIncludes( String[] manifestIncludes )
+    {
+        List<String> includes = new ArrayList<String>();
+        if ( manifestIncludes != null )
+        {
+            includes.addAll( Arrays.asList( manifestIncludes ) );
+        }
+
+        includes.add( "**/*.as" );
+        includes.add( "**/*.mxml" );
+
+        return includes.toArray( new String[0] );
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -131,18 +157,9 @@ public class ManifestMojo
         }
     }
 
-    private String[] addDefaultIncludes( String[] manifestIncludes )
+    public MavenSession getSession()
     {
-        List<String> includes = new ArrayList<String>();
-        if ( manifestIncludes != null )
-        {
-            includes.addAll( Arrays.asList( manifestIncludes ) );
-        }
-
-        includes.add( "**/*.as" );
-        includes.add( "**/*.mxml" );
-
-        return includes.toArray( new String[0] );
+        return context;
     }
 
 }
