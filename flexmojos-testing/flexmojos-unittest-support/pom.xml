@@ -18,7 +18,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
-  <version>3.7-SNAPSHOT</version>
+  <version>3.7</version>
 
   <packaging>swc</packaging>
 
