@@ -30,6 +30,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.PatternSet;
 import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.ContextEnabled;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -47,7 +48,7 @@ import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.util.PathUtil;
 
 public abstract class AbstractMavenMojo
-    implements Mojo, Cacheable
+    implements Mojo, Cacheable, ContextEnabled
 {
 
     private static final String AIR_GLOBAL = "airglobal";
@@ -128,6 +129,8 @@ public abstract class AbstractMavenMojo
      * @readonly
      */
     protected List<Artifact> pluginArtifacts;
+
+    private Map pluginContext;
 
     /**
      * The maven project.
@@ -381,6 +384,14 @@ public abstract class AbstractMavenMojo
         return PathUtil.getCanonicalFile( outputDirectory );
     }
 
+    /**
+     * @see org.apache.maven.plugin.ContextEnabled#getPluginContext()
+     */
+    public Map getPluginContext()
+    {
+        return pluginContext;
+    }
+
     protected List<File> getResourcesTargetDirectories()
     {
         List<File> directories = new ArrayList<File>();
@@ -403,11 +414,6 @@ public abstract class AbstractMavenMojo
             directories.add( directory );
         }
         return directories;
-    }
-
-    public MavenSession getSession()
-    {
-        return session;
     }
 
     public File getTargetDirectory()
@@ -513,6 +519,14 @@ public abstract class AbstractMavenMojo
         this.log = log;
     }
 
+    /**
+     * @see org.apache.maven.plugin.ContextEnabled#setPluginContext(java.util.Map)
+     */
+    public void setPluginContext( Map pluginContext )
+    {
+        this.pluginContext = pluginContext;
+    }
+
     protected String toClass( String filename )
     {
         String classname = filename;
@@ -550,5 +564,4 @@ public abstract class AbstractMavenMojo
             checkResult( result );
         }
     }
-
 }

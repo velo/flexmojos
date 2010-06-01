@@ -221,7 +221,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Long benchmarkTimeFilter;
 
-
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      * 
@@ -1761,18 +1760,15 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         if ( SWC.equals( getProjectType() ) )
         {
             Matcher<? extends Artifact> swcs =
-                allOf( type( SWC ), // 
+                allOf( type( SWC ), //
                        anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ), scope( null ) )//
                 );
             return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
         }
         else
         {
-            return MavenUtils.getFiles(
-                                        getDependencies(
-                                                         not( GLOBAL_MATCHER ),// 
-                                                         allOf(
-                                                                type( SWC ),// 
+            return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
+                                                         allOf( type( SWC ),//
                                                                 anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ) ) ) ),
                                         getGlobalArtifact() );
         }
@@ -1834,35 +1830,39 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return generateFrameLoader;
     }
 
+    private static final Object lock = new Object();
+
     @SuppressWarnings( "unchecked" )
     public Collection<Artifact> getGlobalArtifact()
     {
-        Artifact global = getDependency( GLOBAL_MATCHER );
-        if ( global == null )
+        synchronized ( lock )
         {
-            throw new IllegalArgumentException(
-                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
-        }
-
-        File source = global.getFile();
-        File dest = new File( source.getParentFile(), global.getArtifactId() + "." + SWC );
-
-        try
-        {
-            if ( !dest.exists() )
+            Artifact global = getDependency( GLOBAL_MATCHER );
+            if ( global == null )
             {
-                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
-                FileUtils.copyFile( source, dest );
+                throw new IllegalArgumentException(
+                                                    "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
             }
-        }
-        catch ( IOException e )
-        {
-            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
-        }
 
-        global.setFile( dest );
+            File source = global.getFile();
+            File dest = new File( source.getParentFile(), global.getArtifactId() + "." + SWC );
+            global.setFile( dest );
 
-        return Collections.singletonList( global );
+            try
+            {
+                if ( !dest.exists() )
+                {
+                    getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                    FileUtils.copyFile( source, dest );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+            }
+
+            return Collections.singletonList( global );
+        }
     }
 
     public Boolean getHeadlessServer()
@@ -1999,8 +1999,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
         catch ( ClassNotFoundException e )
         {
-            getLog().warn(
-                           "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
+            getLog().warn( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
                                + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
             return null;
         }

@@ -13,6 +13,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @since 3.3
  * @goal trust
  * @phase process-resources
+ * @threadSafe
  */
 public class TrusterMojo
     extends AbstractMojo

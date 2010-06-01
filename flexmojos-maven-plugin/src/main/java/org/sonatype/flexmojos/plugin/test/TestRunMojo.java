@@ -48,6 +48,7 @@ import org.sonatype.flexmojos.test.report.TestCoverageReport;
  * @goal test-run
  * @requiresDependencyResolution test
  * @phase test
+ * @threadSafe
  */
 public class TestRunMojo
     extends AbstractMavenMojo

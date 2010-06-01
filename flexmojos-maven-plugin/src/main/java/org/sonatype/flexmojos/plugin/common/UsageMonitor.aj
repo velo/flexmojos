@@ -1,6 +1,5 @@
 package org.sonatype.flexmojos.plugin.common;
 
-import org.apache.maven.execution.MavenSession;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 
@@ -10,21 +9,22 @@ import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 public aspect UsageMonitor
 {
 
+    private static final String TRACKER = "flexmojos-JGoogleAnalyticsTracker";
+
     pointcut execute() : target(AbstractMavenMojo) && execution(void execute() );
 
+    @SuppressWarnings( "unchecked" )
     before() : execute() 
     {
         final AbstractMavenMojo mojo = (AbstractMavenMojo) thisJoinPoint.getThis();
 
-        MavenSession s = mojo.getSession();
-
         JGoogleAnalyticsTracker tracker =
-            (JGoogleAnalyticsTracker) s.getSystemProperties().get( "JGoogleAnalyticsTracker" );
+            (JGoogleAnalyticsTracker) mojo.getPluginContext().get( TRACKER );
         if ( tracker == null )
         {
             byte[] bytes = new byte[] { 85, 65, 45, 51, 57, 51, 57, 48, 55, 52, 45, 51 };
             tracker = new JGoogleAnalyticsTracker( "Flexmojos", MavenUtils.getFlexMojosVersion(), new String( bytes ) );
-            s.getSystemProperties().put( "JGoogleAnalyticsTracker", tracker );
+            mojo.getPluginContext().put( TRACKER, tracker );
         }
         
 

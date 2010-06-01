@@ -36,6 +36,7 @@ import scala.actors.threadpool.Arrays;
  * @requiresDependencyResolution compile
  * @phase compile
  * @configurator flexmojos
+ * @threadSafe
  */
 public class MxmlcMojo
     extends AbstractFlexCompilerMojo<MxmlcConfigurationHolder, MxmlcMojo>
