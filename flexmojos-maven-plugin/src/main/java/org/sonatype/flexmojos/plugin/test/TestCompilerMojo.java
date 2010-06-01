@@ -76,6 +76,7 @@ import flex2.compiler.common.SinglePathResolver;
  * @requiresDependencyResolution test
  * @phase test-compile
  * @configurator flexmojos
+ * @threadSafe
  */
 public class TestCompilerMojo
     extends MxmlcMojo

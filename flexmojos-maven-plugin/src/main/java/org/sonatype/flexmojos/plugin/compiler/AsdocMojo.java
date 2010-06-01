@@ -66,6 +66,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @requiresDependencyResolution compile
  * @phase process-sources
  * @configurator flexmojos
+ * @threadSafe
  */
 public class AsdocMojo
     extends AbstractFlexCompilerMojo<IASDocConfiguration, AsdocMojo>

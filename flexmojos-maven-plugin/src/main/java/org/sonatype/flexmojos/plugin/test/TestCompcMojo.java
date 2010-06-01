@@ -46,6 +46,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @requiresDependencyResolution test
  * @phase package
  * @configurator flexmojos
+ * @threadSafe
  */
 public class TestCompcMojo
     extends CompcMojo

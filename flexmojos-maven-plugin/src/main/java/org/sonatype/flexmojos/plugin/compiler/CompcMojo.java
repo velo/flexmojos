@@ -52,6 +52,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @requiresDependencyResolution compile
  * @phase compile
  * @configurator flexmojos
+ * @threadSafe
  */
 public class CompcMojo
     extends AbstractFlexCompilerMojo<ICompcConfiguration, CompcMojo>
