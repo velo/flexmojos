@@ -119,6 +119,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     Cloneable, FlexMojo
 {
 
+    private static final Object lock = new Object();
+
     /**
      * Generate an accessible SWF
      * <p>
@@ -1847,8 +1849,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return generateFrameLoader;
     }
 
-    private static final Object lock = new Object();
-
     @SuppressWarnings( "unchecked" )
     public Collection<Artifact> getGlobalArtifact()
     {
@@ -1862,7 +1862,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             }
 
             File source = global.getFile();
-            File dest = new File( source.getParentFile(), global.getArtifactId() + "." + SWC );
+            File dest =
+                new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
             global.setFile( dest );
 
             try
