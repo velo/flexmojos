@@ -180,8 +180,7 @@ public class SwcMojo
     @Override
     protected void addRuntimeLibrary( Artifact artifact )
     {
-        getLog().warn(
-                       "Invalid scope for '" + artifact.getArtifactId()
+        getLog().warn( "Invalid scope for '" + artifact.getArtifactId()
                            + "'. SWC doesn't support runtime scope, switching to external!" );
 
         File artifactFile = artifact.getFile();
@@ -389,13 +388,11 @@ public class SwcMojo
         if ( !checkNullOrEmpty( includeAsClasses ) )
         {
             String[] includedClasses = this.getClassesFromPaths();
-            getLog().info(
-                           "Including " + includedClasses.length
+            getLog().info( "Including " + includedClasses.length
                                + " classes to compile with <includeAsClasses> option." );
             if ( getLog().isDebugEnabled() )
             {
-                getLog().debug(
-                                "Classes included with <includeAsClasses> option: "
+                getLog().debug( "Classes included with <includeAsClasses> option: "
                                     + ArrayUtils.toString( includedClasses ) + "." );
             }
             for ( String includeClass : includedClasses )

@@ -17,6 +17,10 @@
  */
 package org.sonatype.flexmojos;
 
+import static org.sonatype.flexmojos.common.FlexExtension.SWC;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +39,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.flexmojos.common.FlexExtension;
+import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.utilities.MavenUtils;
 
 /**
@@ -165,9 +169,26 @@ public abstract class AbstractIrvinMojo
                                                    artifactMetadataSource, artifactFactory );
             for ( Artifact a : dependencyArtifacts )
             {
-                if ( FlexExtension.SWC.equals( a.getType() ) )
+                if ( SWC.equals( a.getType() ) && //
+                    ( "playerglobal".equals( a.getArtifactId() ) || "airglobal".equals( a.getArtifactId() ) ) )
                 {
-                    a.setFile( MavenUtils.getArtifactFile( a, build ) );
+                    File source = a.getFile();
+                    File dest =
+                        new File( source.getParentFile(), a.getClassifier() + "/" + a.getArtifactId() + "." + SWC );
+                    a.setFile( dest );
+
+                    try
+                    {
+                        if ( !dest.exists() )
+                        {
+                            getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                            FileUtils.copyFile( source, dest );
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Error renamming '" + a.getArtifactId() + "'.", e );
+                    }
                 }
             }
         }
@@ -197,7 +218,7 @@ public abstract class AbstractIrvinMojo
         List<Artifact> artifacts = new ArrayList<Artifact>();
         for ( Artifact artifact : getDependencyArtifacts() )
         {
-            if ( FlexExtension.SWC.equals( artifact.getType() ) && scopesList.contains( artifact.getScope() ) )
+            if ( SWC.equals( artifact.getType() ) && scopesList.contains( artifact.getScope() ) )
             {
                 artifacts.add( artifact );
             }

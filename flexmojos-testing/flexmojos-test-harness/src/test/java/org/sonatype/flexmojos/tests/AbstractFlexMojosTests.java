@@ -40,6 +40,8 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -217,8 +219,7 @@ public class AbstractFlexMojosTests
         try
         {
             File projectFolder = new File( projectsSource, projectName );
-            AssertJUnit.assertTrue(
-                                    "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
+            AssertJUnit.assertTrue( "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName + "_" + getTestName() );
@@ -294,6 +295,43 @@ public class AbstractFlexMojosTests
         }
 
         return configReportDOM;
+    }
+
+    protected void assertSeftExit( File main, int expectedExitCode )
+        throws Exception
+    {
+        Process p = null;
+        try
+        {
+            p = Runtime.getRuntime().exec( new String[] { "flashplayer", main.getCanonicalPath() } );
+            final Process tp = p;
+
+            Thread t = new Thread( new Runnable()
+            {
+
+                public void run()
+                {
+                    try
+                    {
+                        tp.waitFor();
+                    }
+                    catch ( InterruptedException e )
+                    {
+                    }
+                }
+            } );
+
+            t.start();
+
+            t.join( 10000 );
+
+            MatcherAssert.assertThat( p.exitValue(), CoreMatchers.equalTo( expectedExitCode ) );
+        }
+        finally
+        {
+            if ( p != null )
+                p.destroy();
+        }
     }
 
 }

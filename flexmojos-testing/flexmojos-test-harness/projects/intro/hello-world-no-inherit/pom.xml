@@ -19,52 +19,62 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>info.rvin.itest</groupId>
-	<artifactId>hello-world-no-inherit</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <groupId>info.rvin.itest</groupId>
+  <artifactId>hello-world-no-inherit</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-	<packaging>swf</packaging>
+  <packaging>swf</packaging>
 
-	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
-				<artifactId>flexmojos-maven-plugin</artifactId>
-                <version>%{flexmojos.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<locales>
-						<locale>en_US</locale>
-					</locales>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+  <properties>
+    <isIt>false</isIt>
+  </properties>
 
-	<repositories>
-		<repository>
-			<id>flexmojos-repository</id>
-			<url>http://repository.sonatype.org/content/groups/flexgroup/</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>flexmojos-repository</id>
-			<url>http://repository.sonatype.org/content/groups/flexgroup/</url>
-		</pluginRepository>
-	</pluginRepositories>
+  <build>
+    <sourceDirectory>src/main/flex</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <version>%{flexmojos.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <locales>
+            <locale>en_US</locale>
+          </locales>
+          <definesDeclaration>
+            <property>
+              <name>CFG::IT</name>
+              <value>${isIt}</value>
+            </property>
+          </definesDeclaration>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>flex-framework</artifactId>
-			<version>%{flex.version}</version>
-			<type>pom</type>
-		</dependency>
-	</dependencies>
+  <repositories>
+    <repository>
+      <id>flexmojos-repository</id>
+      <url>http://svn.sonatype.org/flexmojos/repository/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>flexmojos-repository</id>
+      <url>http://svn.sonatype.org/flexmojos/repository/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>%{flex.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
 </project>

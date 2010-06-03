@@ -1904,7 +1904,7 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     protected File[] getGlobalDependency()
         throws MojoExecutionException
     {
-        return new File[] { MavenUtils.getArtifactFile( getGlobalArtifact(), build ) };
+        return new File[] { getGlobalArtifact().getFile() };
     }
 
     protected abstract boolean getIsApplication();
