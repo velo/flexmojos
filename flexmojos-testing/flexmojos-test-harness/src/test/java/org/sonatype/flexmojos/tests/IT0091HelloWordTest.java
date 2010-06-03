@@ -20,6 +20,8 @@
  */
 package org.sonatype.flexmojos.tests;
 
+import java.io.File;
+
 import org.testng.annotations.Test;
 
 public class IT0091HelloWordTest
@@ -30,14 +32,24 @@ public class IT0091HelloWordTest
     public void helloWordTest()
         throws Exception
     {
-        test( getProject( "intro/hello-world" ), "install" );
+        String dir = test( getProject( "intro/hello-world" ), "install", "-DisIt=true" ).getBasedir();
+
+        File target = new File( dir, "target" );
+        File main = new File( target, "hello-world-1.0-SNAPSHOT.swf" );
+
+        assertSeftExit( main, 3539 );
     }
 
     @Test
     public void helloWordNoInherit()
         throws Exception
     {
-        test( getProject( "intro/hello-world-no-inherit" ), "install" );
+        String dir = test( getProject( "intro/hello-world-no-inherit" ), "install", "-DisIt=true" ).getBasedir();
+
+        File target = new File( dir, "target" );
+        File main = new File( target, "hello-world-no-inherit-1.0-SNAPSHOT.swf" );
+
+        assertSeftExit( main, 3539 );
     }
 
 }

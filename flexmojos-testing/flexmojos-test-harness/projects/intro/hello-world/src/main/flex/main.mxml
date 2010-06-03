@@ -21,6 +21,18 @@
     limitations under the License.
 
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="kill()">
 	<mx:Label text="Hello World" />
+
+    <mx:Script>
+        <![CDATA[
+            private function kill():void
+            {
+                CFG::IT {
+                  System.exit( 3539 );
+                }
+            }
+        ]]>
+    </mx:Script>
+
 </mx:Application>
