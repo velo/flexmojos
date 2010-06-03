@@ -2031,7 +2031,7 @@ public abstract class AbstractCompilerMojo<E extends Builder>
             }
 
         }
-        getLog().debug( "getResourcesBundles(" + requestedLocales + ") returning resourceBundles: " + resourceBundles );
+        getLog().debug( "getResourcesBundles(" + Arrays.toString( requestedLocales ) + ") returning resourceBundles: " + resourceBundles );
         return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
