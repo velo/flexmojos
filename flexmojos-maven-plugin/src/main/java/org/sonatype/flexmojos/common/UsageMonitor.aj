@@ -37,9 +37,8 @@ public aspect UsageMonitor
         final MavenMojo mojo = (MavenMojo) thisJoinPoint.getTarget();
         MavenSession s = mojo.getSession();
 
-        JGoogleAnalyticsTracker tracker =
-            (JGoogleAnalyticsTracker) s.getExecutionProperties().get( "JGoogleAnalyticsTracker" );
-        if ( tracker == null )
+        Object tracker = s.getExecutionProperties().get( "JGoogleAnalyticsTracker" );
+        if ( !( tracker instanceof JGoogleAnalyticsTracker ) )
         {
             byte[] bytes = new byte[] { 85, 65, 45, 51, 57, 51, 57, 48, 55, 52, 45, 51 };
             tracker = new JGoogleAnalyticsTracker( "Flexmojos", MavenUtils.getFlexMojosVersion(), new String( bytes ) );
@@ -49,16 +48,15 @@ public aspect UsageMonitor
         FocusPoint focusPoint = new FocusPoint( mojo.getClass().getName() );
 
         // prevent some asynchronous issues related to new maven 3 parallel support
-        if ( getClass().getPackage().getName().startsWith(
-                                                           new String( new byte[] { 111, 114, 103, 46, 115, 111, 110,
+        if ( getClass().getPackage().getName().startsWith( new String( new byte[] { 111, 114, 103, 46, 115, 111, 110,
                                                                97, 116, 121, 112, 101, 46, 102, 108, 101, 120, 109,
                                                                111, 106, 111, 115 } ) ) )
         {
-            tracker.trackAsynchronously( focusPoint );
+            ( (JGoogleAnalyticsTracker) tracker ).trackAsynchronously( focusPoint );
         }
         else
         {
-            tracker.trackSynchronously( focusPoint );
+            ( (JGoogleAnalyticsTracker) tracker ).trackSynchronously( focusPoint );
         }
     }
 
