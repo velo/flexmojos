@@ -18,7 +18,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-funit</artifactId>
-  <version>3.8-SNAPSHOT</version>
+  <version>3.7.1</version>
   <packaging>swc</packaging>
 
   <name>Flexmojos Unit Test support - funit</name>
