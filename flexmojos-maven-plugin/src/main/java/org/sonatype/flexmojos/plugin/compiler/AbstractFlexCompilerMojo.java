@@ -41,6 +41,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.filefilter.AgeFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -2839,5 +2841,71 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getWarnXmlClassHasChanged()
     {
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public boolean isCompilationRequired()
+    {
+        if ( !quick )
+        {
+            // not running at quick mode
+            return true;
+        }
+
+        Artifact artifact =
+            resolve( project.getGroupId(), project.getArtifactId(), project.getVersion(), getClassifier(),
+                     project.getPackaging() );
+
+        if ( !artifact.isResolved() || artifact.getFile() == null || !artifact.getFile().exists() )
+        {
+            // Recompile, file doesn't exists
+            getLog().warn( "Can't find any older instaled version." );
+            return true;
+        }
+
+        long lastCompiledArtifact = artifact.getFile().lastModified();
+
+        boolean required = false;
+        Set<Artifact> dependencies = getDependencies();
+        for ( Artifact dependency : dependencies )
+        {
+            if ( org.apache.commons.io.FileUtils.isFileNewer( dependency.getFile(), lastCompiledArtifact ) )
+            {
+                // a dependency is newer, recompile
+                getLog().warn( "Found a updated dependency: " + dependency );
+                required = true;
+            }
+        }
+
+        if ( !required )
+        {
+            Collection<File> files =
+                org.apache.commons.io.FileUtils.listFiles( new File( project.getBuild().getSourceDirectory() ),
+                                                           new AgeFileFilter( lastCompiledArtifact, false ),
+                                                           TrueFileFilter.INSTANCE );
+
+            // If has any newer file
+            if ( files.size() > 0 )
+            {
+                getLog().warn( "Found some updated files." );
+                required = true;
+            }
+        }
+
+        if ( !required )
+        {
+            try
+            {
+                FileUtils.copyFile( artifact.getFile(), new File( getOutput() ) );
+            }
+            catch ( IOException e )
+            {
+                getLog().error( "Unable to copy instaled version to target folder.", e );
+                return true;
+            }
+        }
+
+        // nothing new was found.
+        return required;
     }
 }
