@@ -67,7 +67,7 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
     {
-        return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),// 
+        return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),//
                       anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractMavenMojo
      */
     protected List<Artifact> pluginArtifacts;
 
-    private Map pluginContext;
+    private Map<Object, Object> pluginContext;
 
     /**
      * The maven project.
@@ -147,6 +147,14 @@ public abstract class AbstractMavenMojo
      * @required
      */
     protected MavenProjectHelper projectHelper;
+
+    /**
+     * Quick compile mode. When true, Flexmojos will check if the latest artifact available at maven repository for this
+     * project is newer then sources. If so, wont recompile.
+     * 
+     * @parameter default-value="false" expression="${flexmojos.quick}"
+     */
+    protected boolean quick;
 
     /**
      * List of remote repositories to be used by the plugin to resolve dependencies.
@@ -181,7 +189,7 @@ public abstract class AbstractMavenMojo
     protected MavenSession session;
 
     /**
-     * Skips lexmojos goal execution
+     * Skips flexmojos goal execution
      * 
      * @parameter expression="${flexmojos.skip}"
      */
@@ -387,7 +395,7 @@ public abstract class AbstractMavenMojo
     /**
      * @see org.apache.maven.plugin.ContextEnabled#getPluginContext()
      */
-    public Map getPluginContext()
+    public Map<Object, Object> getPluginContext()
     {
         return pluginContext;
     }
@@ -522,6 +530,7 @@ public abstract class AbstractMavenMojo
     /**
      * @see org.apache.maven.plugin.ContextEnabled#setPluginContext(java.util.Map)
      */
+    @SuppressWarnings( "unchecked" )
     public void setPluginContext( Map pluginContext )
     {
         this.pluginContext = pluginContext;
