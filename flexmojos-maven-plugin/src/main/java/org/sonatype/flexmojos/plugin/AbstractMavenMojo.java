@@ -59,6 +59,8 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.hamcrest.Matcher;
+import org.mockito.ReturnValues;
+import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
@@ -80,6 +82,14 @@ public abstract class AbstractMavenMojo
     protected static final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
     private static final String PLAYER_GLOBAL = "playerglobal";
+
+    protected static final ReturnValues RETURNS_NULL = new ReturnValues()
+    {
+        public Object valueFor( InvocationOnMock invocation )
+        {
+            return null;
+        }
+    };
 
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
@@ -537,6 +547,11 @@ public abstract class AbstractMavenMojo
         }
 
         return scan( resource, dir );
+    }
+
+    public void setArchiverManager( ArchiverManager archiverManager )
+    {
+        this.archiverManager = archiverManager;
     }
 
     public void setLog( Log log )

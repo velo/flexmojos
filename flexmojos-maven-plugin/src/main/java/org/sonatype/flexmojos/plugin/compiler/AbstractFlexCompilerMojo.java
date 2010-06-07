@@ -20,6 +20,8 @@ package org.sonatype.flexmojos.plugin.compiler;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
@@ -54,9 +56,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -65,6 +67,7 @@ import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -72,6 +75,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
 import org.sonatype.flexmojos.compiler.IDefaultSize;
@@ -1333,6 +1337,60 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean warnings;
 
+    protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
+    {
+        getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
+                            + " to " + desiredRbSwc.getClassifier() );
+
+        File dest;
+        try
+        {
+            UnArchiver unzip = archiverManager.getUnArchiver( "zip" );
+            unzip.setSourceFile( baseRbSwc.getFile() );
+            dest =
+                FileUtils.createTempFile( baseRbSwc.getArtifactId(), desiredRbSwc.getClassifier(), getOutputDirectory() );
+            unzip.extract( "locale/" + baseRbSwc.getClassifier(), dest );
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Unable to extract base locale", e );
+        }
+
+        File resourceBundleBaseDir = new File( dest, "locale/" + baseRbSwc.getClassifier() );
+        List<String> bundles = new ArrayList<String>();
+        for ( String bundle : resourceBundleBaseDir.list() )
+        {
+            bundles.add( bundle.replace( ".properties", "" ) );
+        }
+
+        ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
+        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
+        when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
+        when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
+        when( compilerCfg.getTheme() ).thenReturn( Collections.EMPTY_LIST );
+        when( compilerCfg.getFontsConfiguration() ).thenReturn( getFontsConfiguration() );
+        
+        when( compilerCfg.getLocale() ).thenReturn( new String[] { desiredRbSwc.getClassifier() } );
+        when( compilerCfg.getSourcePath() ).thenReturn( new File[] { resourceBundleBaseDir } );
+        when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
+        String output = PathUtil.getCanonicalPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
+        when( cfg.getOutput() ).thenReturn( output );
+        when( compilerCfg.getExternalLibraryPath() ).thenReturn( this.getExternalLibraryPath() );
+        when( compilerCfg.getLibraryPath() ).thenReturn( this.getLibraryPath() );
+
+        try
+        {
+            checkResult( compiler.compileSwc( cfg, true ) );
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Unable to compile adapted resource bundle", e );
+        }
+        
+        desiredRbSwc.setFile( new File(output) );
+        desiredRbSwc.setResolved( true );
+    }
+
     protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
                                                                String[] policyFileUrls )
     {
@@ -1512,13 +1570,57 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         Set<Artifact> beacons = getDependencies( type( RB_SWC ) );
 
-        for ( String locale : getLocale() )
+        String[] localeChains = this.localesCompiled;
+        if ( localeChains == null )
         {
-            for ( Artifact beacon : beacons )
+            localeChains = getLocale();
+        }
+
+        // TODO for for for for if for for, too many nested blocks, improve this
+        for ( Artifact beacon : beacons )
+        {
+            for ( String localeChain : localeChains )
             {
-                Artifact rbSwc =
-                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale, beacon.getType() );
-                rbsSwc.add( rbSwc );
+                String[] locales;
+                if ( localeChain.contains( "," ) )
+                {
+                    locales = localeChain.split( "," );
+                }
+                else
+                {
+                    locales = new String[] { localeChain };
+                }
+
+                String mainLocale = locales[0];
+
+                final Artifact mainRbSwc =
+                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), mainLocale,
+                             beacon.getType() );
+
+                if ( mainRbSwc.isResolved() )
+                {
+                    rbsSwc.add( mainRbSwc );
+                }
+                else
+                {
+                    for ( String locale : locales )
+                    {
+                        final Artifact rbSwc =
+                            resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale,
+                                     beacon.getType() );
+
+                        if ( rbSwc.isResolved() )
+                        {
+                            if ( mainLocale.equals( locale ) )
+                            {
+                                adaptResourceBundle( rbSwc, mainRbSwc );
+                            }
+
+                            rbsSwc.add( mainRbSwc );
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -1872,6 +1974,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             {
                 if ( !dest.exists() )
                 {
+                    dest.getParentFile().mkdirs();
                     getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
                     FileUtils.copyFile( source, dest );
                 }
@@ -2111,7 +2214,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         if ( localesCompiled != null )
         {
-            return localesCompiled;
+            String[] locales = new String[localesCompiled.length];
+            for ( int i = 0; i < localesCompiled.length; i++ )
+            {
+                String locale = localesCompiled[i];
+                if ( locale.contains( "," ) )
+                {
+                    locale = locale.split( "," )[0];
+                }
+                locales[i] = locale;
+            }
+            return locales;
         }
 
         // if there are runtime locales, no need for compiled locales

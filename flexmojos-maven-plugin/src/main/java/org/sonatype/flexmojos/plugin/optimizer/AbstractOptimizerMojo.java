@@ -30,8 +30,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
-import org.mockito.ReturnValues;
-import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IOptimizerConfiguration;
@@ -48,14 +46,6 @@ public abstract class AbstractOptimizerMojo
 {
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat( "#.##" );
-
-    private static final ReturnValues RETURNS_NULL = new ReturnValues()
-    {
-        public Object valueFor( InvocationOnMock invocation )
-        {
-            return null;
-        }
-    };
 
     /**
      * @parameter expression="${project.build}"
