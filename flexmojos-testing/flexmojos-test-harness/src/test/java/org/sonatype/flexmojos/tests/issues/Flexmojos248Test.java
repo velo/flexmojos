@@ -66,6 +66,6 @@ public class Flexmojos248Test
         File module2 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-module1.swf" );
         MatcherAssert.assertThat( module2, FileMatcher.isFile() );
 
-        assertSeftExit( main );
+        assertSeftExit( main, 3539 );
     }
 }

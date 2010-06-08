@@ -34,7 +34,7 @@ public class Flexmojos315Test
         File target = new File( dir, "target" );
         File main = new File( target, "flexmojos-315-1.0-SNAPSHOT.swf" );
 
-        assertSeftExit( main );
+        assertSeftExit( main, 3539 );
     }
 
 }

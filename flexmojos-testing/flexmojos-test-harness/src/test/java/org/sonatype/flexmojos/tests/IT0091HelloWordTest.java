@@ -36,7 +36,7 @@ public class IT0091HelloWordTest
         File target = new File( dir, "target" );
         File main = new File( target, "hello-world-1.0-SNAPSHOT.swf" );
 
-        assertSeftExit( main );
+        assertSeftExit( main, 3539 );
     }
 
     @Test
@@ -48,7 +48,7 @@ public class IT0091HelloWordTest
         File target = new File( dir, "target" );
         File main = new File( target, "hello-world-no-inherit-1.0-SNAPSHOT.swf" );
 
-        assertSeftExit( main );
+        assertSeftExit( main, 3539 );
     }
 
     @Test
