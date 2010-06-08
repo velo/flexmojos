@@ -8,6 +8,7 @@
 package org.sonatype.flexmojos.tests;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
+import org.sonatype.flexmojos.util.PathUtil;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeSuite;
@@ -324,6 +326,10 @@ public class AbstractFlexMojosTests
     protected void assertSeftExit( File main )
         throws Exception
     {
+        if(!main.exists()) {
+            throw new FileNotFoundException( PathUtil.getCanonicalPath( main ) );
+        }
+        
         Process p = null;
         try
         {

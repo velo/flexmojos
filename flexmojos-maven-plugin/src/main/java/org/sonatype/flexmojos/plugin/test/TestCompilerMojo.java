@@ -443,8 +443,8 @@ public class TestCompilerMojo
     public SinglePathResolver getMavenPathResolver()
     {
         List<Resource> resources = new ArrayList<Resource>();
-        resources.addAll( this.resources );
         resources.addAll( this.testResources );
+        resources.addAll( this.resources );
         return new MavenPathResolver( resources );
     }
 
