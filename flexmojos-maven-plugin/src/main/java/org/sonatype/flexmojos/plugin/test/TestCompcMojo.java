@@ -4,16 +4,21 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.model.Resource;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
+import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
+
+import flex2.compiler.common.SinglePathResolver;
 
 /**
  * <p>
@@ -48,33 +53,19 @@ public class TestCompcMojo
      */
     private List<String> testCompileSourceRoots;
 
-    @Override
-    public File[] getSourcePath()
-    {
-        Set<File> files = new LinkedHashSet<File>();
-
-        files.addAll( PathUtil.getExistingFilesList( testCompileSourceRoots ) );
-        files.addAll( Arrays.asList( super.getSourcePath() ) );
-
-        return files.toArray( new File[0] );
-    }
+    /**
+     * The maven test resources
+     * 
+     * @parameter expression="${project.build.testResources}"
+     * @required
+     * @readonly
+     */
+    protected List<Resource> testResources;
 
     @Override
-    public List<String> getIncludeClasses()
+    public String getClassifier()
     {
-        return null;
-    }
-
-    @Override
-    public File[] getIncludeSources()
-    {
-        return PathUtil.getExistingFiles( testCompileSourceRoots );
-    }
-
-    @Override
-    public List<String> getIncludeNamespaces()
-    {
-        return null;
+        return "tests";
     }
 
     @SuppressWarnings( "unchecked" )
@@ -85,9 +76,27 @@ public class TestCompcMojo
     }
 
     @Override
+    public List<String> getIncludeClasses()
+    {
+        return null;
+    }
+
+    @Override
     public File[] getIncludeLibraries()
     {
         return null;
+    }
+
+    @Override
+    public List<String> getIncludeNamespaces()
+    {
+        return null;
+    }
+
+    @Override
+    public File[] getIncludeSources()
+    {
+        return PathUtil.getExistingFiles( testCompileSourceRoots );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -98,15 +107,9 @@ public class TestCompcMojo
     }
 
     @Override
-    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    public String[] getLocale()
     {
-        return null;
-    }
-
-    @Override
-    public String getClassifier()
-    {
-        return "tests";
+        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
     }
 
     @Override
@@ -115,10 +118,28 @@ public class TestCompcMojo
         return null;
     }
 
-    @Override
-    public String[] getLocale()
+    public SinglePathResolver getMavenPathResolver()
     {
-        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
+        List<Resource> resources = new ArrayList<Resource>();
+        resources.addAll( this.testResources );
+        resources.addAll( this.resources );
+        return new MavenPathResolver( resources );
+    }
+
+    @Override
+    public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+    @Override
+    public File[] getSourcePath()
+    {
+        Set<File> files = new LinkedHashSet<File>();
+
+        files.addAll( PathUtil.getExistingFilesList( testCompileSourceRoots ) );
+        files.addAll( Arrays.asList( super.getSourcePath() ) );
+
+        return files.toArray( new File[0] );
     }
 
 }
