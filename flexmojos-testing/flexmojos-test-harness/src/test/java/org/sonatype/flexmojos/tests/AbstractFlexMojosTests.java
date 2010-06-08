@@ -323,7 +323,7 @@ public class AbstractFlexMojosTests
         return configReportDOM;
     }
 
-    protected void assertSeftExit( File main )
+    protected void assertSeftExit( File main, int exitCode )
         throws Exception
     {
         if(!main.exists()) {
@@ -355,7 +355,7 @@ public class AbstractFlexMojosTests
 
             t.join( 10000 );
 
-            MatcherAssert.assertThat( p.exitValue(), CoreMatchers.equalTo( 0 ) );
+            MatcherAssert.assertThat( p.exitValue(), CoreMatchers.equalTo( exitCode ) );
         }
         finally
         {
