@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>flexmojos-test-coverage</artifactId>
+  <version>4.0-alpha-3</version>
   <packaging>swc</packaging>
 
   <dependencies>
