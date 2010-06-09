@@ -18,6 +18,7 @@
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
+  <version>4.0-alpha-3</version>
   <packaging>swc</packaging>
 
   <name>Flexmojos Unit Test support</name>
