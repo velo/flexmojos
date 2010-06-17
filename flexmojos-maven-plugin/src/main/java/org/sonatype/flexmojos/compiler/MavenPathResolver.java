@@ -47,7 +47,7 @@ public class MavenPathResolver
 
         for ( Resource resource : resources )
         {
-            File resourceFolder = new File( resource.getDirectory() );
+            File resourceFolder = new File( resource.getTargetPath() );
             File resourceFile = new File( resourceFolder, relative );
             if ( resourceFile.exists() )
             {
