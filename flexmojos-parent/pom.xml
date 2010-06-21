@@ -52,7 +52,7 @@
     <flex.sdk.version>4.1.0.15646</flex.sdk.version>
     <maven.version>3.0-beta-1</maven.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0-FLEXMOJOS-r418</apparat.version>
+    <apparat.version>1.0-FLEXMOJOS-r511</apparat.version>
   </properties>
 
   <build>
