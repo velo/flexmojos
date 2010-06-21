@@ -27,9 +27,10 @@ import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.util.PathUtil;
 
-import apparat.tools.ApparatConfiguration;
 import apparat.tools.reducer.Reducer.ReducerTool;
+import apparat.tools.reducer.ReducerConfiguration;
 import apparat.tools.stripper.Stripper.StripperTool;
+import apparat.tools.stripper.StripperConfiguration;
 
 public abstract class AbstractOptimizerMojo
     extends AbstractMavenMojo
@@ -158,7 +159,7 @@ public abstract class AbstractOptimizerMojo
      * 
      * @parameter expression="${flex.quality}"
      */
-    private Double quality;
+    private float quality;
 
     /**
      * Strength of deblocking filter
@@ -168,7 +169,7 @@ public abstract class AbstractOptimizerMojo
      * 
      * @parameter expression="${flex.deblock}"
      */
-    private Double deblock;
+    private float deblock;
 
     public abstract String getInput();
 
@@ -180,7 +181,7 @@ public abstract class AbstractOptimizerMojo
     public String[] getLoadConfig()
     {
         return PathUtil.getCanonicalPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
-                                                                                      configDirectory ) );
+                                                                                       configDirectory ) );
     }
 
     public IOptimizerConfiguration getOptimizerConfiguration( File input, File output )
@@ -220,33 +221,51 @@ public abstract class AbstractOptimizerMojo
         }
     }
 
-    protected void reduce( File input, File output )
+    protected void reduce( final File input, final File output )
     {
         ReducerTool s = new ReducerTool();
-        ApparatConfiguration cfg = new ApparatConfiguration();
-        cfg.update( "-i", PathUtil.getCanonicalPath( input ) );
-        cfg.update( "-o", PathUtil.getCanonicalPath( output ) );
-
-        if ( quality != null )
+        ReducerConfiguration cfg = new ReducerConfiguration()
         {
-            cfg.update( "-q", String.valueOf( quality ) );
-        }
 
-        if ( deblock != null )
-        {
-            cfg.update( "-d", String.valueOf( deblock ) );
-        }
+            public float quality()
+            {
+                return quality;
+            }
 
+            public File output()
+            {
+                return output;
+            }
+
+            public File input()
+            {
+                return input;
+            }
+
+            public float deblock()
+            {
+                return deblock;
+            }
+        };
         s.configure( cfg );
         s.run();
     }
 
-    protected void strip( File input, File output )
+    protected void strip( final File input, final File output )
     {
         StripperTool s = new StripperTool();
-        ApparatConfiguration cfg = new ApparatConfiguration();
-        cfg.update( "-i", PathUtil.getCanonicalPath( input ) );
-        cfg.update( "-o", PathUtil.getCanonicalPath( output ) );
+        StripperConfiguration cfg = new StripperConfiguration()
+        {
+            public File output()
+            {
+                return output;
+            }
+
+            public File input()
+            {
+                return input;
+            }
+        };
         s.configure( cfg );
         s.run();
     }
