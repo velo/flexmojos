@@ -45,6 +45,7 @@
     <flex.sdk.version>3.2.0.3958</flex.sdk.version>
     <maven.version>2.0.9</maven.version>
     <plexus.version>1.0-beta-3.0.6</plexus.version>
+    <tycho-version>0.8.0</tycho-version>
 
     <!-- need due grid limitations -->
     <flexReleaseUrl>http://repository.sonatype.org/content/repositories/flexmojos-releases</flexReleaseUrl>
@@ -192,6 +193,12 @@
       <plugin>
         <groupId>org.sonatype.maven.plugin</groupId>
         <artifactId>emma-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <extensions>true</extensions>
       </plugin>
     </plugins>
   </build>
