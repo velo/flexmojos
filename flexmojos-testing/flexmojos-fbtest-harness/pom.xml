@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-testing</artifactId>
+    <version>3.8-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>flexmojos-fbtest-harness</artifactId>
+  <version>3.8.0-SNAPSHOT</version>
+  
+  <packaging>eclipse-test-plugin</packaging>
+
+  <name>Flexmojos Flexbuilder Integration Tests</name>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>maven-osgi-test-plugin</artifactId>
+        <configuration>
+          <useUIThread>false</useUIThread>
+          <forkedProcessTimeoutInSeconds>7200</forkedProcessTimeoutInSeconds>
+          <appArgLine>-pluginCustomization ${project.basedir}/plugin_customization.ini</appArgLine>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
