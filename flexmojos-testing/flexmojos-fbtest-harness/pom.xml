@@ -32,9 +32,10 @@
         <groupId>org.sonatype.tycho</groupId>
         <artifactId>maven-osgi-test-plugin</artifactId>
         <configuration>
+          <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
+          <argLine>-Xmx800m -XX:MaxPermSize=256m</argLine>
           <forkedProcessTimeoutInSeconds>7200</forkedProcessTimeoutInSeconds>
-          <appArgLine>-pluginCustomization ${project.basedir}/plugin_customization.ini</appArgLine>
         </configuration>
       </plugin>
 
