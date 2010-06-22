@@ -24,7 +24,9 @@ Require-Bundle: org.eclipse.swtbot.eclipse.core,
  com.adobe.flexbuilder.project,
  org.eclipse.search,
  org.eclipse.ui.forms,
- org.junit4
+ org.junit4,
+ org.eclipse.emf.ecore.edit,
+ org.eclipse.xsd
 Bundle-Version: 3.8.0.qualifier
 Bundle-SymbolicName: flexmojos.fbtest.harness;singleton:=true
 Bundle-Name: Flexmojos FB test harness
