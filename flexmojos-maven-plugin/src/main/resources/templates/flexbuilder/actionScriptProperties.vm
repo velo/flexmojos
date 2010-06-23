@@ -23,22 +23,30 @@
         version="3"
         >
 
-    <compiler 
+    <compiler
+#if( $flexSDK != "default" )
+			flexSDK="$flexSDK"
+#end
             additionalCompilerArguments="$!additionalCompilerArguments" 
             copyDependentFiles="true" 
             enableModuleDebug="true" 
             generateAccessible="$accessible" 
-            htmlExpressInstall="true" 
+            htmlExpressInstall="$htmlExpressInstall" 
             htmlGenerate="$generateHtmlWrapper" 
-            htmlHistoryManagement="true" 
+            htmlHistoryManagement="$htmlHistoryManagement" 
             htmlPlayerVersion="$targetPlayer" 
-            htmlPlayerVersionCheck="true" 
-            outputFolderPath="$flexBuilderOutputFolderPath" 
+            htmlPlayerVersionCheck="$htmlPlayerVersionCheck" 
+            outputFolderPath="$ideOutputFolderPath" 
             sourceFolderPath="$mainSources" 
             strict="$strict" 
             useApolloConfig="$useApolloConfig" 
             verifyDigests="$verifyDigests" 
             warn="$showWarnings"
+#if($useApolloConfig)
+			targetPlayerVersion="0.0.0"
+#else
+			targetPlayerVersion="$targetPlayer"
+#end
             >
 
         <compilerSourcePath>
@@ -56,62 +64,43 @@
 
 #foreach ($artifact in $dependencies)
 			<!-- artifact: $artifact -->
-            <libraryPathEntry 
+            <libraryPathEntry
+#if($artifact.getScope() == "rsl")
+					autoExtract="true"
+					rslUrl="$artifact.getFile().getName().replaceAll('swc', 'swf')"
+#end 
                     kind="3" 
-                    linkType="1" 
-                    path="$artifact.getFile().getPath().replaceAll('\\', '/')"
-#if ($artifact.getSourceAttachment())
-                    sourcepath="$artifact.getSourceAttachment().getPath().replaceAll('\\', '/')"
+                    linkType="$artifact.getLinkType().getId()" 
+                    path="$artifact.getPath()"
+#if ($artifact.getSourcePath())
+                    sourcepath="$artifact.getSourcePath()"
 #end
                     useDefaultLinkType="false"
                     />
 
 #end
-
-#if ($pureActionscriptProject == false)
-## workaround to get player global
-	      <libraryPathEntry kind="4" path="">
-	        <excludedEntries>
-	          <libraryPathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/locale/{locale}"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/rpc.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="4" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="true">
-	            <crossDomainRsls>
-	              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.1.0.2710.swz"/>
-	              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.1.0.2710.swf"/>
-	            </crossDomainRsls>
-	          </libraryPathEntry>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_flashflexkit.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/utilities.swc" useDefaultLinkType="false"/>
-	          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
-	        </excludedEntries>
-	      </libraryPathEntry>
-#else
-## only used by pure ActionScript projects
-      <libraryPathEntry kind="4" path="">
-        <excludedEntries>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_charts.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/locale/{locale}"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/charts.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/rpc.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_flashflexkit.swc" useDefaultLinkType="false"/>
-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
-        </excludedEntries>
-      </libraryPathEntry>
+			<libraryPathEntry kind="4" path="">
+				<excludedEntries>
+					<libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+#foreach ($exclude in $sdkExcludes)
+					<libraryPathEntry kind="3" linkType="1" path="$exclude.getPath()" useDefaultLinkType="false" />
 #end
-
+				</excludedEntries>
+			</libraryPathEntry>
         </libraryPath>
 
-        <sourceAttachmentPath/>
+        <sourceAttachmentPath>
+#foreach ($artifact in $dependencies)
+#if ($artifact.getSourcePath())
+            <sourceAttachmentPathEntry
+                kind="3"
+                linkType="$artifact.getLinkType().getId()"
+                path="$artifact.getPath()"
+                sourcepath="$artifact.getSourcePath()"
+                useDefaultLinkType="false" />
+#end 
+#end        
+        </sourceAttachmentPath>
 
     </compiler>
 
@@ -122,12 +111,19 @@
                 />
 #end
     </applications>
-
-    <modules/>
+    
+    <modules>
+#foreach($module in $moduleFiles)
+		<module application="$mainSources/$mainApplication" 
+			destPath="$module.replace('mxml', 'swf')" 
+			optimize="true" 
+			sourcePath="$mainSources/$module"/>
+#end
+    </modules>
 
     <buildCSSFiles>
 #foreach( $cssfile in $cssfiles )
-        <buildCSSFileEntry destPath="bin-debug" sourcePath="$cssfile"/>
+        <buildCSSFileEntry destPath="$ideOutputFolderPath" sourcePath="$cssfile"/>
 #end
     </buildCSSFiles>
 

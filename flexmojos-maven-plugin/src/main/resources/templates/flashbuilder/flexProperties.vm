@@ -19,16 +19,10 @@
 
 -->
 <flexProperties
+	enableServiceManager="false"
+	flexServerFeatures="0"
 	flexServerType="0"
 	toolCompile="true"
 	useServerFlexSDK="false"
-#if($version >= 6)
-	enableServiceManager="false"
-	flexServerFeatures="0"
-#end
-#if($version < 6)
-	version="1"
-#else
 	version="2"
-#end
 	/>

@@ -19,6 +19,8 @@ package org.sonatype.flexmojos.flexbuilder;
 
 import org.apache.maven.plugin.ide.IdeDependency;
 import org.sonatype.flexmojos.common.FlexScopes;
+import org.sonatype.flexmojos.flexbuilder.sdk.LinkType;
+import org.sonatype.flexmojos.flexbuilder.sdk.LocalSdkEntry;
 
 /**
  * Extends IdeDependency to add the scope value. Additionally
@@ -30,8 +32,9 @@ import org.sonatype.flexmojos.common.FlexScopes;
  */
 public class FbIdeDependency extends IdeDependency
 {
-	
+	private String path = null;
 	private String sourcePath = null;
+	private LocalSdkEntry localSdkEntry = null;
 	
 	/**
 	 * Constructor that copies values from an existing IdeDependency
@@ -40,6 +43,11 @@ public class FbIdeDependency extends IdeDependency
 	 * @param scope
 	 */
 	public FbIdeDependency(IdeDependency dep, String scope)
+	{
+		this( dep, scope, null );
+	}
+	
+	public FbIdeDependency(IdeDependency dep, String scope, LocalSdkEntry entry)
 	{
 		this.setArtifactId( dep.getArtifactId() );
 		this.setClassifier( dep.getClassifier() );
@@ -53,6 +61,7 @@ public class FbIdeDependency extends IdeDependency
     	if( dep.getSourceAttachment() != null )
     		this.setSourceAttachment( dep.getSourceAttachment().getAbsoluteFile() );
     	this.setReferencedProject( dep.isReferencedProject() );
+    	this.localSdkEntry = entry;
 	}
 	
 	/**
@@ -78,44 +87,38 @@ public class FbIdeDependency extends IdeDependency
         this.scope = scope;
     }
     
-    public int getLinkType()
+    public LinkType getLinkType()
     {
-    	int id = 0;
+    	LinkType type = LinkType.MERGE;
     	
     	if( scope.equals( FlexScopes.EXTERNAL ) || scope.equals( "runtime" ) ) {
-    		id = 2;
+    		type = LinkType.EXTERNAL;
     	} else if ( scope.equals( FlexScopes.RSL  ) ) {
-    		id = 3;
+    		type = LinkType.RSL;
+    	} else if ( scope.equals( FlexScopes.CACHING ) ) {
+    		type = LinkType.RSL_DIGEST;
     	} else {
-    		id = 1; // MERGED is 1. MERGED is default.
+    		type = LinkType.MERGE; // MERGED is 1. MERGED is default.
     	}
     	
-    	return id;
+    	return type;
     }
     
-    /**
-     * Fix problem where Maven 2.1.0 on Windows Vista 64bit is adding "c:" to
-     * the front of referenced project paths.
-     * @return
-     */
+    public void setPath( String path )
+    {
+    	this.path = path;
+    }
     public String getPath()
     {
-    	String path = "";
-    	
-    	if(isReferencedProject())
+    	if( localSdkEntry != null )
     	{
-    		path = getFile().getAbsolutePath().replaceAll("c:", "");
-    		path = path.replaceAll("C:", "");
+    		return localSdkEntry.getPath();
     	}
-    	else
+    	else if( path == null )
     	{
-    		path = getFile().getAbsolutePath();
+    		path = this.getFile().getAbsolutePath();
     	}
-    	
-    	path = path.replaceAll("\\\\", "/");
-    	
     	return path;
-    	
     }
     
     public void setSourcePath(String path)
@@ -125,13 +128,30 @@ public class FbIdeDependency extends IdeDependency
     
     public String getSourcePath()
     {   
-    	// Always default to using the source path attachment when available.
-    	if( getSourceAttachment() != null )
+    	if( localSdkEntry != null )
     	{
-    		sourcePath = getSourceAttachment().getPath().replaceAll("\\\\", "/");
+    		return localSdkEntry.getSourcePath();
     	}
     	    	
     	return sourcePath;
+    }
+    
+    public boolean isFlexSdkDependency()
+    {
+    	return ( localSdkEntry != null || 
+    			( "rb.swc".equals( getType() ) && "com.adobe.flex.framework".equals( getGroupId() ) ) );
+    }
+    
+    public boolean isModifiedFlexSdkDependency()
+    {
+    	boolean modified = false;
+    	
+    	if( isFlexSdkDependency() )
+    	{
+    		// TODO resolve if this dependency is different from the base.
+    	}
+    	
+    	return modified;
     }
     
     

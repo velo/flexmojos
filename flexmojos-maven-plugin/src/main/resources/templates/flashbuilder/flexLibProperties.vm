@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<flexLibProperties version="1">
+<flexLibProperties version="3">
   <includeClasses>
 #foreach ($flexClass in $flexClasses)
     <classEntry path="$flexClass"/>

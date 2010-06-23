@@ -30,8 +30,28 @@
 		<allow-source-path-overlap>$allowSourcePathOverlap</allow-source-path-overlap>
 #end
 
+#if( $services )
+		<services>$services</services>
+#end
+
+#if( $compatibilityVersion )
+		<compatibility-version>$compatibilityVersion</compatibility-version>
+#end
+
+#if( $keepAllTypeSelectors )
+		<keep-all-type-selectors>$keepAllTypeSelectors</keep-all-type-selectors>
+#end
+
 #if( $contextRoot )
 		<context-root>$contextRoot</context-root>
+#end
+
+#if( $locales )
+		<locale>
+#foreach( $locale in $locales )
+			<locale-element>$locale</locale-element>
+#end
+		</locale>
 #end
 
 #foreach( $defKey in $defines.keySet() )
@@ -66,6 +86,14 @@
 		<services>$services</services>
 #end				
 	</compiler>
+	
+#if( $includeSources )
+	<include-sources>
+#foreach( $path in $includeSources )
+		<path-element>$path</path-element>
+#end
+	</include-sources>
+#end
 	
 #if( $defaultBackgroundColor )
 	<default-background-color>$defaultBackgroundColor</default-background-color>

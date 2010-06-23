@@ -36,6 +36,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseConfigFile;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
+import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
@@ -83,6 +84,22 @@ public class AbstractIdeMojo
      * @deprecated
      */
     private Boolean mergeResourceBundle;
+    
+    /**
+     * Sets the locales that should be used to generate resource bundles. <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;runtimeLocales&gt;
+     *    &lt;locale&gt;en_US&lt;/locale&gt;
+     *    &lt;locale&gt;pt_BR&lt;/locale&gt;
+     *    &lt;locale&gt;es_ES&lt;/locale&gt;
+     * &lt;/runtimeLocales&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] runtimeLocales;
 
     /**
      * Sets the locales that the compiler uses to replace <code>{locale}</code> tokens that appear in some configuration
@@ -274,7 +291,7 @@ public class AbstractIdeMojo
             }
         }
 
-        if ( Boolean.TRUE.equals( mergeResourceBundle ) || compiledLocales != null )
+        if ( Boolean.TRUE.equals( mergeResourceBundle ) || compiledLocales != null || runtimeLocales != null )
         {
             sources.add( resourceBundlePath );
         }
