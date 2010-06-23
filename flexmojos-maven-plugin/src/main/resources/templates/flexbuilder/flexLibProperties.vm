@@ -7,7 +7,7 @@
   </includeClasses>
   <includeResources>
 #foreach ($include in $includeFiles)
-    <resourceEntry destPath="$include" sourcePath="$include"/>
+    <resourceEntry destPath="$include.getDestPath()" sourcePath="$include.getSourcePath()"/>
 #end 
   </includeResources>
   <namespaceManifests/>
