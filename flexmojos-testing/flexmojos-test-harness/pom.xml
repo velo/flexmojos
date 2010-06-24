@@ -85,21 +85,6 @@
               <outputDirectory>${fake-maven}/lib</outputDirectory>
             </configuration>
           </execution>
-          <execution>
-            <id>copy-repo</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.sonatype.flexmojos</includeGroupIds>
-              <outputDirectory>${fake-repo}</outputDirectory>
-              <useRepositoryLayout>true</useRepositoryLayout>
-              <generateRepositoryMetadatas>true</generateRepositoryMetadatas>
-              <silent>true</silent>
-              <copyPom>true</copyPom>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
