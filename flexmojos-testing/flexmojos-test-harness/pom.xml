@@ -172,6 +172,7 @@
             <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
 
             <xml>org.sonatype.flexmojos:flexmojos-maven-plugin:${project.version}</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-generator-api:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-parent:${project.version}:pom</xml>
             
             <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc</xml>
