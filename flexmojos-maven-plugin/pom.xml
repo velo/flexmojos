@@ -330,7 +330,7 @@
 
     <dependency>
       <groupId>com.googlecode.apparat</groupId>
-      <artifactId>apparat</artifactId>
+      <artifactId>apparat-core</artifactId>
     </dependency>
 
   </dependencies>
