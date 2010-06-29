@@ -17,15 +17,12 @@
  */
 package org.sonatype.flexmojos.coverage;
 
-import java.io.File;
-
+import apparat.tools.coverage.Coverage.CoverageTool;
+import apparat.tools.coverage.CoverageObserver;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.coverage.util.ApparatUtil;
-import org.sonatype.flexmojos.util.PathUtil;
 
-import apparat.tools.ApparatConfiguration;
-import apparat.tools.coverage.CoverageObserver;
-import apparat.tools.coverage.Coverage.CoverageTool;
+import java.io.File;
 
 public abstract class AbstractCoverageReporter
     extends AbstractLogEnabled
@@ -34,16 +31,12 @@ public abstract class AbstractCoverageReporter
 
     public void instrument( File swf, File... sourcePaths )
     {
-
         getLogger().debug( "Instrumenting code to test coverage mode " + System.getProperty( "apparat.threads" ) );
 
-        ApparatConfiguration cfg = new ApparatConfiguration();
-        cfg.update( "-i", PathUtil.getCanonicalPath( swf ) );
-        cfg.update( "-s", PathUtil.getCanonicalPathString( sourcePaths ) );
-
         CoverageTool c = new CoverageTool();
-        c.configure( cfg );
+        c.configure( new CoverageConfigurationImpl( swf, swf, sourcePaths ) );
         c.addObserver( getInstumentationObserver() );
+
         if ( getLogger().isDebugEnabled() )
         {
             c.addObserver( new CoverageObserver()
