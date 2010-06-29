@@ -2972,7 +2972,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         if ( !artifact.isResolved() || artifact.getFile() == null || !artifact.getFile().exists() )
         {
             // Recompile, file doesn't exists
-            getLog().warn( "Can't find any older instaled version." );
+            getLog().warn( "Can't find any older installed version." );
             return true;
         }
 
@@ -3009,7 +3009,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             try
             {
-                FileUtils.copyFile( artifact.getFile(), new File( getOutput() ) );
+				final File output = new File( getOutput() );
+
+                FileUtils.copyFile( artifact.getFile(), output );
+				
+				if( !output.setLastModified( artifact.getFile().lastModified() ) ) {
+					getLog().warn( "Could not set modified on copied artifact. Unnecessary rebuilds will occur." );
+				}
             }
             catch ( IOException e )
             {
