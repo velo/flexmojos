@@ -134,18 +134,12 @@ public class MxmlcMojo
     public final Result doCompile( MxmlcConfigurationHolder cfg, boolean synchronize )
         throws Exception
     {
-        try
+        if ( isUpdateSecuritySandbox() )
         {
-            return compiler.compileSwf( cfg, synchronize );
+            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ).getParentFile() );
+            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
         }
-        finally
-        {
-            if ( isUpdateSecuritySandbox() )
-            {
-                truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
-            }
-        }
-
+        return compiler.compileSwf( cfg, synchronize );
     }
 
     public void execute()
