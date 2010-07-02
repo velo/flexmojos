@@ -139,8 +139,6 @@
             
             <xml>emma:emma:2.0.5312</xml>
             
-            <xml>com.googlecode.apparat:apparat:${apparat.version}</xml>
-            
             <xml>com.adobe.flex:compiler:2.0.1.180927:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:2.0.1.180927:pom</xml>
             <xml>com.adobe.flex:compiler:3.2.0.3958:pom</xml>
