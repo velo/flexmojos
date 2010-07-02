@@ -137,6 +137,9 @@
             <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
 
             <xml>org.sonatype.flexmojos:flexmojos-maven-plugin:${project.version}</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-archetypes-application:${project.version}</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-archetypes-library:${project.version}</xml>
+            <xml>org.sonatype.flexmojos:flexmojos-archetypes-modular-webapp:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-flex2-compatibility-layer:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-flex3-compatibility-layer:${project.version}</xml>
             
