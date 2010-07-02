@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.text.StringContains;
 import org.testng.Assert;
@@ -41,6 +42,8 @@ public class Flexmojos247Test
         // must have both classes and the uri
         MatcherAssert.assertThat( catalog, StringContains.containsString( "AClass" ) );
         MatcherAssert.assertThat( catalog, StringContains.containsString( "BClass" ) );
+        MatcherAssert.assertThat( catalog, StringContains.containsString( "p:CClass" ) );
+        MatcherAssert.assertThat( catalog, CoreMatchers.not( StringContains.containsString( "p:DClass" ) ) );
         MatcherAssert.assertThat( catalog, StringContains.containsString( "http://flexmojos.sonatype.org/tests" ) );
     }
 }
