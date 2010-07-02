@@ -49,6 +49,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
+import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -115,7 +116,7 @@ public class AbstractFlexMojosTests
         addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion()
             + "/flexmojos-parent-" + getFlexmojosVersion() + ".pom" ) );
         addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-maven-plugin/" + getFlexmojosVersion()
-                           + "/flexmojos-maven-plugin-" + getFlexmojosVersion() + ".pom" ) );
+            + "/flexmojos-maven-plugin-" + getFlexmojosVersion() + ".pom" ) );
     }
 
     private static void addEmma( File fmParentPom )
@@ -254,8 +255,7 @@ public class AbstractFlexMojosTests
         try
         {
             File projectFolder = new File( projectsSource, projectName );
-            AssertJUnit.assertTrue(
-                                    "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
+            AssertJUnit.assertTrue( "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
                                     projectFolder.isDirectory() );
 
             File destDir = new File( projectsWorkdir, projectName + "_" + getTestName() );
@@ -333,13 +333,14 @@ public class AbstractFlexMojosTests
         return configReportDOM;
     }
 
-    protected void assertSeftExit( File main, int exitCode )
+    protected void assertSeftExit( File main, int expectedExitCode )
         throws Exception
     {
-        if(!main.exists()) {
+        if ( !main.exists() )
+        {
             throw new FileNotFoundException( PathUtil.getCanonicalPath( main ) );
         }
-        
+
         Process p = null;
         try
         {
@@ -365,7 +366,11 @@ public class AbstractFlexMojosTests
 
             t.join( 10000 );
 
-            MatcherAssert.assertThat( p.exitValue(), CoreMatchers.equalTo( exitCode ) );
+            int exitValue = p.exitValue();
+            if ( OSUtils.isWindows() )
+            {
+                MatcherAssert.assertThat( exitValue, CoreMatchers.equalTo( expectedExitCode ) );
+            }
         }
         finally
         {
