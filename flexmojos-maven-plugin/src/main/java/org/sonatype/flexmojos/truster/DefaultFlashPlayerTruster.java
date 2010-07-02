@@ -107,14 +107,7 @@ public class DefaultFlashPlayerTruster
                 }
             }
 
-            if ( MavenUtils.isWindowsVista() )
-            {
-                trustPath = appData + "/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-            }
-            else
-            {
-                trustPath = appData + "/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-            }
+            trustPath = appData + "/Macromedia/Flash Player/#Security/FlashPlayerTrust";
         }
         else if ( MavenUtils.isUnixBased() )
         {
