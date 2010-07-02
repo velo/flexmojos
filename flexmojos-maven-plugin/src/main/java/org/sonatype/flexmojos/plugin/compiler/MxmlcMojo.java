@@ -136,7 +136,6 @@ public class MxmlcMojo
     {
         if ( isUpdateSecuritySandbox() )
         {
-            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ).getParentFile() );
             truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
         }
         return compiler.compileSwf( cfg, synchronize );
