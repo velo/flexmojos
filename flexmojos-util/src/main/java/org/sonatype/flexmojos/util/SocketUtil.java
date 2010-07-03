@@ -15,26 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.issues;
+package org.sonatype.flexmojos.util;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
 
-import org.testng.annotations.Test;
-
-public class Flexmojos315Test
-    extends AbstractIssueTest
+public class SocketUtil
 {
-
-    @Test
-    public void resourcesEmbedding()
-        throws Exception
+    public static int freePort()
+        throws IOException
     {
-        String dir = test( getProject( "issues/flexmojos-321" ), "install"  ).getBasedir();
-
-        File target = new File( dir, "target" );
-        File main = new File( target, "flexmojos-321-1.0-SNAPSHOT.swf" );
-
-        assertSeftExit( main, 3539 );
+        ServerSocket ss = new ServerSocket( 0 );
+        try
+        {
+            return ss.getLocalPort();
+        }
+        finally
+        {
+            ss.close();
+        }
     }
-
 }

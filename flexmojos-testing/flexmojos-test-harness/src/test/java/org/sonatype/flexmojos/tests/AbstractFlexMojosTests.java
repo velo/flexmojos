@@ -153,7 +153,7 @@ public class AbstractFlexMojosTests
     }
 
     @SuppressWarnings( "unchecked" )
-    protected static Verifier test( File projectDirectory, String goal, String... args )
+    protected Verifier test( File projectDirectory, String goal, String... args )
         throws VerificationException
     {
         Verifier verifier = getVerifier( projectDirectory );
@@ -165,7 +165,7 @@ public class AbstractFlexMojosTests
     }
 
     @SuppressWarnings( "unchecked" )
-    protected static Verifier getVerifier( File projectDirectory )
+    protected Verifier getVerifier( File projectDirectory )
         throws VerificationException
     {
         System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
@@ -181,7 +181,7 @@ public class AbstractFlexMojosTests
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
-                verifier.getCliOptions().add( "-X" );
+                //verifier.getCliOptions().add( "-X" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:go-offline" );
             }
@@ -213,7 +213,7 @@ public class AbstractFlexMojosTests
         return verifier;
     }
 
-    private static String getTestName()
+    protected String getTestName()
     {
         StackTraceElement[] stackTrace = new Exception().getStackTrace();
         for ( StackTraceElement stack : stackTrace )
@@ -242,8 +242,14 @@ public class AbstractFlexMojosTests
         return null;
     }
 
+    protected File getProject( String projectName, String... filesToInterpolate )
+        throws IOException
+    {
+        return getProjectCustom( projectName, null, filesToInterpolate );
+    }
+
     @SuppressWarnings( "unchecked" )
-    protected static File getProject( String projectName, String... filesToInterpolate )
+    protected File getProjectCustom( String projectName, String output, String... filesToInterpolate )
         throws IOException
     {
         if ( filesToInterpolate == null || filesToInterpolate.length == 0 )
@@ -258,7 +264,10 @@ public class AbstractFlexMojosTests
             AssertJUnit.assertTrue( "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
                                     projectFolder.isDirectory() );
 
-            File destDir = new File( projectsWorkdir, projectName + "_" + getTestName() );
+            if(output == null) {
+                output = projectName + "_" + getTestName();
+            }
+            File destDir = new File( projectsWorkdir, output );
 
             FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
 

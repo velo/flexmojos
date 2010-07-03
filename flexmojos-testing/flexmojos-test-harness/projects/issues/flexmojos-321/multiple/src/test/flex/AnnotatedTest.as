@@ -15,26 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.issues;
-
-import java.io.File;
-
-import org.testng.annotations.Test;
-
-public class Flexmojos315Test
-    extends AbstractIssueTest
+/**
+ * @author Seven
+ */
+package
 {
+	import org.flexunit.Assert;
 
-    @Test
-    public void resourcesEmbedding()
-        throws Exception
-    {
-        String dir = test( getProject( "issues/flexmojos-321" ), "install"  ).getBasedir();
+	public class AnnotatedTest
+	{
 
-        File target = new File( dir, "target" );
-        File main = new File( target, "flexmojos-321-1.0-SNAPSHOT.swf" );
+		[Test]
+		public function dummyTest():void
+		{
+		}
 
-        assertSeftExit( main, 3539 );
-    }
+	}
 
 }

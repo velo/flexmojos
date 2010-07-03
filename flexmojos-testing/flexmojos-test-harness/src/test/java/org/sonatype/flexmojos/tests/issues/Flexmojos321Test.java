@@ -17,44 +17,26 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
-import java.io.File;
+import java.net.ServerSocket;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class Flexmojos170Test
+public class Flexmojos321Test
     extends AbstractIssueTest
 {
 
     @Test
-    public void generateSwfConfig()
-        throws Exception
+    public void multiple()
+        throws Throwable
     {
-        File testDir = getProject( "/issues/flexmojos-170/swf" );
-
-        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getFlexmojosVersion()
-            + ":generate-config-swf" );
-
-        checkReport( testDir );
+        ServerSocket ss = new ServerSocket( 13539 );
+        try
+        {
+            testIssue( "flexmojos-321/multiple" );
+        }
+        finally
+        {
+            ss.close();
+        }
     }
-
-    @Test
-    public void generateSwcConfig()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/flexmojos-170/swc" );
-
-        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getFlexmojosVersion()
-            + ":generate-config-swc" );
-
-        checkReport( testDir );
-    }
-
-    private void checkReport( File testDir )
-    {
-        File target = new File( testDir, "target" );
-        File configReport = new File( target, "flexmojos-170-1.0-SNAPSHOT-config-report.xml" );
-        Assert.assertTrue( configReport.isFile() );
-    }
-
 }
