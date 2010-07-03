@@ -32,10 +32,10 @@ public class Flexmojos315Test
     public void resourcesEmbedding()
         throws Exception
     {
-        String dir = test( getProject( "issues/flexmojos-315" ), "install"  ).getBasedir();
+        String dir = test( getProject( "issues/flexmojos-321" ), "install"  ).getBasedir();
 
         File target = new File( dir, "target" );
-        File main = new File( target, "flexmojos-315-1.0-SNAPSHOT.swf" );
+        File main = new File( target, "flexmojos-321-1.0-SNAPSHOT.swf" );
 
         assertSeftExit( main, 3539 );
     }
