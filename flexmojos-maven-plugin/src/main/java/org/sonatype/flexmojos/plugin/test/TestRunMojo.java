@@ -60,13 +60,6 @@ public class TestRunMojo
     private boolean failures = false;
 
     /**
-     * Socket connect port for flex/java communication to transfer tests results
-     * 
-     * @parameter default-value="13539" expression="${flex.testPort}"
-     */
-    private int testPort;
-
-    /**
      * Socket connect port for flex/java communication to control if flashplayer is alive
      * 
      * @parameter default-value="13540" expression="${flex.testControlPort}"
@@ -331,6 +324,7 @@ public class TestRunMojo
                 try
                 {
                     File swf = new File( testOutputDirectory, swfName );
+                    Integer testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
 
                     TestRequest testRequest = new TestRequest();
                     testRequest.setTestControlPort( testControlPort );
@@ -445,8 +439,7 @@ public class TestRunMojo
     {
 
         getLog().info( "------------------------------------------------------------------------" );
-        getLog().info(
-                       MessageFormat.format( TEST_INFO, new Object[] { new Integer( numTests ),
+        getLog().info( MessageFormat.format( TEST_INFO, new Object[] { new Integer( numTests ),
                            new Integer( numErrors ), new Integer( numFailures ), new Integer( time ) } ) );
 
         if ( !testFailureIgnore )

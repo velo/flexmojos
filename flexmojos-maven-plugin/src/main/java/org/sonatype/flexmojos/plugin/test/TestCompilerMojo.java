@@ -45,6 +45,7 @@ import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
+import org.sonatype.flexmojos.util.SocketUtil;
 
 import flex2.compiler.common.SinglePathResolver;
 
@@ -66,6 +67,8 @@ public class TestCompilerMojo
 {
 
     private static final String ONCE = "once";
+
+    protected static final String FLEXMOJOS_TEST_PORT = "flexmojos_test_port";
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -129,13 +132,6 @@ public class TestCompilerMojo
      * @readonly
      */
     private File testOutputDirectory;
-
-    /**
-     * Socket connect port for flex/java communication to transfer tests results
-     * 
-     * @parameter default-value="13539" expression="${testPort}"
-     */
-    private int testPort;
 
     /**
      * The maven test resources
@@ -286,11 +282,14 @@ public class TestCompilerMojo
             classes.append( '\n' );
         }
 
+        Integer testPort = SocketUtil.freePort();
+        putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
+
         InputStream templateSource = getTemplate();
         String sourceString = IOUtils.toString( templateSource );
         sourceString = sourceString.replace( "$imports", imports );
         sourceString = sourceString.replace( "$testClasses", classes );
-        sourceString = sourceString.replace( "$port", String.valueOf( testPort ) );
+        sourceString = sourceString.replace( "$port", testPort.toString() );
         sourceString = sourceString.replace( "$controlPort", String.valueOf( testControlPort ) );
         File testSourceFile = new File( testOutputDirectory, testFilename + ".mxml" );
         FileWriter fileWriter = new FileWriter( testSourceFile );
@@ -383,9 +382,10 @@ public class TestCompilerMojo
         Collection<Artifact> coverArtifact =
             (Collection<Artifact>) ( coverage ? Collections.singletonList( getFlexmojosTestArtifact( "flexmojos-test-coverage" ) )
                             : Collections.emptyList() );
-        return MavenUtils.getFiles( coverArtifact, Collections.singletonList( getFlexmojosUnittestSupport() ),
+        return MavenUtils.getFiles( coverArtifact,
+                                    Collections.singletonList( getFlexmojosUnittestSupport() ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
-                                    getDependencies( type( SWC ),// 
+                                    getDependencies( type( SWC ),//
                                                      anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
                                                             scope( TEST ) ),//
                                                      not( GLOBAL_MATCHER ) ) );
@@ -395,7 +395,7 @@ public class TestCompilerMojo
     public List<String> getIncludes()
     {
         List<String> includes = new ArrayList<String>();
-        
+
         File[] sp = getSourcePath();
         List<FileSet> sets = as3ClassesFileSet( sp );
         for ( FileSet fileset : sets )
@@ -404,10 +404,10 @@ public class TestCompilerMojo
             for ( String testFile : scan.getIncludedFiles() )
             {
                 String include = toClass( testFile );
-                includes.add(include);
+                includes.add( include );
             }
-        }    
-        
+        }
+
         return includes;
     }
 
@@ -521,8 +521,7 @@ public class TestCompilerMojo
 
     private List<String> getTestClasses()
     {
-        getLog().debug(
-                        "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
+        getLog().debug( "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
                             + " but " + Arrays.toString( excludeTestFiles ) );
 
         DirectoryScanner scanner = new DirectoryScanner();
