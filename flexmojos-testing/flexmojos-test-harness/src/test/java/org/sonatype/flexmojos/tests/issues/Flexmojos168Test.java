@@ -20,7 +20,7 @@ public class Flexmojos168Test
         Verifier v = test( testDir, "compile", "-Dflexmojos.skip=true" );
 
         String log = FileUtils.fileRead( new File( v.getBasedir(), v.getLogFileName() ) );
-        Assert.assertTrue( log.contains( "Skipping Flexmojos execution" ) );
+        Assert.assertTrue( log.contains( "Skipping flexmojos goal execution" ) );
         Assert.assertFalse( log.contains( "Flexmojos " + MavenUtils.getFlexMojosVersion()
             + " - Apache License (NO WARRANTY) - See COPYRIGHT file" ) );
 
