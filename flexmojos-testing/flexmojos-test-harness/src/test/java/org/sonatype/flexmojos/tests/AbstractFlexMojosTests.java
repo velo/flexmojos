@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -158,7 +159,8 @@ public class AbstractFlexMojosTests
     protected Verifier getVerifier( File projectDirectory )
         throws VerificationException
     {
-        System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
+        // System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
+        System.setProperty( "maven.home", "" );
 
         if ( new File( projectDirectory, "pom.xml" ).exists() )
         {
@@ -200,6 +202,7 @@ public class AbstractFlexMojosTests
         verifier.setSystemProperties( sysProps );
         verifier.setLogFileName( getTestName() + ".log" );
         verifier.setAutoclean( false );
+
         return verifier;
     }
 
