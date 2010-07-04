@@ -26,4 +26,5 @@
     <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
   <artifactId>flexmojos-util</artifactId>
+  <name>Flexmojos util</name>
 </project>
