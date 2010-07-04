@@ -167,7 +167,7 @@ public class AbstractFlexMojosTests
             downloadArtifactsLock.writeLock().lock();
             try
             {
-                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, false );
+                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
                 verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
                 verifier.setLocalRepo( getProperty( "fake-repo" ) );
                 verifier.setAutoclean( false );
@@ -188,7 +188,7 @@ public class AbstractFlexMojosTests
             }
         }
 
-        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, false );
+        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
