@@ -169,8 +169,8 @@ public class AbstractFlexMojosTests
     protected Verifier getVerifier( File projectDirectory )
         throws VerificationException
     {
-        // System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
-        System.setProperty( "maven.home", "" );
+        System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
+        // System.setProperty( "maven.home", "" );
 
         if ( new File( projectDirectory, "pom.xml" ).exists() )
         {
