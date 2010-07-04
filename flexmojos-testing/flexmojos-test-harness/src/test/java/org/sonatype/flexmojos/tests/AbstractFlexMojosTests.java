@@ -167,7 +167,7 @@ public class AbstractFlexMojosTests
             downloadArtifactsLock.writeLock().lock();
             try
             {
-                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, false );
                 verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
                 verifier.setLocalRepo( getProperty( "fake-repo" ) );
                 verifier.setAutoclean( false );
