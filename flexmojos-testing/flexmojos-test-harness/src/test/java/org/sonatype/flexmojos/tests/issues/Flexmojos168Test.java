@@ -42,10 +42,10 @@ public class Flexmojos168Test
             + " - Apache License (NO WARRANTY) - See COPYRIGHT file" ) );
 
         File target = new File( v.getBasedir(), "target" );
-        File swf = new File( target, "flexmojos-168-1.0-SNAPSHOT.swf" );
+        File swf = new File( target, "flexmojos-168-skip-1.0-SNAPSHOT.swf" );
         Assert.assertFalse( swf.exists() );
 
-        v.assertArtifactNotPresent( "info.rvin.itest.issues", "flexmojos-168", "1.0-SNAPSHOT", "swf" );
+        v.assertArtifactNotPresent( "info.rvin.itest.issues", "flexmojos-168-skip", "1.0-SNAPSHOT", "swf" );
     }
 
     @Test

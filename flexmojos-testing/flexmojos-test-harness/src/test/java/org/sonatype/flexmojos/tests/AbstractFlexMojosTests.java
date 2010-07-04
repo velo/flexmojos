@@ -181,7 +181,7 @@ public class AbstractFlexMojosTests
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
-                //verifier.getCliOptions().add( "-X" );
+                // verifier.getCliOptions().add( "-X" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:go-offline" );
             }
@@ -196,7 +196,7 @@ public class AbstractFlexMojosTests
             }
         }
 
-        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, true );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
@@ -264,7 +264,8 @@ public class AbstractFlexMojosTests
             AssertJUnit.assertTrue( "Project " + projectName + " folder not found.\n" + projectFolder.getAbsolutePath(),
                                     projectFolder.isDirectory() );
 
-            if(output == null) {
+            if ( output == null )
+            {
                 output = projectName + "_" + getTestName();
             }
             File destDir = new File( projectsWorkdir, output );
