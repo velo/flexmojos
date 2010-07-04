@@ -186,7 +186,7 @@ public class AbstractFlexMojosTests
             }
         }
 
-        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, true );
+        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath(), null, false, false );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
