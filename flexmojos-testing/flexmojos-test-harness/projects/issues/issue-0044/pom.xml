@@ -27,7 +27,7 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
-          <compatibilityVersion>2.0.1</compatibilityVersion>
+          <compatibilityVersion>3.0.0</compatibilityVersion>
         </configuration>
       </plugin>
     </plugins>
