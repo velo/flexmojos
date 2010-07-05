@@ -66,9 +66,9 @@ public class TestCompilerMojo
     extends MxmlcMojo
 {
 
-    private static final String ONCE = "once";
-
     protected static final String FLEXMOJOS_TEST_PORT = "flexmojos_test_port";
+
+    private static final String ONCE = "once";
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -105,6 +105,21 @@ public class TestCompilerMojo
      * @parameter expression="${maven.test.skip}"
      */
     private boolean skipTests;
+
+    /**
+     * Specify this parameter to run individual tests by file name, overriding the includes/excludes parameters. Each
+     * pattern you specify here will be used to create an include pattern formatted like **\/${test}.as and
+     * **\/${test}.mxml, so you can just type "-Dtest=MyTest" to run a single test called "foo/MyTest.as" and
+     * "bar/MyTest.mxml".
+     * <p>
+     * This mimic surefire test configuration. <a
+     * href="http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#test"
+     * >http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#test</a>
+     * </p>
+     * 
+     * @parameter expression="${test}"
+     */
+    private String test;
 
     /**
      * The maven compile source roots
@@ -193,6 +208,12 @@ public class TestCompilerMojo
         {
             getLog().warn( "Skipping compiler, test source path doesn't exist." );
             return;
+        }
+
+        if ( test != null )
+        {
+            includeTestFiles = new String[] { test };
+            excludeTestFiles = null;
         }
 
         if ( includeTestFiles == null || includeTestFiles.length == 0 )
