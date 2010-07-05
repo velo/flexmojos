@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -319,6 +320,7 @@ public class TestRunMojo
         try
         {
             String[] swfs = scan.getIncludedFiles();
+            getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
             for ( String swfName : swfs )
             {
                 try
