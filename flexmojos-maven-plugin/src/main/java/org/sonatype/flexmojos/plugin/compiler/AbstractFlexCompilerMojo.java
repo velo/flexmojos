@@ -879,9 +879,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Usage:
      * 
      * <pre>
-     * &lt;compilerLocales&gt;
+     * &lt;localesCompiled&gt;
      *   &lt;locale&gt;en_US&lt;/locale&gt;
-     * &lt;/compilerLocales&gt;
+     * &lt;/localesCompiled&gt;
      * </pre>
      * 
      * @parameter
@@ -896,9 +896,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Usage:
      * 
      * <pre>
-     * &lt;runtimeLocales&gt;
+     * &lt;localesRuntime&gt;
      *   &lt;locale&gt;en_US&lt;/locale&gt;
-     * &lt;/runtimeLocales&gt;
+     * &lt;/localesRuntime&gt;
      * </pre>
      * 
      * @parameter
