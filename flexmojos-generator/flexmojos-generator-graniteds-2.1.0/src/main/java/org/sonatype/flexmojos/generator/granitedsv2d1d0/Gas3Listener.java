@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonatype.flexmojos.generator.granitedsv2d0d0;
+package org.sonatype.flexmojos.generator.granitedsv2d1d0;
 
 import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
@@ -61,6 +61,16 @@ final class Gas3Listener
         this.logger.info( message, e );
     }
 
+    public void debug( String message )
+    {
+        this.logger.debug( message );
+    }
+
+    public void debug( String message, Throwable e )
+    {
+        this.logger.debug( message, e );
+    }
+
     public void warn( String message )
     {
         this.logger.warn( message );
@@ -76,9 +86,19 @@ final class Gas3Listener
         info( "  Generating: " + output.getDescription() );
     }
 
+    public void generating( String file, String message )
+    {
+        info( "  Generating: " + file + " - " + message );
+    }
+
     public void skipping( Input<?> input, Output<?> output )
     {
         info( "  Skipping: " + output.getDescription() + " - " + output.getMessage() );
+    }
+
+    public void skipping( String file, String message )
+    {
+        info( "  Skipping: " + file + " - " + message );
     }
 
 }

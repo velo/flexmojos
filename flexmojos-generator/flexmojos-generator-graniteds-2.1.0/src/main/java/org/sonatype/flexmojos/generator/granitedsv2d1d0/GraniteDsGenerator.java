@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonatype.flexmojos.generator.granitedsv2d0d0;
+package org.sonatype.flexmojos.generator.granitedsv2d1d0;
 
 import static java.lang.Thread.currentThread;
 import static org.granite.generator.template.StandardTemplateUris.BEAN;
@@ -27,7 +27,10 @@ import static org.granite.generator.template.StandardTemplateUris.ENTITY;
 import static org.granite.generator.template.StandardTemplateUris.ENTITY_BASE;
 import static org.granite.generator.template.StandardTemplateUris.ENUM;
 import static org.granite.generator.template.StandardTemplateUris.INTERFACE;
+import static org.granite.generator.template.StandardTemplateUris.REMOTE;
+import static org.granite.generator.template.StandardTemplateUris.REMOTE_BASE;
 import static org.granite.generator.template.StandardTemplateUris.TIDE_ENTITY_BASE;
+import static org.granite.generator.template.StandardTemplateUris.TIDE_REMOTE_BASE;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -38,17 +41,20 @@ import java.util.Map;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Generator;
 import org.granite.generator.Output;
 import org.granite.generator.TemplateUri;
 import org.granite.generator.Transformer;
 import org.granite.generator.as3.As3TypeFactory;
 import org.granite.generator.as3.DefaultAs3TypeFactory;
+import org.granite.generator.as3.DefaultEntityFactory;
+import org.granite.generator.as3.DefaultRemoteDestinationFactory;
+import org.granite.generator.as3.EntityFactory;
 import org.granite.generator.as3.JavaAs3GroovyConfiguration;
 import org.granite.generator.as3.JavaAs3GroovyTransformer;
 import org.granite.generator.as3.JavaAs3Input;
 import org.granite.generator.as3.PackageTranslator;
+import org.granite.generator.as3.RemoteDestinationFactory;
 import org.granite.generator.as3.reflect.JavaType;
 import org.granite.generator.gsp.GroovyTemplateFactory;
 import org.sonatype.flexmojos.generator.api.GenerationException;
@@ -58,7 +64,7 @@ import org.sonatype.flexmojos.generator.api.GenerationRequest;
  * @author edward.yakop@gmail.com
  * @since 3.2
  */
-@Component( role = org.sonatype.flexmojos.generator.api.Generator.class, hint = "graniteds2" )
+@Component( role = org.sonatype.flexmojos.generator.api.Generator.class, hint = "graniteds21" )
 public final class GraniteDsGenerator
     extends AbstractLogEnabled
     implements org.sonatype.flexmojos.generator.api.Generator
@@ -84,6 +90,10 @@ public final class GraniteDsGenerator
 
     private GroovyTemplateFactory groovyTemplateFactory = null;
 
+    private EntityFactory entityFactoryImpl = null;
+
+    private RemoteDestinationFactory remoteDestinationFactoryImpl = null;
+
     private TemplateUri[] entityTemplateUris;
 
     private TemplateUri[] interfaceTemplateUris;
@@ -91,6 +101,8 @@ public final class GraniteDsGenerator
     private TemplateUri[] beanTemplateUris;
 
     private TemplateUri[] enumTemplateUris;
+    
+    private TemplateUri[] remoteTemplateUris;
 
     private Map<String, File> classes;
 
@@ -160,6 +172,26 @@ public final class GraniteDsGenerator
 
         return createTemplateUris( baseTemplateUri, templateUri );
     }
+    
+    private TemplateUri[] initializeRemoteTemplateURIs( String[] remoteTemplate )
+    {
+        String baseTemplateUri = REMOTE_BASE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        String templateUri = REMOTE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        if ( getStringIndex1( remoteTemplate ) != null )
+        {
+            templateUri = getStringIndex1( remoteTemplate );
+        }
+        if ( getStringIndex0( remoteTemplate ) != null )
+        {
+            baseTemplateUri = getStringIndex0( remoteTemplate );
+        }
+        else if ( tide )
+        {
+            baseTemplateUri = TIDE_REMOTE_BASE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
+        }
+        
+        return createTemplateUris( baseTemplateUri, templateUri );
+    }
 
     private String getStringIndex0( String[] a )
     {
@@ -192,33 +224,20 @@ public final class GraniteDsGenerator
     public final void generate( GenerationRequest request )
         throws GenerationException
     {
-    	
-    	// add / create package translators
-    	for(String currentTranslator : request.getTranslators()){
-    		String[] splitTranslator = currentTranslator.split("=");
-    		if(splitTranslator.length != 2){
-    			throw new GenerationException("Invalid format: translators must be in format 'java.package=as3.package'");
-    		}
-    		String java = splitTranslator[0];
-    		String as3 = splitTranslator[1];
-    		
-    		getLogger().info("Adding translator: [" + java + ", " + as3 + "]");
-    		translators.add(new PackageTranslator(java, as3));
-    	}
-    	// tide
-    	String useTide = request.getExtraOptions().get("tide");
-    	if(useTide != null)
-    	{
-    		tide = new Boolean(useTide.trim());
-    	}
+        // tide
+        String useTide = request.getExtraOptions().get( "tide" );
+        if ( useTide != null )
+        {
+            tide = new Boolean( useTide.trim() );
+        }
         uid = request.getExtraOptions().get( "uid" );
-        
+
         transformer = request.getExtraOptions().get( "transformer" );
 
         outputDirectory = request.getPersistentOutputFolder();
-        
+
         baseOutputDirectory = request.getTransientOutputFolder();
-		
+
         String[] enumTemplate = getTemplate( request, "enum-template" );
         enumTemplateUris = initializeEnumTemplateURIs( new String[]{enumTemplate[1]} );
 
@@ -230,7 +249,9 @@ public final class GraniteDsGenerator
 
         String[] beanTemplate = getTemplate( request, "bean-template" );
         beanTemplateUris = initializeBeanTemplateURIs( beanTemplate );
-
+        
+        String[] remoteTemplate = getTemplate( request, "remote-template" );
+        remoteTemplateUris = initializeRemoteTemplateURIs( remoteTemplate );
 
         classes = request.getClasses();
         if ( classes.isEmpty() )
@@ -247,7 +268,7 @@ public final class GraniteDsGenerator
         try
         {
             // As3TypeFactory.
-            as3typefactory = request.getExtraOptions().get("as3typefactory");
+            as3typefactory = request.getExtraOptions().get( "as3typefactory" );
             if ( as3typefactory == null )
             {
                 as3TypeFactoryImpl = new DefaultAs3TypeFactory();
@@ -256,6 +277,32 @@ public final class GraniteDsGenerator
             {
                 getLogger().info( "Instantiating custom As3TypeFactory class: [" + as3typefactory + "]" );
                 as3TypeFactoryImpl = newInstance( classLoader, as3typefactory );
+            }
+
+            // EntityFactory.
+            String entityfactory = request.getExtraOptions().get( "entityFactory" );
+            if ( entityfactory == null )
+            {
+                entityFactoryImpl = new DefaultEntityFactory();
+            }
+            else
+            {
+                getLogger().info( "Instantiating custom EntityFactory class: [" + entityfactory + "]" );
+                entityFactoryImpl = newInstance( classLoader, entityfactory );
+            }
+
+            // RemoteDestinationFactory.
+            String remotedestinationfactory = request.getExtraOptions().get( "remoteDestinationFactory" );
+            if ( remotedestinationfactory == null )
+            {
+                remoteDestinationFactoryImpl = new DefaultRemoteDestinationFactory();
+            }
+            else
+            {
+                getLogger().info(
+                                  "Instantiating custom RemoteDestinationFactory class: [" + remotedestinationfactory
+                                      + "]" );
+                remoteDestinationFactoryImpl = newInstance( classLoader, remotedestinationfactory );
             }
 
             // Listener.
@@ -267,7 +314,7 @@ public final class GraniteDsGenerator
             // Create the generator.
             Generator generator = new Generator( configuration );
             generator.add( transformerImpl );
-            
+
             // Call the generator for each class
             getLogger().info( "Calling the generator for each Java class." );
             int count = generateClass( classLoader, generator );
@@ -313,12 +360,11 @@ public final class GraniteDsGenerator
             try
             {
                 Class<?> classToGenerate = classLoader.loadClass( className );
-				if( classToGenerate.isMemberClass() && !classToGenerate.isEnum() )
-				{
-					continue;
-				}
+                if ( classToGenerate.isMemberClass() && !classToGenerate.isEnum() )
+                {
+                    continue;
+                }
                 JavaAs3Input input = new JavaAs3Input( classToGenerate, classFile.getValue() );
-                
                 for ( Output<?> output : generator.generate( input ) )
                 {
                     if ( output.isOutdated() )
@@ -394,6 +440,16 @@ public final class GraniteDsGenerator
             return translators;
         }
 
+        public EntityFactory getEntityFactory()
+        {
+            return entityFactoryImpl;
+        }
+
+        public RemoteDestinationFactory getRemoteDestinationFactory()
+        {
+            return remoteDestinationFactoryImpl;
+        }
+
         public TemplateUri[] getTemplateUris( JavaType.Kind kind, Class<?> clazz )
         {
             switch ( kind )
@@ -406,6 +462,8 @@ public final class GraniteDsGenerator
                     return enumTemplateUris;
                 case BEAN:
                     return beanTemplateUris;
+                case REMOTE_DESTINATION:
+                    return remoteTemplateUris;
                 default:
                     throw new IllegalArgumentException( "Unknown template kind: " + kind + " / " + clazz );
             }
