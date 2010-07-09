@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.granitedsv1d1d0;
+package org.sonatype.flexmojos.generator.granitedsv2d1d0;
 
 import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
@@ -31,44 +31,51 @@ final class Gas3Listener
     implements Listener
 {
 
-    private final Logger log;
+    private Logger logger;
 
-    /**
-     * @param log
-     */
-    public Gas3Listener( final Logger log )
+    public Gas3Listener( Logger logger )
     {
-        this.log = log;
+        this.logger = logger;
     }
 
     public void error( String message )
     {
-        this.log.error( message );
+        this.logger.error( message );
     }
 
     public void error( String message, Throwable e )
     {
-        log.error( message, e );
+        this.logger.error( message, e );
     }
 
     public void info( String message )
     {
-        this.log.info( message );
+        this.logger.info( message );
     }
 
     public void info( String message, Throwable e )
     {
-        log.info( message, e );
+        this.logger.info( message, e );
+    }
+
+    public void debug( String message )
+    {
+        this.logger.debug( message );
+    }
+
+    public void debug( String message, Throwable e )
+    {
+        this.logger.debug( message, e );
     }
 
     public void warn( String message )
     {
-        this.log.warn( message );
+        this.logger.warn( message );
     }
 
     public void warn( String message, Throwable e )
     {
-        log.warn( message, e );
+        this.logger.warn( message, e );
     }
 
     public void generating( Input<?> input, Output<?> output )
@@ -76,9 +83,19 @@ final class Gas3Listener
         info( "  Generating: " + output.getDescription() );
     }
 
+    public void generating( String file, String message )
+    {
+        info( "  Generating: " + file + " - " + message );
+    }
+
     public void skipping( Input<?> input, Output<?> output )
     {
-        info( "  Skipping: " + output.getDescription() );
+        info( "  Skipping: " + output.getDescription() + " - " + output.getMessage() );
+    }
+
+    public void skipping( String file, String message )
+    {
+        info( "  Skipping: " + file + " - " + message );
     }
 
 }

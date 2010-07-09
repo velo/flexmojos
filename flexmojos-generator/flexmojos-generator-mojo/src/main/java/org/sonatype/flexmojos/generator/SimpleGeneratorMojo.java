@@ -46,14 +46,14 @@ import org.sonatype.flexmojos.generator.api.Generator;
 import org.sonatype.flexmojos.generator.api.GeneratorFactory;
 
 /**
- * This goal generate actionscript 3 code based on Java classes. It does uses Granite GAS3.
+ * This goal generate code based on Java classes. 
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @author edward.yakop@gmail.com
  * @goal generate
  * @phase generate-sources
  * @requiresDependencyResolution test
- * @since 1.0
+ * @since 3.6
  */
 public class SimpleGeneratorMojo
     extends AbstractMojo
@@ -131,7 +131,7 @@ public class SimpleGeneratorMojo
     private boolean outputEnumToBaseOutputDirectory;
 
     /**
-     * @parameter default-value="graniteds2" expression="${generatorToUse}"
+     * @parameter default-value="graniteds21" expression="${generatorToUse}"
      */
     private String generatorToUse;
 
@@ -165,6 +165,14 @@ public class SimpleGeneratorMojo
      * @parameter
      */
     private Map<String, String> templates;
+    
+    /**
+     * A '=' separated list of Strings, format: 
+     * packageToTranslate=packageToReplace
+     * 
+     * @parameter
+     */
+    private String[] translators;
 
     public void execute()
         throws MojoExecutionException
@@ -178,6 +186,7 @@ public class SimpleGeneratorMojo
         request.setPersistentOutputFolder( outputDirectory );
         request.setTemplates( templates );
         request.setTransientOutputFolder( baseOutputDirectory );
+        request.setTranslators(translators);
 
         ClassLoader cl = currentThread().getContextClassLoader();
 
@@ -257,6 +266,10 @@ public class SimpleGeneratorMojo
                 templates.put( "base-bean-template", beanTemplate[0] );
                 templates.put( "bean-template", beanTemplate[1] );
             }
+        }
+        
+        if(translators == null){
+        	translators = new String[0];
         }
     }
 
@@ -380,6 +393,7 @@ public class SimpleGeneratorMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
     private List<String> getClasspath()
         throws MojoExecutionException
     {
