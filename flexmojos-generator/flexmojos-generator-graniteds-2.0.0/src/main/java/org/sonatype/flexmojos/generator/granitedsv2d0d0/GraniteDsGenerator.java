@@ -217,7 +217,7 @@ public final class GraniteDsGenerator
         baseOutputDirectory = request.getTransientOutputFolder();
 		
         String[] enumTemplate = getTemplate( request, "enum-template" );
-        enumTemplateUris = initializeEnumTemplateURIs( enumTemplate );
+        enumTemplateUris = initializeEnumTemplateURIs( new String[]{enumTemplate[1]} );
 
         String[] interfaceTemplate = getTemplate( request, "interface-template" );
         interfaceTemplateUris = initializeInterfaceTemplateURIs( interfaceTemplate );
