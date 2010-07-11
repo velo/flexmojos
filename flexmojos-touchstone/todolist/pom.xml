@@ -33,6 +33,7 @@
         <plugin>
           <groupId>org.sonatype.flexmojos</groupId>
           <artifactId>flexmojos-maven-plugin</artifactId>
+	 <version>3.8-SNAPSHOT</version> 
         </plugin>
       </plugins>
     </pluginManagement>
