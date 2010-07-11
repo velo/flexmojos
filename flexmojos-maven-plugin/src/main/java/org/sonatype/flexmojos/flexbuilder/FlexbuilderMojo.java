@@ -888,7 +888,7 @@ public class FlexbuilderMojo
         else if ( SWC.equals( packaging ) )
         {
             context.put( "mainApplication", project.getArtifactId() + ".as" );
-            context.put( "generateHtmlWrapper", false );
+            context.put( "htmlGenerate", false );
             
             // Warning: Tried to put in .flexConfig.xml but FlexBuilder complains that it doesn't know what "include-sources" is.
             if ( includeClasses == null && includeSources == null && includeNamespaces == null )
@@ -1681,8 +1681,26 @@ public class FlexbuilderMojo
          int[] playerGlobalVersion;
          if ( globalVersion == null )
          {
-             getLog().warn( "Player global doesn't cointain classifier" );
-             return version;
+             // Older playerglobal artifacts had the version appended to the artifact version.
+        	 // Example: 9-3.2.0.3958
+             if( globalArtifact.getVersion().contains( "-" ) )
+             {
+            	 globalVersion = globalArtifact.getVersion().split( "-" )[0];
+            	 if( globalVersion == null )
+            	 {
+            		 getLog().warn( "Player global doesn't cointain classifier" );
+            		 return version;
+            	 }
+            	 else
+            	 {
+            		 playerGlobalVersion = splitVersion( globalVersion );
+            	 }
+             }
+             else
+             {
+            	 getLog().warn( "Player global doesn't cointain classifier" );
+            	 return version;
+             }
          }
          else
          {

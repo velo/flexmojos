@@ -81,10 +81,7 @@
 			<filename>$theme</filename>
 #end
 		</theme>
-		
-#if( $services )
-		<services>$services</services>
-#end				
+				
 	</compiler>
 	
 #if( $includeSources )

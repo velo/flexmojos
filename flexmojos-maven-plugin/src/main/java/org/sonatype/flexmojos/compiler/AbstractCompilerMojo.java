@@ -1144,6 +1144,7 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     {
         configuration.setExternalLibraryPath( getGlobalDependency() );
         configuration.addExternalLibraryPath( getDependenciesPath( EXTERNAL ) );
+        configuration.addExternalLibraryPath( getDependenciesPath( Artifact.SCOPE_RUNTIME ) );
 
         configuration.includeLibraries( getDependenciesPath( INTERNAL ) );
 

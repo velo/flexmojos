@@ -35,23 +35,230 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <name>Flexmojos Flexbuilder Integration Tests</name>
+  
+  <profiles>
+    <profile>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <tycho.argLine>-d32 -Xmx800m -XX:MaxPermSize=256m -XstartOnFirstThread</tycho.argLine>
+        <!-- <tycho.argLine>-d32 -Xmx800m -XX:MaxPermSize=256m -XstartOnFirstThread -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</tycho.argLine> -->
+      </properties>
+    </profile>
+  </profiles>
+  
+  <properties>
+  	<tycho.argLine>-Xmx800m -XX:MaxPermSize=256m</tycho.argLine>
+  	
+  	<maven-version>${maven.version}</maven-version>
+    <fake-maven>${project.build.directory}/apache-maven-${maven-version}</fake-maven>
+    <fake-repo>${project.build.directory}/local-repository</fake-repo>
+  </properties>
+  
+  
 
   <build>
     <sourceDirectory>src</sourceDirectory>
 
+    <resources>
+      <resource>
+        <directory>resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>settings.xml</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>settings.xml</include>
+        </includes>
+        <targetPath>${fake-maven}/conf</targetPath>
+      </resource>
+    </resources>
+
+
     <plugins>
       <plugin>
         <groupId>org.sonatype.tycho</groupId>
+        <artifactId>maven-osgi-compiler-plugin</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
+        <configuration>
+          <executions>
+            <execution>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>generate-bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>tycho-p2-plugin</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
+      </plugin>
+    
+      <plugin>
+        <groupId>org.sonatype.tycho</groupId>
         <artifactId>maven-osgi-test-plugin</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>
-          <argLine>-Xmx800m -XX:MaxPermSize=256m</argLine>
+          <argLine>${tycho.argLine}</argLine>
           <forkedProcessTimeoutInSeconds>7200</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
-
+      
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>jars</directory>
+              <followSymlinks>false</followSymlinks>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>extract-maven</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.maven</groupId>
+                  <artifactId>apache-maven</artifactId>
+                  <version>${maven.version}</version>
+                  <type>tar.gz</type>
+                  <classifier>bin</classifier>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-emma</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeArtifactIds>emma</includeArtifactIds>
+              <outputDirectory>${fake-maven}/lib</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-repo</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.sonatype.flexmojos</includeGroupIds>
+              <outputDirectory>${fake-repo}</outputDirectory>
+              <useRepositoryLayout>true</useRepositoryLayout>
+              <generateRepositoryMetadatas>true</generateRepositoryMetadatas>
+              <silent>true</silent>
+              <copyPom>true</copyPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+   
+      <plugin>
+          <groupId>org.sonatype.tycho</groupId>
+          <artifactId>maven-osgi-packaging-plugin</artifactId>
+          <version>0.10.0-SNAPSHOT</version>
+          <executions>
+            <execution>
+              <phase>initialize</phase>
+              <goals>
+                <goal>generate-bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <packageSources>false</packageSources>
+            <exportPackages>
+              org.apache.maven.*,
+              org.codehaus.plexus.*,
+              org.sonatype.plexus.*,
+              META-INF.plexus,
+            </exportPackages>
+            <manifestAttributes>
+              <Require-Bundle>org.eclipse.swtbot.eclipse.core,org.eclipse.swtbot.swt.finder,org.eclipse.swtbot.eclipse.finder,org.eclipse.swtbot.junit4_x,org.hamcrest,org.eclipse.core.resources,org.eclipse.jdt.core,org.eclipse.debug.core,org.eclipse.jdt.launching,org.eclipse.jface,org.eclipse.jface.text,org.eclipse.ui,org.eclipse.ui.ide,org.eclipse.swt,org.eclipse.ui.workbench,org.eclipse.equinox.registry,org.eclipse.core.resources,org.eclipse.core.jobs,org.eclipse.jface,org.eclipse.core.runtime,com.adobe.flexbuilder.project,org.eclipse.search,org.eclipse.ui.forms,org.junit4,org.eclipse.emf.ecore.edit,org.eclipse.xsd</Require-Bundle>
+              <Eclipse-LazyStart>true</Eclipse-LazyStart>
+              <Bundle-RequiredExecutionEnvironment>J2SE-1.5, JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+            </manifestAttributes>
+            <exclusions>
+              <exclusion>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>apache-maven</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.adobe.flex</groupId>
+                <artifactId>compiler</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.adobe.flex.compiler</groupId>
+                <artifactId>asdoc</artifactId>
+              </exclusion>
+            </exclusions>
+          </configuration>
+        </plugin>
+		
     </plugins>
   </build>
+  
+  <dependencies>
+  
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-verifier</artifactId>
+      <version>1.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+  </dependencies>
 
 </project>

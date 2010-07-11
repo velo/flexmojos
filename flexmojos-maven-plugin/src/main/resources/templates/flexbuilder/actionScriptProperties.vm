@@ -32,7 +32,7 @@
             enableModuleDebug="true" 
             generateAccessible="$accessible" 
             htmlExpressInstall="$htmlExpressInstall" 
-            htmlGenerate="$generateHtmlWrapper" 
+            htmlGenerate="$htmlGenerate" 
             htmlHistoryManagement="$htmlHistoryManagement" 
             htmlPlayerVersion="$targetPlayer" 
             htmlPlayerVersionCheck="$htmlPlayerVersionCheck" 

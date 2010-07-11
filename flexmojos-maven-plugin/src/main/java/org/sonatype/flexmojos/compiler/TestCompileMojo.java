@@ -187,7 +187,8 @@ public class TestCompileMojo
         // and add test libraries
         configuration.includeLibraries( merge( getDependenciesPath( "internal" ), getDependenciesPath( "test" ),
                                                getDependenciesPath( "rsl" ), getDependenciesPath( "caching" ),
-                                               getDependenciesPath( "external" ), testFiles ) );
+                                               getDependenciesPath( "external" ), testFiles,
+                                               getDependenciesPath( Artifact.SCOPE_RUNTIME ) ) );
 
         callThemesResolver();
     }
