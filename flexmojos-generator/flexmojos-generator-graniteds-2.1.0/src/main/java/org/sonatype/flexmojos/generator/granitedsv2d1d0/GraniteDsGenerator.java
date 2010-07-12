@@ -221,7 +221,20 @@ public final class GraniteDsGenerator
     public final void generate( GenerationRequest request )
         throws GenerationException
     {
-        // tide
+    	// add / create package translators
+    	for(String currentTranslator : request.getTranslators()){
+    		String[] splitTranslator = currentTranslator.split("=");
+    		if(splitTranslator.length != 2){
+    			throw new GenerationException("Invalid format: translators must be in format 'java.package=as3.package'");
+    		}
+    		String java = splitTranslator[0];
+    		String as3 = splitTranslator[1];
+    		
+    		getLogger().info("Adding translator: [" + java + ", " + as3 + "]");
+    		translators.add(new PackageTranslator(java, as3));
+    	}
+
+    	// tide
         String useTide = request.getExtraOptions().get( "tide" );
         if ( useTide != null )
         {
