@@ -170,6 +170,16 @@ public abstract class AbstractOptimizerMojo
      * @parameter expression="${flex.deblock}"
      */
     private float deblock;
+    
+    /**
+     * Instructs apparat to whether or not to merge ABC files into a single one.
+     * <p>
+     * Equivalent to -d
+     * </p>
+     * 
+     * @parameter expression="${flex.mergeABC}" default-value="true"
+     */
+    private boolean mergeABC;
 
     public abstract String getInput();
 
@@ -245,6 +255,11 @@ public abstract class AbstractOptimizerMojo
             public float deblock()
             {
                 return deblock;
+            }
+            
+            public boolean mergeABC()
+            {
+                return mergeABC;
             }
         };
         s.configure( cfg );

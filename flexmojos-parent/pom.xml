@@ -48,7 +48,7 @@
     <flex.sdk.version>4.1.0.15646</flex.sdk.version>
     <maven.version>3.0-beta-1</maven.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0.RC1</apparat.version>
+    <apparat.version>1.0-SNAPSHOT</apparat.version>
   </properties>
 
   <build>
@@ -538,6 +538,11 @@
       <dependency>
         <groupId>com.googlecode.apparat</groupId>
         <artifactId>apparat-core</artifactId>
+        <version>${apparat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.googlecode.apparat</groupId>
+        <artifactId>apparat-maven-plugin</artifactId>
         <version>${apparat.version}</version>
       </dependency>
       <dependency>
