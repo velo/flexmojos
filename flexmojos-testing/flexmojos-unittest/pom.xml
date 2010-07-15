@@ -8,7 +8,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>flexmojos-unittest-parent</artifactId>
+  <artifactId>flexmojos-unittest</artifactId>
   <packaging>pom</packaging>
 
   <name>Flexmojos Unit Test support - parent</name>
@@ -62,6 +62,18 @@
       <type>rb.swc</type>
     </dependency>
   </dependencies>
+  
+  <modules>
+    <module>flexmojos-test-coverage</module>
+    <module>flexmojos-unittest-advancedflex</module>
+    <module>flexmojos-unittest-asunit</module>
+    <module>flexmojos-unittest-flexunit</module>
+    <module>flexmojos-unittest-flexunit4</module>
+    <module>flexmojos-unittest-fluint</module>
+    <module>flexmojos-unittest-funit</module>
+    <module>flexmojos-unittest-mustella</module>
+    <module>flexmojos-unittest-support</module>
+  </modules>
 
   <profiles>
     <profile>

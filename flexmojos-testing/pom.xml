@@ -37,16 +37,7 @@
 
       <modules>
         <module>flexmojos-tester</module>
-        <module>flexmojos-unittest-support</module>
-        <module>flexmojos-test-coverage</module>
-        <module>flexmojos-unittest-flexunit</module>
-        <module>flexmojos-unittest-parent</module>
-        <module>flexmojos-unittest-flexunit4</module>
-        <module>flexmojos-unittest-fluint</module>
-        <module>flexmojos-unittest-funit</module>
-        <module>flexmojos-unittest-asunit</module>
-        <module>flexmojos-unittest-advancedflex</module>
-        <module>flexmojos-unittest-mustella</module>
+        <module>flexmojos-unittest</module>
         <module>flexmojos-test-harness</module>
       </modules>
     </profile>
