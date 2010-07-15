@@ -21,8 +21,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
+    <artifactId>flexmojos-sandbox</artifactId>
     <version>4.0-SNAPSHOT</version>
   </parent>
 

@@ -24,9 +24,9 @@
 
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-unittest-parent</artifactId>
+    <artifactId>flexmojos-unittest</artifactId>
     <version>4.0-SNAPSHOT</version>
-    <relativePath>../flexmojos-unittest-parent/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>

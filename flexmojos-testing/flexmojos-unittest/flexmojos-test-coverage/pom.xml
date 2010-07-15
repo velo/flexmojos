@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -19,35 +18,26 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-unittest-parent</artifactId>
+    <artifactId>flexmojos-unittest</artifactId>
     <version>4.0-SNAPSHOT</version>
-    <relativePath>../flexmojos-unittest-parent/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>flexmojos-unittest-flexunit</artifactId>
+  <artifactId>flexmojos-test-coverage</artifactId>
   <version>4.0-SNAPSHOT</version>
   <packaging>swc</packaging>
-
-  <name>Flexmojos Unit Test support - flexunit</name>
+  
+  <name>Flexmojos Unit Test Coverage</name>
 
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-unittest-support</artifactId>
       <version>${project.version}</version>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.adobe.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>0.85</version>
       <type>swc</type>
       <scope>external</scope>
     </dependency>
