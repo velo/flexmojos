@@ -260,7 +260,10 @@ public class MavenUtils
         sample = sample.replace( "{groupId}", artifact.getGroupId() );
         sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
         sample = sample.replace( "{version}", artifact.getBaseVersion() );
-        sample = sample.replace( "{classifier}", artifact.getClassifier() );
+        if ( artifact.getClassifier() != null )
+        {
+            sample = sample.replace( "{classifier}", artifact.getClassifier() );
+        }
         sample = sample.replace( "{hard-version}", artifact.getVersion() );
 
         return sample;
@@ -340,10 +343,10 @@ public class MavenUtils
         {
             return null;
         }
-        
+
         return getFilesSet( Arrays.asList( dependencies ) ).toArray( new File[0] );
     }
-    
+
     public static File[] getFiles( Collection<Artifact>... dependencies )
     {
         if ( dependencies == null )
