@@ -260,6 +260,8 @@ public class MavenUtils
         sample = sample.replace( "{groupId}", artifact.getGroupId() );
         sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
         sample = sample.replace( "{version}", artifact.getBaseVersion() );
+        sample = sample.replace( "{classifier}", artifact.getClassifier() );
+        sample = sample.replace( "{hard-version}", artifact.getVersion() );
 
         return sample;
     }
