@@ -1,6 +1,8 @@
 package org.sonatype.flexmojos.unitestingsupport.fluint
 {
- 	import flash.events.Event;
+	import flash.events.Event;
+
+    import mx.core.Application;
 
 	import net.digitalprimates.fluint.monitor.TestCaseResult;
 	import net.digitalprimates.fluint.monitor.TestMethodResult;
@@ -12,7 +14,7 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 	import net.digitalprimates.fluint.ui.TestRunner;
 
 
-    import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
+	import org.sonatype.flexmojos.unitestingsupport.ITestApplication;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.unitestingsupport.SocketReporter;
 	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
@@ -25,9 +27,10 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 		private var _testSuite:TestSuite=new TestSuite();
 
 		private var _socketReporter:SocketReporter;
-		
-		public function set socketReporter(socketReporter:SocketReporter):void {
-			 this._socketReporter = socketReporter;
+
+		public function set socketReporter(socketReporter:SocketReporter):void
+		{
+			this._socketReporter=socketReporter;
 		}
 
 		public function FluintListener(tests:Array=null, socketReporter:SocketReporter=null)
@@ -40,15 +43,15 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 					_testSuite.addTestCase(testCase);
 				}
 			}
-			
-			this._socketReporter = socketReporter;
+
+			this._socketReporter=socketReporter;
 		}
 
-        public function run( testApp:ITestApplication ):int
-        {
-            var tests:Array = testApp.tests;
+		public function run(testApp:ITestApplication):int
+		{
+			var tests:Array=testApp.tests;
 
-			var listener:FluintListener=new FluintListener(tests,_socketReporter);
+			var listener:FluintListener=new FluintListener(tests, _socketReporter);
 			return listener.runTests();
 		}
 
@@ -56,6 +59,9 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 		{
 			var testRunner:TestRunner=new TestRunner(_testMonitor);
 			testRunner.testEnvironment=new TestEnvironment();
+			// Add testEnvironment to Application, to be able to test graphical components
+			var app:Application=Application.application as Application;
+			app.addChild(testRunner.testEnvironment);
 			testRunner.startTests(_testSuite);
 			testRunner.addEventListener(TestRunner.TESTS_COMPLETE, handleTestsComplete);
 			return testRunner.getTestCount();
