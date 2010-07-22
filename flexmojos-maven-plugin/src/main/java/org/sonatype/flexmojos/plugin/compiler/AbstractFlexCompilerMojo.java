@@ -1159,6 +1159,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * {artifactId}         - replace by library artifactId
      * {version}            - replace by library version
      * {extension}          - replace by library extension swf or swz
+     * {classifier}         - replace by library classifier swf or swz
+     * {hard-version}       - replace by library timestamped version (for -SNAPSHOT artifacts only and if timestamped is available)
      * </pre>
      * 
      * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
@@ -1166,7 +1168,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * 
      * <pre>
      * &lt;rslUrls&gt;
-     *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{version}.{extension}&lt;/url&gt;
+     *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{classifier}-{version}.{extension}&lt;/url&gt;
      * &lt;/rslUrls&gt;
      * </pre>
      * 
