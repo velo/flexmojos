@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,8 +65,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -84,7 +81,6 @@ import org.sonatype.flexmojos.utilities.Namespace;
 
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Configuration;
-import flex2.tools.oem.Library;
 import flex2.tools.oem.Report;
 import flex2.tools.oem.internal.OEMConfiguration;
 
@@ -102,15 +98,15 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     /**
      * license.properties locations get from http://livedocs.adobe.com/flex/3/html/configuring_environment_2.html
      */
-    private static final File[] licensePropertiesLocations = new File[] {
-        new File( // Windows XP
-                  "C:/Documents and Settings/All Users/Application Data/Adobe/Flex/license.properties" ),
-        new File( // Windows Vista
-                  "C:/ProgramData/Adobe/Flex/license.properties" ),
-        new File( // Mac OSX
-                  "/Library/Application Support/Adobe/Flex/license.properties" ),
-        new File( // Linux
-                  System.getProperty( "user.home" ), ".adobe/Flex/license.properties" ) };
+    private static final File[] licensePropertiesLocations =
+        new File[] { new File( // Windows XP
+                               "C:/Documents and Settings/All Users/Application Data/Adobe/Flex/license.properties" ),
+            new File( // Windows Vista
+                      "C:/ProgramData/Adobe/Flex/license.properties" ),
+            new File( // Mac OSX
+                      "/Library/Application Support/Adobe/Flex/license.properties" ),
+            new File( // Linux
+                      System.getProperty( "user.home" ), ".adobe/Flex/license.properties" ) };
 
     protected static final String REPORT_CONFIG = "config";
 
@@ -1255,7 +1251,42 @@ public abstract class AbstractCompilerMojo<E extends Builder>
         FDKConfigResolver sdkConfigResolver =
             new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
 
-        configureFonts( configuration, sdkConfigResolver );
+        // Fonts
+        if ( fonts != null )
+        {
+            configureFontsAntiAliasing();
+            enableFlashType();
+
+            configuration.setMaximumCachedFonts( fonts.getMaxCachedFonts() );
+            configuration.setMaximumGlyphsPerFace( fonts.getMaxGlyphsPerFace() );
+            if ( fonts.getLanguages() != null && !fonts.getLanguages().isEmpty() )
+            {
+                for ( String language : fonts.getLanguages().keySet() )
+                {
+                    configuration.setFontLanguageRange( language, fonts.getLanguages().get( language ) );
+                }
+            }
+        }
+
+        if ( fonts != null && fonts.getManagers() != null )
+        {
+            configuration.setFontManagers( fonts.getManagers() );
+        }
+        else
+        {
+            String[] defaultFontManagers = sdkConfigResolver.getFontManagers();
+            if ( defaultFontManagers != null )
+            {
+                configuration.setFontManagers( defaultFontManagers );
+            }
+        }
+
+        File fontsSnapshot = getFontsSnapshot();
+        if ( fontsSnapshot == null || !fontsSnapshot.exists() )
+        {
+            throw new MojoExecutionException( "LocalFontSnapshot not found " + fontsSnapshot );
+        }
+        configuration.setLocalFontSnapshot( fontsSnapshot );
 
         configuration.setActionScriptMetadata( keepAs3Metadatas );
         configuration.keepCompilerGeneratedActionScript( keepGeneratedActionscript );
@@ -1372,7 +1403,17 @@ public abstract class AbstractCompilerMojo<E extends Builder>
 
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
 
-        configureLoadFile( configuration );
+        if ( configFile != null )
+        {
+            configuration.setConfiguration( configFile );
+        }
+        else if ( configFiles != null )
+        {
+            for ( File cfg : configFiles )
+            {
+                configuration.addConfiguration( cfg );
+            }
+        }
 
         if ( configuration instanceof OEMConfiguration )
         {
@@ -1392,86 +1433,6 @@ public abstract class AbstractCompilerMojo<E extends Builder>
         }
 
         verifyDigests();
-    }
-
-    private void configureFonts( Configuration configuration, FDKConfigResolver sdkConfigResolver )
-        throws MojoExecutionException
-    {
-        // Fonts
-        if ( fonts != null )
-        {
-            configureFontsAntiAliasing( configuration );
-            enableFlashType( configuration );
-
-            configuration.setMaximumCachedFonts( fonts.getMaxCachedFonts() );
-            configuration.setMaximumGlyphsPerFace( fonts.getMaxGlyphsPerFace() );
-            if ( fonts.getLanguages() != null && !fonts.getLanguages().isEmpty() )
-            {
-                for ( String language : fonts.getLanguages().keySet() )
-                {
-                    configuration.setFontLanguageRange( language, fonts.getLanguages().get( language ) );
-                }
-            }
-        }
-
-        if ( fonts != null && fonts.getManagers() != null )
-        {
-            configuration.setFontManagers( fonts.getManagers() );
-        }
-        else
-        {
-            String[] defaultFontManagers = sdkConfigResolver.getFontManagers();
-            if ( defaultFontManagers != null )
-            {
-                configuration.setFontManagers( defaultFontManagers );
-            }
-        }
-
-        File fontsSnapshot = getFontsSnapshot();
-        if ( fontsSnapshot == null || !fontsSnapshot.exists() )
-        {
-            throw new MojoExecutionException( "LocalFontSnapshot not found " + fontsSnapshot );
-        }
-        configuration.setLocalFontSnapshot( fontsSnapshot );
-    }
-
-    private void configureLoadFile( Configuration configuration )
-    {
-        if ( configFile != null )
-        {
-            configuration.setConfiguration( configFile );
-        }
-        else if ( configFiles != null )
-        {
-            for ( File cfg : configFiles )
-            {
-                configuration.addConfiguration( cfg );
-            }
-        }
-
-        if ( configuration instanceof OEMConfiguration )
-        {
-            OEMConfiguration oemConfig = (OEMConfiguration) configuration;
-
-            List<String> commandLineArguments = new ArrayList<String>();
-
-            if ( configFile == null && configFiles == null )
-            {
-                commandLineArguments.add( "-load-config=" );
-            }
-
-            if ( configFiles != null )
-            {
-                String separator = "=";
-                for ( File cfg : configFiles )
-                {
-                    commandLineArguments.add( "-load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
-                    separator = "+=";
-                }
-            }
-
-            oemConfig.setConfiguration( commandLineArguments.toArray( new String[commandLineArguments.size()] ) );
-        }
     }
 
     protected void configureExterns()
@@ -1517,7 +1478,7 @@ public abstract class AbstractCompilerMojo<E extends Builder>
 
     @FlexCompatibility( minVersion = "3" )
     @IgnoreJRERequirement
-    private void configureFontsAntiAliasing( Configuration configuration )
+    private void configureFontsAntiAliasing()
     {
         configuration.enableAdvancedAntiAliasing( fonts.isAdvancedAntiAliasing() );
     }
@@ -1579,6 +1540,12 @@ public abstract class AbstractCompilerMojo<E extends Builder>
 
     protected void configureViaCommandLine( List<String> commandLineArguments )
     {
+        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
+
+        if ( includeLookupOnly )
+        {
+            commandLineArguments.add( "-include-lookup-only" );
+        }
         if ( configFile == null && configFiles == null )
         {
             commandLineArguments.add( "-load-config=" );
@@ -1592,13 +1559,6 @@ public abstract class AbstractCompilerMojo<E extends Builder>
                 commandLineArguments.add( "-load-config" + separator + PathUtil.getCanonicalPath( cfg ) );
                 separator = "+=";
             }
-        }
-
-        commandLineArguments.add( "-static-link-runtime-shared-libraries=" + staticLinkRuntimeSharedLibraries );
-
-        if ( includeLookupOnly )
-        {
-            commandLineArguments.add( "-include-lookup-only" );
         }
 
         configureMetadataViaCommandLine( commandLineArguments );
@@ -1727,7 +1687,7 @@ public abstract class AbstractCompilerMojo<E extends Builder>
     @SuppressWarnings( "deprecation" )
     @FlexCompatibility( maxVersion = "2" )
     @IgnoreJRERequirement
-    private void enableFlashType( Configuration configuration )
+    private void enableFlashType()
     {
         configuration.enableFlashType( fonts.isFlashType() );
     }
@@ -2047,150 +2007,33 @@ public abstract class AbstractCompilerMojo<E extends Builder>
             return new File[0];
         }
 
-        Collection<File> rbsSwc = new LinkedHashSet<File>();
+        List<File> resourceBundles = new ArrayList<File>();
 
-        String[] localeChains = requestedLocales;
-
-        // TODO for for for for if for for, too many nested blocks, improve this
-        for ( Artifact beacon : getDependencyArtifacts() )
+        for ( Artifact resourceBundleBeacon : getDependencyArtifacts() )
         {
-            if ( !RB_SWC.equals( beacon.getType() ) )
+            if ( !RB_SWC.equals( resourceBundleBeacon.getType() ) )
             {
                 continue;
             }
 
-            for ( String localeChain : localeChains )
+            // resouceBundles.add(artifact.getFile());
+            for ( String requestLocale : requestedLocales )
             {
-                String[] locales;
-                if ( localeChain.contains( "," ) )
-                {
-                    locales = localeChain.split( "," );
-                }
-                else
-                {
-                    locales = new String[] { localeChain };
-                }
+                Artifact resolvedResourceBundle =
+                    artifactFactory.createArtifactWithClassifier( resourceBundleBeacon.getGroupId(),
+                                                                  resourceBundleBeacon.getArtifactId(),
+                                                                  resourceBundleBeacon.getVersion(),
+                                                                  resourceBundleBeacon.getType(), requestLocale );
 
-                String mainLocale = locales[0];
-
-                final Artifact mainRbSwc =
-                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), mainLocale,
-                             beacon.getType() );
-
-                if ( mainRbSwc.isResolved() )
-                {
-                    rbsSwc.add( mainRbSwc.getFile() );
-                }
-                else
-                {
-                    for ( String locale : locales )
-                    {
-                        final Artifact rbSwc =
-                            resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale,
-                                     beacon.getType() );
-
-                        if ( rbSwc.isResolved() )
-                        {
-                            if ( mainLocale.equals( locale ) )
-                            {
-                                adaptResourceBundle( rbSwc, mainRbSwc );
-                            }
-
-                            rbsSwc.add( mainRbSwc.getFile() );
-                            break;
-                        }
-                    }
-                }
+                resolvedResourceBundle =
+                    MavenUtils.resolveArtifact( project, resolvedResourceBundle, resolver, localRepository,
+                                                remoteRepositories );
+                resourceBundles.add( resolvedResourceBundle.getFile() );
             }
+
         }
-
-        getLog().debug( "getResourcesBundles(" + Arrays.toString( requestedLocales ) + ") returning resourceBundles: "
-                            + rbsSwc );
-        return rbsSwc.toArray( new File[0] );
-        // return resourceBundles.toArray( new File[resourceBundles.size()] );
-    }
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected ArchiverManager archiverManager;
-
-    protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
-        throws MojoExecutionException
-    {
-        getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
-                            + " to " + desiredRbSwc.getClassifier() );
-
-        File dest;
-        try
-        {
-            UnArchiver unzip = archiverManager.getUnArchiver( "zip" );
-            unzip.setSourceFile( baseRbSwc.getFile() );
-            dest =
-                org.codehaus.plexus.util.FileUtils.createTempFile( baseRbSwc.getArtifactId(),
-                                                                   desiredRbSwc.getClassifier(),
-                                                                   new File( build.getOutputDirectory() ) );
-            unzip.extract( "locale/" + baseRbSwc.getClassifier(), dest );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Unable to extract base locale", e );
-        }
-
-        File resourceBundleBaseDir = new File( dest, "locale/" + baseRbSwc.getClassifier() );
-        List<String> bundles = new ArrayList<String>();
-        for ( String bundle : resourceBundleBaseDir.list() )
-        {
-            bundles.add( bundle.replace( ".properties", "" ) );
-        }
-
-        Library lib = new Library();
-        Configuration cfg = lib.getDefaultConfiguration();
-        configureLoadFile( cfg );
-        cfg.setTheme( null );
-
-        FDKConfigResolver sdkConfigResolver =
-            new FDKConfigResolver( getDependencyArtifacts(), build, getCompilerVersion() );
-
-        configureFonts( cfg, sdkConfigResolver );
-
-        cfg.setLocale( new String[] { desiredRbSwc.getClassifier() } );
-        cfg.setSourcePath( new File[] { resourceBundleBaseDir } );
-        for ( String bundle : bundles )
-        {
-            lib.addResourceBundle( bundle );
-        }
-        String output =
-            PathUtil.getCanonicalPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(),
-                                                                      desiredRbSwc.getClassifier() );
-        lib.setOutput( new File( output ) );
-
-        cfg.setExternalLibraryPath( getGlobalDependency() );
-        cfg.addExternalLibraryPath( getDependenciesPath( EXTERNAL ) );
-        cfg.addExternalLibraryPath( getDependenciesPath( Artifact.SCOPE_RUNTIME ) );
-
-        cfg.includeLibraries( getDependenciesPath( INTERNAL ) );
-
-        cfg.setLibraryPath( getDependenciesPath( Artifact.SCOPE_COMPILE ) );
-        cfg.addLibraryPath( getDependenciesPath( MERGED ) );
-
-        callCompiler( builder, false );
-
-        desiredRbSwc.setFile( new File( output ) );
-        desiredRbSwc.setResolved( true );
-    }
-
-    private Artifact resolve( String groupId, String artifactId, String version, String requestLocale, String type )
-        throws MojoExecutionException
-    {
-        Artifact resolvedResourceBundle =
-            artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, type, requestLocale );
-
-        resolvedResourceBundle =
-            MavenUtils.resolveArtifact( project, resolvedResourceBundle, resolver, localRepository, remoteRepositories );
-
-        return resolvedResourceBundle;
+        getLog().debug( "getResourcesBundles(" + Arrays.toString( requestedLocales ) + ") returning resourceBundles: " + resourceBundles );
+        return resourceBundles.toArray( new File[resourceBundles.size()] );
     }
 
     /**
@@ -2795,7 +2638,8 @@ public abstract class AbstractCompilerMojo<E extends Builder>
             }
             catch ( ClassNotFoundException e )
             {
-                getLog().warn( "Unable to find license.jar on classpath. Check wiki for instructions about how to add it:\n   https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
+                getLog().warn(
+                               "Unable to find license.jar on classpath. Check wiki for instructions about how to add it:\n   https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
                 getLog().debug( "Java classpath: " + System.getProperty( "java.class.path" ) );
             }
         }
