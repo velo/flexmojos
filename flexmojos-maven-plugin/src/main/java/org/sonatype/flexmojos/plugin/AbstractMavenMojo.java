@@ -403,6 +403,17 @@ public abstract class AbstractMavenMojo
     }
 
     @SuppressWarnings( "unchecked" )
+    public <E> E getFromPluginContext( String key )
+    {
+        Object valueHolder = getPluginContext().get( key );
+        if ( valueHolder instanceof ThreadLocal )
+        {
+            return ( (ThreadLocal<E>) valueHolder ).get();
+        }
+        return (E) valueHolder;
+    }
+
+    @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
         return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
@@ -489,6 +500,18 @@ public abstract class AbstractMavenMojo
     public boolean isSkip()
     {
         return skip;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public <E> void putPluginContext( String key, E value )
+    {
+        Object valueHolder = getPluginContext().get( key );
+        if ( !( valueHolder instanceof ThreadLocal ) )
+        {
+            valueHolder = new ThreadLocal<E>();
+            getPluginContext().put( key, valueHolder );
+        }
+        ( (ThreadLocal<E>) valueHolder ).set( value );
     }
 
     protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
@@ -604,30 +627,6 @@ public abstract class AbstractMavenMojo
         {
             checkResult( result );
         }
-    }
-    
-
-    @SuppressWarnings( "unchecked" )
-    public <E> void putPluginContext( String key, E value )
-    {
-        Object valueHolder = getPluginContext().get( key );
-        if ( !( valueHolder instanceof ThreadLocal ) )
-        {
-            valueHolder = new ThreadLocal<E>();
-            getPluginContext().put( key, valueHolder );
-        }
-        ( (ThreadLocal<E>) valueHolder ).set( value );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public <E> E getFromPluginContext( String key )
-    {
-        Object valueHolder = getPluginContext().get( key );
-        if ( valueHolder instanceof ThreadLocal )
-        {
-            return ( (ThreadLocal<E>) valueHolder ).get();
-        }
-        return (E) valueHolder;
     }
 
 }

@@ -1371,11 +1371,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( compilerCfg.getTheme() ).thenReturn( Collections.EMPTY_LIST );
         when( compilerCfg.getFontsConfiguration() ).thenReturn( getFontsConfiguration() );
-        
+
         when( compilerCfg.getLocale() ).thenReturn( new String[] { desiredRbSwc.getClassifier() } );
         when( compilerCfg.getSourcePath() ).thenReturn( new File[] { resourceBundleBaseDir } );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
-        String output = PathUtil.getCanonicalPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
+        String output =
+            PathUtil.getCanonicalPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(),
+                                                                      desiredRbSwc.getClassifier() );
         when( cfg.getOutput() ).thenReturn( output );
         when( compilerCfg.getExternalLibraryPath() ).thenReturn( this.getExternalLibraryPath() );
         when( compilerCfg.getLibraryPath() ).thenReturn( this.getLibraryPath() );
@@ -1388,8 +1390,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             throw new MavenRuntimeException( "Unable to compile adapted resource bundle", e );
         }
-        
-        desiredRbSwc.setFile( new File(output) );
+
+        desiredRbSwc.setFile( new File( output ) );
         desiredRbSwc.setResolved( true );
     }
 
@@ -1462,6 +1464,33 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
         throws Exception;
+
+    private Artifact doLocalizationChain( String[] locales, String requestedLocale, Artifact beacon,
+                                          Artifact requestRbSwc )
+    {
+        getLog().info( "Resolving resource bundle for '" + beacon + "' using localization chain." );
+
+        for ( String locale : locales )
+        {
+            final Artifact rbSwc =
+                resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale, beacon.getType() );
+
+            if ( rbSwc.isResolved() )
+            {
+                if ( !requestedLocale.equals( locale ) )
+                {
+                    getLog().info( "Resolved resource bundle for '" + beacon + "' using localization chain. The '"
+                                       + locale + "' will be used to build the missing '" + requestedLocale + "'" );
+                    adaptResourceBundle( rbSwc, requestRbSwc );
+                }
+
+                return rbSwc;
+            }
+        }
+
+        throw new MavenRuntimeException( "Unable to resolve resource bundle '" + beacon + "' for '" + requestedLocale
+            + "'" );
+    }
 
     protected Result executeCompiler( CFG cfg, boolean synchronize )
         throws MojoExecutionException, MojoFailureException
@@ -1593,36 +1622,27 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                     locales = new String[] { localeChain };
                 }
 
-                String mainLocale = locales[0];
+                String requestedLocale = locales[0];
 
-                final Artifact mainRbSwc =
-                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), mainLocale,
+                final Artifact requestedRbSwc =
+                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), requestedLocale,
                              beacon.getType() );
 
-                if ( mainRbSwc.isResolved() )
+                Artifact resultRbSwc;
+                if ( requestedRbSwc.isResolved() )
                 {
-                    rbsSwc.add( mainRbSwc );
+                    resultRbSwc = requestedRbSwc;
+                }
+                else if ( locales.length > 1 )
+                {
+                    resultRbSwc = doLocalizationChain( locales, requestedLocale, beacon, requestedRbSwc );
                 }
                 else
                 {
-                    for ( String locale : locales )
-                    {
-                        final Artifact rbSwc =
-                            resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale,
-                                     beacon.getType() );
-
-                        if ( rbSwc.isResolved() )
-                        {
-                            if ( mainLocale.equals( locale ) )
-                            {
-                                adaptResourceBundle( rbSwc, mainRbSwc );
-                            }
-
-                            rbsSwc.add( mainRbSwc );
-                            break;
-                        }
-                    }
+                    throw new MavenRuntimeException( "Missing resource bundle '" + requestedRbSwc + "'" );
                 }
+
+                rbsSwc.add( resultRbSwc );
             }
         }
 
@@ -3028,13 +3048,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             try
             {
-				final File output = new File( getOutput() );
+                final File output = new File( getOutput() );
 
                 FileUtils.copyFile( artifact.getFile(), output );
-				
-				if( !output.setLastModified( artifact.getFile().lastModified() ) ) {
-					getLog().warn( "Could not set modified on copied artifact. Unnecessary rebuilds will occur." );
-				}
+
+                if ( !output.setLastModified( artifact.getFile().lastModified() ) )
+                {
+                    getLog().warn( "Could not set modified on copied artifact. Unnecessary rebuilds will occur." );
+                }
             }
             catch ( IOException e )
             {
