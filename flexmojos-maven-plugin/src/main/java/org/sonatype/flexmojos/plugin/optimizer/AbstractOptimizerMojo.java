@@ -27,6 +27,7 @@ import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.util.PathUtil;
 
+import apparat.tools.reducer.MatryoshkaType;
 import apparat.tools.reducer.Reducer.ReducerTool;
 import apparat.tools.reducer.ReducerConfiguration;
 import apparat.tools.stripper.Stripper.StripperTool;
@@ -130,16 +131,6 @@ public abstract class AbstractOptimizerMojo
     protected MavenProjectHelper projectHelper;
 
     /**
-     * Use apparat to strip
-     * <p>
-     * Equivalent to apparat stripper
-     * </p>
-     * 
-     * @parameter default-value="true" expression="${flex.strip}"
-     */
-    protected boolean strip;
-
-    /**
      * Use apparat to reduce the file size of SWFs by making use of the full feature set the Flash Player provides and
      * which is ignored by the ActionScript compiler.
      * <p>
@@ -152,34 +143,65 @@ public abstract class AbstractOptimizerMojo
     protected boolean reduce;
 
     /**
-     * Compression quality from 0.0 to 1.0
-     * <p>
-     * Equivalent to -q
-     * </p>
-     * 
-     * @parameter expression="${flex.quality}"
-     */
-    private float quality;
-
-    /**
      * Strength of deblocking filter
      * <p>
      * Equivalent to -d
      * </p>
      * 
-     * @parameter expression="${flex.deblock}"
+     * @parameter expression="${flex.reduceDeblock}"
      */
-    private float deblock;
-    
+    private float reduceDeblock;
+
     /**
-     * Instructs apparat to whether or not to merge ABC files into a single one.
+     * Whether or not to use LZMA compression. Only available with SWF files.
+     * 
+     * @parameter expression="${flex.reduceLzma}" default-value="false"
+     */
+    private boolean reduceLzma;
+
+    /**
+     * Which Matryoshka implementation to use, valid values are: "none", "quiet" or "preloader".
+     * 
+     * @parameter expression="${flex.reduceMatryoshkaType}" default-value="none"
+     */
+    private String reduceMatryoshkaType;
+
+    /**
+     * Whether or not to merge ABC files into a single one.
      * <p>
      * Equivalent to -d
      * </p>
      * 
-     * @parameter expression="${flex.mergeABC}" default-value="true"
+     * @parameter expression="${flex.reduceMergeABC}" default-value="true"
      */
-    private boolean mergeABC;
+    private boolean reduceMergeABC;
+
+    /**
+     * Compression quality from 0.0 to 1.0
+     * <p>
+     * Equivalent to -q
+     * </p>
+     * 
+     * @parameter expression="${flex.reduceQuality}"
+     */
+    private float reduceQuality;
+
+    /**
+     * Whether or not to sort the constant pool. Only if <code>reduceMergeABC</code> is specified.
+     * 
+     * @parameter expression="${flex.reduceSortCPool}" default-value="true"
+     */
+    private boolean reduceSortCPool;
+
+    /**
+     * Use apparat to strip
+     * <p>
+     * Equivalent to apparat stripper
+     * </p>
+     * 
+     * @parameter default-value="true" expression="${flex.strip}"
+     */
+    protected boolean strip;
 
     public abstract String getInput();
 
@@ -210,79 +232,6 @@ public abstract class AbstractOptimizerMojo
     public String getOutput()
     {
         return PathUtil.getCanonicalPath( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
-    }
-
-    protected void optimize( File input, File output )
-        throws MojoFailureException, MojoExecutionException
-    {
-        int result;
-        try
-        {
-            result = compiler.optimize( getOptimizerConfiguration( input, output ), true ).getExitCode();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
-        if ( result != 0 )
-        {
-            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
-        }
-    }
-
-    protected void reduce( final File input, final File output )
-    {
-        ReducerTool s = new ReducerTool();
-        ReducerConfiguration cfg = new ReducerConfiguration()
-        {
-
-            public float quality()
-            {
-                return quality;
-            }
-
-            public File output()
-            {
-                return output;
-            }
-
-            public File input()
-            {
-                return input;
-            }
-
-            public float deblock()
-            {
-                return deblock;
-            }
-            
-            public boolean mergeABC()
-            {
-                return mergeABC;
-            }
-        };
-        s.configure( cfg );
-        s.run();
-    }
-
-    protected void strip( final File input, final File output )
-    {
-        StripperTool s = new StripperTool();
-        StripperConfiguration cfg = new StripperConfiguration()
-        {
-            public File output()
-            {
-                return output;
-            }
-
-            public File input()
-            {
-                return input;
-            }
-        };
-        s.configure( cfg );
-        s.run();
     }
 
     protected File optimize()
@@ -345,5 +294,104 @@ public abstract class AbstractOptimizerMojo
 
     protected abstract File optimize( File input )
         throws MojoFailureException, MojoExecutionException;
+
+    protected void optimize( File input, File output )
+        throws MojoFailureException, MojoExecutionException
+    {
+        int result;
+        try
+        {
+            result = compiler.optimize( getOptimizerConfiguration( input, output ), true ).getExitCode();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( result != 0 )
+        {
+            throw new MojoFailureException( "Got " + result + " errors building project, check logs" );
+        }
+    }
+
+    protected void reduce( final File input, final File output )
+    {
+        ReducerTool s = new ReducerTool();
+        ReducerConfiguration cfg = new ReducerConfiguration()
+        {
+
+            public float deblock()
+            {
+                return reduceDeblock;
+            }
+
+            public File input()
+            {
+                return input;
+            }
+
+            public boolean lzma()
+            {
+                return reduceLzma;
+            }
+
+            public int matryoshkaType()
+            {
+                if ( reduceMatryoshkaType.equalsIgnoreCase( "quiet" ) )
+                {
+                    return MatryoshkaType.QUIET();
+                }
+                else if ( reduceMatryoshkaType.equalsIgnoreCase( "preloader" ) )
+                {
+                    return MatryoshkaType.PRELOADER();
+                }
+                else
+                {
+                    return MatryoshkaType.NONE();
+                }
+            }
+
+            public boolean mergeABC()
+            {
+                return reduceMergeABC;
+            }
+
+            public File output()
+            {
+                return output;
+            }
+
+            public float quality()
+            {
+                return reduceQuality;
+            }
+
+            public boolean sortCPool()
+            {
+                return reduceSortCPool;
+            }
+        };
+        s.configure( cfg );
+        s.run();
+    }
+
+    protected void strip( final File input, final File output )
+    {
+        StripperTool s = new StripperTool();
+        StripperConfiguration cfg = new StripperConfiguration()
+        {
+            public File input()
+            {
+                return input;
+            }
+
+            public File output()
+            {
+                return output;
+            }
+        };
+        s.configure( cfg );
+        s.run();
+    }
 
 }
