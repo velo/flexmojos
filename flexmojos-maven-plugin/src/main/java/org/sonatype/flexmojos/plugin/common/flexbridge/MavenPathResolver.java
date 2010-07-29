@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.flexbridge;
+package org.sonatype.flexmojos.plugin.common.flexbridge;
 
 import java.io.File;
 import java.util.List;

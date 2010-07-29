@@ -29,8 +29,8 @@ import java.util.Set;
 
 import org.apache.maven.model.Resource;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
+import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
-import org.sonatype.flexmojos.plugin.compiler.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
