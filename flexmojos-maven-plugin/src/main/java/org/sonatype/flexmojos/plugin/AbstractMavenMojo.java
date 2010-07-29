@@ -45,9 +45,15 @@ import org.hamcrest.Matcher;
 import org.mockito.ReturnValues;
 import org.mockito.invocation.InvocationOnMock;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.plugin.common.flexbridge.MavenLogger;
+import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.util.PathUtil;
+
+import flex2.compiler.Logger;
+import flex2.compiler.common.SinglePathResolver;
+import flex2.tools.oem.internal.OEMLogAdapter;
 
 public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
@@ -405,6 +411,16 @@ public abstract class AbstractMavenMojo
     public Log getLog()
     {
         return this.log;
+    }
+
+    public Logger getMavenLogger()
+    {
+        return new OEMLogAdapter( new MavenLogger( getLog() ) );
+    }
+
+    public SinglePathResolver getMavenPathResolver()
+    {
+        return new MavenPathResolver( resources );
     }
 
     public File getOutputDirectory()
