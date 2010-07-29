@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.plugin.compiler.flexbridge;
+package org.sonatype.flexmojos.plugin.common.flexbridge;
 
 import org.apache.maven.plugin.logging.Log;
 
