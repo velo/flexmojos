@@ -75,7 +75,7 @@
     <module>flexmojos-unittest-support</module>
   </modules>
 
-  <profiles>
+  <!--<profiles>
     <profile>
       <id>m2e</id>
       <activation>
@@ -103,4 +103,4 @@
     </profile>
   </profiles>
 
-</project>
+--></project>
