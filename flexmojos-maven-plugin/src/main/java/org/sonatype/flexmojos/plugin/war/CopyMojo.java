@@ -38,6 +38,7 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.common.FlexExtension;
 import org.sonatype.flexmojos.plugin.common.FlexScopes;
 import org.sonatype.flexmojos.plugin.utilities.CompileConfigurationLoader;
@@ -53,53 +54,9 @@ import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
  * @requiresDependencyResolution
  */
 public class CopyMojo
-    extends AbstractMojo
+    extends AbstractMavenMojo
     implements FlexScopes, FlexExtension
 {
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected RepositorySystem repositorySystem;
-
-    /**
-     * The maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
-     */
-    private List<ArtifactRepository> remoteRepositories;
-
-    /**
-     * The directory where the webapp is built.
-     * 
-     * @parameter expression="${project.build.directory}/${project.build.finalName}"
-     * @required
-     */
-    private File webappDirectory;
-
-    /**
-     * Strip artifact version during copy
-     * 
-     * @parameter default-value="false"
-     */
-    private boolean stripVersion;
 
     /**
      * @parameter default-value="true"
@@ -112,6 +69,40 @@ public class CopyMojo
     private boolean copyRuntimeLocales;
 
     /**
+     * @parameter expression="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * The maven project.
+     * 
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
+    /**
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List<ArtifactRepository> remoteRepositories;
+
+    /**
+     * @component
+     * @readonly
+     */
+    protected RepositorySystem repositorySystem;
+
+    /**
      * Skip mojo execution
      * 
      * @parameter default-value="false" expression="${flexmojos.copy.skip}"
@@ -119,9 +110,46 @@ public class CopyMojo
     private boolean skip;
 
     /**
-     * @component
+     * When true will strip artifact and version information from the built MXML module artifact.
+     * 
+     * @parameter default-value="false"
      */
-    private ProjectBuilder projectBuilder;
+    private boolean stripModuleArtifactInfo;
+
+    /**
+     * Strip artifact version during copy
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripVersion;
+
+    /**
+     * Use final name if/when available
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean useFinalName;
+
+    /**
+     * The directory where the webapp is built.
+     * 
+     * @parameter expression="${project.build.directory}/${project.build.finalName}"
+     * @required
+     */
+    private File webappDirectory;
+
+    private void copy( File sourceFile, File destFile )
+        throws MojoExecutionException
+    {
+        try
+        {
+            FileUtils.copyFile( sourceFile, destFile );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to copy " + sourceFile, e );
+        }
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -136,8 +164,7 @@ public class CopyMojo
 
         if ( !"war".equals( packaging ) )
         {
-            getLog().warn( "Unable to copy flex resources to a non war project" );
-            return;
+            getLog().warn( "'copy-flex-resources' was intended to run on war project" );
         }
 
         webappDirectory.mkdirs();
@@ -155,101 +182,96 @@ public class CopyMojo
                 performSubArtifactsCopy( artifact );
             }
         }
-    }
 
-    private void performSubArtifactsCopy( Artifact artifact )
-        throws MojoExecutionException
-    {
-        MavenProject artifactProject = getProject( artifact );
-        if ( artifactProject != null )
+        List<Artifact> airDependencies = getAirArtifacts();
+
+        for ( Artifact artifact : airDependencies )
         {
-            if ( copyRSL )
-            {
-                performRslCopy( artifactProject );
-            }
-            if ( copyRuntimeLocales )
-            {
-                performRuntimeLocalesCopy( artifactProject );
-            }
-        }
-    }
+            File sourceFile = artifact.getFile();
+            File destFile = getDestinationFile( artifact );
 
-    private void performRslCopy( MavenProject artifactProject )
-        throws MojoExecutionException
-    {
-        List<Artifact> rslDeps = getRSLDependencies( artifactProject );
-
-        if ( rslDeps.isEmpty() )
-        {
-            return;
+            copy( sourceFile, destFile );
         }
 
-        String[] rslUrls = getRslUrls( artifactProject );
+    }
 
-        for ( Artifact rslArtifact : rslDeps )
+    private List<Artifact> getAirArtifacts()
+    {
+        return getArtifacts( AIR, project );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private List<Artifact> getArtifacts( String type, MavenProject project )
+    {
+        List<Artifact> swfArtifacts = new ArrayList<Artifact>();
+        Set<Artifact> artifacts = project.getArtifacts();
+        for ( Artifact artifact : artifacts )
         {
-            String extension;
-            if ( RSL.equals( rslArtifact.getScope() ) )
+            if ( type.equals( artifact.getType() ) )
             {
-                extension = SWF;
+                swfArtifacts.add( artifact );
+            }
+        }
+        return swfArtifacts;
+    }
+
+    private File getDestinationFile( Artifact artifact )
+        throws MojoExecutionException
+    {
+        boolean isModule = !StringUtils.isEmpty( artifact.getClassifier() );
+        MavenProject pomProject = getProject( artifact );
+        String fileName;
+        if ( isModule )
+        {
+            if ( !stripModuleArtifactInfo )
+            {
+                fileName =
+                    artifact.getArtifactId() + "-" + artifact.getVersion() + artifact.getClassifier() + "."
+                        + artifact.getType();
             }
             else
             {
-                extension = SWZ;
-            }
-
-            rslArtifact =
-                repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
-                                                               rslArtifact.getVersion(), extension, null );
-
-            File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
-            File sourceFile = rslArtifact.getFile();
-
-            for ( File destFile : destFiles )
-            {
-                copy( sourceFile, destFile );
+                fileName = artifact.getClassifier() + "." + artifact.getType();
             }
         }
+        else
+        {
+            if ( !useFinalName )
+            {
+                fileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
+            }
+            else
+            {
+                fileName = pomProject.getBuild().getFinalName() + "." + artifact.getType();
+            }
+        }
+
+        if ( stripVersion && fileName.contains( artifact.getVersion() ) )
+        {
+            fileName = fileName.replace( "-" + artifact.getVersion(), "" );
+        }
+
+        File destFile = new File( webappDirectory, fileName );
+
+        return destFile;
     }
 
-    private void performRuntimeLocalesCopy( MavenProject artifactProject )
+    private MavenProject getProject( Artifact artifact )
         throws MojoExecutionException
     {
-        List<Artifact> deps = getRuntimeLocalesDependencies( artifactProject );
-
-        if ( deps.isEmpty() )
+        try
         {
-            return;
+            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+            request.setLocalRepository( localRepository );
+            request.setRemoteRepositories( remoteRepositories );
+            request.setResolveDependencies( true );
+            return projectBuilder.build( artifact, request ).getProject();
         }
-
-        String runtimeLocaleOutputPath = getRuntimeLocaleOutputPath( artifactProject );
-
-        for ( Artifact artifact : deps )
+        catch ( ProjectBuildingException e )
         {
-            copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
+            getLog().warn( "Failed to retrieve pom for " + artifact );
+            return null;
         }
-    }
-
-    private File[] resolveRslDestination( String[] rslUrls, Artifact artifact, String extension )
-    {
-        File[] rsls = new File[rslUrls.length];
-        for ( int i = 0; i < rslUrls.length; i++ )
-        {
-            String rsl = replaceContextRoot( rslUrls[i] );
-            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, null );
-            rsls[i] = new File( rsl ).getAbsoluteFile();
-        }
-        return rsls;
-    }
-
-    private String[] getRslUrls( MavenProject artifactProject )
-    {
-        String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
-        if ( urls == null )
-        {
-            // TODO urls = ApplicationMojo.DEFAULT_RSL_URLS;
-        }
-        return urls;
     }
 
     private List<Artifact> getRSLDependencies( MavenProject artifactProject )
@@ -266,12 +288,14 @@ public class CopyMojo
         return swcDeps;
     }
 
-    private File resolveRuntimeLocaleDestination( String runtimeLocaleOutputPath, Artifact artifact )
+    private String[] getRslUrls( MavenProject artifactProject )
     {
-        String path = replaceContextRoot( runtimeLocaleOutputPath );
-        path = MavenUtils.getRuntimeLocaleOutputPath( path, artifact, artifact.getClassifier(), SWF );
-
-        return new File( path ).getAbsoluteFile();
+        String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
+        if ( urls == null )
+        {
+            // TODO urls = ApplicationMojo.DEFAULT_RSL_URLS;
+        }
+        return urls;
     }
 
     private String getRuntimeLocaleOutputPath( MavenProject artifactProject )
@@ -304,80 +328,84 @@ public class CopyMojo
         return artifacts;
     }
 
-    private MavenProject getProject( Artifact artifact )
-        throws MojoExecutionException
-    {
-        try
-        {
-            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
-            request.setLocalRepository( localRepository );
-            request.setRemoteRepositories( remoteRepositories );
-            request.setResolveDependencies( true );
-            return projectBuilder.build( artifact, request ).getProject();
-        }
-        catch ( ProjectBuildingException e )
-        {
-            getLog().warn( "Failed to retrieve pom for " + artifact );
-            return null;
-        }
-    }
-
-    private void copy( File sourceFile, File destFile )
-        throws MojoExecutionException
-    {
-        try
-        {
-            FileUtils.copyFile( sourceFile, destFile );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to copy " + sourceFile, e );
-        }
-    }
-
-    private File getDestinationFile( Artifact artifact )
-        throws MojoExecutionException
-    {
-        File destFile;
-        String defaultFinalName = artifact.getArtifactId() + "-" + artifact.getVersion();
-        MavenProject pomProject = getProject( artifact );
-        String finalName = pomProject.getBuild().getFinalName();
-        if ( finalName.equals( defaultFinalName ) )
-        {
-            String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-            String version = stripVersion ? "" : "-" + artifact.getVersion();
-            destFile = new File( webappDirectory, artifact.getArtifactId() + version + classifier + "." + SWF );
-        }
-        else
-        {
-            if ( stripVersion )
-            {
-                getLog().info( "Copying artifact using final name " + finalName + " ignoring strip version" );
-            }
-            destFile = new File( webappDirectory, finalName + "." + SWF );
-        }
-
-        return destFile;
-    }
-
     private List<Artifact> getSwfArtifacts()
     {
         return getArtifacts( SWF, project );
     }
 
-    @SuppressWarnings( "unchecked" )
-    private List<Artifact> getArtifacts( String type, MavenProject project )
+    private void performRslCopy( MavenProject artifactProject )
+        throws MojoExecutionException
     {
-        List<Artifact> swfArtifacts = new ArrayList<Artifact>();
-        Set<Artifact> artifacts = project.getArtifacts();
-        for ( Artifact artifact : artifacts )
+        List<Artifact> rslDeps = getRSLDependencies( artifactProject );
+
+        if ( rslDeps.isEmpty() )
         {
-            if ( type.equals( artifact.getType() ) )
+            return;
+        }
+
+        String[] rslUrls = getRslUrls( artifactProject );
+
+        for ( Artifact rslArtifact : rslDeps )
+        {
+            String extension;
+            if ( RSL.equals( rslArtifact.getScope() ) )
             {
-                swfArtifacts.add( artifact );
+                extension = SWF;
+            }
+            else
+            {
+                extension = SWZ;
+            }
+
+            rslArtifact =
+                repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
+                                                               rslArtifact.getVersion(), extension, null );
+            rslArtifact = replaceWithResolvedArtifact( rslArtifact );
+
+            File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
+            File sourceFile = rslArtifact.getFile();
+
+            for ( File destFile : destFiles )
+            {
+                copy( sourceFile, destFile );
             }
         }
-        return swfArtifacts;
+    }
+
+    private void performRuntimeLocalesCopy( MavenProject artifactProject )
+        throws MojoExecutionException
+    {
+        List<Artifact> deps = getRuntimeLocalesDependencies( artifactProject );
+
+        if ( deps.isEmpty() )
+        {
+            return;
+        }
+
+        String runtimeLocaleOutputPath = getRuntimeLocaleOutputPath( artifactProject );
+
+        for ( Artifact artifact : deps )
+        {
+            artifact = replaceWithResolvedArtifact( artifact );
+            copy( artifact.getFile(), resolveRuntimeLocaleDestination( runtimeLocaleOutputPath, artifact ) );
+        }
+    }
+
+    private void performSubArtifactsCopy( Artifact artifact )
+        throws MojoExecutionException
+    {
+        MavenProject artifactProject = getProject( artifact );
+        if ( artifactProject != null )
+        {
+            if ( copyRSL )
+            {
+                performRslCopy( artifactProject );
+            }
+            if ( copyRuntimeLocales )
+            {
+                performRuntimeLocalesCopy( artifactProject );
+            }
+        }
     }
 
     private String replaceContextRoot( String sample )
@@ -393,6 +421,33 @@ public class CopyMojo
         }
 
         return sample;
+    }
+
+    private Artifact replaceWithResolvedArtifact( Artifact artifact )
+        throws MojoExecutionException
+    {
+        return resolve( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(),
+                        artifact.getClassifier(), artifact.getType() );
+    }
+
+    private File[] resolveRslDestination( String[] rslUrls, Artifact artifact, String extension )
+    {
+        File[] rsls = new File[rslUrls.length];
+        for ( int i = 0; i < rslUrls.length; i++ )
+        {
+            String rsl = replaceContextRoot( rslUrls[i] );
+            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, null );
+            rsls[i] = new File( rsl ).getAbsoluteFile();
+        }
+        return rsls;
+    }
+
+    private File resolveRuntimeLocaleDestination( String runtimeLocaleOutputPath, Artifact artifact )
+    {
+        String path = replaceContextRoot( runtimeLocaleOutputPath );
+        path = MavenUtils.getRuntimeLocaleOutputPath( path, artifact, artifact.getClassifier(), SWF );
+
+        return new File( path ).getAbsoluteFile();
     }
 
 }
