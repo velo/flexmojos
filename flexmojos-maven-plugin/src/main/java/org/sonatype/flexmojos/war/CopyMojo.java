@@ -236,20 +236,32 @@ public class CopyMojo
     private File getDestinationFile( Artifact artifact )
         throws MojoExecutionException
     {
-        String classifier = StringUtils.isEmpty( artifact.getClassifier() ) ? "" : "-" + artifact.getClassifier();
-
+        boolean isModule = !StringUtils.isEmpty( artifact.getClassifier() );
         MavenProject pomProject = getProject( artifact );
         String fileName;
-        if ( !useFinalName )
+        if ( isModule )
         {
-            String version = stripVersion ? "" : "-" + artifact.getVersion();
-            String artifactPrefix = stripModuleArtifactInfo ? "" : artifact.getArtifactId() + version;
-            fileName = artifactPrefix + classifier + "." + artifact.getType();
+            if ( !stripModuleArtifactInfo )
+            {
+                fileName =
+                    artifact.getArtifactId() + "-" + artifact.getVersion() + artifact.getClassifier() + "."
+                        + artifact.getType();
+            }
+            else
+            {
+                fileName = artifact.getClassifier() + "." + artifact.getType();
+            }
         }
         else
         {
-            String artifactPrefix = stripModuleArtifactInfo ? "" : pomProject.getBuild().getFinalName();
-            fileName = artifactPrefix + classifier + "." + artifact.getType();
+            if ( !useFinalName )
+            {
+                fileName = artifact.getArtifactId() + "-" + artifact.getVersion() + "." + artifact.getType();
+            }
+            else
+            {
+                fileName = pomProject.getBuild().getFinalName() + "." + artifact.getType();
+            }
         }
 
         if ( stripVersion && fileName.contains( artifact.getVersion() ) )
