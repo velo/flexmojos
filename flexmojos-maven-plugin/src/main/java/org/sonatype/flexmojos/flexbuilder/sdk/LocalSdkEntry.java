@@ -57,6 +57,11 @@ public class LocalSdkEntry implements Comparable<LocalSdkEntry>
 				 artifactId.equals( dependency.getArtifactId() ) );
 	}
 	
+	/**
+	 * Determines if this artifact is included in the current SDK version and project type
+	 * where the project type is one of (Flex, Flex Library, AIR, AIR Library or ActionScript).
+	 * @return
+	 */
 	public boolean isProjectType()
 	{
 		boolean value = false;
@@ -75,6 +80,10 @@ public class LocalSdkEntry implements Comparable<LocalSdkEntry>
 		return ( projectLinkTypeMap != null );
 	}
 	
+	/**
+	 * Returns the link type of this artifact for the current SDK version and Project Type.
+	 * @return
+	 */
 	public LinkType getLinkType()
 	{
 		if( projectLinkTypeMap == null || projectType == null )
@@ -152,7 +161,7 @@ public class LocalSdkEntry implements Comparable<LocalSdkEntry>
 		{
 			depLinkType = LinkType.MERGE;
 		}
-		else if( FlexScopes.EXTERNAL.equals( dependency.getScope() ) )
+		else if( FlexScopes.EXTERNAL.equals( dependency.getScope() ) || "runtime".equals( dependency.getScope() ) )
 		{
 			depLinkType = LinkType.EXTERNAL;
 		}
