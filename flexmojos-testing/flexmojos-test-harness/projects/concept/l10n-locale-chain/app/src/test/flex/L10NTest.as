@@ -15,44 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
-
-import java.io.File;
-
-import org.testng.annotations.Test;
-
-public class L10NTest
-    extends AbstractConceptTest
+/**
+ * @author Seven
+ */
+package
 {
 
-    @Test
-    public void testCompiledLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation1" );
-        test( testDir, "install" );
-    }
+	import flexunit.framework.Assert;
 
-    @Test
-    public void testRuntimeLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation2" );
-        test( testDir, "install" );
-    }
+	import mx.resources.*;
 
-    @Test
-    public void testLocalizedLibraryAndApplication()
-        throws Exception
-    {
-        standardConceptTester( "l10n-swc-swf" );
-    }
+	[ResourceBundle("text")]
+	[ResourceBundle("collections")]
+	public class L10NTest
+	{
 
-    @Test
-    public void testLocalizationChain()
-        throws Exception
-    {
-        standardConceptTester( "l10n-locale-chain" );
-    }
+		[Test]
+		public function addition():void
+		{
+			var rm:IResourceManager=ResourceManager.getInstance();
+			rm.localeChain=['en_US'];
+			Assert.assertEquals('Main View', rm.getString("text", "TITLE", null, "en_US"));
+			Assert.assertEquals('Vista principal', rm.getString("text", "TITLE", null, "pt_PT"));
+
+//noItems fall back from pt_PT to pt_BR
+			Assert.assertEquals('No items to search.', rm.getString("text", "noItems", null, "en_US"));
+			Assert.assertEquals('Nenhum item a ser pesquisado.', rm.getString("text", "noItems", null, "pt_PT"));
+		}
+
+	}
 
 }

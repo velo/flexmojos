@@ -15,44 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
-
-import java.io.File;
-
-import org.testng.annotations.Test;
-
-public class L10NTest
-    extends AbstractConceptTest
+package org.sonatype.flexmojos.l10n
 {
+	import mx.resources.ResourceManager;
 
-    @Test
-    public void testCompiledLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation1" );
-        test( testDir, "install" );
-    }
+	[ResourceBundle("text")]
+	public class Resource
+	{
 
-    @Test
-    public void testRuntimeLocalization()
-        throws Exception
-    {
-        File testDir = getProject( "/concept/l10n-swf/FlightReservation2" );
-        test( testDir, "install" );
-    }
+		public var title:String;
 
-    @Test
-    public void testLocalizedLibraryAndApplication()
-        throws Exception
-    {
-        standardConceptTester( "l10n-swc-swf" );
-    }
+		public function Resource()
+		{
+			title = ResourceManager.getInstance().getString("text", "TITLE");
+		}
 
-    @Test
-    public void testLocalizationChain()
-        throws Exception
-    {
-        standardConceptTester( "l10n-locale-chain" );
-    }
-
+	}
 }

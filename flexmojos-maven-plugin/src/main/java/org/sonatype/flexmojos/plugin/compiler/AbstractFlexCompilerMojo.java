@@ -1333,6 +1333,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean warnings;
 
+    @SuppressWarnings( "deprecation" )
     protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
     {
         getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
@@ -1360,21 +1361,22 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
-        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
-        when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        when( compilerCfg.getTheme() ).thenReturn( Collections.EMPTY_LIST );
-        when( compilerCfg.getFontsConfiguration() ).thenReturn( getFontsConfiguration() );
-
-        when( compilerCfg.getLocale() ).thenReturn( new String[] { desiredRbSwc.getClassifier() } );
-        when( compilerCfg.getSourcePath() ).thenReturn( new File[] { resourceBundleBaseDir } );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
         String output =
             PathUtil.getCanonicalPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(),
                                                                       desiredRbSwc.getClassifier() );
         when( cfg.getOutput() ).thenReturn( output );
+
+        ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
+        when( compilerCfg.getTheme() ).thenReturn( Collections.EMPTY_LIST );
+        when( compilerCfg.getFontsConfiguration() ).thenReturn( getFontsConfiguration() );
+        when( compilerCfg.getLocale() ).thenReturn( new String[] { desiredRbSwc.getClassifier() } );
+        when( compilerCfg.getSourcePath() ).thenReturn( new File[] { resourceBundleBaseDir } );
         when( compilerCfg.getExternalLibraryPath() ).thenReturn( this.getExternalLibraryPath() );
-        when( compilerCfg.getLibraryPath() ).thenReturn( this.getLibraryPath() );
+        when( compilerCfg.getLibraryPath() ).thenReturn( this.getLibraryPath( false ) );
+
+        when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
 
         try
         {
@@ -1450,7 +1452,15 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         cfg.localesCompiled = new String[] { locale };
         cfg.localesRuntime = null;
-        cfg.classifier = locale;
+        if ( locale.contains( "," ) )
+        {
+            cfg.classifier = locale.split( "," )[0];
+        }
+        else
+        {
+            cfg.classifier = locale;
+        }
+
         cfg.includeResourceBundles = getResourceBundleListContent();
         cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
         cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
@@ -2113,20 +2123,27 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return lazyInit;
     }
 
-    @SuppressWarnings( "unchecked" )
     public File[] getLibraryPath()
     {
+        return getLibraryPath( true );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File[] getLibraryPath( boolean includeResourceBundle )
+    {
+        Collection<Artifact> resourceBundle =
+            includeResourceBundle ? getCompiledResouceBundles() : Collections.EMPTY_LIST;
         if ( SWC.equals( getProjectType() ) )
         {
             return MavenUtils.getFiles( getDependencies( type( SWC ), scope( MERGED ), not( GLOBAL_MATCHER ) ),
-                                        getCompiledResouceBundles() );
+                                        resourceBundle );
         }
         else
         {
             return MavenUtils.getFiles( getDependencies( type( SWC ),//
                                                          anyOf( scope( MERGED ), scope( COMPILE ), scope( null ) ),//
                                                          not( GLOBAL_MATCHER ) ),//
-                                        getCompiledResouceBundles() );
+                                        resourceBundle );
         }
     }
 
