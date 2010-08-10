@@ -38,4 +38,11 @@ public class L10NTest
         standardConceptTester( "l10n-swc-swf" );
     }
 
+    @Test
+    public void testLocalizationChain()
+        throws Exception
+    {
+        standardConceptTester( "l10n-locale-chain" );
+    }
+
 }

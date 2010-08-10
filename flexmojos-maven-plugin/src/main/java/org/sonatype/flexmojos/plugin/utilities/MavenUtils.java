@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
@@ -76,7 +75,6 @@ public class MavenUtils
      * @return source file or null if source not found
      * @throws MojoFailureException
      */
-    @SuppressWarnings( "unchecked" )
     public static File resolveResourceFile( MavenProject project, String fileName )
         throws MojoFailureException
     {
@@ -337,6 +335,7 @@ public class MavenUtils
         return files;
     }
 
+    @SuppressWarnings( "unchecked" )
     public static File[] getFiles( Artifact... dependencies )
     {
         if ( dependencies == null )
