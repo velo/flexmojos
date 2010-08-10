@@ -55,6 +55,7 @@ public class LocalSdk
 	private ProjectType projectType;
 	private List<LocalSdkEntry> includedEntries;
 	private List<LocalSdkEntry> excludedEntries;
+	private List<LocalSdkEntry> modifiedEntries;
 	
 	public LocalSdk( String version, ProjectType projectType )
 	{
@@ -89,6 +90,7 @@ public class LocalSdk
 		if( excludedEntries == null )
 		{
 			includedEntries = new ArrayList<LocalSdkEntry>();
+			modifiedEntries = new ArrayList<LocalSdkEntry>();
 		
 			// Loop through and collect all local SDK entries that are in the Maven dependency collection
 			Iterator<FbIdeDependency> iter = dependencies.iterator();
@@ -98,9 +100,16 @@ public class LocalSdk
 				if( "com.adobe.flex.framework".equals( dep.getGroupId() ) && "swc".equals( dep.getType() ) )
 				{
 					LocalSdkEntry localEntry = entries.get( dep.getArtifactId() );
+					dep.setLocalSdkEntry( localEntry );
 					if( localEntry != null && localEntry.isProjectType() )
 					{
 						includedEntries.add( localEntry );
+						
+						// Add to modified entries if local SDK values differ from the Maven dependency values
+						if( localEntry.isModified( dep ) )
+						{
+							modifiedEntries.add( localEntry );
+						}
 					}
 				}
 			}
@@ -118,6 +127,14 @@ public class LocalSdk
 		}
 		
 		return excludedEntries;
+	}
+	
+	public List<LocalSdkEntry> getModified( Collection<FbIdeDependency> dependencies )
+	{
+		if( modifiedEntries == null )
+			getExcludes( dependencies );
+		
+		return modifiedEntries;
 	}
 	
 	public LocalSdkEntry getEntry( String artifactId )

@@ -48,12 +48,12 @@
             <libraryPathEntry
 #if($artifact.getScope() == "rsl")
 					autoExtract="true"
-					rslUrl="$artifact.getFile().getName().replaceAll('swc', 'swf')"
+					rslUrl="$artifact.getRslUrl('swf')"
 #end 
                     kind="3" 
-                    linkType="$artifact.getLinkType().getId()" 
+                    linkType="$artifact.getLinkTypeId()" 
                     path="$artifact.getPath()"
-#if ($artifact.getSourcePath())
+#if($artifact.getSourcePath())
                     sourcepath="$artifact.getSourcePath()"
 #end
                     useDefaultLinkType="false"
@@ -61,6 +61,32 @@
 
 #end
 			<libraryPathEntry kind="4" path="">
+				<modifiedEntries>
+#foreach ($modified in $sdkMods)
+#if ($modified.getLinkTypeId() == 4)
+					<libraryPathEntry
+						kind="3"
+						linkType="$modified.getLinkTypeId()"
+						path="$modified.getPath()"
+						useDefaultLinkType="false">
+						<crossDomainRsls>
+							<crossDomainRslEntry autoExtract="true" policyFileUrl="$modified.getPolicyFileUrl()" rslUrl="$modified.getRslUrl('swz')" />
+							<crossDomainRslEntry autoExtract="true" policyFileUrl="$modified.getPolicyFileUrl()" rslUrl="$modified.getRslUrl('swf')" />
+						</crossDomainRsls>
+					</libraryPathEntry>
+#else
+					<libraryPathEntry
+						kind="3"
+						linkType="$modified.getLinkTypeId()"
+						path="$modified.getPath()"
+#if ($modified.getLinkTypeId() == 3)
+						autoExtract="true"
+						rslUrl="$modified.getRslUrl('swf')"
+#end
+						useDefaultLinkType="false" />
+#end
+#end
+				</modifiedEntries>
 				<excludedEntries>
 					<libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
 #foreach ($exclude in $sdkExcludes)

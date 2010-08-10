@@ -1,0 +1,42 @@
+<services-config>
+	<services>
+		<service id="remoting-service" 
+			class="flex.messaging.services.RemotingService"
+			messageTypes="flex.messaging.messages.RemotingMessage">
+	
+			<destination id="fluorine">
+				<channels>
+					<channel ref="fluorine"/>
+					<channel ref="fluorine-unsecure"/>
+				</channels>
+				<properties>
+					<source>*</source>
+				</properties>
+			</destination>
+		</service>
+	</services>
+	
+	<channels>       
+		<channel-definition id="fluorine"
+			class="mx.messaging.channels.SecureAMFChannel">
+			<endpoint
+				url="https://{server.name}:{server.port}/{context.root}/Gateway.aspx"
+				class="flex.messaging.endpoints.SecureAMFEndpoint" />
+			<properties>
+				<polling-enabled>false</polling-enabled>
+				<add-no-cache-headers>false</add-no-cache-headers>
+			</properties>
+		</channel-definition>
+
+		<channel-definition id="fluorine-unsecure"
+			class="mx.messaging.channels.AMFChannel">
+			<endpoint
+				url="http://{server.name}:{server.port}/{context.root}/Gateway.aspx"
+				class="flex.messaging.endpoints.AMFEndpoint" />
+			<properties>
+				<polling-enabled>false</polling-enabled>
+				<add-no-cache-headers>false</add-no-cache-headers>
+			</properties>
+		</channel-definition>
+	</channels>
+</services-config>

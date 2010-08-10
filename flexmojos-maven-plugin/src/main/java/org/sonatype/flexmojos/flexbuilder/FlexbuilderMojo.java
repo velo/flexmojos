@@ -45,10 +45,13 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
 import org.sonatype.flexmojos.flexbuilder.sdk.LinkType;
 import org.sonatype.flexmojos.flexbuilder.sdk.LocalSdk;
+import org.sonatype.flexmojos.flexbuilder.sdk.LocalSdkEntry;
 import org.sonatype.flexmojos.test.util.PathUtil;
 import org.sonatype.flexmojos.utilities.HtmlWrapperUtil;
 import org.sonatype.flexmojos.utilities.MavenUtils;
@@ -391,6 +394,57 @@ public class FlexbuilderMojo
      * @parameter
      */
     protected Namespace[] namespaces;
+    
+    /**
+     * policyFileUrls array of policy file URLs. Each entry in the rslUrls array must have a corresponding entry in this
+     * array. A policy file may be needed in order to allow the player to read an RSL from another domain. If a policy
+     * file is not required, then set it to an empty string. Accept some special tokens:
+     * 
+     * <pre>
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
+     * </pre>
+     * 
+     * <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;policyFileUrls&gt;
+     *   &lt;url&gt;/{contextRoot}/rsl/policy-{artifactId}-{version}.xml&lt;/url&gt;
+     * &lt;/policyFileUrls&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private String[] policyFileUrls;
+    
+    /**
+     * rslUrls array of URLs. The first RSL URL in the list is the primary RSL. The remaining RSL URLs will only be
+     * loaded if the primary RSL fails to load. Accept some special tokens:
+     * 
+     * <pre>
+     * {contextRoot}        - replace by defined context root
+     * {groupId}            - replace by library groupId
+     * {artifactId}         - replace by library artifactId
+     * {version}            - replace by library version
+     * {extension}          - replace by library extension swf or swz
+     * </pre>
+     * 
+     * default-value="/{contextRoot}/rsl/{artifactId}-{version}.{extension}" <BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;rslUrls&gt;
+     *   &lt;url&gt;/{contextRoot}/rsl/{artifactId}-{version}.{extension}&lt;/url&gt;
+     * &lt;/rslUrls&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] rslUrls;
     
     /**
      * Run the AS3 compiler in a mode that detects legal but potentially incorrect code
@@ -815,6 +869,7 @@ public class FlexbuilderMojo
         context.put( "useM2Home", useM2Repo );
         context.put( "dependencies", getNonSdkDependencies( dependencies ) );
         context.put( "sdkExcludes", sdk.getExcludes( dependencies ) );
+        context.put( "sdkMods", getModifiedSdkDependencies(dependencies, sdk.getModified( dependencies ) ) );
         context.put( "mainSources", getMainSources() );
         context.put( "ideOutputFolderPath", ideOutputFolderPath );
         context.put( "targetPlayer", targetPlayer );
@@ -921,6 +976,36 @@ public class FlexbuilderMojo
         throws MojoExecutionException
     {
     	runVelocity( getAsPropertiesTemplate(), ".actionScriptProperties", getAsPropertiesContext( type, dependecies ) );
+    }
+    
+    protected Collection<FbIdeDependency> getExcludeSdkDependencies( Collection<FbIdeDependency> dependencies, List<LocalSdkEntry> excludes )
+    {
+    	LinkedHashSet<FbIdeDependency> excludeDeps = new LinkedHashSet<FbIdeDependency>();
+    	Iterator<FbIdeDependency> iter = dependencies.iterator();
+    	while( iter.hasNext() )
+    	{
+    		FbIdeDependency dep = iter.next();
+    		if( excludes.contains( dep.getLocalSdkEntry() ) )
+    		{
+    			excludeDeps.add( dep );
+    		}
+    	}
+    	return excludeDeps;
+    }
+    
+    protected Collection<FbIdeDependency> getModifiedSdkDependencies( Collection<FbIdeDependency> dependencies, List<LocalSdkEntry> modified )
+    {
+    	LinkedHashSet<FbIdeDependency> modDeps = new LinkedHashSet<FbIdeDependency>();
+    	Iterator<FbIdeDependency> iter = dependencies.iterator();
+    	while( iter.hasNext() )
+    	{
+    		FbIdeDependency dep = iter.next();
+    		if( modified.contains( dep.getLocalSdkEntry() ) )
+    		{
+    			modDeps.add( dep );
+    		}
+    	}
+    	return modDeps;
     }
     
     protected Collection<FbIdeDependency> getNonSdkDependencies( Collection<FbIdeDependency> dependencies )
@@ -1415,6 +1500,19 @@ public class FlexbuilderMojo
     		{
     			FbIdeDependency fbDep = new FbIdeDependency( dep, getDependencyScope( dep ) );
     			
+    			// Set RSL URL template if the scope is either RSL or CACHING
+    			if( FlexScopes.RSL.equals( fbDep.getScope() ) || FlexScopes.CACHING.equals( fbDep.getScope() ) )
+    			{
+    				// NOTE artifactId, version and extension are all replaced when getRslUrl is called on the artifact (see FbIdeDependency).
+    				String rslTemplate = (rslUrls != null && rslUrls.length > 0) ? rslUrls[0] : "/{contextRoot}/rsl/{artifactId}-{version}.{extension}";
+    				rslTemplate = StringUtils.replace( rslTemplate , "{contextRoot}", contextRoot );
+    				fbDep.setRslUrl( rslTemplate );
+    				
+    				String policyFileUrl = ( policyFileUrls != null && policyFileUrls.length > 0 ) ? policyFileUrls[0] : "";
+    				policyFileUrl = StringUtils.replace( policyFileUrl , "{contextRoot}", contextRoot );
+    				fbDep.setPolicyFileUrl( policyFileUrl );
+    			}
+    			
     			// Save reference to player global dependecies for later use
     			if ( ( "playerglobal".equals( fbDep.getArtifactId() ) ||
     					"airglobal".equals( fbDep.getArtifactId() ) ) && SWC.equals( fbDep.getType() ) )
@@ -1423,6 +1521,9 @@ public class FlexbuilderMojo
     				// these are picked up by test dependencies so need to be filtered out.
     				if( fbDep.getScope().equals( "test" ) )
     					continue;
+    				
+    				// Make sure global artifact is scope external.
+    				fbDep.setScope( FlexScopes.EXTERNAL );
     		            	
     				globalDependency = fbDep;
     			}

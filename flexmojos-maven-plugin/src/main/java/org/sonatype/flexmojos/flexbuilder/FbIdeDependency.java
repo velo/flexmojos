@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.flexbuilder;
 
 import org.apache.maven.plugin.ide.IdeDependency;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.flexmojos.common.FlexScopes;
 import org.sonatype.flexmojos.flexbuilder.sdk.LinkType;
 import org.sonatype.flexmojos.flexbuilder.sdk.LocalSdkEntry;
@@ -17,6 +18,8 @@ public class FbIdeDependency extends IdeDependency
 {
 	private String path = null;
 	private String sourcePath = null;
+	private String rslUrlTemplate = null;
+	private String policyFileUrlTemplate = null;
 	private LocalSdkEntry localSdkEntry = null;
 	
 	/**
@@ -70,6 +73,20 @@ public class FbIdeDependency extends IdeDependency
         this.scope = scope;
     }
     
+    public void setLocalSdkEntry( LocalSdkEntry entry )
+    {
+    	localSdkEntry = entry;
+    }
+    public LocalSdkEntry getLocalSdkEntry()
+    {
+    	return localSdkEntry;
+    }
+    
+    public Integer getLinkTypeId()
+    {
+    	return getLinkType().getId();
+    }
+    
     public LinkType getLinkType()
     {
     	LinkType type = LinkType.MERGE;
@@ -85,6 +102,37 @@ public class FbIdeDependency extends IdeDependency
     	}
     	
     	return type;
+    }
+    
+    public String getPolicyFileUrl()
+    {
+    	String url = policyFileUrlTemplate;
+    	
+    	url = StringUtils.replace( url, "{groupId}", getGroupId() );
+    	url = StringUtils.replace( url, "{artifactId}", getArtifactId() );
+    	url = StringUtils.replace( url, "{version}", getVersion() );
+    	
+    	return url;
+    }
+    public void setPolicyFileUrl( String template )
+    {
+    	policyFileUrlTemplate = template;
+    }
+    
+    public String getRslUrl( String extension )
+    {
+    	String url = rslUrlTemplate;
+    	
+    	url = StringUtils.replace( url, "{groupId}", getGroupId() );
+    	url = StringUtils.replace( url, "{artifactId}", getArtifactId() );
+    	url = StringUtils.replace( url, "{version}", getVersion() );
+    	url = StringUtils.replace( url, "{extension}", extension );
+    	
+    	return url;
+    }
+    public void setRslUrl( String template )
+    {
+    	rslUrlTemplate = template;
     }
     
     public void setPath( String path )

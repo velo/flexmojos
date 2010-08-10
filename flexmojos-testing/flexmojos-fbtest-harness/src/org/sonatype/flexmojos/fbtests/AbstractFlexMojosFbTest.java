@@ -26,6 +26,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotCombo;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,8 +47,20 @@ public class AbstractFlexMojosFbTest
     
     protected static enum ProjectType
     {
-    	FLEX,
-    	FLEX_LIBRARY
+    	FLEX( "Flex Compiler" ),
+    	FLEX_LIBRARY( "Flex Library Compiler" );
+    	
+    	private String compilerMenu;
+    	
+    	private ProjectType( String compilerMenu )
+    	{
+    		this.compilerMenu = compilerMenu;
+    	}
+    	
+    	public String getCompilerMenu()
+    	{
+    		return compilerMenu;
+    	}
     }
     
     @BeforeClass
@@ -270,6 +283,11 @@ public class AbstractFlexMojosFbTest
     
     protected static void assertGeneralProjectConfig( String projectName, Double sdkVersion, boolean generateHtml )
     {
+    	assertGeneralProjectConfig(projectName, sdkVersion, ProjectType.FLEX, generateHtml);
+    }
+    
+    protected static void assertGeneralProjectConfig( String projectName, Double sdkVersion, ProjectType projectType, boolean generateHtml )
+    {
     	
     	
     	// Check FlexBuilder config dialog is correct
@@ -279,10 +297,13 @@ public class AbstractFlexMojosFbTest
         shell.activate();
         
         // Check values in "Flex Compiler" section
-        bot.tree().select( "Flex Compiler" );
+        bot.tree().select( projectType.getCompilerMenu() );
         
-        SWTBotCheckBox genHtmlCheckBox = bot.checkBox( "Generate HTML wrapper file" );
-        Assert.assertEquals( "Generate HTML wrapper file", generateHtml, genHtmlCheckBox.isChecked() );
+        if( projectType == ProjectType.FLEX )
+        {
+        	SWTBotCheckBox genHtmlCheckBox = bot.checkBox( "Generate HTML wrapper file" );
+        	Assert.assertEquals( "Generate HTML wrapper file", generateHtml, genHtmlCheckBox.isChecked() );
+        }
         
         // Check selected SDK
         String flexSdk = "Flex "+sdkVersion.toString();
@@ -344,5 +365,11 @@ public class AbstractFlexMojosFbTest
 		treeItem.select();
 		return tree;
 	}
+    
+    @AfterClass
+    public static void sleep()
+    {
+       AbstractFlexMojosFbTest.bot.sleep( 2000 );
+    }
 
 }
