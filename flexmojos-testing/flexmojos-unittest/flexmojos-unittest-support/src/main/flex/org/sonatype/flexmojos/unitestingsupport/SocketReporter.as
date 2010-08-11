@@ -150,9 +150,7 @@ package org.sonatype.flexmojos.unitestingsupport
             {
                 var testReport:TestCaseReport = reports[ className ];
                 // Create the XML report.
-                var xml:XML = testReport.toXml();
-
-                var xmlString:String = xml.toXMLString();
+                var xmlString:String = testReport.toXml();
 
                 // Send the XML report.
                 socket.send( xmlString );

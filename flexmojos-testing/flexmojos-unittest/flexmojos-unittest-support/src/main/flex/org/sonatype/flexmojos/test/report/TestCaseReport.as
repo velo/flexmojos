@@ -74,27 +74,26 @@ package org.sonatype.flexmojos.test.report
            </testcase>
            </testsuite>
          */
-        public function toXml():XML
+        public function toXml():String
         {
-
-            var genxml:XML = <testsuite 
-                    errors = { errors } 
-                    failures = { failures }
-                    name = { name.replace( "::", "." ) }
-                    tests = { tests }
-                    time = { time } />;
+            var genxml:String = "<testsuite errors='"+ errors +  
+                    "' failures='"+failures+
+                    "' name='" + name.replace( "::", "." ) +
+                    "' tests='"+tests +
+                    "' time='"+ time + "' >";
 
             for each ( var methodReport:TestMethodReport in methods )
             {
-                genxml = genxml.appendChild( methodReport.toXml() );
+                genxml +=  methodReport.toXml().toXMLString();
             }
 
             var data:Object = CoverageDataCollector.extractCoverageResult();
             for ( var cls:String in data )
             {
-                genxml = genxml.appendChild( TestCoverageReport( data[ cls ] ).toXml() );
+                genxml +=  TestCoverageReport(data[cls]).toXml() ;
             }
-
+            
+            genxml += "</testsuite>"
             return genxml;
         }
 
