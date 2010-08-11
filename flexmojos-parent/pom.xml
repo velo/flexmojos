@@ -65,7 +65,7 @@
   <properties>
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>4.1.0.16076</flex.sdk.version>
-    <maven.version>3.0-beta-1</maven.version>
+    <maven.version>3.0-beta-2</maven.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0.RC6</apparat.version>
   </properties>
