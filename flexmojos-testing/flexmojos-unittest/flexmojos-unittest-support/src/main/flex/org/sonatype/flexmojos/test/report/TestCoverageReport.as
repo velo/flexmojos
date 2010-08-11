@@ -26,21 +26,18 @@ package org.sonatype.flexmojos.test.report
             touchs.splice( touchs.length, 0, lineNumber );
         }
 
-        public function toXml():XML
+        public function toXml():String
         {
-            var genxml:String = "<coverage classname =\""+ classname + "\">";
+            var genxml:String = "<coverage classname=\""+ classname + "\">";
 
             for each ( var line:int in touchs )
             {
-//                var touchXml:XML = <touch>{ line} 
-//                    </touch>;
-//                genxml = genxml.appendChild( touchXml );
-genxml += "<touch>" + line + "</touch>";
+                  genxml = genxml.concat("<touch>",line,"</touch>");
             }
             
             genxml += "</coverage>";
-            
-            return XML(genxml);
+
+            return genxml;
         }
 
     }
