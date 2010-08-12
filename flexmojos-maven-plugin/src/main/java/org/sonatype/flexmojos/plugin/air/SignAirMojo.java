@@ -347,6 +347,9 @@ public class SignAirMojo
                 str =
                     str.replace( "[This value will be overwritten by Flex Builder in the output app.xml]",
                                  output.getName() );
+                str =
+                    str.replace( "[This value will be overwritten by Flash Builder in the output app.xml]",
+                                 output.getName() );
                 FileUtils.fileWrite( PathUtil.getCanonicalPath( dest ), str );
             }
         }
