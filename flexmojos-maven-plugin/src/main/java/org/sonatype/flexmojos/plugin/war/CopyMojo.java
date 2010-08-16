@@ -66,38 +66,9 @@ public class CopyMojo
     private boolean copyRuntimeLocales;
 
     /**
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * The maven project.
-     * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
-
-    /**
      * @component
      */
     private ProjectBuilder projectBuilder;
-
-    /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
-     * @required
-     * @readonly
-     */
-    private List<ArtifactRepository> remoteRepositories;
-
-    /**
-     * @component
-     * @readonly
-     */
-    protected RepositorySystem repositorySystem;
 
     /**
      * Skip mojo execution
@@ -290,7 +261,7 @@ public class CopyMojo
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
         if ( urls == null )
         {
-            // TODO urls = ApplicationMojo.DEFAULT_RSL_URLS;
+            urls = AbstractMavenMojo.DEFAULT_RSL_URLS;
         }
         return urls;
     }
@@ -301,7 +272,7 @@ public class CopyMojo
             CompileConfigurationLoader.getCompilerPluginSetting( artifactProject, "runtimeLocaleOutputPath" );
         if ( runtimeLocaleOutputPath == null )
         {
-            // TODO runtimeLocaleOutputPath = AbstractFlexCompilerMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
+            runtimeLocaleOutputPath = AbstractMavenMojo.DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH;
         }
         return runtimeLocaleOutputPath;
     }
