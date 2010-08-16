@@ -28,6 +28,10 @@
   <packaging>pom</packaging>
 
   <name>todolist</name>
+  
+  <properties>
+    <flex.version>4.0.0.14159</flex.version>
+  </properties>
 
   <build>
     <pluginManagement>
@@ -45,6 +49,15 @@
         <plugin>
           <groupId>org.sonatype.flexmojos</groupId>
           <artifactId>flexmojos-maven-plugin</artifactId>
+          <version>4.0-SNAPSHOT</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.adobe.flex</groupId>
+              <artifactId>compiler</artifactId>
+              <version>${flex.version}</version>
+              <type>pom</type>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>

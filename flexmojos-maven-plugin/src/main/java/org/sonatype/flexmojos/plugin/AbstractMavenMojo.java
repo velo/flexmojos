@@ -97,6 +97,9 @@ public abstract class AbstractMavenMojo
         }
     };
 
+    public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
+        "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
+
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
     {
