@@ -59,8 +59,8 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.hamcrest.Matcher;
-import org.mockito.ReturnValues;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenLogger;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
@@ -89,9 +89,9 @@ public abstract class AbstractMavenMojo
 
     private static final String PLAYER_GLOBAL = "playerglobal";
 
-    protected static final ReturnValues RETURNS_NULL = new ReturnValues()
+    protected static final Answer<Object> RETURNS_NULL = new Answer<Object>()
     {
-        public Object valueFor( InvocationOnMock invocation )
+        public Object answer(InvocationOnMock invocation) throws Throwable
         {
             return null;
         }
