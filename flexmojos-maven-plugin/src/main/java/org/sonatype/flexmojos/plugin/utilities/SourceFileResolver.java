@@ -82,7 +82,10 @@ public class SourceFileResolver
                 return sourceFile;
             }
         }
-        return null;
+        throw new IllegalArgumentException(
+                                            "SourceFile not specified and no default found!\nhttp://repository.sonatype.org/content/sites/flexmojos-site/"
+                                                + MavenUtils.getFlexMojosVersion()
+                                                + "/compile-swf-mojo.html#sourceFile" );
     }
 
     private static File resolveFile( File sourceDirectory, String artifactId )
@@ -97,8 +100,7 @@ public class SourceFileResolver
             public boolean accept( File pathname )
             {
                 return pathname.isFile()
-                    && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith(
-                                                                                                                                        ".css" ) );
+                    && ( pathname.getName().endsWith( ".mxml" ) || pathname.getName().endsWith( ".as" ) || pathname.getName().endsWith( ".css" ) );
             }
         } );
 
