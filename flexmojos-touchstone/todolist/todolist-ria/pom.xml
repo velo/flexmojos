@@ -39,10 +39,10 @@
         <configuration>
           <contextRoot>todolist-web</contextRoot>
           <debug>true</debug>
-          <compiledLocales><!-- Compiled localization -->
+          <localesCompiled><!-- Compiled localization -->
             <locale>en_US</locale>
-            <locale>pt_BR</locale>
-          </compiledLocales>
+            <locale>pt_BR,en_US</locale>
+          </localesCompiled>
         </configuration>
       </plugin>
 
@@ -89,7 +89,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>${flex.version}</version>
       <type>pom</type>
     </dependency>
 

@@ -33,7 +33,6 @@
         <executions>
           <execution>
             <goals>
-              <goal>optimize</goal> <!-- Optimized RSL generation -->
               <goal>generate</goal> <!-- ActionScript POJOs generation based on Java POJOs -->
             </goals>
             <configuration>
@@ -62,7 +61,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>${flex.version}</version>
       <type>pom</type>
     </dependency>
 
