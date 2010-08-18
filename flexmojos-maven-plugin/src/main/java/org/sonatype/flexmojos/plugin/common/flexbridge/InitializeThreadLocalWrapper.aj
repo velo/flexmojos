@@ -14,4 +14,5 @@ public aspect InitializeThreadLocalWrapper
         ThreadLocalToolkitHelper.setMavenLogger( mojo.getMavenLogger() );
         ThreadLocalToolkitHelper.setMavenResolver( mojo.getMavenPathResolver() );
     }
+    
 }
