@@ -85,6 +85,8 @@ public class SourceFileResolver
         {
             return resolveSourceFile( sourceFileName, sourceRoots );
         }
+        
+        //TODO Source file was not defined, flexmojos will guess one.
 
         for ( File sourceDirectory : sourceRoots )
         {
@@ -99,6 +101,7 @@ public class SourceFileResolver
                 return sourceFile;
             }
         }
+
         throw new IllegalArgumentException(
                                             "SourceFile not specified and no default found!\nhttp://repository.sonatype.org/content/sites/flexmojos-site/"
                                                 + MavenUtils.getFlexMojosVersion()
