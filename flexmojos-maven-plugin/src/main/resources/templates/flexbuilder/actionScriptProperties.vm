@@ -18,6 +18,12 @@
             htmlPlayerVersion="$targetPlayer" 
             htmlPlayerVersionCheck="$htmlPlayerVersionCheck" 
             outputFolderPath="$ideOutputFolderPath" 
+#if($ideOutputFolderLocation)
+            outputFolderLocation="$ideOutputFolderLocation"
+#end
+#if($rootURL)
+            rootURL="$rootURL"
+#end
             sourceFolderPath="$mainSources" 
             strict="$strict" 
             useApolloConfig="$useApolloConfig" 
