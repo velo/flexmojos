@@ -666,7 +666,7 @@ public class FlexbuilderMojo
             ProjectType.getProjectType( project.getPackaging(), isUseApolloConfig(), pureActionscriptProject );
 
         // Initialize new Local SDK to help with the dependency cleaning process.
-        sdk = new LocalSdk( getCompilerVersion(), type );
+        sdk = new LocalSdk( getCompilerVersion(), type, getLog() );
 
         if ( type == ProjectType.FLEX || type == ProjectType.FLEX_LIBRARY || type == ProjectType.AIR
             || type == ProjectType.AIR_LIBRARY || type == ProjectType.ACTIONSCRIPT )

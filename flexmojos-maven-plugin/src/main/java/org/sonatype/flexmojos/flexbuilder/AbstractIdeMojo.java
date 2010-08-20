@@ -36,7 +36,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.eclipse.EclipseConfigFile;
 import org.apache.maven.plugin.eclipse.EclipsePlugin;
-import org.apache.maven.wagon.PathUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.sonatype.flexmojos.test.util.PathUtil;
 
