@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.reactor.MavenExecutionException;
 import org.sonatype.flexmojos.flexbuilder.FbIdeDependency;
 import org.sonatype.flexmojos.flexbuilder.ProjectType;
 
@@ -17,13 +19,13 @@ public class LocalSdk
 	
 	public enum Version
 	{
-		FLEX3_0_0("3.0.0"),
-		FLEX3_1_0("3.1.0"),
-		FLEX3_2_0("3.2.0"),
-		FLEX3_3_0("3.3.0"),
-		FLEX3_4_0("3.4.0"),
-		FLEX3_5_0("3.5.0"),
-		FLEX4_0_0("4.0.0");
+		FLEX3_0_0("3"),
+		FLEX3_1_0("3.1"),
+		FLEX3_2_0("3.2"),
+		FLEX3_3_0("3.3"),
+		FLEX3_4_0("3.4"),
+		FLEX3_5_0("3.5"),
+		FLEX4_0_0("4");
 		
 		public static Version valueFrom( String version )
 		{
@@ -56,9 +58,11 @@ public class LocalSdk
 	private List<LocalSdkEntry> includedEntries;
 	private List<LocalSdkEntry> excludedEntries;
 	private List<LocalSdkEntry> modifiedEntries;
+	private Log log;
 	
-	public LocalSdk( String version, ProjectType projectType )
+	public LocalSdk( String version, ProjectType projectType, Log log )
 	{
+		this.log = log;
 		this.projectType = projectType;
 		this.version = version;
 		entries = getEntries( version );
@@ -171,12 +175,25 @@ public class LocalSdk
 	
 	private Version getBestVersion( String version )
 	{
+		String requestedVersion = version;
+		
 		// Find closest matching configuration.
 		Version v = Version.valueFrom( version );
 		while( v == null )
 		{
-			version = version.substring( 0, version.lastIndexOf(".") );
-			v = Version.valueFrom( version );
+			int end = version.lastIndexOf( "." );
+			if( end > -1 )
+			{
+				version = version.substring( 0, version.lastIndexOf(".") );
+				v = Version.valueFrom( version );
+			}
+			else
+			{
+				v = Version.values()[Version.values().length-1];
+				
+				// Use most recent metadata that is available.
+				log.warn( String.format( "Unable to find local SDK metadata for %s. Defaulting to latest known version %s.", requestedVersion, v.getVersion() ) );
+			}
 		}
 		return v;
 	}

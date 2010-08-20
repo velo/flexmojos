@@ -36,4 +36,30 @@ public class FlashBuilderTest extends AbstractFlexMojosFbTest
         // Check config
         assertGeneralProjectConfig( projectName, 4.0, false );
     }
+	
+	@Test
+    public void testIssueFlexmojos343()
+        throws Exception
+    {
+    	String projectName = "flexmojos-343";
+    	
+    	String dir = test( getProject( "flashbuilder/issues/"+projectName ), "flexmojos:flashbuilder" ).getBasedir();
+    	
+    	assertProjectFiles( dir, ProjectType.FLEX );
+    	
+        importAndBuildProject( dir );
+        
+        File bin = new File( dir, "bin-debug" );
+        File swf = new File( bin, "main.swf" );
+        Assert.assertTrue( "Main SWF should have been built.", swf.exists() );
+        Long swfKb = swf.length()/1000;
+        Assert.assertEquals( 607, swfKb.intValue() );
+        
+        // Check HTML template does not exist
+        File template = new File( dir, "html-template" );
+        Assert.assertTrue( "Html Template should not exist.", !template.exists() );
+        
+        // Check config
+        assertGeneralProjectConfig( projectName, 4.1, false );
+    }
 }
