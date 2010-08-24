@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.compiler;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
@@ -85,7 +86,9 @@ public class DefaultFlexCompiler
             {
                 String[] args = parser.parseArguments( configuration, IDigestConfiguration.class );
                 logArgs( args );
-                DigestTool.main( args );
+                Method m = DigestTool.class.getDeclaredMethod( "digestTool", String[].class );
+                m.setAccessible( true );
+                m.invoke( null, new Object[]{args} );
             }
         }, sychronize );
     }
@@ -130,14 +133,18 @@ public class DefaultFlexCompiler
                 {
                     command.command();
                 }
+//                catch ( CompilerSecurityException e )
+//                {
+//                    // that is fine, just we preventing adobe from killing the VM
+//                }
                 catch ( Exception e )
                 {
                     r.setException( e );
                 }
-                finally
-                {
+//                finally
+//                {
 //                    System.setSecurityManager( sm );
-                }
+//                }
 
                 r.setExitCode( ThreadLocalToolkit.errorCount() );
             }
@@ -157,7 +164,7 @@ public class DefaultFlexCompiler
             }
         } );
         t.start();
-        r.setThread(t);
+        r.setThread( t );
 
         if ( sychronize )
         {

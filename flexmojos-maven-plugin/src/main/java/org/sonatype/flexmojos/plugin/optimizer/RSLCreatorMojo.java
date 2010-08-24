@@ -60,7 +60,7 @@ public class RSLCreatorMojo
      * Equivalent to digester execution
      * </p>
      * 
-     * @parameter expression="${flex.updateSwcDigest}"
+     * @parameter default-value="true" expression="${flex.updateSwcDigest}"
      */
     private boolean updateSwcDigest;
 
