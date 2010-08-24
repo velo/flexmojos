@@ -150,47 +150,42 @@ public class SourceFileResolverTest
         MatcherAssert.assertThat( rfile, CoreMatchers.equalTo( file ) );
     }
 
-    @Test(expectedExceptions={IllegalArgumentException.class})
+    @Test( expectedExceptions = { IllegalArgumentException.class } )
     public void notResolve()
     {
         File file = SourceFileResolver.resolveSourceFile( "NotResolve.mxml", getDir( "notresolve" ), null, null );
         MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
     }
 
-    @Test
+    @Test( expectedExceptions = { IllegalArgumentException.class } )
     public void notResolvePackage()
     {
-        File file =
-            SourceFileResolver.resolveSourceFile( null, getDir( "notresolvepackage" ), "org.sonatype.flexmojos",
-                                                  "artifactid" );
-        MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
+        SourceFileResolver.resolveSourceFile( null, getDir( "notresolvepackage" ), "org.sonatype.flexmojos",
+                                              "artifactid" );
     }
 
-    @Test
+    @Test( expectedExceptions = { IllegalArgumentException.class } )
     public void notResolvePackageArtifactid()
     {
-        File file =
-            SourceFileResolver.resolveSourceFile( null, getDir( "notresolvepackageid" ),
-                                                  "org.sonatype.flexmojos.artifactid", "artifactid" );
-        MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
+        SourceFileResolver.resolveSourceFile( null, getDir( "notresolvepackageid" ),
+                                              "org.sonatype.flexmojos.artifactid", "artifactid" );
     }
 
-    @Test
+    @Test( expectedExceptions = { IllegalArgumentException.class } )
     public void notResolveMultipleRoots()
     {
-        File file =
-            SourceFileResolver.resolveSourceFile( null, getDir( "notresolvenroots/root1", "notresolvenroots/root2",
-                                                                "notresolvenroots/root3" ), null, null );
-        MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
+        SourceFileResolver.resolveSourceFile( null,
+                                              getDir( "notresolvenroots/root1", "notresolvenroots/root2",
+                                                      "notresolvenroots/root3" ), null, null );
     }
 
-    @Test(expectedExceptions={IllegalArgumentException.class})
+    @Test( expectedExceptions = { IllegalArgumentException.class } )
     public void notResolveNamedMultipleRoots()
     {
         File file =
-            SourceFileResolver.resolveSourceFile( "NotResolve.mxml", getDir( "notresolvenroots2/root1",
-                                                                             "notresolvenroots2/root2",
-                                                                             "notresolvenroots2/root3" ), null, null );
+            SourceFileResolver.resolveSourceFile( "NotResolve.mxml",
+                                                  getDir( "notresolvenroots2/root1", "notresolvenroots2/root2",
+                                                          "notresolvenroots2/root3" ), null, null );
         MatcherAssert.assertThat( file, CoreMatchers.nullValue() );
     }
 }
