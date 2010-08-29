@@ -57,7 +57,20 @@
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>mx</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>swc</type>
+      <scope>external</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>rb.swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>mx</artifactId>
       <version>${flex.sdk.version}</version>
       <type>rb.swc</type>
     </dependency>
