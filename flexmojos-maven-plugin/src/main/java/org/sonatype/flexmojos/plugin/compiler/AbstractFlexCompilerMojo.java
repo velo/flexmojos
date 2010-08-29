@@ -26,7 +26,7 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
-import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
+import static org.sonatype.flexmojos.plugin.common.FlexClassifier.*;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.CSS;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
@@ -96,6 +96,7 @@ import org.sonatype.flexmojos.compiler.IMxmlConfiguration;
 import org.sonatype.flexmojos.compiler.INamespace;
 import org.sonatype.flexmojos.compiler.INamespacesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
+import org.sonatype.flexmojos.compiler.IRuntimeSharedLibrarySettingsConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.license.LicenseCalculator;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
@@ -116,7 +117,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     extends AbstractMavenMojo
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
     IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
-    Cloneable, FlexMojo
+    Cloneable, FlexMojo, IRuntimeSharedLibrarySettingsConfiguration
 {
 
     private static final Object lock = new Object();
@@ -579,6 +580,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean flashType;
 
     /**
+     * Force an RSL to be loaded, overriding the removal caused by using the remove-unused-rsls option.
+     * <p>
+     * Equivalent to -runtime-shared-library-settings.force-rsls
+     * </p>
+     * 
+     * @parameter
+     */
+    private String[] forceRsls;
+
+    /**
      * A SWF frame label with a sequence of classnames that will be linked onto the frame
      * <p>
      * Equivalent to -frames.frame
@@ -650,6 +661,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean headlessServer;
 
     /**
+     * Only include inheritance dependencies of classes specified with include-classes.
+     * <p>
+     * Equivalent to -include-inheritance-dependencies-only
+     * </p>
+     * 
+     * @parameter expression="${flex.includeInheritanceDependenciesOnly}"
+     */
+    private Boolean includeInheritanceDependenciesOnly;
+
+    /**
      * A list of resource bundles to include in the output SWC
      * <p>
      * Equivalent to -include-resource-bundles
@@ -705,6 +726,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.isolateStyles}"
      */
     private Boolean isolateStyles;
+
+    /**
+     * DOCME undocumented by adobe
+     * <p>
+     * Equivalent to -compiler.java-profiler-class
+     * </p>
+     * 
+     * @parameter expression="${flex.javaProfilerClass}"
+     */
+    private String javaProfilerClass;
 
     /**
      * Disables the pruning of unused CSS type selectors
@@ -1123,6 +1154,26 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String rawMetadata;
 
     /**
+     * Remove RSLs that are not being used by the application.
+     * <p>
+     * Equivalent to -remove-unused-rsls
+     * </p>
+     * 
+     * @parameter expression="${flex.removeUnusedRsls}"
+     */
+    private Boolean removeUnusedRsls;
+
+    /**
+     * Use this option to generate a warning instead of an error when a missing required skin part is detected.
+     * <p>
+     * Equivalent to -compiler.report-missing-required-skin-parts-as-warnings
+     * </p>
+     * 
+     * @parameter expression="${flex.reportMissingRequiredSkinPartsAsWarnings}"
+     */
+    private Boolean reportMissingRequiredSkinPartsAsWarnings;
+
+    /**
      * Prints a list of resource bundles to a file for input to the compc compiler to create a resource bundle SWC file.
      * <p>
      * Equivalent to -resource-bundle-list
@@ -1189,6 +1240,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.signatureDirectory}"
      */
     private File signatureDirectory;
+
+    /**
+     * When true the size report will be attached to maven reactor
+     * 
+     * @parameter expression="${flex.sizeReportAttach}"
+     */
+    private boolean sizeReportAttach;
 
     /**
      * Statically link the libraries specified by the -runtime-shared-libraries-path option.
@@ -1333,7 +1391,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean warnings;
 
-    @SuppressWarnings( "deprecation" )
     protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
     {
         getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
@@ -1954,6 +2011,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return this;
     }
 
+    public String[] getForceRsls()
+    {
+        return forceRsls;
+    }
+
     public IFrame[] getFrame()
     {
         return frames;
@@ -2030,6 +2092,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return null;
     }
 
+    public Boolean getIncludeInheritanceDependenciesOnly()
+    {
+        return includeInheritanceDependenciesOnly;
+    }
+
     @SuppressWarnings( "unchecked" )
     public File[] getIncludeLibraries()
     {
@@ -2053,6 +2120,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getIsolateStyles()
     {
         return isolateStyles;
+    }
+
+    public String getJavaProfilerClass()
+    {
+        return javaProfilerClass;
     }
 
     public Boolean getKeepAllTypeSelectors()
@@ -2527,9 +2599,19 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return rawMetadata;
     }
 
+    public Boolean getRemoveUnusedRsls()
+    {
+        return removeUnusedRsls;
+    }
+
     public Boolean getReportInvalidStylesAsWarnings()
     {
         return getCompilerWarnings().get( "report-invalid-styles-as-warnings" );
+    }
+
+    public Boolean getReportMissingRequiredSkinPartsAsWarnings()
+    {
+        return reportMissingRequiredSkinPartsAsWarnings;
     }
 
     public String getResourceBundleList()
@@ -2652,6 +2734,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return rsls.toArray( new IRuntimeSharedLibraryPath[rsls.size()] );
     }
 
+    public IRuntimeSharedLibrarySettingsConfiguration getRuntimeSharedLibrarySettingsConfiguration()
+    {
+        return this;
+    }
+
     public String getServices()
     {
         if ( services != null )
@@ -2705,6 +2792,23 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public File getSignatureDirectory()
     {
         return signatureDirectory;
+    }
+
+    public String getSizeReport()
+    {
+        File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
+        if ( sizeReportAttach )
+        {
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Size report is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, SIZE_REPORT, sizeReport );
+            }
+        }
+        return PathUtil.getCanonicalPath( sizeReport );
     }
 
     public File[] getSourcePath()
