@@ -7,288 +7,304 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-    import flash.events.DataEvent;
-    import flash.events.Event;
-    import flash.net.XMLSocket;
-    import flash.utils.Dictionary;
-    import flash.utils.getDefinitionByName;
+	import flash.events.DataEvent;
+	import flash.events.Event;
+	import flash.net.XMLSocket;
+	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 
-    import mx.binding.utils.BindingUtils;
+	import org.sonatype.flexmojos.test.monitor.CommConstraints;
+	import org.sonatype.flexmojos.test.report.ErrorReport;
+	import org.sonatype.flexmojos.test.report.TestCaseReport;
+	import org.sonatype.flexmojos.test.report.TestMethodReport;
 
-    import org.sonatype.flexmojos.test.monitor.CommConstraints;
-    import org.sonatype.flexmojos.test.report.ErrorReport;
-    import org.sonatype.flexmojos.test.report.TestCaseReport;
-    import org.sonatype.flexmojos.test.report.TestMethodReport;
+	public class SocketReporter
+	{
 
-    public class SocketReporter
-    {
+		[Inspectable]
+		public var port:uint=1024;
 
-        [Inspectable]
-        public var port:uint = 1024;
+		[Inspectable]
+		public var server:String="127.0.0.1";
 
-        [Inspectable]
-        public var server:String = "127.0.0.1";
+		private var socket:XMLSocket;
 
-        private var socket:XMLSocket;
+		private var reports:Dictionary=new Dictionary();
 
-        private var reports:Dictionary = new Dictionary();
+		private var _totalTestCount:int=0;
 
-        [Bindable]
-        public var totalTestCount:int = 0;
+		public function get totalTestCount():int
+		{
+			return _totalTestCount;
+		}
 
-        [Bindable]
-        public var numTestsRun:int = 0;
+		public function set totalTestCount(data:int):void
+		{
+			this._totalTestCount=data;
+			checkIsDone();
+		}
 
-        private var closeController:CloseController = CloseController.getInstance();
+		private var _numTestsRun:int=0;
 
-        /**
-         * Called when an error occurs.
-         * @param test the Test that generated the error.
-         * @param error the Error.
-         */
-        public function addError( testName:String, methodName:String, error:ErrorReport ):void
-        {
-            // Increment error count.
-            var report:TestCaseReport = getReport( testName );
-            report.errors++;
+		public function get numTestsRun():int
+		{
+			return _numTestsRun;
+		}
 
-            // Add the error to the method.
-            var methodObject:TestMethodReport = report.getMethod( methodName );
-            methodObject.error = error;
-        }
-
-        /**
-         * Add the currently executing method on a Test to the internal report
-         * model.
-         * @param test the Test.
-         */
-        public function addMethod( testName:String, methodName:String ):void
-        {
-            var reportObject:TestCaseReport = getReport( testName );
-            reportObject.getMethod( methodName );
-            reportObject.tests++;
-        }
-
-        /**
-         * Called when a failure occurs.
-         * @param test the Test that generated the failure.
-         * @param error the failure.
-         */
-        public function addFailure( testName:String, methodName:String, failure:ErrorReport ):void
-        {
-            // Increment failure count.
-            var report:TestCaseReport = getReport( testName );
-            report.failures++;
-
-            // Add the failure to the method.
-            var methodObject:TestMethodReport = report.getMethod( methodName );
-            methodObject.failure = failure;
-        }
-
-        public function testFinished( testName:String, timeTaken:int = 0 ):void
-        {
-            var reportObject:TestCaseReport = reports[ testName ];
-            reportObject.time = timeTaken;
-
-            // If we have finished running all the tests send the results.
-            ++numTestsRun;
-        }
+		public function set numTestsRun(data:int):void
+		{
+			this._numTestsRun=data;
+			checkIsDone();
+		}
 
 
-        /**
-         * Return the report Object from the internal report model for the
-         * currently executing Test.
-         * @param Test the test.
-         */
-        public function getReport( testName:String ):TestCaseReport
-        {
-            var reportObject:TestCaseReport;
+		private var closeController:CloseController=CloseController.getInstance();
 
-            // Check we have a report Object for the executing Test, if not
-            // create a new one.
-            if ( reports[ testName ] )
-            {
-                reportObject = reports[ testName ];
-            }
-            else
-            {
-                reportObject = new TestCaseReport();
-                reportObject.name = testName;
+		/**
+		 * Called when an error occurs.
+		 * @param test the Test that generated the error.
+		 * @param error the Error.
+		 */
+		public function addError(testName:String, methodName:String, error:ErrorReport):void
+		{
+			// Increment error count.
+			var report:TestCaseReport=getReport(testName);
+			report.errors++;
 
-                reports[ testName ] = reportObject;
-            }
+			// Add the error to the method.
+			var methodObject:TestMethodReport=report.getMethod(methodName);
+			methodObject.error=error;
+		}
 
-            return reportObject;
-        }
+		/**
+		 * Add the currently executing method on a Test to the internal report
+		 * model.
+		 * @param test the Test.
+		 */
+		public function addMethod(testName:String, methodName:String):void
+		{
+			var reportObject:TestCaseReport=getReport(testName);
+			reportObject.getMethod(methodName);
+			reportObject.tests++;
+		}
 
-        /**
-         * Sends the results. This sends the reports back to the controlling Ant
-         * task using an XMLSocket.
-         */
-        private function sendResults():void
-        {
-            // Open an XML socket.
-            socket = new XMLSocket();
-            socket.addEventListener( Event.CONNECT, handleConnect );
-            socket.addEventListener( DataEvent.DATA, dataHandler );
-            socket.connect( server, port );
-        }
+		/**
+		 * Called when a failure occurs.
+		 * @param test the Test that generated the failure.
+		 * @param error the failure.
+		 */
+		public function addFailure(testName:String, methodName:String, failure:ErrorReport):void
+		{
+			// Increment failure count.
+			var report:TestCaseReport=getReport(testName);
+			report.failures++;
 
-        private function handleConnect( event:Event ):void
-        {
-            for ( var className:String in reports )
-            {
-                var testReport:TestCaseReport = reports[ className ];
-                // Create the XML report.
-                var xmlString:String = testReport.toXml();
+			// Add the failure to the method.
+			var methodObject:TestMethodReport=report.getMethod(methodName);
+			methodObject.failure=failure;
+		}
 
-                // Send the XML report.
-                socket.send( xmlString );
-            }
+		public function testFinished(testName:String, timeTaken:int=0):void
+		{
+			var reportObject:TestCaseReport=reports[testName];
+			reportObject.time=timeTaken;
 
-            // Send the end of reports terminator.
-            socket.send( CommConstraints.END_OF_TEST_RUN );
-        }
+			// If we have finished running all the tests send the results.
+			++numTestsRun;
+		}
 
-        /**
-         * Event listener to handle data received on the socket.
-         * @param event the DataEvent.
-         */
-        private function dataHandler( event:DataEvent ):void
-        {
-            var data:String = event.data;
 
-            // If we received an acknowledgement finish-up.			
-            if ( data == CommConstraints.ACK_OF_TEST_RESULT )
-            {
-                exit();
-            }
-        }
+		/**
+		 * Return the report Object from the internal report model for the
+		 * currently executing Test.
+		 * @param Test the test.
+		 */
+		public function getReport(testName:String):TestCaseReport
+		{
+			var reportObject:TestCaseReport;
 
-        /**
-         * Exit the test runner and enabling to close the player.
-         */
-        private function exit():void
-        {
-            // Close the socket.
-            if ( socket )
-            {
-                socket.close();
-            }
+			// Check we have a report Object for the executing Test, if not
+			// create a new one.
+			if (reports[testName])
+			{
+				reportObject=reports[testName];
+			}
+			else
+			{
+				reportObject=new TestCaseReport();
+				reportObject.name=testName;
 
-            // Enabling to close flashplayer
-            closeController.canClose = true;
-        }
+				reports[testName]=reportObject;
+			}
 
-        private function formatQualifiedClassName( className:String ):String
-        {
-            var pattern:RegExp = /::/;
+			return reportObject;
+		}
 
-            return className.replace( pattern, "." );
-        }
+		/**
+		 * Sends the results. This sends the reports back to the controlling Ant
+		 * task using an XMLSocket.
+		 */
+		private function sendResults():void
+		{
+			// Open an XML socket.
+			socket=new XMLSocket();
+			socket.addEventListener(Event.CONNECT, handleConnect);
+			socket.addEventListener(DataEvent.DATA, dataHandler);
+			socket.connect(server, port);
+		}
 
-        public function runTests( testApplication:ITestApplication ):void
-        {
-            var def:* = null;
+		private function handleConnect(event:Event):void
+		{
+			for (var className:String in reports)
+			{
+				var testReport:TestCaseReport=reports[className];
+				// Create the XML report.
+				var xmlString:String=testReport.toXml();
 
-            //flexunit supported
-            if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener" ) ) != null )
-            {
-                trace( "Running tests using Flexunit" );
-            }
+				// Send the XML report.
+				socket.send(xmlString);
+			}
 
-            //flexunit4 supported
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.flexunit4.FlexUnit4Listener" ) ) != null )
-            {
-                trace( "Running tests using Flexunit4" );
-            }
+			// Send the end of reports terminator.
+			socket.send(CommConstraints.END_OF_TEST_RUN);
+		}
 
-            //funit supported			
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener" ) ) != null )
-            {
-                trace( "Running tests using FUnit" );
-            }
+		/**
+		 * Event listener to handle data received on the socket.
+		 * @param event the DataEvent.
+		 */
+		private function dataHandler(event:DataEvent):void
+		{
+			var data:String=event.data;
 
-            //fluint supported
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener" ) ) != null )
-            {
-                trace( "Running tests using Fluint" );
-            }
+			// If we received an acknowledgement finish-up.			
+			if (data == CommConstraints.ACK_OF_TEST_RESULT)
+			{
+				exit();
+			}
+		}
 
-            //asunit supported
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener" ) ) != null )
-            {
-                trace( "Running tests using asunit" );
-            }
+		/**
+		 * Exit the test runner and enabling to close the player.
+		 */
+		private function exit():void
+		{
+			// Close the socket.
+			if (socket)
+			{
+				socket.close();
+			}
 
-            //advancedflex supported
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener" ) ) != null )
-            {
-                trace( "Running tests using Advanced Flex tests" );
-            }
+			// Enabling to close flashplayer
+			closeController.canClose=true;
+		}
 
-            //mustella
-            else if ( ( def = tryGetDefinitionByName( "org.sonatype.flexmojos.unitestingsupport.mustella.MustellaListener" ) ) != null )
-            {
-                trace( "Running tests using Mustella" );
-            }
+		private function formatQualifiedClassName(className:String):String
+		{
+			var pattern:RegExp=/::/;
 
-            //not found
-            else
-            {
-                trace( "No test runner found, exiting" );
-                exit();
-            }
+			return className.replace(pattern, ".");
+		}
 
-            var runner:UnitTestRunner = new def();
-            runner.socketReporter = this;
-            totalTestCount = runner.run( testApplication );
-            trace( "Running " + totalTestCount + " tests" );
+		public function runTests(testApplication:ITestApplication):void
+		{
+			var def:*=null;
 
-            if ( totalTestCount == 0 )
-            {
-                trace( "No tests to run, exiting" );
-                exit();
-            }
-        }
+			//flexunit supported
+			if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit.FlexUnitListener")) != null)
+			{
+				trace("Running tests using Flexunit");
+			}
 
-        private function tryGetDefinitionByName( classname:String ):Class
-        {
-            try
-            {
-                return getDefinitionByName( classname ) as Class;
-            }
-            catch ( e:ReferenceError )
-            {
-            }
-            return null;
-        }
+			//flexunit4 supported
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.flexunit4.FlexUnit4Listener")) != null)
+			{
+				trace("Running tests using Flexunit4");
+			}
 
-        private static var instance:SocketReporter;
+			//funit supported			
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.funit.FUnitListener")) != null)
+			{
+				trace("Running tests using FUnit");
+			}
 
-        public static function getInstance():SocketReporter
-        {
-            if ( instance == null )
-            {
-                instance = new SocketReporter();
+			//fluint supported
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.fluint.FluintListener")) != null)
+			{
+				trace("Running tests using Fluint");
+			}
 
-                var checkIsDone:Function = function( e:* ):void
-                    {
-                        if ( instance.totalTestCount == 0 )
-                        {
-                            return;
-                        }
-                        if ( instance.totalTestCount == instance.numTestsRun )
-                        {
-                            instance.sendResults();
-                        }
-                    };
+			//asunit supported
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.asunit.AsUnitListener")) != null)
+			{
+				trace("Running tests using asunit");
+			}
 
-                BindingUtils.bindSetter( checkIsDone, instance, "numTestsRun" );
-                BindingUtils.bindSetter( checkIsDone, instance, "totalTestCount" );
-            }
-            return instance;
-        }
+			//advancedflex supported
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.advancedflex.AdvancedFlexListener")) != null)
+			{
+				trace("Running tests using Advanced Flex tests");
+			}
 
-    }
+			//mustella
+			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.mustella.MustellaListener")) != null)
+			{
+				trace("Running tests using Mustella");
+			}
+
+			//not found
+			else
+			{
+				trace("No test runner found, exiting");
+				exit();
+			}
+
+			var runner:UnitTestRunner=new def();
+			runner.socketReporter=this;
+			totalTestCount=runner.run(testApplication);
+			trace("Running " + totalTestCount + " tests");
+
+			if (totalTestCount == 0)
+			{
+				trace("No tests to run, exiting");
+				exit();
+			}
+		}
+
+		private function tryGetDefinitionByName(classname:String):Class
+		{
+			try
+			{
+				return getDefinitionByName(classname) as Class;
+			}
+			catch (e:ReferenceError)
+			{
+			}
+			return null;
+		}
+
+		private static var instance:SocketReporter;
+
+		public static function getInstance():SocketReporter
+		{
+			if (instance == null)
+			{
+				instance=new SocketReporter();
+			}
+			return instance;
+		}
+
+		private function checkIsDone():void
+		{
+			if (totalTestCount == 0)
+			{
+				return;
+			}
+			if (totalTestCount == numTestsRun)
+			{
+				sendResults();
+			}
+		}
+
+	}
 }
