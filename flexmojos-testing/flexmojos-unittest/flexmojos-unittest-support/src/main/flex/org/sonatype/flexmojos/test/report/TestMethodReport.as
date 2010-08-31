@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.test.report {
 
+    [Bindable]
     [RemoteClass(alias="org.sonatype.flexmojos.test.report.TestMethodReport")]
     public class TestMethodReport extends TestMethodReportBase {
     	

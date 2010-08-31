@@ -26,7 +26,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 public class TestCaseReport
 {
 
-    private TestCoverageReport[] coverage;
+    private List<TestCoverageReport> coverage;
 
     private Xpp3Dom dom;
 
@@ -34,7 +34,7 @@ public class TestCaseReport
 
     private int failures;
 
-    private TestMethodReport[] methods;
+    private List<TestMethodReport> methods;
 
     private String name;
 
@@ -47,16 +47,15 @@ public class TestCaseReport
         this.dom = dom;
     }
 
-    public TestCoverageReport[] getCoverage()
+    public List<TestCoverageReport> getCoverage()
     {
         if ( this.coverage == null )
         {
-            List<TestCoverageReport> coverage = new ArrayList<TestCoverageReport>();
+            this.coverage = new ArrayList<TestCoverageReport>();
             for ( Xpp3Dom child : dom.getChildren( "coverage" ) )
             {
                 coverage.add( new TestCoverageReport( child ) );
             }
-            this.coverage = coverage.toArray( new TestCoverageReport[0] );
         }
         return coverage;
     }
@@ -71,17 +70,15 @@ public class TestCaseReport
         return Integer.parseInt( dom.getAttribute( "failures" ) );
     }
 
-    public TestMethodReport[] getMethods()
+    public List<TestMethodReport> getMethods()
     {
         if ( this.methods == null )
         {
-            List<TestMethodReport> methods = new ArrayList<TestMethodReport>();
+            this.methods = new ArrayList<TestMethodReport>();
             for ( Xpp3Dom child : dom.getChildren( "testcase" ) )
             {
                 methods.add( new TestMethodReport( child ) );
             }
-
-            this.methods = methods.toArray( new TestMethodReport[0] );
         }
         return this.methods;
     }
@@ -101,7 +98,7 @@ public class TestCaseReport
         return Double.parseDouble( dom.getAttribute( "time" ) );
     }
 
-    public void setCoverage( TestCoverageReport[] coverage )
+    public void setCoverage( List<TestCoverageReport> coverage )
     {
         throw new UnsupportedOperationException();
     }
@@ -116,7 +113,7 @@ public class TestCaseReport
         throw new UnsupportedOperationException();
     }
 
-    public void setMethods( TestMethodReport[] methods )
+    public void setMethods( List<TestMethodReport> methods )
     {
         throw new UnsupportedOperationException();
     }

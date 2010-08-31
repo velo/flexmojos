@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
+    import mx.core.Application;
 
     public interface ITestApplication
     {
