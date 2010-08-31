@@ -8,15 +8,18 @@
 package org.sonatype.flexmojos.test.report
 {
 
+    import mx.collections.ArrayCollection;
+
     import org.sonatype.flexmojos.coverage.CoverageDataCollector;
 
+    [Bindable]
     [RemoteClass( alias="org.sonatype.flexmojos.test.report.TestCaseReport" )]
     public class TestCaseReport extends TestCaseReportBase
     {
 
         public function TestCaseReport()
         {
-            methods = new Array();
+            methods = new ArrayCollection();
         }
 
         /*

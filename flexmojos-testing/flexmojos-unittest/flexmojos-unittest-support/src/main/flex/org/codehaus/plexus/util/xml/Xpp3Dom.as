@@ -4,5 +4,6 @@
 
 package org.codehaus.plexus.util.xml {
 
+    [Bindable]
     public class Xpp3Dom {  }
 }

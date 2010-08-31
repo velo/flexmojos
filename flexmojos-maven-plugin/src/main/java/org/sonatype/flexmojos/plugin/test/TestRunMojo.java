@@ -359,7 +359,7 @@ public class TestRunMojo
                         TestCaseReport report = writeTestReport( result );
                         if ( coverage )
                         {
-                            TestCoverageReport[] coverageResult = report.getCoverage();
+                            List<TestCoverageReport> coverageResult = report.getCoverage();
                             for ( TestCoverageReport testCoverageReport : coverageResult )
                             {
                                 reporter.addResult( testCoverageReport.getClassname(), testCoverageReport.getTouchs() );
