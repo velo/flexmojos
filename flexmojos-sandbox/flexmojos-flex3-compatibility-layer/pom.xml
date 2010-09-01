@@ -12,6 +12,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
       <version>3.5.0.12683</version>

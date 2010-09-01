@@ -11,8 +11,19 @@ public aspect InitializeThreadLocalWrapper
     @SuppressWarnings( "unchecked" )
     before() : execute() {
         AbstractMavenMojo mojo = (AbstractMavenMojo) thisJoinPoint.getThis();
+
+//        try
+//        {
+//            Class<?> tlt = Class.forName( "flex2.compiler.util.ThreadLocalToolkit" );
+//            tlt.getDeclaredField( "assertor" );
+//        }
+//        catch ( Exception e )
+//        {
+//            throw new IllegalStateException( "Flexmojos didn't loaded the ThreadLocalToolkit properly.", e );
+//        }
+
         ThreadLocalToolkitHelper.setMavenLogger( mojo.getMavenLogger() );
         ThreadLocalToolkitHelper.setMavenResolver( mojo.getMavenPathResolver() );
     }
-    
+
 }
