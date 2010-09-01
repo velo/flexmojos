@@ -9,7 +9,9 @@ java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTproces
 	port="$port" 
 	controlPort="$controlPort" 
 	>
-	
+
+$includes
+
 	<mx:Script>
 		<![CDATA[
 

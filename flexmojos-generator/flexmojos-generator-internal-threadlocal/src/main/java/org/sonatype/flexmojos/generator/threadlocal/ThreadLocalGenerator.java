@@ -9,12 +9,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.bcel.Constants;
+import org.apache.bcel.classfile.AccessFlags;
 import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.BranchInstruction;
 import org.apache.bcel.generic.ClassGen;
 import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.FieldGen;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
@@ -119,8 +122,7 @@ public class ThreadLocalGenerator
                 il.append( _factory.createInvoke( THREAD_LOCAL_TOOLKIT, "getLocalizationManager",
                                                   new ObjectType( "flash.localization.LocalizationManager" ),
                                                   Type.NO_ARGS, Constants.INVOKESTATIC ) );
-                il.append( _factory.createInvoke(
-                                                  "flex2.compiler.Logger",
+                il.append( _factory.createInvoke( "flex2.compiler.Logger",
                                                   "setLocalizationManager",
                                                   Type.VOID,
                                                   new Type[] { new ObjectType( "flash.localization.LocalizationManager" ) },
@@ -144,8 +146,7 @@ public class ThreadLocalGenerator
                                    method.getName(), null, il, cp );
 
                 il.append( InstructionFactory.createLoad( Type.OBJECT, 0 ) );
-                il.append( _factory.createInvoke(
-                                                  FLEXMOJOS_HELPER,
+                il.append( _factory.createInvoke( FLEXMOJOS_HELPER,
                                                   "fixPathResolver",
                                                   new ObjectType( "flex2.compiler.common.PathResolver" ),
                                                   new Type[] { new ObjectType( "flex2.compiler.common.PathResolver" ) },
@@ -168,6 +169,9 @@ public class ThreadLocalGenerator
                 il.dispose();
             }
         }
+
+        FieldGen assertor = new FieldGen( Constants.ACC_PUBLIC & Constants.ACC_STATIC, Type.STRING, "assertor", cp );
+        cg.addField( assertor.getField() );
 
         FileOutputStream output = null;
         try
