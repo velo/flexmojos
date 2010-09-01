@@ -2777,6 +2777,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return signatureDirectory;
     }
 
+    @FlexCompatibility( minVersion = "4.5.0" )
     public String getSizeReport()
     {
         File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
