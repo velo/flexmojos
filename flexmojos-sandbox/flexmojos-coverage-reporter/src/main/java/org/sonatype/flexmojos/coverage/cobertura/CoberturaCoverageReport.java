@@ -98,6 +98,8 @@ public class CoberturaCoverageReport
         try
         {
             File coverageReportDestinationDir = request.getReportDestinationDir();
+            coverageReportDestinationDir.mkdirs();
+
             List<String> format = request.getFormats();
             if ( format.contains( "html" ) )
             {
@@ -123,7 +125,7 @@ public class CoberturaCoverageReport
             throw new CoverageReportException( "Unable to write coverage report", e );
         }
 
-        CoverageDataFileHandler.saveCoverageData( coverageProjectData, new File(dataDirectory, "cobertura.ser") );
+        CoverageDataFileHandler.saveCoverageData( coverageProjectData, new File( dataDirectory, "cobertura.ser" ) );
     }
 
     public void addResult( String classname, Integer[] touchs )

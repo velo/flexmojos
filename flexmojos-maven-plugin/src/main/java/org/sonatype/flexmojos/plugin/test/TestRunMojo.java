@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -50,6 +51,7 @@ import org.sonatype.flexmojos.test.TestRunnerException;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
+import org.sonatype.flexmojos.util.PathUtil;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -367,7 +369,7 @@ public class TestRunMojo
 
                     if ( coverage )
                     {
-                        reporter.instrument( swf, new File( project.getBuild().getSourceDirectory() ) );
+                        reporter.instrument( swf, getSourcePath() );
                     }
 
                     List<String> results = testRunner.run( testRequest );
@@ -418,6 +420,28 @@ public class TestRunMojo
             }
 
         }
+    }
+
+    /**
+     * The maven compile source roots
+     * <p>
+     * Equivalent to -compiler.source-path
+     * </p>
+     * List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> compileSourceRoots;
+
+    public File[] getSourcePath()
+    {
+        List<File> files = new ArrayList<File>();
+
+        files.addAll( PathUtil.getExistingFilesList( compileSourceRoots ) );
+
+        return files.toArray( new File[0] );
     }
 
     private File getSwfDescriptor( File swf )

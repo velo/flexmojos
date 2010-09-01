@@ -434,4 +434,14 @@ public class PathUtil
         return null;
     }
 
+    public static File getCanonicalFile( String path, File... basedirs )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        return getCanonicalFile( path, Arrays.asList( basedirs ) );
+    }
+
 }

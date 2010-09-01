@@ -24,7 +24,9 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.version;
+import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.COMPILE;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
@@ -37,18 +39,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -59,6 +64,7 @@ import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
+import org.sonatype.flexmojos.plugin.test.scanners.FlexClassScanner;
 import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -96,6 +102,18 @@ public class TestCompilerMojo
     private boolean coverage;
 
     /**
+     * Classes that shouldn't be include on code coverage analysis.
+     * 
+     * @parameter
+     */
+    private String[] coverageExclusions;
+
+    /**
+     * @parameter default-value="all" expression="${flex.coverage.scanner}"
+     */
+    private String coverageFlexClassScanner;
+
+    /**
      * Files to exclude from testing. If not defined, assumes no exclusions
      * 
      * @parameter
@@ -115,6 +133,16 @@ public class TestCompilerMojo
      * @parameter
      */
     private String[] includeTestFiles;
+
+    /**
+     * @readonly
+     */
+    private FlexClassScanner scanner;
+
+    /**
+     * @component role='org.sonatype.flexmojos.plugin.test.scanners.FlexClassScanner'
+     */
+    private Map<String, FlexClassScanner> scanners;
 
     /**
      * Set this to 'true' to bypass unit tests entirely. Its use is NOT RECOMMENDED, but quite convenient on occasion.
@@ -290,25 +318,30 @@ public class TestCompilerMojo
         // org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for
         // deserialization
 
-        StringBuilder imports = new StringBuilder();
+        StringBuilder imports = getImports( testClasses );
+        StringBuilder includes = getExtraIncludes( testOutputDirectory );
+        StringBuilder classes = getClasses( testClasses );
 
-        for ( String testClass : testClasses )
-        {
-            imports.append( "import " );
-            imports.append( testClass );
-            imports.append( "; " );
-            if ( testClass.indexOf( '.' ) != -1 )
-            {
-                imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
-            }
-            else
-            {
-                imports.append( testClass );
-            }
-            imports.append( ";" );
-            imports.append( '\n' );
-        }
+        Integer testPort = SocketUtil.freePort();
+        putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
 
+        InputStream templateSource = getTemplate();
+        String sourceString = IOUtils.toString( templateSource );
+        sourceString = sourceString.replace( "$imports", imports );
+        sourceString = sourceString.replace( "$includes", includes );
+        sourceString = sourceString.replace( "$testClasses", classes );
+        sourceString = sourceString.replace( "$port", testPort.toString() );
+        sourceString = sourceString.replace( "$controlPort", String.valueOf( testControlPort ) );
+        File testSourceFile = new File( testOutputDirectory, testFilename + ".mxml" );
+        FileWriter fileWriter = new FileWriter( testSourceFile );
+        IOUtils.write( sourceString, fileWriter );
+        fileWriter.flush();
+        fileWriter.close();
+        return testSourceFile;
+    }
+
+    private StringBuilder getClasses( List<? extends String> testClasses )
+    {
         StringBuilder classes = new StringBuilder();
 
         for ( String testClass : testClasses )
@@ -319,22 +352,7 @@ public class TestCompilerMojo
             classes.append( ");" );
             classes.append( '\n' );
         }
-
-        Integer testPort = SocketUtil.freePort();
-        putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
-
-        InputStream templateSource = getTemplate();
-        String sourceString = IOUtils.toString( templateSource );
-        sourceString = sourceString.replace( "$imports", imports );
-        sourceString = sourceString.replace( "$testClasses", classes );
-        sourceString = sourceString.replace( "$port", testPort.toString() );
-        sourceString = sourceString.replace( "$controlPort", String.valueOf( testControlPort ) );
-        File testSourceFile = new File( testOutputDirectory, testFilename + ".mxml" );
-        FileWriter fileWriter = new FileWriter( testSourceFile );
-        IOUtils.write( sourceString, fileWriter );
-        fileWriter.flush();
-        fileWriter.close();
-        return testSourceFile;
+        return classes;
     }
 
     @Override
@@ -348,6 +366,51 @@ public class TestCompilerMojo
     public File[] getExternalLibraryPath()
     {
         return MavenUtils.getFiles( getGlobalArtifact() );
+    }
+
+    private StringBuilder getExtraIncludes( File testOutputDirectory )
+    {
+        StringBuilder includes = new StringBuilder();
+        if ( coverage )
+        {
+            FlexClassScanner scanner = getFlexClassScanner();
+            for ( String snippet : scanner.getAs3Snippets() )
+            {
+                // as3 include "sampleInclude.as";
+                // includes.append( "include \"" );
+                // includes.append( snippets.replace( '\\', '/' ) );
+                // includes.append( "\";\n" );
+
+                // mxml <mx:Script source="includes/CameraExample.as" />
+                includes.append( "<mx:Script source=\"" );
+                includes.append( snippet.replace( '\\', '/' ) );
+                includes.append( "\" />\n" );
+
+            }
+        }
+        return includes;
+    }
+
+    private FlexClassScanner getFlexClassScanner()
+    {
+        if ( this.scanner == null )
+        {
+            File[] sp = getSourcePath();
+
+            scanner = scanners.get( coverageFlexClassScanner );
+            if ( scanner == null )
+            {
+                throw new IllegalArgumentException( "Invalid coverageFlexClassScanner: '" + coverageFlexClassScanner
+                    + "'" );
+            }
+
+            Map<String, Object> context = new LinkedHashMap<String, Object>();
+            // TODO need a better idea to resolve link report file
+            context.put( LINK_REPORT, new File( project.getBuild().getDirectory(), project.getBuild().getFinalName()
+                + "-" + LINK_REPORT + "." + XML ) );
+            scanner.scan( sp, coverageExclusions, context );
+        }
+        return scanner;
     }
 
     protected Artifact getFlexmojosTestArtifact( String artifactId )
@@ -413,6 +476,29 @@ public class TestCompilerMojo
         return getFlexmojosTestArtifact( "flexmojos-unittest-support", getIsAirProject() ? "air" : "flex" );
     }
 
+    private StringBuilder getImports( List<? extends String> testClasses )
+    {
+        StringBuilder imports = new StringBuilder();
+
+        for ( String testClass : testClasses )
+        {
+            imports.append( "import " );
+            imports.append( testClass );
+            imports.append( "; " );
+            if ( testClass.indexOf( '.' ) != -1 )
+            {
+                imports.append( testClass.substring( testClass.lastIndexOf( '.' ) + 1 ) );
+            }
+            else
+            {
+                imports.append( testClass );
+            }
+            imports.append( ";" );
+            imports.append( '\n' );
+        }
+        return imports;
+    }
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getIncludeLibraries()
@@ -432,18 +518,27 @@ public class TestCompilerMojo
     @Override
     public List<String> getIncludes()
     {
-        List<String> includes = new ArrayList<String>();
-
-        File[] sp = getSourcePath();
-        List<FileSet> sets = as3ClassesFileSet( sp );
-        for ( FileSet fileset : sets )
+        if ( !coverage )
         {
-            DirectoryScanner scan = scan( fileset );
-            for ( String testFile : scan.getIncludedFiles() )
-            {
-                String include = toClass( testFile );
-                includes.add( include );
-            }
+            return super.getIncludes();
+        }
+
+        List<String> includes = super.getIncludes();
+        if ( includes == null )
+        {
+            includes = new ArrayList<String>();
+        }
+        else
+        {
+            includes = new ArrayList<String>( includes );
+        }
+
+        FlexClassScanner scanner = getFlexClassScanner();
+
+        for ( String testFile : scanner.getAs3Classes() )
+        {
+            String include = toClass( testFile );
+            includes.add( include );
         }
 
         return includes;
