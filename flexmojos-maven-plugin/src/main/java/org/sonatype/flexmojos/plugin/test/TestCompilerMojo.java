@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Resource;
@@ -92,9 +90,30 @@ public class TestCompilerMojo
     private String[] coverageExclusions;
 
     /**
-     * @parameter default-value="all" expression="${flex.coverage.scanner}"
+     * The strategy used by flexmojos do determine which files should be taken into account when calculating code
+     * coverage. So far there are 4 valid values: 'all', 'disabled', 'link-report' and 'as3Content' <li>
+     * <ul>
+     * 'all' is the default implementation, includes all .as and .mxml available on source folders, is the fastest but
+     * has potential problems with as3 inclusion. This ensures all classes available on source folder are taken into
+     * account when calculating code coverage.
+     * </ul>
+     * <ul>
+     * 'disabled' it will produce wrong coverage reports
+     * </ul>
+     * <ul>
+     * 'link-report' will use the application link-report in other to know which classes need to be included on coverage
+     * reports, basically mean that all files on your swf/swc will be on the coverage report, but not necessarily all
+     * files present on your source folders.
+     * </ul>
+     * <ul>
+     * 'as3Content' will scan all .as and .mxml file contents and will handle they properly, this ensures all classes
+     * available on source folder are taken into account when calculating code coverage.
+     * </ul>
+     * </li>
+     * 
+     * @parameter default-value="all" expression="${flex.strategy}"
      */
-    private String coverageFlexClassScanner;
+    private String coverageStrategy;
 
     /**
      * Files to exclude from testing. If not defined, assumes no exclusions
@@ -380,10 +399,10 @@ public class TestCompilerMojo
         {
             File[] sp = getSourcePath();
 
-            scanner = scanners.get( coverageFlexClassScanner );
+            scanner = scanners.get( coverageStrategy );
             if ( scanner == null )
             {
-                throw new IllegalArgumentException( "Invalid coverageFlexClassScanner: '" + coverageFlexClassScanner
+                throw new IllegalArgumentException( "Invalid coverageFlexClassScanner: '" + coverageStrategy
                     + "'" );
             }
 
