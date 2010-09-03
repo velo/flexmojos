@@ -28,7 +28,7 @@ public class MxmlcContinuousCompileMojo
      * 
      * @parameter expression="${flex.liveDevelopment}" default-value="true"
      */
-    private Boolean liveDevelopment;
+    private boolean liveDevelopment;
 
     /**
      * Can be of type <code>&lt;argument&gt;</code>
