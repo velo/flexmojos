@@ -3165,7 +3165,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             }
             catch ( IOException e )
             {
-                getLog().error( "Unable to copy instaled version to target folder.", e );
+                getLog().error( "Unable to copy installed version to target folder.", e );
                 return true;
             }
         }
