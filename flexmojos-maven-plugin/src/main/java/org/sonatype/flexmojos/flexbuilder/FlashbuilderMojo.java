@@ -22,10 +22,6 @@ import java.util.Collection;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.velocity.VelocityContext;
 
-
-
-
-
 /**
  * Extends the standard Flex Builder configuration.
  * 
@@ -39,63 +35,58 @@ import org.apache.velocity.VelocityContext;
 public class FlashbuilderMojo
     extends FlexbuilderMojo
 {
-	/**
-	 * IDE Verion. First release of Flashbuilder is version 6.
-	 * 
-	 * @parameter default-value=6
-	 */
-	protected Integer ideVersion;
-	
-	@Override
-	protected String getAsPropertiesTemplate()
-	{
-		return "/templates/flashbuilder/actionScriptProperties.vm";
-	}
-	
-	@Override
-	protected VelocityContext getAsPropertiesContext(ProjectType type, Collection<FbIdeDependency> dependencies)
-		throws MojoExecutionException
-	{
-		VelocityContext context = super.getAsPropertiesContext( type, dependencies );
-		
-		context.put( "ideVersion", ideVersion );
-		
-		return context;
-	}
-	
-	@Override
-	protected String getFlexLibPropertiesTemplate()
-	{
-		return "/templates/flashbuilder/flexLibProperties.vm";
-	}
-	
-	@Override
-	protected String getFlexPropertiesTemplate()
-	{
-		return "/templates/flashbuilder/flexProperties.vm";
-	}
-	
-	/**
-     * Utility function to sense flex builder SDK value from framework dependencies.
+    /**
+     * IDE Verion. First release of Flashbuilder is version 6.
      * 
-     * For example:
-     * 4.0.0 will import into Flexbuilder as "Flex 4.0"
-     * 3.5.0 will import as Flex "3.5".
-     * 
-     * This override differs from the base function in that versions such
-     * as 4.0.0 will return 4.0 instead of 4 as in the base implementation.
+     * @parameter default-value=6
+     */
+    protected Integer ideVersion;
+
+    @Override
+    protected String getAsPropertiesTemplate()
+    {
+        return "/templates/flashbuilder/actionScriptProperties.vm";
+    }
+
+    @Override
+    protected VelocityContext getAsPropertiesContext( ProjectType type, Collection<FbIdeDependency> dependencies )
+        throws MojoExecutionException
+    {
+        VelocityContext context = super.getAsPropertiesContext( type, dependencies );
+
+        context.put( "ideVersion", ideVersion );
+
+        return context;
+    }
+
+    @Override
+    protected String getFlexLibPropertiesTemplate()
+    {
+        return "/templates/flashbuilder/flexLibProperties.vm";
+    }
+
+    @Override
+    protected String getFlexPropertiesTemplate()
+    {
+        return "/templates/flashbuilder/flexProperties.vm";
+    }
+
+    /**
+     * Utility function to sense flex builder SDK value from framework dependencies. For example: 4.0.0 will import into
+     * Flexbuilder as "Flex 4.0" 3.5.0 will import as Flex "3.5". This override differs from the base function in that
+     * versions such as 4.0.0 will return 4.0 instead of 4 as in the base implementation.
      * 
      * @return
      */
-	@Override
+    @Override
     protected String getFlexSdkVersion()
     {
-    	String value = super.getFlexSdkVersion();
-    	
-    	if( !value.equals( "default" ) && !value.contains(".") )
-    		value += ".0";
-    	
-    	return value;
+        String value = super.getFlexSdkVersion();
+
+        if ( !value.equals( "default" ) && !value.contains( "." ) )
+            value += ".0";
+
+        return value;
     }
 
 }
