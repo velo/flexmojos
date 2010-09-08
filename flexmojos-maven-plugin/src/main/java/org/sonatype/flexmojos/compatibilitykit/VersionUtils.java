@@ -58,7 +58,14 @@ public class VersionUtils
 
         for ( int i = 0; i < versionsStr.length; i++ )
         {
-            versions[i] = new Integer( versionsStr[i] );
+            try
+            {
+                versions[i] = new Integer( versionsStr[i] );
+            }
+            catch ( NumberFormatException e )
+            {
+                versions[i] = 0;
+            }
         }
 
         return versions;
