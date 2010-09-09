@@ -10,7 +10,6 @@ public class SwfArtifactHandler
     implements ArtifactHandler
 {
 
-
     @Override
     public String getType()
     {

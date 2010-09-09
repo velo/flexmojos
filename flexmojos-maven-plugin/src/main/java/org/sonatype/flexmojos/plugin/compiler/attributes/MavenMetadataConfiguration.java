@@ -1,8 +1,8 @@
 package org.sonatype.flexmojos.plugin.compiler.attributes;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.sonatype.flexmojos.compiler.ILocalizedDescription;
 import org.sonatype.flexmojos.compiler.ILocalizedTitle;
@@ -69,14 +69,14 @@ public class MavenMetadataConfiguration
         {
             keys[i++] = new ILocalizedDescription()
             {
-                public String text()
-                {
-                    return entry.getValue();
-                }
-
                 public String lang()
                 {
                     return entry.getKey();
+                }
+
+                public String text()
+                {
+                    return entry.getValue();
                 }
             };
         }

@@ -9,7 +9,8 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
-import static org.sonatype.flexmojos.plugin.common.FlexClassifier.*;
+import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
+import static org.sonatype.flexmojos.plugin.common.FlexClassifier.SIZE_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.CSS;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RB_SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;

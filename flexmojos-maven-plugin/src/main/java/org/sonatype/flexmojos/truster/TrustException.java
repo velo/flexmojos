@@ -1,6 +1,5 @@
 package org.sonatype.flexmojos.truster;
 
-
 public class TrustException
     extends RuntimeException
 {

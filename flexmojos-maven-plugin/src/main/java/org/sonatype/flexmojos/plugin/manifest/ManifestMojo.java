@@ -30,6 +30,12 @@ public class ManifestMojo
 {
 
     /**
+     * @parameter default-value="${project.basedir}"
+     * @readonly
+     */
+    private File basedir;
+
+    /**
      * @parameter default-value="${project.compileSourceRoots}"
      * @readonly
      */
@@ -38,23 +44,31 @@ public class ManifestMojo
     /**
      * @parameter
      */
-    private String[] manifestIncludes;
+    private String[] manifestExcludes;
 
     /**
      * @parameter
      */
-    private String[] manifestExcludes;
+    private String[] manifestIncludes;
 
     /**
      * @parameter default-value="${project.build.directory}/manifest.xml"
      */
     private File outputFile;
 
-    /**
-     * @parameter default-value="${project.basedir}"
-     * @readonly
-     */
-    private File basedir;
+    private String[] addDefaultIncludes( String[] manifestIncludes )
+    {
+        List<String> includes = new ArrayList<String>();
+        if ( manifestIncludes != null )
+        {
+            includes.addAll( Arrays.asList( manifestIncludes ) );
+        }
+
+        includes.add( "**/*.as" );
+        includes.add( "**/*.mxml" );
+
+        return includes.toArray( new String[0] );
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -109,20 +123,6 @@ public class ManifestMojo
         {
             IOUtil.close( output );
         }
-    }
-
-    private String[] addDefaultIncludes( String[] manifestIncludes )
-    {
-        List<String> includes = new ArrayList<String>();
-        if ( manifestIncludes != null )
-        {
-            includes.addAll( Arrays.asList( manifestIncludes ) );
-        }
-
-        includes.add( "**/*.as" );
-        includes.add( "**/*.mxml" );
-
-        return includes.toArray( new String[0] );
     }
 
 }

@@ -9,7 +9,8 @@ import java.util.Map;
 import org.codehaus.plexus.component.annotations.Component;
 
 @Component( role = FlexClassScanner.class, hint = "all" )
-public class AllFlexClassScanner extends AbstractFlexClassScanner
+public class AllFlexClassScanner
+    extends AbstractFlexClassScanner
     implements FlexClassScanner
 {
 

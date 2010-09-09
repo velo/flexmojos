@@ -12,10 +12,6 @@ public class DisableFlexClassScanner
     implements FlexClassScanner
 {
 
-    public void scan( File[] directories, String[] exclusions, Map<String, Object> context )
-    {
-    }
-
     public List<String> getAs3Classes()
     {
         return Collections.emptyList();
@@ -24,6 +20,10 @@ public class DisableFlexClassScanner
     public List<String> getAs3Snippets()
     {
         return Collections.emptyList();
+    }
+
+    public void scan( File[] directories, String[] exclusions, Map<String, Object> context )
+    {
     }
 
 }

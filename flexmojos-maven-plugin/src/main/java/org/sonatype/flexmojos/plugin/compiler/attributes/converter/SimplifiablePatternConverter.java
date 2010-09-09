@@ -14,7 +14,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
 public class SimplifiablePatternConverter
     extends AbstractConfigurationConverter
 {
-    
+
     public static final String ID = "SimplifiablePattern";
 
     @SuppressWarnings( "unchecked" )
@@ -63,9 +63,10 @@ public class SimplifiablePatternConverter
         {
             FileSet f = new FileSet();
 
-            f.setDirectory( (String) fromExpression( patternNode.getChild( "directory" ), expressionEvaluator, String.class ) );
+            f.setDirectory( (String) fromExpression( patternNode.getChild( "directory" ), expressionEvaluator,
+                                                     String.class ) );
             PlexusConfiguration includes = patternNode.getChild( "includes" );
-            for ( PlexusConfiguration include : includes.getChildren(  ) )
+            for ( PlexusConfiguration include : includes.getChildren() )
             {
                 f.addInclude( (String) fromExpression( include, expressionEvaluator, String.class ) );
             }

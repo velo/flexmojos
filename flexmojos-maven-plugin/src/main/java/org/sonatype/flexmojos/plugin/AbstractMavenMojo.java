@@ -74,7 +74,8 @@ public abstract class AbstractMavenMojo
 
     protected static final Answer<Object> RETURNS_NULL = new Answer<Object>()
     {
-        public Object answer(InvocationOnMock invocation) throws Throwable
+        public Object answer( InvocationOnMock invocation )
+            throws Throwable
         {
             return null;
         }
@@ -526,8 +527,9 @@ public abstract class AbstractMavenMojo
             req.setArtifact( artifact );
             req.setLocalRepository( localRepository );
             req.setRemoteRepositories( remoteRepositories );
+            boolean success = repositorySystem.resolve( req ).isSuccess();
             // FIXME need to check isSuccess
-            repositorySystem.resolve( req ).isSuccess();
+            assert success;
         }
         return artifact;
     }

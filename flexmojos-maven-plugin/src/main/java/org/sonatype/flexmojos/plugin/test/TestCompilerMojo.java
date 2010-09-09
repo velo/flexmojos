@@ -402,8 +402,7 @@ public class TestCompilerMojo
             scanner = scanners.get( coverageStrategy );
             if ( scanner == null )
             {
-                throw new IllegalArgumentException( "Invalid coverageFlexClassScanner: '" + coverageStrategy
-                    + "'" );
+                throw new IllegalArgumentException( "Invalid coverageFlexClassScanner: '" + coverageStrategy + "'" );
             }
 
             Map<String, Object> context = new LinkedHashMap<String, Object>();
