@@ -361,8 +361,8 @@ public class HtmlWrapperMojo
             {
                 // Found matching dependency, so use this as the basis for the target external pom artifact
                 sourceArtifact =
-                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(), "pom",
-                                                                  swfArtifact.getClassifier() );
+                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, swfArtifact.getVersion(),
+                                                                   "pom", swfArtifact.getClassifier() );
             }
             else
             {
@@ -443,8 +443,7 @@ public class HtmlWrapperMojo
     private void executeInternal()
         throws MojoExecutionException, MojoFailureException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
+        getLog().info( "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         init();
@@ -619,7 +618,7 @@ public class HtmlWrapperMojo
             req.setArtifact( artifact );
             req.setLocalRepository( localRepository );
             req.setRemoteRepositories( remoteRepositories );
-            //FIXME need to check isSuccess
+            // FIXME need to check isSuccess
             repositorySystem.resolve( req ).isSuccess();
         }
     }
@@ -654,8 +653,7 @@ public class HtmlWrapperMojo
                             }
                             else
                             {
-                                getLog().warn(
-                                               "Wrapper found matching artifact with classifier [" + matchClassifier
+                                getLog().warn( "Wrapper found matching artifact with classifier [" + matchClassifier
                                                    + "], but did not match requested classifier [" + classifier
                                                    + "] so it is being ignored" );
                             }
@@ -667,8 +665,7 @@ public class HtmlWrapperMojo
                     }
                     else
                     {
-                        getLog().warn(
-                                       "Wrapper found matching artifact with version [" + matchVersion
+                        getLog().warn( "Wrapper found matching artifact with version [" + matchVersion
                                            + "], but did not match requested version [" + version
                                            + "] so it is being ignored" );
                     }
@@ -686,8 +683,8 @@ public class HtmlWrapperMojo
     private Artifact convertToArtifact( Dependency dependency )
     {
         return repositorySystem.createArtifactWithClassifier( dependency.getGroupId(), dependency.getArtifactId(),
-                                                             dependency.getVersion(), dependency.getType(),
-                                                             dependency.getClassifier() );
+                                                              dependency.getVersion(), dependency.getType(),
+                                                              dependency.getClassifier() );
     }
 
     /**

@@ -33,26 +33,6 @@ public class MavenLogger
         this.log = log;
     }
 
-    public void log( Message message, int errorCode, String source )
-    {
-        if ( Message.ERROR.equals( message.getLevel() ) )
-        {
-            log.error( getMessage( message, source ) );
-        }
-        else if ( Message.INFO.equals( message.getLevel() ) )
-        {
-            log.info( getMessage( message, source ) );
-        }
-        else if ( Message.WARNING.equals( message.getLevel() ) )
-        {
-            log.warn( getMessage( message, source ) );
-        }
-        else
-        {
-            log.info( getMessage( message, source ) );
-        }
-    }
-
     private String getMessage( Message msg, String source )
     {
         StringBuilder sb = new StringBuilder();
@@ -77,5 +57,25 @@ public class MavenLogger
         }
 
         return sb.toString();
+    }
+
+    public void log( Message message, int errorCode, String source )
+    {
+        if ( Message.ERROR.equals( message.getLevel() ) )
+        {
+            log.error( getMessage( message, source ) );
+        }
+        else if ( Message.INFO.equals( message.getLevel() ) )
+        {
+            log.info( getMessage( message, source ) );
+        }
+        else if ( Message.WARNING.equals( message.getLevel() ) )
+        {
+            log.warn( getMessage( message, source ) );
+        }
+        else
+        {
+            log.info( getMessage( message, source ) );
+        }
     }
 }

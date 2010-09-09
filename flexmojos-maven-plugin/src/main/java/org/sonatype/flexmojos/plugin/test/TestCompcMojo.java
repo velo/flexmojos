@@ -148,6 +148,7 @@ public class TestCompcMojo
     {
         return null;
     }
+
     @Override
     public File[] getSourcePath()
     {

@@ -17,6 +17,9 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.cli.StreamConsumer;
@@ -24,9 +27,6 @@ import org.codehaus.plexus.util.cli.StreamPumper;
 import org.sonatype.flexmojos.test.launcher.FlashPlayerShutdownHook;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.util.OSUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @since 4.0

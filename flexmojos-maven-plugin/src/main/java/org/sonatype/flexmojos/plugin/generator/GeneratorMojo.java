@@ -40,8 +40,7 @@ public class GeneratorMojo
     public void execute()
         throws MojoExecutionException
     {
-        getLog().info(
-                       "flexmojos " + MavenUtils.getFlexMojosVersion()
+        getLog().info( "flexmojos " + MavenUtils.getFlexMojosVersion()
                            + " - GNU GPL License (NO WARRANTY) - See COPYRIGHT file" );
 
         super.execute();

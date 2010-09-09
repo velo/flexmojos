@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.plugin.compiler.attributes;
 
-
 public class MavenIncludeStylesheet
 {
 

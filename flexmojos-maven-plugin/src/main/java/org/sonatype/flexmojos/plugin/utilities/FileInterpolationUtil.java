@@ -36,37 +36,33 @@ public class FileInterpolationUtil
      * in addition to those added by {@link DirectoryScanner#addDefaultExcludes()}. Since we are performing text
      * replacement, these should not be scanned unless the user explicitly says so.
      */
-    private static final String[] binaryExcludes =
-        {
-            // Common adobe binaries
-            "**/*.swf", "**/*.swc", "**/*.swz", "**/*.flv", "**/*.fla", "**/*.pdf",
-            "**/*.ps",
-            "**/*.eps",
+    private static final String[] binaryExcludes = {
+        // Common adobe binaries
+        "**/*.swf", "**/*.swc", "**/*.swz", "**/*.flv", "**/*.fla", "**/*.pdf", "**/*.ps",
+        "**/*.eps",
 
-            // Images
-            "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.jif", "**/*.jiff", "**/*.bmp,", "**/*.gif,",
-            "**/*.tif",
-            "**/*.tiff",
+        // Images
+        "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.jif", "**/*.jiff", "**/*.bmp,", "**/*.gif,", "**/*.tif",
+        "**/*.tiff",
 
-            // Audio
-            "**/*.wav", "**/*.mp3", "**/*.aac", "**/*.m4a", "**/*.mid", "**/*.midi", "**/*.mpa", "**/*.ra", "**/*.ram",
-            "**/*.wma",
+        // Audio
+        "**/*.wav", "**/*.mp3", "**/*.aac", "**/*.m4a", "**/*.mid", "**/*.midi", "**/*.mpa", "**/*.ra", "**/*.ram",
+        "**/*.wma",
 
-            // Video
-            "**/*.avi", "**/*.mov", "**/*.mp4", "**/*.mpg", "**/*.mpeg", "**/*.qt", "**/*.rm", "**/*.wmv",
+        // Video
+        "**/*.avi", "**/*.mov", "**/*.mp4", "**/*.mpg", "**/*.mpeg", "**/*.qt", "**/*.rm", "**/*.wmv",
 
-            // Fonts
-            "**/*.fnt", "**/*.fon", "**/*.otf", "**/*.ttf",
+        // Fonts
+        "**/*.fnt", "**/*.fon", "**/*.otf", "**/*.ttf",
 
-            // Compressed
-            "**/*.zip", "**/*.rar", "**/*.tar", "**/*.tar.gz", "**/*.gz", "**/*.7z",
+        // Compressed
+        "**/*.zip", "**/*.rar", "**/*.tar", "**/*.tar.gz", "**/*.gz", "**/*.7z",
 
-            // Documentation
-            "**/*.doc", "**/*.docx", "**/*.ppt", "**/*.pptx", "**/*.xls", "**/*.xlsx", "**/*.odt", "**/*.ods",
-            "**/*.odp",
+        // Documentation
+        "**/*.doc", "**/*.docx", "**/*.ppt", "**/*.pptx", "**/*.xls", "**/*.xlsx", "**/*.odt", "**/*.ods", "**/*.odp",
 
-            // Other
-            "**/*.exe" };
+        // Other
+        "**/*.exe" };
 
     /**
      * Provided to mirror the method signature and behavior of the old implementation.

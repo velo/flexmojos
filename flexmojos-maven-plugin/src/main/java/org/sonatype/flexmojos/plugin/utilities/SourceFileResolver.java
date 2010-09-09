@@ -85,8 +85,8 @@ public class SourceFileResolver
         {
             return resolveSourceFile( sourceFileName, sourceRoots );
         }
-        
-        //TODO Source file was not defined, flexmojos will guess one.
+
+        // TODO Source file was not defined, flexmojos will guess one.
 
         for ( File sourceDirectory : sourceRoots )
         {

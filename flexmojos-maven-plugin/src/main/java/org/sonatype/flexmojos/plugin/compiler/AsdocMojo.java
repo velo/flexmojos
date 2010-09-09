@@ -411,6 +411,12 @@ public class AsdocMojo
         return docSources;
     }
 
+    @Override
+    public final String getDumpConfig()
+    {
+        return null;
+    }
+
     public String getExamplesPath()
     {
         return PathUtil.getCanonicalPath( examplesPath );
@@ -635,11 +641,5 @@ public class AsdocMojo
                 throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
             }
         }
-    }
-
-    @Override
-    public final String getDumpConfig()
-    {
-        return null;
     }
 }
