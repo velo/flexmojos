@@ -236,6 +236,7 @@ public class CopyMojo
             request.setLocalRepository( localRepository );
             request.setRemoteRepositories( remoteRepositories );
             request.setResolveDependencies( true );
+            request.setRepositorySession( session.getRepositorySession() );
             return projectBuilder.build( artifact, request ).getProject();
         }
         catch ( ProjectBuildingException e )
