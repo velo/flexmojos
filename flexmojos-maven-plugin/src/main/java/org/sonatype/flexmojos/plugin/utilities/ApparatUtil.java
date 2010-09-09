@@ -1,10 +1,9 @@
 package org.sonatype.flexmojos.plugin.utilities;
 
-
 public class ApparatUtil
 {
 
-    public static String toClassname( String apparatClassname)
+    public static String toClassname( String apparatClassname )
     {
         // F:\4.x\flexmojos-aggregator\flexmojos-testing\flexmojos-test-harness\target\projects\concept\flexunit-example_testFlexUnitExample\src;com\adobe\example;Calculator.as
         String cn = apparatClassname;

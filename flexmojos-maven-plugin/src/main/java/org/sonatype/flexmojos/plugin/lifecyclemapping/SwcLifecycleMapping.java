@@ -14,7 +14,7 @@ public class SwcLifecycleMapping
     {
         return "org.sonatype.flexmojos:flexmojos-maven-plugin:compile-swc";
     }
-    
+
     @Override
     protected String getPackage()
     {
