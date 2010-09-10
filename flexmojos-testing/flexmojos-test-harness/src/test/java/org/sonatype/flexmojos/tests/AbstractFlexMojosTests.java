@@ -113,22 +113,22 @@ public class AbstractFlexMojosTests
         throws Exception
     {
         File repo = new File( getProperty( "fake-repo" ) );
-        addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion()
+        addCobertura( new File( repo, "org/sonatype/flexmojos/flexmojos-parent/" + getFlexmojosVersion()
             + "/flexmojos-parent-" + getFlexmojosVersion() + ".pom" ) );
-        addEmma( new File( repo, "org/sonatype/flexmojos/flexmojos-maven-plugin/" + getFlexmojosVersion()
+        addCobertura( new File( repo, "org/sonatype/flexmojos/flexmojos-maven-plugin/" + getFlexmojosVersion()
             + "/flexmojos-maven-plugin-" + getFlexmojosVersion() + ".pom" ) );
     }
 
-    private static void addEmma( File fmParentPom )
+    private static void addCobertura( File fmParentPom )
         throws ComponentLookupException, IOException, ModelParseException
     {
         ModelProcessor builder = container.lookup( ModelProcessor.class );
         Model pom = builder.read( fmParentPom, null );
-        Dependency emma = new Dependency();
-        emma.setGroupId( "emma" );
-        emma.setArtifactId( "emma" );
-        emma.setVersion( "2.0.5312" );
-        pom.addDependency( emma );
+        Dependency cobertura = new Dependency();
+        cobertura.setGroupId( "net.sourceforge.cobertura" );
+        cobertura.setArtifactId( "cobertura" );
+        cobertura.setVersion( "1.9.4.1" );
+        pom.addDependency( cobertura );
 
         ModelWriter writer = container.lookup( ModelWriter.class );
         writer.write( fmParentPom, null, pom );

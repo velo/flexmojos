@@ -54,7 +54,7 @@ public class CoberturaCoverageReport
     public void initialize()
         throws InitializationException
     {
-        this.coverageProjectData = ProjectData.getGlobalProjectData();
+        this.coverageProjectData = new ProjectData();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class CoberturaCoverageReport
         ClassData classData = this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( classname ) );
         for ( Integer touch : touchs )
         {
-            classData.touch( touch );
+            classData.touch( touch, 1 );
         }
     }
 
