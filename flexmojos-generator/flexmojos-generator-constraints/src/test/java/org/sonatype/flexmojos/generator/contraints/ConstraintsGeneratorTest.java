@@ -20,9 +20,9 @@ package org.sonatype.flexmojos.generator.contraints;
 import java.io.File;
 
 import org.codehaus.plexus.PlexusTestCase;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.Generator;
+import org.sonatype.flexmojos.generator.TestGenerationRequest;
 
 public class ConstraintsGeneratorTest
     extends PlexusTestCase
@@ -42,7 +42,7 @@ public class ConstraintsGeneratorTest
     public void testGenerate()
         throws GenerationException
     {
-        GenerationRequest request = new GenerationRequest();
+        TestGenerationRequest request = new TestGenerationRequest();
         request.setTransientOutputFolder( new File( "./target/files" ) );
         request.addClass( "org.sonatype.flexmojos.generator.contraints.ConstraintDemo", null );
         request.setClassLoader( Thread.currentThread().getContextClassLoader() );

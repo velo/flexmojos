@@ -32,9 +32,9 @@ import org.apache.ws.jaxme.js.JavaSource;
 import org.apache.ws.jaxme.js.JavaSourceFactory;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.GenerationRequest;
+import org.sonatype.flexmojos.generator.Generator;
 
 import flex2.compiler.config.ConfigurationInfo;
 import flex2.compiler.config.ConfigurationValue;

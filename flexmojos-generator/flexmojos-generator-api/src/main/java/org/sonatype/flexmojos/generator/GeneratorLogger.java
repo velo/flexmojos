@@ -15,23 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.api;
+package org.sonatype.flexmojos.generator;
 
-import java.util.Map;
-
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-
-@Component( role = GeneratorFactory.class )
-public class GeneratorFactory
+public interface GeneratorLogger
 {
+    void debug( String message );
 
-    @Requirement( role = Generator.class )
-    private Map<String, Generator> generators;
+    void debug( String message, Throwable throwable );
 
-    public Generator getGenerator( String hint )
-    {
-        return generators.get( hint );
-    }
+    boolean isDebugEnabled();
 
+    void info( String message );
+
+    void info( String message, Throwable throwable );
+
+    boolean isInfoEnabled();
+
+    void warn( String message );
+
+    void warn( String message, Throwable throwable );
+
+    boolean isWarnEnabled();
+
+    void error( String message );
+
+    void error( String message, Throwable throwable );
 }

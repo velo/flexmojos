@@ -40,10 +40,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.SelectorUtils;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
-import org.sonatype.flexmojos.generator.api.GeneratorFactory;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.GenerationRequest;
+import org.sonatype.flexmojos.generator.Generator;
+import org.sonatype.flexmojos.generator.GeneratorFactory;
 
 /**
  * This goal generate code based on Java classes. 
@@ -142,7 +142,7 @@ public class SimpleGeneratorMojo
     private boolean useTideEntityTemplate;
 
     /**
-     * @component role="org.sonatype.flexmojos.generator.api.GeneratorFactory"
+     * @component role="org.sonatype.flexmojos.generator.GeneratorFactory"
      */
     private GeneratorFactory generatorFactory;
 
@@ -179,6 +179,8 @@ public class SimpleGeneratorMojo
     {
         setUp();
 
+        GeneratorLogger logger = new MavenGeneratorLogger(getLog());
+        
         GenerationRequest request = new GenerationRequest();
         request.setClasses( getFilesToGenerator() );
         request.setClassLoader( this.initializeClassLoader() );
@@ -187,6 +189,7 @@ public class SimpleGeneratorMojo
         request.setTemplates( templates );
         request.setTransientOutputFolder( baseOutputDirectory );
         request.setTranslators(translators);
+        request.setLogger(logger);
 
         ClassLoader cl = currentThread().getContextClassLoader();
 

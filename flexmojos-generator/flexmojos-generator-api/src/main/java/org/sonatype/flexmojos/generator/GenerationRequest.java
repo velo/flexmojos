@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.api;
+package org.sonatype.flexmojos.generator;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -33,25 +33,24 @@ public class GenerationRequest
     // UsingTideEntity
     private Map<String, String> extraOptions;
 
+    private GeneratorLogger logger;
+
     private File persistentOutputFolder;
 
     private Map<String, String> templates;
 
     private File transientOutputFolder;
-    
+
     private String[] translators;
 
-    public String[] getTranslators() {
-		return translators;
-	}
-
-	public void setTranslators(String[] translators) {
-		this.translators = translators;
-	}
-
-	public void addClass( String classname, File sourceJar )
+    protected void addClass( String classname, File sourceJar )
     {
         getClasses().put( classname, sourceJar );
+    }
+
+    protected void addExtraOption( String name, String value )
+    {
+        getExtraOptions().put( name, value );
     }
 
     public Map<String, File> getClasses()
@@ -77,6 +76,11 @@ public class GenerationRequest
         return extraOptions;
     }
 
+    public GeneratorLogger getLogger()
+    {
+        return logger;
+    }
+
     public File getPersistentOutputFolder()
     {
         return persistentOutputFolder;
@@ -92,39 +96,49 @@ public class GenerationRequest
         return transientOutputFolder;
     }
 
-    public void setClasses( Map<String, File> classes )
+    public String[] getTranslators()
+    {
+        return translators;
+    }
+
+    protected void setClasses( Map<String, File> classes )
     {
         this.classes = classes;
     }
 
-    public void setClassLoader( ClassLoader classLoader )
+    protected void setClassLoader( ClassLoader classLoader )
     {
         this.classLoader = classLoader;
     }
 
-    public void setExtraOptions( Map<String, String> extraOptions )
+    protected void setExtraOptions( Map<String, String> extraOptions )
     {
         this.extraOptions = extraOptions;
     }
 
-    public void setPersistentOutputFolder( File persistentOutputFolder )
+    protected void setLogger( GeneratorLogger logger )
+    {
+        this.logger = logger;
+    }
+
+    protected void setPersistentOutputFolder( File persistentOutputFolder )
     {
         this.persistentOutputFolder = persistentOutputFolder;
     }
 
-    public void setTemplates( Map<String, String> templates )
+    protected void setTemplates( Map<String, String> templates )
     {
         this.templates = templates;
     }
 
-    public void setTransientOutputFolder( File transientOutputFolder )
+    protected void setTransientOutputFolder( File transientOutputFolder )
     {
         this.transientOutputFolder = transientOutputFolder;
     }
 
-    public void addExtraOption( String name, String value )
+    protected void setTranslators( String[] translators )
     {
-        getExtraOptions().put( name, value );
+        this.translators = translators;
     }
 
 }

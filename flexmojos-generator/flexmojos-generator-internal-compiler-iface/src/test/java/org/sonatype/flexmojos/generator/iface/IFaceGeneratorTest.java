@@ -27,15 +27,15 @@ import javax.tools.ToolProvider;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.Generator;
+import org.sonatype.flexmojos.generator.TestGenerationRequest;
 
 import flex2.tools.ASDocConfiguration;
 import flex2.tools.CompcConfiguration;
 import flex2.tools.DigestRootConfiguration;
-import flex2.tools.ToolsConfiguration;
 import flex2.tools.Optimizer.OptimizerConfiguration;
+import flex2.tools.ToolsConfiguration;
 
 @SuppressWarnings( "restriction" )
 public class IFaceGeneratorTest
@@ -71,7 +71,7 @@ public class IFaceGeneratorTest
     public void testGenerate()
         throws GenerationException, IOException
     {
-        GenerationRequest request = new GenerationRequest();
+        TestGenerationRequest request = new TestGenerationRequest();
         request.setTransientOutputFolder( files );
         request.addClass( CompcConfiguration.class.getName(), null );
         request.addClass( ToolsConfiguration.class.getName(), null );
