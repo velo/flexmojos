@@ -18,27 +18,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonatype.flexmojos.generator.api;
+package org.sonatype.flexmojos.generator;
 
-public class GenerationException
-    extends Exception
+public interface Generator
 {
 
-    private static final long serialVersionUID = -4101638383564443510L;
-
-    public GenerationException()
-    {
-        super();
-    }
-
-    public GenerationException( String message, Throwable cause )
-    {
-        super( message, cause );
-    }
-
-    public GenerationException( String message )
-    {
-        super( message );
-    }
+    void generate( GenerationRequest request )
+        throws GenerationException;
 
 }

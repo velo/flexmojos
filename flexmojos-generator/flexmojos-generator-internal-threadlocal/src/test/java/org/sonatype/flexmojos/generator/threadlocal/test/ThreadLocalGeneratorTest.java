@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.Generator;
+import org.sonatype.flexmojos.generator.TestGenerationRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,7 +37,7 @@ public class ThreadLocalGeneratorTest
     public void generate()
         throws GenerationException
     {
-        GenerationRequest request = new GenerationRequest();
+        TestGenerationRequest request = new TestGenerationRequest();
         request.addClass( CLASS, new File( "target/test-classes/mxmlc.jar" ) );
         request.setTransientOutputFolder( files );
         generator.generate( request );
