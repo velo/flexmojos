@@ -32,9 +32,9 @@ import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.sonatype.flexmojos.generator.api.GenerationException;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
-import org.sonatype.flexmojos.generator.api.Generator;
+import org.sonatype.flexmojos.generator.GenerationException;
+import org.sonatype.flexmojos.generator.GenerationRequest;
+import org.sonatype.flexmojos.generator.Generator;
 
 @Component( role = Generator.class, hint = "constraints" )
 public final class ConstraintsGenerator

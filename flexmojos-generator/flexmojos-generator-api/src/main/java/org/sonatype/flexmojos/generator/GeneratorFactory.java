@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sonatype.flexmojos.generator.api;
+package org.sonatype.flexmojos.generator;
 
 import java.util.Map;
 

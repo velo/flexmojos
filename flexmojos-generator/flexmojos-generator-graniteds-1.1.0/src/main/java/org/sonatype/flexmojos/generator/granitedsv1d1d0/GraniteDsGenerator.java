@@ -49,16 +49,16 @@ import org.granite.generator.as3.reflect.JavaEnum;
 import org.granite.generator.as3.reflect.JavaInterface;
 import org.granite.generator.as3.reflect.JavaType;
 import org.granite.generator.gsp.GroovyTemplateFactory;
-import org.sonatype.flexmojos.generator.api.GenerationRequest;
+import org.sonatype.flexmojos.generator.GenerationRequest;
 
 /**
  * @author edward.yakop@gmail.com
  * @since 3.2
  */
-@Component( role = org.sonatype.flexmojos.generator.api.Generator.class, hint = "graniteds1" )
+@Component( role = org.sonatype.flexmojos.generator.Generator.class, hint = "graniteds1" )
 public final class GraniteDsGenerator
     extends AbstractLogEnabled
-    implements org.sonatype.flexmojos.generator.api.Generator
+    implements org.sonatype.flexmojos.generator.Generator
 {
     private static final String PREFIX_TO_REPLACE = "class:";
 
