@@ -111,7 +111,7 @@ public class TestCompilerMojo
      * </ul>
      * </li>
      * 
-     * @parameter default-value="all" expression="${flex.strategy}"
+     * @parameter default-value="all" expression="${flex.coverageStrategy}"
      */
     private String coverageStrategy;
 
