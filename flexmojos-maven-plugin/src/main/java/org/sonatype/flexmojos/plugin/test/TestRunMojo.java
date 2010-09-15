@@ -77,22 +77,6 @@ public class TestRunMojo
 
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elapsed: {3} sec";
 
-    private boolean failures = false;
-
-    /**
-     * Socket connect port for flex/java communication to control if flashplayer is alive
-     * 
-     * @parameter default-value="13540" expression="${flex.testControlPort}"
-     */
-    private int testControlPort;
-
-    /**
-     * Can be of type <code>&lt;argument&gt;</code>
-     * 
-     * @parameter expression="${flex.flashPlayer.command}"
-     */
-    private String flashPlayerCommand;
-
     /**
      * Can be of type <code>&lt;argument&gt;</code>
      * 
@@ -101,67 +85,11 @@ public class TestRunMojo
     private String adlCommand;
 
     /**
-     * @parameter expression="${project.build.testOutputDirectory}"
-     * @readonly
-     */
-    private File testOutputDirectory;
-
-    private Throwable executionError;
-
-    /**
-     * @parameter default-value="false" expression="${maven.test.skip}"
-     */
-    private boolean skip;
-
-    /**
-     * @parameter default-value="false" expression="${skipTests}"
-     */
-    private boolean skipTest;
-
-    /**
-     * Place where all test reports are saved
-     */
-    private File reportPath;
-
-    /**
-     * @parameter default-value="false" expression="${maven.test.failure.ignore}"
-     */
-    private boolean testFailureIgnore;
-
-    private int numTests;
-
-    private int numFailures;
-
-    private int numErrors;
-
-    private int time;
-
-    /**
      * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
      * 
      * @parameter default-value="true" expression="${flex.allowHeadlessMode}"
      */
     private boolean allowHeadlessMode;
-
-    /**
-     * Timeout for the first connection on ping Thread. That means how much time flexmojos will wait for Flashplayer be
-     * loaded at first time.
-     * 
-     * @parameter default-value="20000" expression="${flex.firstConnectionTimeout}"
-     */
-    private int firstConnectionTimeout;
-
-    /**
-     * Test timeout to wait for socket responding
-     * 
-     * @parameter default-value="2000" expression="${flex.testTimeout}"
-     */
-    private int testTimeout;
-
-    /**
-     * @component role="org.sonatype.flexmojos.test.TestRunner"
-     */
-    private TestRunner testRunner;
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -194,13 +122,6 @@ public class TestRunMojo
     private File coverageReportDestinationDir;
 
     /**
-     * The coverage report format. Can be 'html', 'xml' and/or 'summaryXml'. Default value is 'html'.
-     * 
-     * @parameter
-     */
-    private List<String> coverageReportFormat = Collections.singletonList( "html" );
-
-    /**
      * Encoding used to generate coverage report
      * 
      * @parameter expression="${project.build.sourceEncoding}"
@@ -211,6 +132,106 @@ public class TestRunMojo
      * @component
      */
     private CoverageReporterManager coverageReporterManager;
+
+    /**
+     * The coverage report format. Can be 'html', 'xml' and/or 'summaryXml'. Default value is 'html'.
+     * 
+     * @parameter
+     */
+    private List<String> coverageReportFormat = Collections.singletonList( "html" );
+
+    /**
+     * The maven compile source roots. List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> coverageSourceRoots;
+
+    /**
+     * This is only used by flexmojos integration tests
+     * 
+     * @parameter expression="${flex.coverageOverwriteSourceRoots}"
+     * @readonly
+     */
+    private String coverageOverwriteSourceRoots;
+
+    private Throwable executionError;
+
+    private boolean failures = false;
+
+    /**
+     * Timeout for the first connection on ping Thread. That means how much time flexmojos will wait for Flashplayer be
+     * loaded at first time.
+     * 
+     * @parameter default-value="20000" expression="${flex.firstConnectionTimeout}"
+     */
+    private int firstConnectionTimeout;
+
+    /**
+     * Can be of type <code>&lt;argument&gt;</code>
+     * 
+     * @parameter expression="${flex.flashPlayer.command}"
+     */
+    private String flashPlayerCommand;
+
+    private int numErrors;
+
+    private int numFailures;
+
+    private int numTests;
+
+    /**
+     * Place where all test reports are saved
+     */
+    private File reportPath;
+
+    /**
+     * @parameter default-value="false" expression="${maven.test.skip}"
+     */
+    private boolean skip;
+
+    /**
+     * @parameter default-value="false" expression="${skipTests}"
+     */
+    private boolean skipTest;
+
+    /**
+     * Socket connect port for flex/java communication to control if flashplayer is alive
+     * 
+     * @parameter default-value="13540" expression="${flex.testControlPort}"
+     */
+    private int testControlPort;
+
+    /**
+     * @parameter default-value="false" expression="${maven.test.failure.ignore}"
+     */
+    private boolean testFailureIgnore;
+
+    /**
+     * @parameter expression="${project.build.testOutputDirectory}"
+     * @readonly
+     */
+    private File testOutputDirectory;
+
+    /**
+     * @component role="org.sonatype.flexmojos.test.TestRunner"
+     */
+    private TestRunner testRunner;
+
+    /**
+     * Test timeout to wait for socket responding
+     * 
+     * @parameter default-value="2000" expression="${flex.testTimeout}"
+     */
+    private int testTimeout;
+
+    private int time;
+
+    /**
+     * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
+     */
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -234,84 +255,53 @@ public class TestRunMojo
         }
     }
 
-    /**
-     * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
-     */
+    public File[] getSourcePath()
+    {
+        List<File> files = new ArrayList<File>();
 
-    /**
-     * Write a test report to disk.
-     * 
-     * @param reportString the report to write.
-     * @return
-     * @throws MojoExecutionException
-     */
-    private TestCaseReport writeTestReport( final String reportString )
+        if ( coverageOverwriteSourceRoots == null )
+        {
+            files.addAll( PathUtil.getExistingFilesList( coverageSourceRoots ) );
+        }
+        else
+        {
+            files.addAll( PathUtil.getExistingFilesList( Arrays.asList( coverageOverwriteSourceRoots.split( "," ) ) ) );
+        }
+
+        return files.toArray( new File[0] );
+    }
+
+    private File getSwfDescriptor( File swf )
         throws MojoExecutionException
     {
-        // Parse the report.
-        TestCaseReport report;
-        try
-        {
-            report = new TestCaseReport( Xpp3DomBuilder.build( new StringReader( reportString ) ) );
-        }
-        catch ( XmlPullParserException e )
-        {
-            // should never happen
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            // should never happen
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-
-        // Get the test attributes.
-        final String name = report.getName();
-        final int numFailures = report.getFailures();
-        final int numErrors = report.getErrors();
-        final int totalProblems = numFailures + numErrors;
-
-        getLog().debug( "[MOJO] Test report of " + name );
-        getLog().debug( reportString );
-
-        // Get the output file name.
-        final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
-
+        Reader reader = null;
         FileWriter writer = null;
         try
         {
-            writer = new FileWriter( file );
-            IOUtil.copy( reportString, writer );
-            writer.flush();
+            reader =
+                new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
+
+            Map<String, String> variables = new LinkedHashMap<String, String>();
+            variables.put( "swf", swf.getName() );
+
+            InterpolationFilterReader filterReader = new InterpolationFilterReader( reader, variables );
+
+            File destFile = new File( swf.getParentFile(), FilenameUtils.getBaseName( swf.getName() ) + ".xml" );
+            writer = new FileWriter( destFile );
+
+            IOUtil.copy( filterReader, writer );
+
+            return destFile;
         }
         catch ( IOException e )
         {
-            throw new MojoExecutionException( "Unable to save test result report", e );
+            throw new MojoExecutionException( "Fail to create test air descriptor", e );
         }
         finally
         {
+            IOUtil.close( reader );
             IOUtil.close( writer );
         }
-
-        // Pretty print the document to disk.
-        // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
-        // writer.write( document );
-        // writer.close();
-
-        // First write the report, then fail the build if the test failed.
-        if ( totalProblems > 0 )
-        {
-            failures = true;
-
-            getLog().warn( "Unit test " + name + " failed." );
-
-        }
-
-        this.numTests += report.getTests();
-        this.numErrors += report.getErrors();
-        this.numFailures += report.getFailures();
-
-        return report;
     }
 
     protected void run()
@@ -422,61 +412,6 @@ public class TestRunMojo
         }
     }
 
-    /**
-     * The maven compile source roots
-     * <p>
-     * Equivalent to -compiler.source-path
-     * </p>
-     * List of path elements that form the roots of ActionScript class
-     * 
-     * @parameter expression="${project.compileSourceRoots}"
-     * @required
-     * @readonly
-     */
-    private List<String> compileSourceRoots;
-
-    public File[] getSourcePath()
-    {
-        List<File> files = new ArrayList<File>();
-
-        files.addAll( PathUtil.getExistingFilesList( compileSourceRoots ) );
-
-        return files.toArray( new File[0] );
-    }
-
-    private File getSwfDescriptor( File swf )
-        throws MojoExecutionException
-    {
-        Reader reader = null;
-        FileWriter writer = null;
-        try
-        {
-            reader =
-                new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
-
-            Map<String, String> variables = new LinkedHashMap<String, String>();
-            variables.put( "swf", swf.getName() );
-
-            InterpolationFilterReader filterReader = new InterpolationFilterReader( reader, variables );
-
-            File destFile = new File( swf.getParentFile(), FilenameUtils.getBaseName( swf.getName() ) + ".xml" );
-            writer = new FileWriter( destFile );
-
-            IOUtil.copy( filterReader, writer );
-
-            return destFile;
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Fail to create test air descriptor", e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
-            IOUtil.close( writer );
-        }
-    }
-
     protected void tearDown()
         throws MojoExecutionException, MojoFailureException
     {
@@ -510,6 +445,82 @@ public class TestRunMojo
             }
         }
 
+    }
+
+    /**
+     * Write a test report to disk.
+     * 
+     * @param reportString the report to write.
+     * @return
+     * @throws MojoExecutionException
+     */
+    private TestCaseReport writeTestReport( final String reportString )
+        throws MojoExecutionException
+    {
+        // Parse the report.
+        TestCaseReport report;
+        try
+        {
+            report = new TestCaseReport( Xpp3DomBuilder.build( new StringReader( reportString ) ) );
+        }
+        catch ( XmlPullParserException e )
+        {
+            // should never happen
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            // should never happen
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        // Get the test attributes.
+        final String name = report.getName();
+        final int numFailures = report.getFailures();
+        final int numErrors = report.getErrors();
+        final int totalProblems = numFailures + numErrors;
+
+        getLog().debug( "[MOJO] Test report of " + name );
+        getLog().debug( reportString );
+
+        // Get the output file name.
+        final File file = new File( reportPath, "TEST-" + name.replace( "::", "." ) + ".xml" );
+
+        FileWriter writer = null;
+        try
+        {
+            writer = new FileWriter( file );
+            IOUtil.copy( reportString, writer );
+            writer.flush();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to save test result report", e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+
+        // Pretty print the document to disk.
+        // final XMLWriter writer = new XMLWriter( new FileOutputStream( file ), format );
+        // writer.write( document );
+        // writer.close();
+
+        // First write the report, then fail the build if the test failed.
+        if ( totalProblems > 0 )
+        {
+            failures = true;
+
+            getLog().warn( "Unit test " + name + " failed." );
+
+        }
+
+        this.numTests += report.getTests();
+        this.numErrors += report.getErrors();
+        this.numFailures += report.getFailures();
+
+        return report;
     }
 
 }

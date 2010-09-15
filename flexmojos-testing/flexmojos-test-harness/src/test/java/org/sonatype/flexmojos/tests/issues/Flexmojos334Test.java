@@ -41,7 +41,8 @@ public class Flexmojos334Test
     public void linkReportScanner()
         throws Exception
     {
-        Verifier v = testIssue( "flexmojos-334", "-Dflex.coverage.scanner=link-report" );
+        Verifier v =
+            testIssue( "flexmojos-334", "-Dflex.coverageStrategy=link-report", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 3, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java
@@ -56,7 +57,8 @@ public class Flexmojos334Test
     public void disabledScanner()
         throws Exception
     {
-        Verifier v = testIssue( "flexmojos-334", "-Dflex.coverage.scanner=disabled" );
+        Verifier v =
+            testIssue( "flexmojos-334", "-Dflex.coverageStrategy=disabled", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 2, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java
@@ -71,7 +73,8 @@ public class Flexmojos334Test
     public void as3contentScanner()
         throws Exception
     {
-        Verifier v = testIssue( "flexmojos-334", "-Dflex.coverage.scanner=as3Content" );
+        Verifier v =
+            testIssue( "flexmojos-334", "-Dflex.coverageStrategy=as3Content", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 4, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java

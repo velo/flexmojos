@@ -203,6 +203,8 @@ public class AbstractFlexMojosTests
         verifier.getCliOptions().add( "-npu" );
         verifier.getCliOptions().add( "-B" );
         verifier.getCliOptions().add( "-X" );
+        verifier.getCliOptions().add( "-Dflex.coverage=true" );
+        verifier.getCliOptions().add( "-Dflex.coverageOverwriteSourceRoots=" + getSourceRoots() );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
         Properties sysProps = new Properties();
@@ -213,6 +215,19 @@ public class AbstractFlexMojosTests
         verifier.setAutoclean( false );
 
         return verifier;
+    }
+
+    private String getSourceRoots()
+    {
+        return getPath( "flexmojos-unittest-advancedflex" ) + "," + getPath( "flexmojos-unittest-asunit" ) + ","
+            + getPath( "flexmojos-unittest-flexunit" ) + "," + getPath( "flexmojos-unittest-flexunit4" ) + ","
+            + getPath( "flexmojos-unittest-fluint" ) + "," + getPath( "flexmojos-unittest-funit" ) + ","
+            + getPath( "flexmojos-unittest-mustella" ) + "," + getPath( "flexmojos-unittest-support" );
+    }
+
+    private String getPath( String path )
+    {
+        return PathUtil.getCanonicalPath( new File( "../flexmojos-unittest/" + path + "/src/main/flex" ) );
     }
 
     protected String getTestName()
