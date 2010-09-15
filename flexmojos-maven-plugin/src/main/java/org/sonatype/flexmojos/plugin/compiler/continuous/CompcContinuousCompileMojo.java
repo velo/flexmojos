@@ -1,7 +1,8 @@
-package org.sonatype.flexmojos.plugin.compiler;
+package org.sonatype.flexmojos.plugin.compiler.continuous;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
 
 /**
  * @since 4.0
