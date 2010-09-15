@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler;
+package org.sonatype.flexmojos.plugin.compiler.continuous;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
 
 /**
  * @since 4.0
