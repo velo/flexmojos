@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -22,6 +23,9 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.util.FileUtils;
@@ -53,7 +57,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  */
 public class AsdocMojo
     extends AbstractFlexCompilerMojo<IASDocConfiguration, AsdocMojo>
-    implements IASDocConfiguration, IPackagesConfiguration, Mojo
+    implements IASDocConfiguration, IPackagesConfiguration, Mojo, MavenReport
 {
 
     private static String getFileExtention( File file )
@@ -83,6 +87,15 @@ public class AsdocMojo
     private boolean aggregate;
 
     /**
+     * Specifies the destination directory where asdoc saves the generated HTML files.
+     * 
+     * @parameter expression="${project.reporting.outputDirectory}/asdoc"
+     * @readonly
+     * @required
+     */
+    protected File asdocOutputDirectory;
+
+    /**
      * If true, bundles the asdoc documentation for main code into a zip using the standard Asdoc Tool.
      * 
      * @parameter default-value="true" expression="${flex.asdoc.attach}"
@@ -98,6 +111,13 @@ public class AsdocMojo
      * @parameter expression="${flex.dateInFooter}"
      */
     private Boolean dateInFooter;
+
+    /**
+     * The description of the AsDoc report.
+     * 
+     * @parameter expression="${flex.description}" default-value="ASDoc API documentation."
+     */
+    private String description;
 
     /**
      * Automatically document all declared namespaces
@@ -256,6 +276,13 @@ public class AsdocMojo
     private String mainTitle;
 
     /**
+     * The name of the AsDoc report.
+     * 
+     * @parameter expression="${flex.name}" default-value="ASDocs"
+     */
+    private String name;
+
+    /**
      * The filename of bundled asdoc
      * 
      * @parameter default-value="${project.build.directory}/${project.build.finalName}-asdoc.zip"
@@ -290,6 +317,11 @@ public class AsdocMojo
      */
     private Boolean skipXsl;
 
+    /**
+     * TODO
+     * 
+     * @parameter
+     */
     private File templatePath;
 
     /**
@@ -311,6 +343,11 @@ public class AsdocMojo
         archiver.createArchive();
 
         projectHelper.attachArtifact( project, getFileExtention( output ), "asdoc", output );
+    }
+
+    public boolean canGenerateReport()
+    {
+        return PathUtil.exist( getSourcePath() );
     }
 
     @Override
@@ -349,9 +386,41 @@ public class AsdocMojo
         }
     }
 
+    public void generate( Sink sink, Locale locale )
+        throws MavenReportException
+    {
+        // Not really sure why this class loader switching
+        // is necessary. But it is.
+        Thread currentThread = Thread.currentThread();
+        ClassLoader savedCL = currentThread.getContextClassLoader();
+        try
+        {
+            currentThread.setContextClassLoader( getClass().getClassLoader() );
+            execute();
+        }
+        catch ( Exception e )
+        {
+            throw new MavenReportException( "Unable to generate report", e );
+        }
+        finally
+        {
+            currentThread.setContextClassLoader( savedCL );
+        }
+    }
+
+    public String getCategoryName()
+    {
+        return CATEGORY_PROJECT_REPORTS;
+    }
+
     public Boolean getDateInFooter()
     {
         return dateInFooter;
+    }
+
+    public String getDescription( Locale locale )
+    {
+        return description;
     }
 
     public List<String> getDocClasses()
@@ -505,11 +574,20 @@ public class AsdocMojo
         return mainTitle;
     }
 
-    public final String getOutput()
+    public String getName( Locale locale )
     {
-        File output = new File( getTargetDirectory(), "asdoc" );
-        output.mkdirs();
-        return PathUtil.getCanonicalPath( output );
+        return name;
+    }
+
+    public String getOutput()
+    {
+        asdocOutputDirectory.mkdirs();
+        return PathUtil.getCanonicalPath( asdocOutputDirectory );
+    }
+
+    public String getOutputName()
+    {
+        return "asdoc/index";
     }
 
     public String[] getPackage()
@@ -527,6 +605,11 @@ public class AsdocMojo
     public IPackagesConfiguration getPackagesConfiguration()
     {
         return this;
+    }
+
+    public File getReportOutputDirectory()
+    {
+        return asdocOutputDirectory;
     }
 
     public Boolean getRestoreBuiltinClasses()
@@ -598,6 +681,11 @@ public class AsdocMojo
         return windowTitle;
     }
 
+    public boolean isExternalReport()
+    {
+        return true;
+    }
+
     @FlexCompatibility( maxVersion = "4.0.0.3127" )
     private void makeAsdocExecutable( File templateOutput )
     {
@@ -624,5 +712,9 @@ public class AsdocMojo
                 throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
             }
         }
+    }
+
+    public void setReportOutputDirectory( File outputDirectory )
+    {
     }
 }
