@@ -20,6 +20,7 @@ import org.sonatype.flexmojos.util.OSUtils;
  * @configurator flexmojos
  * @threadSafe
  * @author Joa Ebert
+ * @requiresDirectInvocation
  */
 public class MxmlcContinuousCompileMojo
     extends MxmlcMojo

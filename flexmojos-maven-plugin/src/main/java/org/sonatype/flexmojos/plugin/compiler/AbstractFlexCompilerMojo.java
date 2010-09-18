@@ -1371,9 +1371,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Equivalent to -warnings
      * </p>
      * 
-     * @parameter expression="${flex.warnings}"
+     * @parameter expression="${flex.showWarnings}"
      */
-    private Boolean warnings;
+    private Boolean showWarnings;
 
     protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
     {
@@ -1707,6 +1707,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public Map<String, Boolean> getCompilerWarnings()
     {
+        //converts the <String, String> map into a <String, Boolean> one
         Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
 
         Set<Entry<String, String>> warns = this.compilerWarnings.entrySet();
@@ -3017,7 +3018,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public Boolean getWarnings()
     {
-        return warnings;
+        return showWarnings;
     }
 
     public Boolean getWarnInstanceOfChanges()

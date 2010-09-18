@@ -12,6 +12,7 @@ import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
  * @configurator flexmojos
  * @threadSafe
  * @author Joa Ebert
+ * @requiresDirectInvocation
  */
 public class CompcContinuousCompileMojo
     extends CompcMojo

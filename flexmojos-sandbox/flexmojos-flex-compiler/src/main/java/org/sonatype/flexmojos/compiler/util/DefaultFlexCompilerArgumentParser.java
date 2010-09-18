@@ -95,6 +95,8 @@ public class DefaultFlexCompilerArgumentParser
             }
 
             Class<?> returnType = method.getReturnType();
+            
+            String name = parseName( method.getName() );
 
             if ( value instanceof IFlexConfiguration )
             {
@@ -104,6 +106,11 @@ public class DefaultFlexCompilerArgumentParser
                 {
                     args.add( new Entry<String, List<String>>( configurationName + "." + arg.getName(), arg.getValue() ) );
                 }
+            }
+            else if ( "footer".equals( name ) )
+            {
+                args.add( new Entry<String, List<String>>( name,
+                                                           Collections.singletonList( value.toString() ) ) );
             }
             else if ( value instanceof IRuntimeSharedLibraryPath || value instanceof IRuntimeSharedLibraryPath[] )
             {
@@ -136,7 +143,7 @@ public class DefaultFlexCompilerArgumentParser
                         }
                     }
 
-                    args.add( new Entry<String, List<String>>( parseName( method.getName() ) + "=" + sb, null ) );
+                    args.add( new Entry<String, List<String>>( name + "=" + sb, null ) );
                 }
             }
             else if ( value instanceof IFlexArgument || value instanceof IFlexArgument[] )
@@ -202,7 +209,7 @@ public class DefaultFlexCompilerArgumentParser
                         }
                     }
 
-                    args.add( new Entry<String, List<String>>( parseName( method.getName() ), subArg ) );
+                    args.add( new Entry<String, List<String>>( name, subArg ) );
                 }
             }
             else if ( returnType.isArray() || value instanceof Collection<?> )
@@ -216,7 +223,6 @@ public class DefaultFlexCompilerArgumentParser
                 {
                     values = ( (Collection<?>) value ).toArray();
                 }
-                String name = parseName( method.getName() );
                 if ( values.length == 0 )
                 {
                     args.add( new Entry<String, List<String>>( name + "=", null ) );
@@ -246,7 +252,7 @@ public class DefaultFlexCompilerArgumentParser
             }
             else
             {
-                args.add( new Entry<String, List<String>>( parseName( method.getName() ) + "=" + value.toString(), null ) );
+                args.add( new Entry<String, List<String>>( name + "=" + value.toString(), null ) );
             }
 
         }
