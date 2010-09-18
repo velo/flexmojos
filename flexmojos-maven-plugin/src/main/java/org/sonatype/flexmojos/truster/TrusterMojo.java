@@ -22,6 +22,7 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 
 /**
  * Write a file entry onto flashplayer trust file
@@ -33,7 +34,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @threadSafe
  */
 public class TrusterMojo
-    extends AbstractMojo
+    extends AbstractMavenMojo
 {
 
     /**

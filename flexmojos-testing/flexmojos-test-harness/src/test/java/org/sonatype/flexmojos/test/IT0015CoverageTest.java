@@ -42,11 +42,12 @@ public class IT0015CoverageTest
     }
 
     @Test
-    public void testFlexUnitReport()
+    public void testAsdocReport()
         throws Exception
     {
         File testDir = getProject( "/concept/flexunit-example" );
-        test( testDir, "site:site" );
+        test( testDir, "org.apache.maven.plugins:maven-site-plugin:" + getProperty( "maven-site-plugin.version" )
+            + ":site" ).verifyErrorFreeLog();
         File asdoc = new File( testDir, "/target/site/asdoc" );
         assertTrue( asdoc.isDirectory() );
     }
