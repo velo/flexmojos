@@ -41,25 +41,6 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>%{flexmojos.version}</version>
         <extensions>true</extensions>
-        <dependencies>
-          <dependency>
-            <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
-            <version>%{flexmojos.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>adt</artifactId>
-            <version>3.2.0.3958</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>compiler</artifactId>
-            <version>3.2.0.3958</version>
-            <type>pom</type>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>
@@ -69,7 +50,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>air-framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>%{flex.sdk.version}</version>
       <type>pom</type>
     </dependency>
   </dependencies>

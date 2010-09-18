@@ -58,7 +58,7 @@ public class IT0091HelloWordTest
         String dir = test( getProject( "intro/hello-world-no-inherit" ), "flexmojos:asdoc" ).getBasedir();
 
         File target = new File( dir, "target" );
-        File asdoc = new File( target, "asdoc" );
+        File asdoc = new File( target, "site/asdoc" );
 
         MatcherAssert.assertThat( asdoc, FileMatcher.exists() );
     }

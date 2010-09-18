@@ -22,6 +22,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -35,8 +36,6 @@ import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.util.PathUtil;
-
-import scala.actors.threadpool.Arrays;
 
 /**
  * <p>
@@ -202,7 +201,9 @@ public class MxmlcMojo
                 }
 
                 // TODO include the original extern
-                String[] loadExterns = new String[] { getLinkReport() };
+                List<String> loadExterns = new ArrayList<String>();
+                loadExterns.add( getLinkReport() );
+                loadExterns.addAll( Arrays.asList( getLoadExterns() ) );
 
                 MxmlcMojo cfg = this.clone();
                 cfg.classifier = classifier;
@@ -210,7 +211,7 @@ public class MxmlcMojo
                 cfg.finalName = moduleFinalName;
                 if ( module.isOptimize() )
                 {
-                    cfg.loadExterns = PathUtil.getFiles( loadExterns );
+                    cfg.getCache().put( "getLoadExterns", PathUtil.getFiles( loadExterns ) );
                 }
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
