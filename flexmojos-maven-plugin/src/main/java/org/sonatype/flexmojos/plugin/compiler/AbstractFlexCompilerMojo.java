@@ -863,22 +863,29 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private File[] loadConfigs;
 
     /**
-     * An XML file containing &lt;def&gt;, &lt;pre&gt;, and &lt;ext&gt; symbols to omit from linking when building a SWF
-     * <p>
-     * Equivalent to -load-externs
-     * </p>
+     * Sets a list of artifacts to omit from linking when building an application. This is equivalent to using the
+     * <code>load-externs</code> option of the mxmlc or compc compilers.<BR>
      * Usage:
      * 
      * <pre>
      * &lt;loadExterns&gt;
-     *   &lt;loadExtern&gt;???&lt;/loadExtern&gt;
-     *   &lt;loadExtern&gt;???&lt;/loadExtern&gt;
+     *   &lt;loadExtern&gt;
+     *     &lt;groupId&gt;com.acme&lt;/groupId&gt;
+     *     &lt;artifactId&gt;flexmodule&lt;/artifactId&gt;
+     *     &lt;version&gt;1.0.0&lt;/version&gt;
+     *   &lt;/loadExtern&gt;
+     *   &lt;loadExtern&gt;
+     *     &lt;groupId&gt;org.tabajara&lt;/groupId&gt;
+     *     &lt;artifactId&gt;flexmodule&lt;/artifactId&gt;
+     *     &lt;version&gt;1.0.0&lt;/version&gt;
+     *   &lt;/loadExtern&gt;
      * &lt;/loadExterns&gt;
      * </pre>
      * 
+     * @deprecated use dependency with type "xml" and classifier "link-report"
      * @parameter
      */
-    protected File[] loadExterns;
+    protected MavenArtifact[] loadExterns;
 
     /**
      * Specifies the locale for internationalization
@@ -1707,7 +1714,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public Map<String, Boolean> getCompilerWarnings()
     {
-        //converts the <String, String> map into a <String, Boolean> one
+        // converts the <String, String> map into a <String, Boolean> one
         Map<String, Boolean> compilerWarnings = new LinkedHashMap<String, Boolean>();
 
         Set<Entry<String, String>> warns = this.compilerWarnings.entrySet();
@@ -2283,21 +2290,35 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                                                                                        configDirectory ) );
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( { "unchecked", "deprecation" } )
     public String[] getLoadExterns()
     {
-        if ( loadExterns == null )
-        {
-            Set<Artifact> dependencies = getDependencies( classifier( LINK_REPORT ), type( XML ) );
+        Collection<Artifact> artifacts = new LinkedHashSet<Artifact>();
 
-            if ( dependencies.isEmpty() )
+        Set<Artifact> dependencies = getDependencies( classifier( LINK_REPORT ), type( XML ) );
+        if ( !dependencies.isEmpty() )
+        {
+            artifacts.addAll( dependencies );
+        }
+
+        if ( loadExterns != null )
+        {
+            for ( MavenArtifact loadExtern : loadExterns )
             {
-                return null;
+                Artifact resolvedArtifact =
+                    resolve( loadExtern.getGroupId(), loadExtern.getArtifactId(), loadExtern.getVersion(), LINK_REPORT,
+                             XML );
+                artifacts.add( resolvedArtifact );
             }
 
-            return PathUtil.getCanonicalPaths( MavenUtils.getFilesSet( dependencies ) );
         }
-        return PathUtil.getCanonicalPaths( loadExterns );
+
+        if ( artifacts.isEmpty() )
+        {
+            return null;
+        }
+
+        return PathUtil.getCanonicalPaths( MavenUtils.getFilesSet( artifacts ) );
     }
 
     public String[] getLocale()

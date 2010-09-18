@@ -49,26 +49,16 @@ public class SignAirMojo
     private static String TIMESTAMP_NONE = "none";
 
     /**
-     * The type of keystore, determined by the keystore implementation.
+     * @parameter default-value="${project.build.directory}/air"
+     */
+    private File airOutput;
+
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
      * 
-     * @parameter default-value="pkcs12"
+     * @parameter expression="${flexmojos.classifier}"
      */
-    private String storetype;
-
-    /**
-     * @parameter default-value="${basedir}/src/main/resources/sign.p12"
-     */
-    private File keystore;
-
-    /**
-     * @parameter expression="${project}"
-     */
-    private MavenProject project;
-
-    /**
-     * @parameter expression="${project.build.resources}"
-     */
-    private List<Resource> resources;
+    private String classifier;
 
     /**
      * @parameter default-value="${basedir}/src/main/resources/descriptor.xml"
@@ -76,15 +66,14 @@ public class SignAirMojo
     private File descriptorTemplate;
 
     /**
-     * @parameter
-     * @required
+     * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
+     * prefer to reinvent wheel, so more work to all of us.<BR>
+     * I wonder why people has to be so creative, what is wrong with using something similar to what the rest of the
+     * world uses?! =(
+     * 
+     * @parameter expression="${flexmojos.flexbuilderCompatibility}"
      */
-    private String storepass;
-
-    /**
-     * @parameter default-value="${project.build.directory}/air"
-     */
-    private File airOutput;
+    private boolean flexBuilderCompatibility;
 
     /**
      * Include specified files in AIR package.
@@ -101,25 +90,14 @@ public class SignAirMojo
     private FileSet[] includeFileSets;
 
     /**
-     * Strip artifact version during copy of dependencies.
-     * 
-     * @parameter default-value="false"
+     * @parameter default-value="${basedir}/src/main/resources/sign.p12"
      */
-    private boolean stripVersion;
+    private File keystore;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
-     * 
-     * @parameter expression="${flexmojos.classifier}"
+     * @parameter expression="${project}"
      */
-    private String classifier;
-
-    /**
-     * The URL for the timestamp server. If 'none', no timestamp will be used.
-     * 
-     * @parameter
-     */
-    private String timestampURL;
+    private MavenProject project;
 
     /**
      * @component
@@ -129,14 +107,80 @@ public class SignAirMojo
     protected MavenProjectHelper projectHelper;
 
     /**
-     * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
-     * prefer to reinvent wheel, so more work to all of us.<BR>
-     * I wonder why people has to be so creative, what is wrong with using something similar to what the rest of the
-     * world uses?! =(
-     * 
-     * @parameter expression="${flexmojos.flexbuilderCompatibility}"
+     * @parameter expression="${project.build.resources}"
      */
-    private boolean flexBuilderCompatibility;
+    private List<Resource> resources;
+
+    /**
+     * @parameter
+     * @required
+     */
+    private String storepass;
+
+    /**
+     * The type of keystore, determined by the keystore implementation.
+     * 
+     * @parameter default-value="pkcs12"
+     */
+    private String storetype;
+
+    /**
+     * Strip artifact version during copy of dependencies.
+     * 
+     * @parameter default-value="false"
+     */
+    private boolean stripVersion;
+
+    /**
+     * The URL for the timestamp server. If 'none', no timestamp will be used.
+     * 
+     * @parameter
+     */
+    private String timestampURL;
+
+    private void addSourceWithPath( AIRPackager airPackager, String directory, String includePath )
+        throws MojoFailureException
+    {
+        if ( includePath == null )
+        {
+            throw new MojoFailureException( "Cannot include a null file" );
+        }
+
+        // get file from output directory to allow filtered resources
+        File includeFile = new File( directory, includePath );
+        if ( !includeFile.isFile() )
+        {
+            throw new MojoFailureException( "Include files only accept files as parameters: " + includePath );
+        }
+
+        // don't include the app descriptor or the cert
+        if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
+            || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+        {
+            return;
+        }
+
+        getLog().debug( "  adding source " + includeFile + " with path " + includePath );
+        airPackager.addSourceWithPath( includeFile, includePath );
+    }
+
+    private void appendArtifacts( AIRPackager airPackager, Collection<Artifact> deps )
+    {
+        for ( Artifact artifact : deps )
+        {
+            if ( SWF.equals( artifact.getType() ) )
+            {
+                File source = artifact.getFile();
+                String path = source.getName();
+                if ( stripVersion && path.contains( artifact.getVersion() ) )
+                {
+                    path = path.replace( "-" + artifact.getVersion(), "" );
+                }
+                getLog().debug( "  adding source " + source + " with path " + path );
+                airPackager.addSourceWithPath( source, path );
+            }
+        }
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -269,50 +313,6 @@ public class SignAirMojo
         {
             airPackager.close();
         }
-    }
-
-    private void appendArtifacts( AIRPackager airPackager, Collection<Artifact> deps )
-    {
-        for ( Artifact artifact : deps )
-        {
-            if ( SWF.equals( artifact.getType() ) )
-            {
-                File source = artifact.getFile();
-                String path = source.getName();
-                if ( stripVersion && path.contains( artifact.getVersion() ) )
-                {
-                    path = path.replace( "-" + artifact.getVersion(), "" );
-                }
-                getLog().debug( "  adding source " + source + " with path " + path );
-                airPackager.addSourceWithPath( source, path );
-            }
-        }
-    }
-
-    private void addSourceWithPath( AIRPackager airPackager, String directory, String includePath )
-        throws MojoFailureException
-    {
-        if ( includePath == null )
-        {
-            throw new MojoFailureException( "Cannot include a null file" );
-        }
-
-        // get file from output directory to allow filtered resources
-        File includeFile = new File( directory, includePath );
-        if ( !includeFile.isFile() )
-        {
-            throw new MojoFailureException( "Include files only accept files as parameters: " + includePath );
-        }
-
-        // don't include the app descriptor or the cert
-        if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
-            || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
-        {
-            return;
-        }
-
-        getLog().debug( "  adding source " + includeFile + " with path " + includePath );
-        airPackager.addSourceWithPath( includeFile, includePath );
     }
 
     private File getAirDescriptor()

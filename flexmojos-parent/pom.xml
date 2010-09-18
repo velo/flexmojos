@@ -360,12 +360,6 @@
         <version>${flex.sdk.version}</version>
         <type>pom</type>
       </dependency>
-      <dependency>
-        <groupId>com.adobe.flex.compiler</groupId>
-        <artifactId>adt</artifactId>
-        <version>${flex.sdk.version}</version>
-        <scope>provided</scope>
-      </dependency>
 
       <dependency>
         <groupId>org.apache.maven</groupId>
