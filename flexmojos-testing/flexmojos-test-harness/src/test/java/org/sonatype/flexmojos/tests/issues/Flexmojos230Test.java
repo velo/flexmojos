@@ -1,8 +1,11 @@
 package org.sonatype.flexmojos.tests.issues;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+
 import java.io.File;
 
-import org.testng.Assert;
+import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
 public class Flexmojos230Test
@@ -14,20 +17,20 @@ public class Flexmojos230Test
         throws Exception
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=false" ).getBasedir();
-        File asdoc = new File( baseDir, "target/asdoc" );
-        Assert.assertFalse( asdoc.exists() );
+        File asdoc = new File( baseDir, "target/site/asdoc" );
+        assertThat( asdoc, not( FileMatcher.exists() ) );
 
-        File moduleA = new File( baseDir, "moduleA/target/asdoc" );
-        Assert.assertTrue( moduleA.exists() );
+        File moduleA = new File( baseDir, "moduleA/target/site/asdoc" );
+        assertThat( moduleA, FileMatcher.exists() );
 
-        File moduleB = new File( baseDir, "moduleB/target/asdoc" );
-        Assert.assertTrue( moduleB.exists() );
+        File moduleB = new File( baseDir, "moduleB/target/site/asdoc" );
+        assertThat( moduleB, FileMatcher.exists() );
 
         File aClass = new File( moduleA, "AClass.html" );
-        Assert.assertTrue( aClass.exists() );
+        assertThat( aClass, FileMatcher.exists() );
 
         File bClass = new File( moduleB, "BClass.html" );
-        Assert.assertTrue( bClass.exists() );
+        assertThat( bClass, FileMatcher.exists() );
 
     }
 
@@ -36,20 +39,20 @@ public class Flexmojos230Test
         throws Exception
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=true" ).getBasedir();
-        File target = new File( baseDir, "target" );
-        Assert.assertTrue( target.exists() );
+        File target = new File( baseDir, "target/site" );
+        assertThat( target, FileMatcher.exists() );
 
         File aClass = new File( target, "asdoc/AClass.html" );
-        Assert.assertTrue( aClass.exists() );
+        assertThat( aClass, FileMatcher.exists() );
 
         File bClass = new File( target, "asdoc/BClass.html" );
-        Assert.assertTrue( bClass.exists() );
+        assertThat( bClass, FileMatcher.exists() );
 
-        File moduleA = new File( baseDir, "moduleA/target/asdoc" );
-        Assert.assertFalse( moduleA.exists() );
+        File moduleA = new File( baseDir, "moduleA/target/site/asdoc" );
+        assertThat( moduleA, not( FileMatcher.exists() ) );
 
-        File moduleB = new File( baseDir, "moduleB/target/asdoc" );
-        Assert.assertFalse( moduleB.exists() );
+        File moduleB = new File( baseDir, "moduleB/target/site/asdoc" );
+        assertThat( moduleB, not( FileMatcher.exists() ) );
     }
 
 }
