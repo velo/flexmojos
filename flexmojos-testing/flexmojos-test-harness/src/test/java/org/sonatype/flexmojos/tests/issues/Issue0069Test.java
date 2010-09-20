@@ -56,7 +56,7 @@ public class Issue0069Test
 
         String cfg = IOUtil.toString( new FileReader( mavenCfg ) );
 
-        assertTrue( "flexmojos should write trust localtion", cfg.contains( swf.getAbsolutePath() ) );
+        assertTrue( "flexmojos should write trust localtion", cfg.contains( swf.getParentFile().getAbsolutePath() ) );
     }
 
 }

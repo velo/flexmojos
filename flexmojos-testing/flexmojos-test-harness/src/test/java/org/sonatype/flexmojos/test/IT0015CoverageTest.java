@@ -46,8 +46,7 @@ public class IT0015CoverageTest
         throws Exception
     {
         File testDir = getProject( "/concept/flexunit-example" );
-        test( testDir, "org.apache.maven.plugins:maven-site-plugin:" + getProperty( "maven-site-plugin.version" )
-            + ":site" ).verifyErrorFreeLog();
+        test( testDir, siteGoal() ).verifyErrorFreeLog();
         File asdoc = new File( testDir, "/target/site/asdoc" );
         assertTrue( asdoc.isDirectory() );
     }

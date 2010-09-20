@@ -143,8 +143,9 @@
             <xml>org.apache.maven.plugins:maven-install-plugin:2.3.1:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-resources-plugin:2.4.3:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-site-plugin:${maven-site-plugin.version}:maven-plugin</xml>
-            <xml>org.apache.maven.doxia:doxia-sink-api:1.0</xml>
             <xml>org.apache.maven.plugins:maven-source-plugin:2.0.4</xml>
+            <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.2:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.1.2:maven-plugin</xml>
 
             <xml>net.sourceforge.cobertura:cobertura:1.9.4.1</xml>
 

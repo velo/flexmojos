@@ -32,7 +32,7 @@ public class Issue0017Test
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0017" );
-        test( testDir, "site", "-o" );
+        test( testDir, siteGoal(), "-o" );
 
         File asdoc = new File( testDir, "target/site/asdoc" );
         assertTrue( "asdoc directory must exist", asdoc.isDirectory() );

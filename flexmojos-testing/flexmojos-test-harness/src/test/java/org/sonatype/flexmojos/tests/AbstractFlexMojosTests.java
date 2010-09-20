@@ -406,4 +406,10 @@ public class AbstractFlexMojosTests
         }
     }
 
+    protected String siteGoal()
+    {
+        return "org.apache.maven.plugins:maven-site-plugin:" + getProperty( "maven-site-plugin.version" )
+            + ":site";
+    }
+
 }
