@@ -345,7 +345,7 @@ public class AbstractFlexMojosTests
     protected Xpp3Dom getFlexConfigReport( Verifier verifier, String artifactId, String version )
     {
         File configReport =
-            new File( verifier.getBasedir(), "target/" + artifactId + "-" + version + "-config-report.xml" );
+            new File( verifier.getBasedir(), "target/" + artifactId + "-" + version + "-configs.xml" );
         Xpp3Dom configReportDOM;
         try
         {
