@@ -2715,7 +2715,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         // get all the rsl dependencies
         Set<Artifact> dependencies = getDependencies( not( GLOBAL_MATCHER ),//
-                                                      anyOf( scope( RSL ), scope( CACHING ), scope( EXTERNAL ) ) );
+                                                      anyOf( scope( RSL ), scope( CACHING ) ) );
 
         if ( dependencies.isEmpty() )
         {
