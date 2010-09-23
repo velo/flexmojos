@@ -212,7 +212,7 @@ public class CompcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !( PathUtil.exist( getSourcePath() ) || getIncludeFile() != null ) )
+        if ( !( PathUtil.existAny( getSourcePath() ) || getIncludeFile() != null ) )
         {
             getLog().warn( "Skipping compiler, nothing available to be included on swc." );
             return;
@@ -279,7 +279,7 @@ public class CompcMojo
 
             for ( final String path : includeFiles.getIncludes() )
             {
-                final File file = PathUtil.getCanonicalFile( path, getResourcesTargetDirectories() );
+                final File file = PathUtil.getFile( path, getResourcesTargetDirectories() );
 
                 files.add( new IIncludeFile()
                 {
@@ -311,7 +311,7 @@ public class CompcMojo
                 {
                     public String path()
                     {
-                        return PathUtil.getCanonicalFile( file, scan.getBasedir() ).getAbsolutePath();
+                        return PathUtil.getFile( file, scan.getBasedir() ).getAbsolutePath();
                     }
 
                     public String name()
@@ -375,7 +375,7 @@ public class CompcMojo
 
                 public String path()
                 {
-                    return PathUtil.getCanonicalFile( ss.getName(), getResourcesTargetDirectories() ).getAbsolutePath();
+                    return PathUtil.getFile( ss.getName(), getResourcesTargetDirectories() ).getAbsolutePath();
                 }
 
                 public String name()
