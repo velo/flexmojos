@@ -238,7 +238,7 @@ public abstract class AbstractMavenMojo
         for ( File file : files )
         {
             FileSet fs = new FileSet();
-            fs.setDirectory( PathUtil.getCanonicalPath( file ) );
+            fs.setDirectory( PathUtil.getPath( file ) );
             fs.addInclude( "**/*.as" );
             fs.addInclude( "**/*.mxml" );
             sets.add( fs );
@@ -284,7 +284,7 @@ public abstract class AbstractMavenMojo
             }
             else
             {
-                File dir = PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() );
+                File dir = PathUtil.getFile( pattern.getDirectory(), getBasedir() );
                 if ( !ArrayUtils.contains( directories, dir ) )
                 {
                     throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
@@ -317,19 +317,19 @@ public abstract class AbstractMavenMojo
                 for ( File dir : directories )
                 {
                     DirectoryScanner scan = scan( pattern, dir );
-                    includedFiles.addAll( PathUtil.getCanonicalFiles( scan.getIncludedFiles(), dir ) );
+                    includedFiles.addAll( PathUtil.getFiles( scan.getIncludedFiles(), dir ) );
                 }
             }
             else
             {
-                File dir = PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() );
+                File dir = PathUtil.getFile( pattern.getDirectory(), getBasedir() );
                 if ( !directories.contains( dir ) )
                 {
                     throw new IllegalArgumentException( "Pattern does point to an invalid directory: "
                         + dir.getAbsolutePath() );
                 }
 
-                includedFiles.addAll( PathUtil.getCanonicalFiles( scan( pattern, dir ).getIncludedFiles(), dir ) );
+                includedFiles.addAll( PathUtil.getFiles( scan( pattern, dir ).getIncludedFiles(), dir ) );
             }
         }
 
@@ -430,7 +430,7 @@ public abstract class AbstractMavenMojo
     public File getOutputDirectory()
     {
         outputDirectory.mkdirs();
-        return PathUtil.getCanonicalFile( outputDirectory );
+        return PathUtil.getFile( outputDirectory );
     }
 
     /**
@@ -449,7 +449,7 @@ public abstract class AbstractMavenMojo
             File directory;
             if ( resource.getTargetPath() != null )
             {
-                directory = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
+                directory = PathUtil.getFile( resource.getTargetPath(), getBasedir() );
             }
             else
             {
@@ -468,7 +468,7 @@ public abstract class AbstractMavenMojo
     public File getTargetDirectory()
     {
         targetDirectory.mkdirs();
-        return PathUtil.getCanonicalFile( targetDirectory );
+        return PathUtil.getFile( targetDirectory );
     }
 
     // TODO lazy load here would be awesome
@@ -536,7 +536,7 @@ public abstract class AbstractMavenMojo
 
     protected DirectoryScanner scan( FileSet pattern )
     {
-        return scan( pattern, PathUtil.getCanonicalFile( pattern.getDirectory(), getBasedir() ) );
+        return scan( pattern, PathUtil.getFile( pattern.getDirectory(), getBasedir() ) );
     }
 
     protected DirectoryScanner scan( PatternSet pattern, File directory )
@@ -566,11 +566,11 @@ public abstract class AbstractMavenMojo
         File dir;
         if ( resource.getTargetPath() != null )
         {
-            dir = PathUtil.getCanonicalFile( resource.getTargetPath(), getBasedir() );
+            dir = PathUtil.getFile( resource.getTargetPath(), getBasedir() );
         }
         else
         {
-            dir = PathUtil.getCanonicalFile( resource.getDirectory(), getBasedir() );
+            dir = PathUtil.getFile( resource.getDirectory(), getBasedir() );
         }
 
         return scan( resource, dir );

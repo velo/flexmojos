@@ -251,7 +251,7 @@ public class TestCompilerMojo
             return;
         }
 
-        if ( !PathUtil.exist( testCompileSourceRoots ) )
+        if ( !PathUtil.existAll( testCompileSourceRoots ) )
         {
             getLog().warn( "Skipping compiler, test source path doesn't exist." );
             return;
@@ -591,7 +591,7 @@ public class TestCompilerMojo
     @Override
     public String getOutput()
     {
-        return PathUtil.getCanonicalPath( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
+        return PathUtil.getPath( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
     }
 
     @Override

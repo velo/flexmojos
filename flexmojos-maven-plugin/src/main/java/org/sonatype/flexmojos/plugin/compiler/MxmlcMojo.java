@@ -118,7 +118,7 @@ public class MxmlcMojo
     {
         if ( isUpdateSecuritySandbox() )
         {
-            truster.updateSecuritySandbox( PathUtil.getCanonicalFile( cfg.getConfiguration().getOutput() ) );
+            truster.updateSecuritySandbox( PathUtil.getFile( cfg.getConfiguration().getOutput() ) );
         }
         return compiler.compileSwf( cfg, synchronize );
     }
@@ -126,7 +126,7 @@ public class MxmlcMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !PathUtil.exist( getSourcePath() ) )
+        if ( !PathUtil.existAny( getSourcePath() ) )
         {
             getLog().warn( "Skipping compiler, source path doesn't exist. " + Arrays.toString( getSourcePath() ) );
             return;

@@ -27,7 +27,7 @@ public class MavenNamespace
 
     public String manifest()
     {
-        return PathUtil.getCanonicalPath( manifest );
+        return PathUtil.getPath( manifest );
     }
 
     public String uri()
