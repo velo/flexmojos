@@ -44,7 +44,7 @@
   <inceptionYear>2008</inceptionYear>
 
   <prerequisites>
-    <maven>3.0</maven>
+    <maven>${maven.version}</maven>
   </prerequisites>
 
   <distributionManagement>
@@ -65,7 +65,7 @@
   <properties>
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>4.5.0.17077</flex.sdk.version>
-    <maven.version>3.0-RC1</maven.version>
+    <maven.version>3.0-RC2</maven.version>
     <maven-site-plugin.version>3.0-beta-3-SNAPSHOT</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0.RC6</apparat.version>
