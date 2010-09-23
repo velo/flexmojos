@@ -20,7 +20,7 @@ package org.sonatype.flexmojos.plugin.air;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.util.PathUtil.getCanonicalPath;
+import static org.sonatype.flexmojos.util.PathUtil.getPath;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -171,8 +171,8 @@ public class SignAirMojo
         }
 
         // don't include the app descriptor or the cert
-        if ( getCanonicalPath( includeFile ).equals( getCanonicalPath( this.descriptorTemplate ) )
-            || getCanonicalPath( includeFile ).equals( getCanonicalPath( this.keystore ) ) )
+        if ( getPath( includeFile ).equals( getPath( this.descriptorTemplate ) )
+            || getPath( includeFile ).equals( getPath( this.keystore ) ) )
         {
             return;
         }
@@ -367,7 +367,7 @@ public class SignAirMojo
                 str =
                     str.replace( "[This value will be overwritten by Flash Builder in the output app.xml]",
                                  output.getName() );
-                FileUtils.fileWrite( PathUtil.getCanonicalPath( dest ), str );
+                FileUtils.fileWrite( PathUtil.getPath( dest ), str );
             }
         }
         catch ( IOException e )

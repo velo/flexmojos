@@ -222,7 +222,7 @@ public abstract class AbstractOptimizerMojo
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getCanonicalPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
+        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
                                                                                        configDirectory ) );
     }
 
@@ -232,8 +232,8 @@ public abstract class AbstractOptimizerMojo
         IOptimizerConfiguration cfg = mock( IOptimizerConfiguration.class, RETURNS_NULL );
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
-        when( cfg.getInput() ).thenReturn( PathUtil.getCanonicalPath( input ) );
-        when( cfg.getOutput() ).thenReturn( PathUtil.getCanonicalPath( output ) );
+        when( cfg.getInput() ).thenReturn( PathUtil.getPath( input ) );
+        when( cfg.getOutput() ).thenReturn( PathUtil.getPath( output ) );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( compilerCfg.getKeepAs3Metadata() ).thenReturn( getKeepAs3Metadata() );
         return cfg;
@@ -241,13 +241,13 @@ public abstract class AbstractOptimizerMojo
 
     public String getOutput()
     {
-        return PathUtil.getCanonicalPath( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
+        return PathUtil.getPath( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
     }
 
     protected File optimize()
         throws MojoFailureException, MojoExecutionException
     {
-        File input = PathUtil.getCanonicalFile( getInput() );
+        File input = PathUtil.getFile( getInput() );
         double originalSize = input.length();
         {
             getLog().debug( "Backuping original file " + input );
@@ -283,7 +283,7 @@ public abstract class AbstractOptimizerMojo
 
         {
             getLog().debug( "Placing optimized file on target folder" );
-            final File output = PathUtil.getCanonicalFile( getOutput() );
+            final File output = PathUtil.getFile( getOutput() );
             try
             {
                 FileUtils.copyFile( input, output );

@@ -172,10 +172,10 @@ public class RSLCreatorMojo
         }
         catch ( Exception e )
         {
-            throw new MavenRuntimeException( e.getMessage() + ": " + PathUtil.getCanonicalPath( originalFile ), e );
+            throw new MavenRuntimeException( e.getMessage() + ": " + PathUtil.getPath( originalFile ), e );
         }
 
-        return PathUtil.getCanonicalPath( bkpOriginalFile );
+        return PathUtil.getPath( bkpOriginalFile );
     }
 
 }

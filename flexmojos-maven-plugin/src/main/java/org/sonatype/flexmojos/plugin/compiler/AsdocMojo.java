@@ -364,7 +364,7 @@ public class AsdocMojo
 
     public boolean canGenerateReport()
     {
-        return PathUtil.exist( getSourcePath() );
+        return PathUtil.existAny( getSourcePath() );
     }
 
     @Override
@@ -383,7 +383,7 @@ public class AsdocMojo
             return;
         }
 
-        if ( !PathUtil.exist( getSourcePath() ) )
+        if ( !PathUtil.existAny( getSourcePath() ) )
         {
             getLog().warn( "Skipping asdoc, source path doesn't exist." );
             return;
@@ -488,7 +488,7 @@ public class AsdocMojo
 
     public String getExamplesPath()
     {
-        return PathUtil.getCanonicalPath( examplesPath );
+        return PathUtil.getPath( examplesPath );
     }
 
     public List<String> getExcludeClasses()
@@ -599,7 +599,7 @@ public class AsdocMojo
     public String getOutput()
     {
         asdocOutputDirectory.mkdirs();
-        return PathUtil.getCanonicalPath( asdocOutputDirectory );
+        return PathUtil.getPath( asdocOutputDirectory );
     }
 
     public String getOutputName()
@@ -669,7 +669,7 @@ public class AsdocMojo
     {
         if ( templatePath != null )
         {
-            return PathUtil.getCanonicalPath( templatePath );
+            return PathUtil.getPath( templatePath );
         }
 
         File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
@@ -690,7 +690,7 @@ public class AsdocMojo
 
         makeAsdocExecutable( templateOutput );
 
-        return PathUtil.getCanonicalPath( templateOutput );
+        return PathUtil.getPath( templateOutput );
     }
 
     public String getWindowTitle()

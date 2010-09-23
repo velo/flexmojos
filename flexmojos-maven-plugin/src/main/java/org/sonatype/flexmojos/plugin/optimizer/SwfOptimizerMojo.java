@@ -93,7 +93,7 @@ public class SwfOptimizerMojo
             projectHelper.attachArtifact( project, SWF, originalClassifierName, bkpOriginalFile );
         }
 
-        return PathUtil.getCanonicalPath( bkpOriginalFile );
+        return PathUtil.getPath( bkpOriginalFile );
     }
 
     protected File getOriginalSwfFile()
