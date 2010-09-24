@@ -1429,8 +1429,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
         String output =
-            PathUtil.getPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(),
-                                                                      desiredRbSwc.getClassifier() );
+            PathUtil.getPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
         when( cfg.getOutput() ).thenReturn( output );
 
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
@@ -1755,7 +1754,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String[] getContributor()
     {
-        if ( this.metadata != null )
+        if ( this.metadata != null && this.metadata.getContributor() != null )
         {
             return this.metadata.getContributor();
         }
@@ -1777,7 +1776,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String[] getCreator()
     {
-        if ( this.metadata != null )
+        if ( this.metadata != null && this.metadata.getCreator() != null )
         {
             return this.metadata.getCreator();
         }
@@ -2158,7 +2157,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String[] getLanguage()
     {
-        if ( this.metadata != null )
+        if ( this.metadata != null && this.metadata.getLanguage() != null )
         {
             return this.metadata.getLanguage();
         }
@@ -2303,8 +2302,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
-                                                                                       configDirectory ) );
+        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
     }
 
     @SuppressWarnings( { "unchecked", "deprecation" } )
