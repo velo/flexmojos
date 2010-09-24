@@ -13,7 +13,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.0-alpha-6</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -228,9 +228,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk</developerConnection>
-    <url>https://sventon.sonatype.org/repos/flexmojos/list/</url>
+    <connection>scm:svn:http://svn.sonatype.org/flexmojos/tags/flexmojos-4.0-alpha-6/trunk</connection>
+    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/tags/flexmojos-4.0-alpha-6/trunk</developerConnection>
+    <url>https://sventon.sonatype.org/repos/flexmojos/list/tags/flexmojos-4.0-alpha-6/trunk</url>
   </scm>
 
   <mailingLists>
