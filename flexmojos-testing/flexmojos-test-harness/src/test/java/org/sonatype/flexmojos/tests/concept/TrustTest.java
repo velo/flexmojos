@@ -37,12 +37,11 @@ public class TrustTest
             mavenCfg.delete();
         }
 
-        standardConceptTester( "flashplayertrust" );
+        String basedir = standardConceptTester( "flashplayertrust" ).getBasedir();
 
         String cfg = IOUtil.toString( new FileReader( mavenCfg ) );
 
-        assertTrue( "flexmojos should write trust localtion", cfg.contains( "file1.swf" ) );
-        assertTrue( "flexmojos should write trust localtion", cfg.contains( "something_else.zip" ) );
+        assertTrue( "flexmojos should write trust localtion", cfg.contains( basedir ) );
     }
 
 }
