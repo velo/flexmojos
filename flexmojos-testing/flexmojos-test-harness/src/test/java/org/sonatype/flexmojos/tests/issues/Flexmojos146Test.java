@@ -33,7 +33,7 @@ public class Flexmojos146Test
 {
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test( enabled = false )
     public void attachSources()
         throws Exception
     {

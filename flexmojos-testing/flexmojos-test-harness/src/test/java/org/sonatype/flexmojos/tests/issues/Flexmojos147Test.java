@@ -31,7 +31,7 @@ public class Flexmojos147Test
 {
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test( enabled = false )
     public void m2Home()
         throws Exception
     {
