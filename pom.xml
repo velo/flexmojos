@@ -43,9 +43,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/</developerConnection>
-    <url>http://svn.sonatype.org/flexmojos/trunk</url>
+    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
+    <url>http://github.com/Flexmojos/flexmojos</url>
   </scm>
 
   <build>
