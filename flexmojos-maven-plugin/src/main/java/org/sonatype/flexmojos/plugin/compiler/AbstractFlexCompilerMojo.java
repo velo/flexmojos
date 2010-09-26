@@ -22,7 +22,9 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
@@ -361,7 +363,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     /**
      * Default value of resourceBundleList used when it is not defined
      * 
-     * @parameter default-value="${project.build.directory}/${project.build.finalName}-rb.properties"
+     * @parameter default-value= "${project.build.directory}/${project.build.finalName}-rb.properties"
      * @readonly
      */
     private File defaultResourceBundleList;
@@ -662,6 +664,15 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean headlessServer;
 
     /**
+     * EXTREMELLY UN-ADVISIBLE. When true, flexmojos will check if the compiler and the framework versions match.
+     * Usually, you must use the same compiler and framework versions. Set this to true to avoid this check. EXTREMELLY
+     * UN-ADVISIBLE.
+     * 
+     * @parameter default-value="false" expression="${flex.ignoreVersionIssues}"
+     */
+    private boolean ignoreVersionIssues;
+
+    /**
      * Only include inheritance dependencies of classes specified with include-classes.
      * <p>
      * Equivalent to -include-inheritance-dependencies-only
@@ -820,7 +831,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     /**
      * When true flexmojos will automatically lookup for licenses folling this documentation
-     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03.html#140756
+     * http://livedocs.adobe.com/flex/3/html/help.html?content=05B_Security_03 .html#140756
      * 
      * @parameter default-value="true" expression="${flex.licenseLocalLookup}"
      */
@@ -1240,6 +1251,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private File services;
 
     /**
+     * Toggle the display of warnings
+     * <p>
+     * Equivalent to -warnings
+     * </p>
+     * 
+     * @parameter expression="${flex.showWarnings}"
+     */
+    private Boolean showWarnings;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.signature-directory
@@ -1388,16 +1409,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.verifyDigests}"
      */
     private Boolean verifyDigests;
-
-    /**
-     * Toggle the display of warnings
-     * <p>
-     * Equivalent to -warnings
-     * </p>
-     * 
-     * @parameter expression="${flex.showWarnings}"
-     */
-    private Boolean showWarnings;
 
     protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
     {
@@ -2037,6 +2048,42 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getFramework()
     {
         return framework;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected String getFrameworkVersion()
+    {
+        Artifact dep = null;
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "playerglobal" ), type( "swc" ) );
+        }
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airglobal" ), type( "swc" ) );
+        }
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
+        }
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "air-framework" ), type( "pom" ) );
+        }
+        if ( dep == null )
+        {
+            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
+        }
+        if ( dep == null )
+        {
+            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
+        }
+
+        if ( dep == null )
+        {
+            return null;
+        }
+        return dep.getVersion();
     }
 
     public Boolean getGenerateAbstractSyntaxTree()
@@ -2701,10 +2748,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public final String[] getRuntimeSharedLibraries()
     {
-        // Set<Artifact> dependencies = getDependencies( not( GLOBAL_MATCHER ),//
+        // Set<Artifact> dependencies = getDependencies( not( GLOBAL_MATCHER
+        // ),//
         // anyOf( scope( RSL ), scope( CACHING ), scope( EXTERNAL ) ) );
         //
-        // return PathUtil.getCanonicalPath( MavenUtils.getFiles( dependencies ) );
+        // return PathUtil.getCanonicalPath( MavenUtils.getFiles( dependencies )
+        // );
         return null;
     }
 
@@ -3194,4 +3243,34 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         // nothing new was found.
         return required;
     }
+
+    public void versionCheck()
+    {
+        if ( ignoreVersionIssues )
+        {
+            return;
+        }
+
+        String compilerVersion = getCompilerVersion();
+        String frameworkVersion = getFrameworkVersion();
+        if ( compilerVersion == null || frameworkVersion == null )
+        {
+            // ignore, missing version
+            return;
+        }
+
+        if ( !compilerVersion.equals( frameworkVersion ) )
+        {
+            String msg =
+                "Flex compiler and flex framework versions doesn't match. Compiler: '"
+                    + compilerVersion
+                    + "' - Framework: '"
+                    + frameworkVersion
+                    + "'.\n"
+                    + " You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc.\n"
+                    + "If you prefer fixing it instead of ignoring, take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
+            throw new IllegalStateException( msg );
+        }
+    }
+
 }
