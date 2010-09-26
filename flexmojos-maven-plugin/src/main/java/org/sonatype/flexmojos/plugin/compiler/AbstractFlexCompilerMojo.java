@@ -2216,6 +2216,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return this.metadata.getLanguage();
         }
 
+        if ( getLocale() == null || getLocale().length == 0 )
+        {
+            return null;
+        }
+
         return getLocale();
     }
 
