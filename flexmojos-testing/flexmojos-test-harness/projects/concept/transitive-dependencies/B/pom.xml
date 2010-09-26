@@ -16,7 +16,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>air-framework</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>%{flex.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
