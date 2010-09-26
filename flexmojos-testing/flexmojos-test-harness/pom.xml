@@ -146,6 +146,10 @@
             <xml>org.apache.maven.plugins:maven-source-plugin:2.0.4</xml>
             <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.2:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.1.2:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-archetype-plugin:2.0-alpha-5:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-surefire-plugin:2.5:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-compiler-plugin:2.3.2:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-war-plugin:2.1:maven-plugin</xml>
 
             <xml>net.sourceforge.cobertura:cobertura:1.9.4.1</xml>
 
