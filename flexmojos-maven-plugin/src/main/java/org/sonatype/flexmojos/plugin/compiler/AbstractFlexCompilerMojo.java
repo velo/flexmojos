@@ -1716,6 +1716,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return this;
     }
 
+    protected File getCompilerOutput()
+    {
+        File output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
+        output.getParentFile().mkdirs();
+        return output;
+    }
+
     public String getCompilerVersion()
     {
         Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
@@ -2601,9 +2608,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getOutput()
     {
-        File output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
-        output.getParentFile().mkdirs();
-
+        File output = getCompilerOutput();
         if ( getClassifier() != null )
         {
             projectHelper.attachArtifact( project, getProjectType(), getClassifier(), output );
