@@ -112,6 +112,11 @@ public class DefaultFlexCompilerArgumentParser
                 args.add( new Entry<String, List<String>>( name,
                                                            Collections.singletonList( value.toString() ) ) );
             }
+            else if ( "description".equals( name ) )
+            {
+                args.add( new Entry<String, List<String>>( name,
+                                Collections.singletonList( value.toString() ) ) );
+            }
             else if ( value instanceof IRuntimeSharedLibraryPath || value instanceof IRuntimeSharedLibraryPath[] )
             {
                 IRuntimeSharedLibraryPath[] values;
