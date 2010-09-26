@@ -228,9 +228,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/trunk</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/trunk</developerConnection>
-    <url>https://sventon.sonatype.org/repos/flexmojos/list/</url>
+    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
+    <url>http://github.com/Flexmojos/flexmojos</url>
   </scm>
 
   <mailingLists>
