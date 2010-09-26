@@ -62,7 +62,7 @@ public class ArchetypesTest
             new String[] { "-DarchetypeGroupId=org.sonatype.flexmojos",
                 "-DarchetypeArtifactId=flexmojos-archetypes-" + kind, "-DarchetypeVersion=" + getFlexmojosVersion(),
                 "-DgroupId=org.sonatype.flexmojos.it", "-DartifactId=" + artifactId, "-Dversion=1.0-SNAPSHOT" };
-        test( baseTestDir, "org.apache.maven.plugins:maven-archetype-plugin:2.0-alpha-4:create", args );
+        test( baseTestDir, "org.apache.maven.plugins:maven-archetype-plugin:2.0-alpha-5:create", args );
 
         File testDir2 = new File( baseTestDir, artifactId );
         test( testDir2, "install" );
