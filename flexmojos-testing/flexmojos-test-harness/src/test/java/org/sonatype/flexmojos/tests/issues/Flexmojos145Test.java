@@ -16,7 +16,7 @@ public class Flexmojos145Test
 {
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test( enabled = false )
     public void multipleApplications()
         throws Exception
     {
