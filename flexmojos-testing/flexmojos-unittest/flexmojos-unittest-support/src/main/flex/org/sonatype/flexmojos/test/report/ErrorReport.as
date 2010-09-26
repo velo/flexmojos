@@ -19,8 +19,6 @@ package org.sonatype.flexmojos.test.report {
 	import org.sonatype.flexmojos.unitestingsupport.util.ClassnameUtil;
 	
 
-    [Bindable]
-    [RemoteClass(alias="org.sonatype.flexmojos.test.report.ErrorReport")]
     public class ErrorReport extends ErrorReportBase {
     	
     	public function ErrorReport(error:Error = null)

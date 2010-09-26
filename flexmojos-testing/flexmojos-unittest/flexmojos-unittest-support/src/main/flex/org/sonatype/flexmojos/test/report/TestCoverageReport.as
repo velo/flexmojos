@@ -25,12 +25,8 @@
 package org.sonatype.flexmojos.test.report
 {
 
-    [Bindable]
-    [RemoteClass( alias="org.sonatype.flexmojos.test.report.TestCoverageReport" )]
     public class TestCoverageReport extends TestCoverageReportBase
     {
-
-
 
         public function TestCoverageReport( classname:String )
         {

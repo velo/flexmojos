@@ -17,37 +17,44 @@
  */
 package org.sonatype.flexmojos.unitestingsupport
 {
-	
+
 	/**
-	 * Singleton class to help synchronization  when tests finished. 
+	 * Singleton class to help synchronization  when tests finished.
 	 */
-	
+
 	public class CloseController
 	{
-		
+
 		private var _canClose:Boolean;
 
 		private static var instance:CloseController;
-				
-		public function set canClose(close:Boolean):void {
-			
-			_canClose = close;
-			
-			trace ("Property canClose set to " + _canClose);
+
+		public function CloseController()
+		{
+			super();
 		}
-		
-		public function get canClose():Boolean {
-		
-			trace ("Property canClose is " + _canClose);
-			
+
+		public function set canClose(close:Boolean):void
+		{
+			_canClose=close;
+
+			trace("Property canClose set to " + _canClose);
+		}
+
+		public function get canClose():Boolean
+		{
+			trace("Property canClose is " + _canClose);
+
 			return _canClose;
 		}
-		
-		
-		public static function getInstance():CloseController {
-			if(instance == null) {
-				instance = new CloseController();
-				instance.canClose = false;
+
+
+		public static function getInstance():CloseController
+		{
+			if (instance == null)
+			{
+				instance=new CloseController();
+				instance.canClose=false;
 			}
 			return instance;
 		}
