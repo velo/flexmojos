@@ -214,7 +214,7 @@ public class MxmlcMojo
                 cfg.finalName = moduleFinalName;
                 if ( module.isOptimize() )
                 {
-                    cfg.getCache().put( "getLoadExterns",  loadExterns.toArray( new String[1] ));
+                    cfg.getCache().put( "getLoadExterns", loadExterns.toArray( new String[1] ) );
                 }
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }

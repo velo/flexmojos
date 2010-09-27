@@ -933,6 +933,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String[] localesCompiled;
 
     /**
+     * Relative path where the locales should be created
+     * 
+     * @parameter expression="${flex.localesOutputPath}"
+     */
+    private String localesOutputPath;
+
+    /**
      * Specifies the locales for external internationalization bundles
      * <p>
      * No equivalent parameter
@@ -1539,6 +1546,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         cfg.includeResourceBundles = getResourceBundleListContent();
         cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
         cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
+
+        if ( localesOutputPath != null )
+        {
+            cfg.getCache().put( "getTargetDirectory", new File( getTargetDirectory(), localesOutputPath ) );
+        }
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
