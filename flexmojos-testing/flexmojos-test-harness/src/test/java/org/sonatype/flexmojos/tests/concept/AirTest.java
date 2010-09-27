@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.tests.concept;
 
+import org.sonatype.flexmojos.util.OSUtils;
 import org.testng.annotations.Test;
 
 public class AirTest
@@ -12,11 +13,32 @@ public class AirTest
     {
         standardConceptTester( "simple-air" );
     }
-    
+
     @Test
     public void simplify()
-    throws Exception
+        throws Exception
     {
         standardConceptTester( "simplify-air" );
+    }
+
+    @Test
+    public void nativeAir()
+        throws Exception
+    {
+        String osPackages;
+        if ( OSUtils.isLinux() )
+        {
+            osPackages = "deb";
+        }
+        else if ( OSUtils.isMacOS() )
+        {
+            osPackages = "dmg";
+        }
+        else
+        {
+            osPackages = "exe";
+        }
+
+        standardConceptTester( "native-air", "-Dos.packages=" + osPackages );
     }
 }
