@@ -15,47 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.tests.concept;
+/**
+ * @author Seven
+ */
+package  {
 
-import org.sonatype.flexmojos.util.OSUtils;
-import org.testng.annotations.Test;
+	import flexunit.framework.Assert;
+	import flash.errors.IOError;
+	
+	public class AnnotatedTest {
+		
+		[Test]
+		public function addition():void { 
+		   Assert.assertEquals(12, 7 + 5); 
+		}
+		
+		[Test(expects="flash.errors.IOError")] 
+		public function doIOError():void { 
+		   //a test which causes an IOError }Or
+		   throw new IOError(); 
+		}
+	}
 
-public class AirTest
-    extends AbstractConceptTest
-{
-
-    @Test
-    public void airApp()
-        throws Exception
-    {
-        standardConceptTester( "simple-air" );
-    }
-
-    @Test
-    public void simplify()
-        throws Exception
-    {
-        standardConceptTester( "simplify-air" );
-    }
-
-    @Test
-    public void nativeAir()
-        throws Exception
-    {
-        String osPackages;
-        if ( OSUtils.isLinux() )
-        {
-            osPackages = "deb";
-        }
-        else if ( OSUtils.isMacOS() )
-        {
-            osPackages = "dmg";
-        }
-        else
-        {
-            osPackages = "exe";
-        }
-
-        standardConceptTester( "native-air", "-Dos.packages=" + osPackages );
-    }
 }

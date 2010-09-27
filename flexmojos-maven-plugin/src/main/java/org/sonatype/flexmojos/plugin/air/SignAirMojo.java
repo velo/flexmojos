@@ -18,6 +18,10 @@
 package org.sonatype.flexmojos.plugin.air;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.DMG;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.EXE;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.RPM;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.util.PathUtil.getPath;
@@ -28,11 +32,14 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -49,9 +56,14 @@ import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
 
+import com.adobe.air.ADTPackager;
 import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
 import com.adobe.air.Message;
+import com.adobe.air.nai.DEBPackager;
+import com.adobe.air.nai.DMGPackager;
+import com.adobe.air.nai.EXEPackager;
+import com.adobe.air.nai.RPMPackager;
 
 /**
  * @goal sign-air
@@ -112,6 +124,15 @@ public class SignAirMojo
     private File keystore;
 
     /**
+     * Valid values: 'air', 'dmg', 'exe', 'rpm' and 'deb'
+     * <p>
+     * Default-value = 'air'
+     * 
+     * @parameter
+     */
+    private List<String> packages = Arrays.asList( AIR );
+
+    /**
      * @parameter expression="${project}"
      */
     private MavenProject project;
@@ -155,7 +176,7 @@ public class SignAirMojo
      */
     private String timestampURL;
 
-    private void addSourceWithPath( AIRPackager airPackager, String directory, String includePath )
+    private void addSourceWithPath( ADTPackager packager, String directory, String includePath )
         throws MojoFailureException
     {
         if ( includePath == null )
@@ -178,10 +199,10 @@ public class SignAirMojo
         }
 
         getLog().debug( "  adding source " + includeFile + " with path " + includePath );
-        airPackager.addSourceWithPath( includeFile, includePath );
+        packager.addSourceWithPath( includeFile, includePath );
     }
 
-    private void appendArtifacts( AIRPackager airPackager, Collection<Artifact> deps )
+    private void appendArtifacts( ADTPackager packager, Collection<Artifact> deps )
     {
         for ( Artifact artifact : deps )
         {
@@ -194,46 +215,45 @@ public class SignAirMojo
                     path = path.replace( "-" + artifact.getVersion(), "" );
                 }
                 getLog().debug( "  adding source " + source + " with path " + path );
-                airPackager.addSourceWithPath( source, path );
+                packager.addSourceWithPath( source, path );
             }
         }
     }
 
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    private void doPackage( String packagerName, ADTPackager packager )
+        throws MojoExecutionException
     {
-        AIRPackager airPackager = new AIRPackager();
         try
         {
             String c = this.classifier == null ? "" : "-" + this.classifier;
             File output =
-                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + AIR );
-            airPackager.setOutput( output );
-            airPackager.setDescriptor( getAirDescriptor() );
+                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
+            packager.setOutput( output );
+            packager.setDescriptor( getAirDescriptor() );
 
             KeyStore keyStore = KeyStore.getInstance( storetype );
             keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
             String alias = keyStore.aliases().nextElement();
-            airPackager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
-            airPackager.setSignerCertificate( keyStore.getCertificate( alias ) );
-            airPackager.setCertificateChain( keyStore.getCertificateChain( alias ) );
+            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+            packager.setSignerCertificate( keyStore.getCertificate( alias ) );
+            packager.setCertificateChain( keyStore.getCertificateChain( alias ) );
             if ( this.timestampURL != null )
             {
-                airPackager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
+                packager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
             }
 
             String packaging = project.getPackaging();
             if ( AIR.equals( packaging ) )
             {
-                appendArtifacts( airPackager, project.getDependencyArtifacts() );
-                appendArtifacts( airPackager, project.getAttachedArtifacts() );
+                appendArtifacts( packager, project.getDependencyArtifacts() );
+                appendArtifacts( packager, project.getAttachedArtifacts() );
             }
             else if ( SWF.equals( packaging ) )
             {
                 File source = project.getArtifact().getFile();
                 String path = source.getName();
                 getLog().debug( "  adding source " + source + " with path " + path );
-                airPackager.addSourceWithPath( source, path );
+                packager.addSourceWithPath( source, path );
             }
             else
             {
@@ -250,7 +270,7 @@ public class SignAirMojo
                 for ( final String includePath : includeFiles )
                 {
                     String directory = project.getBuild().getOutputDirectory();
-                    addSourceWithPath( airPackager, directory, includePath );
+                    addSourceWithPath( packager, directory, includePath );
                 }
             }
 
@@ -268,40 +288,50 @@ public class SignAirMojo
                     String[] files = scanner.getIncludedFiles();
                     for ( String path : files )
                     {
-                        addSourceWithPath( airPackager, set.getDirectory(), path );
+                        addSourceWithPath( packager, set.getDirectory(), path );
                     }
                 }
             }
 
             if ( classifier != null )
             {
-                projectHelper.attachArtifact( project, project.getArtifact().getType(), classifier, output );
+                projectHelper.attachArtifact( project, packagerName, classifier, output );
             }
             else if ( SWF.equals( packaging ) )
             {
-                projectHelper.attachArtifact( project, AIR, output );
+                projectHelper.attachArtifact( project, packagerName, output );
             }
             else
             {
-                project.getArtifact().setFile( output );
+                if ( AIR.equals( packagerName ) && AIR.equals( packaging ) )
+                {
+                    project.getArtifact().setFile( output );
+                }
+                else
+                {
+                    projectHelper.attachArtifact( project, packagerName, output );
+                }
             }
 
             final List<Message> messages = new ArrayList<Message>();
 
-            airPackager.setListener( new Listener()
+            if ( packager.getADTStream() != null )
             {
-                public void message( final Message message )
+                packager.setListener( new Listener()
                 {
-                    messages.add( message );
-                }
+                    public void message( final Message message )
+                    {
+                        messages.add( message );
+                    }
 
-                public void progress( final int soFar, final int total )
-                {
-                    getLog().info( "  completed " + soFar + " of " + total );
-                }
-            } );
+                    public void progress( final int soFar, final int total )
+                    {
+                        getLog().info( "  completed " + soFar + " of " + total );
+                    }
+                } );
+            }
 
-            airPackager.createAIR();
+            packager.createPackage();
 
             if ( messages.size() > 0 )
             {
@@ -328,7 +358,17 @@ public class SignAirMojo
         }
         finally
         {
-            airPackager.close();
+            packager.close();
+        }
+    }
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Map<String, ADTPackager> packagers = getPackagers();
+        for ( Entry<String, ADTPackager> packager : packagers.entrySet() )
+        {
+            doPackage( packager.getKey(), packager.getValue() );
         }
     }
 
@@ -405,6 +445,121 @@ public class SignAirMojo
             output = project.getArtifact().getFile();
         }
         return output;
+    }
+
+    private Map<String, ADTPackager> getPackagers()
+    {
+        getLog().info( "Creating the following packagers: " + packages.toString() );
+
+        Map<String, ADTPackager> packs = new LinkedHashMap<String, ADTPackager>();
+        if ( packages.contains( AIR ) )
+        {
+            packs.put( AIR, new AIRPackager() );
+        }
+        if ( packages.contains( DMG ) )
+        {
+            packs.put( DMG, new DMGPackager()
+            {
+                @Override
+                protected File getNAISDKBinDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKBinDir();
+                }
+
+                @Override
+                protected File getNAISDKLibDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKLibDir();
+                }
+            } );
+        }
+        if ( packages.contains( EXE ) )
+        {
+            packs.put( EXE, new EXEPackager()
+            {
+                @Override
+                protected File getNAISDKBinDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKBinDir();
+                }
+
+                @Override
+                protected File getNAISDKLibDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKLibDir();
+                }
+            } );
+        }
+        if ( packages.contains( RPM ) )
+        {
+            packs.put( RPM, new RPMPackager()
+            {
+                @Override
+                protected File getNAISDKBinDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKBinDir();
+                }
+
+                @Override
+                protected File getNAISDKLibDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKLibDir();
+                }
+            } );
+        }
+        if ( packages.contains( DEB ) )
+        {
+            packs.put( DEB, new DEBPackager()
+            {
+                @Override
+                protected File getNAISDKBinDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKBinDir();
+                }
+
+                @Override
+                protected File getNAISDKLibDir()
+                    throws IOException
+                {
+                    return getMavenNAISDKLibDir();
+                }
+            } );
+        }
+
+        if ( packages.size() != packs.size() )
+        {
+            getLog().error( "Invalid package found, valid values are: 'air', 'dmg', 'exe', 'rpm' and 'deb', but got "
+                                + packages.toString() );
+        }
+
+        if ( packs.isEmpty() )
+        {
+            getLog().debug( "Packagers is empty or contains invalid packagers, using AIR" );
+            packs.put( AIR, new AIRPackager() );
+        }
+
+        return packs;
+    }
+
+    protected File getMavenNAISDKBinDir()
+        throws IOException
+    {
+        // TODO
+        return null;
+    }
+
+    protected File getMavenNAISDKLibDir()
+        throws IOException
+    {
+        // TODO
+        return null;
     }
 
 }

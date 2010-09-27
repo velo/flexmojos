@@ -21,20 +21,28 @@ public interface FlexExtension
 {
     String AIR = "air";
 
-    String SWF = "swf";
+    String CSS = "css";
 
-    String SWC = "swc";
+    String DEB = "deb";
 
-    String SWZ = "swz";
+    String DMG = "dmg";
 
-    String RB_SWC = "rb.swc";
-
-    String ZIP = "zip";
+    String EXE = "exe";
 
     String POM = "pom";
 
+    String RB_SWC = "rb.swc";
+
+    String RPM = "rpm";
+
+    String SWC = "swc";
+
+    String SWF = "swf";
+
+    String SWZ = "swz";
+
     String XML = "xml";
 
-    String CSS = "css";
+    String ZIP = "zip";
 
 }
