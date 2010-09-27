@@ -21,6 +21,8 @@ public interface FlexExtension
 {
     String AIR = "air";
 
+    String APK = "apk";
+
     String CSS = "css";
 
     String DEB = "deb";
@@ -40,6 +42,8 @@ public interface FlexExtension
     String SWF = "swf";
 
     String SWZ = "swz";
+    
+    String TAR_GZ = "tar.gz";
 
     String XML = "xml";
 
