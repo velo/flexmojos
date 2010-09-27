@@ -360,7 +360,6 @@ public abstract class AbstractMavenMojo
 
     protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
     {
-
         Set<Artifact> dependencies = getDependencies();
         List<Artifact> filtered = filter( allOf( matchers ), dependencies );
         if ( filtered.isEmpty() )
