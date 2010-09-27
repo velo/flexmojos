@@ -37,8 +37,16 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
-          <linkReport>true</linkReport>
+          <linkReportAttach>true</linkReportAttach>
         </configuration>
+        <!-- that isn't really needed, bug on maven 3, it needs package phase being executed! -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>optimize-swf</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
