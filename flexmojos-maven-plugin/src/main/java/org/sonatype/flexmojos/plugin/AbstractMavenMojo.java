@@ -1,6 +1,6 @@
 package org.sonatype.flexmojos.plugin;
 
-import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.*;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
@@ -26,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.PatternSet;
@@ -61,10 +62,15 @@ public abstract class AbstractMavenMojo
 
     private static final String AIR_GLOBAL = "airglobal";
 
+    protected static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
+
     protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
     protected static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
+
+    public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
+        "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
 
     public static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
@@ -80,9 +86,6 @@ public abstract class AbstractMavenMojo
             return null;
         }
     };
-
-    public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
-        "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
 
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
@@ -360,14 +363,7 @@ public abstract class AbstractMavenMojo
 
     protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
     {
-        Set<Artifact> dependencies = getDependencies();
-        List<Artifact> filtered = filter( allOf( matchers ), dependencies );
-        if ( filtered.isEmpty() )
-        {
-            return null;
-        }
-
-        return filtered.get( 0 );
+        return selectFirst( getDependencies(), allOf( matchers ) );
     }
 
     // TODO lazy load here would be awesome
@@ -470,6 +466,36 @@ public abstract class AbstractMavenMojo
         return PathUtil.getFile( targetDirectory );
     }
 
+    protected File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier,
+                                        String type )
+    {
+        Artifact artifact = resolve( groupId, artifactId, version, classifier, type );
+
+        String dirName = classifier == null ? "" : classifier + "_" + type;
+
+        File dir = new File( artifact.getFile().getParentFile(), dirName );
+        if ( dir.isDirectory() )
+        {
+            return dir;
+        }
+
+        dir.mkdirs();
+
+        try
+        {
+            UnArchiver unarchive = archiverManager.getUnArchiver( artifact.getFile() );
+            unarchive.setSourceFile( artifact.getFile() );
+            unarchive.setDestDirectory( dir );
+            unarchive.extract();
+        }
+        catch ( Exception e )
+        {
+            throw new MavenRuntimeException( "Failed to extract " + artifact, e );
+        }
+
+        return dir;
+    }
+
     // TODO lazy load here would be awesome
     protected File getUnpackedFrameworkConfig()
     {
@@ -480,23 +506,8 @@ public abstract class AbstractMavenMojo
             return null;
         }
 
-        File cfgZip = frmkCfg.getFile();
-        File dest = new File( getOutputDirectory(), "configs" );
-        dest.mkdirs();
-
-        try
-        {
-            UnArchiver unzip = archiverManager.getUnArchiver( cfgZip );
-            unzip.setSourceFile( cfgZip );
-            unzip.setDestDirectory( dest );
-            unzip.extract();
-        }
-        catch ( Exception e )
-        {
-            throw new MavenRuntimeException( "Failed to unpack framework configuration", e );
-        }
-
-        return dest;
+        return getUnpackedArtifact( frmkCfg.getGroupId(), frmkCfg.getArtifactId(), frmkCfg.getVersion(),
+                                    frmkCfg.getClassifier(), frmkCfg.getType() );
     }
 
     public boolean isSkip()
@@ -526,9 +537,18 @@ public abstract class AbstractMavenMojo
             req.setArtifact( artifact );
             req.setLocalRepository( localRepository );
             req.setRemoteRepositories( remoteRepositories );
-            boolean success = repositorySystem.resolve( req ).isSuccess();
-            // FIXME need to check isSuccess
-            assert success;
+            ArtifactResolutionResult res = repositorySystem.resolve( req );
+            if ( !res.isSuccess() )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    for ( Exception e : res.getExceptions() )
+                    {
+                        getLog().error( e );
+                    }
+                }
+                throw new IllegalStateException( "Failed to resolve artifact " + artifact );
+            }
         }
         return artifact;
     }

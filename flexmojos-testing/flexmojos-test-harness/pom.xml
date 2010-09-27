@@ -142,6 +142,8 @@
             <xml>com.adobe.flex:compiler:${flex.sdk.version}:pom</xml>
             <xml>com.adobe.flex.framework:air-framework:${flex.sdk.version}:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
+            <xml>com.adobe.flex.compiler:nai:${flex.sdk.version}:zip:windows</xml>
+            <xml>com.adobe.flex.compiler:runtime:${flex.sdk.version}:zip:windows</xml>
 
             <xml>org.sonatype.flexmojos:flexmojos-maven-plugin:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-archetypes-application:${project.version}</xml>

@@ -1,12 +1,21 @@
 package org.sonatype.flexmojos.plugin.air;
 
+import static ch.lambdaj.Lambda.selectFirst;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.APK;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.DMG;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.EXE;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.RPM;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.TAR_GZ;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.ZIP;
 import static org.sonatype.flexmojos.util.PathUtil.getPath;
 
 import java.io.File;
@@ -28,7 +37,6 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -36,6 +44,11 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.repository.legacy.resolver.transform.SnapshotTransformation;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDEBPackager;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDMGPackager;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosEXEPackager;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosRPMPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -43,10 +56,6 @@ import com.adobe.air.ADTPackager;
 import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
 import com.adobe.air.Message;
-import com.adobe.air.nai.DEBPackager;
-import com.adobe.air.nai.DMGPackager;
-import com.adobe.air.nai.EXEPackager;
-import com.adobe.air.nai.RPMPackager;
 
 /**
  * @goal sign-air
@@ -55,7 +64,7 @@ import com.adobe.air.nai.RPMPackager;
  * @author Marvin Froeder
  */
 public class SignAirMojo
-    extends AbstractMojo
+    extends AbstractMavenMojo
 {
 
     private static String TIMESTAMP_NONE = "none";
@@ -355,6 +364,15 @@ public class SignAirMojo
         }
     }
 
+    @SuppressWarnings( "unchecked" )
+    private Artifact getAdt()
+    {
+        Artifact adt =
+            selectFirst( pluginArtifacts,
+                         allOf( groupId( COMPILER_GROUP_ID ), artifactId( "adt" ), type( "jar" ), classifier( null ) ) );
+        return adt;
+    }
+
     private File getAirDescriptor()
         throws MojoExecutionException
     {
@@ -401,6 +419,17 @@ public class SignAirMojo
         return dest;
     }
 
+    protected File getRuntimeDir( String classifier, String type )
+    {
+        return getUnpackedArtifact( COMPILER_GROUP_ID, "runtime", getAdt().getVersion(), classifier, type );
+    }
+
+    private File getNaiDir( String classifier, String type )
+        throws MojoExecutionException
+    {
+        return getUnpackedArtifact( COMPILER_GROUP_ID, "nai", getAdt().getVersion(), classifier, type );
+    }
+
     private File getOutput()
     {
         File output = null;
@@ -431,6 +460,7 @@ public class SignAirMojo
     }
 
     private Map<String, ADTPackager> getPackagers()
+        throws MojoExecutionException
     {
         getLog().info( "Creating the following packagers: " + packages.toString() );
 
@@ -441,79 +471,30 @@ public class SignAirMojo
         }
         if ( packages.contains( DMG ) )
         {
-            packs.put( DMG, new DMGPackager()
-            {
-                @Override
-                protected File getNAISDKBinDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKBinDir();
-                }
-
-                @Override
-                protected File getNAISDKLibDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKLibDir();
-                }
-            } );
+            packs.put( DMG, new FlexmojosDMGPackager( getNaiDir( "mac", TAR_GZ ), getRuntimeDir( "mac", TAR_GZ ) ) );
         }
         if ( packages.contains( EXE ) )
         {
-            packs.put( EXE, new EXEPackager()
-            {
-                @Override
-                protected File getNAISDKBinDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKBinDir();
-                }
-
-                @Override
-                protected File getNAISDKLibDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKLibDir();
-                }
-            } );
+            packs.put( EXE, new FlexmojosEXEPackager( getNaiDir( "windows", ZIP ), getRuntimeDir( "windows", ZIP ) ) );
         }
         if ( packages.contains( RPM ) )
         {
-            packs.put( RPM, new RPMPackager()
-            {
-                @Override
-                protected File getNAISDKBinDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKBinDir();
-                }
-
-                @Override
-                protected File getNAISDKLibDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKLibDir();
-                }
-            } );
+            packs.put( RPM, new FlexmojosRPMPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
         }
         if ( packages.contains( DEB ) )
         {
-            packs.put( DEB, new DEBPackager()
+            packs.put( DEB, new FlexmojosDEBPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
+        }
+        if ( packages.contains( APK ) )
+        {
+            try
             {
-                @Override
-                protected File getNAISDKBinDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKBinDir();
-                }
-
-                @Override
-                protected File getNAISDKLibDir()
-                    throws IOException
-                {
-                    return getMavenNAISDKLibDir();
-                }
-            } );
+                packs.put( APK, (ADTPackager) Class.forName( "com.adobe.air.apk.APKPackager" ).newInstance() );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Unable to create APKPackager", e );
+            }
         }
 
         if ( packages.size() != packs.size() )
@@ -529,20 +510,6 @@ public class SignAirMojo
         }
 
         return packs;
-    }
-
-    protected File getMavenNAISDKBinDir()
-        throws IOException
-    {
-        // TODO
-        return null;
-    }
-
-    protected File getMavenNAISDKLibDir()
-        throws IOException
-    {
-        // TODO
-        return null;
     }
 
 }
