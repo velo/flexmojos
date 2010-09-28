@@ -1160,6 +1160,18 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String[] policyFileUrls;
 
     /**
+     * Specifies the default value for the Application's preloader attribute. If not specified, the default preloader
+     * value will be mx.preloaders.SparkDownloadProgressBar with -compatibility-version >= 4.0 and it will be
+     * mx.preloader.DownloadProgressBar with -compatibility-version < 4.0.
+     * <p>
+     * Equivalent to -compiler.preloader
+     * </p>
+     * 
+     * @parameter expression="${flex.preloader}"
+     */
+    private String preloader;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.mxml.qualified-type-selectors
@@ -2662,6 +2674,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return new String[0];
         }
         return policyFileUrls;
+    }
+
+    public String getPreloader()
+    {
+        return preloader;
     }
 
     public String getProjectType()
