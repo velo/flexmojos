@@ -254,9 +254,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</connection>
-    <developerConnection>scm:svn:https://svn.sonatype.org/flexmojos/branches/flexmojos-3.x</developerConnection>
-    <url>http://svn.sonatype.org/forge/branches/flexmojos-3.x</url>
+    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
+    <url>http://github.com/Flexmojos/flexmojos</url>
   </scm>
 
   <distributionManagement>
