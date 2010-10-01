@@ -149,11 +149,6 @@ public class MxmlcMojo
             return;
         }
 
-        if ( AIR.equals( packaging ) )
-        {
-            classifier = "application";
-        }
-
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
 
         if ( getLocalesRuntime() != null )

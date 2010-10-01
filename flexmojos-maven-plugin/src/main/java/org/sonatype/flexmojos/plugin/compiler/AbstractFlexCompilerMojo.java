@@ -2659,6 +2659,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             projectHelper.attachArtifact( project, getProjectType(), getClassifier(), output );
         }
+        else if ( !getProjectType().equals( packaging ) )
+        {
+            projectHelper.attachArtifact( project, getProjectType(), output );
+        }
         else
         {
             project.getArtifact().setFile( output );

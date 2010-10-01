@@ -17,6 +17,7 @@
  */
 package org.sonatype.flexmojos.tests.concept;
 
+import org.apache.maven.it.Verifier;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.testng.annotations.Test;
 
@@ -35,7 +36,11 @@ public class AirTest
     public void simplify()
         throws Exception
     {
-        standardConceptTester( "simplify-air" );
+        Verifier v = standardConceptTester( "simplify-air" );
+
+        v.assertArtifactPresent( "info.rvin.itest", "simplify-air", "1.0-SNAPSHOT", "pom" );
+        v.assertArtifactPresent( "info.rvin.itest", "simplify-air", "1.0-SNAPSHOT", "swf" );
+        v.assertArtifactPresent( "info.rvin.itest", "simplify-air", "1.0-SNAPSHOT", "air" );
     }
 
     @Test
@@ -56,6 +61,10 @@ public class AirTest
             osPackages = "exe";
         }
 
-        standardConceptTester( "native-air", "-Dos.packages=" + osPackages );
+        Verifier v = standardConceptTester( "native-air", "-Dos.packages=" + osPackages );
+        v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "pom" );
+        v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "swf" );
+        v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "air" );
+        v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", osPackages );
     }
 }
