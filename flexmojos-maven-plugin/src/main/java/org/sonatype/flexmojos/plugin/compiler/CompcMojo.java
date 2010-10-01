@@ -128,7 +128,7 @@ public class CompcMojo
      * 
      * @parameter
      */
-    private SimplifiablePattern includeFiles;
+    protected SimplifiablePattern includeFiles;
 
     /**
      * If true, manifest entries with lookupOnly=true are included in SWC catalog
@@ -291,7 +291,7 @@ public class CompcMojo
 
                     public String name()
                     {
-                        return path;
+                        return path.replace( '\\', '/' );
                     }
                 } );
             }
