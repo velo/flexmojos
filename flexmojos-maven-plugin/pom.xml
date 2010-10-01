@@ -220,7 +220,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
+      <artifactId>maven-reporting-api</artifactId>
       <exclusions>
         <exclusion>
           <artifactId>maven-project</artifactId>
