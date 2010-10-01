@@ -440,6 +440,10 @@ public class TestCompilerMojo
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-flexunit4" );
         }
+        else if ( getDependency( groupId( "org.flexunit" ), artifactId( "flexunit" ) ) != null )
+        {
+            return getFlexmojosTestArtifact( "flexmojos-unittest-flexunit4" );
+        }
         else if ( getDependency( groupId( "advancedflex" ), artifactId( "debugger" ) ) != null )
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-advancedflex" );
