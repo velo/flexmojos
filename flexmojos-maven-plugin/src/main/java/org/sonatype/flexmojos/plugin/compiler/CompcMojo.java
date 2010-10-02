@@ -283,7 +283,6 @@ public class CompcMojo
 
                 files.add( new IIncludeFile()
                 {
-
                     public String path()
                     {
                         return file.getAbsolutePath();
