@@ -8,8 +8,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compiler.IIncludeFile;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
