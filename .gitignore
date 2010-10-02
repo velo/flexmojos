@@ -8,6 +8,7 @@
 .classpath
 .project
 .settings/
+test-output/
 
 # Maven related (and some plugins)
 target/
