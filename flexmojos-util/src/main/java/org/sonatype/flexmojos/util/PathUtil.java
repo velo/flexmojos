@@ -423,4 +423,30 @@ public class PathUtil
         return s;
     }
 
+    public static String getFileExtention( File file )
+    {
+        if ( file == null )
+        {
+            return null;
+        }
+
+        String path = file.getName();
+
+        String[] doted = path.split( "\\." );
+        if ( doted.length == 1 )
+        {
+            return "";
+        }
+
+        if ( "gz".equals( doted[doted.length - 1] ) || "bz2".equals( doted[doted.length - 1] ) )
+        {
+            if ( doted.length > 2 && "tar".equals( doted[doted.length - 2].toLowerCase() ) )
+            {
+                return "tar." + doted[doted.length - 1];
+            }
+        }
+
+        return doted[doted.length - 1];
+    }
+
 }

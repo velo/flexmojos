@@ -1,7 +1,6 @@
 package org.sonatype.flexmojos.coverage.emma;
 
- import java.io.File;
-import java.util.Arrays;
+import java.io.File;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
@@ -57,13 +56,13 @@ public class EmmaCoverageReport
     {
         File dataDirectory = request.getDataDirectory();
         File reportDirectory = request.getReportDestinationDir();
-        
-        File coverageFile = new File(dataDirectory, "coverage.ec");
+
+        File coverageFile = new File( dataDirectory, "coverage.ec" );
 
         XProperties properties = new XProperties();
-        properties.setProperty( "report.html.out.file", PathUtil.getPath(new File( reportDirectory, "index.html" )) );
-        properties.setProperty( "report.xml.out.file", PathUtil.getPath(new File( reportDirectory, "coverage.xml" )) );
-        properties.setProperty( "report.txt.out.file", PathUtil.getPath(new File( reportDirectory, "coverage.txt" )) );
+        properties.setProperty( "report.html.out.file", PathUtil.getPath( new File( reportDirectory, "index.html" ) ) );
+        properties.setProperty( "report.xml.out.file", PathUtil.getPath( new File( reportDirectory, "coverage.xml" ) ) );
+        properties.setProperty( "report.txt.out.file", PathUtil.getPath( new File( reportDirectory, "coverage.txt" ) ) );
         properties.setProperty( "report.sort", "+name,+block,+method,+class" );
         properties.setProperty( "report.out.encoding", "UTF-8" );
         properties.setProperty( "report.xml.out.encoding", "UTF-8" );
@@ -75,7 +74,7 @@ public class EmmaCoverageReport
         reporter.setSourcePath( PathUtil.getPaths( request.getSourcePaths() ) );
         try
         {
-            reporter.setReportTypes( request.getFormats().toArray( new String[0] )  );
+            reporter.setReportTypes( request.getFormats().toArray( new String[0] ) );
         }
         catch ( RuntimeException e )
         {
@@ -88,12 +87,12 @@ public class EmmaCoverageReport
 
     public void addResult( String classname, Integer[] touchs )
     {
-//        mdata.ClassData classData =
-//            this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( classname ) );
-        for ( Integer touch : touchs )
-        {
-//            classData.touch( touch );
-        }
+        // mdata.ClassData classData =
+        // this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( classname ) );
+        // for ( Integer touch : touchs )
+        // {
+        // classData.touch( touch );
+        // }
     }
 
 }

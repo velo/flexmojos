@@ -2,7 +2,6 @@ package org.sonatype.flexmojos.truster;
 
 import java.io.File;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;

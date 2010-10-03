@@ -39,7 +39,7 @@ public interface FlexExtension
     String SWF = "swf";
 
     String SWZ = "swz";
-    
+
     String TAR_GZ = "tar.gz";
 
     String XML = "xml";

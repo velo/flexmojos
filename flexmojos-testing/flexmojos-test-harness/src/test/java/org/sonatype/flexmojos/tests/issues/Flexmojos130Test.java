@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.maven.it.Verifier;

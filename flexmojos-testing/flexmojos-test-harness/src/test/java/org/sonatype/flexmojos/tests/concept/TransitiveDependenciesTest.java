@@ -1,6 +1,5 @@
 package org.sonatype.flexmojos.tests.concept;
 
-import org.apache.maven.it.Verifier;
 import org.testng.annotations.Test;
 
 public class TransitiveDependenciesTest
@@ -10,6 +9,6 @@ public class TransitiveDependenciesTest
     public void testTransitiveDependency()
         throws Exception
     {
-        Verifier v = standardConceptTester( "transitive-dependencies" );
+        standardConceptTester( "transitive-dependencies" );
     }
 }

@@ -28,6 +28,7 @@ import org.sonatype.flexmojos.coverage.CoverageReportRequest;
 import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.SourcePathAware;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
@@ -55,7 +56,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  */
 public class TestRunMojo
     extends AbstractMavenMojo
-    implements Mojo
+    implements Mojo, SourcePathAware
 {
 
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elapsed: {3} sec";
@@ -80,7 +81,7 @@ public class TestRunMojo
      * 
      * @parameter expression="${flex.coverage}"
      */
-    private boolean coverage;
+    protected boolean coverage;
 
     /**
      * Location to save temporary files from coverage framework
@@ -100,9 +101,9 @@ public class TestRunMojo
     /**
      * Location to write coverage report
      * 
-     * @parameter default-value="${project.build.directory}/site/flexmojos" expression="${flex.reportDestinationDir}"
+     * @parameter default-value="${project.build.directory}/coverage" expression="${flex.reportDestinationDir}"
      */
-    private File coverageReportDestinationDir;
+    protected File coverageOutputDirectory;
 
     /**
      * Encoding used to generate coverage report
@@ -121,7 +122,7 @@ public class TestRunMojo
      * 
      * @parameter
      */
-    private List<String> coverageReportFormat = Collections.singletonList( "html" );
+    protected List<String> coverageReportFormat = Collections.singletonList( "html" );
 
     /**
      * The maven compile source roots. List of path elements that form the roots of ActionScript class
@@ -380,7 +381,7 @@ public class TestRunMojo
             {
                 CoverageReportRequest request =
                     new CoverageReportRequest( coverageDataDirectory, coverageReportFormat, coverageReportEncoding,
-                                               coverageReportDestinationDir,
+                                               coverageOutputDirectory,
                                                new File( project.getBuild().getSourceDirectory() ) );
                 try
                 {

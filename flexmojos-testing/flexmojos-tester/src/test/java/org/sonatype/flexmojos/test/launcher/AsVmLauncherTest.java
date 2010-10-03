@@ -8,8 +8,6 @@ import static org.testng.Assert.fail;
 import java.io.File;
 import java.util.Arrays;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.text.StringContains;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.ThreadStatus;
 import org.testng.SkipException;
@@ -45,6 +43,7 @@ public class AsVmLauncherTest
         // MatcherAssert.assertThat( log, StringContains.containsString( "SWF Created!" ) );
     }
 
+    @SuppressWarnings( "unused" )
     @Test( timeOut = 20000 )
     public void stop()
         throws Exception
