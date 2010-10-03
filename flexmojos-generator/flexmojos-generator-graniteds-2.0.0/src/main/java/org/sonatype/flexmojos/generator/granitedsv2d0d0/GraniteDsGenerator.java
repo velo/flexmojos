@@ -38,7 +38,6 @@ import java.util.Map;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Generator;
 import org.granite.generator.Output;
 import org.granite.generator.TemplateUri;

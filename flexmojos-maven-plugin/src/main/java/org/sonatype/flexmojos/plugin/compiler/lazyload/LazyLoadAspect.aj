@@ -24,8 +24,7 @@ public aspect LazyLoadAspect
 
     pointcut getters() :
         target (AbstractMavenMojo) && ( execution( * get*() )  &&
-             !execution(  * getLog() ) &&
-             !execution(  * getCache() )  );
+             !execution(@NotCacheable *  *() )  );
 
     Object around() : getters() {
         Map<String, Object> cachedValues = ( (AbstractMavenMojo) thisJoinPoint.getTarget() ).getCache();

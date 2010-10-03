@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.plugin;
 
-import static ch.lambdaj.Lambda.*;
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.selectFirst;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
@@ -50,6 +51,7 @@ import org.sonatype.flexmojos.plugin.common.flexbridge.MavenLogger;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
+import org.sonatype.flexmojos.plugin.compiler.lazyload.NotCacheable;
 import org.sonatype.flexmojos.util.PathUtil;
 
 import flex2.compiler.Logger;
@@ -344,6 +346,7 @@ public abstract class AbstractMavenMojo
         return basedir;
     }
 
+    @NotCacheable
     public Map<String, Object> getCache()
     {
         return cache;
@@ -407,6 +410,7 @@ public abstract class AbstractMavenMojo
         return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
     }
 
+    @NotCacheable
     public Log getLog()
     {
         return this.log;

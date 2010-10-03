@@ -212,8 +212,7 @@ public abstract class AbstractOptimizerMojo
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig,
-                                                                                       configDirectory ) );
+        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
     }
 
     public IOptimizerConfiguration getOptimizerConfiguration( File input, File output )

@@ -14,10 +14,13 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
-import static org.testng.AssertJUnit.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 
 import java.io.File;
 
+import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
@@ -29,10 +32,22 @@ public class Issue0017Test
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0017" );
-        test( testDir, siteGoal(), "-o" );
+        Verifier verifier = getVerifier( testDir );
+        verifier.getCliOptions().remove( "-Dflex.coverage=true" );
+        verifier.executeGoal( siteGoal() );
 
         File asdoc = new File( testDir, "target/site/asdoc" );
-        assertTrue( "asdoc directory must exist", asdoc.isDirectory() );
+        assertThat( asdoc, FileMatcher.exists() );
+        assertThat( new File( asdoc, "index.html" ), FileMatcher.exists() );
+        assertThat( new File( asdoc, "main.html" ), FileMatcher.exists() );
+
+        File coverage = new File( testDir, "target/site/coverage" );
+        assertThat( coverage, FileMatcher.exists() );
+        assertThat( new File( coverage, "index.html" ), FileMatcher.exists() );
+        assertThat( new File( coverage, "org.sonatype.flexmojos.coverage.CoverageDataCollector.html" ), FileMatcher.exists() );
+        
+        assertThat( new File( testDir, "target/asdoc" ), not( FileMatcher.exists() ) );
+        assertThat( new File( testDir, "target/coverage" ), not( FileMatcher.exists() ) );
     }
 
 }

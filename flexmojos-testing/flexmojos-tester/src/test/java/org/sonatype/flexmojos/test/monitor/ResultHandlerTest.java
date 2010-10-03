@@ -6,8 +6,6 @@ import static org.sonatype.flexmojos.test.monitor.CommConstraints.END_OF_TEST_SU
 import static org.sonatype.flexmojos.test.monitor.CommConstraints.NULL_BYTE;
 import static org.testng.Assert.assertEquals;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -94,7 +92,6 @@ public class ResultHandlerTest
         while ( !ThreadStatus.STARTED.equals( result.getStatus() ) );
 
         Socket s = new Socket( "localhost", port );
-        BufferedReader in = new BufferedReader( new InputStreamReader( s.getInputStream() ) );
         OutputStream out = s.getOutputStream();
 
         IOUtil.copy( REPORT1, out );

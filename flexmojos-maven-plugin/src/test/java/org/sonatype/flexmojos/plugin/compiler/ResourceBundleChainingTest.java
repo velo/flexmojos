@@ -1,19 +1,8 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.collection.IsCollectionContaining.hasItems;
-import static org.hamcrest.text.StringContains.containsString;
-import static org.mockito.Mockito.mock;
-import static org.sonatype.flexmojos.matcher.file.FileMatcher.withAbsolutePath;
-import static org.sonatype.flexmojos.plugin.AbstractMavenMojo.FRAMEWORK_GROUP_ID;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -24,14 +13,9 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.compiler.FlexCompiler;
-import org.sonatype.flexmojos.matcher.collection.CollectionsMatcher;
-import org.sonatype.flexmojos.plugin.test.TestCompilerMojo;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ResourceBundleChainingTest

@@ -1,15 +1,17 @@
 package org.sonatype.flexmojos.compiler.test;
 
-import org.mockito.ReturnValues;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public interface MockitoConstraints
 {
-    ReturnValues RETURNS_NULL = new ReturnValues()
+    Answer<Object> RETURNS_NULL = new Answer<Object>()
     {
-        public Object valueFor( InvocationOnMock invocation )
+        public Object answer( InvocationOnMock invocation )
+            throws Throwable
         {
             return null;
         }
     };
+
 }

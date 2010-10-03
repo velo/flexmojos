@@ -87,10 +87,11 @@ public class Flexmojos334Test
                                                                             "FlexMaven/App.java" ) );
     }
 
+    @SuppressWarnings( "unchecked" )
     private List<String> getCoveredClasses( Verifier v )
         throws DocumentException
     {
-        File coverageXml = new File( v.getBasedir(), "target/site/flexmojos/coverage.xml" );
+        File coverageXml = new File( v.getBasedir(), "target/coverage/coverage.xml" );
 
         MatcherAssert.assertThat( coverageXml, FileMatcher.exists() );
 

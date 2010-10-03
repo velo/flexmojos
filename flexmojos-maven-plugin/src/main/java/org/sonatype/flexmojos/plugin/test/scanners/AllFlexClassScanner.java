@@ -14,6 +14,11 @@ public class AllFlexClassScanner
     implements FlexClassScanner
 {
 
+    public List<String> getAs3Snippets()
+    {
+        return Collections.emptyList();
+    }
+
     public void scan( File[] directories, String[] exclusions, Map<String, Object> context )
     {
         classes = new ArrayList<String>();
@@ -22,11 +27,6 @@ public class AllFlexClassScanner
         {
             classes.addAll( scan( dir, exclusions, context ) );
         }
-    }
-
-    public List<String> getAs3Snippets()
-    {
-        return Collections.emptyList();
     }
 
 }

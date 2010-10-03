@@ -3,8 +3,6 @@ package org.sonatype.flexmojos.coverage;
 import java.io.File;
 import java.util.List;
 
-import org.sonatype.flexmojos.util.PathUtil;
-
 import scala.actors.threadpool.Arrays;
 
 public class CoverageReportRequest

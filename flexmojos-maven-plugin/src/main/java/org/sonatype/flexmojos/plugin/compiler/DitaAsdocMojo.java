@@ -86,7 +86,6 @@ public class DitaAsdocMojo
 
         wait( executeCompiler( this, true ) );
 
-
         ZipOutputStream out = null;
         try
         {
