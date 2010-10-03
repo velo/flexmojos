@@ -15,38 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.common;
+/**
+ * @author Seven
+ */
+package  {
 
-public interface FlexExtension
-{
-    String AIR = "air";
-
-    String APK = "apk";
-
-    String CSS = "css";
-
-    String DEB = "deb";
-
-    String DMG = "dmg";
-
-    String EXE = "exe";
-
-    String POM = "pom";
-
-    String RB_SWC = "rb.swc";
-
-    String RPM = "rpm";
-
-    String SWC = "swc";
-
-    String SWF = "swf";
-
-    String SWZ = "swz";
-
-    String TAR_GZ = "tar.gz";
-
-    String XML = "xml";
-
-    String ZIP = "zip";
+	import flexunit.framework.Assert;
+	import flash.errors.IOError;
+	
+	public class AnnotatedTest {
+		
+		[Test]
+		public function addition():void { 
+		   Assert.assertEquals(12, 7 + 5); 
+		}
+		
+		[Test(expects="flash.errors.IOError")] 
+		public function doIOError():void { 
+		   //a test which causes an IOError }Or
+		   throw new IOError(); 
+		}
+	}
 
 }

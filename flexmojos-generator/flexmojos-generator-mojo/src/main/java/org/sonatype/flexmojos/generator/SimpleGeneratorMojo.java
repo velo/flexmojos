@@ -396,7 +396,6 @@ public class SimpleGeneratorMojo
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     private List<String> getClasspath()
         throws MojoExecutionException
     {

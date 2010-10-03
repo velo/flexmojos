@@ -17,7 +17,6 @@
  */
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 
 import java.io.File;

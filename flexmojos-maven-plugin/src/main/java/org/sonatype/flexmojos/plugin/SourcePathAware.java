@@ -15,38 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.common;
+package org.sonatype.flexmojos.plugin;
 
-public interface FlexExtension
+import java.io.File;
+
+public interface SourcePathAware
 {
-    String AIR = "air";
 
-    String APK = "apk";
-
-    String CSS = "css";
-
-    String DEB = "deb";
-
-    String DMG = "dmg";
-
-    String EXE = "exe";
-
-    String POM = "pom";
-
-    String RB_SWC = "rb.swc";
-
-    String RPM = "rpm";
-
-    String SWC = "swc";
-
-    String SWF = "swf";
-
-    String SWZ = "swz";
-
-    String TAR_GZ = "tar.gz";
-
-    String XML = "xml";
-
-    String ZIP = "zip";
+    File[] getSourcePath();
 
 }

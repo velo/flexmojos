@@ -15,38 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.common;
+package org.sonatype.flexmojos.plugin.compiler.lazyload;
 
-public interface FlexExtension
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention( RetentionPolicy.RUNTIME )
+@Target( ElementType.METHOD )
+public @interface NotCacheable
 {
-    String AIR = "air";
-
-    String APK = "apk";
-
-    String CSS = "css";
-
-    String DEB = "deb";
-
-    String DMG = "dmg";
-
-    String EXE = "exe";
-
-    String POM = "pom";
-
-    String RB_SWC = "rb.swc";
-
-    String RPM = "rpm";
-
-    String SWC = "swc";
-
-    String SWF = "swf";
-
-    String SWZ = "swz";
-
-    String TAR_GZ = "tar.gz";
-
-    String XML = "xml";
-
-    String ZIP = "zip";
 
 }

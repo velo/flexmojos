@@ -82,7 +82,7 @@ public class Flex2Generator
         }
     }
 
-    @SuppressWarnings( { "unchecked", "deprecation" } )
+    @SuppressWarnings(  "deprecation"  )
     private void editMxmlc( File mxmlcJar, File destination )
         throws IOException, TargetLostException
     {
@@ -100,7 +100,7 @@ public class Flex2Generator
 
                 MethodGen mg = new MethodGen( method, jc.getClassName(), p );
                 InstructionList il = mg.getInstructionList();
-                for ( Iterator it = il.iterator(); it.hasNext(); )
+                for ( Iterator<?> it = il.iterator(); it.hasNext(); )
                 {
                     InstructionHandle ih = (InstructionHandle) it.next();
                     Instruction inst = ih.getInstruction();

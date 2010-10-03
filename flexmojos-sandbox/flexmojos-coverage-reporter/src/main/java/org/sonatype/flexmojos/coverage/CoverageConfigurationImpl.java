@@ -29,7 +29,7 @@ import java.io.File;
  */
 final class CoverageConfigurationImpl implements CoverageConfiguration
 {
-	private final ListBuffer _sourcePath = new ListBuffer<String>();
+	private final ListBuffer<String> _sourcePath = new ListBuffer<String>();
 	private final File _input;
 	private final File _output;
 
@@ -59,7 +59,6 @@ final class CoverageConfigurationImpl implements CoverageConfiguration
 		return _output;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<String> sourcePath()
 	{
 		//

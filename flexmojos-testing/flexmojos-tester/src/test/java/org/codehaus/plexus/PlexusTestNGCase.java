@@ -42,6 +42,7 @@ public class PlexusTestNGCase
         basedir = getBasedir();
     }
 
+    @SuppressWarnings( "unchecked" )
     protected void setupContainer()
     {
         // ----------------------------------------------------------------------------

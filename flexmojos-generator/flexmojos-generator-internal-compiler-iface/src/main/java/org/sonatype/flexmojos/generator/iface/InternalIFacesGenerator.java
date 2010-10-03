@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ws.jaxme.js.JavaMethod;
 import org.apache.ws.jaxme.js.JavaQName;
 import org.apache.ws.jaxme.js.JavaQNameImpl;
 import org.apache.ws.jaxme.js.JavaSource;
@@ -200,7 +199,7 @@ public final class InternalIFacesGenerator
                         type = JavaQNameImpl.getArray( type );
                     }
 
-                    JavaMethod nm = js.newJavaMethod( GET_PREFIX + name, type );
+                    /*JavaMethod nm =*/ js.newJavaMethod( GET_PREFIX + name, type );
                 }
             }
         }
