@@ -105,7 +105,7 @@ public class ManifestMojo
             dom.addChild( component );
         }
 
-        String outputPath = PathUtil.getRelativePath( basedir, outputFile );
+        String outputPath = PathUtil.relativePath( basedir, outputFile );
         getLog().info( "Writting " + classes.size() + " entry(ies) to manifest at: " + outputPath );
         Writer output = null;
         try

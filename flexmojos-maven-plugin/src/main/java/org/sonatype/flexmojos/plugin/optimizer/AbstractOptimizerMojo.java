@@ -212,7 +212,7 @@ public abstract class AbstractOptimizerMojo
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
+        return PathUtil.paths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
     }
 
     public IOptimizerConfiguration getOptimizerConfiguration( File input, File output )
@@ -221,8 +221,8 @@ public abstract class AbstractOptimizerMojo
         IOptimizerConfiguration cfg = mock( IOptimizerConfiguration.class, RETURNS_NULL );
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
-        when( cfg.getInput() ).thenReturn( PathUtil.getPath( input ) );
-        when( cfg.getOutput() ).thenReturn( PathUtil.getPath( output ) );
+        when( cfg.getInput() ).thenReturn( PathUtil.path( input ) );
+        when( cfg.getOutput() ).thenReturn( PathUtil.path( output ) );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         when( compilerCfg.getKeepAs3Metadata() ).thenReturn( getKeepAs3Metadata() );
         return cfg;
@@ -230,13 +230,13 @@ public abstract class AbstractOptimizerMojo
 
     public String getOutput()
     {
-        return PathUtil.getPath( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
+        return PathUtil.path( new File( build.getDirectory(), build.getFinalName() + ".swf" ) );
     }
 
     protected File optimize()
         throws MojoFailureException, MojoExecutionException
     {
-        File input = PathUtil.getFile( getInput() );
+        File input = PathUtil.file( getInput() );
         double originalSize = input.length();
         {
             getLog().debug( "Backuping original file " + input );
@@ -272,7 +272,7 @@ public abstract class AbstractOptimizerMojo
 
         {
             getLog().debug( "Placing optimized file on target folder" );
-            final File output = PathUtil.getFile( getOutput() );
+            final File output = PathUtil.file( getOutput() );
             try
             {
                 FileUtils.copyFile( input, output );

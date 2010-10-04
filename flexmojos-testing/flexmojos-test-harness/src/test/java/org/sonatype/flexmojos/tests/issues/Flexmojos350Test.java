@@ -21,8 +21,8 @@ public class Flexmojos350Test
         Verifier verifier = getVerifier( basedir );
 
         // TODO remove this once flexunit is released!
-        File or = getFile( verifier.getArtifactPath( "com.adobe.flexunit", "flexunit", "4.0-beta-2", "swc" ) );
-        File fk = getFile( verifier.getArtifactPath( "org.flexunit", "flexunit", "4.1", "swc" ) );
+        File or = file( verifier.getArtifactPath( "com.adobe.flexunit", "flexunit", "4.0-beta-2", "swc" ) );
+        File fk = file( verifier.getArtifactPath( "org.flexunit", "flexunit", "4.1", "swc" ) );
 
         assertThat( or, FileMatcher.exists() );
         fk.getParentFile().mkdirs();

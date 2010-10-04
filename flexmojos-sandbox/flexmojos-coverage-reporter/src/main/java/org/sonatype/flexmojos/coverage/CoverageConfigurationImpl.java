@@ -28,7 +28,7 @@ final class CoverageConfigurationImpl implements CoverageConfiguration
 			// _sourcePath += PathUtil getCanonicalPath sourcePathElement
 			//
 
-			_sourcePath.$plus$eq(PathUtil.getPath( sourcePathElement));
+			_sourcePath.$plus$eq(PathUtil.path( sourcePathElement));
 		}
 	}
 

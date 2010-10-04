@@ -595,7 +595,7 @@ public class TestCompilerMojo
     @Override
     public String getOutput()
     {
-        return PathUtil.getPath( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
+        return PathUtil.path( new File( getTargetDirectory(), getFinalName() + "." + getProjectType() ) );
     }
 
     @Override
@@ -615,7 +615,7 @@ public class TestCompilerMojo
     {
         Set<File> files = new LinkedHashSet<File>();
 
-        files.addAll( PathUtil.getExistingFilesList( testCompileSourceRoots ) );
+        files.addAll( PathUtil.existingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
 
         return files.toArray( new File[0] );

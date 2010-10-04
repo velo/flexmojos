@@ -60,9 +60,9 @@ public class EmmaCoverageReport
         File coverageFile = new File( dataDirectory, "coverage.ec" );
 
         XProperties properties = new XProperties();
-        properties.setProperty( "report.html.out.file", PathUtil.getPath( new File( reportDirectory, "index.html" ) ) );
-        properties.setProperty( "report.xml.out.file", PathUtil.getPath( new File( reportDirectory, "coverage.xml" ) ) );
-        properties.setProperty( "report.txt.out.file", PathUtil.getPath( new File( reportDirectory, "coverage.txt" ) ) );
+        properties.setProperty( "report.html.out.file", PathUtil.path( new File( reportDirectory, "index.html" ) ) );
+        properties.setProperty( "report.xml.out.file", PathUtil.path( new File( reportDirectory, "coverage.xml" ) ) );
+        properties.setProperty( "report.txt.out.file", PathUtil.path( new File( reportDirectory, "coverage.txt" ) ) );
         properties.setProperty( "report.sort", "+name,+block,+method,+class" );
         properties.setProperty( "report.out.encoding", "UTF-8" );
         properties.setProperty( "report.xml.out.encoding", "UTF-8" );
@@ -70,8 +70,8 @@ public class EmmaCoverageReport
 
         ReportProcessor reporter = ReportProcessor.create();
         reporter.setAppName( IAppConstants.APP_NAME );
-        reporter.setDataPath( PathUtil.getPaths( coverageFile ) );
-        reporter.setSourcePath( PathUtil.getPaths( request.getSourcePaths() ) );
+        reporter.setDataPath( PathUtil.paths( coverageFile ) );
+        reporter.setSourcePath( PathUtil.paths( request.getSourcePaths() ) );
         try
         {
             reporter.setReportTypes( request.getFormats().toArray( new String[0] ) );

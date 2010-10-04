@@ -301,7 +301,7 @@ public class AsdocMojo
         archiver.setDestFile( output );
         archiver.createArchive();
 
-        projectHelper.attachArtifact( project, PathUtil.getFileExtention( output ), "asdoc", output );
+        projectHelper.attachArtifact( project, PathUtil.fileExtention( output ), "asdoc", output );
     }
 
     @Override
@@ -393,7 +393,7 @@ public class AsdocMojo
 
     public String getExamplesPath()
     {
-        return PathUtil.getPath( examplesPath );
+        return PathUtil.path( examplesPath );
     }
 
     public List<String> getExcludeClasses()
@@ -499,7 +499,7 @@ public class AsdocMojo
     public String getOutput()
     {
         asdocOutputDirectory.mkdirs();
-        return PathUtil.getPath( asdocOutputDirectory );
+        return PathUtil.path( asdocOutputDirectory );
     }
 
     public String[] getPackage()
@@ -544,7 +544,7 @@ public class AsdocMojo
 
             for ( MavenProject p : reactorProjects )
             {
-                files.addAll( PathUtil.getExistingFilesList( p.getCompileSourceRoots() ) );
+                files.addAll( PathUtil.existingFilesList( p.getCompileSourceRoots() ) );
             }
 
             return files.toArray( new File[0] );
@@ -559,7 +559,7 @@ public class AsdocMojo
     {
         if ( templatePath != null )
         {
-            return PathUtil.getPath( templatePath );
+            return PathUtil.path( templatePath );
         }
 
         File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
@@ -580,7 +580,7 @@ public class AsdocMojo
 
         makeAsdocExecutable( templateOutput );
 
-        return PathUtil.getPath( templateOutput );
+        return PathUtil.path( templateOutput );
     }
 
     public String getWindowTitle()

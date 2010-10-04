@@ -18,12 +18,12 @@ public abstract class AbstractCoverageReporter
         getLogger().debug( "Instrumenting code to test coverage mode " + System.getProperty( "apparat.threads" ) );
         if ( getLogger().isDebugEnabled() )
         {
-            getLogger().info( "Instrumenting: " + PathUtil.getPath( swf ) + "\n source paths: \n"
-                                  + PathUtil.getPathString( sourcePaths ) );
+            getLogger().info( "Instrumenting: " + PathUtil.path( swf ) + "\n source paths: \n"
+                                  + PathUtil.pathString( sourcePaths ) );
         }
         else
         {
-            getLogger().info( "Instrumenting: " + PathUtil.getPath( swf ) );
+            getLogger().info( "Instrumenting: " + PathUtil.path( swf ) );
         }
 
         CoverageTool c = new CoverageTool();
