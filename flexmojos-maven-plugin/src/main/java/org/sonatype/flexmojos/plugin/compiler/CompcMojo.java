@@ -299,7 +299,7 @@ public class CompcMojo
 
             for ( final String path : includeFiles.getIncludes() )
             {
-                final File file = PathUtil.getFile( path, getResourcesTargetDirectories() );
+                final File file = PathUtil.file( path, getResourcesTargetDirectories() );
 
                 files.add( new IIncludeFile()
                 {
@@ -393,7 +393,7 @@ public class CompcMojo
             {
                 public String path()
                 {
-                    return PathUtil.getFile( ss.getPath(), getResourcesTargetDirectories() ).getAbsolutePath();
+                    return PathUtil.file( ss.getPath(), getResourcesTargetDirectories() ).getAbsolutePath();
                 }
 
                 public String name()
@@ -403,7 +403,7 @@ public class CompcMojo
                         return ss.getName();
                     }
 
-                    return PathUtil.getFile( ss.getPath(), getResourcesTargetDirectories() ).getName();
+                    return PathUtil.file( ss.getPath(), getResourcesTargetDirectories() ).getName();
                 }
             };
         }
