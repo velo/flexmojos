@@ -78,7 +78,7 @@ public class AsdocReportMojo
     @Override
     public String getOutput()
     {
-        return PathUtil.getPath( getReportOutputDirectory() );
+        return PathUtil.path( getReportOutputDirectory() );
     }
 
     public String getOutputName()

@@ -200,7 +200,10 @@ public class CompcMojo
      * 
      * <pre>
      * &lt;includeStylesheets&gt;
-     *   &lt;stylesheet&gt;${basedir}/mystyle.css&lt;/stylesheet&gt;
+     *   &lt;stylesheet&gt;
+     *     &lt;name&gt;mystyle.css&lt;/name&gt;
+     *     &lt;path&gt;${basedir}/mystyle.css&lt;/path&gt;
+     *   &lt;/stylesheet&gt;
      * &lt;/includeStylesheets&gt;
      * </pre>
      * 
@@ -327,7 +330,7 @@ public class CompcMojo
                 {
                     public String path()
                     {
-                        return PathUtil.getFile( file, scan.getBasedir() ).getAbsolutePath();
+                        return PathUtil.file( file, scan.getBasedir() ).getAbsolutePath();
                     }
 
                     public String name()
@@ -388,10 +391,9 @@ public class CompcMojo
             final MavenIncludeStylesheet ss = includeStylesheets[i];
             is[i] = new IIncludeStylesheet()
             {
-
                 public String path()
                 {
-                    return PathUtil.getFile( ss.getName(), getResourcesTargetDirectories() ).getAbsolutePath();
+                    return PathUtil.getFile( ss.getPath(), getResourcesTargetDirectories() ).getAbsolutePath();
                 }
 
                 public String name()
@@ -401,7 +403,7 @@ public class CompcMojo
                         return ss.getName();
                     }
 
-                    return ss.getPath();
+                    return PathUtil.getFile( ss.getPath(), getResourcesTargetDirectories() ).getName();
                 }
             };
         }

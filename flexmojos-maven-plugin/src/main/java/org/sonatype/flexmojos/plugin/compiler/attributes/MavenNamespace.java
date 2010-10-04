@@ -44,7 +44,7 @@ public class MavenNamespace
 
     public String manifest()
     {
-        return PathUtil.getPath( manifest );
+        return PathUtil.path( manifest );
     }
 
     public String uri()

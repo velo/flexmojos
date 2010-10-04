@@ -76,7 +76,7 @@ public class DitaAsdocMojo
     public String getOutput()
     {
         ditaOutputDirectory.mkdirs();
-        return PathUtil.getPath( ditaOutputDirectory );
+        return PathUtil.path( ditaOutputDirectory );
     }
 
     public void execute()

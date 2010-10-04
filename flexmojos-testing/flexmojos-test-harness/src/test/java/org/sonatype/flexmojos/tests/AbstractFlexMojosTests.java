@@ -227,7 +227,7 @@ public class AbstractFlexMojosTests
 
     private String getPath( String path )
     {
-        return PathUtil.getPath( new File( "../flexmojos-unittest/" + path + "/src/main/flex" ) );
+        return PathUtil.path( new File( "../flexmojos-unittest/" + path + "/src/main/flex" ) );
     }
 
     protected String getTestName()
@@ -365,7 +365,7 @@ public class AbstractFlexMojosTests
     {
         if ( !main.exists() )
         {
-            throw new FileNotFoundException( PathUtil.getPath( main ) );
+            throw new FileNotFoundException( PathUtil.path( main ) );
         }
 
         Process p = null;

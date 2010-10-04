@@ -260,7 +260,7 @@ public abstract class AbstractMavenMojo
         for ( File file : files )
         {
             FileSet fs = new FileSet();
-            fs.setDirectory( PathUtil.getPath( file ) );
+            fs.setDirectory( PathUtil.path( file ) );
             fs.addInclude( "**/*.as" );
             fs.addInclude( "**/*.mxml" );
             sets.add( fs );
@@ -289,7 +289,7 @@ public abstract class AbstractMavenMojo
 
     protected List<String> filterClasses( List<FileSet> classesPattern, File[] directories )
     {
-        directories = PathUtil.getExistingFiles( directories );
+        directories = PathUtil.existingFiles( directories );
 
         Set<String> includedFiles = new LinkedHashSet<String>();
         for ( FileSet pattern : classesPattern )
@@ -306,7 +306,7 @@ public abstract class AbstractMavenMojo
             }
             else
             {
-                File dir = PathUtil.getFile( pattern.getDirectory(), getBasedir() );
+                File dir = PathUtil.file( pattern.getDirectory(), getBasedir() );
                 if ( !ArrayUtils.contains( directories, dir ) )
                 {
                     throw new IllegalArgumentException( "Pattern does point to an invalid source directory: "
@@ -329,7 +329,7 @@ public abstract class AbstractMavenMojo
 
     protected Collection<File> filterFiles( List<FileSet> patterns, List<File> directories )
     {
-        directories = PathUtil.getExistingFilesList( directories );
+        directories = PathUtil.existingFilesList( directories );
 
         Set<File> includedFiles = new LinkedHashSet<File>();
         for ( FileSet pattern : patterns )
@@ -339,19 +339,19 @@ public abstract class AbstractMavenMojo
                 for ( File dir : directories )
                 {
                     DirectoryScanner scan = scan( pattern, dir );
-                    includedFiles.addAll( PathUtil.getFiles( scan.getIncludedFiles(), dir ) );
+                    includedFiles.addAll( PathUtil.files( scan.getIncludedFiles(), dir ) );
                 }
             }
             else
             {
-                File dir = PathUtil.getFile( pattern.getDirectory(), getBasedir() );
+                File dir = PathUtil.file( pattern.getDirectory(), getBasedir() );
                 if ( !directories.contains( dir ) )
                 {
                     throw new IllegalArgumentException( "Pattern does point to an invalid directory: "
                         + dir.getAbsolutePath() );
                 }
 
-                includedFiles.addAll( PathUtil.getFiles( scan( pattern, dir ).getIncludedFiles(), dir ) );
+                includedFiles.addAll( PathUtil.files( scan( pattern, dir ).getIncludedFiles(), dir ) );
             }
         }
 
@@ -446,7 +446,7 @@ public abstract class AbstractMavenMojo
     public File getOutputDirectory()
     {
         outputDirectory.mkdirs();
-        return PathUtil.getFile( outputDirectory );
+        return PathUtil.file( outputDirectory );
     }
 
     /**
@@ -465,7 +465,7 @@ public abstract class AbstractMavenMojo
             File directory;
             if ( resource.getTargetPath() != null )
             {
-                directory = PathUtil.getFile( resource.getTargetPath(), getBasedir() );
+                directory = PathUtil.file( resource.getTargetPath(), getBasedir() );
             }
             else
             {
@@ -484,7 +484,7 @@ public abstract class AbstractMavenMojo
     public File getTargetDirectory()
     {
         targetDirectory.mkdirs();
-        return PathUtil.getFile( targetDirectory );
+        return PathUtil.file( targetDirectory );
     }
 
     protected File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier,
@@ -576,7 +576,7 @@ public abstract class AbstractMavenMojo
 
     protected DirectoryScanner scan( FileSet pattern )
     {
-        return scan( pattern, PathUtil.getFile( pattern.getDirectory(), getBasedir() ) );
+        return scan( pattern, PathUtil.file( pattern.getDirectory(), getBasedir() ) );
     }
 
     protected DirectoryScanner scan( PatternSet pattern, File directory )
@@ -606,11 +606,11 @@ public abstract class AbstractMavenMojo
         File dir;
         if ( resource.getTargetPath() != null )
         {
-            dir = PathUtil.getFile( resource.getTargetPath(), getBasedir() );
+            dir = PathUtil.file( resource.getTargetPath(), getBasedir() );
         }
         else
         {
-            dir = PathUtil.getFile( resource.getDirectory(), getBasedir() );
+            dir = PathUtil.file( resource.getDirectory(), getBasedir() );
         }
 
         return scan( resource, dir );
