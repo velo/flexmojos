@@ -194,10 +194,10 @@ public class PathUtilTest
     @Test
     public void testGetFileStringListOfFile()
     {
-        assertThat( PathUtil.getFile( null, Collections.singletonList( f5 ) ), nullValue() );
-        assertThat( PathUtil.getFile( f5.getName(), Collections.singletonList( f5.getParentFile() ) ), equalTo( f5 ) );
-        assertThat( PathUtil.getFile( f5.getAbsolutePath(), Collections.singletonList( f1 ) ), equalTo( f5 ) );
-        assertThat( PathUtil.getFile( f5.getName(), new ArrayList<File>() ), nullValue() );
+        assertThat( PathUtil.file( null, Collections.singletonList( f5 ) ), nullValue() );
+        assertThat( PathUtil.file( f5.getName(), Collections.singletonList( f5.getParentFile() ) ), equalTo( f5 ) );
+        assertThat( PathUtil.file( f5.getAbsolutePath(), Collections.singletonList( f1 ) ), equalTo( f5 ) );
+        assertThat( PathUtil.file( f5.getName(), new ArrayList<File>() ), nullValue() );
     }
 
     @Test
