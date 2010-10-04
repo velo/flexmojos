@@ -126,10 +126,10 @@ public class PathUtil
             return null;
         }
 
-        return getFile( path, Arrays.asList( basedirs ) );
+        return file( path, Arrays.asList( basedirs ) );
     }
 
-    public static File getFile( String path, List<File> basedirs )
+    public static File file( String path, List<File> basedirs )
     {
         if ( path == null )
         {
