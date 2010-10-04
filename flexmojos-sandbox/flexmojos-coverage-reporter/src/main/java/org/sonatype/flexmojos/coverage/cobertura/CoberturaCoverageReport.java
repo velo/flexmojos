@@ -74,7 +74,7 @@ public class CoberturaCoverageReport
         List<File> sp = request.getSourcePaths();
         for ( File dir : sp )
         {
-            finder.addSourceDirectory( PathUtil.getPath( dir ) );
+            finder.addSourceDirectory( PathUtil.path( dir ) );
         }
 
         ComplexityCalculator complexity = new ComplexityCalculator( finder );

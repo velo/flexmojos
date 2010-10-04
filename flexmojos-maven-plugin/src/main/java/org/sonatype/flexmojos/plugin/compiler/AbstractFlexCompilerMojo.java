@@ -1442,7 +1442,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
         String output =
-            PathUtil.getPath( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
+            PathUtil.path( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
         when( cfg.getOutput() ).thenReturn( output );
 
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
@@ -1858,7 +1858,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public List<String> getDefaultsCssFiles()
     {
-        return PathUtil.getPathsList( defaultsCssFiles );
+        return PathUtil.pathsList( defaultsCssFiles );
     }
 
     public String getDefaultsCssUrl()
@@ -1933,7 +1933,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 projectHelper.attachArtifact( project, XML, CONFIGS, dumpConfig );
             }
         }
-        return PathUtil.getPath( dumpConfig );
+        return PathUtil.path( dumpConfig );
     }
 
     public Boolean getEnableRuntimeDesignLayers()
@@ -2363,12 +2363,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 projectHelper.attachArtifact( project, XML, LINK_REPORT, linkReport );
             }
         }
-        return PathUtil.getPath( linkReport );
+        return PathUtil.path( linkReport );
     }
 
     public String[] getLoadConfig()
     {
-        return PathUtil.getPaths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
+        return PathUtil.paths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
     }
 
     @SuppressWarnings( { "unchecked", "deprecation" } )
@@ -2399,7 +2399,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return null;
         }
 
-        return PathUtil.getPaths( MavenUtils.getFilesSet( artifacts ) );
+        return PathUtil.paths( MavenUtils.getFilesSet( artifacts ) );
     }
 
     public String[] getLocale()
@@ -2457,14 +2457,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public List<String> getLocalFontPaths()
     {
-        return PathUtil.getPathsList( localFontPaths );
+        return PathUtil.pathsList( localFontPaths );
     }
 
     public String getLocalFontsSnapshot()
     {
         if ( localFontsSnapshot != null )
         {
-            return PathUtil.getPath( localFontsSnapshot );
+            return PathUtil.path( localFontsSnapshot );
         }
 
         URL url;
@@ -2490,7 +2490,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             throw new IllegalStateException( "Error copying fonts file.", e );
         }
-        return PathUtil.getPath( fontsSer );
+        return PathUtil.path( fontsSer );
     }
 
     public ILocalizedDescription[] getLocalizedDescription()
@@ -2651,7 +2651,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             project.getArtifact().setFile( output );
         }
 
-        return PathUtil.getPath( output );
+        return PathUtil.path( output );
     }
 
     public String[] getPolicyFileUrls()
@@ -2710,7 +2710,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getResourceBundleList()
     {
-        return PathUtil.getPath( getResourceBundleListFile() );
+        return PathUtil.path( getResourceBundleListFile() );
     }
 
     protected List<String> getResourceBundleListContent()
@@ -2839,13 +2839,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         if ( services != null )
         {
-            return PathUtil.getPath( services );
+            return PathUtil.path( services );
         }
 
         File cfg = new File( configDirectory, "services-config.xml" );
         if ( cfg.exists() )
         {
-            return PathUtil.getPath( cfg );
+            return PathUtil.path( cfg );
         }
         return null;
     }
@@ -2905,14 +2905,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 projectHelper.attachArtifact( project, XML, SIZE_REPORT, sizeReport );
             }
         }
-        return PathUtil.getPath( sizeReport );
+        return PathUtil.path( sizeReport );
     }
 
     public File[] getSourcePath()
     {
         List<File> files = new ArrayList<File>();
 
-        files.addAll( PathUtil.getExistingFilesList( compileSourceRoots ) );
+        files.addAll( PathUtil.existingFilesList( compileSourceRoots ) );
 
         if ( localesCompiled != null )
         {
@@ -2951,9 +2951,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         List<String> themes = new ArrayList<String>();
         if ( this.themes != null )
         {
-            themes.addAll( PathUtil.getPathsList( this.themes ) );
+            themes.addAll( PathUtil.pathsList( this.themes ) );
         }
-        themes.addAll( PathUtil.getPathsList( //
+        themes.addAll( PathUtil.pathsList( //
         MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
                                               scope( THEME ) ) ) ) );
         return themes;

@@ -23,12 +23,12 @@ public class SourceFileResolver
     public static File resolveSourceFile( List<String> sourcePaths, String sourceFileName, String groupId,
                                           String artifactId )
     {
-        return resolveSourceFile( sourceFileName, PathUtil.getFilesList( sourcePaths ), groupId, artifactId );
+        return resolveSourceFile( sourceFileName, PathUtil.filesList( sourcePaths ), groupId, artifactId );
     }
 
     public static File resolveSourceFile( List<String> sourcePaths, String sourceFile )
     {
-        return resolveSourceFile( sourceFile, PathUtil.getFilesList( sourcePaths ) );
+        return resolveSourceFile( sourceFile, PathUtil.filesList( sourcePaths ) );
     }
 
     public static File resolveSourceFile( String sourceFileName, List<File> sourceRoots )

@@ -245,11 +245,11 @@ public class TestRunMojo
 
         if ( coverageOverwriteSourceRoots == null )
         {
-            files.addAll( PathUtil.getExistingFilesList( coverageSourceRoots ) );
+            files.addAll( PathUtil.existingFilesList( coverageSourceRoots ) );
         }
         else
         {
-            files.addAll( PathUtil.getExistingFilesList( Arrays.asList( coverageOverwriteSourceRoots.split( "," ) ) ) );
+            files.addAll( PathUtil.existingFilesList( Arrays.asList( coverageOverwriteSourceRoots.split( "," ) ) ) );
         }
 
         return files.toArray( new File[0] );

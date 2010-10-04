@@ -95,100 +95,100 @@ public class PathUtilTest
     @Test
     public void testGetExistingFilesCollectionOfString()
     {
-        assertThat( PathUtil.getExistingFiles( (List<String>) null ), nullValue() );
-        assertThat( PathUtil.getExistingFiles( Collections.singletonList( f5.getAbsolutePath() ) ),
+        assertThat( PathUtil.existingFiles( (List<String>) null ), nullValue() );
+        assertThat( PathUtil.existingFiles( Collections.singletonList( f5.getAbsolutePath() ) ),
                     equalTo( new File[] { f5 } ) );
     }
 
     @Test
     public void testGetExistingFilesFileArray()
     {
-        assertThat( PathUtil.getExistingFiles( (File[]) null ), nullValue() );
-        assertThat( PathUtil.getExistingFiles( f5 ), equalTo( new File[] { f5 } ) );
+        assertThat( PathUtil.existingFiles( (File[]) null ), nullValue() );
+        assertThat( PathUtil.existingFiles( f5 ), equalTo( new File[] { f5 } ) );
     }
 
     @Test
     public void testGetExistingFilesListCollectionOfString()
     {
-        assertThat( PathUtil.getExistingFilesList( (List<String>) null ), nullValue() );
-        assertThat( PathUtil.getExistingFilesList( Collections.singletonList( f5.getAbsolutePath() ) ), hasItem( f5 ) );
+        assertThat( PathUtil.existingFilesList( (List<String>) null ), nullValue() );
+        assertThat( PathUtil.existingFilesList( Collections.singletonList( f5.getAbsolutePath() ) ), hasItem( f5 ) );
     }
 
     @Test
     public void testGetExistingFilesListListOfFile()
     {
-        assertThat( PathUtil.getExistingFilesList( (List<File>) null ), nullValue() );
-        assertThat( PathUtil.getExistingFilesList( Collections.singletonList( f5 ) ), hasItem( f5 ) );
-        assertThat( PathUtil.getExistingFilesList( Arrays.asList( f2, f4, f5 ) ), hasItem( f5 ) );
+        assertThat( PathUtil.existingFilesList( (List<File>) null ), nullValue() );
+        assertThat( PathUtil.existingFilesList( Collections.singletonList( f5 ) ), hasItem( f5 ) );
+        assertThat( PathUtil.existingFilesList( Arrays.asList( f2, f4, f5 ) ), hasItem( f5 ) );
     }
 
     @Test
     public void testGetFile()
         throws IOException
     {
-        assertThat( PathUtil.getFile( (String) null ), nullValue() );
-        assertThat( PathUtil.getFile( _PATH ), equalTo( new File( _PATH ).getCanonicalFile() ) );
+        assertThat( PathUtil.file( (String) null ), nullValue() );
+        assertThat( PathUtil.file( _PATH ), equalTo( new File( _PATH ).getCanonicalFile() ) );
     }
 
     @Test
     public void testGetFileFile()
     {
-        assertThat( PathUtil.getFile( (File) null ), nullValue() );
-        assertThat( PathUtil.getFile( f3 ), equalTo( f1 ) );
-        assertThat( PathUtil.getFile( f4 ), equalTo( f2 ) );
+        assertThat( PathUtil.file( (File) null ), nullValue() );
+        assertThat( PathUtil.file( f3 ), equalTo( f1 ) );
+        assertThat( PathUtil.file( f4 ), equalTo( f2 ) );
     }
 
     @Test
     public void testGetFilesList()
     {
-        assertThat( PathUtil.getFiles( (Collection<String>) null ), nullValue() );
-        assertThat( PathUtil.getFiles( Arrays.asList( f5.getAbsolutePath() ) ), equalTo( new File[] { f5 } ) );
+        assertThat( PathUtil.files( (Collection<String>) null ), nullValue() );
+        assertThat( PathUtil.files( Arrays.asList( f5.getAbsolutePath() ) ), equalTo( new File[] { f5 } ) );
     }
 
     @Test
     public void testGetFilesListCollectionOfString()
     {
-        assertThat( PathUtil.getFilesList( (Collection<String>) null ), nullValue() );
-        assertThat( PathUtil.getFilesList( Arrays.asList( f5.getAbsolutePath() ) ), hasItem( f5 ) );
+        assertThat( PathUtil.filesList( (Collection<String>) null ), nullValue() );
+        assertThat( PathUtil.filesList( Arrays.asList( f5.getAbsolutePath() ) ), hasItem( f5 ) );
     }
 
     @Test
     public void testGetFilesListOfStringFile()
     {
-        assertThat( PathUtil.getFiles( (List<String>) null, f1 ), nullValue() );
-        assertThat( PathUtil.getFiles( Collections.singletonList( f5.getAbsolutePath() ), f1 ), hasItem( f5 ) );
-        assertThat( PathUtil.getFiles( Collections.singletonList( f5.getName() ), f5.getParentFile() ), hasItem( f5 ) );
+        assertThat( PathUtil.files( (List<String>) null, f1 ), nullValue() );
+        assertThat( PathUtil.files( Collections.singletonList( f5.getAbsolutePath() ), f1 ), hasItem( f5 ) );
+        assertThat( PathUtil.files( Collections.singletonList( f5.getName() ), f5.getParentFile() ), hasItem( f5 ) );
     }
 
     @Test
     public void testGetFilesStringArray()
     {
-        assertThat( PathUtil.getFiles( (String[]) null ), nullValue() );
-        assertThat( PathUtil.getFiles( new String[] { f5.getAbsolutePath() } ), equalTo( new File[] { f5 } ) );
+        assertThat( PathUtil.files( (String[]) null ), nullValue() );
+        assertThat( PathUtil.files( new String[] { f5.getAbsolutePath() } ), equalTo( new File[] { f5 } ) );
     }
 
     @Test
     public void testGetFilesStringArrayFile()
     {
-        assertThat( PathUtil.getFiles( (String[]) null, f1 ), nullValue() );
-        assertThat( PathUtil.getFiles( new String[] { f5.getAbsolutePath() }, f1 ), hasItem( f5 ) );
-        assertThat( PathUtil.getFiles( new String[] { f5.getName() }, f5.getParentFile() ), hasItem( f5 ) );
+        assertThat( PathUtil.files( (String[]) null, f1 ), nullValue() );
+        assertThat( PathUtil.files( new String[] { f5.getAbsolutePath() }, f1 ), hasItem( f5 ) );
+        assertThat( PathUtil.files( new String[] { f5.getName() }, f5.getParentFile() ), hasItem( f5 ) );
     }
 
     @Test
     public void testGetFileStringFile()
     {
-        assertThat( PathUtil.getFile( null, f1 ), nullValue() );
-        assertThat( PathUtil.getFile( f5.getAbsolutePath(), f1 ), equalTo( f5 ) );
-        assertThat( PathUtil.getFile( f5.getName(), f5.getParentFile() ), equalTo( f5 ) );
+        assertThat( PathUtil.file( null, f1 ), nullValue() );
+        assertThat( PathUtil.file( f5.getAbsolutePath(), f1 ), equalTo( f5 ) );
+        assertThat( PathUtil.file( f5.getName(), f5.getParentFile() ), equalTo( f5 ) );
     }
 
     @Test
     public void testGetFileStringFileArray()
     {
-        assertThat( PathUtil.getFile( null, f5, f1 ), nullValue() );
-        assertThat( PathUtil.getFile( f5.getName(), f5.getParentFile(), f1 ), equalTo( f5 ) );
-        assertThat( PathUtil.getFile( f5.getAbsolutePath(), f1, f1 ), equalTo( f5 ) );
+        assertThat( PathUtil.file( null, f5, f1 ), nullValue() );
+        assertThat( PathUtil.file( f5.getName(), f5.getParentFile(), f1 ), equalTo( f5 ) );
+        assertThat( PathUtil.file( f5.getAbsolutePath(), f1, f1 ), equalTo( f5 ) );
     }
 
     @Test
@@ -204,50 +204,50 @@ public class PathUtilTest
     public void testGetPath()
         throws IOException
     {
-        assertThat( PathUtil.getPath( null ), nullValue() );
-        assertThat( PathUtil.getPath( f1 ), equalTo( _PATH ) );
-        assertThat( PathUtil.getPath( f2 ), equalTo( ABSOLUTE_PATH ) );
+        assertThat( PathUtil.path( null ), nullValue() );
+        assertThat( PathUtil.path( f1 ), equalTo( _PATH ) );
+        assertThat( PathUtil.path( f2 ), equalTo( ABSOLUTE_PATH ) );
     }
 
     @Test
     public void testGetPathsCollectionOfFile()
     {
-        assertThat( PathUtil.getPaths( (Collection<File>) null ), nullValue() );
-        assertThat( PathUtil.getPaths( Arrays.asList( f1, f2 ) ),
+        assertThat( PathUtil.paths( (Collection<File>) null ), nullValue() );
+        assertThat( PathUtil.paths( Arrays.asList( f1, f2 ) ),
                     equalTo( new String[] { _PATH, ABSOLUTE_PATH } ) );
     }
 
     @Test
     public void testGetPathsFileArray()
     {
-        assertThat( PathUtil.getPaths( (File[]) null ), nullValue() );
-        assertThat( PathUtil.getPaths().length, equalTo( 0 ) );
+        assertThat( PathUtil.paths( (File[]) null ), nullValue() );
+        assertThat( PathUtil.paths().length, equalTo( 0 ) );
     }
 
     @Test
     public void testGetPathsList()
     {
-        assertThat( PathUtil.getPathsList( null ), nullValue() );
-        assertThat( PathUtil.getPathsList( new File[] { f1, f2 } ), hasItems( _PATH, ABSOLUTE_PATH ) );
+        assertThat( PathUtil.pathsList( null ), nullValue() );
+        assertThat( PathUtil.pathsList( new File[] { f1, f2 } ), hasItems( _PATH, ABSOLUTE_PATH ) );
     }
 
     @Test
     public void testGetPathString()
     {
-        assertThat( PathUtil.getPathString( null ), nullValue() );
-        assertThat( PathUtil.getPathString( new File[] { f1 } ), equalTo( _PATH ) );
-        assertThat( PathUtil.getPathString( new File[] { f1, f2 } ), equalTo( _PATH + File.pathSeparatorChar
+        assertThat( PathUtil.pathString( null ), nullValue() );
+        assertThat( PathUtil.pathString( new File[] { f1 } ), equalTo( _PATH ) );
+        assertThat( PathUtil.pathString( new File[] { f1, f2 } ), equalTo( _PATH + File.pathSeparatorChar
             + ABSOLUTE_PATH ) );
     }
 
     @Test
     public void testGetRelativePath()
     {
-        assertThat( PathUtil.getRelativePath( new File( "/home" ), new File( "/home/velo/content" ) ),
+        assertThat( PathUtil.relativePath( new File( "/home" ), new File( "/home/velo/content" ) ),
                     equalTo( "velo/content" ) );
-        assertThat( PathUtil.getRelativePath( new File( "/home/velo/content" ), new File( "/home/velo/c2" ) ),
+        assertThat( PathUtil.relativePath( new File( "/home/velo/content" ), new File( "/home/velo/c2" ) ),
                     equalTo( "../c2" ) );
-        assertThat( PathUtil.getRelativePath( new File( "/home/velo/content" ), new File( "/home/velo2" ) ),
+        assertThat( PathUtil.relativePath( new File( "/home/velo/content" ), new File( "/home/velo2" ) ),
                     equalTo( "../../velo2" ) );
     }
 

@@ -62,7 +62,7 @@ public class PathUtil
             return false;
         }
 
-        return existAll( getFiles( paths ) );
+        return existAll( files( paths ) );
     }
 
     public static boolean existAny( File... files )
@@ -86,7 +86,7 @@ public class PathUtil
         return false;
     }
 
-    public static File getFile( File file )
+    public static File file( File file )
     {
         if ( file == null )
         {
@@ -103,7 +103,7 @@ public class PathUtil
         }
     }
 
-    public static File getFile( String path, File basedir )
+    public static File file( String path, File basedir )
     {
         if ( path == null )
         {
@@ -116,10 +116,10 @@ public class PathUtil
             file = new File( basedir, path );
         }
 
-        return getFile( file );
+        return file( file );
     }
 
-    public static File getFile( String path, File... basedirs )
+    public static File file( String path, File... basedirs )
     {
         if ( path == null )
         {
@@ -145,7 +145,7 @@ public class PathUtil
 
         for ( File basedir : basedirs )
         {
-            file = getFile( path, basedir );
+            file = file( path, basedir );
             if ( file.exists() )
             {
                 return file;
@@ -155,7 +155,7 @@ public class PathUtil
         return null;
     }
 
-    public static Collection<File> getFiles( List<String> paths, File basedir )
+    public static Collection<File> files( List<String> paths, File basedir )
     {
         if ( paths == null )
         {
@@ -165,23 +165,23 @@ public class PathUtil
         List<File> files = new ArrayList<File>();
         for ( String path : paths )
         {
-            files.add( getFile( path, basedir ) );
+            files.add( file( path, basedir ) );
         }
 
         return files;
     }
 
-    public static Collection<File> getFiles( String[] paths, File basedir )
+    public static Collection<File> files( String[] paths, File basedir )
     {
         if ( paths == null )
         {
             return null;
         }
 
-        return getFiles( Arrays.asList( paths ), basedir );
+        return files( Arrays.asList( paths ), basedir );
     }
 
-    public static String getPath( File file )
+    public static String path( File file )
     {
         if ( file == null )
         {
@@ -198,17 +198,17 @@ public class PathUtil
         }
     }
 
-    public static String[] getPaths( Collection<File> files )
+    public static String[] paths( Collection<File> files )
     {
         if ( files == null )
         {
             return null;
         }
 
-        return getPaths( files.toArray( new File[files.size()] ) );
+        return paths( files.toArray( new File[files.size()] ) );
     }
 
-    public static String[] getPaths( File... files )
+    public static String[] paths( File... files )
     {
         if ( files == null )
         {
@@ -218,21 +218,21 @@ public class PathUtil
         String[] paths = new String[files.length];
         for ( int i = 0; i < paths.length; i++ )
         {
-            paths[i] = getPath( files[i] );
+            paths[i] = path( files[i] );
         }
         return paths;
     }
 
-    public static List<String> getPathsList( File[] files )
+    public static List<String> pathsList( File[] files )
     {
         if ( files == null )
         {
             return null;
         }
-        return Arrays.asList( getPaths( files ) );
+        return Arrays.asList( paths( files ) );
     }
 
-    public static String getPathString( File[] files )
+    public static String pathString( File[] files )
     {
         if ( files == null )
         {
@@ -246,42 +246,42 @@ public class PathUtil
             {
                 paths.append( File.pathSeparatorChar );
             }
-            paths.append( getPath( file ) );
+            paths.append( path( file ) );
         }
         return paths.toString();
     }
 
-    public static File[] getExistingFiles( Collection<String> paths )
+    public static File[] existingFiles( Collection<String> paths )
     {
         if ( paths == null )
         {
             return null;
         }
 
-        return getExistingFilesList( paths ).toArray( new File[0] );
+        return existingFilesList( paths ).toArray( new File[0] );
     }
 
-    public static File[] getExistingFiles( File... files )
+    public static File[] existingFiles( File... files )
     {
         if ( files == null )
         {
             return null;
         }
 
-        return getExistingFilesList( Arrays.asList( files ) ).toArray( new File[0] );
+        return existingFilesList( Arrays.asList( files ) ).toArray( new File[0] );
     }
 
-    public static List<File> getExistingFilesList( Collection<String> paths )
+    public static List<File> existingFilesList( Collection<String> paths )
     {
         if ( paths == null )
         {
             return null;
         }
 
-        return getExistingFilesList( getFilesList( paths ) );
+        return existingFilesList( filesList( paths ) );
     }
 
-    public static List<File> getExistingFilesList( List<File> files )
+    public static List<File> existingFilesList( List<File> files )
     {
         if ( files == null )
         {
@@ -301,17 +301,17 @@ public class PathUtil
         return files;
     }
 
-    public static File getFile( String path )
+    public static File file( String path )
     {
         if ( path == null )
         {
             return null;
         }
 
-        return getFile( new File( path ) );
+        return file( new File( path ) );
     }
 
-    public static File[] getFiles( Collection<String> paths )
+    public static File[] files( Collection<String> paths )
     {
         if ( paths == null )
         {
@@ -322,30 +322,30 @@ public class PathUtil
         int i = 0;
         for ( String path : paths )
         {
-            files[i++] = getFile( new File( path ) );
+            files[i++] = file( new File( path ) );
         }
 
         return files;
     }
 
-    public static File[] getFiles( String... paths )
+    public static File[] files( String... paths )
     {
         if ( paths == null )
         {
             return null;
         }
 
-        return getFiles( Arrays.asList( paths ) );
+        return files( Arrays.asList( paths ) );
     }
 
-    public static List<File> getFilesList( Collection<String> paths )
+    public static List<File> filesList( Collection<String> paths )
     {
         if ( paths == null )
         {
             return null;
         }
 
-        return Arrays.asList( getFiles( paths ) );
+        return Arrays.asList( files( paths ) );
     }
 
     /**
@@ -355,10 +355,10 @@ public class PathUtil
      * @param f input file
      * @return a List collection with the individual elements of the path in reverse order
      */
-    private static List<String> getPathList( File f )
+    private static List<String> pathList( File f )
     {
         List<String> l = new ArrayList<String>();
-        File r = getFile( f );
+        File r = file( f );
         while ( r != null )
         {
             l.add( r.getName() );
@@ -375,10 +375,10 @@ public class PathUtil
      * @param f file to generate path for
      * @return path from home to f as a string
      */
-    public static String getRelativePath( File home, File f )
+    public static String relativePath( File home, File f )
     {
-        List<String> homelist = getPathList( home );
-        List<String> filelist = getPathList( f );
+        List<String> homelist = pathList( home );
+        List<String> filelist = pathList( f );
         return matchPathLists( homelist, filelist ).replace( '\\', '/' );
     }
 
@@ -423,7 +423,7 @@ public class PathUtil
         return s;
     }
 
-    public static String getFileExtention( File file )
+    public static String fileExtention( File file )
     {
         if ( file == null )
         {

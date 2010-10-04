@@ -281,7 +281,7 @@ public class AsVmLauncher
         getLogger().debug( "[LAUNCHER] exec: " + asvmCommand + " - " + targetFile );
         getLogger().debug( "[LAUNCHER] Creating process" );
 
-        String target = PathUtil.getPath( targetFile );
+        String target = PathUtil.path( targetFile );
         if ( useXvfb() )
         {
             runFlashplayerHeadless( asvmCommand, target );
