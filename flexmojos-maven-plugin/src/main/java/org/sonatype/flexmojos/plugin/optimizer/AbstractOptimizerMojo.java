@@ -37,6 +37,9 @@ import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.util.PathUtil;
 
+import scala.None$;
+import scala.Option;
+import scala.Some;
 import apparat.tools.reducer.MatryoshkaType;
 import apparat.tools.reducer.Reducer.ReducerTool;
 import apparat.tools.reducer.ReducerConfiguration;
@@ -177,6 +180,13 @@ public abstract class AbstractOptimizerMojo
     private String reduceMatryoshkaType;
 
     /**
+     * A custom Matryoshka. Only used if the matryoshkaType is set to "custom".
+     * 
+     * @parameter expression="${flex.reduceMatryoshka}"
+     */
+    private File reduceMatryoshka;
+
+    /**
      * Whether or not to merge ABC files into a single one.
      * <p>
      * Equivalent to -d
@@ -202,6 +212,13 @@ public abstract class AbstractOptimizerMojo
      * @parameter expression="${flex.reduceSortCPool}" default-value="true"
      */
     private boolean reduceSortCPool;
+
+    /**
+     * Whether or not to merge control flow where possible.
+     * 
+     * @parameter expression="${flex.reduceMergeCF}" default-value="true"
+     */
+    private boolean reduceMergeCF;
 
     /**
      * Use apparat to strip
@@ -354,10 +371,19 @@ public abstract class AbstractOptimizerMojo
                 {
                     return MatryoshkaType.PRELOADER();
                 }
+//                else if ( reduceMatryoshkaType.equalsIgnoreCase( "custom" ) )
+//                {
+//                    return MatryoshkaType.CUSTOM();
+//                }
                 else
                 {
                     return MatryoshkaType.NONE();
                 }
+            }
+
+            public Option<File> matryoshka()
+            {
+                return ( null == reduceMatryoshka ) ? None$.MODULE$ : new Some( reduceMatryoshka );
             }
 
             public boolean mergeABC()
@@ -378,6 +404,11 @@ public abstract class AbstractOptimizerMojo
             public boolean sortCPool()
             {
                 return reduceSortCPool;
+            }
+
+            public boolean mergeCF()
+            {
+                return reduceMergeCF;
             }
         };
         s.configure( cfg );
