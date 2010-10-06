@@ -46,10 +46,10 @@
   <properties>
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>4.5.0.17855</flex.sdk.version>
-    <maven.version>3.0-RC3</maven.version>
+    <maven.version>3.0</maven.version>
     <maven-site-plugin.version>3.0-beta-3-SONATYPE-r1000854</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0.RC6</apparat.version>
+    <apparat.version>1.0.RC7</apparat.version>
   </properties>
 
   <build>
