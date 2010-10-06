@@ -199,7 +199,8 @@ public class AbstractFlexMojosTests
         verifier.setLocalRepo( getProperty( "fake-repo" ) );
         Properties sysProps = new Properties();
         sysProps.setProperty( "MAVEN_OPTS", "-Xmx512m" );
-        sysProps.setProperty( "apparat.threads", "true" );
+        sysProps.setProperty( "apparat.threads", "false" );
+        sysProps.setProperty( "apparat.debug", "true" );
         verifier.setSystemProperties( sysProps );
         verifier.setLogFileName( getTestName() + ".log" );
         verifier.setAutoclean( false );
