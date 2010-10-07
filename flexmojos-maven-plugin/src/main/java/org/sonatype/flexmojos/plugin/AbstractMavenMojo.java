@@ -52,6 +52,7 @@ import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.NotCacheable;
+import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 
 import flex2.compiler.Logger;
@@ -350,6 +351,12 @@ public abstract class AbstractMavenMojo
     public Map<String, Object> getCache()
     {
         return cache;
+    }
+
+    public String getCompilerVersion()
+    {
+        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        return compiler.getVersion();
     }
 
     public Set<Artifact> getDependencies()

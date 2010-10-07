@@ -64,7 +64,7 @@ public class DefaultTestRunner
                 if ( hasError( launcher, pinger, resultHandler ) )
                 {
                     Throwable executionError = getError( launcher, pinger, resultHandler );
-                    throw new TestRunnerException( executionError.getMessage() + swf, executionError );
+                    throw new TestRunnerException( executionError.getMessage() + " - " + swf, executionError );
                 }
 
                 if ( hasDone( launcher ) )
