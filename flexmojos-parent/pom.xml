@@ -30,7 +30,7 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>forge</id>
+      <id>forge-snapshots</id>
       <url>${flexSnapshotUrl}</url>
     </snapshotRepository>
   </distributionManagement>
