@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -23,19 +24,24 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.sonatype.flexmojos.compatibilitykit.VersionUtils;
 import org.sonatype.flexmojos.coverage.CoverageReportException;
 import org.sonatype.flexmojos.coverage.CoverageReportRequest;
 import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.SourcePathAware;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
+import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.*;
+import static org.sonatype.flexmojos.util.PathUtil.*;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -69,6 +75,22 @@ public class TestRunMojo
     private String adlCommand;
 
     /**
+     * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;adlGav&gt;
+     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
+     *   &lt;artifactId&gt;adl&lt;/artifactId&gt;
+     *   &lt;type&gt;exe&lt;/type&gt;
+     * &lt;/adlGav&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenArtifact adlGav;
+
+    /**
      * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
      * 
      * @parameter default-value="true" expression="${flex.allowHeadlessMode}"
@@ -92,18 +114,26 @@ public class TestRunMojo
     private File coverageDataDirectory;
 
     /**
-     * Framework that will be used to produce the coverage report. Accepts "emma" and "cobertura"
-     * 
-     * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
-     */
-    private String coverageProvider;
-
-    /**
      * Location to write coverage report
      * 
      * @parameter default-value="${project.build.directory}/coverage" expression="${flex.reportDestinationDir}"
      */
     protected File coverageOutputDirectory;
+
+    /**
+     * This is only used by flexmojos integration tests
+     * 
+     * @parameter expression="${flex.coverageOverwriteSourceRoots}"
+     * @readonly
+     */
+    private String coverageOverwriteSourceRoots;
+
+    /**
+     * Framework that will be used to produce the coverage report. Accepts "emma" and "cobertura"
+     * 
+     * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
+     */
+    private String coverageProvider;
 
     /**
      * Encoding used to generate coverage report
@@ -133,14 +163,6 @@ public class TestRunMojo
      */
     private List<String> coverageSourceRoots;
 
-    /**
-     * This is only used by flexmojos integration tests
-     * 
-     * @parameter expression="${flex.coverageOverwriteSourceRoots}"
-     * @readonly
-     */
-    private String coverageOverwriteSourceRoots;
-
     private Throwable executionError;
 
     private boolean failures = false;
@@ -159,6 +181,22 @@ public class TestRunMojo
      * @parameter expression="${flex.flashPlayer.command}"
      */
     private String flashPlayerCommand;
+
+    /**
+     * Coordinates to flashplayer. If not set will use <i>com.adobe:flashplayer</i><BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;flashPlayerGav&gt;
+     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
+     *   &lt;artifactId&gt;flashplayer&lt;/artifactId&gt;
+     *   &lt;type&gt;exe&lt;/type&gt;
+     * &lt;/flashPlayerGav&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenArtifact flashPlayerGav;
 
     private int numErrors;
 
@@ -180,6 +218,17 @@ public class TestRunMojo
      * @parameter default-value="false" expression="${skipTests}"
      */
     private boolean skipTest;
+
+    /**
+     * Specifies the version of the player the application is targeting. Features requiring a later version will not be
+     * compiled into the application. The minimum value supported is "9.0.0".
+     * <p>
+     * Equivalent to -target-player
+     * </p>
+     * 
+     * @parameter expression="${flex.targetPlayer}" default-value="10.1"
+     */
+    private String targetPlayer;
 
     /**
      * Socket connect port for flex/java communication to control if flashplayer is alive
@@ -216,7 +265,6 @@ public class TestRunMojo
     /**
      * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
      */
-
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -237,6 +285,85 @@ public class TestRunMojo
             run();
             tearDown();
         }
+    }
+
+    private String getAirTarget()
+    {
+        int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
+        {
+            return "2.0";
+        }
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
+        {
+            return "1.5";
+        }
+
+        return "1.0";
+    }
+
+    private String getFlashVM( String command, MavenArtifact gav, String defaultArtifactId, String version )
+    {
+        if ( command != null )
+        {
+            getLog().debug( "Using user defined command for " + defaultArtifactId + ":" + command );
+            return command;
+        }
+
+        if ( gav == null )
+        {
+            gav = new MavenArtifact();
+            gav.setGroupId( "com.adobe" );
+            gav.setArtifactId( defaultArtifactId );
+            if ( OSUtils.isWindows() )
+            {
+                gav.setType( "exe" );
+            }
+            else
+            {
+                gav.setType( "uexe" );
+                if ( OSUtils.isMacOS() )
+                {
+                    gav.setClassifier( "mac" );
+                }
+                else
+                {
+                    gav.setClassifier( "linux" );
+                }
+            }
+        }
+
+        @SuppressWarnings( "unchecked" )
+        Artifact fp =
+            getDependency( groupId( gav.getGroupId() ), artifactId( gav.getArtifactId() ),
+                           classifier( gav.getClassifier() ), type( gav.getType() ) );
+        if ( fp == null )
+        {
+            version = gav.getVersion() != null ? gav.getVersion() : version;
+            try
+            {
+                fp = resolve( gav.getGroupId(), gav.getArtifactId(), version, gav.getClassifier(), gav.getType() );
+            }
+            catch ( IllegalStateException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( e.getMessage(), e );
+                }
+
+                fp = null;
+            }
+        }
+
+        if ( fp != null && fp.getFile() != null )
+        {
+            getLog().debug( "Using " + defaultArtifactId + " from maven local repository: " + fp.getFile() );
+            return path( fp.getFile() );
+        }
+
+        getLog().debug( "Flexmojos was not able to resolve " + defaultArtifactId + " delegating the job to OS!" );
+
+        return null;
     }
 
     public File[] getSourcePath()
@@ -333,12 +460,13 @@ public class TestRunMojo
                     testRequest.setUseAirDebugLauncher( isAirProject );
                     if ( isAirProject )
                     {
-                        testRequest.setAdlCommand( adlCommand );
+                        testRequest.setAdlCommand( getFlashVM( adlCommand, adlGav, "adl", getAirTarget() ) );
                         testRequest.setSwfDescriptor( getSwfDescriptor( swf ) );
                     }
                     else
                     {
-                        testRequest.setFlashplayerCommand( flashPlayerCommand );
+                        testRequest.setFlashplayerCommand( getFlashVM( flashPlayerCommand, flashPlayerGav,
+                                                                       "flashplayer", targetPlayer ) );
                     }
 
                     if ( coverage )

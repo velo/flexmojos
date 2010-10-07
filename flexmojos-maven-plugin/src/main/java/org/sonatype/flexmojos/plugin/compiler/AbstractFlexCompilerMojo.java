@@ -1747,12 +1747,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return output;
     }
 
-    public String getCompilerVersion()
-    {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
-    }
-
     public Map<String, Boolean> getCompilerWarnings()
     {
         // converts the <String, String> map into a <String, Boolean> one
