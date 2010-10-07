@@ -10,10 +10,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.it.Verifier;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 import flash.swf.tools.SwfxPrinter;
@@ -26,7 +26,7 @@ public class MetadataTest
     public void testMetadataTest()
         throws Exception
     {
-        Verifier v = standardConceptTester( "metadata-test" );
+        FMVerifier v = standardConceptTester( "metadata-test" );
         File testDir = new File( v.getBasedir() );
         final String swfPath = new File( testDir, "target/metadata-test-1.0-SNAPSHOT.swf" ).getAbsolutePath();
         final String swfDumpPath = swfPath + "x";

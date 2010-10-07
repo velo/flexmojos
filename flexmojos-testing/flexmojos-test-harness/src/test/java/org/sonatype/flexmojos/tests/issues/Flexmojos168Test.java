@@ -2,9 +2,9 @@ package org.sonatype.flexmojos.tests.issues;
 
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,7 +17,7 @@ public class Flexmojos168Test
         throws Exception
     {
         File testDir = getProject( "/issues/flexmojos-168/skip" );
-        Verifier v = test( testDir, "compile", "-Dflexmojos.skip=true" );
+        FMVerifier v = test( testDir, "compile", "-Dflexmojos.skip=true" );
 
         String log = FileUtils.fileRead( new File( v.getBasedir(), v.getLogFileName() ) );
         Assert.assertTrue( log.contains( "Skipping flexmojos goal execution" ) );
@@ -35,7 +35,7 @@ public class Flexmojos168Test
     public void classifier()
         throws Exception
     {
-        Verifier v = testIssue( "flexmojos-168/classifier" );
+        FMVerifier v = testIssue( "flexmojos-168/classifier" );
 
         File target = new File( v.getBasedir(), "target" );
         String filename = "flexmojos-168-1.0-SNAPSHOT-validation.swf";

@@ -7,8 +7,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.zip.ZipFile;
 
-import org.apache.maven.it.Verifier;
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Flexmojos130Test
@@ -20,7 +20,7 @@ public class Flexmojos130Test
         throws Exception
     {
         File testDir = getProject( "/issues/flexmojos-130" );
-        Verifier v = getVerifier( testDir );
+        FMVerifier v = getVerifier( testDir );
         v.executeGoals( Arrays.asList( "install", "org.sonatype.flexmojos:flexmojos-maven-plugin:"
             + getProperty( "version" ) + ":dita-asdoc" ) );
 

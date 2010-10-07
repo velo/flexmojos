@@ -103,6 +103,11 @@ public class PathUtil
         }
     }
 
+    public static File file( String path, String basedir )
+    {
+        return file( path, file( basedir ) );
+    }
+
     public static File file( String path, File basedir )
     {
         if ( path == null )

@@ -22,6 +22,7 @@ package org.sonatype.flexmojos.tests.issues;
 
 import java.io.File;
 
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Flexmojos315Test
@@ -32,12 +33,13 @@ public class Flexmojos315Test
     public void resourcesEmbedding()
         throws Exception
     {
-        String dir = test( getProject( "issues/flexmojos-315" ), "install"  ).getBasedir();
+        FMVerifier v = test( getProject( "issues/flexmojos-315" ), "install" );
+        String dir = v.getBasedir();
 
         File target = new File( dir, "target" );
         File main = new File( target, "flexmojos-315-1.0-SNAPSHOT.swf" );
 
-        assertSeftExit( main, 3539 );
+        assertSeftExit( main, 3539, v );
     }
 
 }

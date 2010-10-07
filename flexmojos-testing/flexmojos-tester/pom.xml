@@ -17,6 +17,28 @@
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
       </plugin>
+      <plugin>
+        <groupId>com.savage7.maven.plugins</groupId>
+        <artifactId>maven-external-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/flashplayer</outputDirectory>
+              <includeGroupIds>com.adobe</includeGroupIds>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -42,6 +64,22 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-util</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.adobe</groupId>
+      <artifactId>flashplayer</artifactId>
+      <version>10.1</version>
+      <type>exe</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe</groupId>
+      <artifactId>flashplayer</artifactId>
+      <version>10.1</version>
+      <classifier>linux</classifier>
+      <type>uexe</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

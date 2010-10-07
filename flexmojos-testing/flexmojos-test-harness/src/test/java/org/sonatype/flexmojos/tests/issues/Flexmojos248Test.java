@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.hamcrest.MatcherAssert;
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Flexmojos248Test
@@ -14,16 +15,18 @@ public class Flexmojos248Test
     public void moduleFiles()
         throws Exception
     {
-        String dir = testIssue( "flexmojos-248", "-DloadExternsOnModules=true" ).getBasedir();
-        validateCompilation( dir );
+        FMVerifier v = testIssue( "flexmojos-248", "-DloadExternsOnModules=true" );
+        String dir = v.getBasedir();
+        validateCompilation( dir, v );
     }
 
     @Test
     public void moduleFilesLoadExternsOnModules()
         throws Exception
     {
-        String dir = testIssue( "flexmojos-248", "-DloadExternsOnModules=false" ).getBasedir();
-        validateCompilation( dir );
+        FMVerifier v = testIssue( "flexmojos-248", "-DloadExternsOnModules=false" );
+        String dir = v.getBasedir();
+        validateCompilation( dir, v );
     }
 
     @Test
@@ -31,13 +34,14 @@ public class Flexmojos248Test
         throws Exception
     {
         File testDir = getProject( "/issues/flexmojos-248", "pom.xml", "m.xml", "p1.xml", "p2.xml" );
-        String dir = test( testDir, "install", "-f", "m.xml" ).getBasedir();
+        FMVerifier v = test( testDir, "install", "-f", "m.xml" );
+        String dir = v.getBasedir();
         test( testDir, "install", "-f", "p1.xml" );
         test( testDir, "install", "-f", "p2.xml" );
-        validateCompilation( dir );
+        validateCompilation( dir, v );
     }
 
-    private void validateCompilation( String dir )
+    private void validateCompilation( String dir, FMVerifier v )
         throws Exception
     {
         File target = new File( dir, "target" );
@@ -49,6 +53,6 @@ public class Flexmojos248Test
         File module2 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-module1.swf" );
         MatcherAssert.assertThat( module2, FileMatcher.isFile() );
 
-        assertSeftExit( main, 3539 );
+        assertSeftExit( main, 3539, v );
     }
 }
