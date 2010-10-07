@@ -385,7 +385,7 @@
                   <goal>upload-file</goal>
                 </goals>
                 <configuration>
-                  <serverId>forge-snapshots</serverId>
+                  <serverId>central</serverId>
                   <repositoryUrl>http://repository.sonatype.org/service/local/repositories/flexmojos-site/content-compressed</repositoryUrl>
                   <file>target/${project.artifactId}-${project.version}-site.jar</file>
                   <repositoryPath>${project.version}</repositoryPath>
