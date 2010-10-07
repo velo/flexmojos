@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.it.Verifier;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -33,6 +32,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsCollectionContaining;
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -44,7 +44,7 @@ public class Flexmojos334Test
     public void linkReportScanner()
         throws Exception
     {
-        Verifier v =
+        FMVerifier v =
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=link-report", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 3, classes.toString() );
@@ -60,7 +60,7 @@ public class Flexmojos334Test
     public void disabledScanner()
         throws Exception
     {
-        Verifier v =
+        FMVerifier v =
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=disabled", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 2, classes.toString() );
@@ -76,7 +76,7 @@ public class Flexmojos334Test
     public void as3contentScanner()
         throws Exception
     {
-        Verifier v =
+        FMVerifier v =
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=as3Content", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 4, classes.toString() );
@@ -88,7 +88,7 @@ public class Flexmojos334Test
     }
 
     @SuppressWarnings( "unchecked" )
-    private List<String> getCoveredClasses( Verifier v )
+    private List<String> getCoveredClasses( FMVerifier v )
         throws DocumentException
     {
         File coverageXml = new File( v.getBasedir(), "target/coverage/coverage.xml" );

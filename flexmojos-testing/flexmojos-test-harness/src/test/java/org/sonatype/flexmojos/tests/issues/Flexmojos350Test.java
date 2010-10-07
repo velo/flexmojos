@@ -1,14 +1,14 @@
 package org.sonatype.flexmojos.tests.issues;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.sonatype.flexmojos.util.PathUtil.file;
+
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.sonatype.flexmojos.util.PathUtil.*;
 
 public class Flexmojos350Test
     extends AbstractIssueTest
@@ -18,7 +18,7 @@ public class Flexmojos350Test
         throws Exception
     {
         File basedir = getProject( "issues/flexmojos-350" );
-        Verifier verifier = getVerifier( basedir );
+        FMVerifier verifier = getVerifier( basedir );
 
         // TODO remove this once flexunit is released!
         File or = file( verifier.getArtifactPath( "com.adobe.flexunit", "flexunit", "4.0-beta-2", "swc" ) );

@@ -3,7 +3,7 @@ package org.sonatype.flexmojos.tests.issues;
 import java.io.File;
 
 import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -16,7 +16,7 @@ public class Flexmojos141Test
         throws Exception
     {
         File testDir = getProject( "/issues/" + "flexmojos-141" );
-        Verifier verifier = getVerifier( testDir );
+        FMVerifier verifier = getVerifier( testDir );
         try
         {
             verifier.executeGoal( "install" );

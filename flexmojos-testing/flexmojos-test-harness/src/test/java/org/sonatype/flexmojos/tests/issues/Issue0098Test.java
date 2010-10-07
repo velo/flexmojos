@@ -9,21 +9,20 @@ package org.sonatype.flexmojos.tests.issues;
 
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Issue0098Test
     extends AbstractIssueTest
 {
 
-    @SuppressWarnings( "unchecked" )
     @Test
     public void issue98()
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0098" );
 
-        Verifier verifier = getVerifier( testDir );
+        FMVerifier verifier = getVerifier( testDir );
         verifier.getCliOptions().add( "-DinjectedNumber=3" );
         verifier.executeGoal( "install" );
         verifier.verifyErrorFreeLog();

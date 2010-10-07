@@ -9,14 +9,14 @@ package org.sonatype.flexmojos.tests.concept;
 
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 
 public abstract class AbstractConceptTest
     extends AbstractFlexMojosTests
 {
 
-    public Verifier standardConceptTester( String conceptName, String... args )
+    public FMVerifier standardConceptTester( String conceptName, String... args )
         throws Exception
     {
         File testDir = getProject( "/concept/" + conceptName );

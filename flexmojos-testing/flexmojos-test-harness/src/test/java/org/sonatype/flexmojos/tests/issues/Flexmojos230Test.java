@@ -17,13 +17,13 @@ public class Flexmojos230Test
         throws Exception
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=false" ).getBasedir();
-        File asdoc = new File( baseDir, "target/site/asdoc" );
+        File asdoc = new File( baseDir, "target/asdoc" );
         assertThat( asdoc, not( FileMatcher.exists() ) );
 
-        File moduleA = new File( baseDir, "moduleA/target/site/asdoc" );
+        File moduleA = new File( baseDir, "moduleA/target/asdoc" );
         assertThat( moduleA, FileMatcher.exists() );
 
-        File moduleB = new File( baseDir, "moduleB/target/site/asdoc" );
+        File moduleB = new File( baseDir, "moduleB/target/asdoc" );
         assertThat( moduleB, FileMatcher.exists() );
 
         File aClass = new File( moduleA, "AClass.html" );
@@ -39,7 +39,7 @@ public class Flexmojos230Test
         throws Exception
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=true" ).getBasedir();
-        File target = new File( baseDir, "target/site" );
+        File target = new File( baseDir, "target" );
         assertThat( target, FileMatcher.exists() );
 
         File aClass = new File( target, "asdoc/AClass.html" );
@@ -48,10 +48,10 @@ public class Flexmojos230Test
         File bClass = new File( target, "asdoc/BClass.html" );
         assertThat( bClass, FileMatcher.exists() );
 
-        File moduleA = new File( baseDir, "moduleA/target/site/asdoc" );
+        File moduleA = new File( baseDir, "moduleA/target/asdoc" );
         assertThat( moduleA, not( FileMatcher.exists() ) );
 
-        File moduleB = new File( baseDir, "moduleB/target/site/asdoc" );
+        File moduleB = new File( baseDir, "moduleB/target/asdoc" );
         assertThat( moduleB, not( FileMatcher.exists() ) );
     }
 

@@ -11,14 +11,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 
 public abstract class AbstractIssueTest
     extends AbstractFlexMojosTests
 {
 
-    public Verifier testIssue( String issueNumber, String... args )
+    public FMVerifier testIssue( String issueNumber, String... args )
         throws IOException, VerificationException
     {
         File testDir = getProject( "/issues/" + issueNumber );

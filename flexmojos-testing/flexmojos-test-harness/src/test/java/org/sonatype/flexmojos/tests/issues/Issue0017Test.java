@@ -19,8 +19,8 @@ import static org.hamcrest.Matchers.not;
 
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
@@ -32,7 +32,7 @@ public class Issue0017Test
         throws Exception
     {
         File testDir = getProject( "/issues/issue-0017" );
-        Verifier verifier = getVerifier( testDir );
+        FMVerifier verifier = getVerifier( testDir );
         verifier.getCliOptions().remove( "-Dflex.coverage=true" );
         verifier.executeGoal( siteGoal() );
 

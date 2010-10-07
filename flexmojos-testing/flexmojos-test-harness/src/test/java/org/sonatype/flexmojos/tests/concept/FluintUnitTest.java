@@ -10,7 +10,7 @@ package org.sonatype.flexmojos.tests.concept;
 import java.io.File;
 
 import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
@@ -23,7 +23,7 @@ public class FluintUnitTest
     public void passFluint()
         throws Exception
     {
-        Verifier v = standardConceptTester( "/fluint-example/pass" );
+        FMVerifier v = standardConceptTester( "/fluint-example/pass" );
         File testDir = new File( v.getBasedir() );
 
         TestCaseReport report = getTestReport( testDir, "fluint.ExampleTest" );

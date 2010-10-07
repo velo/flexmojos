@@ -8,10 +8,10 @@ import java.io.File;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Writer;
-import org.apache.maven.it.Verifier;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Flexmojos136Test extends AbstractIssueTest {
@@ -32,7 +32,7 @@ public class Flexmojos136Test extends AbstractIssueTest {
 				libArtifactMetadata);
 
 		File appTestDir = getProject("/issues/flexmojos-136/app");
-		Verifier appVerifier = test(appTestDir, "compile",
+		FMVerifier appVerifier = test(appTestDir, "compile",
 				"-DconfigurationReport");
 
 		Xpp3Dom appConfigReportDOM = getFlexConfigReport(appVerifier, "app",

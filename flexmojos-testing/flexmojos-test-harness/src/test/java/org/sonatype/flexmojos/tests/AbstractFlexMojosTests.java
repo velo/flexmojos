@@ -7,6 +7,9 @@
  */
 package org.sonatype.flexmojos.tests;
 
+import static org.sonatype.flexmojos.util.PathUtil.file;
+import static org.sonatype.flexmojos.util.PathUtil.path;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -24,7 +27,6 @@ import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.Verifier;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.ModelProcessor;
@@ -38,6 +40,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -142,11 +145,10 @@ public class AbstractFlexMojosTests
         return props.getProperty( key );
     }
 
-    @SuppressWarnings( "unchecked" )
-    protected Verifier test( File projectDirectory, String goal, String... args )
+    protected FMVerifier test( File projectDirectory, String goal, String... args )
         throws VerificationException
     {
-        Verifier verifier = getVerifier( projectDirectory );
+        FMVerifier verifier = getVerifier( projectDirectory );
         verifier.getCliOptions().addAll( Arrays.asList( args ) );
         verifier.executeGoal( goal );
         // TODO there are some errors logged, but they are not my concern
@@ -154,8 +156,7 @@ public class AbstractFlexMojosTests
         return verifier;
     }
 
-    @SuppressWarnings( "unchecked" )
-    protected Verifier getVerifier( File projectDirectory )
+    protected FMVerifier getVerifier( File projectDirectory )
         throws VerificationException
     {
         System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
@@ -166,7 +167,7 @@ public class AbstractFlexMojosTests
             downloadArtifactsLock.writeLock().lock();
             try
             {
-                Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+                FMVerifier verifier = new FMVerifier( projectDirectory.getAbsolutePath() );
                 verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
                 verifier.setLocalRepo( getProperty( "fake-repo" ) );
                 verifier.setAutoclean( false );
@@ -187,7 +188,7 @@ public class AbstractFlexMojosTests
             }
         }
 
-        Verifier verifier = new Verifier( projectDirectory.getAbsolutePath() );
+        FMVerifier verifier = new FMVerifier( projectDirectory.getAbsolutePath() );
         // verifier.getCliOptions().add( "-s" + rootFolder.getAbsolutePath() + "/settings.xml" );
         // verifier.getCliOptions().add( "-o" );
         verifier.getCliOptions().add( "-npu" );
@@ -328,15 +329,14 @@ public class AbstractFlexMojosTests
         return report;
     }
 
-    protected Xpp3Dom getFlexConfigReport( Verifier verifier, String artifactId )
+    protected Xpp3Dom getFlexConfigReport( FMVerifier verifier, String artifactId )
     {
         return getFlexConfigReport( verifier, artifactId, "1.0-SNAPSHOT" );
     }
 
-    protected Xpp3Dom getFlexConfigReport( Verifier verifier, String artifactId, String version )
+    protected Xpp3Dom getFlexConfigReport( FMVerifier verifier, String artifactId, String version )
     {
-        File configReport =
-            new File( verifier.getBasedir(), "target/" + artifactId + "-" + version + "-configs.xml" );
+        File configReport = new File( verifier.getBasedir(), "target/" + artifactId + "-" + version + "-configs.xml" );
         Xpp3Dom configReportDOM;
         try
         {
@@ -351,7 +351,7 @@ public class AbstractFlexMojosTests
         return configReportDOM;
     }
 
-    protected void assertSeftExit( File main, int expectedExitCode )
+    protected void assertSeftExit( File main, int expectedExitCode, FMVerifier v )
         throws Exception
     {
         if ( !main.exists() )
@@ -359,10 +359,24 @@ public class AbstractFlexMojosTests
             throw new FileNotFoundException( PathUtil.path( main ) );
         }
 
+        File fp;
+        if ( OSUtils.isWindows() )
+        {
+            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "exe" ), v.localRepo );
+        }
+        else if ( OSUtils.isMacOS() )
+        {
+            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "mac" ), v.localRepo );
+        }
+        else
+        {
+            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "linux" ), v.localRepo );
+        }
+
         Process p = null;
         try
         {
-            p = Runtime.getRuntime().exec( new String[] { "flashplayer", main.getCanonicalPath() } );
+            p = Runtime.getRuntime().exec( new String[] { path( fp ), path( main ) } );
             final Process tp = p;
 
             Thread t = new Thread( new Runnable()
@@ -399,8 +413,7 @@ public class AbstractFlexMojosTests
 
     protected String siteGoal()
     {
-        return "org.apache.maven.plugins:maven-site-plugin:" + getProperty( "maven-site-plugin.version" )
-            + ":site";
+        return "org.apache.maven.plugins:maven-site-plugin:" + getProperty( "maven-site-plugin.version" ) + ":site";
     }
 
 }

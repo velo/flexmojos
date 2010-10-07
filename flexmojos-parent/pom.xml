@@ -129,6 +129,82 @@
           <artifactId>maven-plugin-plugin</artifactId>
           <version>2.5.1</version>
         </plugin>
+
+        <plugin>
+          <groupId>com.savage7.maven.plugins</groupId>
+          <artifactId>maven-external-dependency-plugin</artifactId>
+          <version>0.5-SONATYPE-r108</version>
+          <configuration>
+            <createChecksum>true</createChecksum>
+            <skipChecksumVerification>false</skipChecksumVerification>
+            <artifactItems>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>flashplayer</artifactId>
+                <version>10.1</version>
+                <packaging>exe</packaging>
+                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.exe</downloadUrl>
+                <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>flashplayer</artifactId>
+                <version>9.0</version>
+                <packaging>exe</packaging>
+                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/sa_flashplayer_9_debug.exe</downloadUrl>
+                <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>flashplayer</artifactId>
+                <version>10.1</version>
+                <classifier>linux</classifier>
+                <packaging>uexe</packaging>
+                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/10/flashplayer_10_sa_debug.tar.gz</downloadUrl>
+                <extractFile>flashplayerdebugger</extractFile>
+                <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>flashplayer</artifactId>
+                <version>9.0</version>
+                <classifier>linux</classifier>
+                <packaging>uexe</packaging>
+                <downloadUrl>http://download.macromedia.com/pub/flashplayer/updaters/9/flashplayer_9_sa_debug.tar.gz</downloadUrl>
+                <extractFile>flashplayer</extractFile>
+                <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>adl</artifactId>
+                <version>2.0</version>
+                <packaging>exe</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
+                <extractFile>bin/adl.exe</extractFile>
+                <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe</groupId>
+                <artifactId>adl</artifactId>
+                <version>2.0</version>
+                <classifier>linux</classifier>
+                <packaging>uexe</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
+                <extractFile>bin/adl</extractFile>
+                <generatePom>false</generatePom>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>initialize</phase>
+              <goals>
+                <goal>resolve-external</goal>
+                <goal>install-external</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
