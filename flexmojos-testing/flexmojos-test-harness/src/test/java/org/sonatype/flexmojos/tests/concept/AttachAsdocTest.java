@@ -19,7 +19,7 @@ package org.sonatype.flexmojos.tests.concept;
 
 import java.io.File;
 
-import org.apache.maven.it.Verifier;
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,7 +31,7 @@ public class AttachAsdocTest
     public void attachAsdoc()
         throws Exception
     {
-        Verifier v = standardConceptTester( "attach-asdoc" );
+        FMVerifier v = standardConceptTester( "attach-asdoc" );
         File target = new File( v.getBasedir(), "target" );
 
         Assert.assertTrue( target.exists() );

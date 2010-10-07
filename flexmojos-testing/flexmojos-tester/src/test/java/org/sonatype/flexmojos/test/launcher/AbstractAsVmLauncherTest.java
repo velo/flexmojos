@@ -17,6 +17,9 @@
  */
 package org.sonatype.flexmojos.test.launcher;
 
+import static org.sonatype.flexmojos.util.PathUtil.file;
+import static org.sonatype.flexmojos.util.PathUtil.path;
+
 import java.io.File;
 import java.net.URISyntaxException;
 
@@ -41,10 +44,28 @@ public class AbstractAsVmLauncherTest
     {
         try
         {
+            String fp;
+            if ( OSUtils.isWindows() )
+            {
+                fp = path( file( "target/flashplayer/flashplayer.exe" ) );
+            }
+            else if ( OSUtils.isLinux() )
+            {
+                fp = path( file( "target/flashplayer/flashplayer-linux.uexe" ) );
+            }
+            else
+            {
+                fp = path( file( "target/flashplayer/flashplayer-mac.uexe" ) );
+            }
+
             VALID_SWF = new TestRequest();
             VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
+            VALID_SWF.setFlashplayerCommand( fp );
             INVALID_SWF = new TestRequest();
             INVALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() ) );
+            INVALID_SWF.setFlashplayerCommand( fp );
+            INVALID_SWF.setFirstConnectionTimeout( 1000 );
+            INVALID_SWF.setTestTimeout( 1000 );
         }
         catch ( URISyntaxException e )
         {
@@ -64,14 +85,6 @@ public class AbstractAsVmLauncherTest
         throws Exception
     {
         launcher.stop();
-    }
-
-    @Override
-    protected void customizeContext( Context context )
-    {
-        super.customizeContext( context );
-
-        context.put( "flashplayer.command", OSUtils.getPlatformDefaultFlashPlayer() );
     }
 
 }
