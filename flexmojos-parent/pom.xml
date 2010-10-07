@@ -31,7 +31,7 @@
   <distributionManagement>
     <snapshotRepository>
       <id>forge</id>
-      <url>http://repository.sonatype.org/content/repositories/flexmojos-snapshots/</url>
+      <url>${flexSnapshotUrl}</url>
     </snapshotRepository>
   </distributionManagement>
 
