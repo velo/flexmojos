@@ -14,8 +14,10 @@ import java.util.Set;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IFlexArgument;
 import org.sonatype.flexmojos.compiler.IFlexConfiguration;
+import org.sonatype.flexmojos.compiler.IFontsConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
@@ -95,7 +97,7 @@ public class DefaultFlexCompilerArgumentParser
             }
 
             Class<?> returnType = method.getReturnType();
-            
+
             String name = parseName( method.getName() );
 
             if ( value instanceof IFlexConfiguration )
@@ -107,15 +109,17 @@ public class DefaultFlexCompilerArgumentParser
                     args.add( new Entry<String, List<String>>( configurationName + "." + arg.getName(), arg.getValue() ) );
                 }
             }
-            else if ( "footer".equals( name ) )
+            else if ( cfg instanceof IASDocConfiguration && "footer".equals( name ) )
             {
-                args.add( new Entry<String, List<String>>( name,
-                                                           Collections.singletonList( value.toString() ) ) );
+                args.add( new Entry<String, List<String>>( name, Collections.singletonList( value.toString() ) ) );
             }
-            else if ( "description".equals( name ) )
+            else if ( cfg instanceof IASDocConfiguration && "description".equals( name ) )
             {
-                args.add( new Entry<String, List<String>>( name,
-                                Collections.singletonList( value.toString() ) ) );
+                args.add( new Entry<String, List<String>>( name, Collections.singletonList( value.toString() ) ) );
+            }
+            else if ( cfg instanceof IFontsConfiguration && "managers".equals( name ) )
+            {
+                args.add( new Entry<String, List<String>>( name, (List<String>) value ) );
             }
             else if ( value instanceof IRuntimeSharedLibraryPath || value instanceof IRuntimeSharedLibraryPath[] )
             {
