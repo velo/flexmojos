@@ -23,13 +23,6 @@
     <maven>${maven.version}</maven>
   </prerequisites>
 
-  <distributionManagement>
-    <site>
-      <id>flexmojos</id>
-      <url>dav:http://repository.sonatype.org/content/sites/flexmojos-site/${project.version}</url>
-    </site>
-  </distributionManagement>
-
   <developers>
     <developer>
       <id>velo</id>
