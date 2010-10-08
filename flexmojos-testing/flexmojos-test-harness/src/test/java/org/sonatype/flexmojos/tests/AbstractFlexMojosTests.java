@@ -34,6 +34,7 @@ import org.apache.maven.model.io.ModelParseException;
 import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.archiver.util.ArchiveEntryUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -61,6 +62,8 @@ public class AbstractFlexMojosTests
     private static File mavenHome;
 
     protected static PlexusContainer container;
+
+    private static File flashplayer;
 
     private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
 
@@ -127,6 +130,30 @@ public class AbstractFlexMojosTests
         writer.write( fmParentPom, null, pom );
     }
 
+    @BeforeSuite
+    public static void makeFlashplayerExecutable()
+    {
+        FMVerifier.setLocalRepo( getProperty( "fake-repo" ) );
+
+        if ( OSUtils.isWindows() )
+        {
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "exe" ) );
+        }
+        else if ( OSUtils.isMacOS() )
+        {
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "mac" ) );
+        }
+        else
+        {
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "linux" ) );
+        }
+
+        if ( !OSUtils.isWindows() )
+        {
+            flashplayer.setExecutable( true );
+        }
+    }
+
     private static void updateMavenMemory( File mvn, String memString )
         throws IOException
     {
@@ -169,7 +196,6 @@ public class AbstractFlexMojosTests
             {
                 FMVerifier verifier = new FMVerifier( projectDirectory.getAbsolutePath() );
                 verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
-                verifier.setLocalRepo( getProperty( "fake-repo" ) );
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
@@ -197,7 +223,6 @@ public class AbstractFlexMojosTests
         verifier.getCliOptions().add( "-Dflex.coverage=true" );
         verifier.getCliOptions().add( "-Dflex.coverageOverwriteSourceRoots=" + getSourceRoots() );
         verifier.getVerifierProperties().put( "use.mavenRepoLocal", "true" );
-        verifier.setLocalRepo( getProperty( "fake-repo" ) );
         Properties sysProps = new Properties();
         sysProps.setProperty( "MAVEN_OPTS", "-Xmx512m" );
         sysProps.setProperty( "apparat.threads", "false" );
@@ -359,24 +384,10 @@ public class AbstractFlexMojosTests
             throw new FileNotFoundException( PathUtil.path( main ) );
         }
 
-        File fp;
-        if ( OSUtils.isWindows() )
-        {
-            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "exe" ), v.localRepo );
-        }
-        else if ( OSUtils.isMacOS() )
-        {
-            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "mac" ), v.localRepo );
-        }
-        else
-        {
-            fp = file( v.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "linux" ), v.localRepo );
-        }
-
         Process p = null;
         try
         {
-            p = Runtime.getRuntime().exec( new String[] { path( fp ), path( main ) } );
+            p = Runtime.getRuntime().exec( new String[] { path( flashplayer ), path( main ) } );
             final Process tp = p;
 
             Thread t = new Thread( new Runnable()
