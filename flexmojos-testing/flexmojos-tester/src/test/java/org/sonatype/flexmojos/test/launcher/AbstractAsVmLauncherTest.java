@@ -41,6 +41,11 @@ public class AbstractAsVmLauncherTest
                 fp = path( file( "target/flashplayer/flashplayer-mac.uexe" ) );
             }
 
+            if ( !OSUtils.isWindows() )
+            {
+                file( fp ).setExecutable( true );
+            }
+
             VALID_SWF = new TestRequest();
             VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
             VALID_SWF.setFlashplayerCommand( fp );

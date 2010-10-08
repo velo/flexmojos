@@ -357,6 +357,10 @@ public class TestRunMojo
 
         if ( fp != null && fp.getFile() != null )
         {
+            if ( !OSUtils.isWindows() )
+            {
+                fp.getFile().setExecutable( true );
+            }
             getLog().debug( "Using " + defaultArtifactId + " from maven local repository: " + fp.getFile() );
             return path( fp.getFile() );
         }
