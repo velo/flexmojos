@@ -147,11 +147,6 @@ public class AbstractFlexMojosTests
         {
             flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "linux" ) );
         }
-
-        if ( !OSUtils.isWindows() )
-        {
-            flashplayer.setExecutable( true );
-        }
     }
 
     private static void updateMavenMemory( File mvn, String memString )
