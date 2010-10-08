@@ -101,7 +101,7 @@ public class FMVerifier
 {
     private static final String LOG_FILENAME = "log.txt";
 
-    public String localRepo;
+    public static String localRepo;
 
     private final String basedir;
 
@@ -202,9 +202,9 @@ public class FMVerifier
         this( basedir, null, debug );
     }
 
-    public void setLocalRepo( String localRepo )
+    public static void setLocalRepo( String localRepo )
     {
-        this.localRepo = localRepo;
+        FMVerifier.localRepo = localRepo;
     }
 
     public void resetStreams()
@@ -548,12 +548,12 @@ public class FMVerifier
         return getArtifactPath( org, name, version, ext, null );
     }
 
-    public String getArtifactPath( String org, String name, String version, String ext )
+    public static String getArtifactPath( String org, String name, String version, String ext )
     {
         return getArtifactPath( org, name, version, ext, null );
     }
 
-    public String getArtifactPath( String org, String name, String version, String ext, String classifier )
+    public static String getArtifactPath( String org, String name, String version, String ext, String classifier )
     {
         if ( "maven-plugin".equals( ext ) )
         {
