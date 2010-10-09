@@ -18,6 +18,7 @@ import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IFlexArgument;
 import org.sonatype.flexmojos.compiler.IFlexConfiguration;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
+import org.sonatype.flexmojos.compiler.IMetadataConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
@@ -113,7 +114,7 @@ public class DefaultFlexCompilerArgumentParser
             {
                 args.add( new Entry<String, List<String>>( name, Collections.singletonList( value.toString() ) ) );
             }
-            else if ( cfg instanceof IASDocConfiguration && "description".equals( name ) )
+            else if ( cfg instanceof IMetadataConfiguration && "description".equals( name ) )
             {
                 args.add( new Entry<String, List<String>>( name, Collections.singletonList( value.toString() ) ) );
             }
