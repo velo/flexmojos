@@ -9,6 +9,7 @@ package org.sonatype.flexmojos.tests.concept;
 
 import java.io.File;
 
+import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class L10NTest
@@ -42,7 +43,11 @@ public class L10NTest
     public void testLocalizationChain()
         throws Exception
     {
-        standardConceptTester( "l10n-locale-chain" );
+        FMVerifier v = standardConceptTester( "l10n-locale-chain" );
+        v.assertArtifactPresent( "com.adobe.flex.framework", "datavisualization", getFlexSDKVersion(), "rb.swc",
+                                 "pt_BR2pt_PT" );
+        v.assertArtifactNotPresent( "com.adobe.flex.framework", "datavisualization", getFlexSDKVersion(), "rb.swc",
+                                    "pt_PT" );
     }
 
 }
