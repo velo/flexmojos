@@ -80,6 +80,11 @@ public class MxmlcMojo
     private Module[] modules;
 
     /**
+     * @parameter expression="${flex.modulesLoadExterns}" default-value="true"
+     */
+    private boolean modulesLoadExterns;
+
+    /**
      * DOCME Another, undocumented by adobe
      * <p>
      * Equivalent to -projector
@@ -152,6 +157,11 @@ public class MxmlcMojo
 
             for ( Module module : modules )
             {
+                if ( module.isOptimize() == null )
+                {
+                    module.setOptimize( modulesLoadExterns );
+                }
+
                 File moduleSource =
                     SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), module.getSourceFile() );
 
