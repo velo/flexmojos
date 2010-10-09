@@ -7,7 +7,7 @@ public class Module
 
     private String finalName;
 
-    private boolean optimize = true;
+    private Boolean optimize ;
 
     private String sourceFile;
 
@@ -26,7 +26,7 @@ public class Module
         return sourceFile;
     }
 
-    public boolean isOptimize()
+    public Boolean isOptimize()
     {
         return optimize;
     }
@@ -41,7 +41,7 @@ public class Module
         this.finalName = finalName;
     }
 
-    public void setOptimize( boolean optimize )
+    public void setOptimize( Boolean optimize )
     {
         this.optimize = optimize;
     }
