@@ -1322,7 +1322,7 @@ public class FMVerifier
             System.err.println( "Exit code: " + ret );
 
             throw new VerificationException( "Exit code was non-zero: " + ret + "; command line and log = \n" + cli
-                + "\n" + getLogContents( logFile, 50 ) );
+                + "\n" + getLogContents( logFile, 75 ) );
         }
     }
 
@@ -1599,13 +1599,13 @@ public class FMVerifier
         try
         {
             String[] content = FileUtils.fileRead( logFile ).split( "\n" );
-            content = Arrays.copyOfRange( content, content.length - 51, content.length - 1 );
-            return Lambda.aggregate( content, new Concat( "\n" ) ).toString();
+            content = Arrays.copyOfRange( content, content.length - lines, content.length - 1 );
+            return "Full log at: " + logFile + "\n" + Lambda.aggregate( content, new Concat( "\n" ) ).toString();
         }
         catch ( IOException e )
         {
             // ignore
-            return "(Error reading log contents: " + e.getMessage() + ")";
+            return "(Error reading log contents: " + e.getMessage() + "): " + logFile;
         }
     }
 
