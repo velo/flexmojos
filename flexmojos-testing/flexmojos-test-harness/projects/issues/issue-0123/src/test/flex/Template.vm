@@ -13,8 +13,11 @@
 	xmlns="*"
 	layout="absolute"
 	creationComplete="startUp()"
+	implements="org.sonatype.flexmojos.unitestingsupport.ITestApplication"
 	>
 	
+$includes
+
 	<mx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
@@ -23,7 +26,7 @@
 		
 $imports
 
-			private var tests:Array;
+			private var _tests:Array;
 		
 			private static var socketReporter:SocketReporter = SocketReporter.getInstance();
 
@@ -33,19 +36,38 @@ $imports
 				socketReporter.port = $port;
                 controlSocket.port = $controlPort;
 
-				this.tests = new Array;
+				this._tests = new Array;
 
 $testClasses
 
-    			controlSocket.connect();
-    			socketReporter.runTests(this.tests);
+    			controlSocket.connect(this);
+    			socketReporter.runTests(this);
 			}
 
 			public function addTest( test:Class ) : void
 	    	{
-	    	    tests.push(test);
+	    	    _tests.push(test);
 			}
 			
+			public function get tests() : Array
+	    	{
+	    	    return _tests;
+			}
+
+	        public function get componentUnderTest():*
+	        {
+	            return null;
+	        }
+	
+	        public function set componentUnderTest( cmp:* ):void
+	        {
+	        }
+
+	        public function killApplication():void
+	        {
+	            fscommand( "quit" );
+	        }
+
 		]]>
 	</mx:Script>
 	

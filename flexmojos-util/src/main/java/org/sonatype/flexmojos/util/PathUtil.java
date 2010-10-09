@@ -134,6 +134,21 @@ public class PathUtil
         return file( path, Arrays.asList( basedirs ) );
     }
 
+    public static File[] files( String[] paths, List<File> basedirs )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        File[] files = new File[paths.length];
+        for ( int i = 0; i < paths.length; i++ )
+        {
+            files[i] = file( paths[i], basedirs );
+        }
+        return files;
+    }
+
     public static File file( String path, List<File> basedirs )
     {
         if ( path == null )

@@ -26,6 +26,8 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
+import static org.sonatype.flexmojos.util.PathUtil.files;
+import static org.sonatype.flexmojos.util.PathUtil.pathsList;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -1350,7 +1352,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * 
      * @parameter
      */
-    private File[] themes;
+    private String[] themes;
 
     /**
      * Configures the LocalizationManager's locale, which is used when reporting compile time errors, warnings, and
@@ -1458,7 +1460,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
-        String output = PathUtil.path( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), rbSwc.getClassifier());
+        String output = PathUtil.path( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), rbSwc.getClassifier() );
         when( cfg.getOutput() ).thenReturn( output );
 
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
@@ -2978,7 +2980,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         List<String> themes = new ArrayList<String>();
         if ( this.themes != null )
         {
-            themes.addAll( PathUtil.pathsList( this.themes ) );
+            themes.addAll( pathsList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
         themes.addAll( PathUtil.pathsList( //
         MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
