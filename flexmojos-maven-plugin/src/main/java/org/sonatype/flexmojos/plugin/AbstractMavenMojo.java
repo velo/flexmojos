@@ -539,6 +539,7 @@ public abstract class AbstractMavenMojo
     }
 
     protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
+        throws RuntimeMavenResolutionException
     {
         Artifact artifact =
             repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
@@ -558,7 +559,7 @@ public abstract class AbstractMavenMojo
                         getLog().error( e );
                     }
                 }
-                throw new IllegalStateException( "Failed to resolve artifact " + artifact );
+                throw new RuntimeMavenResolutionException( "Failed to resolve artifact " + artifact, res, artifact );
             }
         }
         return artifact;

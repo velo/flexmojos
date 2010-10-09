@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static org.testng.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -114,9 +115,8 @@ public class ResourceBundleChainingTest
         c.compiler = plexus.lookup( FlexCompiler.class );
         c.setArchiverManager( plexus.lookup( ArchiverManager.class ) );
         Artifact base = createArtifact( "some.group", "artifact", "1.0", "compile", "rb.swc", "en_US" );
-        Artifact desired = createArtifact( "some.group", "artifact", "1.0", "compile", "rb.swc", "en_GB" );
-        c.adaptResourceBundle( base, desired );
-
+        Artifact desired = c.adaptResourceBundle( base, "en_GB" );
+        assertTrue( desired.isResolved() );
     }
 
 }

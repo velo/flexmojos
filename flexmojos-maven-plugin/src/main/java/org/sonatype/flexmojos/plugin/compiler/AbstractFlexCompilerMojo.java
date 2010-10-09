@@ -86,6 +86,7 @@ import org.sonatype.flexmojos.compiler.IRuntimeSharedLibrarySettingsConfiguratio
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.license.LicenseCalculator;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
@@ -1412,18 +1413,34 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean verifyDigests;
 
-    protected void adaptResourceBundle( final Artifact baseRbSwc, Artifact desiredRbSwc )
+    protected Artifact adaptResourceBundle( final Artifact baseRbSwc, String requestedLocale )
     {
         getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
-                            + " to " + desiredRbSwc.getClassifier() );
+                            + " to " + requestedLocale );
+
+        Artifact rbSwc;
+        try
+        {
+            rbSwc =
+                resolve( baseRbSwc.getGroupId(), baseRbSwc.getArtifactId(), baseRbSwc.getVersion(),
+                         baseRbSwc.getClassifier() + "2" + requestedLocale, baseRbSwc.getType() );
+        }
+        catch ( RuntimeMavenResolutionException e )
+        {
+            rbSwc = e.getArtifact();
+        }
+
+        if ( rbSwc.isResolved() )
+        {
+            return rbSwc;
+        }
 
         File dest;
         try
         {
             UnArchiver unzip = archiverManager.getUnArchiver( "zip" );
             unzip.setSourceFile( baseRbSwc.getFile() );
-            dest =
-                FileUtils.createTempFile( baseRbSwc.getArtifactId(), desiredRbSwc.getClassifier(), getOutputDirectory() );
+            dest = FileUtils.createTempFile( baseRbSwc.getArtifactId(), requestedLocale, getOutputDirectory() );
             unzip.extract( "locale/" + baseRbSwc.getClassifier(), dest );
         }
         catch ( Exception e )
@@ -1441,14 +1458,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         ICompcConfiguration cfg = mock( ICompcConfiguration.class, RETURNS_NULL );
         when( cfg.getLoadConfig() ).thenReturn( getLoadConfig() );
         when( cfg.getIncludeResourceBundles() ).thenReturn( bundles );
-        String output =
-            PathUtil.path( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), desiredRbSwc.getClassifier() );
+        String output = PathUtil.path( baseRbSwc.getFile() ).replace( baseRbSwc.getClassifier(), rbSwc.getClassifier());
         when( cfg.getOutput() ).thenReturn( output );
 
         ICompilerConfiguration compilerCfg = mock( ICompilerConfiguration.class, RETURNS_NULL );
         when( compilerCfg.getTheme() ).thenReturn( Collections.EMPTY_LIST );
         when( compilerCfg.getFontsConfiguration() ).thenReturn( getFontsConfiguration() );
-        when( compilerCfg.getLocale() ).thenReturn( new String[] { desiredRbSwc.getClassifier() } );
+        when( compilerCfg.getLocale() ).thenReturn( new String[] { requestedLocale } );
         when( compilerCfg.getSourcePath() ).thenReturn( new File[] { resourceBundleBaseDir } );
         when( compilerCfg.getExternalLibraryPath() ).thenReturn( this.getExternalLibraryPath() );
         when( compilerCfg.getLibraryPath() ).thenReturn( this.getLibraryPath( false ) );
@@ -1464,8 +1480,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             throw new MavenRuntimeException( "Unable to compile adapted resource bundle", e );
         }
 
-        desiredRbSwc.setFile( new File( output ) );
-        desiredRbSwc.setResolved( true );
+        rbSwc.setFile( new File( output ) );
+        rbSwc.setResolved( true );
+        return rbSwc;
     }
 
     protected Map<String, String> calculateRuntimeLibraryPath( Artifact artifact, String[] rslUrls,
@@ -1558,8 +1575,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         for ( String locale : locales )
         {
-            final Artifact rbSwc =
-                resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale, beacon.getType() );
+            Artifact rbSwc;
+            try
+            {
+                rbSwc =
+                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), locale, beacon.getType() );
+            }
+            catch ( RuntimeMavenResolutionException e )
+            {
+                rbSwc = e.getArtifact();
+            }
 
             if ( rbSwc.isResolved() )
             {
@@ -1567,7 +1592,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 {
                     getLog().info( "Resolved resource bundle for '" + beacon + "' using localization chain. The '"
                                        + locale + "' will be used to build the missing '" + requestedLocale + "'" );
-                    adaptResourceBundle( rbSwc, requestRbSwc );
+                    return adaptResourceBundle( rbSwc, requestedLocale );
                 }
 
                 return rbSwc;
@@ -1710,9 +1735,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
                 String requestedLocale = locales[0];
 
-                final Artifact requestedRbSwc =
-                    resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), requestedLocale,
-                             beacon.getType() );
+                Artifact requestedRbSwc;
+                try
+                {
+                    requestedRbSwc =
+                        resolve( beacon.getGroupId(), beacon.getArtifactId(), beacon.getVersion(), requestedLocale,
+                                 beacon.getType() );
+                }
+                catch ( RuntimeMavenResolutionException e )
+                {
+                    requestedRbSwc = e.getArtifact();
+                }
 
                 Artifact resultRbSwc;
                 if ( requestedRbSwc.isResolved() )
