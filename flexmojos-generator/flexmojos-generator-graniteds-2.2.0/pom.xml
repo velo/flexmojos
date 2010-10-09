@@ -16,35 +16,11 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>flexmojos-generator-graniteds-1.1.0</artifactId>
+  <artifactId>flexmojos-generator-graniteds-2.2.0</artifactId>
 
-  <name>Flexmojos Generator - graniteds 1.1.0</name>
-
+  <name>Flexmojos Generator - graniteds 2.2.0</name>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <artifactSet>
-                <includes>
-                  <include>org.graniteds:granite-generator</include>
-                </includes>
-              </artifactSet>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
@@ -64,12 +40,12 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>${project.version}</version>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.graniteds</groupId>
       <artifactId>granite-generator</artifactId>
-      <version>1.1.0</version>
+      <version>2.2.0.RC2</version><!-- FIXME refactor, use a property -->
       <exclusions>
         <exclusion>
           <groupId>ant</groupId>
@@ -81,11 +57,16 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.graniteds</groupId>
+      <artifactId>granite-generator-share</artifactId>
+      <version>2.2.0.RC2</version>
+    </dependency>
 
     <!-- Dependencies of granite-generator -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy</artifactId>
+      <artifactId>groovy-all</artifactId>
       <version>1.6.2</version>
     </dependency>
     <dependency>
@@ -99,9 +80,21 @@
       <version>2.7.7</version>
     </dependency>
     <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>2.2</version>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>2.3-ea</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>transaction-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>1.1</version>
     </dependency>
   </dependencies>
+
 </project>
