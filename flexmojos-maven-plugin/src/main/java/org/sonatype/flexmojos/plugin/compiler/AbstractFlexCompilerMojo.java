@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
+import static java.util.Arrays.*;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
@@ -27,6 +28,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
 import static org.sonatype.flexmojos.util.PathUtil.files;
+import static org.sonatype.flexmojos.util.PathUtil.paths;
 import static org.sonatype.flexmojos.util.PathUtil.pathsList;
 
 import java.awt.GraphicsEnvironment;
@@ -2977,15 +2979,51 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     public List<String> getTheme()
     {
-        List<String> themes = new ArrayList<String>();
+        List<File> themes = new ArrayList<File>();
         if ( this.themes != null )
         {
-            themes.addAll( pathsList( files( this.themes, getResourcesTargetDirectories() ) ) );
+            themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
-        themes.addAll( PathUtil.pathsList( //
-        MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
-                                              scope( THEME ) ) ) ) );
-        return themes;
+        themes.addAll( //
+        asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
+                                                      scope( THEME ) ) ) ) );
+
+        configureSparkCss( themes );
+
+        if ( themes.isEmpty() )
+        {
+            return null;
+        }
+
+        return pathsList( themes );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.11420" )
+    private void configureSparkCss( List<File> themes )
+    {
+        File dir = getUnpackedFrameworkConfig();
+
+        File sparkCss = null;
+        if ( dir != null )
+        {
+            sparkCss = new File( dir, "themes/Spark/spark.css" );
+        }
+
+        if ( sparkCss == null || !sparkCss.exists() )
+        {
+            File fontsSer = new File( getOutputDirectory(), "spark.css" );
+            fontsSer.getParentFile().mkdirs();
+            try
+            {
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/theme/spark.css" ), fontsSer );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenRuntimeException( "Error copying spark.css file.", e );
+            }
+        }
+
+        themes.add( sparkCss );
     }
 
     public String getTitle()
