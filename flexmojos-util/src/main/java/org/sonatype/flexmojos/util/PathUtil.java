@@ -24,11 +24,6 @@ import java.util.List;
 public class PathUtil
 {
 
-    private PathUtil()
-    {
-        super();
-    }
-
     static
     {
         new PathUtil();
@@ -86,191 +81,6 @@ public class PathUtil
         return false;
     }
 
-    public static File file( File file )
-    {
-        if ( file == null )
-        {
-            return null;
-        }
-
-        try
-        {
-            return file.getCanonicalFile();
-        }
-        catch ( IOException e )
-        {
-            return file.getAbsoluteFile();
-        }
-    }
-
-    public static File file( String path, String basedir )
-    {
-        return file( path, file( basedir ) );
-    }
-
-    public static File file( String path, File basedir )
-    {
-        if ( path == null )
-        {
-            return null;
-        }
-
-        File file = new File( path );
-        if ( !file.isAbsolute() )
-        {
-            file = new File( basedir, path );
-        }
-
-        return file( file );
-    }
-
-    public static File file( String path, File... basedirs )
-    {
-        if ( path == null )
-        {
-            return null;
-        }
-
-        return file( path, Arrays.asList( basedirs ) );
-    }
-
-    public static File[] files( String[] paths, List<File> basedirs )
-    {
-        if ( paths == null )
-        {
-            return null;
-        }
-
-        File[] files = new File[paths.length];
-        for ( int i = 0; i < paths.length; i++ )
-        {
-            files[i] = file( paths[i], basedirs );
-        }
-        return files;
-    }
-
-    public static File file( String path, List<File> basedirs )
-    {
-        if ( path == null )
-        {
-            return null;
-        }
-
-        File file = new File( path );
-
-        if ( file.isAbsolute() )
-        {
-            return file;
-        }
-
-        for ( File basedir : basedirs )
-        {
-            file = file( path, basedir );
-            if ( file.exists() )
-            {
-                return file;
-            }
-        }
-
-        return null;
-    }
-
-    public static Collection<File> files( List<String> paths, File basedir )
-    {
-        if ( paths == null )
-        {
-            return null;
-        }
-
-        List<File> files = new ArrayList<File>();
-        for ( String path : paths )
-        {
-            files.add( file( path, basedir ) );
-        }
-
-        return files;
-    }
-
-    public static Collection<File> files( String[] paths, File basedir )
-    {
-        if ( paths == null )
-        {
-            return null;
-        }
-
-        return files( Arrays.asList( paths ), basedir );
-    }
-
-    public static String path( File file )
-    {
-        if ( file == null )
-        {
-            return null;
-        }
-
-        try
-        {
-            return file.getCanonicalPath();
-        }
-        catch ( IOException e )
-        {
-            return file.getAbsolutePath();
-        }
-    }
-
-    public static String[] paths( Collection<File> files )
-    {
-        if ( files == null )
-        {
-            return null;
-        }
-
-        return paths( files.toArray( new File[files.size()] ) );
-    }
-
-    public static String[] paths( File... files )
-    {
-        if ( files == null )
-        {
-            return null;
-        }
-
-        String[] paths = new String[files.length];
-        for ( int i = 0; i < paths.length; i++ )
-        {
-            paths[i] = path( files[i] );
-        }
-        return paths;
-    }
-
-    public static List<String> pathsList( File[] files )
-    {
-        if ( files == null )
-        {
-            return null;
-        }
-        return Arrays.asList( paths( files ) );
-    }
-
-    public static String pathString( File[] files )
-    {
-        if ( files == null )
-        {
-            return null;
-        }
-
-        StringBuilder paths = new StringBuilder();
-        for ( File file : files )
-        {
-            if ( paths.length() != 0 )
-            {
-                paths.append( File.pathSeparatorChar );
-            }
-            paths.append( path( file ) );
-        }
-        return paths.toString();
-    }
-
     public static File[] existingFiles( Collection<String> paths )
     {
         if ( paths == null )
@@ -321,6 +131,23 @@ public class PathUtil
         return files;
     }
 
+    public static File file( File file )
+    {
+        if ( file == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return file.getCanonicalFile();
+        }
+        catch ( IOException e )
+        {
+            return file.getAbsoluteFile();
+        }
+    }
+
     public static File file( String path )
     {
         if ( path == null )
@@ -329,6 +156,89 @@ public class PathUtil
         }
 
         return file( new File( path ) );
+    }
+
+    public static File file( String path, File basedir )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        File file = new File( path );
+        if ( !file.isAbsolute() )
+        {
+            file = new File( basedir, path );
+        }
+
+        return file( file );
+    }
+
+    public static File file( String path, File... basedirs )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        return file( path, Arrays.asList( basedirs ) );
+    }
+
+    public static File file( String path, List<File> basedirs )
+    {
+        if ( path == null )
+        {
+            return null;
+        }
+
+        File file = new File( path );
+
+        if ( file.isAbsolute() )
+        {
+            return file;
+        }
+
+        for ( File basedir : basedirs )
+        {
+            file = file( path, basedir );
+            if ( file.exists() )
+            {
+                return file;
+            }
+        }
+
+        return null;
+    }
+
+    public static File file( String path, String basedir )
+    {
+        return file( path, file( basedir ) );
+    }
+
+    public static String fileExtention( File file )
+    {
+        if ( file == null )
+        {
+            return null;
+        }
+
+        String path = file.getName();
+
+        String[] doted = path.split( "\\." );
+        if ( doted.length == 1 )
+        {
+            return "";
+        }
+
+        if ( "gz".equals( doted[doted.length - 1] ) || "bz2".equals( doted[doted.length - 1] ) )
+        {
+            if ( doted.length > 2 && "tar".equals( doted[doted.length - 2].toLowerCase() ) )
+            {
+                return "tar." + doted[doted.length - 1];
+            }
+        }
+
+        return doted[doted.length - 1];
     }
 
     public static File[] files( Collection<String> paths )
@@ -348,6 +258,22 @@ public class PathUtil
         return files;
     }
 
+    public static Collection<File> files( List<String> paths, File basedir )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        List<File> files = new ArrayList<File>();
+        for ( String path : paths )
+        {
+            files.add( file( path, basedir ) );
+        }
+
+        return files;
+    }
+
     public static File[] files( String... paths )
     {
         if ( paths == null )
@@ -358,6 +284,31 @@ public class PathUtil
         return files( Arrays.asList( paths ) );
     }
 
+    public static Collection<File> files( String[] paths, File basedir )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        return files( Arrays.asList( paths ), basedir );
+    }
+
+    public static File[] files( String[] paths, List<File> basedirs )
+    {
+        if ( paths == null )
+        {
+            return null;
+        }
+
+        File[] files = new File[paths.length];
+        for ( int i = 0; i < paths.length; i++ )
+        {
+            files[i] = file( paths[i], basedirs );
+        }
+        return files;
+    }
+
     public static List<File> filesList( Collection<String> paths )
     {
         if ( paths == null )
@@ -366,40 +317,6 @@ public class PathUtil
         }
 
         return Arrays.asList( files( paths ) );
-    }
-
-    /**
-     * break a path down into individual elements and add to a list. example : if a path is /a/b/c/d.txt, the breakdown
-     * will be [d.txt,c,b,a]
-     * 
-     * @param f input file
-     * @return a List collection with the individual elements of the path in reverse order
-     */
-    private static List<String> pathList( File f )
-    {
-        List<String> l = new ArrayList<String>();
-        File r = file( f );
-        while ( r != null )
-        {
-            l.add( r.getName() );
-            r = r.getParentFile();
-        }
-        return l;
-    }
-
-    /**
-     * get relative path of File 'f' with respect to 'home' directory example : home = /a/b/c f = /a/d/e/x.txt s =
-     * getRelativePath(home,f) = ../../d/e/x.txt
-     * 
-     * @param home base path, should be a directory, not a file, or it doesn't make sense
-     * @param f file to generate path for
-     * @return path from home to f as a string
-     */
-    public static String relativePath( File home, File f )
-    {
-        List<String> homelist = pathList( home );
-        List<String> filelist = pathList( f );
-        return matchPathLists( homelist, filelist ).replace( '\\', '/' );
     }
 
     /**
@@ -443,30 +360,122 @@ public class PathUtil
         return s;
     }
 
-    public static String fileExtention( File file )
+    public static String path( File file )
     {
         if ( file == null )
         {
             return null;
         }
 
-        String path = file.getName();
-
-        String[] doted = path.split( "\\." );
-        if ( doted.length == 1 )
+        try
         {
-            return "";
+            return file.getCanonicalPath();
+        }
+        catch ( IOException e )
+        {
+            return file.getAbsolutePath();
+        }
+    }
+
+    /**
+     * break a path down into individual elements and add to a list. example : if a path is /a/b/c/d.txt, the breakdown
+     * will be [d.txt,c,b,a]
+     * 
+     * @param f input file
+     * @return a List collection with the individual elements of the path in reverse order
+     */
+    private static List<String> pathList( File f )
+    {
+        List<String> l = new ArrayList<String>();
+        File r = file( f );
+        while ( r != null )
+        {
+            l.add( r.getName() );
+            r = r.getParentFile();
+        }
+        return l;
+    }
+
+    public static String[] paths( Collection<File> files )
+    {
+        if ( files == null )
+        {
+            return null;
         }
 
-        if ( "gz".equals( doted[doted.length - 1] ) || "bz2".equals( doted[doted.length - 1] ) )
+        return paths( files.toArray( new File[files.size()] ) );
+    }
+
+    public static String[] paths( File... files )
+    {
+        if ( files == null )
         {
-            if ( doted.length > 2 && "tar".equals( doted[doted.length - 2].toLowerCase() ) )
+            return null;
+        }
+
+        String[] paths = new String[files.length];
+        for ( int i = 0; i < paths.length; i++ )
+        {
+            paths[i] = path( files[i] );
+        }
+        return paths;
+    }
+
+    public static List<String> pathsList( File[] files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+        return Arrays.asList( paths( files ) );
+    }
+
+    public static List<String> pathsList( List<File> files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+        return Arrays.asList( paths( files ) );
+    }
+
+    public static String pathString( File[] files )
+    {
+        if ( files == null )
+        {
+            return null;
+        }
+
+        StringBuilder paths = new StringBuilder();
+        for ( File file : files )
+        {
+            if ( paths.length() != 0 )
             {
-                return "tar." + doted[doted.length - 1];
+                paths.append( File.pathSeparatorChar );
             }
+            paths.append( path( file ) );
         }
+        return paths.toString();
+    }
 
-        return doted[doted.length - 1];
+    /**
+     * get relative path of File 'f' with respect to 'home' directory example : home = /a/b/c f = /a/d/e/x.txt s =
+     * getRelativePath(home,f) = ../../d/e/x.txt
+     * 
+     * @param home base path, should be a directory, not a file, or it doesn't make sense
+     * @param f file to generate path for
+     * @return path from home to f as a string
+     */
+    public static String relativePath( File home, File f )
+    {
+        List<String> homelist = pathList( home );
+        List<String> filelist = pathList( f );
+        return matchPathLists( homelist, filelist ).replace( '\\', '/' );
+    }
+
+    private PathUtil()
+    {
+        super();
     }
 
 }

@@ -213,8 +213,7 @@ public class PathUtilTest
     public void testGetPathsCollectionOfFile()
     {
         assertThat( PathUtil.paths( (Collection<File>) null ), nullValue() );
-        assertThat( PathUtil.paths( Arrays.asList( f1, f2 ) ),
-                    equalTo( new String[] { _PATH, ABSOLUTE_PATH } ) );
+        assertThat( PathUtil.paths( Arrays.asList( f1, f2 ) ), equalTo( new String[] { _PATH, ABSOLUTE_PATH } ) );
     }
 
     @Test
@@ -227,8 +226,15 @@ public class PathUtilTest
     @Test
     public void testGetPathsList()
     {
-        assertThat( PathUtil.pathsList( null ), nullValue() );
+        assertThat( PathUtil.pathsList( (File[]) null ), nullValue() );
         assertThat( PathUtil.pathsList( new File[] { f1, f2 } ), hasItems( _PATH, ABSOLUTE_PATH ) );
+    }
+
+    @Test
+    public void testPathsList()
+    {
+        assertThat( PathUtil.pathsList( (List<File>) null ), nullValue() );
+        assertThat( PathUtil.pathsList( Arrays.asList( f1, f2 ) ), hasItems( _PATH, ABSOLUTE_PATH ) );
     }
 
     @Test
