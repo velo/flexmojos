@@ -39,9 +39,18 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <defines>
-            <BUILD::mavenVersion>"${project.version}"</BUILD::mavenVersion>
-            <BUILD::buildNumber>${buildNumber}</BUILD::buildNumber>
-            <BUILD::timestamp>${timestamp}</BUILD::timestamp>
+            <property>
+              <name>BUILD::mavenVersion</name>
+              <value>"${project.version}"</value>
+            </property>
+            <property>
+              <name>BUILD::buildNumber</name>
+              <value>"${buildNumber}"</value>
+            </property>
+            <property>
+              <name>BUILD::timestamp</name>
+              <value>"${timestamp}"</value>
+            </property>
           </defines>
         </configuration>
       </plugin>

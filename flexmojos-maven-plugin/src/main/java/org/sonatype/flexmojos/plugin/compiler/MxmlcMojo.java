@@ -80,6 +80,8 @@ public class MxmlcMojo
     private Module[] modules;
 
     /**
+     * When true, tells flexmojos to optimized modules using link reports/load externs
+     * 
      * @parameter expression="${flex.modulesLoadExterns}" default-value="true"
      */
     private boolean modulesLoadExterns;
