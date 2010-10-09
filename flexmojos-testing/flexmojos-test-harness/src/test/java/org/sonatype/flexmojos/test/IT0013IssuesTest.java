@@ -56,13 +56,6 @@ public class IT0013IssuesTest
     }
 
     @Test
-    public void issue32()
-        throws Exception
-    {
-        testIssue( "issue-0032" );
-    }
-
-    @Test
     public void issue39()
         throws Exception
     {
