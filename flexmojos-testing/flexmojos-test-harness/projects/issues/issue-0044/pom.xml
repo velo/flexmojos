@@ -16,7 +16,7 @@
   </parent>
 
   <groupId>info.rvin.itest.issues</groupId>
-  <artifactId>issue-0032</artifactId>
+  <artifactId>issue-0044</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>swf</packaging>
@@ -26,21 +26,8 @@
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <configuration>
-          <compatibilityVersion>3.0.0</compatibilityVersion>
-        </configuration>
       </plugin>
     </plugins>
   </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>0.85</version>
-      <type>swc</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
 </project>

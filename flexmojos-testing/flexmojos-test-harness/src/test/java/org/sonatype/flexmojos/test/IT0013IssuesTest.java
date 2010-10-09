@@ -45,13 +45,6 @@ public class IT0013IssuesTest
         testIssue( "issue-0029" );
     }
 
-    @Test
-    public void issue39()
-        throws Exception
-    {
-        testIssue( "issue-0039" );
-    }
-
     // A wierd but on this tests
     // @Test(timeOut=120000) public void issue43() throws Exception {
     // File testDir = ResourceExtractor.simpleExtractResources(getClass(),
@@ -61,14 +54,6 @@ public class IT0013IssuesTest
     // test(testDir, "info.rvin.itest.issues", "issue-0014",
     // "1.0-SNAPSHOT", "swf", "install", args);
     // }
-
-    @Test( expectedExceptions = { VerificationException.class } )
-    public void issue44()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/issue-0044" );
-        test( testDir, "org.sonatype.flexmojos:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
-    }
 
     @Test
     public void issue53()
