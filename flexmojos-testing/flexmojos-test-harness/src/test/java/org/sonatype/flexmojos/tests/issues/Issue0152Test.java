@@ -7,10 +7,13 @@
  */
 package org.sonatype.flexmojos.tests.issues;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.it.VerificationException;
+import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,6 +37,8 @@ public class Issue0152Test
         test( testDir, "install", "-DloadExternsOnModules=" + isLoadExterns );
 
         File module = new File( testDir, "target/issue-0152-1.0-SNAPSHOT-AnModule.swf" );
+
+        assertThat( module, FileMatcher.exists() );
 
         return module.length();
     }
