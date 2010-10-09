@@ -1,6 +1,7 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.util.PathUtil.file;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -139,6 +140,10 @@ public class MxmlcMojo
         }
 
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
+        if ( !file( getOutput() ).exists() )
+        {
+            throw new IllegalStateException( "Output file doesn't exist and now error was throw by the compiler!" );
+        }
 
         if ( getLocalesRuntime() != null )
         {

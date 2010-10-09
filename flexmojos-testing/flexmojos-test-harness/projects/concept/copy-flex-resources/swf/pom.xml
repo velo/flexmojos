@@ -53,16 +53,16 @@
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>flex-framework</artifactId>
-      <version>3.2.0.3958</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
       <version>3.2.0.3958</version>
       <type>swc</type>
       <scope>rsl</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>flex-framework</artifactId>
+      <version>3.2.0.3958</version>
+      <type>pom</type>
     </dependency>
   </dependencies>
 
