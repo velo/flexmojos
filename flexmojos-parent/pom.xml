@@ -197,7 +197,7 @@
           </configuration>
           <executions>
             <execution>
-              <phase>initialize</phase>
+              <phase>validate</phase>
               <goals>
                 <goal>resolve-external</goal>
                 <goal>install-external</goal>
