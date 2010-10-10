@@ -599,7 +599,7 @@ public class FMVerifier
         return getArtifactFileNameList( org, name, version, ext, null );
     }
 
-    public List<String> getArtifactFileNameList( String org, String name, String version, String ext, String classifier )
+    public static List<String> getArtifactFileNameList( String org, String name, String version, String ext, String classifier )
     {
         List<String> files = new ArrayList<String>();
         String artifactPath = getArtifactPath( org, name, version, ext, classifier );
@@ -820,13 +820,13 @@ public class FMVerifier
         return repo;
     }
 
-    public void deleteArtifact( String org, String name, String version, String ext )
+    public static void deleteArtifact( String org, String name, String version, String ext )
         throws IOException
     {
         deleteArtifact( org, name, version, ext, null );
     }
 
-    public void deleteArtifact( String org, String name, String version, String ext, String classifier )
+    public static void deleteArtifact( String org, String name, String version, String ext, String classifier )
         throws IOException
     {
         List<String> files = getArtifactFileNameList( org, name, version, ext, classifier );
@@ -844,7 +844,7 @@ public class FMVerifier
      * @throws IOException If the artifacts could not be deleted.
      * @since 1.2
      */
-    public void deleteArtifacts( String gid )
+    public static void deleteArtifacts( String gid )
         throws IOException
     {
         String path;
