@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 
 import java.io.File;
@@ -21,7 +21,11 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.hamcrest.Matcher;
@@ -30,6 +34,7 @@ import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
@@ -456,6 +461,11 @@ public class AsdocMojo
         return lenient;
     }
 
+    /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
@@ -468,17 +478,26 @@ public class AsdocMojo
 
             for ( MavenProject p : reactorProjects )
             {
+                if ( !( SWC.equals( p.getPackaging() ) || SWF.equals( p.getPackaging() ) || AIR.equals( p.getPackaging() ) ) )
+                {
+                    continue;
+                }
 
-                ArtifactResolutionRequest req = new ArtifactResolutionRequest();
-                req.setArtifact( p.getArtifact() );
-                req.setResolveTransitively( true );
-                req.setLocalRepository( localRepository );
-                req.setRemoteRepositories( remoteRepositories );
-                req.setManagedVersionMap( p.getManagedVersionMap() );
+                ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+                request.setLocalRepository( localRepository );
+                request.setRemoteRepositories( remoteRepositories );
+                request.setResolveDependencies( true );
+                request.setRepositorySession( session.getRepositorySession() );
+                try
+                {
+                    p = projectBuilder.build( p.getArtifact(), request ).getProject();
+                }
+                catch ( ProjectBuildingException e )
+                {
+                    throw new MavenRuntimeException( e.getMessage(), e );
+                }
 
-                ArtifactResolutionResult res = repositorySystem.resolve( req );
-
-                deps.addAll( MavenUtils.getFilesSet( filter( allOf( filter ), res.getArtifacts() ) ) );
+                deps.addAll( MavenUtils.getFilesSet( filter( allOf( filter ), p.getArtifacts() ) ) );
             }
 
             deps.addAll( MavenUtils.getFilesSet( getCompiledResouceBundles() ) );

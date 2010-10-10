@@ -4,13 +4,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class Flexmojos230Test
     extends AbstractIssueTest
 {
+
+    @BeforeMethod
+    public void cleanRepo()
+        throws Exception
+    {
+        FMVerifier.deleteArtifact( "info.rvin.itest.issues", "flexmojos-230-moduleA", "1.0-SNAPSHOT", "swc" );
+        FMVerifier.deleteArtifact( "info.rvin.itest.issues", "flexmojos-230-moduleB", "1.0-SNAPSHOT", "swc" );
+    }
 
     @Test
     public void regularAsdoc()
