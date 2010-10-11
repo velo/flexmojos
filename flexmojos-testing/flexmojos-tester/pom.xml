@@ -26,15 +26,28 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
             <phase>process-test-classes</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/flashplayer</outputDirectory>
-              <includeGroupIds>com.adobe</includeGroupIds>
               <stripVersion>true</stripVersion>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.adobe</groupId>
+                  <artifactId>flashplayer</artifactId>
+                  <version>10.1</version>
+                  <type>exe</type>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>com.adobe</groupId>
+                  <artifactId>flashplayer</artifactId>
+                  <version>10.1</version>
+                  <classifier>linux</classifier>
+                  <type>uexe</type>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>
@@ -64,22 +77,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-util</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.adobe</groupId>
-      <artifactId>flashplayer</artifactId>
-      <version>10.1</version>
-      <type>exe</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe</groupId>
-      <artifactId>flashplayer</artifactId>
-      <version>10.1</version>
-      <classifier>linux</classifier>
-      <type>uexe</type>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
