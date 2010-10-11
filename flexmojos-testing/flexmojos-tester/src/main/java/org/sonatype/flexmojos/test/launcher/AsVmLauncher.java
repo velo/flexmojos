@@ -7,9 +7,11 @@
  */
 package org.sonatype.flexmojos.test.launcher;
 
+import static org.sonatype.flexmojos.util.CollectionUtils.*;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.FileUtils;
@@ -57,7 +59,7 @@ public class AsVmLauncher
 
     private boolean allowHeadlessMode;
 
-    private String asvmCommand;
+    private String[] asvmCommand;
 
     private StringBuffer consoleLog = new StringBuffer();
 
@@ -165,13 +167,13 @@ public class AsVmLauncher
         }
     }
 
-    private void runFlashplayer( String asvmCommand, String targetFile )
+    private void runFlashplayer( String asvmCommand[], String targetFile )
         throws LaunchFlashPlayerException
     {
         getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
         try
         {
-            process = Runtime.getRuntime().exec( new String[] { asvmCommand, targetFile } );
+            process = Runtime.getRuntime().exec( merge( asvmCommand, new String[] { targetFile } ) );
             new StreamPumper( process.getInputStream(), new ConsoleConsumer( "[SYSOUT]: " ) ).start();
             new StreamPumper( process.getErrorStream(), new ConsoleConsumer( "[SYSERR]: " ) ).start();
         }
@@ -181,7 +183,7 @@ public class AsVmLauncher
         }
     }
 
-    private void runFlashplayerHeadless( String asvmCommand, String targetFile )
+    private void runFlashplayerHeadless( String[] asvmCommand, String targetFile )
         throws LaunchFlashPlayerException
     {
         getLogger().warn( "[LAUNCHER] Using xvfb-run to launch headless tests" );
@@ -215,9 +217,8 @@ public class AsVmLauncher
         try
         {
             process =
-                Runtime.getRuntime().exec(
-                                           new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath(), asvmCommand,
-                                               targetFile } );
+                Runtime.getRuntime().exec( merge( new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath() },
+                                                  asvmCommand, new String[] { targetFile } ) );
         }
         catch ( IOException e )
         {
@@ -278,7 +279,7 @@ public class AsVmLauncher
         }
 
         getLogger().debug( "[LAUNCHER] ASVmLauncher starting" );
-        getLogger().debug( "[LAUNCHER] exec: " + asvmCommand + " - " + targetFile );
+        getLogger().debug( "[LAUNCHER] exec: " + Arrays.toString( asvmCommand ) + " - " + targetFile );
         getLogger().debug( "[LAUNCHER] Creating process" );
 
         String target = PathUtil.path( targetFile );
@@ -324,7 +325,7 @@ public class AsVmLauncher
                 getLogger().debug( "[LAUNCHER] killing Xvfb" );
                 Runtime.getRuntime().exec( new String[] { "killall", "Xvfb" } ).waitFor();
                 Runtime.getRuntime().exec( new String[] { "killall", "xvfb-run" } ).waitFor();
-                Runtime.getRuntime().exec( new String[] { "killall", new File( asvmCommand ).getName() } ).waitFor();
+                Runtime.getRuntime().exec( new String[] { "killall", new File( asvmCommand[0] ).getName() } ).waitFor();
             }
             catch ( IOException e )
             {

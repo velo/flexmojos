@@ -1,16 +1,14 @@
 package org.sonatype.flexmojos.plugin.compiler.continuous;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.StreamPumper;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
-import org.sonatype.flexmojos.test.launcher.FlashPlayerShutdownHook;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
+import org.sonatype.flexmojos.test.TestRequest;
+import org.sonatype.flexmojos.test.launcher.AsVmLauncher;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
-import org.sonatype.flexmojos.util.OSUtils;
 
 /**
  * @since 4.0
@@ -20,17 +18,50 @@ import org.sonatype.flexmojos.util.OSUtils;
  * @configurator flexmojos
  * @threadSafe
  * @author Joa Ebert
+ * @author Marvin Froeder
  * @requiresDirectInvocation
  */
 public class MxmlcContinuousCompileMojo
     extends MxmlcMojo
 {
     /**
-     * Whether or not to spawn the Flash Player after each recompile.
+     * Can be of type <code>&lt;argument&gt;</code>
      * 
-     * @parameter expression="${flex.liveDevelopment}" default-value="true"
+     * @parameter expression="${flex.adl.command}"
      */
-    private boolean liveDevelopment;
+    private String adlCommand;
+
+    /**
+     * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;adlGav&gt;
+     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
+     *   &lt;artifactId&gt;adl&lt;/artifactId&gt;
+     *   &lt;type&gt;exe&lt;/type&gt;
+     * &lt;/adlGav&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenArtifact adlGav;
+    
+    /**
+     * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;adlGav&gt;
+     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
+     *   &lt;artifactId&gt;runtime&lt;/artifactId&gt;
+     *   &lt;type&gt;zip&lt;/type&gt;
+     * &lt;/adlGav&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenArtifact adlRuntimeGav;
 
     /**
      * Can be of type <code>&lt;argument&gt;</code>
@@ -39,7 +70,33 @@ public class MxmlcContinuousCompileMojo
      */
     private String flashPlayerCommand;
 
-    private Process process;
+    /**
+     * Coordinates to flashplayer. If not set will use <i>com.adobe:flashplayer</i><BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;flashPlayerGav&gt;
+     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
+     *   &lt;artifactId&gt;flashplayer&lt;/artifactId&gt;
+     *   &lt;type&gt;exe&lt;/type&gt;
+     * &lt;/flashPlayerGav&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenArtifact flashPlayerGav;
+
+    /**
+     * Whether or not to spawn the Flash Player after each recompile.
+     * 
+     * @parameter expression="${flex.liveDevelopment}" default-value="true"
+     */
+    private boolean liveDevelopment;
+
+    /**
+     * @component
+     */
+    private AsVmLauncher vmLauncher;
 
     /**
      * {@inheritDoc}
@@ -58,11 +115,6 @@ public class MxmlcContinuousCompileMojo
         //
         // Use default if Flash Player command has not been set.
         //
-
-        if ( null == flashPlayerCommand )
-        {
-            flashPlayerCommand = OSUtils.getPlatformDefaultFlashPlayer();
-        }
 
         try
         {
@@ -116,59 +168,33 @@ public class MxmlcContinuousCompileMojo
             return;
         }
 
-        final String output = getOutput();
-        final File outputFile = new File( output );
+        final File swf = new File( getOutput() );
 
-        if ( !outputFile.exists() )
+        if ( !swf.exists() )
         {
             return;
         }
 
-        if ( null != process )
+        vmLauncher.stop();
+
+        TestRequest testRequest = new TestRequest();
+        testRequest.setSwf( swf );
+        testRequest.setAllowHeadlessMode( false );
+
+        boolean isAirProject = getIsAirProject();
+        testRequest.setUseAirDebugLauncher( isAirProject );
+        if ( isAirProject )
         {
-            process.destroy();
-            process = null;
+            testRequest.setAdlCommand( resolveAdlVm( adlCommand, adlGav, "adl", getAirTarget(), adlRuntimeGav ) );
+            testRequest.setSwfDescriptor( createSwfDescriptor( swf ) );
+        }
+        else
+        {
+            testRequest.setFlashplayerCommand( resolveFlashVM( flashPlayerCommand, flashPlayerGav, "flashplayer",
+                                                               getTargetPlayer() == null ? "10.1" : getTargetPlayer() ) );
         }
 
-        runFlashplayer( flashPlayerCommand, output );
-        Runtime.getRuntime().addShutdownHook( new FlashPlayerShutdownHook( process ) );
+        vmLauncher.start( testRequest );
     }
 
-    // TODO taken from AsVmLauncher
-    private void runFlashplayer( final String asvmCommand, final String targetFile )
-        throws LaunchFlashPlayerException
-    {
-        try
-        {
-            process = Runtime.getRuntime().exec( new String[] { asvmCommand, targetFile } );
-            new StreamPumper( process.getInputStream(), new ConsoleConsumer( "[SYSOUT]: " ) ).start();
-            new StreamPumper( process.getErrorStream(), new ConsoleConsumer( "[SYSERR]: " ) ).start();
-        }
-        catch ( IOException e )
-        {
-            throw new LaunchFlashPlayerException( "Failed to launch Flash Player.", e );
-        }
-    }
-
-    // TODO taken from AsVmLauncher
-    private class ConsoleConsumer
-        implements StreamConsumer
-    {
-        private final String prefix;
-
-        public ConsoleConsumer( final String prefix )
-        {
-            this.prefix = prefix;
-        }
-
-        public void consumeLine( final String line )
-        {
-            if ( "\n".equals( line ) )
-            {
-                return;
-            }
-
-            getLog().debug( prefix + line );
-        }
-    }
 }

@@ -9,8 +9,13 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -43,16 +49,22 @@ import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.hamcrest.Matcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.sonatype.flexmojos.compatibilitykit.VersionUtils;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenLogger;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.NotCacheable;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
+import org.sonatype.flexmojos.util.CollectionUtils;
+import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 
 import flex2.compiler.Logger;
@@ -271,6 +283,38 @@ public abstract class AbstractMavenMojo
         }
     }
 
+    protected File createSwfDescriptor( File swf )
+    {
+        Reader reader = null;
+        FileWriter writer = null;
+        try
+        {
+            reader =
+                new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
+
+            Map<String, String> variables = new LinkedHashMap<String, String>();
+            variables.put( "swf", swf.getName() );
+
+            InterpolationFilterReader filterReader = new InterpolationFilterReader( reader, variables );
+
+            File destFile = new File( swf.getParentFile(), FilenameUtils.getBaseName( swf.getName() ) + ".xml" );
+            writer = new FileWriter( destFile );
+
+            IOUtil.copy( filterReader, writer );
+
+            return destFile;
+        }
+        catch ( IOException e )
+        {
+            throw new MavenRuntimeException( "Fail to create test air descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+            IOUtil.close( writer );
+        }
+    }
+
     protected List<String> filterClasses( List<FileSet> classesPattern, File[] directories )
     {
         directories = PathUtil.existingFiles( directories );
@@ -340,6 +384,21 @@ public abstract class AbstractMavenMojo
         }
 
         return includedFiles;
+    }
+
+    protected String getAirTarget()
+    {
+        int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
+        {
+            return "2.0";
+        }
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
+        {
+            return "1.5";
+        }
+
+        return "1.0";
     }
 
     protected File getBasedir()
@@ -482,7 +541,7 @@ public abstract class AbstractMavenMojo
     {
         Artifact artifact = resolve( groupId, artifactId, version, classifier, type );
 
-        String dirName = classifier == null ? "" : classifier + "_" + type;
+        String dirName = ( classifier == null ? "" : classifier ) + "_" + type;
 
         File dir = new File( artifact.getFile().getParentFile(), dirName );
         if ( dir.isDirectory() )
@@ -563,6 +622,124 @@ public abstract class AbstractMavenMojo
             }
         }
         return artifact;
+    }
+
+    protected String[] resolveFlashVM( String command, MavenArtifact gav, String defaultArtifactId, String version )
+    {
+        if ( command != null )
+        {
+            getLog().debug( "Using user defined command for " + defaultArtifactId + ":" + command );
+            return new String[] { command };
+        }
+
+        if ( gav == null )
+        {
+            gav = new MavenArtifact();
+            gav.setGroupId( "com.adobe" );
+            gav.setArtifactId( defaultArtifactId );
+            if ( OSUtils.isWindows() )
+            {
+                gav.setType( "exe" );
+            }
+            else
+            {
+                gav.setType( "uexe" );
+                if ( OSUtils.isMacOS() )
+                {
+                    gav.setClassifier( "mac" );
+                }
+                else
+                {
+                    gav.setClassifier( "linux" );
+                }
+            }
+
+        }
+        if ( gav.getVersion() == null )
+        {
+            gav.setVersion( version );
+        }
+
+        @SuppressWarnings( "unchecked" )
+        Artifact vm =
+            getDependency( groupId( gav.getGroupId() ), artifactId( gav.getArtifactId() ),
+                           classifier( gav.getClassifier() ), type( gav.getType() ) );
+        if ( vm == null )
+        {
+            try
+            {
+                vm =
+                    resolve( gav.getGroupId(), gav.getArtifactId(), gav.getVersion(), gav.getClassifier(),
+                             gav.getType() );
+            }
+            catch ( RuntimeMavenResolutionException e )
+            {
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( e.getMessage(), e );
+                }
+
+                vm = null;
+            }
+        }
+
+        if ( vm != null && vm.getFile() != null )
+        {
+            if ( !OSUtils.isWindows() )
+            {
+                vm.getFile().setExecutable( true );
+            }
+            getLog().debug( "Using " + defaultArtifactId + " from maven local repository: " + vm.getFile() );
+
+            return new String[] { path( vm.getFile() ) };
+        }
+        else
+        {
+            getLog().debug( "Flexmojos was not able to resolve " + defaultArtifactId + " delegating the job to OS!" );
+
+            return null;
+        }
+    }
+
+    protected String[] resolveAdlVm( String command, MavenArtifact vmGav, String defaultArtifactId, String version,
+                                     MavenArtifact runtimeGav )
+    {
+
+        String[] vm = resolveFlashVM( command, vmGav, defaultArtifactId, version );
+
+        if ( runtimeGav == null )
+        {
+            runtimeGav = new MavenArtifact();
+            runtimeGav.setGroupId( "com.adobe.adl" );
+            runtimeGav.setArtifactId( "runtime" );
+            if ( OSUtils.isWindows() )
+            {
+                runtimeGav.setType( "zip" );
+            }
+            else
+            {
+                runtimeGav.setType( "tar.gz" );
+                if ( OSUtils.isMacOS() )
+                {
+                    runtimeGav.setClassifier( "mac" );
+                }
+                else
+                {
+                    runtimeGav.setClassifier( "linux" );
+                }
+            }
+        }
+
+        if ( runtimeGav.getVersion() == null )
+        {
+            runtimeGav.setVersion( version );
+        }
+
+        // adl nedds air runtime, so lets grab it...
+        File runtime =
+            getUnpackedArtifact( runtimeGav.getGroupId(), runtimeGav.getArtifactId(), runtimeGav.getVersion(),
+                                 runtimeGav.getClassifier(), runtimeGav.getType() );
+        return CollectionUtils.merge( vm, new String[] { "-runtime", path( runtime ) } );
     }
 
     protected DirectoryScanner scan( FileSet pattern )

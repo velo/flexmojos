@@ -1,5 +1,6 @@
-package org.sonatype.flexmojos.plugin.utilities;
+package org.sonatype.flexmojos.util;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,12 +38,15 @@ public class CollectionUtils
         return Collections.unmodifiableList( new LinkedList<E>( merged ) );
     }
 
-    public static <E> List<E> merge( E[]... arrays )
+    @SuppressWarnings( "unchecked" )
+    public static <E> E[] merge( E[]... arrays )
     {
         if ( arrays == null )
         {
             return null;
         }
+
+        Class<E> clazz = (Class<E>) arrays.getClass().getComponentType().getComponentType();
 
         Set<E> merged = new LinkedHashSet<E>();
         for ( E[] es : arrays )
@@ -57,10 +61,10 @@ public class CollectionUtils
 
         if ( merged.isEmpty() )
         {
-            return Collections.emptyList();
+            return (E[]) Array.newInstance( clazz, 0 );
         }
 
-        return Collections.unmodifiableList( new LinkedList<E>( merged ) );
+        return merged.toArray( (E[]) Array.newInstance( clazz, merged.size() ) );
     }
 
 }

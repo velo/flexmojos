@@ -46,8 +46,8 @@ import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.test.scanners.FlexClassScanner;
-import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
+import org.sonatype.flexmojos.util.CollectionUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 import org.sonatype.flexmojos.util.SocketUtil;
 
@@ -569,7 +569,7 @@ public class TestCompilerMojo
     @Override
     public String[] getLocale()
     {
-        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
+        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() );
     }
 
     @Override

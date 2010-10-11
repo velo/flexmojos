@@ -27,30 +27,30 @@ public class OSUtils
         return OS.other;
     }
 
-    public static String getPlatformDefaultFlashPlayer()
+    public static String[] getPlatformDefaultFlashPlayer()
     {
         switch ( getOSType() )
         {
             case windows:
-                return WINDOWS_CMD;
+                return new String[] { WINDOWS_CMD };
             case mac:
-                return MAC_CMD;
+                return new String[] { MAC_CMD };
             default:
-                return UNIX_CMD;
+                return new String[] { UNIX_CMD };
         }
     }
 
-    public static String getPlatformDefaultAdl()
+    public static String[] getPlatformDefaultAdl()
     {
         switch ( getOSType() )
         {
             case windows:
-                return "adl.exe";
+                return new String[] { "adl.exe" };
             default:
-                return "adl";
+                return new String[] { "adl" };
         }
     }
-    
+
     public static boolean isLinux()
     {
         switch ( getOSType() )

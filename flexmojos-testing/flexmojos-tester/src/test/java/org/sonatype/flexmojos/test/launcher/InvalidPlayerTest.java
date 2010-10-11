@@ -25,7 +25,7 @@ public class InvalidPlayerTest
     {
         TestRequest request = new TestRequest();
         request.setSwf( VALID_SWF.getSwf() );
-        request.setFlashplayerCommand( "invalid_flash_player" );
+        request.setFlashplayerCommand( new String[] { "invalid_flash_player" } );
 
         if ( launcher.useXvfb() )
         {

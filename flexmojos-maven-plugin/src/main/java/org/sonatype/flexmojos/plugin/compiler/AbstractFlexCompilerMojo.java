@@ -3297,9 +3297,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return true;
         }
 
-        Artifact artifact =
-            resolve( project.getGroupId(), project.getArtifactId(), project.getVersion(), getClassifier(),
-                     project.getPackaging() );
+        Artifact artifact;
+        try
+        {
+            artifact =
+                resolve( project.getGroupId(), project.getArtifactId(), project.getVersion(), getClassifier(),
+                         project.getPackaging() );
+        }
+        catch ( RuntimeMavenResolutionException e )
+        {
+            artifact = e.getArtifact();
+        }
 
         if ( !artifact.isResolved() || artifact.getFile() == null || !artifact.getFile().exists() )
         {
