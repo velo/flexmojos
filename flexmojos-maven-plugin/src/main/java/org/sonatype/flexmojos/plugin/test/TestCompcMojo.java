@@ -14,8 +14,8 @@ import org.apache.maven.model.Resource;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
-import org.sonatype.flexmojos.plugin.utilities.CollectionUtils;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
+import org.sonatype.flexmojos.util.CollectionUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 
 import flex2.compiler.common.SinglePathResolver;
@@ -109,7 +109,7 @@ public class TestCompcMojo
     @Override
     public String[] getLocale()
     {
-        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() ).toArray( new String[0] );
+        return CollectionUtils.merge( super.getLocalesRuntime(), super.getLocale() );
     }
 
     @Override

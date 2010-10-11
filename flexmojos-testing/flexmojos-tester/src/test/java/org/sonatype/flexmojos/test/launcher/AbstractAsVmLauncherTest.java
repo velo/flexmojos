@@ -48,10 +48,10 @@ public class AbstractAsVmLauncherTest
 
             VALID_SWF = new TestRequest();
             VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
-            VALID_SWF.setFlashplayerCommand( fp );
+            VALID_SWF.setFlashplayerCommand( new String[] { fp } );
             INVALID_SWF = new TestRequest();
             INVALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() ) );
-            INVALID_SWF.setFlashplayerCommand( fp );
+            INVALID_SWF.setFlashplayerCommand( new String[] { fp } );
             INVALID_SWF.setFirstConnectionTimeout( 1000 );
             INVALID_SWF.setTestTimeout( 1000 );
         }

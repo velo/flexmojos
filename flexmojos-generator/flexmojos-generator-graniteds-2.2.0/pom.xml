@@ -40,7 +40,7 @@
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.graniteds</groupId>
