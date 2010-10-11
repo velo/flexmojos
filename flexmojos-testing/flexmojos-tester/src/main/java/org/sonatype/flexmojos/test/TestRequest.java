@@ -22,13 +22,13 @@ import java.io.File;
 public class TestRequest
 {
 
-    private String adlCommand;
+    private String[] adlCommand;
 
     private boolean allowHeadlessMode = true;
 
     private int firstConnectionTimeout;
 
-    private String flashplayerCommand;
+    private String[] flashplayerCommand;
 
     private File swf;
 
@@ -42,7 +42,7 @@ public class TestRequest
 
     private boolean useAirDebugLauncher;
 
-    public String getAdlCommand()
+    public String[] getAdlCommand()
     {
         return adlCommand;
     }
@@ -57,7 +57,7 @@ public class TestRequest
         return firstConnectionTimeout;
     }
 
-    public String getFlashplayerCommand()
+    public String[] getFlashplayerCommand()
     {
         return this.flashplayerCommand;
     }
@@ -92,7 +92,7 @@ public class TestRequest
         return useAirDebugLauncher;
     }
 
-    public void setAdlCommand( String adlCommand )
+    public void setAdlCommand( String[] adlCommand )
     {
         this.adlCommand = adlCommand;
     }
@@ -107,7 +107,7 @@ public class TestRequest
         this.firstConnectionTimeout = firstConnectionTimeout;
     }
 
-    public void setFlashplayerCommand( String flashplayerCommand )
+    public void setFlashplayerCommand( String[] flashplayerCommand )
     {
         this.flashplayerCommand = flashplayerCommand;
     }
