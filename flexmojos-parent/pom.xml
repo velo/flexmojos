@@ -133,7 +133,7 @@
         <plugin>
           <groupId>com.savage7.maven.plugins</groupId>
           <artifactId>maven-external-dependency-plugin</artifactId>
-          <version>0.5-SONATYPE-r108</version>
+          <version>0.5-SONATYPE-r116</version>
           <configuration>
             <createChecksum>true</createChecksum>
             <skipChecksumVerification>false</skipChecksumVerification>
@@ -184,6 +184,26 @@
                 <generatePom>false</generatePom>
               </artifactItem>
               <artifactItem>
+                <groupId>com.adobe.adl</groupId>
+                <artifactId>runtime</artifactId>
+                <version>2.0</version>
+                <packaging>zip</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
+                <extractFile>runtimes/air/win</extractFile>
+                <generatePom>false</generatePom>
+                <repack>true</repack>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe.adl</groupId>
+                <artifactId>nai</artifactId>
+                <version>2.0</version>
+                <packaging>zip</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
+                <extractFile>lib/nai</extractFile>
+                <generatePom>false</generatePom>
+                <repack>true</repack>
+              </artifactItem>
+              <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>adl</artifactId>
                 <version>2.0</version>
@@ -192,6 +212,28 @@
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
                 <extractFile>bin/adl</extractFile>
                 <generatePom>false</generatePom>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe.adl</groupId>
+                <artifactId>runtime</artifactId>
+                <version>2.0</version>
+                <classifier>linux</classifier>
+                <packaging>tar.gz</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
+                <extractFile>runtimes/air/linux</extractFile>
+                <generatePom>false</generatePom>
+                <repack>true</repack>
+              </artifactItem>
+              <artifactItem>
+                <groupId>com.adobe.adl</groupId>
+                <artifactId>nai</artifactId>
+                <version>2.0</version>
+                <classifier>linux</classifier>
+                <packaging>tar.gz</packaging>
+                <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
+                <extractFile>lib/nai</extractFile>
+                <generatePom>false</generatePom>
+                <repack>true</repack>
               </artifactItem>
             </artifactItems>
           </configuration>

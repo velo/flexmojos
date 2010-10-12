@@ -421,13 +421,13 @@ public class SignAirMojo
 
     protected File getRuntimeDir( String classifier, String type )
     {
-        return getUnpackedArtifact( COMPILER_GROUP_ID, "runtime", getAdt().getVersion(), classifier, type );
+        return getUnpackedArtifact( "com.adobe.adl", "runtime", getAirTarget(), classifier, type );
     }
 
     private File getNaiDir( String classifier, String type )
         throws MojoExecutionException
     {
-        return getUnpackedArtifact( COMPILER_GROUP_ID, "nai", getAdt().getVersion(), classifier, type );
+        return getUnpackedArtifact( "com.adobe.adl", "nai", getAirTarget(), classifier, type );
     }
 
     private File getOutput()
@@ -475,7 +475,7 @@ public class SignAirMojo
         }
         if ( packages.contains( EXE ) )
         {
-            packs.put( EXE, new FlexmojosEXEPackager( getNaiDir( "windows", ZIP ), getRuntimeDir( "windows", ZIP ) ) );
+            packs.put( EXE, new FlexmojosEXEPackager( getNaiDir( null, ZIP ), getRuntimeDir( null, ZIP ) ) );
         }
         if ( packages.contains( RPM ) )
         {
