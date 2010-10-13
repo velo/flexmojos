@@ -350,6 +350,9 @@ public class TestRunMojo
             {
                 File swf = new File( testOutputDirectory, swfName );
                 Integer testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
+                Integer testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
+
+                getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
 
                 TestRequest testRequest = new TestRequest();
                 testRequest.setTestControlPort( testControlPort );
