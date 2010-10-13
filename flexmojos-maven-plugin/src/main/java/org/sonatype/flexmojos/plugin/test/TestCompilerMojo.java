@@ -460,10 +460,6 @@ public class TestCompilerMojo
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-funit" );
         }
-        else if ( getDependency( groupId( "com.adobe.mustella" ), artifactId( "mustella" ) ) != null )
-        {
-            return getFlexmojosTestArtifact( "flexmojos-unittest-mustella" );
-        }
         else
         {
             if ( getLog().isDebugEnabled() )

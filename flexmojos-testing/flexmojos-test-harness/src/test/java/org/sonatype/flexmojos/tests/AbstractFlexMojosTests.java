@@ -234,7 +234,7 @@ public class AbstractFlexMojosTests
         return getPath( "flexmojos-unittest-advancedflex" ) + "," + getPath( "flexmojos-unittest-asunit" ) + ","
             + getPath( "flexmojos-unittest-flexunit" ) + "," + getPath( "flexmojos-unittest-flexunit4" ) + ","
             + getPath( "flexmojos-unittest-fluint" ) + "," + getPath( "flexmojos-unittest-funit" ) + ","
-            + getPath( "flexmojos-unittest-mustella" ) + "," + getPath( "flexmojos-unittest-support" );
+            + getPath( "flexmojos-unittest-support" );
     }
 
     private String getPath( String path )

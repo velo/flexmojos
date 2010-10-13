@@ -232,12 +232,6 @@ package org.sonatype.flexmojos.unitestingsupport
 				trace("Running tests using Advanced Flex tests");
 			}
 
-			//mustella
-			else if ((def=tryGetDefinitionByName("org.sonatype.flexmojos.unitestingsupport.mustella.MustellaListener")) != null)
-			{
-				trace("Running tests using Mustella");
-			}
-
 			//not found
 			else
 			{

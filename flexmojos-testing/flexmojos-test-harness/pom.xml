@@ -159,7 +159,7 @@
             <xml>com.adobe.flex:compiler:${flex.sdk.version}:pom</xml>
             <xml>com.adobe.flex.framework:air-framework:${flex.sdk.version}:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
-
+            
             <xml>org.sonatype.flexmojos:flexmojos-maven-plugin:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-archetypes-application:${project.version}</xml>
             <xml>org.sonatype.flexmojos:flexmojos-archetypes-library:${project.version}</xml>
@@ -181,7 +181,6 @@
             <xml>org.sonatype.flexmojos:flexmojos-unittest-funit:${project.version}:swc</xml>
             <xml>org.sonatype.flexmojos:flexmojos-unittest-asunit:${project.version}:swc</xml>
             <xml>org.sonatype.flexmojos:flexmojos-unittest-advancedflex:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-mustella:${project.version}:swc</xml>
 
             <xml>org.sonatype.flexmojos:flexmojos-air-super-pom:${project.version}:pom</xml>
             <xml>org.sonatype.flexmojos:flexmojos-flex-super-pom:${project.version}:pom</xml>

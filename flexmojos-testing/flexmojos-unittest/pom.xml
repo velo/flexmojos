@@ -84,7 +84,6 @@
     <module>flexmojos-unittest-flexunit4</module>
     <module>flexmojos-unittest-fluint</module>
     <module>flexmojos-unittest-funit</module>
-    <module>flexmojos-unittest-mustella</module>
     <module>flexmojos-unittest-support</module>
   </modules>
 
