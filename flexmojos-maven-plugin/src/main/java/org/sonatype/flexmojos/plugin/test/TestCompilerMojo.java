@@ -74,6 +74,8 @@ public class TestCompilerMojo
 
     private static final String ONCE = "once";
 
+    public static final String FLEXMOJOS_TEST_CONTROL_PORT = "flexmojos_test_control_port";
+
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
      * this.
@@ -180,13 +182,6 @@ public class TestCompilerMojo
      * @readonly
      */
     private List<String> testCompileSourceRoots;
-
-    /**
-     * Socket connect port for flex/java communication to control if flashplayer is alive
-     * 
-     * @parameter default-value="13540" expression="${testControlPort}"
-     */
-    private int testControlPort;
 
     /**
      * @parameter expression="${project.build.testOutputDirectory}"
@@ -324,8 +319,11 @@ public class TestCompilerMojo
         StringBuilder includes = getExtraIncludes( testOutputDirectory );
         StringBuilder classes = getClasses( testClasses );
 
+        Integer testControlPort = SocketUtil.freePort();
+        putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );
         Integer testPort = SocketUtil.freePort();
         putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
+        getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
 
         InputStream templateSource = getTemplate();
         String sourceString = IOUtils.toString( templateSource );
