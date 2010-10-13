@@ -3,18 +3,14 @@ package org.sonatype.flexmojos.plugin.report;
 import static org.sonatype.flexmojos.util.PathUtil.files;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
-import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.doxia.sink.Sink;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.SourcePathAware;
-import org.sonatype.flexmojos.plugin.test.TestRunMojo;
 
 /**
  * Goal to generate coverage report from unit tests
@@ -54,6 +50,21 @@ public class CoverageReportMojo
      */
     private String name;
 
+    /**
+     * The maven compile source roots. List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> sourcePaths;
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        // nothing to be done, the lifecycle deal with this report generation
+    }
+
     public String getDescription( Locale locale )
     {
         return description;
@@ -74,23 +85,6 @@ public class CoverageReportMojo
         coverageReportOutputDirectory.mkdirs();
         return coverageReportOutputDirectory;
     }
-
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-//        super.coverageOutputDirectory = coverageReportOutputDirectory;
-//
-//        super.execute();
-    }
-
-    /**
-     * The maven compile source roots. List of path elements that form the roots of ActionScript class
-     * 
-     * @parameter expression="${project.compileSourceRoots}"
-     * @required
-     * @readonly
-     */
-    private List<String> sourcePaths;
 
     public File[] getSourcePath()
     {

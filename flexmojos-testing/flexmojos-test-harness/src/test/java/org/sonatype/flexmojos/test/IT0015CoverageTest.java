@@ -36,7 +36,7 @@ public class IT0015CoverageTest
         throws Exception
     {
         File testDir = getProject( "/concept/flexunit-example" );
-        test( testDir, siteGoal() ).verifyErrorFreeLog();
+        test( testDir, siteGoal() );
         File asdoc = new File( testDir, "target/site/asdoc" );
         assertTrue( asdoc.isDirectory() );
     }
