@@ -7,13 +7,21 @@
     <phases>
       <phase>
         <id>test-compile</id>
-        <executions>
-          <execution>
-            <goals>
-              <goal>coverage-report</goal>
-            </goals>
-          </execution>
-        </executions>
+        <configuration>
+          <ignoreFailures>true</ignoreFailures>
+          <coverage>true</coverage>
+        </configuration>
+      </phase>
+      <phase>
+        <id>test</id>
+        <configuration>
+          <testFailureIgnore>true</testFailureIgnore>
+          <coverage>true</coverage>
+          <coverageReportFormat>
+            <fomart>html</fomart>
+          </coverageReportFormat>
+          <coverageOutputDirectory>${project.reporting.outputDirectory}/coverage</coverageOutputDirectory>
+        </configuration>
       </phase>
     </phases>
   </lifecycle>

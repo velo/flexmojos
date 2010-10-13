@@ -1,12 +1,19 @@
 package org.sonatype.flexmojos.plugin.report;
 
+import static org.sonatype.flexmojos.util.PathUtil.files;
+
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.doxia.sink.Sink;
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.SourcePathAware;
 import org.sonatype.flexmojos.plugin.test.TestRunMojo;
 
 /**
@@ -15,13 +22,13 @@ import org.sonatype.flexmojos.plugin.test.TestRunMojo;
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @since 4.0
  * @goal coverage-report
- * @execute lifecycle="coveragecycle" phase="test-compile"
+ * @execute lifecycle="coveragecycle" phase="test"
  * @requiresDependencyResolution test
  * @threadSafe
  */
 public class CoverageReportMojo
-    extends TestRunMojo
-    implements MavenReport
+    extends AbstractMavenMojo
+    implements MavenReport, SourcePathAware
 {
 
     /**
@@ -68,14 +75,26 @@ public class CoverageReportMojo
         return coverageReportOutputDirectory;
     }
 
-    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        super.coverage = true;
-        super.coverageReportFormat = Collections.singletonList( "html" );
-        super.coverageOutputDirectory = coverageReportOutputDirectory;
-
-        super.execute();
+//        super.coverageOutputDirectory = coverageReportOutputDirectory;
+//
+//        super.execute();
     }
+
+    /**
+     * The maven compile source roots. List of path elements that form the roots of ActionScript class
+     * 
+     * @parameter expression="${project.compileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> sourcePaths;
+
+    public File[] getSourcePath()
+    {
+        return files( sourcePaths );
+    }
+
 }
