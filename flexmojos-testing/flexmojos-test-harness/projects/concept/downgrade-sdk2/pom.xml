@@ -16,7 +16,7 @@
   </parent>
 
   <groupId>info.rvin.itest</groupId>
-  <artifactId>simple-flex-library</artifactId>
+  <artifactId>downgrade-2</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>swf</packaging>
@@ -30,7 +30,7 @@
           <dependency>
             <groupId>org.sonatype.flexmojos</groupId>
             <artifactId>flexmojos-flex2-compatibility-layer</artifactId>
-            <version>4.0-SNAPSHOT</version>
+            <version>%{flexmojos.version}</version>
           </dependency>
           <dependency>
             <groupId>com.adobe.flex</groupId>

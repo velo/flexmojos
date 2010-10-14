@@ -170,7 +170,7 @@ public class AbstractFlexMojosTests
     protected FMVerifier test( File projectDirectory, String goal, String... args )
         throws VerificationException
     {
-        FMVerifier verifier = getVerifier( projectDirectory );
+        FMVerifier verifier = getVerifier( projectDirectory, args );
         verifier.getCliOptions().addAll( Arrays.asList( args ) );
         verifier.executeGoal( goal );
         // TODO there are some errors logged, but they are not my concern
@@ -179,6 +179,12 @@ public class AbstractFlexMojosTests
     }
 
     protected FMVerifier getVerifier( File projectDirectory )
+        throws VerificationException
+    {
+        return getVerifier( projectDirectory );
+    }
+
+    protected FMVerifier getVerifier( File projectDirectory, String... args )
         throws VerificationException
     {
         System.setProperty( "maven.home", mavenHome.getAbsolutePath() );
@@ -194,6 +200,7 @@ public class AbstractFlexMojosTests
                 verifier.setAutoclean( false );
                 verifier.getCliOptions().add( "-npu" );
                 verifier.getCliOptions().add( "-B" );
+                verifier.getCliOptions().addAll( Arrays.asList( args ) );
                 // verifier.getCliOptions().add( "-X" );
                 verifier.setLogFileName( getTestName() + ".resolve.log" );
                 verifier.executeGoal( "dependency:go-offline" );
