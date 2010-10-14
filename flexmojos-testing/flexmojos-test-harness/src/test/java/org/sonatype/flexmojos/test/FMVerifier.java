@@ -1419,6 +1419,8 @@ public class FMVerifier
         if ( forkJvm )
         {
             Writer logWriter = new FileWriter( logFile );
+            
+            logWriter.append( Arrays.toString( cli.getShellCommandline() ) );
 
             StreamConsumer out = new WriterStreamConsumer( logWriter );
 

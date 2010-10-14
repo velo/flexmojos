@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	minWidth="955" minHeight="600">
+
+	<s:Label text="Hello World in Flex 4"
+		x="72" y="74" color="#FFFFFF"
+		fontSize="20" backgroundColor="#000000"
+		height="44" width="240"
+		textAlign="center" verticalAlign="middle"
+		fontWeight="bold" fontFamily="verdana"/>
+
+</s:Application>
