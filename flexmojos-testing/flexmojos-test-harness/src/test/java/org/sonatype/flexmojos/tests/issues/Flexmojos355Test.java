@@ -15,37 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.matcher.artifact;
+package org.sonatype.flexmojos.tests.issues;
 
-import org.apache.maven.artifact.Artifact;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+import org.sonatype.flexmojos.test.FMVerifier;
+import org.sonatype.flexmojos.tests.AbstractFlexMojosTests;
+import org.testng.annotations.Test;
 
-class ClassifierMatcher
-    extends TypeSafeMatcher<Artifact>
+public class Flexmojos355Test
+    extends AbstractFlexMojosTests
 {
 
-    private String classifier;
-
-    ClassifierMatcher( String classifier )
+    @Test
+    public void flexmojos355()
+        throws Exception
     {
-        this.classifier = classifier;
-    }
-
-    @Override
-    public boolean matchesSafely( Artifact a )
-    {
-        if ( classifier == null )
-        {
-            return a.getClassifier() == null;
-        }
-        return classifier.equals( a.getClassifier() );
-    }
-
-    public void describeTo( Description msg )
-    {
-        msg.appendText( " classifier " );
-        msg.appendValue( classifier );
+        FMVerifier v = test( getProject( "intro/hello-world" ), "install", "-Dflex.defaultBackgroundColor=#FFFFFF" );
+        v.verifyTextInLog( "defaultBackgroundColor = 16777215" );
+        v.verifyTextInLog( "-default-background-color=16777215" );
     }
 
 }

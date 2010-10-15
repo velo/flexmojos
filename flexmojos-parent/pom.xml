@@ -131,9 +131,9 @@
           <version>${plexus.version}</version>
           <executions>
             <execution>
-              <phase>process-classes</phase>
               <goals>
                 <goal>generate-metadata</goal>
+                <goal>generate-test-metadata</goal>
               </goals>
             </execution>
           </executions>
@@ -300,7 +300,7 @@
             <fileset>
               <directory>${basedir}</directory>
               <includes>
-                <include>coverage.ec</include>
+                <include>cobertura.ser</include>
               </includes>
               <followSymlinks>true</followSymlinks>
             </fileset>
@@ -315,13 +315,9 @@
           <execution>
             <goals>
               <goal>instrument</goal>
-              <!--<goal>check</goal> -->
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <minimunLineCoverage>50</minimunLineCoverage>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -413,6 +409,27 @@
       </build>
     </profile>
 
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.maven.plugin</groupId>
+            <artifactId>cobertura4it-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <minimunLineCoverage>50</minimunLineCoverage>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <reporting>
@@ -651,8 +668,14 @@
 
       <dependency>
         <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
+        <artifactId>hamcrest-library</artifactId>
         <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-integration</artifactId>
+        <version>1.1</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -689,5 +712,21 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <classifier>jdk15</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-integration</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

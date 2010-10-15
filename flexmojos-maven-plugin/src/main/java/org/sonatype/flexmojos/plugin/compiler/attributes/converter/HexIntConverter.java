@@ -15,37 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.matcher.artifact;
+package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
 
-import org.apache.maven.artifact.Artifact;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
+import org.codehaus.plexus.component.configurator.converters.ConfigurationConverter;
+import org.codehaus.plexus.component.configurator.converters.basic.IntConverter;
 
-public class GroupIdMatcher
-    extends TypeSafeMatcher<Artifact>
+public class HexIntConverter
+    extends IntConverter
+    implements ConfigurationConverter
 {
-
-    private String groupId;
-
-    GroupIdMatcher( String groupId )
+    public Object fromString( String str )
+        throws ComponentConfigurationException
     {
-        if ( groupId == null )
+        try
         {
-            throw new IllegalArgumentException( "GroupID must be not null" );
+            return Integer.decode( str );
         }
-        this.groupId = groupId;
+        catch ( NumberFormatException e )
+        {
+            throw new ComponentConfigurationException( "Not a number: '" + str + "'", e );
+        }
     }
-
-    @Override
-    public boolean matchesSafely( Artifact a )
-    {
-        return groupId.equals( a.getGroupId() );
-    }
-
-    public void describeTo( Description msg )
-    {
-        msg.appendText( " groupId " );
-        msg.appendValue( groupId );
-    }
-
 }
