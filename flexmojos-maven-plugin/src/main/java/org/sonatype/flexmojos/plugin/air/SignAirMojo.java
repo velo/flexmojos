@@ -2,6 +2,7 @@ package org.sonatype.flexmojos.plugin.air;
 
 import static ch.lambdaj.Lambda.selectFirst;
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
@@ -362,15 +363,6 @@ public class SignAirMojo
         {
             doPackage( packager.getKey(), packager.getValue() );
         }
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private Artifact getAdt()
-    {
-        Artifact adt =
-            selectFirst( pluginArtifacts,
-                         allOf( groupId( COMPILER_GROUP_ID ), artifactId( "adt" ), type( "jar" ), classifier( null ) ) );
-        return adt;
     }
 
     private File getAirDescriptor()

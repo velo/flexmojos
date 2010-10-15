@@ -49,7 +49,7 @@ import org.sonatype.flexmojos.generator.Generator;
 import org.sonatype.flexmojos.generator.GeneratorFactory;
 
 /**
- * This goal generate code based on Java classes. 
+ * This goal generate code based on Java classes.
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @author edward.yakop@gmail.com
@@ -96,53 +96,9 @@ public class SimpleGeneratorMojo
     private File baseOutputDirectory;
 
     /**
-     * @parameter
-     * @deprecated
-     */
-    private String uid = "uid";
-
-    /**
-     * @parameter
-     * @deprecated
-     */
-    private String[] entityTemplate;
-
-    /**
-     * @parameter
-     * @deprecated
-     */
-    private String[] interfaceTemplate;
-
-    /**
-     * @parameter
-     * @deprecated
-     */
-    private String[] beanTemplate;
-
-    /**
-     * @parameter
-     * @deprecated
-     */
-    private String[] enumTemplate;
-
-    /**
-     * Controls whether or not enum classes are output to the baseOutputDirectory (true) or the outputDirectory (false)
-     * 
-     * @parameter default-value="false"
-     * @deprecated
-     */
-    private boolean outputEnumToBaseOutputDirectory;
-
-    /**
-     * @parameter default-value="graniteds21" expression="${generatorToUse}"
+     * @parameter default-value="graniteds22" expression="${generatorToUse}"
      */
     private String generatorToUse;
-
-    /**
-     * @parameter default-value="false";
-     * @deprecated
-     */
-    private boolean useTideEntityTemplate;
 
     /**
      * @component role="org.sonatype.flexmojos.generator.GeneratorFactory"
@@ -168,10 +124,9 @@ public class SimpleGeneratorMojo
      * @parameter
      */
     private Map<String, String> templates;
-    
+
     /**
-     * A '=' separated list of Strings, format: 
-     * packageToTranslate=packageToReplace
+     * A '=' separated list of Strings, format: packageToTranslate=packageToReplace
      * 
      * @parameter
      */
@@ -182,8 +137,8 @@ public class SimpleGeneratorMojo
     {
         setUp();
 
-        GeneratorLogger logger = new MavenGeneratorLogger(getLog());
-        
+        GeneratorLogger logger = new MavenGeneratorLogger( getLog() );
+
         GenerationRequest request = new GenerationRequest();
         request.setClasses( getFilesToGenerator() );
         request.setClassLoader( this.initializeClassLoader() );
@@ -191,8 +146,8 @@ public class SimpleGeneratorMojo
         request.setPersistentOutputFolder( outputDirectory );
         request.setTemplates( templates );
         request.setTransientOutputFolder( baseOutputDirectory );
-        request.setTranslators(translators);
-        request.setLogger(logger);
+        request.setTranslators( translators );
+        request.setLogger( logger );
 
         ClassLoader cl = currentThread().getContextClassLoader();
 
@@ -242,40 +197,9 @@ public class SimpleGeneratorMojo
             project.addCompileSourceRoot( baseOutputPath );
         }
 
-        if ( extraOptions == null )
+        if ( translators == null )
         {
-            extraOptions = new HashMap<String, String>();
-            extraOptions.put( "uid", uid );
-            extraOptions.put( "outputEnumToBaseOutputDirectory", String.valueOf( outputEnumToBaseOutputDirectory ) );
-            extraOptions.put( "tide", String.valueOf( useTideEntityTemplate ) );
-        }
-
-        if ( templates == null )
-        {
-            templates = new HashMap<String, String>();
-            if ( enumTemplate != null )
-            {
-                templates.put( "enum-template", enumTemplate[0] );
-            }
-            if ( interfaceTemplate != null )
-            {
-                templates.put( "base-interface-template", interfaceTemplate[0] );
-                templates.put( "interface-template", interfaceTemplate[1] );
-            }
-            if ( entityTemplate != null )
-            {
-                templates.put( "base-entity-template", entityTemplate[0] );
-                templates.put( "entity-template", entityTemplate[1] );
-            }
-            if ( beanTemplate != null )
-            {
-                templates.put( "base-bean-template", beanTemplate[0] );
-                templates.put( "bean-template", beanTemplate[1] );
-            }
-        }
-        
-        if(translators == null){
-        	translators = new String[0];
+            translators = new String[0];
         }
     }
 

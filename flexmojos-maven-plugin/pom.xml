@@ -159,7 +159,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-generator-graniteds-2.1.0</artifactId>
+      <artifactId>flexmojos-generator-graniteds-2.2.0</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -177,11 +177,6 @@
       <artifactId>flexmojos-generator-mojo</artifactId>
       <version>${project.version}</version>
       <type>maven-plugin</type>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-common-matchers</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>

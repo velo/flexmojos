@@ -91,6 +91,10 @@ public class GenerationRequest
 
     public Map<String, String> getTemplates()
     {
+        if ( templates == null )
+        {
+            templates = new LinkedHashMap<String, String>();
+        }
         return templates;
     }
 

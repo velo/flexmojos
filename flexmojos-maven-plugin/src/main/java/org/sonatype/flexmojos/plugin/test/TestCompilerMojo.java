@@ -2,6 +2,8 @@ package org.sonatype.flexmojos.plugin.test;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
@@ -39,7 +41,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.hamcrest.text.StringStartsWith;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
@@ -429,8 +430,7 @@ public class TestCompilerMojo
     protected Artifact getFlexmojosUnittestFrameworkIntegrationLibrary()
     {
 
-        if ( getDependency( groupId( "com.adobe.flexunit" ), artifactId( "flexunit" ),
-                            version( StringStartsWith.startsWith( "0" ) ) ) != null )
+        if ( getDependency( groupId( "com.adobe.flexunit" ), artifactId( "flexunit" ), version( startsWith( "0" ) ) ) != null )
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-flexunit" );
         }
@@ -549,7 +549,7 @@ public class TestCompilerMojo
     {
         return MavenUtils.getFiles( getDependencies( type( SWC ),//
                                                      anyOf( scope( MERGED ), scope( EXTERNAL ), scope( COMPILE ),
-                                                            scope( null ) ),//
+                                                            scope( nullValue( String.class ) ) ),//
                                                      not( GLOBAL_MATCHER ) ),//
                                     getCompiledResouceBundles() );
     }
