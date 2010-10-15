@@ -44,7 +44,6 @@ import org.apache.maven.model.io.ModelParseException;
 import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.archiver.util.ArchiveEntryUtils;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -191,7 +190,7 @@ public class AbstractFlexMojosTests
     protected FMVerifier getVerifier( File projectDirectory )
         throws VerificationException
     {
-        return getVerifier( projectDirectory );
+        return getVerifier( projectDirectory, new String[0] );
     }
 
     protected FMVerifier getVerifier( File projectDirectory, String... args )
