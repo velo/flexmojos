@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
@@ -2083,7 +2084,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             Matcher<? extends Artifact> swcs =
                 allOf( type( SWC ), //
-                       anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ), scope( null ) )//
+                       anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ),
+                              scope( nullValue( String.class ) ) )//
                 );
             return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
         }
@@ -2370,7 +2372,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         else
         {
             return MavenUtils.getFiles( getDependencies( type( SWC ),//
-                                                         anyOf( scope( MERGED ), scope( COMPILE ), scope( null ) ),//
+                                                         anyOf( scope( MERGED ), scope( COMPILE ),
+                                                                scope( nullValue( String.class ) ) ),//
                                                          not( GLOBAL_MATCHER ) ),//
                                         resourceBundle );
         }

@@ -119,9 +119,10 @@ public class FileMatcher
         };
     }
 
-    public static Matcher<File> sized( long size )
+    @SuppressWarnings( "unchecked" )
+    public static Matcher<File> sized( Long size )
     {
-        return sized( Matchers.equalTo( size ) );
+        return sized( (Matcher<Long>) Matchers.equalTo( size ) );
     }
 
     public static Matcher<File> sized( final Matcher<Long> size )

@@ -28,7 +28,7 @@ public class GenerationException
 
     public GenerationException()
     {
-        super();
+        this( null );
     }
 
     public GenerationException( String message, Throwable cause )
@@ -38,7 +38,7 @@ public class GenerationException
 
     public GenerationException( String message )
     {
-        super( message );
+        this( message, null );
     }
 
 }
