@@ -90,4 +90,5 @@ public class AsdocReportMojo
     {
         return asdocOutputDirectory;
     }
+
 }

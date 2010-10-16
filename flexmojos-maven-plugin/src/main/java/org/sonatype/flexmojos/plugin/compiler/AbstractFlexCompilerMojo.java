@@ -2025,8 +2025,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getDumpConfig()
     {
         File dumpConfig = new File( getTargetDirectory(), getFinalName() + "-" + CONFIGS + "." + XML );
-        getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), dumpConfig, isDumpConfigAttach(),
-                                                              CONFIGS, XML ) );
+        if ( isAddMetadata() )
+        {
+            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), dumpConfig,
+                                                                  isDumpConfigAttach(), CONFIGS, XML ) );
+        }
         return PathUtil.path( dumpConfig );
     }
 
@@ -2448,8 +2451,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getLinkReport()
     {
         File linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
-        getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), linkReport, isLinkReportAttach(),
-                                                              LINK_REPORT, XML ) );
+        if ( isAddMetadata() )
+        {
+            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), linkReport,
+                                                                  isLinkReportAttach(), LINK_REPORT, XML ) );
+        }
         return PathUtil.path( linkReport );
     }
 
@@ -2995,8 +3001,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getSizeReport()
     {
         File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
-        getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), sizeReport, isSizeReportAttach(),
-                                                              SIZE_REPORT, XML ) );
+        if ( isAddMetadata() )
+        {
+            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), sizeReport,
+                                                                  isSizeReportAttach(), SIZE_REPORT, XML ) );
+        }
         return PathUtil.path( sizeReport );
     }
 
@@ -3295,6 +3304,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getWarnXmlClassHasChanged()
     {
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
+    }
+
+    protected boolean isAddMetadata()
+    {
+        return true;
     }
 
     @SuppressWarnings( "unchecked" )
