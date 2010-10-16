@@ -39,6 +39,7 @@ public abstract class AbstractActionScriptLifecycleMapping
         }
         phases.put( "install", "org.apache.maven.plugins:maven-install-plugin:install" );
         phases.put( "deploy", "org.apache.maven.plugins:maven-deploy-plugin:deploy" );
+        phases.put( "verify", "org.sonatype.flexmojos:flexmojos-maven-plugin:unused-check" );
         lifecycle.setPhases( phases );
 
         lifecycleMap.put( "default", lifecycle );
