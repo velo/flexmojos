@@ -58,6 +58,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
@@ -88,11 +89,11 @@ public class TestCompilerMojo
     extends MxmlcMojo
 {
 
+    public static final String FLEXMOJOS_TEST_CONTROL_PORT = "flexmojos_test_control_port";
+
     protected static final String FLEXMOJOS_TEST_PORT = "flexmojos_test_port";
 
     private static final String ONCE = "once";
-
-    public static final String FLEXMOJOS_TEST_CONTROL_PORT = "flexmojos_test_control_port";
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -379,6 +380,12 @@ public class TestCompilerMojo
         return true;
     }
 
+    @Override
+    public final String getDumpConfig()
+    {
+        return null;
+    }
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getExternalLibraryPath()
@@ -572,6 +579,12 @@ public class TestCompilerMojo
     }
 
     @Override
+    public final String getLinkReport()
+    {
+        return null;
+    }
+
+    @Override
     public String[] getLoadExterns()
     {
         return null;
@@ -611,6 +624,12 @@ public class TestCompilerMojo
 
     @Override
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    @FlexCompatibility( minVersion = "4.5.0" )
+    public final String getSizeReport()
     {
         return null;
     }
