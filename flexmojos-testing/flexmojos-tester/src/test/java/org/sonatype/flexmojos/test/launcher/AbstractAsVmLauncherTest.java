@@ -7,7 +7,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 
 import org.codehaus.plexus.PlexusTestNGCase;
-import org.codehaus.plexus.context.Context;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.testng.annotations.AfterMethod;

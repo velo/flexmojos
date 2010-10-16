@@ -1,12 +1,5 @@
 package org.sonatype.flexmojos.plugin.air;
 
-import static ch.lambdaj.Lambda.selectFirst;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.Matchers.nullValue;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.APK;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;

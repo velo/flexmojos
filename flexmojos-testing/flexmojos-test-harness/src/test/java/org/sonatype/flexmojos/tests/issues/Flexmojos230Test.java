@@ -4,12 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
 import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class Flexmojos230Test

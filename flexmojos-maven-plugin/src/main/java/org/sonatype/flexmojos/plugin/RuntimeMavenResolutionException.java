@@ -7,6 +7,8 @@ public class RuntimeMavenResolutionException
     extends RuntimeException
 {
 
+    private static final long serialVersionUID = -4816015188431985147L;
+
     private Artifact artifact;
 
     private ArtifactResolutionResult resolutionResult;

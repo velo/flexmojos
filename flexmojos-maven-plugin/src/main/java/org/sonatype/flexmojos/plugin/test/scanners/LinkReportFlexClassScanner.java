@@ -1,5 +1,7 @@
 package org.sonatype.flexmojos.plugin.test.scanners;
 
+import static org.sonatype.flexmojos.util.LinkReportUtil.getLinkedFiles;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 import org.sonatype.flexmojos.plugin.common.FlexClassifier;
 
 @Component( role = FlexClassScanner.class, hint = "link-report" )
@@ -31,27 +29,9 @@ public class LinkReportFlexClassScanner
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     protected void removeUnlinkedIncludedFiles( List<String> found, File basedir, File linkReport )
     {
-        List<String> linkedFiles = new ArrayList<String>();
-        SAXReader saxReader = new SAXReader();
-        Document document;
-        try
-        {
-            document = saxReader.read( linkReport );
-        }
-        catch ( DocumentException e )
-        {
-            throw new IllegalStateException( "Error removing unlinked includes using link report '"
-                + linkReport.getAbsolutePath() + "'.", e );
-        }
-
-        List<Attribute> list = document.selectNodes( "//script/@name" );
-        for ( Attribute attribute : list )
-        {
-            linkedFiles.add( attribute.getValue() );
-        }
+        List<String> linkedFiles = getLinkedFiles( linkReport );
 
         String baseDir = basedir.getAbsolutePath().concat( File.separator );
         for ( Iterator<String> iterator = found.iterator(); iterator.hasNext(); )

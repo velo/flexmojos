@@ -5,7 +5,9 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 
 import java.io.File;
@@ -16,8 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -34,7 +34,6 @@ import org.sonatype.flexmojos.compiler.IASDocConfiguration;
 import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
@@ -254,6 +253,11 @@ public class AsdocMojo
     private File output;
 
     /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
+    /**
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -461,11 +465,6 @@ public class AsdocMojo
         return lenient;
     }
 
-    /**
-     * @component
-     */
-    private ProjectBuilder projectBuilder;
-
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
@@ -510,6 +509,12 @@ public class AsdocMojo
         }
     }
 
+    @Override
+    public final String getLinkReport()
+    {
+        return null;
+    }
+
     public String getMainTitle()
     {
         return mainTitle;
@@ -545,6 +550,12 @@ public class AsdocMojo
 
     @Override
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    @FlexCompatibility( minVersion = "4.5.0" )
+    public final String getSizeReport()
     {
         return null;
     }

@@ -3,34 +3,25 @@ package org.sonatype.flexmojos.plugin.test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.sonatype.flexmojos.compatibilitykit.VersionUtils;
 import org.sonatype.flexmojos.coverage.CoverageReportException;
 import org.sonatype.flexmojos.coverage.CoverageReportRequest;
 import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
 import org.sonatype.flexmojos.plugin.SourcePathAware;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.test.TestRequest;
@@ -39,10 +30,7 @@ import org.sonatype.flexmojos.test.TestRunnerException;
 import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
-import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.*;
-import static org.sonatype.flexmojos.util.PathUtil.*;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -246,13 +234,6 @@ public class TestRunMojo
      * @parameter expression="${flex.targetPlayer}" default-value="10.1"
      */
     private String targetPlayer;
-
-    /**
-     * Socket connect port for flex/java communication to control if flashplayer is alive
-     * 
-     * @parameter default-value="13540" expression="${flex.testControlPort}"
-     */
-    private int testControlPort;
 
     /**
      * @parameter default-value="false" expression="${maven.test.failure.ignore}"
