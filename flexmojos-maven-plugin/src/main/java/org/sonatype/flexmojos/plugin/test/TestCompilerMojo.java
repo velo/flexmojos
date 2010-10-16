@@ -363,12 +363,6 @@ public class TestCompilerMojo
         return true;
     }
 
-    @Override
-    public final String getDumpConfig()
-    {
-        return null;
-    }
-
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getExternalLibraryPath()
@@ -562,12 +556,6 @@ public class TestCompilerMojo
     }
 
     @Override
-    public final String getLinkReport()
-    {
-        return null;
-    }
-
-    @Override
     public String[] getLoadExterns()
     {
         return null;
@@ -607,12 +595,6 @@ public class TestCompilerMojo
 
     @Override
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
-    {
-        return null;
-    }
-
-    @FlexCompatibility( minVersion = "4.5.0" )
-    public final String getSizeReport()
     {
         return null;
     }
@@ -694,6 +676,12 @@ public class TestCompilerMojo
         }
         getLog().debug( "Test classes: " + testClasses );
         return testClasses;
+    }
+
+    @Override
+    protected boolean isAddMetadata()
+    {
+        return false;
     }
 
     @Override
