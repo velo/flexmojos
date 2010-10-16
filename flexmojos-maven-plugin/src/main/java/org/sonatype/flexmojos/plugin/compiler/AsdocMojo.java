@@ -394,12 +394,6 @@ public class AsdocMojo
         return docSources;
     }
 
-    @Override
-    public final String getDumpConfig()
-    {
-        return null;
-    }
-
     public String getExamplesPath()
     {
         return PathUtil.path( examplesPath );
@@ -509,12 +503,6 @@ public class AsdocMojo
         }
     }
 
-    @Override
-    public final String getLinkReport()
-    {
-        return null;
-    }
-
     public String getMainTitle()
     {
         return mainTitle;
@@ -554,12 +542,6 @@ public class AsdocMojo
         return null;
     }
 
-    @FlexCompatibility( minVersion = "4.5.0" )
-    public final String getSizeReport()
-    {
-        return null;
-    }
-
     public Boolean getSkipXsl()
     {
         return skipXsl;
@@ -583,6 +565,14 @@ public class AsdocMojo
         {
             return super.getSourcePath();
         }
+    }
+
+    @Override
+    public File getTargetDirectory()
+    {
+        File targetDir = new File( super.getTargetDirectory(), "asdoc-reports" );
+        targetDir.mkdirs();
+        return targetDir;
     }
 
     public String getTemplatesPath()
@@ -616,6 +606,12 @@ public class AsdocMojo
     public String getWindowTitle()
     {
         return windowTitle;
+    }
+
+    @Override
+    protected boolean isAddMetadata()
+    {
+        return false;
     }
 
     @FlexCompatibility( maxVersion = "4.0.0.3127" )
