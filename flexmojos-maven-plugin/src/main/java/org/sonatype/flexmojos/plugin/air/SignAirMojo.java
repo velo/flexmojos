@@ -148,11 +148,6 @@ public class SignAirMojo
     protected MavenProjectHelper projectHelper;
 
     /**
-     * @parameter expression="${project.build.resources}"
-     */
-    private List<Resource> resources;
-
-    /**
      * @parameter
      * @required
      */
@@ -281,12 +276,15 @@ public class SignAirMojo
             {
                 for ( FileSet set : includeFileSets )
                 {
-                    DirectoryScanner scanner = new DirectoryScanner();
-                    scanner.setBasedir( set.getDirectory() );
-                    scanner.setIncludes( (String[]) set.getIncludes().toArray( new String[0] ) );
-                    scanner.setExcludes( (String[]) set.getExcludes().toArray( new String[0] ) );
-                    scanner.addDefaultExcludes();
-                    scanner.scan();
+                    DirectoryScanner scanner;
+                    if ( set instanceof Resource )
+                    {
+                        scanner = scan( (Resource) set );
+                    }
+                    else
+                    {
+                        scanner = scan( set );
+                    }
 
                     String[] files = scanner.getIncludedFiles();
                     for ( String path : files )
