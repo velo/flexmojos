@@ -25,7 +25,7 @@ public class OptimizationTest
     {
         FMVerifier v = standardConceptTester( "optimized-application" );
         v.assertArtifactPresent( "info.rvin.itest", "optimized-application", "1.0-SNAPSHOT", "swf" );
-        File path = new File( v.getArtifactPath( "info.rvin.itest", "optimized-application", "1.0-SNAPSHOT", "swf" ) );
+        File path = new File( FMVerifier.getArtifactPath( "info.rvin.itest", "optimized-application", "1.0-SNAPSHOT", "swf" ) );
         FileAssert.assertFile( new File( path.getParentFile(), "optimized-application-1.0-SNAPSHOT-original.swf" ) );
     }
 
