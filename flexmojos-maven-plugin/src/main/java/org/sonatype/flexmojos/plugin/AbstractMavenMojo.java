@@ -252,6 +252,7 @@ public abstract class AbstractMavenMojo
 
     /**
      * @parameter expression="${project.build.directory}"
+     * @readonly
      * @required
      */
     protected File targetDirectory;
