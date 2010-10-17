@@ -15,7 +15,7 @@ import org.sonatype.flexmojos.util.PathUtil;
 public aspect MojoReport
 {
 
-    declare parents : ( AsdocReportMojo || CoverageReportMojo || UnusedSourceReportMojo) implements MavenReport, SourcePathAware, Mojo;
+    declare parents : ( AsdocReportMojo || CoverageReportMojo ) implements MavenReport, SourcePathAware, Mojo;
 
     @NotCacheable
     public String MavenReport.getCategoryName()
@@ -50,7 +50,6 @@ public aspect MojoReport
         }
     }
 
-    @NotCacheable
     public boolean MavenReport.isExternalReport()
     {
         return true;

@@ -25,13 +25,5 @@
       </phase>
     </phases>
   </lifecycle>
-  <lifecycle>
-    <id>unusedcycle</id>
-    <phases>
-      <phase>
-        <id>compile</id>
-      </phase>
-    </phases>
-  </lifecycle>
 </lifecycles>
 

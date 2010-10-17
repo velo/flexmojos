@@ -18,7 +18,7 @@ public class SwcLifecycleMapping
     @Override
     protected String getPackage()
     {
-        return "org.sonatype.flexmojos:flexmojos-maven-plugin:create-rsl";
+        return "org.sonatype.flexmojos:flexmojos-maven-plugin:create-rsl,org.sonatype.flexmojos:flexmojos-maven-plugin:dita-asdoc";
     }
 
 }

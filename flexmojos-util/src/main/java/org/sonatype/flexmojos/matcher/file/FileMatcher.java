@@ -119,6 +119,7 @@ public class FileMatcher
         };
     }
 
+    @SuppressWarnings( "unchecked" )
     public static Matcher<File> sized( Long size )
     {
         return sized( (Matcher<Long>) Matchers.equalTo( size ) );

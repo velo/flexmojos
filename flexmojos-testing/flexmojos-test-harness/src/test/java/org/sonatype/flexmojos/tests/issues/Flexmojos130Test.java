@@ -4,11 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.zip.ZipFile;
 
 import org.sonatype.flexmojos.matcher.file.FileMatcher;
-import org.sonatype.flexmojos.test.FMVerifier;
 import org.testng.annotations.Test;
 
 public class Flexmojos130Test
@@ -16,13 +14,11 @@ public class Flexmojos130Test
 {
 
     @Test
-    public void generateDita()
+    public void attachAsdoc()
         throws Exception
     {
         File testDir = getProject( "/issues/flexmojos-130" );
-        FMVerifier v = getVerifier( testDir );
-        v.executeGoals( Arrays.asList( "install", "org.sonatype.flexmojos:flexmojos-maven-plugin:"
-            + getProperty( "version" ) + ":dita-asdoc" ) );
+        test( testDir, "install" );
 
         File swc = new File( testDir, "target/flexmojos-130-1.0-SNAPSHOT.swc" );
         assertThat( swc, FileMatcher.exists() );
@@ -40,13 +36,5 @@ public class Flexmojos130Test
         {
             swcC.close();
         }
-    }
-
-    @Test
-    public void attachAsdoc()
-        throws Exception
-    {
-        File testDir = getProject( "/issues/flexmojos-130" );
-        test( testDir, "install" );
     }
 }

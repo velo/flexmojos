@@ -100,7 +100,6 @@ import org.sonatype.flexmojos.plugin.compiler.attributes.MavenMetadataConfigurat
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenNamespace;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.compiler.lazyload.Cacheable;
-import org.sonatype.flexmojos.plugin.compiler.metadata.ReportMetadata;
 import org.sonatype.flexmojos.plugin.utilities.ConfigurationResolver;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -815,7 +814,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     /**
      * @component
-     * @readonly
      */
     private LicenseCalculator licenseCalculator;
 
@@ -2008,10 +2006,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getDumpConfig()
     {
         File dumpConfig = new File( getTargetDirectory(), getFinalName() + "-" + CONFIGS + "." + XML );
-        if ( isAddMetadata() )
+
+        if ( dumpConfigAttach )
         {
-            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), dumpConfig,
-                                                                  isDumpConfigAttach(), CONFIGS, XML ) );
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Config dump is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, CONFIGS, dumpConfig );
+            }
         }
         return PathUtil.path( dumpConfig );
     }
@@ -2434,10 +2439,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getLinkReport()
     {
         File linkReport = new File( getTargetDirectory(), getFinalName() + "-" + LINK_REPORT + "." + XML );
-        if ( isAddMetadata() )
+
+        if ( linkReportAttach )
         {
-            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), linkReport,
-                                                                  isLinkReportAttach(), LINK_REPORT, XML ) );
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Link report is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, LINK_REPORT, linkReport );
+            }
         }
         return PathUtil.path( linkReport );
     }
@@ -2714,8 +2726,18 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getOutput()
     {
         File output = getCompilerOutput();
-        getProjectArtifact().setFile( output );
-        getProjectArtifact().setResolved( true );
+        if ( getClassifier() != null )
+        {
+            projectHelper.attachArtifact( project, getProjectType(), getClassifier(), output );
+        }
+        else if ( !getProjectType().equals( packaging ) )
+        {
+            projectHelper.attachArtifact( project, getProjectType(), output );
+        }
+        else
+        {
+            project.getArtifact().setFile( output );
+        }
 
         return PathUtil.path( output );
     }
@@ -2732,30 +2754,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getPreloader()
     {
         return preloader;
-    }
-
-    public Artifact getProjectArtifact()
-    {
-        if ( getClassifier() == null && getProjectType().equals( packaging ) )
-        {
-            return project.getArtifact();
-        }
-
-        Artifact artifact;
-        if ( getClassifier() == null )
-        {
-            artifact =
-                repositorySystem.createArtifact( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                                 getProjectType() );
-        }
-        else
-        {
-            artifact =
-                repositorySystem.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
-                                                               project.getVersion(), getProjectType(), getClassifier() );
-        }
-        project.addAttachedArtifact( artifact );
-        return artifact;
     }
 
     public String getProjectType()
@@ -2984,10 +2982,17 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getSizeReport()
     {
         File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
-        if ( isAddMetadata() )
+
+        if ( sizeReportAttach )
         {
-            getProjectArtifact().addMetadata( new ReportMetadata( getProjectArtifact(), sizeReport,
-                                                                  isSizeReportAttach(), SIZE_REPORT, XML ) );
+            if ( getClassifier() != null )
+            {
+                getLog().warn( "Size report is not attached for artifacts with classifier" );
+            }
+            else
+            {
+                projectHelper.attachArtifact( project, XML, SIZE_REPORT, sizeReport );
+            }
         }
         return PathUtil.path( sizeReport );
     }
@@ -3289,11 +3294,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return getCompilerWarnings().get( "warn-xml-class-has-changed" );
     }
 
-    protected boolean isAddMetadata()
-    {
-        return true;
-    }
-
     @SuppressWarnings( "unchecked" )
     public boolean isCompilationRequired()
     {
@@ -3373,33 +3373,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         // nothing new was found.
         return required;
-    }
-
-    private boolean isDumpConfigAttach()
-    {
-        if ( getClassifier() != null )
-        {
-            return false;
-        }
-        return dumpConfigAttach;
-    }
-
-    private boolean isLinkReportAttach()
-    {
-        if ( getClassifier() != null )
-        {
-            return false;
-        }
-        return linkReportAttach;
-    }
-
-    private boolean isSizeReportAttach()
-    {
-        if ( getClassifier() != null )
-        {
-            return false;
-        }
-        return sizeReportAttach;
     }
 
     public void versionCheck()
