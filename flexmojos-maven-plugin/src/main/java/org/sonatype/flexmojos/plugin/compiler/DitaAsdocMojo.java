@@ -28,7 +28,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @since 4.0
  * @goal dita-asdoc
  * @requiresDependencyResolution compile
- * @phase process-sources
+ * @phase package
  * @configurator flexmojos
  * @threadSafe
  */
@@ -71,7 +71,7 @@ public class DitaAsdocMojo
             return;
         }
 
-        File output = getCompilerOutput();
+        File output = project.getArtifact().getFile();
         if ( !output.exists() )
         {
             getLog().warn( "Skipping dita asdoc, associated SWC file doesn't exist " + output );

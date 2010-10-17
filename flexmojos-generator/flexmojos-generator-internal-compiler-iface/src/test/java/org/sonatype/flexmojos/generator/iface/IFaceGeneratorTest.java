@@ -20,6 +20,7 @@ import flex2.tools.DigestRootConfiguration;
 import flex2.tools.Optimizer.OptimizerConfiguration;
 import flex2.tools.ToolsConfiguration;
 
+@SuppressWarnings( "restriction" )
 public class IFaceGeneratorTest
     extends PlexusTestCase
 {

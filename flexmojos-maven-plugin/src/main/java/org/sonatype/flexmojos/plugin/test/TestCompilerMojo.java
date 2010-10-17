@@ -41,7 +41,6 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
@@ -676,12 +675,6 @@ public class TestCompilerMojo
         }
         getLog().debug( "Test classes: " + testClasses );
         return testClasses;
-    }
-
-    @Override
-    protected boolean isAddMetadata()
-    {
-        return false;
     }
 
     @Override

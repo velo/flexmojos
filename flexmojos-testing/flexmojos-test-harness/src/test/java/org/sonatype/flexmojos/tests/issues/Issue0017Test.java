@@ -44,14 +44,8 @@ public class Issue0017Test
         File coverage = new File( testDir, "target/site/coverage" );
         assertThat( coverage, FileMatcher.exists() );
         assertThat( new File( coverage, "index.html" ), FileMatcher.exists() );
-        assertThat( new File( coverage, "org.sonatype.flexmojos.coverage.CoverageDataCollector.html" ),
-                    FileMatcher.exists() );
+        assertThat( new File( coverage, "org.sonatype.flexmojos.coverage.CoverageDataCollector.html" ), FileMatcher.exists() );
         
-        File unused = new File( testDir, "target/site/unused" );
-        assertThat( unused, FileMatcher.exists() );
-        assertThat( new File( unused, "index.html" ), FileMatcher.exists() );
-
-        // the regular executions shouldn't exist!
         assertThat( new File( testDir, "target/asdoc" ), not( FileMatcher.exists() ) );
         assertThat( new File( testDir, "target/coverage" ), not( FileMatcher.exists() ) );
     }

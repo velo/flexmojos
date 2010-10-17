@@ -23,7 +23,7 @@ public aspect LazyLoadAspect
 {
 
     pointcut getters() :
-        target (AbstractMavenMojo) && ( (execution( * get*() )||execution( * is*() ))  &&
+        target (AbstractMavenMojo) && ( execution( * get*() )  &&
              !execution(@NotCacheable *  *() )  );
 
     Object around() : getters() {

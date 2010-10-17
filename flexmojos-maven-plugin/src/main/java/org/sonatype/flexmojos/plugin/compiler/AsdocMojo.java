@@ -253,11 +253,6 @@ public class AsdocMojo
     private File output;
 
     /**
-     * @component
-     */
-    private ProjectBuilder projectBuilder;
-
-    /**
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -459,6 +454,11 @@ public class AsdocMojo
         return lenient;
     }
 
+    /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
@@ -567,14 +567,6 @@ public class AsdocMojo
         }
     }
 
-    @Override
-    public File getTargetDirectory()
-    {
-        File targetDir = new File( super.getTargetDirectory(), "asdoc-reports" );
-        targetDir.mkdirs();
-        return targetDir;
-    }
-
     public String getTemplatesPath()
     {
         if ( templatePath != null )
@@ -608,12 +600,6 @@ public class AsdocMojo
         return windowTitle;
     }
 
-    @Override
-    protected boolean isAddMetadata()
-    {
-        return false;
-    }
-
     @FlexCompatibility( maxVersion = "4.0.0.3127" )
     private void makeAsdocExecutable( File templateOutput )
     {
@@ -642,4 +628,21 @@ public class AsdocMojo
         }
     }
 
+    @Override
+    public String getDumpConfig()
+    {
+        return null;
+    }
+
+    @Override
+    public String getLinkReport()
+    {
+        return null;
+    }
+
+    @Override
+    public String getSizeReport()
+    {
+        return null;
+    }
 }
