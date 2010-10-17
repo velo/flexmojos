@@ -14,6 +14,8 @@
  */
 package org.sonatype.flexmojos.plugin.war;
 
+import static org.sonatype.flexmojos.util.PathUtil.file;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,7 +167,6 @@ public class CopyMojo
         return getArtifacts( AIR, project );
     }
 
-    @SuppressWarnings( "unchecked" )
     private List<Artifact> getArtifacts( String type, MavenProject project )
     {
         List<Artifact> swfArtifacts = new ArrayList<Artifact>();
@@ -254,14 +255,14 @@ public class CopyMojo
         return swcDeps;
     }
 
-    private String[] getRslUrls( MavenProject artifactProject )
+    private String getLastRslUrls( MavenProject artifactProject )
     {
         String[] urls = CompileConfigurationLoader.getCompilerPluginSettings( artifactProject, "rslUrls" );
-        if ( urls == null )
+        if ( urls == null || urls.length == 0 )
         {
             urls = AbstractMavenMojo.DEFAULT_RSL_URLS;
         }
-        return urls;
+        return urls[urls.length - 1];
     }
 
     private String getRuntimeLocaleOutputPath( MavenProject artifactProject )
@@ -309,7 +310,7 @@ public class CopyMojo
             return;
         }
 
-        String[] rslUrls = getRslUrls( artifactProject );
+        String rslUrls = getLastRslUrls( artifactProject );
 
         for ( Artifact rslArtifact : rslDeps )
         {
@@ -328,13 +329,9 @@ public class CopyMojo
                                                                rslArtifact.getVersion(), extension, null );
             rslArtifact = replaceWithResolvedArtifact( rslArtifact );
 
-            File[] destFiles = resolveRslDestination( rslUrls, rslArtifact, extension );
+            File destFile = resolveRslDestination( rslUrls, rslArtifact, extension );
             File sourceFile = rslArtifact.getFile();
-
-            for ( File destFile : destFiles )
-            {
-                copy( sourceFile, destFile );
-            }
+            copy( sourceFile, destFile );
         }
     }
 
@@ -396,16 +393,11 @@ public class CopyMojo
                         artifact.getClassifier(), artifact.getType() );
     }
 
-    private File[] resolveRslDestination( String[] rslUrls, Artifact artifact, String extension )
+    private File resolveRslDestination( String rsl, Artifact artifact, String extension )
     {
-        File[] rsls = new File[rslUrls.length];
-        for ( int i = 0; i < rslUrls.length; i++ )
-        {
-            String rsl = replaceContextRoot( rslUrls[i] );
-            rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, null );
-            rsls[i] = new File( rsl ).getAbsoluteFile();
-        }
-        return rsls;
+        rsl = replaceContextRoot( rsl );
+        rsl = MavenUtils.interpolateRslUrl( rsl, artifact, extension, null );
+        return file( rsl );
     }
 
     private File resolveRuntimeLocaleDestination( String runtimeLocaleOutputPath, Artifact artifact )
