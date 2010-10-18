@@ -412,7 +412,7 @@ public class CompcMojo
     }
 
     @Override
-    public final String getProjectType()
+    public String getProjectType()
     {
         return SWC;
     }
