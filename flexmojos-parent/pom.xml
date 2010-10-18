@@ -237,6 +237,12 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.0-beta-1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -287,6 +293,27 @@
             <goals>
               <goal>instrument</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <message>junit is banned</message>
+                  <excludes>
+                    <exclude>junit:junit</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
           </execution>
         </executions>
       </plugin>

@@ -219,6 +219,8 @@
             <xml>org.sonatype.flexmojos:flexmojos-air-super-pom:${project.version}:pom</xml>
             <xml>org.sonatype.flexmojos:flexmojos-flex-super-pom:${project.version}:pom</xml>
             <xml>org.sonatype.flexmojos:flexmojos-super-pom-commons:${project.version}:pom</xml>
+            
+            <xml>org.sonatype.flexmojos:flexmojos-sample-configurator:${project.version}:jar</xml>
           </extraArtifacts>
         </configuration>
         <executions>

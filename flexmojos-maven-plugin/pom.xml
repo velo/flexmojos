@@ -154,6 +154,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-configurator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-generator-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -347,7 +352,6 @@
               </execution>
             </executions>
           </plugin>
-
         </plugins>
       </build>
     </profile>

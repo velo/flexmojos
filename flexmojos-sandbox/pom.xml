@@ -36,6 +36,8 @@
   	<module>flexmojos-flex3-compatibility-layer</module>
   	<module>flexmojos-flex2-compatibility-layer</module>
   	<module>flexmojos-coverage-reporter</module>
+  	<module>flexmojos-configurator</module>
+  	<module>flexmojos-sample-configurator</module>
   </modules>
 
 </project>
