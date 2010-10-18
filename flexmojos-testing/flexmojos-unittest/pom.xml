@@ -21,6 +21,10 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>${project.version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <!-- dita is bugged, why it doesn't surprises me? -->
+          <ditaSkip>true</ditaSkip>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>com.adobe.flex</groupId>
@@ -75,7 +79,7 @@
       <type>rb.swc</type>
     </dependency>
   </dependencies>
-  
+
   <modules>
     <module>flexmojos-test-coverage</module>
     <module>flexmojos-unittest-advancedflex</module>
@@ -87,32 +91,6 @@
     <module>flexmojos-unittest-support</module>
   </modules>
 
-  <!--<profiles>
-    <profile>
-      <id>m2e</id>
-      <activation>
-        <property>
-          <name>m2e.version</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-maven-plugin</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>axdt</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
---></project>
+  <!--<profiles> <profile> <id>m2e</id> <activation> <property> <name>m2e.version</name> </property> </activation> <build> <plugins> <plugin> <groupId>org.sonatype.flexmojos</groupId> <artifactId>flexmojos-maven-plugin</artifactId> <version>${project.version}</version> 
+    <executions> <execution> <phase>initialize</phase> <goals> <goal>axdt</goal> </goals> </execution> </executions> </plugin> </plugins> </build> </profile> </profiles> -->
+</project>

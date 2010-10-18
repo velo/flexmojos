@@ -22,26 +22,28 @@ package org.sonatype.flexmojos.generator.contraints;
 
 import java.io.File;
 
+import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusTestCase;
 import org.sonatype.flexmojos.generator.GenerationException;
 import org.sonatype.flexmojos.generator.Generator;
 import org.sonatype.flexmojos.generator.TestGenerationRequest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class ConstraintsGeneratorTest
-    extends PlexusTestCase
 {
 
     private Generator generator;
 
-    @Override
-    protected void setUp()
+    @BeforeMethod
+    public void setUp()
         throws Exception
     {
-        super.setUp();
-
-        this.generator = lookup( Generator.class, "constraints" );
+        DefaultPlexusContainer plexus = new DefaultPlexusContainer();
+        this.generator = plexus.lookup( Generator.class, "constraints" );
     }
 
+    @Test
     public void testGenerate()
         throws GenerationException
     {
