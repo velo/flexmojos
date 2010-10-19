@@ -75,6 +75,7 @@
           <includeJavaClasses>
             <param>com.vacillant.flexmojos.jira126.magicobjects.*</param>
           </includeJavaClasses>
+          <ditaSkip>true</ditaSkip>
         </configuration>
         <dependencies>
           <dependency>
