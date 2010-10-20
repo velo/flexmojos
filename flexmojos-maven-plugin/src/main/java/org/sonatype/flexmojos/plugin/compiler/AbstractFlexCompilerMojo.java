@@ -1393,9 +1393,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Equivalent to -use-network
      * </p>
      * 
-     * @parameter expression="${flex.userNetwork}"
+     * @parameter expression="${flex.useNetwork}"
      */
-    private Boolean userNetwork;
+    private Boolean useNetwork;
 
     /**
      * Save callstack information to the SWF for debugging
@@ -3085,7 +3085,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public Boolean getUseNetwork()
     {
-        return userNetwork;
+        return useNetwork;
     }
 
     public Boolean getUseResourceBundleMetadata()
