@@ -47,7 +47,7 @@
     <commons_io.version>1.4</commons_io.version>
     <flex.sdk.version>4.5.0.17855</flex.sdk.version>
     <maven.version>3.0</maven.version>
-    <maven-site-plugin.version>3.0-beta-3-SONATYPE-r1000854</maven-site-plugin.version>
+    <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0.RC6</apparat.version>
   </properties>
@@ -242,6 +242,12 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.0-beta-1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
