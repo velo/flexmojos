@@ -280,7 +280,6 @@
     <dependency>
       <groupId>com.googlecode.lambdaj</groupId>
       <artifactId>lambdaj</artifactId>
-      <version>2.1</version>
     </dependency>
 
     <dependency><!-- needed on optimizer mojo -->
