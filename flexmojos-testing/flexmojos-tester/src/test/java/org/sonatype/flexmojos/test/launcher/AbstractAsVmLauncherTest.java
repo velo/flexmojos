@@ -7,7 +7,6 @@ import java.io.File;
 import java.net.URISyntaxException;
 
 import org.codehaus.plexus.PlexusTestNGCase;
-import org.codehaus.plexus.context.Context;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.testng.annotations.AfterMethod;
@@ -27,33 +26,31 @@ public class AbstractAsVmLauncherTest
     {
         try
         {
-            String fp;
-            if ( OSUtils.isWindows() )
+        	VALID_SWF = new TestRequest();
+        	VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
+        	INVALID_SWF = new TestRequest();
+        	INVALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() ) );
+        	INVALID_SWF.setFirstConnectionTimeout( 1000 );
+        	INVALID_SWF.setTestTimeout( 1000 );
+            
+        	if ( OSUtils.isWindows() )
             {
-                fp = path( file( "target/flashplayer/flashplayer.exe" ) );
+                String fp = path( file( "target/flashplayer/flashplayer.exe" ) );
+                VALID_SWF.setFlashplayerCommand( new String[] { fp } );
+                INVALID_SWF.setFlashplayerCommand( new String[] { fp } );
             }
             else if ( OSUtils.isLinux() )
             {
-                fp = path( file( "target/flashplayer/flashplayer-linux.uexe" ) );
+                String fp = path( file( "target/flashplayer/flashplayer-linux.uexe" ) );
+                VALID_SWF.setFlashplayerCommand( new String[] { fp } );
+                INVALID_SWF.setFlashplayerCommand( new String[] { fp } );
+                file( fp ).setExecutable( true );
             }
             else
             {
-                fp = path( file( "target/flashplayer/flashplayer-mac.uexe" ) );
+            	//do not set the path to flash player, it should use the system default.
+            	
             }
-
-            if ( !OSUtils.isWindows() )
-            {
-                file( fp ).setExecutable( true );
-            }
-
-            VALID_SWF = new TestRequest();
-            VALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/SelftExit.swf" ).toURI() ) );
-            VALID_SWF.setFlashplayerCommand( new String[] { fp } );
-            INVALID_SWF = new TestRequest();
-            INVALID_SWF.setSwf( new File( AsVmLauncherTest.class.getResource( "/NonExit.swf" ).toURI() ) );
-            INVALID_SWF.setFlashplayerCommand( new String[] { fp } );
-            INVALID_SWF.setFirstConnectionTimeout( 1000 );
-            INVALID_SWF.setTestTimeout( 1000 );
         }
         catch ( URISyntaxException e )
         {
