@@ -1,13 +1,15 @@
 package org.sonatype.flexmojos.generator.iface;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.testng.annotations.Test;
 
 public class StringUtilTest
-    extends TestCase
 {
 
+    @Test
     public void testPrefixRemoval()
     {
         String a = "abcCba";
@@ -16,6 +18,7 @@ public class StringUtilTest
         assertEquals( "Cba", StringUtil.removePrefix( a ) );
     }
 
+    @Test
     public void testSplit()
     {
         String a = "abcCba";
