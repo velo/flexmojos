@@ -94,6 +94,7 @@ public class SignAirMojo
 
     /**
      * @parameter default-value="${basedir}/src/main/resources/descriptor.xml"
+     * @required
      */
     private File descriptorTemplate;
 
