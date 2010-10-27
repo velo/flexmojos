@@ -20,7 +20,7 @@ public class DowngradeTest
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { { "4.0.0.14159" }, { "4.1.0.16076" }, { "4.5.0.17855" } };
+        return new Object[][] { { "4.0.0.14159" }, { "4.1.0.16076" }, { "4.5.0.17855" } , { "4.5.0.17689" } };
     }
 
     @Test
