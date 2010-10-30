@@ -1,6 +1,8 @@
 package org.sonatype.flexmojos.plugin.air;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIRN;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.ANE;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.APK;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.DMG;
@@ -39,7 +41,10 @@ import org.apache.maven.repository.legacy.resolver.transform.SnapshotTransformat
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRNPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosANEPackager;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAPKPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDEBPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDMGPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosEXEPackager;
@@ -478,7 +483,15 @@ public class SignAirMojo
         }
         if ( packages.contains( APK ) )
         {
-            // packs.put( APK, new FlexmojosAPKPackager() );
+             packs.put( APK, new FlexmojosAPKPackager() );
+        }
+        if ( packages.contains( AIRN ) )
+        {
+            packs.put( AIRN, new FlexmojosAIRNPackager() );
+        }
+        if ( packages.contains( ANE ) )
+        {
+            packs.put( ANE, new FlexmojosANEPackager() );
         }
 
         if ( packages.size() != packs.size() )
