@@ -1,6 +1,5 @@
 package org.sonatype.flexmojos.plugin.font;
 
-import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
@@ -13,7 +12,6 @@ import java.net.URL;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.classworlds.UrlUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 
