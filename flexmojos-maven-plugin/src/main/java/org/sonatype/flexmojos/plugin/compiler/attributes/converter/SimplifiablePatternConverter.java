@@ -1,28 +1,25 @@
 package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
 
 import org.apache.maven.model.FileSet;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ConfigurationListener;
 import org.codehaus.plexus.component.configurator.converters.AbstractConfigurationConverter;
-import org.codehaus.plexus.component.configurator.converters.ConfigurationConverter;
 import org.codehaus.plexus.component.configurator.converters.lookup.ConverterLookup;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
+@SuppressWarnings( "all" )
 public class SimplifiablePatternConverter
     extends AbstractConfigurationConverter
 {
 
     public static final String ID = "SimplifiablePattern";
 
-    @SuppressWarnings( "unchecked" )
     public boolean canConvert( Class type )
     {
         return SimplifiablePattern.class.equals( type );
     }
 
-    @SuppressWarnings( "unchecked" )
     public Object fromConfiguration( ConverterLookup converterLookup, PlexusConfiguration cfg, Class type,
                                      Class baseType, ClassLoader classLoader, ExpressionEvaluator expressionEvaluator,
                                      ConfigurationListener listener )

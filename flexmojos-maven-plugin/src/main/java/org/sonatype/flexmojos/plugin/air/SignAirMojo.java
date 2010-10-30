@@ -39,15 +39,15 @@ import org.apache.maven.repository.legacy.resolver.transform.SnapshotTransformat
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDEBPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDMGPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosEXEPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosRPMPackager;
+import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
 
-import com.adobe.air.ADTPackager;
-import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
 import com.adobe.air.Message;
 
@@ -83,9 +83,7 @@ public class SignAirMojo
 
     /**
      * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
-     * prefer to reinvent wheel, so more work to all of us.<BR>
-     * I wonder why people has to be so creative, what is wrong with using something similar to what the rest of the
-     * world uses?! =(
+     * prefer to reinvent wheel, so more work to all of us.
      * 
      * @parameter expression="${flexmojos.flexbuilderCompatibility}"
      */
@@ -158,7 +156,7 @@ public class SignAirMojo
      */
     private String timestampURL;
 
-    private void addSourceWithPath( ADTPackager packager, String directory, String includePath )
+    private void addSourceWithPath( IPackager packager, String directory, String includePath )
         throws MojoFailureException
     {
         if ( includePath == null )
@@ -184,7 +182,7 @@ public class SignAirMojo
         packager.addSourceWithPath( includeFile, includePath );
     }
 
-    private void appendArtifacts( ADTPackager packager, Collection<Artifact> deps )
+    private void appendArtifacts( IPackager packager, Collection<Artifact> deps )
     {
         for ( Artifact artifact : deps )
         {
@@ -202,7 +200,7 @@ public class SignAirMojo
         }
     }
 
-    private void doPackage( String packagerName, ADTPackager packager )
+    private void doPackage( String packagerName, IPackager packager )
         throws MojoExecutionException
     {
         try
@@ -300,7 +298,7 @@ public class SignAirMojo
 
             final List<Message> messages = new ArrayList<Message>();
 
-            if ( packager.getADTStream() != null )
+            try
             {
                 packager.setListener( new Listener()
                 {
@@ -314,6 +312,15 @@ public class SignAirMojo
                         getLog().info( "  completed " + soFar + " of " + total );
                     }
                 } );
+            }
+            catch ( NullPointerException e )
+            {
+                // this is a ridiculous workaround, but I have no means to prevent the NPE nor to check if it will
+                // happen on AIR 2.5
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().error( e.getMessage() );
+                }
             }
 
             packager.createPackage();
@@ -350,8 +357,8 @@ public class SignAirMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Map<String, ADTPackager> packagers = getPackagers();
-        for ( Entry<String, ADTPackager> packager : packagers.entrySet() )
+        Map<String, IPackager> packagers = getPackagers();
+        for ( Entry<String, IPackager> packager : packagers.entrySet() )
         {
             doPackage( packager.getKey(), packager.getValue() );
         }
@@ -443,15 +450,15 @@ public class SignAirMojo
         return output;
     }
 
-    private Map<String, ADTPackager> getPackagers()
+    private Map<String, IPackager> getPackagers()
         throws MojoExecutionException
     {
         getLog().info( "Creating the following packagers: " + packages.toString() );
 
-        Map<String, ADTPackager> packs = new LinkedHashMap<String, ADTPackager>();
+        Map<String, IPackager> packs = new LinkedHashMap<String, IPackager>();
         if ( packages.contains( AIR ) )
         {
-            packs.put( AIR, new AIRPackager() );
+            packs.put( AIR, new FlexmojosAIRPackager() );
         }
         if ( packages.contains( DMG ) )
         {
@@ -471,14 +478,7 @@ public class SignAirMojo
         }
         if ( packages.contains( APK ) )
         {
-            try
-            {
-                packs.put( APK, (ADTPackager) Class.forName( "com.adobe.air.apk.APKPackager" ).newInstance() );
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "Unable to create APKPackager", e );
-            }
+            // packs.put( APK, new FlexmojosAPKPackager() );
         }
 
         if ( packages.size() != packs.size() )
@@ -490,9 +490,8 @@ public class SignAirMojo
         if ( packs.isEmpty() )
         {
             getLog().debug( "Packagers is empty or contains invalid packagers, using AIR" );
-            packs.put( AIR, new AIRPackager() );
+            packs.put( AIR, new FlexmojosAIRPackager() );
         }
-
         return packs;
     }
 
