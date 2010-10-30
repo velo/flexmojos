@@ -21,6 +21,10 @@ public interface FlexExtension
 {
     String AIR = "air";
 
+    String AIRN = "airn";
+
+    String ANE = "ane";
+
     String APK = "apk";
 
     String CSS = "css";
