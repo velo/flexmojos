@@ -132,7 +132,7 @@ public class ConfigurationMojo
         }
     }
 
-    public List getFileSpecs()
+    public List<String> getFileSpecs()
     {
         return fileSpecs;
     }

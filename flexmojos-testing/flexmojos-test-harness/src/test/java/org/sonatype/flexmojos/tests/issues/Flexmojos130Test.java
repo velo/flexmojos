@@ -18,7 +18,7 @@
 package org.sonatype.flexmojos.tests.issues;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.zip.ZipFile;
