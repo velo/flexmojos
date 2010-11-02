@@ -2475,12 +2475,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return new String[] {};
         }
 
-        if ( SWC.equals( getProjectType() ) )
-        {
-            return new String[] {};
-        }
-
-        return new String[] { toolsLocale };
+        return null;
     }
 
     public String[] getLocalesRuntime()
