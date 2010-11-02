@@ -440,7 +440,6 @@ public abstract class AbstractMavenMojo
         return selectFirst( getDependencies(), allOf( matchers ) );
     }
 
-    // TODO lazy load here would be awesome
     @SuppressWarnings( "unchecked" )
     protected Artifact getFrameworkConfig()
     {
@@ -451,17 +450,41 @@ public abstract class AbstractMavenMojo
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
         {
-            // it should resolve playerglobal or airglobal, framework can be absent
-            Artifact frmk = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ) );
-
-            if ( frmk == null )
-            {
-                return null;
-            }
-
-            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", frmk.getVersion(), "configs", "zip" );
+            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", getFrameworkVersion(), "configs", "zip" );
         }
         return frmkCfg;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public String getFrameworkVersion()
+    {
+        Artifact dep = null;
+        if ( dep == null )
+        {
+            dep = getDependency( GLOBAL_MATCHER );
+        }
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
+        }
+        if ( dep == null )
+        {
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "air-framework" ), type( "pom" ) );
+        }
+        if ( dep == null )
+        {
+            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
+        }
+        if ( dep == null )
+        {
+            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
+        }
+
+        if ( dep == null )
+        {
+            return null;
+        }
+        return dep.getVersion();
     }
 
     @SuppressWarnings( "unchecked" )
@@ -629,6 +652,47 @@ public abstract class AbstractMavenMojo
         return artifact;
     }
 
+    protected String[] resolveAdlVm( String command, MavenArtifact vmGav, String defaultArtifactId, String version,
+                                     MavenArtifact runtimeGav )
+    {
+
+        String[] vm = resolveFlashVM( command, vmGav, defaultArtifactId, version );
+
+        if ( runtimeGav == null )
+        {
+            runtimeGav = new MavenArtifact();
+            runtimeGav.setGroupId( "com.adobe.adl" );
+            runtimeGav.setArtifactId( "runtime" );
+            if ( OSUtils.isWindows() )
+            {
+                runtimeGav.setType( "zip" );
+            }
+            else
+            {
+                runtimeGav.setType( "tar.gz" );
+                if ( OSUtils.isMacOS() )
+                {
+                    runtimeGav.setClassifier( "mac" );
+                }
+                else
+                {
+                    runtimeGav.setClassifier( "linux" );
+                }
+            }
+        }
+
+        if ( runtimeGav.getVersion() == null )
+        {
+            runtimeGav.setVersion( version );
+        }
+
+        // adl nedds air runtime, so lets grab it...
+        File runtime =
+            getUnpackedArtifact( runtimeGav.getGroupId(), runtimeGav.getArtifactId(), runtimeGav.getVersion(),
+                                 runtimeGav.getClassifier(), runtimeGav.getType() );
+        return CollectionUtils.merge( vm, new String[] { "-runtime", path( runtime ) } );
+    }
+
     protected String[] resolveFlashVM( String command, MavenArtifact gav, String defaultArtifactId, String version )
     {
         if ( command != null )
@@ -704,47 +768,6 @@ public abstract class AbstractMavenMojo
 
             return null;
         }
-    }
-
-    protected String[] resolveAdlVm( String command, MavenArtifact vmGav, String defaultArtifactId, String version,
-                                     MavenArtifact runtimeGav )
-    {
-
-        String[] vm = resolveFlashVM( command, vmGav, defaultArtifactId, version );
-
-        if ( runtimeGav == null )
-        {
-            runtimeGav = new MavenArtifact();
-            runtimeGav.setGroupId( "com.adobe.adl" );
-            runtimeGav.setArtifactId( "runtime" );
-            if ( OSUtils.isWindows() )
-            {
-                runtimeGav.setType( "zip" );
-            }
-            else
-            {
-                runtimeGav.setType( "tar.gz" );
-                if ( OSUtils.isMacOS() )
-                {
-                    runtimeGav.setClassifier( "mac" );
-                }
-                else
-                {
-                    runtimeGav.setClassifier( "linux" );
-                }
-            }
-        }
-
-        if ( runtimeGav.getVersion() == null )
-        {
-            runtimeGav.setVersion( version );
-        }
-
-        // adl nedds air runtime, so lets grab it...
-        File runtime =
-            getUnpackedArtifact( runtimeGav.getGroupId(), runtimeGav.getArtifactId(), runtimeGav.getVersion(),
-                                 runtimeGav.getClassifier(), runtimeGav.getType() );
-        return CollectionUtils.merge( vm, new String[] { "-runtime", path( runtime ) } );
     }
 
     protected DirectoryScanner scan( FileSet pattern )
