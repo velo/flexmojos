@@ -64,16 +64,16 @@ public class MxmlcMojo
      * The list of modules to be compiled.
      * 
      * <pre>
-     * <modules>
-     *   <module>Module1.mxml</module>
-     *   <module>Module2.mxml</module>
-     *   <module>
-     *     <sourceFile>Module3.mxml</sourceFile>
-     *     <optimize>false</optimize>
-     *     <finalName>MyModule</finalName>
-     *     <destinationPath>dir1/dir2</destinationPath>
-     *   </module>
-     * </modules>
+     * &lt;modules&gt;
+     *   &lt;module&gt;Module1.mxml&lt;/module&gt;
+     *   &lt;module&gt;Module2.mxml&lt;/module&gt;
+     *   &lt;module&gt;
+     *     &lt;sourceFile&gt;Module3.mxml&lt;/sourceFile&gt;
+     *     &lt;optimize&gt;false&lt;/optimize&gt;
+     *     &lt;finalName&gt;MyModule&lt;/finalName&gt;
+     *     &lt;destinationPath&gt;dir1/dir2&lt;/destinationPath&gt;
+     *   &lt;/module&gt;
+     * &lt;/modules&gt;
      * </pre>
      * 
      * @parameter
