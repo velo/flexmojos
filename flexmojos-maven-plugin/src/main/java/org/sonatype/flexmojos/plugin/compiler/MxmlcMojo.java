@@ -227,6 +227,24 @@ public class MxmlcMojo
         return includeResourceBundles;
     }
 
+    @Override
+    public String[] getLocale()
+    {
+        String[] locales = super.getLocale();
+        if ( locales != null )
+        {
+            return locales;
+        }
+
+        if ( "css".equalsIgnoreCase( FilenameUtils.getExtension( sourceFile ) ) )
+        {
+            return new String[] {};
+        }
+
+        return new String[] { toolsLocale };
+
+    }
+
     public String getProjector()
     {
         return projector;
@@ -248,5 +266,4 @@ public class MxmlcMojo
     {
         return updateSecuritySandbox;
     }
-
 }
