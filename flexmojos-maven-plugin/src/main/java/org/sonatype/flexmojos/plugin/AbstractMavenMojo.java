@@ -675,6 +675,11 @@ public abstract class AbstractMavenMojo
 
         String[] vm = resolveFlashVM( command, vmGav, defaultArtifactId, version );
 
+        if ( vm == null )
+        {
+            return null;
+        }
+
         if ( runtimeGav == null )
         {
             runtimeGav = new MavenArtifact();
