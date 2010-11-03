@@ -112,11 +112,11 @@
 
   <profiles>
     <profile>
-      <activation>
+     <!-- TODO activate me when nexus 1.9 is released <activation>
         <property>
           <name>!performRelease</name>
         </property>
-      </activation>
+      </activation> -->
 
       <properties>
         <!-- can only run tests with testNG using nexus 1.9 -->
