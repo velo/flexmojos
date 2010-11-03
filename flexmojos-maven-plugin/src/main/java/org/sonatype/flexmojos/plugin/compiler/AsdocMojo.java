@@ -563,7 +563,7 @@ public class AsdocMojo
         }
         else
         {
-            return super.getSourcePath();
+            return PathUtil.existingFiles( super.getSourcePath() );
         }
     }
 
