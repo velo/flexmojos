@@ -1568,23 +1568,19 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureSparkCss( List<File> themes )
+    private void configureThemeSparkCss( List<File> themes )
     {
         File dir = getUnpackedFrameworkConfig();
 
-        File sparkCss = null;
-        if ( dir != null )
-        {
-            sparkCss = new File( dir, "themes/Spark/spark.css" );
-        }
+        File sparkCss = new File( dir, "themes/Spark/spark.css" );
 
-        if ( sparkCss == null || !sparkCss.exists() )
+        if ( !sparkCss.exists() )
         {
-            File fontsSer = new File( getOutputDirectory(), "spark.css" );
-            fontsSer.getParentFile().mkdirs();
+            sparkCss = new File( getOutputDirectory(), "spark.css" );
+            sparkCss.getParentFile().mkdirs();
             try
             {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/theme/spark.css" ), fontsSer );
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
             }
             catch ( IOException e )
             {
@@ -1593,6 +1589,30 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         themes.add( sparkCss );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.11420" )
+    private void configureThemeHaloSwc( List<File> themes )
+    {
+        File dir = getUnpackedFrameworkConfig();
+
+        File haloSwc = new File( dir, "themes/Halo/halo.swc" );
+
+        if ( !haloSwc.exists() )
+        {
+            haloSwc = new File( getOutputDirectory(), "halo.swc" );
+            haloSwc.getParentFile().mkdirs();
+            try
+            {
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/halo.swc" ), haloSwc );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenRuntimeException( "Error copying halo.swc file.", e );
+            }
+        }
+
+        themes.add( haloSwc );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -3003,7 +3023,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         asList( MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( CSS ) ),//
                                                       scope( THEME ) ) ) ) );
 
-        configureSparkCss( themes );
+        configureThemeSparkCss( themes );
+        configureThemeHaloSwc( themes );
 
         if ( themes.isEmpty() )
         {
