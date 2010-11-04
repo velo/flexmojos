@@ -64,9 +64,22 @@ public class RSLCreatorMojo
      */
     private boolean updateSwcDigest;
 
+    /**
+     * When true won't create a RSL (swf) for this project
+     * 
+     * @parameter default-value="true" expression="${flex.skipRSLCreation}"
+     */
+    private boolean skipRSLCreation;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skipRSLCreation )
+        {
+            getLog().info( "Skipping RSL creation" );
+            return;
+        }
+
         getLog().debug( "project.getPackaging = " + packaging );
 
         if ( project.getArtifact().getFile() == null )
