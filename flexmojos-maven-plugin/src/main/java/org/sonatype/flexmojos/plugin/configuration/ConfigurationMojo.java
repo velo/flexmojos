@@ -2,6 +2,7 @@ package org.sonatype.flexmojos.plugin.configuration;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,20 @@ public class ConfigurationMojo
      */
     private String projector;
 
+    /**
+     * Extra parameters that will be injected onto configurator
+     * 
+     * <pre>
+     * &lt;parameters&gt;
+     *   &lt;extra&gt;???&lt;/extra&gt;
+     *   &lt;plus&gt;???&lt;/plus&gt;
+     * &lt;/parameters&gt;
+     * </pre>
+     * 
+     * @parameters
+     */
+    private Map<String, Object> parameters;
+
     @Override
     public Result doCompile( ICompcConfiguration cfg, boolean synchronize )
         throws Exception
@@ -105,13 +120,19 @@ public class ConfigurationMojo
             }
         }
 
+        if ( parameters == null )
+        {
+            parameters = new LinkedHashMap<String, Object>();
+        }
+        parameters.put( "project", project );
+
         if ( SWC.equals( getProjectType() ) )
         {
-            cfg.buildConfiguration( (ICompcConfiguration) this );
+            cfg.buildConfiguration( (ICompcConfiguration) this, parameters );
         }
         else
         {
-            cfg.buildConfiguration( (ICommandLineConfiguration) this );
+            cfg.buildConfiguration( (ICommandLineConfiguration) this, parameters );
         }
     }
 
