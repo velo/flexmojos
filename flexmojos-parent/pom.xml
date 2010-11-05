@@ -49,7 +49,7 @@
     <maven.version>3.0</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0.RC6</apparat.version>
+    <apparat.version>1.0.RC8</apparat.version>
   </properties>
 
   <build>
