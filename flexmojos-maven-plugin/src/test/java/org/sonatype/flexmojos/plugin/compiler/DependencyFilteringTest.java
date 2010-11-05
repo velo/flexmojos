@@ -229,6 +229,12 @@ public class DependencyFilteringTest
             {
                 return "air";
             }
+
+            @Override
+            public String[] getLocale()
+            {
+                return new String[] { "en_US" };
+            }
         };
         c.setLog( mock( Log.class ) );
 
