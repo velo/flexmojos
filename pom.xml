@@ -6,31 +6,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.forge</groupId>
-    <artifactId>forge-parent</artifactId>
-    <version>5</version>
+  <groupId>org.sonatype.flexmojos</groupId>
+  <artifactId>flexmojos-parent</artifactId>
+  <version>4.0-SNAPSHOT</version>
+  <relativePath>flexmojos-parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-aggregator</artifactId>
-  <version>4.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Aggregator</name>
-
-  <licenses>
-    <license>
-      <name>ASF</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
-    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
-    <url>http://github.com/Flexmojos/flexmojos</url>
-  </scm>
 
   <build>
     <plugins>
