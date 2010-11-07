@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>4.0-beta-3</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
