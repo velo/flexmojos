@@ -19,6 +19,7 @@ package org.sonatype.flexmojos.plugin.configuration;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,9 @@ import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.configurator.Configurator;
+import org.sonatype.flexmojos.configurator.ConfiguratorException;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
+import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 
 /**
  * <p>
@@ -142,14 +145,22 @@ public class ConfigurationMojo
             parameters = new LinkedHashMap<String, Object>();
         }
         parameters.put( "project", project );
+        parameters.put( "classifier", classifier );
 
-        if ( SWC.equals( getProjectType() ) )
+        try
         {
-            cfg.buildConfiguration( (ICompcConfiguration) this, parameters );
+            if ( SWC.equals( getProjectType() ) )
+            {
+                cfg.buildConfiguration( (ICompcConfiguration) this, parameters );
+            }
+            else
+            {
+                cfg.buildConfiguration( (ICommandLineConfiguration) this, getSourceFile(), parameters );
+            }
         }
-        else
+        catch ( ConfiguratorException e )
         {
-            cfg.buildConfiguration( (ICommandLineConfiguration) this, parameters );
+            throw new MojoExecutionException( "Failed to execute configurator: " + e.getMessage(), e );
         }
     }
 
@@ -167,6 +178,19 @@ public class ConfigurationMojo
     public String getProjectType()
     {
         return packaging;
+    }
+
+    /**
+     * The file to be compiled. The path must be relative with source folder
+     * 
+     * @parameter expression="${flex.sourceFile}"
+     */
+    private String sourceFile;
+
+    protected File getSourceFile()
+    {
+        return SourceFileResolver.resolveSourceFile( project.getCompileSourceRoots(), sourceFile, project.getGroupId(),
+                                                     project.getArtifactId() );
     }
 
 }

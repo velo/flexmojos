@@ -17,19 +17,25 @@
  */
 package org.sonatype.flexmojos.configurator;
 
-import java.io.File;
-import java.util.Map;
-
-import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
-import org.sonatype.flexmojos.compiler.ICompcConfiguration;
-
-public interface Configurator
+public class ConfiguratorException
+    extends Exception
 {
 
-    void buildConfiguration( ICommandLineConfiguration swf, File sourceFile, Map<String, Object> parameters )
-        throws ConfiguratorException;
+    private static final long serialVersionUID = 2029345547281621644L;
 
-    void buildConfiguration( ICompcConfiguration swc, Map<String, Object> parameters )
-        throws ConfiguratorException;
+    public ConfiguratorException()
+    {
+        super();
+    }
+
+    public ConfiguratorException( String message, Throwable cause )
+    {
+        super( message, cause );
+    }
+
+    public ConfiguratorException( String message )
+    {
+        super( message );
+    }
 
 }
