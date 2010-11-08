@@ -326,7 +326,7 @@ public class CopyMojo
 
             rslArtifact =
                 repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
-                                                               rslArtifact.getVersion(), extension, null );
+                                                               rslArtifact.getVersion(), extension, rslArtifact.getClassifier() );
             rslArtifact = replaceWithResolvedArtifact( rslArtifact );
 
             File destFile = resolveRslDestination( rslUrls, rslArtifact, extension );
