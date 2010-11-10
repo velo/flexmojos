@@ -67,7 +67,7 @@ public class RSLCreatorMojo
     /**
      * When true won't create a RSL (swf) for this project
      * 
-     * @parameter default-value="true" expression="${flex.skipRSLCreation}"
+     * @parameter default-value="false" expression="${flex.skipRSLCreation}"
      */
     private boolean skipRSLCreation;
 
