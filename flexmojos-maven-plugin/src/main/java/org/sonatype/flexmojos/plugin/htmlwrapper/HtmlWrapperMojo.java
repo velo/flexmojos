@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.util.URIUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.model.Dependency;
@@ -39,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
@@ -312,8 +311,7 @@ public class HtmlWrapperMojo
 
         try
         {
-            FileUtils.copyDirectory( source, templateOutputDirectory,
-                                     FileFilterUtils.makeSVNAware( FileFilterUtils.makeCVSAware( null ) ) );
+            FileUtils.copyDirectory( source, templateOutputDirectory );
         }
         catch ( IOException e )
         {

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
@@ -18,31 +17,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
+    <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <artifactId>flexmojos-parent</artifactId>
     <version>4.0-SNAPSHOT</version>
-    <relativePath>../flexmojos-parent/pom.xml</relativePath>
   </parent>
+  <artifactId>flexmojos-air250-compatibility-layer</artifactId>
 
-  <artifactId>flexmojos-sandbox</artifactId>
-  <packaging>pom</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
-  <name>Flexmojos Sandbox</name>
-
-  <modules>
-    <!-- <module>flexmojos-installer</module> -->
-  	<module>flexmojos-flex-compiler</module>
-  	<module>flexmojos-threadlocaltoolkit-wrapper</module>
-  	<module>flexmojos-flex3-compatibility-layer</module>
-  	<module>flexmojos-flex2-compatibility-layer</module>
-  	<module>flexmojos-coverage-reporter</module>
-  	<module>flexmojos-configurator</module>
-  	<module>flexmojos-sample-configurator</module>
-  	<module>flexmojos-nexus-plugin</module>
-  	<module>flexmojos-air250-compatibility-layer</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>

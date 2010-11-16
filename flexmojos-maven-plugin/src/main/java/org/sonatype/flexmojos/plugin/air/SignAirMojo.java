@@ -227,16 +227,17 @@ public class SignAirMojo
     {
         try
         {
+            KeyStore keyStore = KeyStore.getInstance( storetype );
+            keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
+            String alias = keyStore.aliases().nextElement();
+            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+
             String c = this.classifier == null ? "" : "-" + this.classifier;
             File output =
                 new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
             packager.setOutput( output );
             packager.setDescriptor( getAirDescriptor() );
 
-            KeyStore keyStore = KeyStore.getInstance( storetype );
-            keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
-            String alias = keyStore.aliases().nextElement();
-            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
             packager.setSignerCertificate( keyStore.getCertificate( alias ) );
             packager.setCertificateChain( keyStore.getCertificateChain( alias ) );
             if ( this.timestampURL != null )
@@ -500,7 +501,7 @@ public class SignAirMojo
         }
         if ( packages.contains( APK ) )
         {
-             packs.put( APK, new FlexmojosAPKPackager() );
+            packs.put( APK, new FlexmojosAPKPackager() );
         }
         if ( packages.contains( AIRN ) )
         {
