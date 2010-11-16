@@ -8,7 +8,7 @@
 
 
 -->
-<application xmlns="http://ns.adobe.com/air/application/2.0">
+<application xmlns="http://ns.adobe.com/air/application/2.5">
 
 <!-- Adobe AIR Application Descriptor File Template.
 
@@ -33,7 +33,7 @@
 	<name>main</name>
 
 	<!-- An application version designator (such as "v1", "2.5", or "Alpha 1"). Required. -->
-	<version>v1</version>
+	<versionNumber>1.0.0</versionNumber>
 
 	<!-- Description, displayed in the AIR application installer. Optional. -->
 	<!-- <description></description> -->

@@ -390,10 +390,10 @@ public abstract class AbstractMavenMojo
     protected String getAirTarget()
     {
         int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
-        // if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
-        // {
-        // return "2.5";
-        // }
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
+        {
+            return "2.5";
+        }
         if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
         {
             return "2.0";
@@ -830,7 +830,7 @@ public abstract class AbstractMavenMojo
     /**
      * @see org.apache.maven.plugin.ContextEnabled#setPluginContext(java.util.Map)
      */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( "all" )
     public void setPluginContext( Map pluginContext )
     {
         this.pluginContext = pluginContext;

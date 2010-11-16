@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.granite.generator.Generator;
 import org.granite.generator.Output;
 import org.granite.generator.TemplateUri;
@@ -66,7 +65,6 @@ import org.sonatype.flexmojos.generator.GenerationRequest;
  */
 @Component( role = org.sonatype.flexmojos.generator.Generator.class, hint = "graniteds22" )
 public final class GraniteDsGenerator
-    extends AbstractLogEnabled
     implements org.sonatype.flexmojos.generator.Generator
 {
 
@@ -233,7 +231,7 @@ public final class GraniteDsGenerator
     		String java = splitTranslator[0];
     		String as3 = splitTranslator[1];
     		
-    		getLogger().info("Adding translator: [" + java + ", " + as3 + "]");
+    		request.getLogger().info("Adding translator: [" + java + ", " + as3 + "]");
     		translators.add(new PackageTranslator(java, as3));
     	}
         // tide
@@ -268,7 +266,7 @@ public final class GraniteDsGenerator
         classes = request.getClasses();
         if ( classes.isEmpty() )
         {
-            getLogger().warn( "No classes to generate." );
+            request.getLogger().warn( "No classes to generate." );
             return;
         }
 
@@ -287,7 +285,7 @@ public final class GraniteDsGenerator
             }
             else
             {
-                getLogger().info( "Instantiating custom As3TypeFactory class: [" + as3typefactory + "]" );
+                request.getLogger().info( "Instantiating custom As3TypeFactory class: [" + as3typefactory + "]" );
                 as3TypeFactoryImpl = newInstance( classLoader, as3typefactory );
             }
 
@@ -299,7 +297,7 @@ public final class GraniteDsGenerator
             }
             else
             {
-                getLogger().info( "Instantiating custom EntityFactory class: [" + entityfactory + "]" );
+                request.getLogger().info( "Instantiating custom EntityFactory class: [" + entityfactory + "]" );
                 entityFactoryImpl = newInstance( classLoader, entityfactory );
             }
 
@@ -311,7 +309,7 @@ public final class GraniteDsGenerator
             }
             else
             {
-                getLogger().info(
+                request.getLogger().info(
                                   "Instantiating custom RemoteDestinationFactory class: [" + remotedestinationfactory
                                       + "]" );
                 remoteDestinationFactoryImpl = newInstance( classLoader, remotedestinationfactory );
@@ -321,16 +319,16 @@ public final class GraniteDsGenerator
             GeneratorConfiguration configuration = new GeneratorConfiguration();
 
             // Transformer
-            Transformer<?, ?, ?> transformerImpl = createTransformer( classLoader, configuration );
+            Transformer<?, ?, ?> transformerImpl = createTransformer( request, configuration );
 
             // Create the generator.
             Generator generator = new Generator( configuration );
             generator.add( transformerImpl );
 
             // Call the generator for each class
-            getLogger().info( "Calling the generator for each Java class." );
-            int count = generateClass( classLoader, generator );
-            getLogger().info( "Files affected: " + count + ( count == 0 ? " (nothing to do)." : "." ) );
+            request.getLogger().info( "Calling the generator for each Java class." );
+            int count = generateClass( request, generator );
+            request.getLogger().info( "Files affected: " + count + ( count == 0 ? " (nothing to do)." : "." ) );
         }
         finally
         {
@@ -345,24 +343,24 @@ public final class GraniteDsGenerator
         return new String[] { baseTemplate, template };
     }
 
-    private Transformer<?, ?, ?> createTransformer( ClassLoader classLoader, GeneratorConfiguration configuration )
+    private Transformer<?, ?, ?> createTransformer( GenerationRequest request, GeneratorConfiguration configuration )
         throws GenerationException
     {
         Transformer<?, ?, ?> transformerImpl;
         if ( transformer != null )
         {
-            getLogger().info( "Instantiating custom Transformer class: [" + transformer + "]" );
-            transformerImpl = newInstance( classLoader, transformer );
+            request.getLogger().info( "Instantiating custom Transformer class: [" + transformer + "]" );
+            transformerImpl = newInstance( request.getClassLoader(), transformer );
         }
         else
         {
             transformerImpl = new JavaAs3GroovyTransformer();
         }
-        transformerImpl.setListener( new Gas3Listener( getLogger() ) );
+        transformerImpl.setListener( new Gas3Listener( request.getLogger() ) );
         return transformerImpl;
     }
 
-    private int generateClass( ClassLoader classLoader, Generator generator )
+    private int generateClass( GenerationRequest request, Generator generator )
         throws GenerationException
     {
         int count = 0;
@@ -371,7 +369,7 @@ public final class GraniteDsGenerator
             String className = classFile.getKey();
             try
             {
-                Class<?> classToGenerate = classLoader.loadClass( className );
+                Class<?> classToGenerate = request.getClassLoader().loadClass( className );
                 if ( classToGenerate.isMemberClass() && !classToGenerate.isEnum() )
                 {
                     continue;
@@ -387,7 +385,7 @@ public final class GraniteDsGenerator
             }
             catch ( Exception e )
             {
-                getLogger().error( getStackTrace( e ) );
+                request.getLogger().error( getStackTrace( e ) );
                 throw new GenerationException( "Fail to generate class [" + className + "]", e );
             }
         }

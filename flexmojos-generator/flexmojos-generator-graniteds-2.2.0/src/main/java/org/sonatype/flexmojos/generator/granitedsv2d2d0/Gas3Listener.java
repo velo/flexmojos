@@ -20,10 +20,10 @@
  */
 package org.sonatype.flexmojos.generator.granitedsv2d2d0;
 
-import org.codehaus.plexus.logging.Logger;
 import org.granite.generator.Input;
 import org.granite.generator.Listener;
 import org.granite.generator.Output;
+import org.sonatype.flexmojos.generator.GeneratorLogger;
 
 /**
  * Logging <code>GenerationListener</code>.
@@ -34,11 +34,11 @@ final class Gas3Listener
     implements Listener
 {
 
-    private Logger logger;
+    private GeneratorLogger logger;
 
-    public Gas3Listener( Logger logger )
+    public Gas3Listener( GeneratorLogger generatorLogger )
     {
-        this.logger = logger;
+        this.logger = generatorLogger;
     }
 
     public void error( String message )

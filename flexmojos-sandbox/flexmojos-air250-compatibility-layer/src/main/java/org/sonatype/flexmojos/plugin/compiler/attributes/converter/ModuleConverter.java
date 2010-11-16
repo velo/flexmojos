@@ -13,13 +13,13 @@ public class ModuleConverter
 
     public static final String ID = "Module";
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( "all" )
     public boolean canConvert( Class type )
     {
         return Module.class.equals( type );
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings( "all" )
     public Object fromConfiguration( ConverterLookup converterLookup, PlexusConfiguration cfg, Class type,
                                      Class baseType, ClassLoader classLoader, ExpressionEvaluator expressionEvaluator,
                                      ConfigurationListener listener )

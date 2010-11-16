@@ -147,9 +147,24 @@
       <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>flexmojos-air250-compatibility-layer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -187,14 +202,6 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -308,6 +315,13 @@
       <artifactId>apparat-maven-plugin</artifactId>
     </dependency>
 
+    <dependency>
+      <!-- must be the last dependency -->
+      <groupId>com.adobe.flex</groupId>
+      <artifactId>compiler</artifactId>
+      <version>${flex.sdk.version}</version>
+      <type>pom</type>
+    </dependency>
   </dependencies>
 
   <reporting>
