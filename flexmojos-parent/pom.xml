@@ -29,9 +29,13 @@
   </prerequisites>
 
   <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
     <snapshotRepository>
-      <id>forge-snapshots</id>
-      <url>${flexSnapshotUrl}</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
