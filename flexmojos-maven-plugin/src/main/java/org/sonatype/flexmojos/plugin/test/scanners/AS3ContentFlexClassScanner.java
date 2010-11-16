@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.util.FileUtils;
 
 @Component( role = FlexClassScanner.class, hint = "as3Content" )
 public class AS3ContentFlexClassScanner
@@ -68,7 +68,7 @@ public class AS3ContentFlexClassScanner
             return true;
 
         File file = new File( basedir, pathname );
-        String contents = FileUtils.readFileToString( file );
+        String contents = FileUtils.fileRead( file );
         contents = contents.replaceAll( COMMENTS_REGEX, "$1 " );
 
         String className = FilenameUtils.getBaseName( file.getName() );

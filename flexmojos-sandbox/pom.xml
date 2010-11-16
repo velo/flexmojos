@@ -39,6 +39,7 @@
   	<module>flexmojos-configurator</module>
   	<module>flexmojos-sample-configurator</module>
   	<module>flexmojos-nexus-plugin</module>
+  	<module>flexmojos-air250-compatibility-layer</module>
   </modules>
 
 </project>

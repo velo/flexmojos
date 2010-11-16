@@ -45,8 +45,8 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.5.0.17855</flex.sdk.version>
-    <maven.version>3.0</maven.version>
+    <flex.sdk.version>4.5.0.17689</flex.sdk.version>
+    <maven.version>3.0.1-SNAPSHOT</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0.RC8</apparat.version>
@@ -173,7 +173,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>adl</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>exe</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>bin/adl.exe</extractFile>
@@ -181,7 +181,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>runtime</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>zip</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>runtimes/air/win</extractFile>
@@ -190,7 +190,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>nai</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <packaging>zip</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/win/download/latest/AdobeAIRSDK.zip</downloadUrl>
                 <extractFile>lib/nai</extractFile>
@@ -199,7 +199,7 @@
               <artifactItem>
                 <groupId>com.adobe</groupId>
                 <artifactId>adl</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>uexe</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
@@ -208,7 +208,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>runtime</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>tar.gz</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>
@@ -218,7 +218,7 @@
               <artifactItem>
                 <groupId>com.adobe.adl</groupId>
                 <artifactId>nai</artifactId>
-                <version>2.0</version>
+                <version>2.5</version>
                 <classifier>linux</classifier>
                 <packaging>tar.gz</packaging>
                 <downloadUrl>http://airdownload.adobe.com/air/lin/download/latest/AdobeAIRSDK.tbz2</downloadUrl>

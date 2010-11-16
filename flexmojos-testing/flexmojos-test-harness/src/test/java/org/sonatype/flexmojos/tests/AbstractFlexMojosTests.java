@@ -22,8 +22,6 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
@@ -35,6 +33,8 @@ import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -289,7 +289,7 @@ public class AbstractFlexMojosTests
     {
         if ( filesToInterpolate == null || filesToInterpolate.length == 0 )
         {
-            filesToInterpolate = new String[] { "pom.xml" };
+            filesToInterpolate = new String[] { "**/pom.xml" };
         }
 
         copyProjectLock.writeLock().lock();
@@ -305,17 +305,23 @@ public class AbstractFlexMojosTests
             }
             File destDir = new File( projectsWorkdir, output );
 
-            FileUtils.copyDirectory( projectFolder, destDir, HiddenFileFilter.VISIBLE );
+            FileUtils.copyDirectoryStructure( projectFolder, destDir );
+
+            DirectoryScanner scan = new DirectoryScanner();
+            scan.setBasedir( destDir );
+            scan.setIncludes( filesToInterpolate );
+            scan.addDefaultExcludes();
+            scan.scan();
 
             // projects filtering
-            Collection<File> poms =
-                FileUtils.listFiles( destDir, new WildcardFileFilter( filesToInterpolate ), TrueFileFilter.INSTANCE );
-            for ( File pom : poms )
+            for ( String path : scan.getIncludedFiles() )
             {
-                String pomContent = FileUtils.readFileToString( pom );
+                File pom = new File( destDir, path );
+
+                String pomContent = FileUtils.fileRead( pom );
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
                 pomContent = pomContent.replace( "%{flex.version}", getFlexSDKVersion() );
-                FileUtils.writeStringToFile( pom, pomContent );
+                FileUtils.fileWrite( path( pom ), pomContent );
             }
 
             return destDir;

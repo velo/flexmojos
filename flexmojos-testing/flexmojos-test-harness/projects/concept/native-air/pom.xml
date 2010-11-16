@@ -28,6 +28,7 @@
           <packages>
             <pack>air</pack>
             <pack>${os.packages}</pack>
+            <pack>apk</pack>
           </packages>
         </configuration>
       </plugin>

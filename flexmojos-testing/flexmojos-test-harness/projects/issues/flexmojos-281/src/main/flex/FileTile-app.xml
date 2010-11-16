@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/2.0beta2">
+<application xmlns="http://ns.adobe.com/air/application/2.5">
 	<id>com.adobe.filetile</id>
 	<filename>air2-1.0-SNAPSHOT</filename>
 	<name>FileTile</name>
-	<version>v1</version>
+	<versionNumber>1.0.0</versionNumber>
 	<description>Browse devices that expose themselves as storage volumes. Created by Christian Cantrell.</description>
 	<copyright>Copyright © 2009 Adobe Systems Incorporated. All rights reserved.</copyright>
 

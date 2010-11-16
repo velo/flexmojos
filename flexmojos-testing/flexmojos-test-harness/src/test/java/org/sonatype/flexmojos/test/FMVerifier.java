@@ -582,7 +582,8 @@ public class FMVerifier
         return getArtifactFileNameList( org, name, version, ext, null );
     }
 
-    public static List<String> getArtifactFileNameList( String org, String name, String version, String ext, String classifier )
+    public static List<String> getArtifactFileNameList( String org, String name, String version, String ext,
+                                                        String classifier )
     {
         List<String> files = new ArrayList<String>();
         String artifactPath = getArtifactPath( org, name, version, ext, classifier );
@@ -1419,7 +1420,7 @@ public class FMVerifier
         if ( forkJvm )
         {
             Writer logWriter = new FileWriter( logFile );
-            
+
             logWriter.append( Arrays.toString( cli.getShellCommandline() ) );
 
             StreamConsumer out = new WriterStreamConsumer( logWriter );
@@ -1601,7 +1602,10 @@ public class FMVerifier
         try
         {
             String[] content = FileUtils.fileRead( logFile ).split( "\n" );
-            content = Arrays.copyOfRange( content, content.length - lines, content.length - 1 );
+            if ( content.length > lines )
+            {
+                content = Arrays.copyOfRange( content, content.length - lines, content.length - 1 );
+            }
             return "Full log at: " + logFile + "\n" + Lambda.aggregate( content, new Concat( "\n" ) ).toString();
         }
         catch ( IOException e )

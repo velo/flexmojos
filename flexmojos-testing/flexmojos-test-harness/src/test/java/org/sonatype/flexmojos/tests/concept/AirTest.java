@@ -61,11 +61,12 @@ public class AirTest
         {
             osPackages = "exe";
         }
-
+        
         FMVerifier v = standardConceptTester( "native-air", "-Dos.packages=" + osPackages );
         v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "pom" );
         v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "swf" );
         v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "air" );
+        v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "apk" );
         v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", osPackages );
     }
 }
