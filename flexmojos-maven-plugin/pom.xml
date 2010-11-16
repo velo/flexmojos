@@ -397,13 +397,25 @@
                   <goal>upload-file</goal>
                 </goals>
                 <configuration>
-                  <serverId>central</serverId>
-                  <repositoryUrl>http://repository.sonatype.org/service/local/repositories/flexmojos-site/content-compressed</repositoryUrl>
-                  <file>target/${project.artifactId}-${project.version}-site.jar</file>
-                  <repositoryPath>${project.version}</repositoryPath>
+                  <repositoryPath>flexmojos/${project.version}</repositoryPath>
+                </configuration>
+              </execution>
+              <execution>
+                <id>publish-latest-site</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>upload-file</goal>
+                </goals>
+                <configuration>
+                  <repositoryPath>flexmojos/latest</repositoryPath>
                 </configuration>
               </execution>
             </executions>
+            <configuration>
+              <serverId>rso</serverId>
+              <repositoryUrl>http://repository.sonatype.org/service/local/repositories/maven-sites/content-compressed</repositoryUrl>
+              <file>target/${project.artifactId}-${project.version}-site.jar</file>
+            </configuration>
           </plugin>
         </plugins>
       </build>
