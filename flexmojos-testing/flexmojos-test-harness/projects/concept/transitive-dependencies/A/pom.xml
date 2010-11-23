@@ -24,7 +24,7 @@
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>playerglobal</artifactId>
       <version>%{flex.version}</version>
-      <classifier>10.1</classifier>
+      <classifier>10.2</classifier>
       <type>swc</type>
     </dependency>
     <dependency>

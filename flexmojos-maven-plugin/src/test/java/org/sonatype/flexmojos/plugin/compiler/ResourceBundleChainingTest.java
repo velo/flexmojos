@@ -102,7 +102,7 @@ public class ResourceBundleChainingTest
             public Set<Artifact> getDependencies()
             {
                 Set<Artifact> set = new LinkedHashSet<Artifact>();
-                set.add( createArtifact( FRAMEWORK_GROUP_ID, "playerglobal", "4", "provided", "swc", "10.1" ) );
+                set.add( createArtifact( FRAMEWORK_GROUP_ID, "playerglobal", "4", "provided", "swc", "10" ) );
                 set.add( createArtifact( FRAMEWORK_GROUP_ID, "framework", "4", "compile", "swc", null ) );
                 return set;
             }
