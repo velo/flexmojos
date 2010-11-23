@@ -231,7 +231,7 @@ public class TestRunMojo
      * Equivalent to -target-player
      * </p>
      * 
-     * @parameter expression="${flex.targetPlayer}" default-value="10.1"
+     * @parameter expression="${flex.targetPlayer}" default-value="10.2"
      */
     private String targetPlayer;
 

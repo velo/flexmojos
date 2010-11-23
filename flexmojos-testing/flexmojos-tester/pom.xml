@@ -37,13 +37,13 @@
                 <artifactItem>
                   <groupId>com.adobe</groupId>
                   <artifactId>flashplayer</artifactId>
-                  <version>10.1</version>
+                  <version>10.2</version>
                   <type>exe</type>
                 </artifactItem>
                 <artifactItem>
                   <groupId>com.adobe</groupId>
                   <artifactId>flashplayer</artifactId>
-                  <version>10.1</version>
+                  <version>10.2</version>
                   <classifier>linux</classifier>
                   <type>uexe</type>
                 </artifactItem>

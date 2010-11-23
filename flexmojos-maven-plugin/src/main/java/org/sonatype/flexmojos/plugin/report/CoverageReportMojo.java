@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.reporting.MavenReport;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.SourcePathAware;
 
@@ -24,7 +23,7 @@ import org.sonatype.flexmojos.plugin.SourcePathAware;
  */
 public class CoverageReportMojo
     extends AbstractMavenMojo
-    implements MavenReport, SourcePathAware
+    implements SourcePathAware
 {
 
     /**
