@@ -80,6 +80,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.compiler.IApplicationDomains;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -193,6 +194,31 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.allowSourcePathOverlap}"
      */
     private Boolean allowSourcePathOverlap;
+
+    /**
+     * Override the application domain an RSL is loaded into. The supported values are 'current', 'default', 'parent',
+     * or 'top-level'
+     * <p>
+     * Equivalent to -runtime-shared-library-settings.application-domains
+     * </p>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;applicationDomains&gt;
+     *   &lt;applicationDomain&gt;
+     *     &lt;pathElement&gt;path&lt;/pathElement&gt;
+     *     &lt;applicationDomain&gt;current&lt;/applicationDomain&gt;
+     *   &lt;/applicationDomain&gt;
+     *   &lt;applicationDomain&gt;
+     *     &lt;pathElement&gt;path&lt;/pathElement&gt;
+     *     &lt;applicationDomain&gt;default&lt;/applicationDomain&gt;
+     *   &lt;/applicationDomain&gt;
+     * &lt;/applicationDomains&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    private MavenApplicationDomains[] applicationDomains;
 
     /**
      * DOCME undocumented by adobe
@@ -1097,6 +1123,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private String minimumSupportedVersion;
 
     /**
+     * Specifies the target runtime is a mobile device
+     * <p>
+     * Equivalent to -compiler.mobile
+     * </p>
+     * 
+     * @parameter expression="${flex.mobile}"
+     */
+    private Boolean mobile;
+
+    /**
      * Specify a URI to associate with a manifest of components for use as MXML elements
      * <p>
      * Equivalent to -compiler.namespaces.namespace
@@ -1330,6 +1366,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean swcChecksum;
 
     /**
+     * Specifies the version of the compiled SWF file
+     * <p>
+     * Equivalent to -swf-version
+     * </p>
+     * 
+     * @parameter expression="${flex.swfVersion}"
+     */
+    private Integer swfVersion;
+
+    /**
      * Specifies the version of the player the application is targeting. Features requiring a later version will not be
      * compiled into the application. The minimum value supported is "9.0.0".
      * <p>
@@ -1391,6 +1437,26 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.translationFormat}"
      */
     private String translationFormat;
+
+    /**
+     * Use hardware acceleration to blit graphics to the screen, where such acceleration is available
+     * <p>
+     * Equivalent to -use-direct-blit
+     * </p>
+     * 
+     * @parameter expression="${flex.useDirectBlit}"
+     */
+    private Boolean useDirectBlit;
+
+    /**
+     * Use GPU compositing features when drawing graphics, where such acceleration is available
+     * <p>
+     * Equivalent to -compiler.use-gpu
+     * </p>
+     * 
+     * @parameter expression="${flex.useGpu}"
+     */
+    private Boolean useGpu;
 
     /**
      * Toggle whether the SWF is flagged for access to network resources
@@ -1585,30 +1651,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
-    private void configureThemeSparkCss( List<File> themes )
-    {
-        File dir = getUnpackedFrameworkConfig();
-
-        File sparkCss = new File( dir, "themes/Spark/spark.css" );
-
-        if ( !sparkCss.exists() )
-        {
-            sparkCss = new File( getOutputDirectory(), "spark.css" );
-            sparkCss.getParentFile().mkdirs();
-            try
-            {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenRuntimeException( "Error copying spark.css file.", e );
-            }
-        }
-
-        themes.add( sparkCss );
-    }
-
-    @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeHaloSwc( List<File> themes )
     {
         File dir = getUnpackedFrameworkConfig();
@@ -1630,6 +1672,30 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         themes.add( haloSwc );
+    }
+
+    @FlexCompatibility( minVersion = "4.0.0.11420" )
+    private void configureThemeSparkCss( List<File> themes )
+    {
+        File dir = getUnpackedFrameworkConfig();
+
+        File sparkCss = new File( dir, "themes/Spark/spark.css" );
+
+        if ( !sparkCss.exists() )
+        {
+            sparkCss = new File( getOutputDirectory(), "spark.css" );
+            sparkCss.getParentFile().mkdirs();
+            try
+            {
+                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenRuntimeException( "Error copying spark.css file.", e );
+            }
+        }
+
+        themes.add( sparkCss );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -1719,6 +1785,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getAllowSourcePathOverlap()
     {
         return allowSourcePathOverlap;
+    }
+
+    public IApplicationDomains[] getApplicationDomains()
+    {
+        return this.applicationDomains;
     }
 
     public Boolean getArchiveClassesAndAssets()
@@ -2633,6 +2704,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return this.minimumSupportedVersion;
     }
 
+    public Boolean getMobile()
+    {
+        return mobile;
+    }
+
     public IMxmlConfiguration getMxmlConfiguration()
     {
         return this;
@@ -3023,6 +3099,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
+    public Integer getSwfVersion()
+    {
+        return swfVersion;
+    }
+
     public String getTargetPlayer()
     {
         return targetPlayer;
@@ -3076,6 +3157,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public String getTranslationFormat()
     {
         return translationFormat;
+    }
+
+    public Boolean getUseDirectBlit()
+    {
+        return useDirectBlit;
+    }
+
+    public Boolean getUseGpu()
+    {
+        return useGpu;
     }
 
     public Boolean getUseNetwork()

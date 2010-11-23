@@ -63,7 +63,7 @@ public class MxmlcContinuousCompileMojo
      * @parameter
      */
     private MavenArtifact adlGav;
-    
+
     /**
      * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
      * Usage:
@@ -208,7 +208,7 @@ public class MxmlcContinuousCompileMojo
         else
         {
             testRequest.setFlashplayerCommand( resolveFlashVM( flashPlayerCommand, flashPlayerGav, "flashplayer",
-                                                               getTargetPlayer() == null ? "10.1" : getTargetPlayer() ) );
+                                                               getTargetPlayer() == null ? "10.2" : getTargetPlayer() ) );
         }
 
         vmLauncher.start( testRequest );

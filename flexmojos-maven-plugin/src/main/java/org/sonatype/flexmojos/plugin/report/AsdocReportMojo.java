@@ -20,7 +20,6 @@ package org.sonatype.flexmojos.plugin.report;
 import java.io.File;
 import java.util.Locale;
 
-import org.apache.maven.reporting.MavenReport;
 import org.sonatype.flexmojos.plugin.compiler.AsdocMojo;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -39,7 +38,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  */
 public class AsdocReportMojo
     extends AsdocMojo
-    implements MavenReport
 {
 
     /**
