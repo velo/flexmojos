@@ -70,6 +70,12 @@
       <artifactId>lambdaj</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- #ITSet ENDS -->
 
   </dependencies>
@@ -112,11 +118,7 @@
 
   <profiles>
     <profile>
-     <!-- TODO activate me when nexus 1.9 is released <activation>
-        <property>
-          <name>!performRelease</name>
-        </property>
-      </activation> -->
+      <!-- TODO activate me when nexus 1.9 is released <activation> <property> <name>!performRelease</name> </property> </activation> -->
 
       <properties>
         <!-- can only run tests with testNG using nexus 1.9 -->
