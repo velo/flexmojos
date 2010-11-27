@@ -62,7 +62,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
-          <version>1.4-SNAPSHOT</version>
+          <version>1.4-SONATYPE-13219</version>
           <configuration>
             <complianceLevel>1.6</complianceLevel>
           </configuration>
