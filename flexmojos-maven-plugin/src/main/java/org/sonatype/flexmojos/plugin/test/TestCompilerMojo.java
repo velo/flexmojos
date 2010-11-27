@@ -60,7 +60,7 @@ import flex2.compiler.common.SinglePathResolver;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 4.0
+ * @since 1.0
  * @goal test-compile
  * @requiresDependencyResolution test
  * @phase test-compile

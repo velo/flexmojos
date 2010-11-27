@@ -46,7 +46,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 4.0
+ * @since 1.0
  * @goal asdoc
  * @requiresDependencyResolution compile
  * @phase process-sources
