@@ -29,7 +29,7 @@ import flex2.compiler.common.SinglePathResolver;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 4.0
+ * @since 2.0
  * @goal test-swc
  * @requiresDependencyResolution test
  * @phase package
