@@ -185,11 +185,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-air250-compatibility-layer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-configurator</artifactId>
       <version>${project.version}</version>
     </dependency>
