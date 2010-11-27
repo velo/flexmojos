@@ -42,7 +42,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 4.0
+ * @since 3.5
  * @goal dita-asdoc
  * @requiresDependencyResolution compile
  * @phase package
