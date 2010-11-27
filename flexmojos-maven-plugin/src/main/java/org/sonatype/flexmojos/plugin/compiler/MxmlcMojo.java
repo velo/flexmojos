@@ -30,7 +30,7 @@ import org.sonatype.flexmojos.util.PathUtil;
  * </p>
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @since 4.0
+ * @since 1.0
  * @goal compile-swf
  * @requiresDependencyResolution compile
  * @phase compile
@@ -158,11 +158,11 @@ public class MxmlcMojo
             wait( results );
         }
 
-        if ( modules != null )
+        if ( getModules() != null )
         {
             List<Result> results = new ArrayList<Result>();
 
-            for ( Module module : modules )
+            for ( Module module : getModules() )
             {
                 if ( module.isOptimize() == null )
                 {
@@ -243,6 +243,11 @@ public class MxmlcMojo
 
         return new String[] { toolsLocale };
 
+    }
+
+    public Module[] getModules()
+    {
+        return modules;
     }
 
     public String getProjector()
