@@ -23,3 +23,5 @@ target/
 # Other
 .svn/
 bin/
+
+.scala_dependencies
