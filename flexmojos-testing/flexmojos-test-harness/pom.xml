@@ -237,6 +237,22 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+          <phase>generate-test-sources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>2.8.0</scalaVersion>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
