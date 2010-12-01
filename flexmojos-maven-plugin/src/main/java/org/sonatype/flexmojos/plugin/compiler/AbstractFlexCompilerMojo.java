@@ -7,8 +7,11 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.*;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.CONFIGS;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexClassifier.SIZE_REPORT;
@@ -1394,6 +1397,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      *   &lt;version&gt;1.0&lt;/version&gt;
      * &lt;/dependency&gt;
      * </pre>
+     * <p>
+     * There are three ways a theme can be included when you compile
+     * </p>
+     * 1 - you explicitly list a <theme> in the config of the pom file<BR>
+     * 2 - You include a dependency with scope="theme" and with type="css" or type="swc"<BR>
+     * 3 - if you don't do either of the above steps, flexmojos will attempt to automatically include a theme for you
+     * based on your dependencies. (if you depend upon mx.swc halo will be included, if you depend upon spark.swc -
+     * spark.css theme will be included)
      * 
      * @parameter
      */
@@ -1635,48 +1646,26 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeHaloSwc( List<File> themes )
     {
-        File dir = getUnpackedFrameworkConfig();
-
-        File haloSwc = new File( dir, "themes/Halo/halo.swc" );
-
-        if ( !haloSwc.exists() )
+        File haloSwc = resolveThemeFile( "mx", "halo", "swc", "Halo" );
+        if ( haloSwc == null )
         {
-            haloSwc = new File( getOutputDirectory(), "halo.swc" );
-            haloSwc.getParentFile().mkdirs();
-            try
-            {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/halo.swc" ), haloSwc );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenRuntimeException( "Error copying halo.swc file.", e );
-            }
+            return;
         }
 
+        getLog().warn( "Added the halo.swc theme because mx.swc was included as a dependency" );
         themes.add( haloSwc );
     }
 
     @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeSparkCss( List<File> themes )
     {
-        File dir = getUnpackedFrameworkConfig();
-
-        File sparkCss = new File( dir, "themes/Spark/spark.css" );
-
-        if ( !sparkCss.exists() )
+        File sparkCss = resolveThemeFile( "spark", "spark", "css", "Spark" );
+        if ( sparkCss == null )
         {
-            sparkCss = new File( getOutputDirectory(), "spark.css" );
-            sparkCss.getParentFile().mkdirs();
-            try
-            {
-                FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/spark.css" ), sparkCss );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenRuntimeException( "Error copying spark.css file.", e );
-            }
+            return;
         }
 
+        getLog().warn( "Added the spark.css theme because spark.swc was included as a dependency" );
         themes.add( sparkCss );
     }
 
@@ -2696,6 +2685,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return this;
     }
 
+    @SuppressWarnings( "unchecked" )
+    @FlexCompatibility( minVersion = "4.5.0.17077" )
+    private Artifact getMxSwc()
+    {
+        Artifact haloSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "mx" ), type( "swc" ) );
+        return haloSwc;
+    }
+
     public INamespace[] getNamespace()
     {
         List<INamespace> namespaces = new ArrayList<INamespace>();
@@ -3092,54 +3089,26 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @SuppressWarnings( "unchecked" )
-    // There are three ways a theme can be included when you compile.
-    // 1 - you explicitly list a <theme> in the config of the pom file
-    // 2 - You include a dependency with scope="theme" and with type="css" or type="swc"
-    //
-    // or 3 - if you don't do either of the above steps, flexmojos will attempt to automatically include
-    // a theme for you based on your dependencies. (if you depend upon mx.swc halo will be included,
-    // if you depend upon spark.swc - spark.css theme will be included)
-    //
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
-        Set<Artifact> themeDependencies = getDependencies(anyOf(type(SWC), type(CSS)), scope(THEME));
+        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( THEME ) );
+        themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
 
-        // if no themes are specified in the <theme> and no themes are included as dependencies, try to guess
-        // which theme to include
-        if ((this.themes == null || this.themes.length == 0) && themeDependencies.size() == 0) {
-
-            getLog().warn("No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. " +
-                          "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning " +
-                          "you should explicitly state your theme dependencies)");
-
-            Artifact sparkSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "spark" ),type( "swc" ) );
-            if (sparkSwc != null) {
-                configureThemeSparkCss( themes );
-                getLog().warn("Added the spark theme because spark.swc was included as a dependency");
-            }
-            Artifact haloSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "mx" ),type( "swc" ) );
-            if (haloSwc != null) {
-                configureThemeHaloSwc( themes );
-                getLog().warn("Added the halo theme because mx.swc was included as a dependency");
-            }
-
-        }
-        else {
-            if ( this.themes != null )
-            {
-                themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
-            }
-
-            if (themeDependencies.size() > 0 ) {
-                themes.addAll( //
-                    asList( MavenUtils.getFiles(themeDependencies) ) );
-            }
+        // if themes are specified in the <themes> configuration
+        if ( this.themes != null )
+        {
+            themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
         }
 
         if ( themes.isEmpty() )
         {
-            return null;
+            getLog().warn( "No themes are explicitly defined in the <theme> section or in any scope=\"theme\" dependencies. "
+                               + "Flexmojos is now attempting to figure out which themes to include. (to avoid this warning "
+                               + "you should explicitly state your theme dependencies)" );
+
+            configureThemeSparkCss( themes );
+            configureThemeHaloSwc( themes );
         }
 
         return pathsList( themes );
@@ -3472,6 +3441,46 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         // nothing new was found.
         return required;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File resolveThemeFile( String artifactName, String themeName, String type, String path )
+    {
+        Artifact sparkSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( artifactName ), type( "swc" ) );
+        if ( sparkSwc == null )
+        {
+            return null;
+        }
+
+        File sparkCss;
+        try
+        {
+            // first try to get the artifact from maven local repository for the appropriated flex version
+            sparkCss = resolve( FRAMEWORK_GROUP_ID, themeName, getFrameworkVersion(), "theme", type ).getFile();
+        }
+        catch ( RuntimeMavenResolutionException e )
+        {
+            // then try to get it from framework-config.zip
+            File dir = getUnpackedFrameworkConfig();
+            sparkCss = new File( dir, "themes/" + path + "/" + themeName + "." + type );
+
+            // if not possible get it from flexmojos jar
+            if ( !sparkCss.exists() )
+            {
+                sparkCss = new File( getOutputDirectory(), themeName + "." + type );
+                sparkCss.getParentFile().mkdirs();
+                try
+                {
+                    FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/" + themeName + "." + type ),
+                                             sparkCss );
+                }
+                catch ( IOException ioE )
+                {
+                    throw new MavenRuntimeException( "Error copying " + themeName + "." + type + " file.", ioE );
+                }
+            }
+        }
+        return sparkCss;
     }
 
     public void versionCheck()
