@@ -295,8 +295,10 @@ public class CompcMojo
         }
         else
         {
+            // process patterns
             patterns.addAll( includeFiles.getPatterns() );
 
+            // process files
             for ( final String path : includeFiles.getIncludes() )
             {
                 final File file = PathUtil.file( path, getResourcesTargetDirectories() );
@@ -330,7 +332,7 @@ public class CompcMojo
                 {
                     public String name()
                     {
-                        return file;
+                        return file.replace( '\\', '/' );
                     }
 
                     public String path()
