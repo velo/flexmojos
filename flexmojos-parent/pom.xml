@@ -341,6 +341,9 @@
                     <exclude>org.hamcrest:hamcrest-all</exclude>
                   </excludes>
                 </bannedDependencies>
+                <requireMavenVersion>
+                  <version>${maven.version}</version>
+                </requireMavenVersion>
               </rules>
             </configuration>
           </execution>
