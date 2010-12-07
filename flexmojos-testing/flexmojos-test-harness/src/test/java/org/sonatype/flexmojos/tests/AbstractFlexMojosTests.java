@@ -17,13 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -283,7 +280,6 @@ public class AbstractFlexMojosTests
         return getProjectCustom( projectName, null, filesToInterpolate );
     }
 
-    @SuppressWarnings( "unchecked" )
     protected File getProjectCustom( String projectName, String output, String... filesToInterpolate )
         throws IOException
     {
