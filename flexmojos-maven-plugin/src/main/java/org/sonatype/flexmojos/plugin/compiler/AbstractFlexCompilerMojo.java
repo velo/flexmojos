@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,8 +75,6 @@ import org.sonatype.flexmojos.compiler.IExtensionsConfiguration;
 import org.sonatype.flexmojos.compiler.IFontsConfiguration;
 import org.sonatype.flexmojos.compiler.IFrame;
 import org.sonatype.flexmojos.compiler.IFramesConfiguration;
-import org.sonatype.flexmojos.compiler.ILanguageRange;
-import org.sonatype.flexmojos.compiler.ILanguages;
 import org.sonatype.flexmojos.compiler.ILicense;
 import org.sonatype.flexmojos.compiler.ILicensesConfiguration;
 import org.sonatype.flexmojos.compiler.ILocalizedDescription;
@@ -96,6 +93,7 @@ import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenExtension;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenFontsConfiguration;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenFrame;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenMetadataConfiguration;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenNamespace;
@@ -108,8 +106,8 @@ import org.sonatype.flexmojos.util.PathUtil;
 public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompilerMojo<CFG, C>>
     extends AbstractMavenMojo
     implements ICompilerConfiguration, IFramesConfiguration, ILicensesConfiguration, IMetadataConfiguration,
-    IFontsConfiguration, ILanguages, IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable,
-    Cloneable, FlexMojo, IRuntimeSharedLibrarySettingsConfiguration
+    IMxmlConfiguration, INamespacesConfiguration, IExtensionsConfiguration, Cacheable, Cloneable, FlexMojo,
+    IRuntimeSharedLibrarySettingsConfiguration
 {
 
     private static final Object lock = new Object();
@@ -144,16 +142,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.adjustOpdebugline}"
      */
     private Boolean adjustOpdebugline;
-
-    /**
-     * Enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts
-     * <p>
-     * Equivalent to -compiler.fonts.advanced-anti-aliasing
-     * </p>
-     * 
-     * @parameter expression="${flex.advancedAntiAliasing}"
-     */
-    private Boolean advancedAntiAliasing;
 
     /**
      * If true, a style manager will add style declarations to the local style manager without checking to see if the
@@ -587,14 +575,31 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     protected String finalName;
 
     /**
-     * Enables FlashType for embedded fonts, which provides greater clarity for small fonts
+     * Fonts configurations to be used on SWF compilation
      * <p>
-     * Equivalent to -compiler.fonts.flash-type
+     * Equivalent to -compiler.fonts.*
      * </p>
+     * Usage:
      * 
-     * @parameter expression="${flex.flashType}"
+     * <pre>
+     * &lt;fonts&gt;
+     *   &lt;advancedAntiAliasing&gt;true&lt;/advancedAntiAliasing&gt;
+     *   &lt;flashType&gt;true&lt;/flashType&gt;
+     *   &lt;languages&gt;
+     *     &lt;englishRange&gt;U+0020-U+007E&lt;/englishRange&gt;
+     *   &lt;/languages&gt;
+     *   &lt;localFontsSnapshot&gt;${baseDir}/src/main/resources/fonts.ser&lt;/localFontsSnapshot&gt;
+     *   &lt;managers&gt;
+     *     &lt;manager&gt;flash.fonts.BatikFontManager&lt;/manager&gt;
+     *   &lt;/managers&gt;
+     *   &lt;maxCachedFonts&gt;20&lt;/maxCachedFonts&gt;
+     *   &lt;maxGlyphsPerFace&gt;1000&lt;/maxGlyphsPerFace&gt;
+     * &lt;/fonts&gt;
+     * </pre>
+     * 
+     * @parameter
      */
-    private Boolean flashType;
+    private MavenFontsConfiguration fonts;
 
     /**
      * Force an RSL to be loaded, overriding the removal caused by using the remove-unused-rsls option.
@@ -812,23 +817,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean keepGeneratedSignatures;
 
     /**
-     * A range to restrict the number of font glyphs embedded into the SWF
-     * <p>
-     * Equivalent to -compiler.fonts.languages.language-range
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;languageRange&gt;
-     *   &lt;lang&gt;range&lt;/lang&gt;
-     * &lt;/languageRange&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private Map<String, String> languageRange;
-
-    /**
      * DOCME Undocumented by adobe
      * <p>
      * Equivalent to -lazy-init
@@ -984,72 +972,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     /**
      * DOCME undocumented by adobe
      * <p>
-     * Equivalent to -compiler.fonts.local-font-paths
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;localFontPaths&gt;
-     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
-     *   &lt;localFontPath&gt;???&lt;/localFontPath&gt;
-     * &lt;/localFontPaths&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private File[] localFontPaths;
-
-    /**
-     * Compiler font manager classes, in policy resolution order
-     * <p>
-     * Equivalent to -compiler.fonts.local-fonts-snapshot
-     * </p>
-     * 
-     * @parameter expression="${flex.localFontsSnapshot}"
-     */
-    private File localFontsSnapshot;
-
-    /**
-     * Compiler font manager classes, in policy resolution order
-     * <p>
-     * Equivalent to -compiler.fonts.managers
-     * </p>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;managers&gt;
-     *   &lt;manager&gt;???&lt;/manager&gt;
-     *   &lt;manager&gt;???&lt;/manager&gt;
-     * &lt;/managers&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private List<String> managers;
-
-    /**
-     * Sets the maximum number of fonts to keep in the server cache
-     * <p>
-     * Equivalent to -compiler.fonts.max-cached-fonts
-     * </p>
-     * 
-     * @parameter expression="${flex.maxCachedFonts}"
-     */
-    private Integer maxCachedFonts;
-
-    /**
-     * Sets the maximum number of character glyph-outlines to keep in the server cache for each font face
-     * <p>
-     * Equivalent to -compiler.fonts.max-glyphs-per-face
-     * </p>
-     * 
-     * @parameter expression="${flex.maxGlyphsPerFace}"
-     */
-    private Integer maxGlyphsPerFace;
-
-    /**
-     * DOCME undocumented by adobe
-     * <p>
      * Equivalent to -compiler.memory-usage-factor
      * </p>
      * 
@@ -1060,9 +982,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     /**
      * Information to store in the SWF metadata
      * <p>
-     * Equivalent to: -metadata.contributor, -metadata.creator, -metadata.date, -metadata.description,
-     * -metadata.language, -metadata.localized-description, -metadata.localized-title, -metadata.publisher,
-     * -metadata.title
+     * Equivalent to: -metadata.*
      * </p>
      * Usage:
      * 
@@ -1743,11 +1663,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return adjustOpdebugline;
     }
 
-    public Boolean getAdvancedAntiAliasing()
-    {
-        return advancedAntiAliasing;
-    }
-
     public Boolean getAllowDuplicateDefaultStyleDeclarations()
     {
         return allowDuplicateDefaultStyleDeclarations;
@@ -2197,14 +2112,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return finalName;
     }
 
-    public Boolean getFlashType()
-    {
-        return flashType;
-    }
-
     public IFontsConfiguration getFontsConfiguration()
     {
-        return this;
+        if ( this.fonts == null )
+        {
+            this.fonts = new MavenFontsConfiguration();
+        }
+        return this.fonts.toFontsConfiguration( getOutputDirectory() );
     }
 
     public String[] getForceRsls()
@@ -2356,39 +2270,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         return getLocale();
-    }
-
-    public ILanguageRange[] getLanguageRange()
-    {
-        if ( languageRange == null )
-        {
-            return null;
-        }
-
-        List<ILanguageRange> keys = new ArrayList<ILanguageRange>();
-        Set<Entry<String, String>> entries = this.languageRange.entrySet();
-        for ( final Entry<String, String> entry : entries )
-        {
-            keys.add( new ILanguageRange()
-            {
-                public String lang()
-                {
-                    return entry.getKey();
-                }
-
-                public String range()
-                {
-                    return entry.getValue();
-                }
-            } );
-        }
-
-        return keys.toArray( new ILanguageRange[keys.size()] );
-    }
-
-    public ILanguages getLanguagesConfiguration()
-    {
-        return this;
     }
 
     public Boolean getLazyInit()
@@ -2579,44 +2460,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return localesRuntime;
     }
 
-    public List<String> getLocalFontPaths()
-    {
-        return PathUtil.pathsList( localFontPaths );
-    }
-
-    public String getLocalFontsSnapshot()
-    {
-        if ( localFontsSnapshot != null )
-        {
-            return PathUtil.path( localFontsSnapshot );
-        }
-
-        URL url;
-        if ( MavenUtils.isMac() )
-        {
-            url = getClass().getResource( "/fonts/macFonts.ser" );
-        }
-        else if ( MavenUtils.isWindows() )
-        {
-            url = getClass().getResource( "/fonts/winFonts.ser" );
-        }
-        else
-        {
-            url = getClass().getResource( "/fonts/localFonts.ser" );
-        }
-
-        File fontsSer = new File( getOutputDirectory(), "fonts.ser" );
-        try
-        {
-            FileUtils.copyURLToFile( url, fontsSer );
-        }
-        catch ( IOException e )
-        {
-            throw new IllegalStateException( "Error copying fonts file.", e );
-        }
-        return PathUtil.path( fontsSer );
-    }
-
     public ILocalizedDescription[] getLocalizedDescription()
     {
         if ( this.metadata != null )
@@ -2635,29 +2478,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         return null;
-    }
-
-    public List<String> getManagers()
-    {
-        return managers;
-    }
-
-    public String getMaxCachedFonts()
-    {
-        if ( maxCachedFonts == null )
-        {
-            return null;
-        }
-        return maxCachedFonts.toString();
-    }
-
-    public String getMaxGlyphsPerFace()
-    {
-        if ( maxGlyphsPerFace == null )
-        {
-            return null;
-        }
-        return maxGlyphsPerFace.toString();
     }
 
     public Integer getMemoryUsageFactor()
@@ -2683,14 +2503,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public IMxmlConfiguration getMxmlConfiguration()
     {
         return this;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    @FlexCompatibility( minVersion = "4.5.0.17077" )
-    private Artifact getMxSwc()
-    {
-        Artifact haloSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "mx" ), type( "swc" ) );
-        return haloSwc;
     }
 
     public INamespace[] getNamespace()

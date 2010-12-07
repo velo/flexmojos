@@ -43,9 +43,9 @@
           <fonts>
             <advancedAntiAliasing>true</advancedAntiAliasing>
             <flashType>true</flashType>
-            <languages>
+            <languageRange>
               <englishRange>U+0020-U+007E</englishRange>
-            </languages>
+            </languageRange>
             <localFontsSnapshot>${basedir}/src/main/resources/fonts.ser</localFontsSnapshot>
             <managers>
               <manager>flash.fonts.BatikFontManager</manager>
