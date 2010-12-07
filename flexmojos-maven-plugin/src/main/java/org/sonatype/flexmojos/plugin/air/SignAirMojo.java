@@ -29,6 +29,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.TAR_GZ;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.ZIP;
+import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
@@ -178,7 +179,7 @@ public class SignAirMojo
      */
     private String timestampURL;
 
-    private void addSourceWithPath( IPackager packager, String directory, String includePath )
+    private void addSourceWithPath( IPackager packager, File directory, String includePath )
         throws MojoFailureException
     {
         if ( includePath == null )
@@ -272,7 +273,7 @@ public class SignAirMojo
             {
                 for ( final String includePath : includeFiles )
                 {
-                    String directory = project.getBuild().getOutputDirectory();
+                    File directory = file( project.getBuild().getOutputDirectory() );
                     addSourceWithPath( packager, directory, includePath );
                 }
             }
@@ -291,10 +292,12 @@ public class SignAirMojo
                         scanner = scan( set );
                     }
 
+                    File directory = file( set.getDirectory(), project.getBasedir() );
+
                     String[] files = scanner.getIncludedFiles();
                     for ( String path : files )
                     {
-                        addSourceWithPath( packager, set.getDirectory(), path );
+                        addSourceWithPath( packager, directory, path );
                     }
                 }
             }
