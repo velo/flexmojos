@@ -159,6 +159,28 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedPlugins>
+                  <message>maven-invoker-plugin isn't allowed here, add tests on flexmojos-test-harness instead</message>
+                  <excludes>
+                    <exclude>*:maven-invoker-plugin</exclude>
+                  </excludes>
+                </bannedPlugins>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -350,41 +372,6 @@
   </reporting>
 
   <profiles>
-    <profile>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>false</value>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-enforcer-plugin</artifactId>
-            <version>1.0-beta-2-SNAPSHOT</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>enforce</goal>
-                </goals>
-                <configuration>
-                  <rules>
-                    <bannedPlugins>
-                      <message>maven-invoker-plugin isn't allowed here, add tests on flexmojos-test-harness instead</message>
-                      <excludes>
-                        <exclude>*:maven-invoker-plugin</exclude>
-                      </excludes>
-                    </bannedPlugins>
-                  </rules>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <id>site</id>
       <build>
