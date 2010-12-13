@@ -167,4 +167,10 @@
     </profile>
   </profiles>
 
+  <scm>
+    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
+    <url>http://github.com/Flexmojos/flexmojos</url>
+  </scm>
+
 </project>
