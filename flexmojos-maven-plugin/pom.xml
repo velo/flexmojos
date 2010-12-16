@@ -139,28 +139,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>tattletale-maven-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>tattletale-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeRtJar>true</includeRtJar>
-              <profiles>
-                <profile>java6</profile>
-              </profiles>
-              <reports>
-                <report>multiplejars</report>
-              </reports>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
@@ -376,6 +354,27 @@
       <id>site</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>tattletale-maven-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>tattletale-dependencies</goal>
+                </goals>
+                <configuration>
+                  <includeRtJar>true</includeRtJar>
+                  <profiles>
+                    <profile>java6</profile>
+                  </profiles>
+                  <reports>
+                    <report>multiplejars</report>
+                  </reports>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <artifactId>maven-site-plugin</artifactId>
             <executions>
