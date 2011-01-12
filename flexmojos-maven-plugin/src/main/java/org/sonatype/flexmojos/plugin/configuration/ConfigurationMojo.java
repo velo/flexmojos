@@ -18,6 +18,7 @@
 package org.sonatype.flexmojos.plugin.configuration;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -116,6 +117,11 @@ public class ConfigurationMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( !( packaging.equals( SWC ) || packaging.equals( SWF ) ) )
+        {
+            return;
+        }
+
         Configurator cfg = configurators.get( configurator );
         if ( cfg == null )
         {
