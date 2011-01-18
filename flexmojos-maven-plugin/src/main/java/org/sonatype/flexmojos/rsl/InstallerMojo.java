@@ -36,81 +36,249 @@
 package org.sonatype.flexmojos.rsl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.OutputStream;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
-import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
-import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
-import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
-import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
-import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
+import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.MavenMojo;
-import org.sonatype.flexmojos.optimizer.OptimizerMojo;
+
+import flex2.compiler.io.FileUtil;
 
 /**
- * @author rlogiacco
+ * Goal that allows for manual generation of RSLs. This goal is intended to be
+ * run out of the build lifecycle to install or deploy SWF files for SWC
+ * artifacts missing their RSL counterpart.
+ * 
+ * Tipical usage examples are:
+ * 
+ * <ul>
+ * <li>to generate and install (or deploy) a specific artifact RSL</br>
+ * <code>mvn flexmojos:install-rsl -DartifactId= -DgroupId= -Dversion= -Dclassifier=</code>
+ * </li>
+ * 
+ * <li>to generate and install (or deploy) all direct dependencies RSLs</br>
+ * <code>mvn flexmojos:install-rsl -Ddependencies=direct</code></li>
+ * 
+ * <li>to generate and install (or deploy) all transitive dependencies RSLs</br>
+ * <code>mvn flexmojos:install-rsl -Ddependencies=transitive</code></li>
+ * 
+ * @author Roberto Lo Giacco (rlogiacco@gmail.com)
  * 
  * @goal install-rsl
- * @phase package
+ * @requiresDependencyResolution
  */
-public class InstallerMojo extends OptimizerMojo implements MavenMojo
+public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
 {
-    /**
-     * @parameter default-value="swf"
-     */
-    private String rslExtension;
 
+    /**
+     * @optional
+     * @parameter expression="${deploy}" default-value="false"
+     */
+    private boolean deploy;
+
+    /**
+     * @optional
+     * @parameter expression="${backup}" default-value="true"
+     */
+    private boolean backup;
+
+    /**
+     * @parameter expression="${originalType}" default-value="swc"
+     */
+    private String originalType;
+
+    /**
+     * @parameter expression="${originalClassifier}" default-value="original"
+     */
+    private String originalClassifier;
+
+    /**
+     * @optional
+     * @parameter expression="${dependencies}"
+     */
+    private String dependencies;
+
+    /**
+     * @parameter expression="${artifactId}"
+     */
+    private String artifactId;
+
+    /**
+     * @parameter expression="${groupId}"
+     */
+    private String groupId;
+
+    /**
+     * @parameter expression="${version}"
+     */
+    private String version;
+
+    /**
+     * @optional
+     * @parameter expression="${classifier}"
+     */
+    private String classifier;
+
+    /**
+     * @component
+     * @readonly
+     * @required
+     */
+    private ArtifactDeployer deployer;
+
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException
     {
-        File originalFile = project.getArtifact().getFile();
-        ZipFile archive = newZipFile( originalFile );
-        InputStream input = readLibrarySwf( originalFile, archive );
-        String noExtensionFilename = originalFile.getName().substring( 0,
-                originalFile.getName().lastIndexOf( '.' ) );
-        File outputFile = new File( project.getBuild().getDirectory(),
-                noExtensionFilename + '.' + rslExtension );
+        if ( dependencies == null )
+        {
+            Artifact artifact = artifactFactory.createArtifactWithClassifier(
+                    groupId, artifactId, version, originalType, classifier );
+
+            Artifact rslArtifact = artifactFactory
+                    .createArtifactWithClassifier( groupId, artifactId,
+                            version, rslExtension, classifier );
+
+            try
+            {
+                resolver.resolve( artifact, remoteRepositories, localRepository );
+                try
+                {
+                    resolver.resolve( rslArtifact, remoteRepositories,
+                            localRepository );
+                    getLog().info( "Overwriting RSL Artifact" );
+                }
+                catch ( Exception e )
+                {
+                    getLog().debug( "Generating the RSL Artifact" );
+                }
+                processDependency( artifact, rslArtifact );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( "Artifact resolution failed",
+                        e );
+            }
+        }
+        else if ( "direct".equalsIgnoreCase( dependencies ) )
+        {
+            excludeTransitive = true;
+            super.execute();
+        }
+        else if ( "transitive".equalsIgnoreCase( dependencies ) )
+        {
+            super.execute();
+        }
+        else
+        {
+            throw new MojoExecutionException(
+                    "No valid execution parameters found" );
+        }
+    }
+
+    @Override
+    protected void processDependency(Artifact artifact, Artifact rslArtifact)
+            throws MojoExecutionException
+    {
 
         try
         {
-            FileOutputStream output = new FileOutputStream( outputFile );
-            byte[] buffer = new byte[ 1024 ];
-            for ( int read = input.read( buffer ); read > 0; read = input
-                    .read( buffer ) )
-            {
-                output.write( buffer, 0, read );
-            }
-            output.close();
-            input.close();
-            archive.close();
+            super.processDependency( artifact, rslArtifact );
         }
-        catch ( IOException e )
+        catch ( MojoExecutionException mee )
         {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
+            // RSL not available then create it
+            ZipFile archive = null;
+            InputStream input = null;
+            OutputStream output = null;
+            File originalFile = null;
+            try
+            {
+                resolver.resolve( artifact, remoteRepositories, localRepository );
+                archive = newZipFile( artifact.getFile() );
+                input = readLibrarySwf( artifact.getFile(), archive );
+                File outputFile = new File( outputDirectory,
+                        getFormattedFileName( rslArtifact ) );
+                output = new FileOutputStream( outputFile );
+                Artifact originalArtifact = artifactFactory
+                        .createArtifactWithClassifier( artifact.getGroupId(),
+                                artifact.getArtifactId(),
+                                artifact.getVersion(), artifact.getType(),
+                                originalClassifier );
 
-        projectHelper.attachArtifact( project, rslExtension, outputFile );
+                if ( optimizeRsls )
+                {
+                    originalFile = new File( project.getBuild()
+                            .getOutputDirectory(), artifact.getFile().getName()
+                            + originalClassifier );
+                    FileUtils.copyFile( artifact.getFile(), originalFile );
+                    getLog().info( "Attempting to optimize: " + artifact );
+                    long initialSize = artifact.getFile().length() / 1024;
+                    optimize( input, output );
+                    long optimizedSize = outputFile.length() / 1024;
+                    getLog().info(
+                            "\t\tsize reduced from " + initialSize + "kB to "
+                                    + optimizedSize + "kB" );
+
+                    updateDigest( outputFile, originalFile );
+                }
+                if ( deploy )
+                {
+                    ArtifactRepository deploymentRepository = project
+                            .getDistributionManagementArtifactRepository();
+                    if ( backup && optimizeRsls )
+                    {
+                        deployer.deploy( originalFile, originalArtifact,
+                                deploymentRepository, localRepository );
+                    }
+                    deployer.deploy( outputFile, rslArtifact,
+                            deploymentRepository, localRepository );
+                }
+                else
+                {
+                    if ( backup && optimizeRsls )
+                    {
+                        installer.install( originalFile, originalArtifact,
+                                localRepository );
+                    }
+                    installer
+                            .install( outputFile, rslArtifact, localRepository );
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( e.getMessage(), e );
+            }
+            finally
+            {
+                IOUtil.close( input );
+                IOUtil.close( output );
+                if ( archive != null )
+                {
+                    try
+                    {
+                        archive.close();
+                        if ( originalFile != null )
+                        {
+                            originalFile.delete();
+                        }
+                    }
+                    catch ( IOException e )
+                    {
+                        // ignore
+                    }
+                }
+            }
+        }
     }
 }
