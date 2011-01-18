@@ -103,7 +103,7 @@ public class OptimizerMojo
 	 * makes it more difficult to read stacktrace errors as they contain no line
 	 * numbers.
      * 
-     * @parameter default-value="true"
+     * @parameter expression="${optimizeRsls}" default-value="true"
      */
     protected boolean optimizeRsls;
 
@@ -219,17 +219,20 @@ public class OptimizerMojo
             {
                 optimize( inputSWF, outputSWF );
                 getLog().info( "Optimized rsl is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
+                
+                if ( SWC.equals( packaging ) )
+                {
+                    getLog().debug( "Updating digest " );
+                    updateDigest( optimizedSWFFile, originalFile );
+                }
             }
             else
             {
                 IOUtil.copy( inputSWF, outputSWF );
             }
-
+            
             if ( SWC.equals( packaging ) )
             {
-                getLog().debug( "Updating digest " );
-                updateDigest( optimizedSWFFile, originalFile );
-
                 getLog().debug( "Attaching swf artifact " );
                 projectHelper.attachArtifact( project, SWF, optimizedSWFFile );
             }
