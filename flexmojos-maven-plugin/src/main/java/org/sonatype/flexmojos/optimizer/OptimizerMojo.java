@@ -47,6 +47,9 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.MavenMojo;
 
+import flex2.compiler.common.CompilerConfiguration;
+import flex2.compiler.common.Configuration;
+import flex2.compiler.mxml.lang.StandardDefs;
 import flex2.compiler.swc.Digest;
 import flex2.compiler.swc.Swc;
 import flex2.compiler.swc.SwcCache;
@@ -82,10 +85,26 @@ public class OptimizerMojo
      */
     protected MavenSession context;
 
-    /**
-     * Optimized RSLs strip out any debugging information such as line numbers. This results in a smaller file, which
-     * leads to shorter load times but makes it more difficult to read stacktrace errors as they contain no line
-     * numbers.
+	/**
+	 * Keep the following AS3 metadata in the bytecodes.<BR>
+	 * Usage:
+	 * 
+	 * <pre>
+	 * &lt;keepAs3Metadatas&gt;
+	 *   &lt;keepAs3Metadata&gt;Bindable&lt;/keepAs3Metadata&gt;
+	 *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
+	 * &lt;/keepAs3Metadatas&gt;
+	 * </pre>
+	 * 
+	 * @parameter
+	 */
+	protected String[] keepAs3Metadatas;
+
+	/**
+	 * Optimized RSLs strip out any debugging information such as line numbers.
+	 * This results in a smaller file, which leads to shorter load times but
+	 * makes it more difficult to read stacktrace errors as they contain no line
+	 * numbers.
      * 
      * @parameter default-value="true"
      */
@@ -167,7 +186,7 @@ public class OptimizerMojo
             throw new MojoExecutionException( "Library file not found." );
         }
 
-        getLog().debug( "attempting to optimize: " + originalFile.getName() );
+        getLog().debug( "Attempting to optimize: " + originalFile.getName() );
         InputStream inputSWF = null;
         ZipFile zipFile = null;
         OutputStream outputSWF = null;
@@ -202,7 +221,7 @@ public class OptimizerMojo
             if ( optimizeRsls )
             {
                 optimize( inputSWF, outputSWF );
-                getLog().info( "optimized swf is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
+                getLog().info( "Optimized rsl is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
             }
             else
             {
@@ -211,10 +230,10 @@ public class OptimizerMojo
 
             if ( SWC.equals( packaging ) )
             {
-                getLog().debug( "updating digest " );
+                getLog().debug( "Updating digest " );
                 updateDigest( optimizedSWFFile, originalFile );
 
-                getLog().debug( "attaching Artifact " );
+                getLog().debug( "Attaching swf artifact " );
                 projectHelper.attachArtifact( project, SWF, optimizedSWFFile );
             }
         }
@@ -250,7 +269,7 @@ public class OptimizerMojo
         return context;
     }
 
-    private ZipFile newZipFile( File originalFile )
+    protected ZipFile newZipFile( File originalFile )
         throws MojoExecutionException
     {
         ZipFile zipFile = null;
@@ -269,7 +288,7 @@ public class OptimizerMojo
         return zipFile;
     }
 
-    private void optimize( InputStream inputSWF, OutputStream outputSWF )
+    protected void optimize( InputStream inputSWF, OutputStream outputSWF )
         throws MojoExecutionException
     {
         try
@@ -284,8 +303,23 @@ public class OptimizerMojo
                 apiClass = Class.forName( "flex2.tools.API" );
             }
 
-            Method optimizeMethod = apiClass.getDeclaredMethod( "optimize", InputStream.class, OutputStream.class );
-            optimizeMethod.invoke( null, inputSWF, outputSWF );
+			Configuration configuration = new Configuration();
+			configuration.setKeepDebugOpcodes( false );
+			CompilerConfiguration compilerConfiguration = configuration.getCompilerConfiguration();
+			compilerConfiguration.setOptimize( true );
+
+			if ( keepAs3Metadatas != null )
+			{
+				compilerConfiguration.cfgKeepAs3Metadata( null, keepAs3Metadatas );
+			}
+			else
+			{
+				compilerConfiguration.cfgKeepAs3Metadata( null, StandardDefs.DefaultAS3Metadata );
+			}
+
+			Method optimizeMethod = apiClass.getDeclaredMethod( "optimize", InputStream.class, OutputStream.class,
+					Configuration.class );
+			optimizeMethod.invoke( null, inputSWF, outputSWF, configuration );
             outputSWF.flush();
         }
         catch ( Exception e )
@@ -294,7 +328,7 @@ public class OptimizerMojo
         }
     }
 
-    private InputStream readLibrarySwf( File originalFile, ZipFile zipFile )
+    protected InputStream readLibrarySwf( File originalFile, ZipFile zipFile )
         throws MojoFailureException, MojoExecutionException
     {
         InputStream inputSWF;
@@ -315,7 +349,7 @@ public class OptimizerMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    private void updateDigest( File optimizedSWF, File originalFile )
+	protected void updateDigest( File optimizedSWF, File originalFile )
         throws MojoExecutionException
     {
         Digest digest = computeDigest( optimizedSWF );
