@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1402,18 +1403,6 @@ public abstract class AbstractCompilerMojo<E extends Builder>
         configuration.keepAllTypeSelectors( keepAllTypeSelectors );
 
         configuration.useResourceBundleMetaData( useResourceBundleMetadata );
-
-        if ( configFile != null )
-        {
-            configuration.setConfiguration( configFile );
-        }
-        else if ( configFiles != null )
-        {
-            for ( File cfg : configFiles )
-            {
-                configuration.addConfiguration( cfg );
-            }
-        }
 
         if ( configuration instanceof OEMConfiguration )
         {
