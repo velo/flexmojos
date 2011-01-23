@@ -40,20 +40,32 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactFilterException;
+import org.apache.maven.shared.artifact.filter.collection.ArtifactIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ClassifierFilter;
+import org.apache.maven.shared.artifact.filter.collection.FilterArtifacts;
+import org.apache.maven.shared.artifact.filter.collection.GroupIdFilter;
+import org.apache.maven.shared.artifact.filter.collection.ProjectTransitivityFilter;
+import org.apache.maven.shared.artifact.filter.collection.TypeFilter;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.flexmojos.MavenMojo;
-
-import flex2.compiler.io.FileUtil;
+import org.sonatype.flexmojos.optimizer.OptimizerMojo;
 
 /**
  * Goal that allows for manual generation of RSLs. This goal is intended to be
@@ -78,7 +90,7 @@ import flex2.compiler.io.FileUtil;
  * @goal install-rsl
  * @requiresDependencyResolution
  */
-public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
+public class InstallerMojo extends OptimizerMojo implements MavenMojo
 {
 
     /**
@@ -136,6 +148,127 @@ public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
      * @required
      */
     private ArtifactDeployer deployer;
+    /**
+     * @optional
+     * @parameter expression="${excludeTransitive}" default-value="false"
+     */
+    protected boolean excludeTransitive;
+
+    /**
+     * @parameter expression="${project.build.directory}/rsl"
+     */
+    protected File outputDirectory;
+
+    /**
+     * @required
+     * @parameter expression="${scope}" default-value="rsl"
+     */
+    private String scope;
+
+    /**
+     * @parameter expression="${rslExpression}" default-value="swf"
+     */
+    protected String rslExtension;
+
+    /**
+     * @parameter expression="${stripVersion}" default-value="false"
+     */
+    private boolean stripVersion;
+
+    /**
+     * @parameter expression="${includeTypes}" default-value="swc"
+     * @optional
+     */
+    private String includeTypes;
+
+    /**
+     * @parameter expression="${excludeTypes}" default-value=""
+     * @optional
+     */
+    private String excludeTypes;
+
+    /**
+     * @parameter expression="${includeClassifiers}" default-value=""
+     * @optional
+     */
+    private String includeClassifiers;
+
+    /**
+     * @parameter expression="${excludeClassifiers}" default-value=""
+     * @optional
+     */
+    private String excludeClassifiers;
+
+    /**
+     * @parameter expression="${includeGroupIds}" default-value=""
+     * @optional
+     */
+    private String includeGroupIds;
+
+    /**
+     * @parameter expression="${excludeGroupIds}" default-value="com.adobe.*"
+     * @optional
+     */
+    private String excludeGroupIds;
+
+    /**
+     * @parameter expression="${includeArtifactIds}" default-value=""
+     * @optional
+     */
+    private String includeArtifactIds;
+
+    /**
+     * @parameter expression="${excludeArtifactIds}" default-value=""
+     * @optional
+     */
+    private String excludeArtifactIds;
+
+    /**
+     * @component
+     * @readonly
+     * @required
+     */
+    protected ArtifactFactory artifactFactory;
+
+    /**
+     * @component
+     * @readonly
+     * @required
+     * */
+    protected ArtifactResolver resolver;
+
+    /**
+     * Location of the local repository.
+     * 
+     * @parameter expression="${localRepository}"
+     * @readonly
+     * @required
+     */
+    protected ArtifactRepository localRepository;
+
+    /**
+     * List of Remote Repositories used by the resolver
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     * @required
+     */
+    protected List remoteRepositories;
+
+    /**
+     * @component
+     * @readonly
+     * @required
+     */
+    protected ArtifactInstaller installer;
+
+    /**
+     * @component
+     * 
+     * @readonly
+     * @required
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException
@@ -173,11 +306,11 @@ public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
         else if ( "direct".equalsIgnoreCase( dependencies ) )
         {
             excludeTransitive = true;
-            super.execute();
+            processDependencies();
         }
         else if ( "transitive".equalsIgnoreCase( dependencies ) )
         {
-            super.execute();
+            processDependencies();
         }
         else
         {
@@ -185,17 +318,93 @@ public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
                     "No valid execution parameters found" );
         }
     }
+    
+    /**
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    protected void processDependencies() throws MojoExecutionException, MojoFailureException
+    {
+        // add filters in well known order, least specific to most specific
+        FilterArtifacts filter = new FilterArtifacts();
+        filter.addFilter( new ProjectTransitivityFilter( project
+                .getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
+        filter.addFilter( new ClassifierFilter( this.includeClassifiers,
+                this.excludeClassifiers ) );
+        filter.addFilter( new GroupIdFilter( this.includeGroupIds,
+                this.excludeGroupIds ) );
+        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds,
+                this.excludeArtifactIds ) );
 
-    @Override
+        // start with all artifacts.
+        Set< Artifact > artifacts = project.getArtifacts();
+
+        // perform filtering
+        try
+        {
+            artifacts = filter.filter( artifacts );
+
+            Iterator< Artifact > iterator = artifacts.iterator();
+            while ( iterator.hasNext() )
+            {
+                Artifact artifact = iterator.next();
+                if ( !scope.equalsIgnoreCase( artifact.getScope() ) )
+                {
+                    iterator.remove();
+                }
+            }
+        }
+        catch ( ArtifactFilterException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        if ( artifacts.isEmpty() )
+        {
+            getLog().warn( "No RSL dependency found" );
+        }
+        else
+        {
+            outputDirectory.mkdirs();
+            for ( Artifact artifact : artifacts )
+            {
+                Artifact rslArtifact = artifactFactory
+                        .createArtifactWithClassifier( artifact.getGroupId(),
+                                artifact.getArtifactId(),
+                                artifact.getVersion(), rslExtension, null );
+
+                processDependency( artifact, rslArtifact );
+            }
+        }
+    }
+    
+    /**
+     * @param artifact
+     * @param rslArtifact
+     * @throws MojoExecutionException
+     */
     protected void processDependency(Artifact artifact, Artifact rslArtifact)
             throws MojoExecutionException
     {
 
         try
         {
-            super.processDependency( artifact, rslArtifact );
+            // lookup RSL artifact
+            resolver.resolve( rslArtifact, remoteRepositories, localRepository );
+            getLog().debug( "Artifact RSL found: " + rslArtifact );
+            File outputFile = new File( outputDirectory,
+                    getFormattedFileName( rslArtifact ) );
+            try
+            {
+                FileUtils.copyFile( rslArtifact.getFile(), outputFile );
+            }
+            catch ( IOException ioe )
+            {
+                throw new MojoExecutionException( ioe.getMessage(), ioe );
+            }
         }
-        catch ( MojoExecutionException mee )
+        catch ( AbstractArtifactResolutionException aare )
         {
             // RSL not available then create it
             ZipFile archive = null;
@@ -280,5 +489,43 @@ public class InstallerMojo extends DependencyProcessorMojo implements MavenMojo
                 }
             }
         }
+    }
+
+    /**
+     * @param artifact
+     * @return
+     */
+    protected String getFormattedFileName(Artifact artifact)
+    {
+        String destFileName = null;
+        if ( artifact.getFile() != null && !stripVersion )
+        {
+            destFileName = artifact.getFile().getName();
+        }
+        else
+        {
+            String versionString = null;
+            if ( !stripVersion )
+            {
+                versionString = "-" + artifact.getVersion();
+            }
+            else
+            {
+                versionString = "";
+            }
+
+            String classifierString = "";
+
+            if ( artifact.getClassifier() != null
+                    && !artifact.getClassifier().trim().isEmpty() )
+            {
+                classifierString = "-" + artifact.getClassifier();
+            }
+
+            destFileName = artifact.getArtifactId() + versionString
+                    + classifierString + "."
+                    + artifact.getArtifactHandler().getExtension();
+        }
+        return destFileName;
     }
 }
