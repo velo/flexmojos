@@ -179,7 +179,7 @@ public class CopyMojo
         }
 
         String packaging = project.getPackaging();
-        if ( ! ("war".equals( packaging ) || "swf".equals( packaging ) ) )
+        if ( !( "war".equals( packaging ) || "swf".equals( packaging ) ) )
         {
             getLog().warn( "'copy-flex-resources' was intended to run on war or swf project" );
         }

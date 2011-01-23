@@ -33,7 +33,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -51,29 +50,25 @@ import org.sonatype.flexmojos.MavenMojo;
 import org.sonatype.flexmojos.optimizer.OptimizerMojo;
 
 /**
- * Goal that allows for manual generation of RSLs. This goal is intended to be
- * run out of the build lifecycle to install or deploy SWF files for SWC
- * artifacts missing their RSL counterpart.
- * 
- * Tipical usage examples are:
- * 
+ * Goal that allows for manual generation of RSLs. This goal is intended to be run out of the build lifecycle to install
+ * or deploy SWF files for SWC artifacts missing their RSL counterpart. Tipical usage examples are:
  * <ul>
  * <li>to generate and install (or deploy) a specific artifact RSL</br>
- * <code>mvn flexmojos:install-rsl -DartifactId= -DgroupId= -Dversion= -Dclassifier=</code>
- * </li>
- * 
+ * <code>mvn flexmojos:install-rsl -DartifactId= -DgroupId= -Dversion= -Dclassifier=</code></li>
  * <li>to generate and install (or deploy) all direct dependencies RSLs</br>
  * <code>mvn flexmojos:install-rsl -Ddependencies=direct</code></li>
- * 
  * <li>to generate and install (or deploy) all transitive dependencies RSLs</br>
  * <code>mvn flexmojos:install-rsl -Ddependencies=transitive</code></li>
  * 
  * @author Roberto Lo Giacco (rlogiacco@gmail.com)
- * 
  * @goal install-rsl
  * @requiresDependencyResolution
+ * @requiresDirectInvocation true
+ * @requiresProject false
  */
-public class InstallerMojo extends OptimizerMojo implements MavenMojo
+public class InstallerMojo
+    extends OptimizerMojo
+    implements MavenMojo
 {
 
     /**
@@ -131,6 +126,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
      * @required
      */
     private ArtifactDeployer deployer;
+
     /**
      * @optional
      * @parameter expression="${excludeTransitive}" default-value="false"
@@ -217,7 +213,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
      * @component
      * @readonly
      * @required
-     * */
+     */
     protected ArtifactResolver resolver;
 
     /**
@@ -236,7 +232,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
      * @readonly
      * @required
      */
-    protected List remoteRepositories;
+    protected List<ArtifactRepository> remoteRepositories;
 
     /**
      * @component
@@ -245,33 +241,24 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
      */
     protected ArtifactInstaller installer;
 
-    /**
-     * @component
-     * 
-     * @readonly
-     * @required
-     */
-    private ArtifactMetadataSource artifactMetadataSource;
-
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
     {
         if ( dependencies == null )
         {
-            Artifact artifact = artifactFactory.createArtifactWithClassifier(
-                    groupId, artifactId, version, originalType, classifier );
+            Artifact artifact =
+                artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, originalType, classifier );
 
-            Artifact rslArtifact = artifactFactory
-                    .createArtifactWithClassifier( groupId, artifactId,
-                            version, rslExtension, classifier );
+            Artifact rslArtifact =
+                artifactFactory.createArtifactWithClassifier( groupId, artifactId, version, rslExtension, classifier );
 
             try
             {
                 resolver.resolve( artifact, remoteRepositories, localRepository );
                 try
                 {
-                    resolver.resolve( rslArtifact, remoteRepositories,
-                            localRepository );
+                    resolver.resolve( rslArtifact, remoteRepositories, localRepository );
                     getLog().info( "Overwriting RSL Artifact" );
                 }
                 catch ( Exception e )
@@ -282,8 +269,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
             }
             catch ( Exception e )
             {
-                throw new MojoExecutionException( "Artifact resolution failed",
-                        e );
+                throw new MojoExecutionException( "Artifact resolution failed", e );
             }
         }
         else if ( "direct".equalsIgnoreCase( dependencies ) )
@@ -297,38 +283,35 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
         }
         else
         {
-            throw new MojoExecutionException(
-                    "No valid execution parameters found" );
+            throw new MojoExecutionException( "No valid execution parameters found" );
         }
     }
-    
+
     /**
      * @throws MojoExecutionException
      * @throws MojoFailureException
      */
-    protected void processDependencies() throws MojoExecutionException, MojoFailureException
+    @SuppressWarnings( "unchecked" )
+    protected void processDependencies()
+        throws MojoExecutionException, MojoFailureException
     {
         // add filters in well known order, least specific to most specific
         FilterArtifacts filter = new FilterArtifacts();
-        filter.addFilter( new ProjectTransitivityFilter( project
-                .getDependencyArtifacts(), this.excludeTransitive ) );
+        filter.addFilter( new ProjectTransitivityFilter( project.getDependencyArtifacts(), this.excludeTransitive ) );
         filter.addFilter( new TypeFilter( this.includeTypes, this.excludeTypes ) );
-        filter.addFilter( new ClassifierFilter( this.includeClassifiers,
-                this.excludeClassifiers ) );
-        filter.addFilter( new GroupIdFilter( this.includeGroupIds,
-                this.excludeGroupIds ) );
-        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds,
-                this.excludeArtifactIds ) );
+        filter.addFilter( new ClassifierFilter( this.includeClassifiers, this.excludeClassifiers ) );
+        filter.addFilter( new GroupIdFilter( this.includeGroupIds, this.excludeGroupIds ) );
+        filter.addFilter( new ArtifactIdFilter( this.includeArtifactIds, this.excludeArtifactIds ) );
 
         // start with all artifacts.
-        Set< Artifact > artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         // perform filtering
         try
         {
             artifacts = filter.filter( artifacts );
 
-            Iterator< Artifact > iterator = artifacts.iterator();
+            Iterator<Artifact> iterator = artifacts.iterator();
             while ( iterator.hasNext() )
             {
                 Artifact artifact = iterator.next();
@@ -352,23 +335,22 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
             outputDirectory.mkdirs();
             for ( Artifact artifact : artifacts )
             {
-                Artifact rslArtifact = artifactFactory
-                        .createArtifactWithClassifier( artifact.getGroupId(),
-                                artifact.getArtifactId(),
-                                artifact.getVersion(), rslExtension, null );
+                Artifact rslArtifact =
+                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                  artifact.getVersion(), rslExtension, null );
 
                 processDependency( artifact, rslArtifact );
             }
         }
     }
-    
+
     /**
      * @param artifact
      * @param rslArtifact
      * @throws MojoExecutionException
      */
-    protected void processDependency(Artifact artifact, Artifact rslArtifact)
-            throws MojoExecutionException
+    protected void processDependency( Artifact artifact, Artifact rslArtifact )
+        throws MojoExecutionException
     {
 
         try
@@ -376,8 +358,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
             // lookup RSL artifact
             resolver.resolve( rslArtifact, remoteRepositories, localRepository );
             getLog().debug( "Artifact RSL found: " + rslArtifact );
-            File outputFile = new File( outputDirectory,
-                    getFormattedFileName( rslArtifact ) );
+            File outputFile = new File( outputDirectory, getFormattedFileName( rslArtifact ) );
             try
             {
                 FileUtils.copyFile( rslArtifact.getFile(), outputFile );
@@ -399,52 +380,43 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
                 resolver.resolve( artifact, remoteRepositories, localRepository );
                 archive = newZipFile( artifact.getFile() );
                 input = readLibrarySwf( artifact.getFile(), archive );
-                File outputFile = new File( outputDirectory,
-                        getFormattedFileName( rslArtifact ) );
+                File outputFile = new File( outputDirectory, getFormattedFileName( rslArtifact ) );
                 output = new FileOutputStream( outputFile );
-                Artifact originalArtifact = artifactFactory
-                        .createArtifactWithClassifier( artifact.getGroupId(),
-                                artifact.getArtifactId(),
-                                artifact.getVersion(), artifact.getType(),
-                                originalClassifier );
+                Artifact originalArtifact =
+                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                  artifact.getVersion(), artifact.getType(),
+                                                                  originalClassifier );
 
                 if ( optimizeRsls )
                 {
-                    originalFile = new File( project.getBuild()
-                            .getOutputDirectory(), artifact.getFile().getName()
+                    originalFile =
+                        new File( project.getBuild().getOutputDirectory(), artifact.getFile().getName()
                             + originalClassifier );
                     FileUtils.copyFile( artifact.getFile(), originalFile );
                     getLog().info( "Attempting to optimize: " + artifact );
                     long initialSize = artifact.getFile().length() / 1024;
                     optimize( input, output );
                     long optimizedSize = outputFile.length() / 1024;
-                    getLog().info(
-                            "\t\tsize reduced from " + initialSize + "kB to "
-                                    + optimizedSize + "kB" );
+                    getLog().info( "\t\tsize reduced from " + initialSize + "kB to " + optimizedSize + "kB" );
 
                     updateDigest( outputFile, originalFile );
                 }
                 if ( deploy )
                 {
-                    ArtifactRepository deploymentRepository = project
-                            .getDistributionManagementArtifactRepository();
+                    ArtifactRepository deploymentRepository = project.getDistributionManagementArtifactRepository();
                     if ( backup && optimizeRsls )
                     {
-                        deployer.deploy( originalFile, originalArtifact,
-                                deploymentRepository, localRepository );
+                        deployer.deploy( originalFile, originalArtifact, deploymentRepository, localRepository );
                     }
-                    deployer.deploy( outputFile, rslArtifact,
-                            deploymentRepository, localRepository );
+                    deployer.deploy( outputFile, rslArtifact, deploymentRepository, localRepository );
                 }
                 else
                 {
                     if ( backup && optimizeRsls )
                     {
-                        installer.install( originalFile, originalArtifact,
-                                localRepository );
+                        installer.install( originalFile, originalArtifact, localRepository );
                     }
-                    installer
-                            .install( outputFile, rslArtifact, localRepository );
+                    installer.install( outputFile, rslArtifact, localRepository );
                 }
             }
             catch ( Exception e )
@@ -478,7 +450,7 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
      * @param artifact
      * @return
      */
-    protected String getFormattedFileName(Artifact artifact)
+    protected String getFormattedFileName( Artifact artifact )
     {
         String destFileName = null;
         if ( artifact.getFile() != null && !stripVersion )
@@ -499,14 +471,13 @@ public class InstallerMojo extends OptimizerMojo implements MavenMojo
 
             String classifierString = "";
 
-            if ( artifact.getClassifier() != null
-                    && !artifact.getClassifier().trim().isEmpty() )
+            if ( artifact.getClassifier() != null && !artifact.getClassifier().trim().isEmpty() )
             {
                 classifierString = "-" + artifact.getClassifier();
             }
 
-            destFileName = artifact.getArtifactId() + versionString
-                    + classifierString + "."
+            destFileName =
+                artifact.getArtifactId() + versionString + classifierString + "."
                     + artifact.getArtifactHandler().getExtension();
         }
         return destFileName;
