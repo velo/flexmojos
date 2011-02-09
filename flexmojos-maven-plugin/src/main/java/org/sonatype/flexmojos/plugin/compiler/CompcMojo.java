@@ -230,7 +230,7 @@ public class CompcMojo
             {
                 CompcMojo cfg = this.clone();
                 configureResourceBundle( locale, cfg );
-                cfg.getCache().put( "getProjectType", RB_SWC );
+                cfg.getCache().put( PROJECT_TYPE, RB_SWC );
                 results.add( executeCompiler( cfg, fullSynchronization ) );
             }
 

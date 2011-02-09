@@ -27,7 +27,6 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
-import static org.sonatype.flexmojos.plugin.common.FlexScopes.THEME;
 import static org.sonatype.flexmojos.util.PathUtil.files;
 import static org.sonatype.flexmojos.util.PathUtil.pathsList;
 
@@ -111,6 +110,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 {
 
     private static final Object lock = new Object();
+
+    public static final String PROJECT_TYPE = "getProjectType";
 
     /**
      * Generate an accessible SWF
@@ -1554,12 +1555,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         cfg.includeResourceBundles = getResourceBundleListContent();
-        cfg.getCache().put( "getExternalLibraryPath", MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
-        cfg.getCache().put( "getLibraryPath", MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
+        cfg.getCache().put( EXTERNAL_LIBRARY_PATH, MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
+        cfg.getCache().put( LIBRARY_PATH, MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
 
         if ( localesOutputPath != null )
         {
-            cfg.getCache().put( "getTargetDirectory", new File( getTargetDirectory(), localesOutputPath ) );
+            cfg.getCache().put( TARGET_DIRECTORY, new File( getTargetDirectory(), localesOutputPath ) );
         }
     }
 
