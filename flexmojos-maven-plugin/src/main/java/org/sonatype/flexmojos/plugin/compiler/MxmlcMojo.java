@@ -211,7 +211,6 @@ public class MxmlcMojo
                     moduleOutputDir = new File( project.getBuild().getDirectory() );
                 }
 
-                // TODO include the original extern
                 List<String> loadExterns = new ArrayList<String>();
                 loadExterns.add( getLinkReport() );
                 if ( getLoadExterns() != null )
@@ -225,7 +224,7 @@ public class MxmlcMojo
                 cfg.finalName = moduleFinalName;
                 if ( module.isOptimize() )
                 {
-                    cfg.getCache().put( "getLoadExterns", loadExterns.toArray( new String[1] ) );
+                    cfg.getCache().put( LOAD_EXTERNS, loadExterns.toArray( new String[1] ) );
                 }
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
