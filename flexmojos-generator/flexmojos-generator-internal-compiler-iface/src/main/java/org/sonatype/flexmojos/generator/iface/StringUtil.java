@@ -78,4 +78,21 @@ public class StringUtil
         return nodes.toArray( new String[nodes.size()] );
     }
 
+    public static String toUpperCamelCase( String name )
+    {
+        String[] texts = splitCamelCase( name );
+
+        StringBuilder sb = new StringBuilder();
+        for ( String text : texts )
+        {
+            if ( sb.length() != 0 )
+            {
+                sb.append( '_' );
+            }
+            sb.append( text.toUpperCase() );
+        }
+
+        return sb.toString();
+    }
+
 }

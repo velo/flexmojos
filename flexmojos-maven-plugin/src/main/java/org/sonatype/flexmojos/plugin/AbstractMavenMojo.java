@@ -102,6 +102,8 @@ public abstract class AbstractMavenMojo
         }
     };
 
+    public static final String TARGET_DIRECTORY = "getTargetDirectory";
+
     @SuppressWarnings( "unchecked" )
     private static Matcher<? extends Artifact> initGlobalMatcher()
     {

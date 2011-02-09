@@ -182,7 +182,13 @@ public final class InternalIFacesGenerator
                         type = JavaQNameImpl.getArray( type );
                     }
 
-                    /*JavaMethod nm =*/ js.newJavaMethod( GET_PREFIX + name, type );
+                    /* JavaMethod nm = */js.newJavaMethod( GET_PREFIX + name, type );
+
+                    StringBuilder order = new StringBuilder();
+                    order.append( "  String " + StringUtil.toUpperCamelCase( name ) + " = " );
+                    order.append( '"' ).append( GET_PREFIX ).append( name ).append( '"' ).append( ';' );
+
+                    js.addRawJavaSource( order.toString() );
                 }
             }
         }
