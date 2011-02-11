@@ -255,7 +255,7 @@ public class CopyMojo
             if ( !stripModuleArtifactInfo )
             {
                 fileName =
-                    artifact.getArtifactId() + "-" + artifact.getVersion() + artifact.getClassifier() + "."
+                    artifact.getArtifactId() + "-" + artifact.getVersion() + "-" + artifact.getClassifier() + "."
                         + artifact.getType();
             }
             else
