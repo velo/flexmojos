@@ -30,8 +30,11 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -56,7 +59,7 @@ import org.sonatype.flexmojos.utilities.MavenUtils;
  * @since 3.0
  * @goal copy-flex-resources
  * @phase process-resources
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution runtime
  */
 public class CopyMojo
     extends AbstractMojo
@@ -76,6 +79,13 @@ public class CopyMojo
      * @readonly
      */
     protected MavenSession context;
+    
+    /** 
+     * @component 
+     * @required
+     * @readonly
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
 
     /**
      * @parameter default-value="true"
@@ -209,6 +219,8 @@ public class CopyMojo
 
             copy( sourceFile, destFile );
         }
+        
+        performRslCopy( project );
 
     }
 
@@ -376,7 +388,18 @@ public class CopyMojo
             {
                 extension = SWZ;
             }
-
+            if ( rslArtifact.getVersionRange() != null )
+            {
+                try 
+                {
+                    List<ArtifactVersion> versions = artifactMetadataSource.retrieveAvailableVersions(rslArtifact, localRepository, remoteRepositories);
+                    rslArtifact.setVersion( rslArtifact.getVersionRange().matchVersion( versions ).toString() );
+                } 
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( e.getMessage(), e );
+                }
+            }
             rslArtifact =
                 artifactFactory.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
                                                               rslArtifact.getVersion(), extension, null );
