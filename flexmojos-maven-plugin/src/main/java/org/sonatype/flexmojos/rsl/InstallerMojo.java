@@ -33,6 +33,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -50,8 +51,12 @@ import org.sonatype.flexmojos.MavenMojo;
 import org.sonatype.flexmojos.optimizer.OptimizerMojo;
 
 /**
- * Goal that allows for manual generation of RSLs. This goal is intended to be run out of the build lifecycle to install
- * or deploy SWF files for SWC artifacts missing their RSL counterpart. Tipical usage examples are:
+ * Goal that allows for manual generation of RSLs. This goal is intended to be
+ * run out of the build lifecycle to install or deploy SWF files for SWC
+ * artifacts missing their RSL counterpart.
+ * 
+ * Tipical usage examples are:
+ * 
  * <ul>
  * <li>to generate and install (or deploy) a specific artifact RSL</br>
  * <code>mvn flexmojos:install-rsl -DartifactId= -DgroupId= -Dversion= -Dclassifier=</code></li>
@@ -59,6 +64,7 @@ import org.sonatype.flexmojos.optimizer.OptimizerMojo;
  * <code>mvn flexmojos:install-rsl -Ddependencies=direct</code></li>
  * <li>to generate and install (or deploy) all transitive dependencies RSLs</br>
  * <code>mvn flexmojos:install-rsl -Ddependencies=transitive</code></li>
+ * </ul>
  * 
  * @author Roberto Lo Giacco (rlogiacco@gmail.com)
  * @goal install-rsl
@@ -232,7 +238,7 @@ public class InstallerMojo
      * @readonly
      * @required
      */
-    protected List<ArtifactRepository> remoteRepositories;
+    protected List remoteRepositories;
 
     /**
      * @component
@@ -240,6 +246,14 @@ public class InstallerMojo
      * @required
      */
     protected ArtifactInstaller installer;
+
+    /**
+     * @component
+     * 
+     * @readonly
+     * @required
+     */
+    private ArtifactMetadataSource artifactMetadataSource;
 
     @Override
     public void execute()
@@ -377,21 +391,31 @@ public class InstallerMojo
             File originalFile = null;
             try
             {
-                resolver.resolve( artifact, remoteRepositories, localRepository );
+                Artifact originalArtifact = artifactFactory
+                        .createArtifactWithClassifier( artifact.getGroupId(),
+                                artifact.getArtifactId(),
+                                artifact.getVersion(), artifact.getType(),
+                                originalClassifier );
+                try
+                {
+                    resolver.resolve( originalArtifact, remoteRepositories, localRepository );
+                    artifact = originalArtifact;
+					getLog().debug( "Original artifact found: the RSL will be produced against the original one" );
+                }
+                catch ( Exception e )
+                {
+					getLog().debug( "Original artifact not found: assuming the RSL production has never been executed before" );
+                    resolver.resolve( artifact, remoteRepositories, localRepository );
+                }
                 archive = newZipFile( artifact.getFile() );
                 input = readLibrarySwf( artifact.getFile(), archive );
                 File outputFile = new File( outputDirectory, getFormattedFileName( rslArtifact ) );
                 output = new FileOutputStream( outputFile );
-                Artifact originalArtifact =
-                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                  artifact.getVersion(), artifact.getType(),
-                                                                  originalClassifier );
 
                 if ( optimizeRsls )
                 {
-                    originalFile =
-                        new File( project.getBuild().getOutputDirectory(), artifact.getFile().getName()
-                            + originalClassifier );
+                    originalFile = 
+                        new File( project.getBuild().getOutputDirectory(), originalArtifact.getFile().getName() );
                     FileUtils.copyFile( artifact.getFile(), originalFile );
                     getLog().info( "Attempting to optimize: " + artifact );
                     long initialSize = artifact.getFile().length() / 1024;
@@ -399,22 +423,33 @@ public class InstallerMojo
                     long optimizedSize = outputFile.length() / 1024;
                     getLog().info( "\t\tsize reduced from " + initialSize + "kB to " + optimizedSize + "kB" );
 
-                    updateDigest( outputFile, originalFile );
+                    updateDigest( outputFile, artifact.getFile() );
                 }
                 if ( deploy )
                 {
                     ArtifactRepository deploymentRepository = project.getDistributionManagementArtifactRepository();
-                    if ( backup && optimizeRsls )
+                    if ( optimizeRsls )
                     {
-                        deployer.deploy( originalFile, originalArtifact, deploymentRepository, localRepository );
+                        if ( backup )
+                        {
+                            deployer.deploy( originalFile, originalArtifact,deploymentRepository, localRepository );
+                        }
+                        deployer.deploy( artifact.getFile(), artifact,deploymentRepository, localRepository );
                     }
                     deployer.deploy( outputFile, rslArtifact, deploymentRepository, localRepository );
                 }
                 else
                 {
-                    if ( backup && optimizeRsls )
+                    if ( backup && optimizeRsls && !originalArtifact.isResolved() )
                     {
-                        installer.install( originalFile, originalArtifact, localRepository );
+                        try
+                        {
+                            resolver.resolve( originalArtifact,remoteRepositories, localRepository );
+                        }
+                        catch ( Exception e )
+                        {
+                            installer.install( originalFile, originalArtifact, localRepository );
+                        }
                     }
                     installer.install( outputFile, rslArtifact, localRepository );
                 }
