@@ -57,6 +57,7 @@ import flex2.compiler.swc.SwcGroup;
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @author Marla Bonar (Marla_Bonar@Intuit.com) - added ability to optimize a swf
+ * @author Roberto Lo Giacco (rlogiacco@gmail.com) - fixed a few things regarding RSLs
  * @since 2.0
  * @goal optimize
  * @phase package
