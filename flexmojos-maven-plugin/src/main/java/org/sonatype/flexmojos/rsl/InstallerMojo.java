@@ -140,7 +140,7 @@ public class InstallerMojo
     protected boolean excludeTransitive;
 
     /**
-     * @parameter expression="${project.build.directory}/rsl"
+     * @parameter expression="${outputDir}" default-value="."
      */
     protected File outputDirectory;
 
@@ -279,6 +279,7 @@ public class InstallerMojo
                 {
                     getLog().debug( "Generating the RSL Artifact" );
                 }
+                outputDirectory.mkdirs();
                 processDependency( artifact, rslArtifact );
             }
             catch ( Exception e )
