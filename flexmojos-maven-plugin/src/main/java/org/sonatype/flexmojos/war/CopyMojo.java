@@ -388,7 +388,7 @@ public class CopyMojo
             {
                 extension = SWZ;
             }
-            if ( rslArtifact.getVersionRange() != null )
+            if ( rslArtifact.getVersion() == null )
             {
                 try 
                 {
