@@ -50,7 +50,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -68,12 +67,8 @@ import org.sonatype.flexmojos.MavenMojo;
 import org.sonatype.flexmojos.optimizer.OptimizerMojo;
 
 /**
- * Goal that allows for manual generation of RSLs. This goal is intended to be
- * run out of the build lifecycle to install or deploy SWF files for SWC
- * artifacts missing their RSL counterpart.
- * 
- * Tipical usage examples are:
- * 
+ * Goal that allows for manual generation of RSLs. This goal is intended to be run out of the build lifecycle to install
+ * or deploy SWF files for SWC artifacts missing their RSL counterpart. Tipical usage examples are:
  * <ul>
  * <li>to generate and install (or deploy) a specific artifact RSL</br>
  * <code>mvn flexmojos:install-rsl -DartifactId= -DgroupId= -Dversion= -Dclassifier=</code></li>
@@ -255,7 +250,7 @@ public class InstallerMojo
      * @readonly
      * @required
      */
-    protected List remoteRepositories;
+    protected List<ArtifactRepository> remoteRepositories;
 
     /**
      * @component
@@ -263,14 +258,6 @@ public class InstallerMojo
      * @required
      */
     protected ArtifactInstaller installer;
-
-    /**
-     * @component
-     * 
-     * @readonly
-     * @required
-     */
-    private ArtifactMetadataSource artifactMetadataSource;
 
     @Override
     public void execute()
@@ -409,20 +396,19 @@ public class InstallerMojo
             File originalFile = null;
             try
             {
-                Artifact originalArtifact = artifactFactory
-                        .createArtifactWithClassifier( artifact.getGroupId(),
-                                artifact.getArtifactId(),
-                                artifact.getVersion(), artifact.getType(),
-                                originalClassifier );
+                Artifact originalArtifact =
+                    artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                  artifact.getVersion(), artifact.getType(),
+                                                                  originalClassifier );
                 try
                 {
                     resolver.resolve( originalArtifact, remoteRepositories, localRepository );
                     artifact = originalArtifact;
-					getLog().debug( "Original artifact found: the RSL will be produced against the original one" );
+                    getLog().debug( "Original artifact found: the RSL will be produced against the original one" );
                 }
                 catch ( Exception e )
                 {
-					getLog().debug( "Original artifact not found: assuming the RSL production has never been executed before" );
+                    getLog().debug( "Original artifact not found: assuming the RSL production has never been executed before" );
                     resolver.resolve( artifact, remoteRepositories, localRepository );
                 }
                 archive = newZipFile( artifact.getFile() );
@@ -432,7 +418,7 @@ public class InstallerMojo
 
                 if ( optimizeRsls )
                 {
-                    originalFile = 
+                    originalFile =
                         new File( project.getBuild().getOutputDirectory(), originalArtifact.getFile().getName() );
                     FileUtils.copyFile( artifact.getFile(), originalFile );
                     getLog().info( "Attempting to optimize: " + artifact );
@@ -450,9 +436,9 @@ public class InstallerMojo
                     {
                         if ( backup )
                         {
-                            deployer.deploy( originalFile, originalArtifact,deploymentRepository, localRepository );
+                            deployer.deploy( originalFile, originalArtifact, deploymentRepository, localRepository );
                         }
-                        deployer.deploy( artifact.getFile(), artifact,deploymentRepository, localRepository );
+                        deployer.deploy( artifact.getFile(), artifact, deploymentRepository, localRepository );
                     }
                     deployer.deploy( outputFile, rslArtifact, deploymentRepository, localRepository );
                 }
@@ -462,7 +448,7 @@ public class InstallerMojo
                     {
                         try
                         {
-                            resolver.resolve( originalArtifact,remoteRepositories, localRepository );
+                            resolver.resolve( originalArtifact, remoteRepositories, localRepository );
                         }
                         catch ( Exception e )
                         {
