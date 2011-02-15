@@ -34,7 +34,6 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -79,9 +78,9 @@ public class CopyMojo
      * @readonly
      */
     protected MavenSession context;
-    
-    /** 
-     * @component 
+
+    /**
+     * @component
      * @required
      * @readonly
      */
@@ -219,7 +218,7 @@ public class CopyMojo
 
             copy( sourceFile, destFile );
         }
-        
+
         performRslCopy( project );
 
     }
@@ -365,6 +364,7 @@ public class CopyMojo
         return getArtifacts( SWF, project );
     }
 
+    @SuppressWarnings( "unchecked" )
     private void performRslCopy( MavenProject artifactProject )
         throws MojoExecutionException
     {
@@ -390,11 +390,13 @@ public class CopyMojo
             }
             if ( rslArtifact.getVersion() == null )
             {
-                try 
+                try
                 {
-                    List<ArtifactVersion> versions = artifactMetadataSource.retrieveAvailableVersions(rslArtifact, localRepository, remoteRepositories);
+                    List<ArtifactVersion> versions =
+                        artifactMetadataSource.retrieveAvailableVersions( rslArtifact, localRepository,
+                                                                          remoteRepositories );
                     rslArtifact.setVersion( rslArtifact.getVersionRange().matchVersion( versions ).toString() );
-                } 
+                }
                 catch ( Exception e )
                 {
                     throw new MojoExecutionException( e.getMessage(), e );
