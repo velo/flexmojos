@@ -1,7 +1,16 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import static org.sonatype.flexmojos.util.CollectionUtils.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.not;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.EXTERNAL;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 
 import java.io.File;
@@ -17,6 +26,7 @@ import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
+import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
 import org.sonatype.flexmojos.util.PathUtil;
