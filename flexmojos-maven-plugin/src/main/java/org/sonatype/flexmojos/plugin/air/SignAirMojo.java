@@ -18,17 +18,8 @@
 package org.sonatype.flexmojos.plugin.air;
 
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIR;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.AIRN;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.ANE;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.APK;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.DEB;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.DMG;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.EXE;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.RPM;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.TAR_GZ;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.ZIP;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
@@ -59,14 +50,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRNPackager;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosANEPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAPKPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDEBPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosDMGPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosEXEPackager;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosRPMPackager;
 import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -435,17 +419,6 @@ public class SignAirMojo
         return dest;
     }
 
-    protected File getRuntimeDir( String classifier, String type )
-    {
-        return getUnpackedArtifact( "com.adobe.adl", "runtime", getAirTarget(), classifier, type );
-    }
-
-    private File getNaiDir( String classifier, String type )
-        throws MojoExecutionException
-    {
-        return getUnpackedArtifact( "com.adobe.adl", "nai", getAirTarget(), classifier, type );
-    }
-
     private File getOutput()
     {
         File output = null;
@@ -484,34 +457,6 @@ public class SignAirMojo
         if ( packages.contains( AIR ) )
         {
             packs.put( AIR, new FlexmojosAIRPackager() );
-        }
-        if ( packages.contains( DMG ) )
-        {
-            packs.put( DMG, new FlexmojosDMGPackager( getNaiDir( "mac", TAR_GZ ), getRuntimeDir( "mac", TAR_GZ ) ) );
-        }
-        if ( packages.contains( EXE ) )
-        {
-            packs.put( EXE, new FlexmojosEXEPackager( getNaiDir( null, ZIP ), getRuntimeDir( null, ZIP ) ) );
-        }
-        if ( packages.contains( RPM ) )
-        {
-            packs.put( RPM, new FlexmojosRPMPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
-        }
-        if ( packages.contains( DEB ) )
-        {
-            packs.put( DEB, new FlexmojosDEBPackager( getNaiDir( "linux", TAR_GZ ), getRuntimeDir( "linux", TAR_GZ ) ) );
-        }
-        if ( packages.contains( APK ) )
-        {
-            packs.put( APK, new FlexmojosAPKPackager() );
-        }
-        if ( packages.contains( AIRN ) )
-        {
-            packs.put( AIRN, new FlexmojosAIRNPackager() );
-        }
-        if ( packages.contains( ANE ) )
-        {
-            packs.put( ANE, new FlexmojosANEPackager() );
         }
 
         if ( packages.size() != packs.size() )
