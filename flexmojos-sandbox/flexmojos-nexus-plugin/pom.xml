@@ -19,7 +19,7 @@
 
   <properties>
     <!-- Set the Nexus version here, against which you build the plugin -->
-    <nexus.version>1.7.0</nexus.version>
+    <nexus.version>1.9</nexus.version>
   </properties>
 
   <dependencies>
@@ -113,78 +113,60 @@
           </dependency>
         </dependencies>
       </plugin>
+
+      <!-- #ITSet BEGINS -->
+      <!-- Nexus IT setup (dependencies below are needed if you have extensive ITs and you want to use Nexus Environment) -->
+      <!-- There are dependencies connected to this set of plugin, see above! -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-test-environment-maven-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>setup-nexus-plugin-environment</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <nexusVersion>${nexus.version}</nexusVersion>
+          <nexusBundleArtifact>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-oss-webapp</artifactId>
+            <version>${nexus.version}</version>
+            <classifier>bundle</classifier>
+            <type>tar.gz</type>
+          </nexusBundleArtifact>
+          <nexusPluginsArtifacts>
+            <plugin>
+              <groupId>org.sonatype.nexus</groupId>
+              <artifactId>nexus-it-helper-plugin</artifactId>
+              <classifier>cp</classifier>
+              <type>jar</type>
+            </plugin>
+            <plugin>
+              <groupId>org.sonatype.nexus</groupId>
+              <artifactId>nexus-it-helper-plugin</artifactId>
+              <classifier>bundle</classifier>
+              <type>zip</type>
+            </plugin>
+          </nexusPluginsArtifacts>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <!-- TODO activate me when nexus 1.9 is released <activation> <property> <name>!performRelease</name> </property> </activation> -->
-
-      <properties>
-        <!-- can only run tests with testNG using nexus 1.9 -->
-        <nexus.version>1.9-SNAPSHOT</nexus.version>
-      </properties>
-
-      <build>
-        <plugins>
-
-          <!-- #ITSet BEGINS -->
-          <!-- Nexus IT setup (dependencies below are needed if you have extensive ITs and you want to use Nexus Environment) -->
-          <!-- There are dependencies connected to this set of plugin, see above! -->
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-test-environment-maven-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>setup-nexus-plugin-environment</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <nexusVersion>${nexus.version}</nexusVersion>
-              <nexusBundleArtifact>
-                <groupId>org.sonatype.nexus</groupId>
-                <artifactId>nexus-oss-webapp</artifactId>
-                <version>${nexus.version}</version>
-                <classifier>bundle</classifier>
-                <type>tar.gz</type>
-              </nexusBundleArtifact>
-              <nexusPluginsArtifacts>
-                <plugin>
-                  <groupId>org.sonatype.nexus</groupId>
-                  <artifactId>nexus-it-helper-plugin</artifactId>
-                  <classifier>cp</classifier>
-                  <type>jar</type>
-                </plugin>
-                <plugin>
-                  <groupId>org.sonatype.nexus</groupId>
-                  <artifactId>nexus-it-helper-plugin</artifactId>
-                  <classifier>bundle</classifier>
-                  <type>zip</type>
-                </plugin>
-              </nexusPluginsArtifacts>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.6</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <!-- #ITSet ENDS -->
-        </plugins>
-      </build>
-
-    </profile>
-  </profiles>
 
 </project>

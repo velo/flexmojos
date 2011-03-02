@@ -23,7 +23,6 @@ package org.sonatype.flexmojos.generator.contraints;
 import java.io.File;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusTestCase;
 import org.sonatype.flexmojos.generator.GenerationException;
 import org.sonatype.flexmojos.generator.Generator;
 import org.sonatype.flexmojos.generator.TestGenerationRequest;
