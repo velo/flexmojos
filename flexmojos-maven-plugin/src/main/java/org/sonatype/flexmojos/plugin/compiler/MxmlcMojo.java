@@ -223,12 +223,7 @@ public class MxmlcMojo
                 cfg.getCache().put( RUNTIME_SHARED_LIBRARY_PATH, null );
                 cfg.getCache().put( INCLUDE_LIBRARIES, null );
                 cfg.getCache().put( EXTERNAL_LIBRARY_PATH,
-                                    MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
-                                                                          allOf( type( SWC ),//
-                                                                                 anyOf( scope( EXTERNAL ),
-                                                                                        scope( CACHING ), scope( RSL ),
-                                                                                        scope( INTERNAL ) ) ) ),
-                                                         getGlobalArtifact() ) );
+                                    getModulesExternalLibraryPath() );
                 results.add( executeCompiler( new MxmlcConfigurationHolder( cfg, moduleSource ), fullSynchronization ) );
             }
 
@@ -267,6 +262,17 @@ public class MxmlcMojo
     public Module[] getModules()
     {
         return modules;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private File[] getModulesExternalLibraryPath()
+    {
+        return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
+                                              allOf( type( SWC ),//
+                                                     anyOf( scope( EXTERNAL ),
+                                                            scope( CACHING ), scope( RSL ),
+                                                            scope( INTERNAL ) ) ) ),
+                             getGlobalArtifact() );
     }
 
     public String getProjector()

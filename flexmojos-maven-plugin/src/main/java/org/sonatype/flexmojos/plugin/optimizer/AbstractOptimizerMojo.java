@@ -371,6 +371,7 @@ public abstract class AbstractOptimizerMojo
                 }
             }
 
+            @SuppressWarnings( "unchecked" )
             public Option<File> matryoshka()
             {
                 return ( null == reduceMatryoshka ) ? None$.MODULE$ : new Some( reduceMatryoshka );

@@ -9,7 +9,6 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.version;
-import static org.sonatype.flexmojos.plugin.common.FlexClassifier.LINK_REPORT;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;

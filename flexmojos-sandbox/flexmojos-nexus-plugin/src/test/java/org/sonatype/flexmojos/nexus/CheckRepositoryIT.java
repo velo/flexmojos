@@ -27,10 +27,8 @@ public class CheckRepositoryIT
     public void download()
         throws Exception
     {
-
         RepositoryMessageUtil repoUtil =
-            new RepositoryMessageUtil( this, XStreamFactory.getXmlXStream(), MediaType.APPLICATION_XML,
-                                       getRepositoryTypeRegistry() );
+            new RepositoryMessageUtil( this, XStreamFactory.getXmlXStream(), MediaType.APPLICATION_XML );
         GroupMessageUtil groupUtil =
             new GroupMessageUtil( this, XStreamFactory.getXmlXStream(), MediaType.APPLICATION_XML );
 

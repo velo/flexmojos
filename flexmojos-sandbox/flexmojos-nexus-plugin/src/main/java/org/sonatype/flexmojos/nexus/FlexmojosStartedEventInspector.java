@@ -1,7 +1,8 @@
 package org.sonatype.flexmojos.nexus;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
-import static java.util.Arrays.*;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -13,14 +14,12 @@ import org.sonatype.nexus.proxy.events.AbstractEventInspector;
 import org.sonatype.nexus.proxy.events.EventInspector;
 import org.sonatype.nexus.proxy.events.NexusStartedEvent;
 import org.sonatype.nexus.proxy.mapping.RepositoryPathMapping;
-import org.sonatype.nexus.proxy.mapping.RequestRepositoryMapper;
 import org.sonatype.nexus.proxy.mapping.RepositoryPathMapping.MappingType;
-import org.sonatype.nexus.proxy.maven.maven2.Maven2ContentClass;
+import org.sonatype.nexus.proxy.mapping.RequestRepositoryMapper;
 import org.sonatype.nexus.proxy.registry.RepositoryRegistry;
 import org.sonatype.nexus.proxy.repository.GroupRepository;
 import org.sonatype.nexus.proxy.repository.Repository;
 import org.sonatype.nexus.templates.TemplateProvider;
-import org.sonatype.nexus.templates.repository.DefaultRepositoryTemplateProvider;
 import org.sonatype.nexus.templates.repository.RepositoryTemplate;
 import org.sonatype.plexus.appevents.Event;
 
