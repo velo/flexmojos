@@ -8,4 +8,3 @@ Flexmojos provides first-class support for Flex and AIR development within Apach
 Build instructions:
 https://docs.sonatype.org/display/FLEXMOJOS/Building+Flexmojos+from+sources
 
- 
