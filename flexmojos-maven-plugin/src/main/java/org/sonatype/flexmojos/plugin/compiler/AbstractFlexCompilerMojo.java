@@ -105,6 +105,7 @@ import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.license.LicenseCalculator;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.RuntimeMavenResolutionException;
+import org.sonatype.flexmojos.plugin.common.FlexScopes;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultScriptLimits;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenDefaultSize;
@@ -2922,7 +2923,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
-        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( THEME ) );
+        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( FlexScopes.THEME ) );
         themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
 
         // if themes are specified in the <themes> configuration
