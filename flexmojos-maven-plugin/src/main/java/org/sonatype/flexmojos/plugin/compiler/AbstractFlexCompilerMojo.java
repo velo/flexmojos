@@ -2906,7 +2906,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public List<String> getTheme()
     {
         List<File> themes = new ArrayList<File>();
-        Set<Artifact> themeDependencies = getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( FlexScopes.THEME ) );
+        Set<Artifact> themeDependencies =
+            getDependencies( anyOf( type( SWC ), type( CSS ) ), scope( FlexScopes.THEME ) );
         themes.addAll( asList( MavenUtils.getFiles( themeDependencies ) ) );
 
         // if themes are specified in the <themes> configuration
