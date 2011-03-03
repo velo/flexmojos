@@ -60,6 +60,8 @@ import flex2.compiler.swc.SwcGroup;
  * 
  * @author Marvin Herman Froeder (velo.br@gmail.com)
  * @author Marla Bonar (Marla_Bonar@Intuit.com) - added ability to optimize a swf
+ * @author Roberto Lo Giacco (rlogiacco@gmail.com) - fixed a few things regarding RSLs
+ * @author Christopher Joseph Walzl (cwalzl@gmail.com) - added classifier awareness
  * @since 2.0
  * @goal optimize
  * @phase package
@@ -109,6 +111,13 @@ public class OptimizerMojo
      * @parameter expression="${optimizeRsls}" default-value="true"
      */
     protected boolean optimizeRsls;
+
+    /**
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * 
+     * @parameter expression="${flexmojos.classifier}"
+     */
+    protected String classifier;
 
     /**
      * The maven project.
@@ -179,14 +188,15 @@ public class OptimizerMojo
             return;
         }
 
-        File originalFile = project.getArtifact().getFile();
+        String c = this.classifier == null ? "" : "-" + this.classifier;
+        File output = new File( build.getDirectory(), build.getFinalName() + c + "." + packaging );
 
-        if ( originalFile == null || !originalFile.exists() )
+        if ( output == null || !output.exists() )
         {
             throw new MojoExecutionException( "Library file not found." );
         }
 
-        getLog().debug( "Attempting to optimize: " + originalFile.getName() );
+        getLog().debug( "Attempting to optimize: " + output.getName() );
         InputStream inputSWF = null;
         ZipFile zipFile = null;
         OutputStream outputSWF = null;
@@ -194,30 +204,30 @@ public class OptimizerMojo
         {
             if ( SWF.equals( packaging ) )
             {
-                inputSWF = new FileInputStream( backupOriginalSWF( originalFile ) );
+                inputSWF = new FileInputStream( backupOriginalSWF( output ) );
                 zipFile = null;
             }
             else
             {
-                zipFile = newZipFile( originalFile );
-                inputSWF = readLibrarySwf( originalFile, zipFile );
+                zipFile = newZipFile( output );
+                inputSWF = readLibrarySwf( output, zipFile );
             }
 
             File optimizedSWFFile;
             if ( SWF.equals( packaging ) )
             {
-                originalFile.delete();
-                optimizedSWFFile = originalFile;
+                output.delete();
+                optimizedSWFFile = output;
             }
             else
             {
-                optimizedSWFFile = new File( build.getDirectory(), build.getFinalName() + ".swf" );
+                optimizedSWFFile = new File( build.getDirectory(), build.getFinalName() + c + "." + SWF );
             }
 
             optimizedSWFFile.getParentFile().mkdirs();
             outputSWF = new FileOutputStream( optimizedSWFFile );
 
-            getLog().info( "Original file is: " + originalFile.length() / 1024 + " k bytes" );
+            getLog().info( "Original file is: " + output.length() / 1024 + " k bytes" );
             if ( optimizeRsls )
             {
                 optimize( inputSWF, outputSWF );
@@ -226,7 +236,7 @@ public class OptimizerMojo
                 if ( SWC.equals( packaging ) )
                 {
                     getLog().debug( "Updating digest " );
-                    updateDigest( optimizedSWFFile, originalFile );
+                    updateDigest( optimizedSWFFile, output );
                 }
             }
             else
@@ -237,7 +247,14 @@ public class OptimizerMojo
             if ( SWC.equals( packaging ) )
             {
                 getLog().debug( "Attaching swf artifact " );
-                projectHelper.attachArtifact( project, SWF, optimizedSWFFile );
+                if ( classifier != null )
+                {
+                    projectHelper.attachArtifact( project, SWF, classifier, optimizedSWFFile );
+                }
+                else
+                {
+                    projectHelper.attachArtifact( project, SWF, optimizedSWFFile );
+                }
             }
         }
         catch ( FileNotFoundException e )
