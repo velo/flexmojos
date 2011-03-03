@@ -285,6 +285,11 @@ public class CompcMojo
             for ( final String path : includeFiles.getIncludes() )
             {
                 final File file = PathUtil.file( path, getResourcesTargetDirectories() );
+                
+                if( file == null )
+                {
+                    throw new IllegalStateException( "Unable to resolve include file, path: '"+path+"'. Please ensure that the file exists. Note: relative paths must be relative to a resource target directory." );
+                }
 
                 files.add( new IIncludeFile()
                 {
