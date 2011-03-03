@@ -2,13 +2,13 @@ package org.sonatype.flexmojos.matcher.artifact;
 
 import static org.hamcrest.Matchers.equalTo;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
 import org.hamcrest.Matcher;
 
-public class ArtifactMatcher
+public class DependencyMatcher
 {
     private static class ArtifactIdMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         ArtifactIdMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -16,14 +16,14 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getArtifactId();
         }
     }
 
     private static class ClassifierMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         public ClassifierMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -31,14 +31,14 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getClassifier();
         }
     }
 
     private static class GroupIdMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         public GroupIdMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -46,14 +46,14 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getGroupId();
         }
     }
 
     private static class ScopeMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         public ScopeMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -61,14 +61,14 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getScope();
         }
     }
 
     private static class TypeMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         public TypeMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -76,14 +76,14 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getType();
         }
     }
 
     private static class VersionMatcher
-        extends AbstractArtifactMatcher<Artifact>
+        extends AbstractArtifactMatcher<Dependency>
     {
         public VersionMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -91,7 +91,7 @@ public class ArtifactMatcher
         }
 
         @Override
-        protected String getValue( Artifact item )
+        protected String getValue( Dependency item )
         {
             return item.getVersion();
         }
@@ -99,7 +99,7 @@ public class ArtifactMatcher
 
     static
     {
-        new ArtifactMatcher();
+        new DependencyMatcher();
     }
 
     public static ArtifactIdMatcher artifactId( Matcher<? extends String> artifactId )
@@ -162,7 +162,7 @@ public class ArtifactMatcher
         return version( equalTo( version ) );
     }
 
-    private ArtifactMatcher()
+    private DependencyMatcher()
     {
         super();
     }
