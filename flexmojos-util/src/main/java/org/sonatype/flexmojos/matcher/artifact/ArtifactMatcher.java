@@ -3,41 +3,12 @@ package org.sonatype.flexmojos.matcher.artifact;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.maven.artifact.Artifact;
-import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 
 public class ArtifactMatcher
 {
-    private static abstract class AbstractArtifactMatcher
-        extends TypeSafeMatcher<Artifact>
-    {
-        private String element;
-
-        private Matcher<? extends String> elementMatcher;
-
-        public AbstractArtifactMatcher( Matcher<? extends String> elementMatcher, String element )
-        {
-            this.elementMatcher = elementMatcher;
-            this.element = element;
-        }
-
-        public void describeTo( Description description )
-        {
-            description.appendText( "a dependency with " + element + " " ).appendDescriptionOf( elementMatcher );
-        }
-
-        protected abstract String getValue( Artifact item );
-
-        @Override
-        public boolean matchesSafely( Artifact item )
-        {
-            return elementMatcher.matches( getValue( item ) );
-        }
-    }
-
     private static class ArtifactIdMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         ArtifactIdMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -52,7 +23,7 @@ public class ArtifactMatcher
     }
 
     private static class ClassifierMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         public ClassifierMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -67,7 +38,7 @@ public class ArtifactMatcher
     }
 
     private static class GroupIdMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         public GroupIdMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -82,7 +53,7 @@ public class ArtifactMatcher
     }
 
     private static class ScopeMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         public ScopeMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -97,7 +68,7 @@ public class ArtifactMatcher
     }
 
     private static class TypeMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         public TypeMatcher( Matcher<? extends String> elementMatcher )
         {
@@ -112,7 +83,7 @@ public class ArtifactMatcher
     }
 
     private static class VersionMatcher
-        extends AbstractArtifactMatcher
+        extends AbstractArtifactMatcher<Artifact>
     {
         public VersionMatcher( Matcher<? extends String> elementMatcher )
         {
