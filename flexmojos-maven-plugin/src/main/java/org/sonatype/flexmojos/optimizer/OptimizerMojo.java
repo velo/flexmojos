@@ -84,26 +84,25 @@ public class OptimizerMojo
      */
     protected MavenSession context;
 
-	/**
-	 * Keep the following AS3 metadata in the bytecodes.<BR>
-	 * Usage:
-	 * 
-	 * <pre>
-	 * &lt;keepAs3Metadatas&gt;
-	 *   &lt;keepAs3Metadata&gt;Bindable&lt;/keepAs3Metadata&gt;
-	 *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
-	 * &lt;/keepAs3Metadatas&gt;
-	 * </pre>
-	 * 
-	 * @parameter
-	 */
-	protected String[] keepAs3Metadatas;
+    /**
+     * Keep the following AS3 metadata in the bytecodes.<BR>
+     * Usage:
+     * 
+     * <pre>
+     * &lt;keepAs3Metadatas&gt;
+     *   &lt;keepAs3Metadata&gt;Bindable&lt;/keepAs3Metadata&gt;
+     *   &lt;keepAs3Metadata&gt;Events&lt;/keepAs3Metadata&gt;
+     * &lt;/keepAs3Metadatas&gt;
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String[] keepAs3Metadatas;
 
-	/**
-	 * Optimized RSLs strip out any debugging information such as line numbers.
-	 * This results in a smaller file, which leads to shorter load times but
-	 * makes it more difficult to read stacktrace errors as they contain no line
-	 * numbers.
+    /**
+     * Optimized RSLs strip out any debugging information such as line numbers. This results in a smaller file, which
+     * leads to shorter load times but makes it more difficult to read stacktrace errors as they contain no line
+     * numbers.
      * 
      * @parameter expression="${optimizeRsls}" default-value="true"
      */
@@ -229,7 +228,7 @@ public class OptimizerMojo
             {
                 optimize( inputSWF, outputSWF );
                 getLog().info( "Optimized rsl is: " + optimizedSWFFile.length() / 1024 + " k bytes" );
-                
+
                 if ( SWC.equals( packaging ) )
                 {
                     getLog().debug( "Updating digest " );
@@ -240,7 +239,7 @@ public class OptimizerMojo
             {
                 IOUtil.copy( inputSWF, outputSWF );
             }
-            
+
             if ( SWC.equals( packaging ) )
             {
                 getLog().debug( "Attaching swf artifact " );
@@ -320,23 +319,23 @@ public class OptimizerMojo
                 apiClass = Class.forName( "flex2.tools.API" );
             }
 
-			Configuration configuration = new Configuration();
-			configuration.setKeepDebugOpcodes( false );
-			CompilerConfiguration compilerConfiguration = configuration.getCompilerConfiguration();
-			compilerConfiguration.setOptimize( true );
+            Configuration configuration = new Configuration();
+            configuration.setKeepDebugOpcodes( false );
+            CompilerConfiguration compilerConfiguration = configuration.getCompilerConfiguration();
+            compilerConfiguration.setOptimize( true );
 
-			if ( keepAs3Metadatas != null )
-			{
-				compilerConfiguration.cfgKeepAs3Metadata( null, keepAs3Metadatas );
-			}
-			else
-			{
-				compilerConfiguration.cfgKeepAs3Metadata( null, StandardDefs.DefaultAS3Metadata );
-			}
+            if ( keepAs3Metadatas != null )
+            {
+                compilerConfiguration.cfgKeepAs3Metadata( null, keepAs3Metadatas );
+            }
+            else
+            {
+                compilerConfiguration.cfgKeepAs3Metadata( null, StandardDefs.DefaultAS3Metadata );
+            }
 
-			Method optimizeMethod = apiClass.getDeclaredMethod( "optimize", InputStream.class, OutputStream.class,
-					Configuration.class );
-			optimizeMethod.invoke( null, inputSWF, outputSWF, configuration );
+            Method optimizeMethod =
+                apiClass.getDeclaredMethod( "optimize", InputStream.class, OutputStream.class, Configuration.class );
+            optimizeMethod.invoke( null, inputSWF, outputSWF, configuration );
             outputSWF.flush();
         }
         catch ( Exception e )
@@ -366,7 +365,7 @@ public class OptimizerMojo
     }
 
     @SuppressWarnings( "unchecked" )
-	protected void updateDigest( File optimizedSWF, File originalFile )
+    protected void updateDigest( File optimizedSWF, File originalFile )
         throws MojoExecutionException
     {
         Digest digest = computeDigest( optimizedSWF );
