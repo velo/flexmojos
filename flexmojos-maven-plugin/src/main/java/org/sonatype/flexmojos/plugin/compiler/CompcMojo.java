@@ -288,7 +288,10 @@ public class CompcMojo
                 
                 if( file == null )
                 {
-                    throw new IllegalStateException( "Unable to resolve include file, path: '"+path+"'. Please ensure that the file exists. Note: relative paths must be relative to a resource target directory." );
+                    throw new IllegalStateException(
+                                                     "Unable to resolve include file, path: '"
+                                                         + path
+                                                         + "'. Please ensure that the file exists. Note: relative paths must be relative to a resource target directory." );
                 }
 
                 files.add( new IIncludeFile()
