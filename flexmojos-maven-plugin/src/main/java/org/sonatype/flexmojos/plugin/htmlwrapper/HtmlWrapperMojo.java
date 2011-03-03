@@ -301,7 +301,7 @@ public class HtmlWrapperMojo
 
         try
         {
-            FileUtils.copyDirectory( source, templateOutputDirectory );
+            FileUtils.copyDirectoryStructure( source, templateOutputDirectory );
         }
         catch ( IOException e )
         {
