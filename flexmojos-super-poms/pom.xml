@@ -63,8 +63,7 @@
     <profile>
       <activation>
         <property>
-          <name>performRelease</name>
-          <value>false</value>
+          <name>!performRelease</name>
         </property>
       </activation>
       <build>

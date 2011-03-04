@@ -321,6 +321,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private List<String> compileSourceRoots;
 
     /**
+     * DOCME Guess what, undocumented by adobe.
+     * <p>
+     * Equivalent to -compiler.compress
+     * </p>
+     * 
+     * @parameter expression="${flex.compress}"
+     */
+    private Boolean compress;
+
+    /**
      * DOCME undocumented by adobe
      * <p>
      * Equivalent to -compiler.conservative
@@ -1860,6 +1870,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         return compilerWarnings;
+    }
+
+    public Boolean getCompress()
+    {
+        return compress;
     }
 
     public Boolean getConservative()

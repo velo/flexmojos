@@ -302,8 +302,8 @@ public class CompcMojo
             for ( final String path : includeFiles.getIncludes() )
             {
                 final File file = PathUtil.file( path, getResourcesTargetDirectories() );
-                
-                if( file == null )
+
+                if ( file == null )
                 {
                     throw new IllegalStateException(
                                                      "Unable to resolve include file, path: '"
