@@ -392,6 +392,10 @@ public abstract class AbstractMavenMojo
     protected String getAirTarget()
     {
         int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
+        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
+        {
+            return "2.6";
+        }
         if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
         {
             return "2.5";

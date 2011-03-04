@@ -14,17 +14,76 @@
  */
 package org.sonatype.flexmojos.test;
 
+import java.io.PrintStream;
+
+import org.apache.commons.io.output.NullOutputStream;
+import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
 public class ProgressListener
     extends TestListenerAdapter
 {
-    @Override
-    public void onTestStart( ITestResult result )
-    {
-        super.onTestStart( result );
 
-        System.out.println( "Running: " + result.getTestClass().getName() + "." + result.getName() + "()" );
+    private PrintStream out;
+
+    private PrintStream err;
+
+    @Override
+    public void onStart( ITestContext testContext )
+    {
+        super.onStart( testContext );
+
+        out = System.out;
+        err = System.err;
+        System.setOut( new PrintStream( new NullOutputStream() ) );
+        System.setErr( new PrintStream( new NullOutputStream() ) );
     }
+
+    @Override
+    public void onFinish( ITestContext testContext )
+    {
+        super.onFinish( testContext );
+
+        System.setOut( out );
+        System.setErr( err );
+    }
+
+    @Override
+    public void onTestFailedButWithinSuccessPercentage( ITestResult tr )
+    {
+        super.onTestFailedButWithinSuccessPercentage( tr );
+
+        showResult( tr, "partial success", err );
+    }
+
+    @Override
+    public void onTestFailure( ITestResult tr )
+    {
+        super.onTestFailure( tr );
+
+        showResult( tr, "failed", err );
+    }
+
+    @Override
+    public void onTestSkipped( ITestResult tr )
+    {
+        super.onTestSkipped( tr );
+
+        showResult( tr, "skipped", err );
+    }
+
+    @Override
+    public void onTestSuccess( ITestResult tr )
+    {
+        super.onTestSuccess( tr );
+
+        showResult( tr, "success", out );
+    }
+
+    private void showResult( ITestResult result, String status, PrintStream printer )
+    {
+        printer.println( "Result: " + result.getTestClass().getName() + "." + result.getName() + "() ===> " + status );
+    }
+
 }

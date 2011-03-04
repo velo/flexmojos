@@ -3,6 +3,7 @@ package org.sonatype.flexmojos.plugin.compiler.issues;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.sonatype.flexmojos.util.PathUtil.file;
 
 import java.io.File;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class Flexmojos345Test
             @Override
             protected List<File> getResourcesTargetDirectories()
             {
-                return Arrays.asList( new File( "." ) );
+                return Arrays.asList( file( "./target/test-classes" ) );
             }
         };
 
