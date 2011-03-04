@@ -253,6 +253,11 @@ public class AsdocMojo
     private File output;
 
     /**
+     * @component
+     */
+    private ProjectBuilder projectBuilder;
+
+    /**
      * @parameter expression="${reactorProjects}"
      * @required
      * @readonly
@@ -389,6 +394,12 @@ public class AsdocMojo
         return docSources;
     }
 
+    @Override
+    public String getDumpConfig()
+    {
+        return null;
+    }
+
     public String getExamplesPath()
     {
         return PathUtil.path( examplesPath );
@@ -454,11 +465,6 @@ public class AsdocMojo
         return lenient;
     }
 
-    /**
-     * @component
-     */
-    private ProjectBuilder projectBuilder;
-
     @SuppressWarnings( "unchecked" )
     @Override
     public File[] getLibraryPath()
@@ -503,6 +509,12 @@ public class AsdocMojo
         }
     }
 
+    @Override
+    public String getLinkReport()
+    {
+        return null;
+    }
+
     public String getMainTitle()
     {
         return mainTitle;
@@ -538,6 +550,12 @@ public class AsdocMojo
 
     @Override
     public IRuntimeSharedLibraryPath[] getRuntimeSharedLibraryPath()
+    {
+        return null;
+    }
+
+    @Override
+    public String getSizeReport()
     {
         return null;
     }
@@ -626,24 +644,6 @@ public class AsdocMojo
                 throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
             }
         }
-    }
-
-    @Override
-    public String getDumpConfig()
-    {
-        return null;
-    }
-
-    @Override
-    public String getLinkReport()
-    {
-        return null;
-    }
-
-    @Override
-    public String getSizeReport()
-    {
-        return null;
     }
 
 }
