@@ -9,7 +9,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * © time4tea technology ltd 2007 - Freely redistributable as long as source is acknowledged
+ * time4tea technology ltd 2007 - Freely redistributable as long as source is acknowledged
  */
 public class FileMatcher
 {
