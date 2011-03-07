@@ -28,7 +28,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 import java.io.File;
 
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
+import org.sonatype.flexmojos.plugin.compiler.attributes.Module;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 
 /**
@@ -40,7 +40,6 @@ import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
  * @since 3.5
  * @goal test-swf
  * @requiresDependencyResolution test
- * @configurator flexmojos
  * @threadSafe
  */
 public class TestMxmlcMojo

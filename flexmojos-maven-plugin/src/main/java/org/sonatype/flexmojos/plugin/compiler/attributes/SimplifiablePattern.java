@@ -15,57 +15,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
+package org.sonatype.flexmojos.plugin.compiler.attributes;
 
-public class Module
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.maven.model.FileSet;
+
+public class SimplifiablePattern
 {
 
-    private String destinationPath;
+    private List<String> includes;
 
-    private String finalName;
+    private List<FileSet> patterns;
 
-    private Boolean optimize ;
-
-    private String sourceFile;
-
-    public String getDestinationPath()
+    public void addInclude( String include )
     {
-        return destinationPath;
+        getIncludes().add( include );
     }
 
-    public String getFinalName()
+    public void addScan( FileSet pattern )
     {
-        return finalName;
+        getPatterns().add( pattern );
     }
 
-    public String getSourceFile()
+    public List<String> getIncludes()
     {
-        return sourceFile;
+        if ( includes == null )
+        {
+            includes = new ArrayList<String>();
+        }
+        return includes;
     }
 
-    public Boolean isOptimize()
+    public List<FileSet> getPatterns()
     {
-        return optimize;
+        if ( patterns == null )
+        {
+            patterns = new ArrayList<FileSet>();
+        }
+        return patterns;
     }
 
-    public void setDestinationPath( String destinationPath )
+    public void setIncludes( List<String> includes )
     {
-        this.destinationPath = destinationPath;
+        this.includes = includes;
     }
 
-    public void setFinalName( String finalName )
+    public void setPatterns( List<FileSet> patterns )
     {
-        this.finalName = finalName;
-    }
-
-    public void setOptimize( Boolean optimize )
-    {
-        this.optimize = optimize;
-    }
-
-    public void setSourceFile( String sourceFile )
-    {
-        this.sourceFile = sourceFile;
+        this.patterns = patterns;
     }
 
 }

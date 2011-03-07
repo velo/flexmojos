@@ -42,7 +42,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.Module;
+import org.sonatype.flexmojos.plugin.compiler.attributes.Module;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 import org.sonatype.flexmojos.truster.FlashPlayerTruster;
@@ -62,7 +62,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal compile-swf
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  */
 public class MxmlcMojo

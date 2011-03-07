@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.sonatype.flexmojos.compiler.IIncludeFile;
 import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
+import org.sonatype.flexmojos.plugin.compiler.attributes.SimplifiablePattern;
 import org.testng.annotations.Test;
 
 public class Flexmojos345Test

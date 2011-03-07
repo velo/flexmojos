@@ -44,7 +44,6 @@ import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
  * @since 4.0
  * @goal configurator
  * @requiresDependencyResolution compile
- * @configurator flexmojos
  * @threadSafe
  */
 public class ConfigurationMojo
