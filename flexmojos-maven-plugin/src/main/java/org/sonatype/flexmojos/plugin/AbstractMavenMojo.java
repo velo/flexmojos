@@ -406,9 +406,9 @@ public abstract class AbstractMavenMojo
         return includedFiles;
     }
 
-    protected String getAirTarget()
+    public String getAirTarget()
     {
-        int[] version = VersionUtils.splitVersion( getCompilerVersion(), 3 );
+        int[] version = VersionUtils.splitVersion( getCompilerVersion() );
         if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
         {
             return "2.6";
@@ -581,14 +581,18 @@ public abstract class AbstractMavenMojo
         return directories;
     }
 
+    public MavenSession getSession()
+    {
+        return session;
+    }
+
     public File getTargetDirectory()
     {
         targetDirectory.mkdirs();
         return PathUtil.file( targetDirectory );
     }
 
-    protected File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier,
-                                        String type )
+    public File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier, String type )
     {
         Artifact artifact = resolve( groupId, artifactId, version, classifier, type );
 
