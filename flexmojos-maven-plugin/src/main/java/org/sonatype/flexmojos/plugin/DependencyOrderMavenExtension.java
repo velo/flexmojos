@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.AbstractMavenLifecycleParticipant;
+import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
@@ -21,7 +22,9 @@ public class DependencyOrderMavenExtension
 
     private static final String FLEXMOJOS = "org.sonatype.flexmojos:flexmojos-maven-plugin";
 
-    public void afterProjectsRead( MavenSession session )
+    @Override
+    public void afterSessionStart( MavenSession session )
+        throws MavenExecutionException
     {
         if ( session.getRequest().getUserProperties().containsKey( "flexmojos.ignore.dependency.order" ) )
         {

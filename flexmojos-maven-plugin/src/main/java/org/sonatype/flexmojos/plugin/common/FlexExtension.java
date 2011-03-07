@@ -32,6 +32,8 @@ public interface FlexExtension
 
     String EXE = "exe";
 
+    String IPA = "ipa";
+
     String POM = "pom";
 
     String RB_SWC = "rb.swc";

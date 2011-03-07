@@ -7,6 +7,8 @@
  */
 package org.sonatype.flexmojos.compatibilitykit;
 
+import static java.lang.Math.min;
+
 import java.util.Arrays;
 
 public class VersionUtils
@@ -70,7 +72,7 @@ public class VersionUtils
 
     private static boolean isVersionOK( int[] fdkVersion, int[] minVersion )
     {
-        int lenght = getSmaller( fdkVersion.length, minVersion.length );
+        int lenght = min( fdkVersion.length, minVersion.length );
 
         int result = 0;
         for ( int i = 0; i < lenght; i++ )
@@ -83,26 +85,6 @@ public class VersionUtils
         }
 
         return result > -1;
-    }
-
-    private static int getSmaller( int... integers )
-    {
-        if ( integers.length == 0 )
-        {
-            return 0;
-        }
-
-        int smaller = Integer.MAX_VALUE;
-
-        for ( int integer : integers )
-        {
-            if ( integer < smaller )
-            {
-                smaller = integer;
-            }
-        }
-
-        return smaller;
     }
 
 }
