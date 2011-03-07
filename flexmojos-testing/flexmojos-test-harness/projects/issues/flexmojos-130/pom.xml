@@ -29,6 +29,7 @@
         <executions>
           <execution>
             <goals>
+              <goal>dita-asdoc</goal>
               <goal>asdoc</goal>
             </goals>
             <configuration>
