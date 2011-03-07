@@ -243,6 +243,12 @@
       <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency> <!-- required by unit tests -->
       <groupId>jaxen</groupId>
@@ -299,10 +305,6 @@
       <artifactId>zip</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>flexmojos-tester</artifactId>
       <version>${project.version}</version>
@@ -336,6 +338,10 @@
       <exclusions>
         <exclusion>
           <artifactId>plexus-component-api</artifactId>
+          <groupId>org.codehaus.plexus</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>plexus-container-default</artifactId>
           <groupId>org.codehaus.plexus</groupId>
         </exclusion>
       </exclusions>

@@ -33,7 +33,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal asdoc-report
  * @requiresDependencyResolution compile
  * @phase process-sources
- * @configurator flexmojos
  * @threadSafe
  */
 public class AsdocReportMojo

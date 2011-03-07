@@ -26,7 +26,6 @@ import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
  * @goal cc-swc
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  * @author Joa Ebert
  * @requiresDirectInvocation
