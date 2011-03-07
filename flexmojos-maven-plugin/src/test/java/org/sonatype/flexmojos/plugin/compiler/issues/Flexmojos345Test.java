@@ -27,7 +27,7 @@ public class Flexmojos345Test
             public IIncludeFile[] getIncludeFile()
             {
                 includeFiles = new SimplifiablePattern();
-                includeFiles.addInclude( "abc\\cba\\test" );
+                includeFiles.addInclude( "abc/cba/test" );
                 return super.getIncludeFile();
             }
 
