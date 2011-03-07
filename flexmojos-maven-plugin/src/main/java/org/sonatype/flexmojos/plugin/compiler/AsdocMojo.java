@@ -35,7 +35,7 @@ import org.sonatype.flexmojos.compiler.IPackagesConfiguration;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
+import org.sonatype.flexmojos.plugin.compiler.attributes.SimplifiablePattern;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.OSUtils;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -50,7 +50,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal asdoc
  * @requiresDependencyResolution compile
  * @phase process-sources
- * @configurator flexmojos
  * @threadSafe
  */
 public class AsdocMojo

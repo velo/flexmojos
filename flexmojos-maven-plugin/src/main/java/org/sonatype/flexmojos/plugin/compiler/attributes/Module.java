@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
+package org.sonatype.flexmojos.plugin.compiler.attributes;
 
 public class Module
 {
@@ -7,7 +7,7 @@ public class Module
 
     private String finalName;
 
-    private Boolean optimize ;
+    private Boolean optimize;
 
     private String sourceFile;
 
@@ -29,6 +29,11 @@ public class Module
     public Boolean isOptimize()
     {
         return optimize;
+    }
+
+    public void set( String sourceFile )
+    {
+        this.sourceFile = sourceFile;
     }
 
     public void setDestinationPath( String destinationPath )

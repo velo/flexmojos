@@ -1,4 +1,4 @@
-package org.sonatype.flexmojos.plugin.compiler.attributes.converter;
+package org.sonatype.flexmojos.plugin.compiler.attributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class SimplifiablePattern
         getIncludes().add( include );
     }
 
-    public void addPattern( FileSet pattern )
+    public void addScan( FileSet pattern )
     {
         getPatterns().add( pattern );
     }
