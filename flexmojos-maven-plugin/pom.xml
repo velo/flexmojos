@@ -172,10 +172,22 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -224,6 +236,12 @@
       <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>sisu-inject-plexus</artifactId>
+          <groupId>org.sonatype.sisu</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency> <!-- required by unit tests -->
       <groupId>jaxen</groupId>
@@ -280,8 +298,8 @@
       <artifactId>zip</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
+      <groupId>org.sonatype.sisu.inject</groupId>
+      <artifactId>guice-plexus-shim</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -318,6 +336,10 @@
         <exclusion>
           <artifactId>plexus-component-api</artifactId>
           <groupId>org.codehaus.plexus</groupId>
+        </exclusion>
+        <exclusion>
+        	<artifactId>plexus-container-default</artifactId>
+        	<groupId>org.codehaus.plexus</groupId>
         </exclusion>
       </exclusions>
     </dependency>

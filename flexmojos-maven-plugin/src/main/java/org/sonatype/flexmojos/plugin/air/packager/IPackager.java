@@ -8,6 +8,8 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
+import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+
 import com.adobe.air.Listener;
 
 public interface IPackager
@@ -36,4 +38,6 @@ public interface IPackager
         throws GeneralSecurityException, IOException;
 
     void close();
+
+    void setContext( AbstractMavenMojo mojo );
 }

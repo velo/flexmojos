@@ -33,7 +33,6 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
 import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -118,6 +117,13 @@ public class SignAirMojo
      * @readonly
      */
     protected MavenProjectHelper projectHelper;
+
+    /**
+     * @component role="org.sonatype.flexmojos.plugin.air.packager.IPackager"
+     * @required
+     * @readonly
+     */
+    protected Map<String, IPackager> packagers;
 
     /**
      * @parameter
@@ -365,7 +371,8 @@ public class SignAirMojo
         String version;
         if ( project.getArtifact().isSnapshot() )
         {
-            version = project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
+            version =
+                project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
         }
         else
         {
@@ -437,21 +444,25 @@ public class SignAirMojo
         getLog().info( "Creating the following packagers: " + packages.toString() );
 
         Map<String, IPackager> packs = new LinkedHashMap<String, IPackager>();
-        if ( packages.contains( AIR ) )
-        {
-            packs.put( AIR, new FlexmojosAIRPackager() );
-        }
 
-        if ( packages.size() != packs.size() )
+        for ( String pack : packages )
         {
-            getLog().error( "Invalid package found, valid values are: 'air', 'dmg', 'exe', 'rpm' and 'deb', but got "
-                                + packages.toString() );
+            IPackager packager = packagers.get( pack );
+            if ( packager == null )
+            {
+                getLog().error( "Invalid package found, got: " + pack + ", valid values are: " + packagers.keySet() );
+            }
+            else
+            {
+                packager.setContext( this );
+                packs.put( pack, packager );
+            }
         }
 
         if ( packs.isEmpty() )
         {
-            getLog().debug( "Packagers is empty or contains invalid packagers, using AIR" );
-            packs.put( AIR, new FlexmojosAIRPackager() );
+            getLog().warn( "Packagers is empty or only contains invalid packagers, using AIR" );
+            packs.put( AIR, packagers.get( AIR ) );
         }
         return packs;
     }
