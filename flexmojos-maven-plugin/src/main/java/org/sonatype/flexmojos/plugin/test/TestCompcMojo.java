@@ -33,7 +33,6 @@ import flex2.compiler.common.SinglePathResolver;
  * @goal test-swc
  * @requiresDependencyResolution test
  * @phase package
- * @configurator flexmojos
  * @threadSafe
  */
 public class TestCompcMojo

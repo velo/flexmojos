@@ -17,7 +17,7 @@ import org.sonatype.flexmojos.compiler.IIncludeFile;
 import org.sonatype.flexmojos.compiler.IIncludeStylesheet;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenIncludeStylesheet;
-import org.sonatype.flexmojos.plugin.compiler.attributes.converter.SimplifiablePattern;
+import org.sonatype.flexmojos.plugin.compiler.attributes.SimplifiablePattern;
 import org.sonatype.flexmojos.util.PathUtil;
 
 /**
@@ -34,7 +34,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal compile-swc
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  */
 public class CompcMojo
