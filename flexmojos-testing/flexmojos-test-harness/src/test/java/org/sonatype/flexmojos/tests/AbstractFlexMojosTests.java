@@ -133,15 +133,15 @@ public class AbstractFlexMojosTests
 
         if ( OSUtils.isWindows() )
         {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "exe" ) );
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "exe" ) );
         }
         else if ( OSUtils.isMacOS() )
         {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "mac" ) );
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "uexe", "mac" ) );
         }
         else
         {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.1", "uexe", "linux" ) );
+            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "uexe", "linux" ) );
         }
     }
 

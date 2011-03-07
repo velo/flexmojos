@@ -15,7 +15,6 @@ import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
  * @goal cc
  * @requiresDependencyResolution compile
  * @phase compile
- * @configurator flexmojos
  * @threadSafe
  * @author Joa Ebert
  * @author Marvin Froeder

@@ -29,7 +29,6 @@ import org.sonatype.flexmojos.util.PathUtil;
  * @goal dita-asdoc
  * @requiresDependencyResolution compile
  * @phase package
- * @configurator flexmojos
  * @threadSafe
  */
 public class DitaAsdocMojo
