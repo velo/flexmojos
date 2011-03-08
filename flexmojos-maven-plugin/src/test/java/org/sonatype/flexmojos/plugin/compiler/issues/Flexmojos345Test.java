@@ -40,30 +40,31 @@ public class Flexmojos345Test
         throws Exception
     {
         // This problem only occurs on Windows machines, so we can only test for it on them.
-		if(OSUtils.isWindows()) {
-			CompcMojo m = new CompcMojo()
-			{
-				@Override
-				public IIncludeFile[] getIncludeFile()
-				{
-					includeFiles = new SimplifiablePattern();
-					includeFiles.addInclude( "abc\\cba\\test" );
-					return super.getIncludeFile();
-				}
+        if ( OSUtils.isWindows() )
+        {
+            CompcMojo m = new CompcMojo()
+            {
+                @Override
+                public IIncludeFile[] getIncludeFile()
+                {
+                    includeFiles = new SimplifiablePattern();
+                    includeFiles.addInclude( "abc\\cba\\test" );
+                    return super.getIncludeFile();
+                }
 
-				@Override
-				protected List<File> getResourcesTargetDirectories()
-				{
-					return Arrays.asList( file( "./target/test-classes" ) );
-				}
-			};
+                @Override
+                protected List<File> getResourcesTargetDirectories()
+                {
+                    return Arrays.asList( file( "./target/test-classes" ) );
+                }
+            };
 
-			IIncludeFile[] files = m.getIncludeFile();
+            IIncludeFile[] files = m.getIncludeFile();
 
-			for ( IIncludeFile file : files )
-			{
-				assertThat( file.name(), not( containsString( "\\" ) ) );
-			}
+            for ( IIncludeFile file : files )
+            {
+                assertThat( file.name(), not( containsString( "\\" ) ) );
+            }
         }
     }
 
