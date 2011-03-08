@@ -299,10 +299,6 @@
     </dependency>
 
     <dependency>
-      <groupId>jgoogleanalytics</groupId>
-      <artifactId>jgoogleanalytics</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.googlecode.lambdaj</groupId>
       <artifactId>lambdaj</artifactId>
     </dependency>
