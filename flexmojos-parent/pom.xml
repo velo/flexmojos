@@ -695,11 +695,6 @@
       </dependency>
 
       <dependency>
-        <groupId>jgoogleanalytics</groupId>
-        <artifactId>jgoogleanalytics</artifactId>
-        <version>0.2</version>
-      </dependency>
-      <dependency>
         <groupId>com.googlecode.apparat</groupId>
         <artifactId>apparat-core</artifactId>
         <version>${apparat.version}</version>
