@@ -67,6 +67,13 @@
           <configuration>
             <complianceLevel>1.6</complianceLevel>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
