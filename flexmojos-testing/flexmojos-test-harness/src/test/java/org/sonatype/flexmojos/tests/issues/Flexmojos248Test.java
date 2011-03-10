@@ -48,9 +48,9 @@ public class Flexmojos248Test
         File main = new File( target, "test-flex-modules-0.0.1-SNAPSHOT.swf" );
         MatcherAssert.assertThat( main, FileMatcher.isFile() );
 
-        File module1 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-module1.swf" );
+        File module1 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-Module1.swf" );
         MatcherAssert.assertThat( module1, FileMatcher.isFile() );
-        File module2 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-module1.swf" );
+        File module2 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-Module2.swf" );
         MatcherAssert.assertThat( module2, FileMatcher.isFile() );
 
         assertSeftExit( main, 3539, v );
