@@ -36,7 +36,7 @@ public class Issue0152Test
         File testDir = getProject( "/issues/issue-0152" );
         test( testDir, "install", "-Dflex.modulesLoadExterns=" + isLoadExterns );
 
-        File module = new File( testDir, "target/issue-0152-1.0-SNAPSHOT-AnModule.swf" );
+        File module = new File( testDir, "target/issue-0152-1.0-SNAPSHOT-anmodule.swf" );
 
         assertThat( module, FileMatcher.exists() );
 
