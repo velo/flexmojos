@@ -153,6 +153,14 @@ public abstract class AbstractMavenMojo
     protected File configDirectory;
 
     /**
+     * When false (faster) Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF). If
+     * true, Thread.join() will be invoked to make the execution synchronous (sequential).
+     * 
+     * @parameter expression="${flex.fullSynchronization}" default-value="false"
+     */
+    protected boolean fullSynchronization;
+
+    /**
      * Local repository to be used by the plugin to resolve dependencies.
      * 
      * @parameter expression="${localRepository}"

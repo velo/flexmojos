@@ -80,7 +80,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
-import org.sonatype.flexmojos.compiler.IApplicationDomains;
+import org.sonatype.flexmojos.compiler.IApplicationDomain;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
 import org.sonatype.flexmojos.compiler.IDefaultScriptLimits;
@@ -672,14 +672,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.framework}"
      */
     private String framework;
-
-    /**
-     * When false (faster) Flexmojos will compiler modules and resource bundles using multiple threads (One per SWF). If
-     * true, Thread.join() will be invoked to make the execution synchronous (sequential).
-     * 
-     * @parameter expression="${flex.fullSynchronization}" default-value="false"
-     */
-    protected boolean fullSynchronization;
 
     /**
      * DOCME undocumented by adobe
@@ -1702,7 +1694,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return allowSourcePathOverlap;
     }
 
-    public IApplicationDomains[] getApplicationDomains()
+    public IApplicationDomain[] getApplicationDomain()
     {
         return this.applicationDomains;
     }
