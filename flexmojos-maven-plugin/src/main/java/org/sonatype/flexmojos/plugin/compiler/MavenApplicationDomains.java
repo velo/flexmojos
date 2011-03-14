@@ -1,9 +1,9 @@
 package org.sonatype.flexmojos.plugin.compiler;
 
-import org.sonatype.flexmojos.compiler.IApplicationDomains;
+import org.sonatype.flexmojos.compiler.IApplicationDomain;
 
 public class MavenApplicationDomains
-    implements IApplicationDomains
+    implements IApplicationDomain
 {
 
     private String pathElement;
@@ -15,7 +15,8 @@ public class MavenApplicationDomains
         return this.pathElement;
     }
 
-    public String applicationDomain()
+    @Override
+    public String applicationDomainTarget()
     {
         return this.applicationDomain;
     }
