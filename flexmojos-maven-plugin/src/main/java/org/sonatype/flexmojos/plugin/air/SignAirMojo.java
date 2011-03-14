@@ -28,16 +28,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -50,6 +48,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
+import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
 import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
@@ -115,15 +114,6 @@ public class SignAirMojo
     private File keystore;
 
     /**
-     * Valid values: 'air', 'dmg', 'exe', 'rpm' and 'deb'
-     * <p>
-     * Default-value = 'air'
-     * 
-     * @parameter
-     */
-    private List<String> packages = Arrays.asList( AIR );
-
-    /**
      * @parameter expression="${project}"
      */
     private MavenProject project;
@@ -134,13 +124,6 @@ public class SignAirMojo
      * @readonly
      */
     protected MavenProjectHelper projectHelper;
-
-    /**
-     * @component role="org.sonatype.flexmojos.plugin.air.packager.IPackager"
-     * @required
-     * @readonly
-     */
-    protected Map<String, IPackager> packagers;
 
     /**
      * @parameter
@@ -213,7 +196,7 @@ public class SignAirMojo
         }
     }
 
-    private void doPackage( String packagerName, IPackager packager )
+    protected void doPackage( String packagerName, IPackager packager )
         throws MojoExecutionException
     {
         try
@@ -221,7 +204,8 @@ public class SignAirMojo
             KeyStore keyStore = KeyStore.getInstance( storetype );
             keyStore.load( new FileInputStream( keystore.getAbsolutePath() ), storepass.toCharArray() );
             String alias = keyStore.aliases().nextElement();
-            packager.setPrivateKey( (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() ) );
+            PrivateKey key = (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() );
+            packager.setPrivateKey( key );
 
             String c = this.classifier == null ? "" : "-" + this.classifier;
             File output =
@@ -229,8 +213,10 @@ public class SignAirMojo
             packager.setOutput( output );
             packager.setDescriptor( getAirDescriptor() );
 
-            packager.setSignerCertificate( keyStore.getCertificate( alias ) );
-            packager.setCertificateChain( keyStore.getCertificateChain( alias ) );
+            Certificate certificate = keyStore.getCertificate( alias );
+            packager.setSignerCertificate( certificate );
+            Certificate[] certificateChain = keyStore.getCertificateChain( alias );
+            packager.setCertificateChain( certificateChain );
             if ( this.timestampURL != null )
             {
                 packager.setTimestampURL( TIMESTAMP_NONE.equals( this.timestampURL ) ? null : this.timestampURL );
@@ -373,11 +359,7 @@ public class SignAirMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        Map<String, IPackager> packagers = getPackagers();
-        for ( Entry<String, IPackager> packager : packagers.entrySet() )
-        {
-            doPackage( packager.getKey(), packager.getValue() );
-        }
+        doPackage( AIR, new FlexmojosAIRPackager() );
     }
 
     private File getAirDescriptor()
@@ -453,35 +435,6 @@ public class SignAirMojo
             output = project.getArtifact().getFile();
         }
         return output;
-    }
-
-    private Map<String, IPackager> getPackagers()
-        throws MojoExecutionException
-    {
-        getLog().info( "Creating the following packagers: " + packages.toString() );
-
-        Map<String, IPackager> packs = new LinkedHashMap<String, IPackager>();
-
-        for ( String pack : packages )
-        {
-            IPackager packager = packagers.get( pack );
-            if ( packager == null )
-            {
-                getLog().error( "Invalid package found, got: " + pack + ", valid values are: " + packagers.keySet() );
-            }
-            else
-            {
-                packager.setContext( this );
-                packs.put( pack, packager );
-            }
-        }
-
-        if ( packs.isEmpty() )
-        {
-            getLog().warn( "Packagers is empty or only contains invalid packagers, using AIR" );
-            packs.put( AIR, packagers.get( AIR ) );
-        }
-        return packs;
     }
 
 }

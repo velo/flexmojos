@@ -25,14 +25,11 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
-import org.codehaus.plexus.component.annotations.Component;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-import org.sonatype.flexmojos.plugin.common.FlexExtension;
 
 import com.adobe.air.AIRPackager;
 import com.adobe.air.Listener;
 
-@Component( role = IPackager.class, hint = FlexExtension.AIR )
 public class FlexmojosAIRPackager
     implements IPackager
 {
@@ -65,11 +62,6 @@ public class FlexmojosAIRPackager
         throws CertificateException
     {
         this.packager.setCertificateChain( certificateChain );
-    }
-
-    @Override
-    public void setContext( AbstractMavenMojo mojo )
-    {
     }
 
     public void setDescriptor( File airDescriptor )
