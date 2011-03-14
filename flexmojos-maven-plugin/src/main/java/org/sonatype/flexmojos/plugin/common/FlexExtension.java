@@ -27,6 +27,8 @@ public interface FlexExtension
 
     String APK = "apk";
 
+    String BAR = "bar";
+
     String CSS = "css";
 
     String DEB = "deb";
