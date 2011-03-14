@@ -126,7 +126,7 @@
 #if ($artifact.getSourcePath())
             <sourceAttachmentPathEntry
                 kind="3"
-                linkType="$artifact.getLinkType()"
+                linkType="$artifact.getLinkTypeId()"
                 path="$artifact.getPath()"
                 sourcepath="$artifact.getSourcePath()"
                 useDefaultLinkType="false" />
