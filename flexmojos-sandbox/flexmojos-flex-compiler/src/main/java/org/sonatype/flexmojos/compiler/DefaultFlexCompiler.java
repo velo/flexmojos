@@ -1,6 +1,5 @@
 package org.sonatype.flexmojos.compiler;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -8,10 +7,10 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.sonatype.flexmojos.compiler.command.Command;
+import org.sonatype.flexmojos.compiler.command.CommandUtil;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.compiler.util.FlexCompilerArgumentParser;
 
-import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.tools.ASDoc;
 import flex2.tools.Compc;
 import flex2.tools.DigestTool;
@@ -30,7 +29,7 @@ public class DefaultFlexCompiler
     public Result compileSwc( final ICompcConfiguration configuration, boolean sychronize )
         throws Exception
     {
-        return execute( new Command()
+        return CommandUtil.execute( new Command()
         {
             public void command()
                 throws Exception
@@ -51,7 +50,7 @@ public class DefaultFlexCompiler
         {
             argsList.add( cfgHolder.sourceFile.getAbsolutePath() );
         }
-        return execute( new Command()
+        return CommandUtil.execute( new Command()
         {
             public void command()
             {
@@ -65,7 +64,7 @@ public class DefaultFlexCompiler
     public Result asdoc( final IASDocConfiguration configuration, boolean sychronize )
         throws Exception
     {
-        return execute( new Command()
+        return CommandUtil.execute( new Command()
         {
             public void command()
             {
@@ -79,7 +78,7 @@ public class DefaultFlexCompiler
     public Result digest( final IDigestConfiguration configuration, boolean sychronize )
         throws Exception
     {
-        return execute( new Command()
+        return CommandUtil.execute( new Command()
         {
             public void command()
                 throws Exception
@@ -88,7 +87,7 @@ public class DefaultFlexCompiler
                 logArgs( args );
                 Method m = DigestTool.class.getDeclaredMethod( "digestTool", String[].class );
                 m.setAccessible( true );
-                m.invoke( null, new Object[]{args} );
+                m.invoke( null, new Object[] { args } );
             }
         }, sychronize );
     }
@@ -96,7 +95,7 @@ public class DefaultFlexCompiler
     public Result optimize( final IOptimizerConfiguration configuration, boolean sychronize )
         throws Exception
     {
-        return execute( new Command()
+        return CommandUtil.execute( new Command()
         {
             public void command()
                 throws Exception
@@ -106,79 +105,6 @@ public class DefaultFlexCompiler
                 Optimizer.main( args );
             }
         }, sychronize );
-    }
-
-    private Result execute( final Command command, boolean sychronize )
-        throws Exception
-    {
-        final Result r = new Result();
-        Thread t = new Thread( new Runnable()
-        {
-            public void run()
-            {
-//                SecurityManager sm = System.getSecurityManager();
-//
-//                System.setSecurityManager( new SecurityManager()
-//                {
-//                    public void checkPermission( java.security.Permission perm )
-//                    {
-//                        if ( perm.getName().contains( "exitVM" ) )
-//                        {
-//                            throw new CompilerSecurityException();
-//                        }
-//                    }
-//                } );
-
-                try
-                {
-                    command.command();
-                }
-//                catch ( CompilerSecurityException e )
-//                {
-//                    // that is fine, just we preventing adobe from killing the VM
-//                }
-                catch ( Exception e )
-                {
-                    r.setException( e );
-                }
-//                finally
-//                {
-//                    System.setSecurityManager( sm );
-//                }
-
-                r.setExitCode( ThreadLocalToolkit.errorCount() );
-            }
-        } );
-        t.setUncaughtExceptionHandler( new UncaughtExceptionHandler()
-        {
-            public void uncaughtException( Thread t, Throwable e )
-            {
-                if ( e instanceof Exception )
-                {
-                    r.setException( (Exception) e );
-                }
-                else
-                {
-                    r.setException( new Exception( e ) );
-                }
-            }
-        } );
-        t.start();
-        r.setThread( t );
-
-        if ( sychronize )
-        {
-            Thread.yield();
-            try
-            {
-                t.join();
-            }
-            catch ( InterruptedException e )
-            {
-            }
-        }
-
-        return r;
     }
 
     private void logArgs( String[] args )
