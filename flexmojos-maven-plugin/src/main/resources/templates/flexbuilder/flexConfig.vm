@@ -76,11 +76,13 @@
 #end
 		</namespaces>
 		
+#if ( $themes.size() &&  $themes.size() > 0 )
 		<theme>
 #foreach( $theme in $themes )
 			<filename>$theme</filename>
 #end
 		</theme>
+#end
 				
 	</compiler>
 	
