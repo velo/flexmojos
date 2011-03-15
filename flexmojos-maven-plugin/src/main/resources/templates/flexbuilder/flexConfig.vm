@@ -67,6 +67,14 @@
 #end
 		</keep-as3-metadata>
 
+#if( $includeLibraries )
+		<include-libraries>
+#foreach( $path in $includeLibraries )
+			<library>$path</library>
+#end
+		</include-libraries>
+#end
+
 		<namespaces>
 #foreach( $namespace in $namespaces )
 			<namespace>
