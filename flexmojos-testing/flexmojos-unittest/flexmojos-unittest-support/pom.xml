@@ -10,7 +10,6 @@
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-unittest</artifactId>
     <version>4.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
