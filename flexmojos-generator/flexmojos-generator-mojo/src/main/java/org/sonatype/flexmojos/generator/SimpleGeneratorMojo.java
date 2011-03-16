@@ -346,7 +346,7 @@ public class SimpleGeneratorMojo
         Set<Artifact> artifacts = project.getDependencyArtifacts();
         for ( Artifact artifact : artifacts )
         {
-            if ( "jar".equals( artifact.getType() ) )
+            if ( "jar".equals( artifact.getType() ) || "maven-plugin".equals( artifact.getType() ) )
             {
                 classpaths.add( artifact.getFile().getAbsolutePath() );
             }
