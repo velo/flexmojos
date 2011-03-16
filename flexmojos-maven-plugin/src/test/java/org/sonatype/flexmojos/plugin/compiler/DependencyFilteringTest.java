@@ -130,7 +130,7 @@ public class DependencyFilteringTest
             }
 
             @Override
-            protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
+            public Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
@@ -212,7 +212,7 @@ public class DependencyFilteringTest
             }
 
             @Override
-            protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
+            public Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
@@ -277,7 +277,7 @@ public class DependencyFilteringTest
             }
 
             @Override
-            protected Artifact resolve( String groupId, String artifactId, String version, String classifier,
+            public Artifact resolve( String groupId, String artifactId, String version, String classifier,
                                         String type )
             {
                 return createArtifact( groupId, artifactId, version, null, type, classifier );
