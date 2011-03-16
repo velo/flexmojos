@@ -643,7 +643,7 @@ public abstract class AbstractMavenMojo
         ( (ThreadLocal<E>) valueHolder ).set( value );
     }
 
-    protected Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
+    public Artifact resolve( String groupId, String artifactId, String version, String classifier, String type )
         throws RuntimeMavenResolutionException
     {
         Artifact artifact =
