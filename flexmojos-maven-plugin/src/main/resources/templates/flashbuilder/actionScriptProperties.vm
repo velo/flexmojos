@@ -40,7 +40,10 @@
             htmlHistoryManagement="$htmlHistoryManagement"
             htmlPlayerVersionCheck="$htmlPlayerVersionCheck"
 			includeNetmonSwc="false"
-            outputFolderPath="$ideOutputFolderPath" 
+            outputFolderPath="$ideOutputFolderPath"
+#if($ideOutputFolderLocation)
+            outputFolderLocation="$ideOutputFolderLocation"
+#end
             sourceFolderPath="$mainSources" 
             strict="$strict"
 #if($useApolloConfig)
