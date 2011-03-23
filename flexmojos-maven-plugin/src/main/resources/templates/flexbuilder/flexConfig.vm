@@ -77,7 +77,7 @@
 
 		<namespaces>
 #foreach( $namespace in $namespaces )
-			<namespace>
+			<namespace append="true">
 				<uri>$namespace.getUri()</uri>
 				<manifest>$namespace.getManifest()</manifest>
 			</namespace>
