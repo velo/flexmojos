@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +64,7 @@ import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
+import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
 import org.sonatype.flexmojos.plugin.test.scanners.FlexClassScanner;
 import org.sonatype.flexmojos.plugin.utilities.MavenUtils;
 import org.sonatype.flexmojos.util.CollectionUtils;
@@ -89,9 +91,7 @@ public class TestCompilerMojo
 
     public static final String FLEXMOJOS_TEST_CONTROL_PORT = "flexmojos_test_control_port";
 
-    protected static final String FLEXMOJOS_TEST_PORT = "flexmojos_test_port";
-
-    private static final String ONCE = "once";
+    public static final String FLEXMOJOS_TEST_PORT = "flexmojos_test_port";
 
     /**
      * Uses instruments the bytecode (using apparat) to create test coverage report. Only the test-swf is affected by
@@ -140,13 +140,6 @@ public class TestCompilerMojo
      * @parameter
      */
     private String[] excludeTestFiles;
-
-    /**
-     * Option to specify the forking mode. Can be "once" or "always". Always fork flashplayer per test class.
-     * 
-     * @parameter default-value="once" expression="${forkMode}"
-     */
-    private String forkMode;
 
     /**
      * File to be tested. If not defined assumes Test*.as and *Test.as
@@ -227,7 +220,8 @@ public class TestCompilerMojo
      */
     private File testSourceDirectory;
 
-    private Result buildTest( String testFilename, List<? extends String> testClasses )
+    public Result buildTest( String testFilename, List<? extends String> testClasses, Integer testControlPort,
+                                Integer testPort )
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info( "Compiling test class: " + testClasses );
@@ -235,7 +229,7 @@ public class TestCompilerMojo
         File testMxml;
         try
         {
-            testMxml = generateTester( testClasses, testFilename );
+            testMxml = generateTester( testClasses, testFilename, testControlPort, testPort );
         }
         catch ( Exception e )
         {
@@ -246,6 +240,20 @@ public class TestCompilerMojo
         cfg.finalName = testFilename;
 
         return executeCompiler( new MxmlcConfigurationHolder( cfg, testMxml ), fullSynchronization );
+    }
+
+    public void buildTests( List<String> testClasses )
+        throws MojoFailureException, MojoExecutionException
+    {
+        String testFilename = "TestRunner";
+
+        Integer testControlPort = freePort();
+        Integer testPort = freePort();
+        putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );
+        putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
+        getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
+
+        checkResult( buildTest( testFilename, testClasses, testControlPort, testPort ) );
     }
 
     @Override
@@ -305,26 +313,23 @@ public class TestCompilerMojo
             return;
         }
 
-        if ( ONCE.equals( forkMode ) )
+        buildTests( testClasses );
+    }
+
+    protected Integer freePort()
+    {
+        try
         {
-            String testFilename = "TestRunner";
-            checkResult( buildTest( testFilename, testClasses ) );
+            return SocketUtil.freePort();
         }
-        else
+        catch ( IOException e )
         {
-            List<Result> results = new ArrayList<Result>();
-
-            for ( String testClass : testClasses )
-            {
-                String testFilename = testClass.replaceAll( "[^A-Za-z0-9]", "_" ) + "_Flexmojos_test";
-                results.add( buildTest( testFilename, Collections.singletonList( testClass ) ) );
-            }
-
-            wait( results );
+            throw new MavenRuntimeException( "Failed to alocate socket port", e );
         }
     }
 
-    private File generateTester( List<? extends String> testClasses, String testFilename )
+    private File generateTester( List<? extends String> testClasses, String testFilename, Integer testControlPort,
+                                 Integer testPort )
         throws Exception
     {
         // can't use velocity, got:
@@ -335,12 +340,6 @@ public class TestCompilerMojo
         StringBuilder imports = getImports( testClasses );
         StringBuilder includes = getExtraIncludes( testOutputDirectory );
         StringBuilder classes = getClasses( testClasses );
-
-        Integer testControlPort = SocketUtil.freePort();
-        putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );
-        Integer testPort = SocketUtil.freePort();
-        putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
-        getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
 
         InputStream templateSource = getTemplate();
         String sourceString = IOUtils.toString( templateSource );
