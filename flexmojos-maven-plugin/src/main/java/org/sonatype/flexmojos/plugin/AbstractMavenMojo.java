@@ -320,6 +320,7 @@ public abstract class AbstractMavenMojo
                 new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
 
             Map<String, String> variables = new LinkedHashMap<String, String>();
+            variables.put( "id", swf.getName().replaceAll( "[^A-Za-z0-9]", "" ) );
             variables.put( "swf", swf.getName() );
             variables.put( "air-version", getAirTarget() );
 
@@ -891,7 +892,7 @@ public abstract class AbstractMavenMojo
         return fileIncludes;
     }
 
-    protected void wait( List<Result> results )
+    public void wait( Collection<Result> results )
         throws MojoFailureException, MojoExecutionException
     {
         for ( Result result : results )
