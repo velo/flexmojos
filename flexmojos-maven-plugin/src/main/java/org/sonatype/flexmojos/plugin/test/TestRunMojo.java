@@ -326,71 +326,7 @@ public class TestRunMojo
         try
         {
             String[] swfs = scan.getIncludedFiles();
-            getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
-            for ( String swfName : swfs )
-            {
-                File swf = new File( testOutputDirectory, swfName );
-                Integer testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
-                Integer testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
-
-                getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
-
-                TestRequest testRequest = new TestRequest();
-                testRequest.setTestControlPort( testControlPort );
-                testRequest.setTestPort( testPort );
-                testRequest.setSwf( swf );
-                testRequest.setAllowHeadlessMode( allowHeadlessMode );
-                testRequest.setTestTimeout( testTimeout );
-                testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
-
-                boolean isAirProject = getIsAirProject();
-                testRequest.setUseAirDebugLauncher( isAirProject );
-                if ( isAirProject )
-                {
-                    testRequest.setAdlCommand( resolveAdlVm( adlCommand, adlGav, "adl", getAirTarget(), adlRuntimeGav ) );
-                    testRequest.setSwfDescriptor( createSwfDescriptor( swf ) );
-                }
-                else
-                {
-                    testRequest.setFlashplayerCommand( resolveFlashVM( flashPlayerCommand, flashPlayerGav,
-                                                                       "flashplayer", targetPlayer ) );
-                }
-
-                if ( coverage )
-                {
-                    reporter.instrument( swf, getSourcePath() );
-                }
-
-                try
-                {
-                    List<String> results = testRunner.run( testRequest );
-                    for ( String result : results )
-                    {
-                        TestCaseReport report = writeTestReport( result );
-                        if ( coverage )
-                        {
-                            List<TestCoverageReport> coverageResult = report.getCoverage();
-                            for ( TestCoverageReport testCoverageReport : coverageResult )
-                            {
-                                reporter.addResult( testCoverageReport.getClassname(), testCoverageReport.getTouchs() );
-                            }
-                        }
-                    }
-                }
-                catch ( TestRunnerException e )
-                {
-                    executionError = e;
-                }
-                catch ( LaunchFlashPlayerException e )
-                {
-                    throw new MojoExecutionException(
-                                                      "Failed to launch Flash Player.  Probably java was not able to find flashplayer."
-                                                          + "\n\t\tMake sure flashplayer is available on PATH"
-                                                          + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
-                                                          + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
-                                                      e );
-                }
-            }
+            runTests( swfs, reporter );
         }
         finally
         {
@@ -410,6 +346,89 @@ public class TestRunMojo
                 }
             }
 
+        }
+    }
+
+    public void runTest( String swfName, Integer testPort, Integer testControlPort, CoverageReporter reporter )
+        throws MojoExecutionException
+    {
+        File swf = new File( testOutputDirectory, swfName );
+
+        getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
+
+        TestRequest testRequest = new TestRequest();
+        testRequest.setTestControlPort( testControlPort );
+        testRequest.setTestPort( testPort );
+        testRequest.setSwf( swf );
+        testRequest.setAllowHeadlessMode( allowHeadlessMode );
+        testRequest.setTestTimeout( testTimeout );
+        testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
+
+        boolean isAirProject = getIsAirProject();
+        testRequest.setUseAirDebugLauncher( isAirProject );
+        if ( isAirProject )
+        {
+            testRequest.setAdlCommand( resolveAdlVm( adlCommand, adlGav, "adl", getAirTarget(), adlRuntimeGav ) );
+            testRequest.setSwfDescriptor( createSwfDescriptor( swf ) );
+        }
+        else
+        {
+            testRequest.setFlashplayerCommand( resolveFlashVM( flashPlayerCommand, flashPlayerGav, "flashplayer",
+                                                               targetPlayer ) );
+        }
+
+        if ( coverage )
+        {
+            reporter.instrument( swf, getSourcePath() );
+        }
+
+        try
+        {
+            List<String> results = runTest( testRequest );
+            for ( String result : results )
+            {
+                TestCaseReport report = writeTestReport( result );
+                if ( coverage )
+                {
+                    List<TestCoverageReport> coverageResult = report.getCoverage();
+                    for ( TestCoverageReport testCoverageReport : coverageResult )
+                    {
+                        reporter.addResult( testCoverageReport.getClassname(), testCoverageReport.getTouchs() );
+                    }
+                }
+            }
+        }
+        catch ( TestRunnerException e )
+        {
+            executionError = e;
+        }
+        catch ( LaunchFlashPlayerException e )
+        {
+            throw new MojoExecutionException(
+                                              "Failed to launch Flash Player.  Probably java was not able to find flashplayer."
+                                                  + "\n\t\tMake sure flashplayer is available on PATH"
+                                                  + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
+                                                  + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
+                                              e );
+        }
+    }
+
+    public List<String> runTest( TestRequest testRequest )
+        throws TestRunnerException, LaunchFlashPlayerException
+    {
+        List<String> results = testRunner.run( testRequest );
+        return results;
+    }
+
+    public void runTests( String[] swfs, CoverageReporter reporter )
+        throws MojoExecutionException, MojoFailureException
+    {
+        Integer testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
+        Integer testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
+        getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
+        for ( String swfName : swfs )
+        {
+            runTest( swfName, testPort, testControlPort, reporter );
         }
     }
 

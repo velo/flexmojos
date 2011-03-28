@@ -11,7 +11,7 @@ import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.monitor.AsVmPing;
 import org.sonatype.flexmojos.test.monitor.ResultHandler;
 
-@Component( role = TestRunner.class )
+@Component( role = TestRunner.class, instantiationStrategy = "per-lookup" )
 public class DefaultTestRunner
     extends AbstractLogEnabled
     implements TestRunner
