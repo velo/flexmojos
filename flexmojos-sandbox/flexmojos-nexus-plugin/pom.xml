@@ -34,7 +34,7 @@
 
   <packaging>nexus-plugin</packaging>
 
-  <name>Nexus Plugin Archetype</name>
+  <name>Flexmojos Nexus Plugin</name>
 
   <properties>
     <!-- Set the Nexus version here, against which you build the plugin -->
