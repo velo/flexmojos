@@ -49,11 +49,11 @@ public class Flexmojos334Test
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 3, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java
-        MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.java",
-                                                                            "FlexMaven/sampleInclude.java",
-                                                                            "FlexMaven/App.java" ) );
+        MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.as",
+                                                                            "FlexMaven/sampleInclude.as",
+                                                                            "FlexMaven/App.as" ) );
         MatcherAssert.assertThat( classes,
-                                  CoreMatchers.not( IsCollectionContaining.hasItems( "FlexMaven/unusedInclude.java" ) ) );
+                                  CoreMatchers.not( IsCollectionContaining.hasItems( "FlexMaven/unusedInclude.as" ) ) );
     }
 
     @Test
@@ -66,10 +66,10 @@ public class Flexmojos334Test
         Assert.assertEquals( classes.size(), 2, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java
         MatcherAssert.assertThat( classes,
-                                  IsCollectionContaining.hasItems( "FlexMaven/sampleInclude.java", "FlexMaven/App.java" ) );
+                                  IsCollectionContaining.hasItems( "FlexMaven/sampleInclude.java", "FlexMaven/App.as" ) );
         MatcherAssert.assertThat( classes,
-                                  CoreMatchers.not( IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.java",
-                                                                                     "FlexMaven/unusedInclude.java" ) ) );
+                                  CoreMatchers.not( IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.as",
+                                                                                     "FlexMaven/unusedInclude.as" ) ) );
     }
 
     @Test(enabled=false)
@@ -82,10 +82,10 @@ public class Flexmojos334Test
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 4, classes.toString() );
         // bug on flexmojos/cobertura support, it does think the files are .java
-        MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.java",
-                                                                            "FlexMaven/sampleInclude.java",
-                                                                            "FlexMaven/unusedInclude.java",
-                                                                            "FlexMaven/App.java" ) );
+        MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.as",
+                                                                            "FlexMaven/sampleInclude.as",
+                                                                            "FlexMaven/unusedInclude.as",
+                                                                            "FlexMaven/App.as" ) );
     }
 
     @SuppressWarnings( "unchecked" )
