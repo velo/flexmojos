@@ -34,6 +34,8 @@ import flex2.tools.DigestTool;
 import flex2.tools.Mxmlc;
 import flex2.tools.Optimizer;
 
+import javax.xml.transform.TransformerFactory;
+
 @Component( role = FlexCompiler.class )
 public class DefaultFlexCompiler
     extends AbstractLogEnabled
@@ -87,7 +89,12 @@ public class DefaultFlexCompiler
             {
                 String[] args = parser.parseArguments( configuration, IASDocConfiguration.class );
                 logArgs( args );
-                ASDoc.asdoc( args );
+                //Force the XML Transformer to the Xalan version that comes with Flex
+                String defaultTransfomer = System.getProperty("javax.xml.transform.TransformerFactory");
+                System.setProperty("javax.xml.transform.TransformerFactory","org.apache.xalan.processor.TransformerFactoryImpl");
+                ASDoc.main(args);
+                //and set it back to the default
+                System.setProperty("javax.xml.transform.TransformerFactory",defaultTransfomer);
             }
         }, sychronize );
     }
