@@ -691,9 +691,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Usually, you must use the same compiler and framework versions. Set this to true to avoid this check. EXTREMELLY
      * UN-ADVISIBLE.
      * 
-     * @parameter default-value="false" expression="${flex.ignoreVersionIssues}"
+     * @parameter default-value="false" expression="${flex.iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking}"
      */
-    private boolean ignoreVersionIssues;
+    private boolean iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking;
 
     /**
      * Only include inheritance dependencies of classes specified with include-classes.
@@ -3307,7 +3307,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public void versionCheck()
     {
-        if ( ignoreVersionIssues )
+        if ( iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking )
         {
             return;
         }
@@ -3328,7 +3328,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                     + "' - Framework: '"
                     + frameworkVersion
                     + "'.\n"
-                    + " You can use 'ignoreVersionIssues' to disable this check.  Please refer to Flexmojos maven doc.\n"
+                    + " You can use 'iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking' to disable this check.  Please refer to Flexmojos maven doc.\n"
                     + "If you prefer fixing it instead of ignoring, take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
             throw new IllegalStateException( msg );
         }
