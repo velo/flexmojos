@@ -197,6 +197,7 @@
             <xml>com.adobe.flex.framework:flex-framework:3.5.a.12683:pom</xml>
 
             <xml>com.adobe.flex:compiler:3.6.0.16321:pom</xml>
+            <xml>com.adobe.flex.framework:air-framework:3.6.0.16995:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:3.6.0.16995:pom</xml>
 
             <xml>com.adobe.flex:compiler:4.0.0.14159:pom</xml>
