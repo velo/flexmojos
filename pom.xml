@@ -68,12 +68,12 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.5.0.19786</flex.sdk.version>
+    <flex.sdk.version>4.5.0.20967</flex.sdk.version>
     <maven.version>3.0.3</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <sisu.version>2.1.1</sisu.version>
     <plexus.version>1.5.4</plexus.version>
-    <apparat.version>1.0.RC7</apparat.version>
+    <apparat.version>1.0-RC9</apparat.version>
   </properties>
 
   <build>
