@@ -204,7 +204,7 @@ public class TestCompilerMojo
     private File testSourceDirectory;
 
     public Result buildTest( String testFilename, List<? extends String> testClasses, Integer testControlPort,
-                                Integer testPort )
+                             Integer testPort )
         throws MojoExecutionException, MojoFailureException
     {
         getLog().info( "Compiling test class: " + testClasses );
@@ -260,29 +260,7 @@ public class TestCompilerMojo
             return;
         }
 
-        if ( test != null )
-        {
-            includeTestFiles = new String[] { test };
-            excludeTestFiles = null;
-        }
-
-        if ( includeTestFiles == null || includeTestFiles.length == 0 )
-        {
-            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" };
-        }
-        else
-        {
-            for ( int i = 0; i < includeTestFiles.length; i++ )
-            {
-                String pattern = includeTestFiles[i];
-
-                if ( !pattern.endsWith( ".as" ) && !pattern.endsWith( ".mxml" ) )
-                {
-                    pattern = pattern + ".as";
-                }
-                includeTestFiles[i] = "**/" + pattern;
-            }
-        }
+        initializeIncludes();
 
         if ( !testOutputDirectory.exists() )
         {
@@ -650,7 +628,7 @@ public class TestCompilerMojo
         }
     }
 
-    private List<String> getTestClasses()
+    protected List<String> getTestClasses()
     {
         getLog().debug( "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
                             + " but " + Arrays.toString( excludeTestFiles ) );
@@ -674,6 +652,33 @@ public class TestCompilerMojo
         }
         getLog().debug( "Test classes: " + testClasses );
         return testClasses;
+    }
+
+    protected void initializeIncludes()
+    {
+        if ( test != null )
+        {
+            includeTestFiles = new String[] { test };
+            excludeTestFiles = null;
+        }
+
+        if ( includeTestFiles == null || includeTestFiles.length == 0 )
+        {
+            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" };
+        }
+        else
+        {
+            for ( int i = 0; i < includeTestFiles.length; i++ )
+            {
+                String pattern = includeTestFiles[i];
+
+                if ( !pattern.endsWith( ".as" ) && !pattern.endsWith( ".mxml" ) )
+                {
+                    pattern = pattern + ".as";
+                }
+                includeTestFiles[i] = "**/" + pattern;
+            }
+        }
     }
 
     @Override
