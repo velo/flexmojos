@@ -18,7 +18,7 @@ public class Flexmojos130Test
         throws Exception
     {
         File testDir = getProject( "/issues/flexmojos-130" );
-        test( testDir, "install" );
+        test( testDir, "install" ).verifyErrorFreeLog();
 
         File swc = new File( testDir, "target/flexmojos-130-1.0-SNAPSHOT.swc" );
         assertThat( swc, FileMatcher.exists() );

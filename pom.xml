@@ -49,7 +49,7 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.5.0.20967</flex.sdk.version>
+    <flex.sdk.version>4.5.1.21328</flex.sdk.version>
     <maven.version>3.0.3</maven.version>
     <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
     <sisu.version>2.1.1</sisu.version>

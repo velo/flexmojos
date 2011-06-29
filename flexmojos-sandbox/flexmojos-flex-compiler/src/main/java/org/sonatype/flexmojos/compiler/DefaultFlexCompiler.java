@@ -74,9 +74,16 @@ public class DefaultFlexCompiler
                 String defaultTransfomer = System.getProperty( "javax.xml.transform.TransformerFactory" );
                 System.setProperty( "javax.xml.transform.TransformerFactory",
                                     "org.apache.xalan.processor.TransformerFactoryImpl" );
-                ASDoc.main( args );
+                ASDoc.asdoc( args );
                 // and set it back to the default
-                System.setProperty( "javax.xml.transform.TransformerFactory", defaultTransfomer );
+                if ( defaultTransfomer == null )
+                {
+                    System.getProperties().remove( "javax.xml.transform.TransformerFactory" );
+                }
+                else
+                {
+                    System.setProperty( "javax.xml.transform.TransformerFactory", defaultTransfomer );
+                }
             }
         }, sychronize );
     }
