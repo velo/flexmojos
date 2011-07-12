@@ -204,7 +204,7 @@ public final class GraniteDsGenerator
     private String getStringByIndex( String[] a, int index )
     {
         String s = a == null ? null : ( a.length < index + 1 ? null : a[index] );
-        return s == null ? null : new File( s ).toURI().toString();
+        return s == null ? null : (s.startsWith(SHADED_PREFIX)) ? s : new File( s ).toURI().toString();
     }
 
     private TemplateUri[] createTemplateUris( String baseUri, String uri )
