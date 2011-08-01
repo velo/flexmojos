@@ -216,12 +216,6 @@ public class TestCompilerMojo
      */
     private File testRunnerTemplate;
 
-    /**
-     * @parameter expression="${project.build.testSourceDirectory}"
-     * @readonly
-     */
-    private File testSourceDirectory;
-
     public Result buildTest( String testFilename, List<? extends String> testClasses, Integer testControlPort,
                              Integer testPort )
         throws MojoExecutionException, MojoFailureException
@@ -658,6 +652,7 @@ public class TestCompilerMojo
         List<String> testClasses = filterClasses( asList( fs ), files( testCompileSourceRoots ) );
 
         getLog().debug( "Test classes: " + testClasses );
+
         return testClasses;
     }
 
