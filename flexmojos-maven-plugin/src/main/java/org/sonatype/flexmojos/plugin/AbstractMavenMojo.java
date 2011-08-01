@@ -8,7 +8,9 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.AS;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.MXML;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
