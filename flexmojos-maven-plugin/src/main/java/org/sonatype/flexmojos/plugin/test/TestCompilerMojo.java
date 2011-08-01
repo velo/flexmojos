@@ -1,5 +1,6 @@
 package org.sonatype.flexmojos.plugin.test;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -19,6 +20,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
 import static org.sonatype.flexmojos.util.PathUtil.file;
+import static org.sonatype.flexmojos.util.PathUtil.files;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,10 +40,10 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
@@ -122,14 +124,14 @@ public class TestCompilerMojo
      * 
      * @parameter
      */
-    private String[] excludeTestFiles;
+    private List<String> excludeTestFiles;
 
     /**
      * File to be tested. If not defined assumes Test*.as and *Test.as
      * 
      * @parameter
      */
-    private String[] includeTestFiles;
+    private List<String> includeTestFiles;
 
     /**
      * @readonly
@@ -630,26 +632,14 @@ public class TestCompilerMojo
 
     protected List<String> getTestClasses()
     {
-        getLog().debug( "Scanning for tests at " + testSourceDirectory + " for " + Arrays.toString( includeTestFiles )
-                            + " but " + Arrays.toString( excludeTestFiles ) );
+        getLog().debug( "Scanning for tests at " + testCompileSourceRoots + " for " + includeTestFiles + " but "
+                            + excludeTestFiles );
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setIncludes( includeTestFiles );
-        scanner.setExcludes( excludeTestFiles );
-        scanner.addDefaultExcludes();
-        scanner.setBasedir( testSourceDirectory );
-        scanner.scan();
+        FileSet fs = new FileSet();
+        fs.setIncludes( includeTestFiles );
+        fs.setExcludes( excludeTestFiles );
+        List<String> testClasses = filterClasses( asList( fs ), files( testCompileSourceRoots ) );
 
-        getLog().debug( "Test files: " + Arrays.toString( scanner.getIncludedFiles() ) );
-        List<String> testClasses = new ArrayList<String>();
-        for ( String testClass : scanner.getIncludedFiles() )
-        {
-            int endPoint = testClass.lastIndexOf( '.' );
-            testClass = testClass.substring( 0, endPoint ); // remove extension
-            testClass = testClass.replace( '/', '.' ); // Unix OS
-            testClass = testClass.replace( '\\', '.' ); // Windows OS
-            testClasses.add( testClass );
-        }
         getLog().debug( "Test classes: " + testClasses );
         return testClasses;
     }
@@ -658,26 +648,13 @@ public class TestCompilerMojo
     {
         if ( test != null )
         {
-            includeTestFiles = new String[] { test };
+            includeTestFiles = asList( test );
             excludeTestFiles = null;
         }
 
-        if ( includeTestFiles == null || includeTestFiles.length == 0 )
+        if ( includeTestFiles == null || includeTestFiles.isEmpty() )
         {
-            includeTestFiles = new String[] { "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" };
-        }
-        else
-        {
-            for ( int i = 0; i < includeTestFiles.length; i++ )
-            {
-                String pattern = includeTestFiles[i];
-
-                if ( !pattern.endsWith( ".as" ) && !pattern.endsWith( ".mxml" ) )
-                {
-                    pattern = pattern + ".as";
-                }
-                includeTestFiles[i] = "**/" + pattern;
-            }
+            includeTestFiles = asList( "**/Test*.as", "**/*Test.as", "**/Test*.mxml", "**/*Test.mxml" );
         }
     }
 

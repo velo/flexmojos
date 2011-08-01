@@ -8,7 +8,7 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.artifactId
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.classifier;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.*;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
@@ -869,8 +869,15 @@ public abstract class AbstractMavenMojo
         List<String> fileIncludes = new ArrayList<String>();
         for ( String classInclude : classesIncludes )
         {
-            fileIncludes.add( classInclude.replace( '.', File.separatorChar ) + ".as" );
-            fileIncludes.add( classInclude.replace( '.', File.separatorChar ) + ".mxml" );
+            if ( classInclude.endsWith( MXML ) || classInclude.endsWith( AS ) )
+            {
+                fileIncludes.add( "**/" + classInclude );
+            }
+            else
+            {
+                fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".as" );
+                fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".mxml" );
+            }
         }
         return fileIncludes;
     }
