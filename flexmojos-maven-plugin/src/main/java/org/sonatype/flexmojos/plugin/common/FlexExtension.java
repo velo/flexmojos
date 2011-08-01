@@ -24,6 +24,8 @@ public interface FlexExtension
 
     String APK = "apk";
 
+    String AS = "as";
+
     String BAR = "bar";
 
     String CSS = "css";
@@ -35,6 +37,8 @@ public interface FlexExtension
     String EXE = "exe";
 
     String IPA = "ipa";
+
+    String MXML = "mxml";
 
     String POM = "pom";
 
