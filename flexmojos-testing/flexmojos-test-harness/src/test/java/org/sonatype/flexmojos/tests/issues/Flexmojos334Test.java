@@ -72,8 +72,7 @@ public class Flexmojos334Test
                                                                                      "FlexMaven/unusedInclude.java" ) ) );
     }
 
-    @Test(enabled=false)
-    //Flex doesn't the inclusions from sourcePath, it must be at same folder as the main.mxml...
+    @Test
     public void as3contentScanner()
         throws Exception
     {

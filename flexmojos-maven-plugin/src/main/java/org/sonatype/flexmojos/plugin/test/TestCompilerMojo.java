@@ -57,18 +57,7 @@ import org.sonatype.flexmojos.util.CollectionUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 import org.sonatype.flexmojos.util.SocketUtil;
 
-import java.io.*;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.*;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
-import static org.sonatype.flexmojos.plugin.common.FlexScopes.*;
-import static org.sonatype.flexmojos.util.PathUtil.file;
+import flex2.compiler.common.SinglePathResolver;
 
 /**
  * <p>
