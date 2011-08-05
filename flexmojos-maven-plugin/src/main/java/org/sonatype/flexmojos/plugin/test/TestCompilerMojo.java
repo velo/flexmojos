@@ -47,6 +47,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
 import org.sonatype.flexmojos.compiler.MxmlcConfigurationHolder;
 import org.sonatype.flexmojos.compiler.command.Result;
+import org.sonatype.flexmojos.plugin.common.FlexClassifier;
 import org.sonatype.flexmojos.plugin.common.flexbridge.MavenPathResolver;
 import org.sonatype.flexmojos.plugin.compiler.MxmlcMojo;
 import org.sonatype.flexmojos.plugin.compiler.attributes.MavenRuntimeException;
@@ -56,7 +57,18 @@ import org.sonatype.flexmojos.util.CollectionUtils;
 import org.sonatype.flexmojos.util.PathUtil;
 import org.sonatype.flexmojos.util.SocketUtil;
 
-import flex2.compiler.common.SinglePathResolver;
+import java.io.*;
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.*;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
+import static org.sonatype.flexmojos.plugin.common.FlexScopes.*;
+import static org.sonatype.flexmojos.util.PathUtil.file;
 
 /**
  * <p>
@@ -378,8 +390,8 @@ public class TestCompilerMojo
 
             Map<String, Object> context = new LinkedHashMap<String, Object>();
             // TODO need a better idea to resolve link report file
-            context.put( LINK_REPORT,
-                         file( project.getBuild().getFinalName() + "-" + LINK_REPORT + "." + XML,
+            context.put( FlexClassifier.LINK_REPORT,
+                         file( project.getBuild().getFinalName() + "-" + FlexClassifier.LINK_REPORT + "." + XML,
                                project.getBuild().getDirectory() ) );
             scanner.scan( sp, coverageExclusions, context );
         }
