@@ -585,9 +585,11 @@ public class TestCompilerMojo
 
         files.addAll( PathUtil.existingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
-        
-        if ( getLocale() != null ) {
-            if ( localesSourcePath.getParentFile().exists() ) {
+
+        if ( getLocale() != null )
+        {
+            if ( localesSourcePath.getParentFile().exists() )
+            {
                 files.add( localesSourcePath );
             }
         }
