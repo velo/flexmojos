@@ -602,7 +602,23 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
      */
     protected String finalName;
-
+    
+    /**
+     * Pattern to be used for locales resurce bundles names generation. Accepts special tokens:
+     * 
+     * <pre>
+     * {locale}     - replace by locale name
+     * {artifactId} - replace by artifactId
+     * {groupId}    - replace by groupId
+     * {version}    - replace by version
+     * {classifier} - replace by classifier
+     * 
+     * </pre>
+     * 
+     * @parameter 
+     */
+    protected String resourceBundleNamePattern; 
+    
     /**
      * Fonts configurations to be used on SWF compilation
      * <p>
@@ -1573,7 +1589,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             cfg.classifier = locale;
         }
-
+        if(resourceBundleNamePattern != null){
+            cfg.finalName = MavenUtils.getRuntimeLocaleOutputName(resourceBundleNamePattern, project.getArtifact(), cfg.classifier);
+        }
+        
         cfg.includeResourceBundles = getResourceBundleListContent();
         cfg.getCache().put( EXTERNAL_LIBRARY_PATH, MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
         cfg.getCache().put( LIBRARY_PATH, MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
