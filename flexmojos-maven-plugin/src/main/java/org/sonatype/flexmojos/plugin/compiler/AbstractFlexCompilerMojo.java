@@ -602,7 +602,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
      */
     protected String finalName;
-    
+
     /**
      * Pattern to be used for locales resurce bundles names generation. Accepts special tokens:
      * 
@@ -612,13 +612,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * {groupId}    - replace by groupId
      * {version}    - replace by version
      * {classifier} - replace by classifier
-     * 
      * </pre>
      * 
-     * @parameter 
+     * @parameter
      */
-    protected String resourceBundleNamePattern; 
-    
+    protected String resourceBundleNames;
+
     /**
      * Fonts configurations to be used on SWF compilation
      * <p>
@@ -724,7 +723,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * Usually, you must use the same compiler and framework versions. Set this to true to avoid this check. EXTREMELLY
      * UN-ADVISIBLE.
      * 
-     * @parameter default-value="false" expression="${flex.iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking}"
+     * @parameter default-value="false"
+     *            expression="${flex.iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking}"
      */
     private boolean iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking;
 
@@ -1589,10 +1589,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             cfg.classifier = locale;
         }
-        if(resourceBundleNamePattern != null){
-            cfg.finalName = MavenUtils.getRuntimeLocaleOutputName(resourceBundleNamePattern, project.getArtifact(), cfg.classifier);
+
+        if ( resourceBundleNames != null )
+        {
+            cfg.finalName =
+                MavenUtils.getRuntimeLocaleOutputName( resourceBundleNames, project.getArtifact(), cfg.classifier );
         }
-        
+
         cfg.includeResourceBundles = getResourceBundleListContent();
         cfg.getCache().put( EXTERNAL_LIBRARY_PATH, MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
         cfg.getCache().put( LIBRARY_PATH, MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
