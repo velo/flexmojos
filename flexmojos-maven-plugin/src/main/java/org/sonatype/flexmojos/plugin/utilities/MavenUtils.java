@@ -301,7 +301,13 @@ public class MavenUtils
 
         return path;
     }
-
+    public static String getRuntimeLocaleOutputName( String sample, Artifact artifact, String locale ) 
+    {
+        String path = replaceArtifactCoordinatesTokens( sample, artifact );
+        path = path.replace( "{locale}", locale );
+        
+        return path;
+    }
     public static Set<File> getFilesSet( Collection<Artifact>... dependenciesSet )
     {
         if ( dependenciesSet == null )
