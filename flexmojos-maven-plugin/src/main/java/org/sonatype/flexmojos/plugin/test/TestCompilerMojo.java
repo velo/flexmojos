@@ -121,6 +121,20 @@ public class TestCompilerMojo
     private String coverageStrategy;
 
     /**
+     * If specified, the testrunner swf will be compiled to use this value as the port to open during test runs.
+     *
+     * @parameter expression="${flex.testPort}"
+     */
+    private Integer testPort;
+
+    /**
+     * If specified, the testrunner swf will be compiled to use this value as the control port to open during test runs.
+     *
+     * @parameter expression="${flex.testControlPort}"
+     */
+    private Integer testControlPort;
+
+    /**
      * Files to exclude from testing. If not defined, assumes no exclusions
      * 
      * @parameter
@@ -227,8 +241,12 @@ public class TestCompilerMojo
     {
         String testFilename = "TestRunner";
 
-        Integer testControlPort = freePort();
-        Integer testPort = freePort();
+        if (testControlPort == null) {
+            testControlPort = freePort();
+        }
+        if (testPort == null) {
+            testPort = freePort();
+        }
         putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );
         putPluginContext( FLEXMOJOS_TEST_PORT, testPort );
         getLog().debug( "Flexmojos test port: " + testPort + " - control: " + testControlPort );
