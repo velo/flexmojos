@@ -138,20 +138,6 @@ public class TestCompilerMojo
     private String coverageStrategy;
 
     /**
-     * If specified, the testrunner swf will be compiled to use this value as the port to open during test runs.
-     *
-     * @parameter expression="${flex.testPort}"
-     */
-    private Integer testPort;
-
-    /**
-     * If specified, the testrunner swf will be compiled to use this value as the control port to open during test runs.
-     *
-     * @parameter expression="${flex.testControlPort}"
-     */
-    private Integer testControlPort;
-
-    /**
      * Files to exclude from testing. If not defined, assumes no exclusions
      * 
      * @parameter
@@ -211,11 +197,25 @@ public class TestCompilerMojo
     private List<String> testCompileSourceRoots;
 
     /**
+     * If specified, the testrunner swf will be compiled to use this value as the control port to open during test runs.
+     * 
+     * @parameter expression="${flex.testControlPort}"
+     */
+    private Integer testControlPort;
+
+    /**
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
      * @readonly
      */
     private File testOutputDirectory;
+
+    /**
+     * If specified, the testrunner swf will be compiled to use this value as the port to open during test runs.
+     * 
+     * @parameter expression="${flex.testPort}"
+     */
+    private Integer testPort;
 
     /**
      * The maven test resources
@@ -258,10 +258,12 @@ public class TestCompilerMojo
     {
         String testFilename = "TestRunner";
 
-        if (testControlPort == null) {
+        if ( testControlPort == null )
+        {
             testControlPort = freePort();
         }
-        if (testPort == null) {
+        if ( testPort == null )
+        {
             testPort = freePort();
         }
         putPluginContext( FLEXMOJOS_TEST_CONTROL_PORT, testControlPort );

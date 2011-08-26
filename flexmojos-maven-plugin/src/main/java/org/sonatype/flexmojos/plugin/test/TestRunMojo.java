@@ -185,22 +185,6 @@ public class TestRunMojo
      */
     private List<String> coverageSourceRoots;
 
-     /**
-     * If specified, flexmojos will use this value as the port to connect to during test runs.
-     *
-     * @parameter expression="${flex.testPort}"
-     */
-    private Integer testPort;
-
-    /**
-     * If specified, the flexmojos will use this value as the control port to connect to during test runs.
-     *
-     * @parameter expression="${flex.testControlPort}"
-     */
-    private Integer testControlPort;
-
-
-
     private Throwable executionError;
 
     private boolean failures = false;
@@ -269,6 +253,13 @@ public class TestRunMojo
     private String targetPlayer;
 
     /**
+     * If specified, the flexmojos will use this value as the control port to connect to during test runs.
+     * 
+     * @parameter expression="${flex.testControlPort}"
+     */
+    private Integer testControlPort;
+
+    /**
      * @parameter default-value="false" expression="${maven.test.failure.ignore}"
      */
     private boolean testFailureIgnore;
@@ -278,6 +269,13 @@ public class TestRunMojo
      * @readonly
      */
     private File testOutputDirectory;
+
+    /**
+     * If specified, flexmojos will use this value as the port to connect to during test runs.
+     * 
+     * @parameter expression="${flex.testPort}"
+     */
+    private Integer testPort;
 
     /**
      * @component role="org.sonatype.flexmojos.test.TestRunner"
@@ -456,16 +454,20 @@ public class TestRunMojo
     public void runTests( String[] swfs, CoverageReporter reporter )
         throws MojoExecutionException, MojoFailureException
     {
-        if (testPort == null) {
-            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the "test-compile" goal!
+        if ( testPort == null )
+        {
+            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
+            // "test-compile" goal!
             testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
         }
-        if (testControlPort == null) {
-            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the "test-compile" goal!
+        if ( testControlPort == null )
+        {
+            // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
+            // "test-compile" goal!
             testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
         }
         getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
-        getLog().debug( "Using test port '" + testPort + "' and test control port '" + testControlPort + "'");
+        getLog().debug( "Using test port '" + testPort + "' and test control port '" + testControlPort + "'" );
         for ( String swfName : swfs )
         {
             runTest( swfName, testPort, testControlPort, reporter );
