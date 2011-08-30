@@ -406,7 +406,15 @@ public class TestCompilerMojo
     {
         if ( this.scanner == null )
         {
-            File[] sp = getSourcePath();
+        	Set<File> files = new LinkedHashSet<File>();
+            files.addAll( Arrays.asList( getSourcePath() ) );
+            //remove any reference to a locale source path from being scanned for the purpose of building the tester swf
+            for (File file : files) {
+				if(file.getPath().contains("{locale}")){
+					files.remove(file);
+				}
+			}
+        	File[] sp = files.toArray( new File[0] );
 
             scanner = scanners.get( coverageStrategy );
             if ( scanner == null )
@@ -622,14 +630,6 @@ public class TestCompilerMojo
 
         files.addAll( PathUtil.existingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
-
-        if ( getLocale() != null )
-        {
-            if ( localesSourcePath.getParentFile().exists() )
-            {
-                files.add( localesSourcePath );
-            }
-        }
 
         return files.toArray( new File[0] );
     }
