@@ -19,6 +19,7 @@ import static org.sonatype.flexmojos.plugin.common.FlexScopes.INTERNAL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.MERGED;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.RSL;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.TEST;
+import static org.sonatype.flexmojos.util.PathUtil.existingFiles;
 import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.files;
 
@@ -389,15 +390,7 @@ public class TestCompilerMojo
     {
         if ( this.scanner == null )
         {
-        	Set<File> files = new LinkedHashSet<File>();
-            files.addAll( Arrays.asList( getSourcePath() ) );
-            //remove any reference to a locale source path from being scanned for the purpose of building the tester swf
-            for (File file : files) {
-				if(file.getPath().contains("{locale}")){
-					files.remove(file);
-				}
-			}
-        	File[] sp = files.toArray( new File[0] );
+            File[] sp = existingFiles( getSourcePath() );
 
             scanner = scanners.get( coverageStrategy );
             if ( scanner == null )
@@ -613,6 +606,14 @@ public class TestCompilerMojo
 
         files.addAll( PathUtil.existingFilesList( testCompileSourceRoots ) );
         files.addAll( Arrays.asList( super.getSourcePath() ) );
+
+        if ( getLocale() != null )
+        {
+            if ( localesSourcePath.getParentFile().exists() )
+            {
+                files.add( localesSourcePath );
+            }
+        }
 
         return files.toArray( new File[0] );
     }
