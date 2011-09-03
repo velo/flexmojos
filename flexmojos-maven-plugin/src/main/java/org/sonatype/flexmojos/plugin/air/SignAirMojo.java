@@ -49,7 +49,6 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.air.packager.FlexmojosAIRPackager;
-import org.sonatype.flexmojos.plugin.air.packager.IPackager;
 import org.sonatype.flexmojos.plugin.utilities.FileInterpolationUtil;
 import org.sonatype.flexmojos.util.PathUtil;
 
@@ -152,7 +151,7 @@ public class SignAirMojo
      */
     private String timestampURL;
 
-    private void addSourceWithPath( IPackager packager, File directory, String includePath )
+    private void addSourceWithPath( FlexmojosAIRPackager packager, File directory, String includePath )
         throws MojoFailureException
     {
         if ( includePath == null )
@@ -178,7 +177,7 @@ public class SignAirMojo
         packager.addSourceWithPath( includeFile, includePath );
     }
 
-    private void appendArtifacts( IPackager packager, Collection<Artifact> deps )
+    private void appendArtifacts( FlexmojosAIRPackager packager, Collection<Artifact> deps )
     {
         for ( Artifact artifact : deps )
         {
@@ -196,7 +195,7 @@ public class SignAirMojo
         }
     }
 
-    protected void doPackage( String packagerName, IPackager packager )
+    protected void doPackage( String packagerName, FlexmojosAIRPackager packager )
         throws MojoExecutionException
     {
         try
