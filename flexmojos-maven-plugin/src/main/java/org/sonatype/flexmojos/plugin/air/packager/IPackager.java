@@ -10,6 +10,9 @@ import java.security.cert.CertificateException;
 
 import com.adobe.air.Listener;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 public interface IPackager
 {
 
@@ -18,7 +21,7 @@ public interface IPackager
     void close();
 
     void createPackage()
-        throws GeneralSecurityException, IOException;
+        throws GeneralSecurityException, IOException, MojoExecutionException, MojoFailureException;
 
     void setCertificateChain( Certificate[] certificateChain )
         throws CertificateException;

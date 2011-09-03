@@ -1,17 +1,19 @@
 package org.sonatype.flexmojos.plugin.air.packager;
 
+import com.adobe.air.AIRPackager;
+import com.adobe.air.Listener;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-
-import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
-
-import com.adobe.air.AIRPackager;
-import com.adobe.air.Listener;
 
 public class FlexmojosAIRPackager
     implements IPackager
@@ -36,9 +38,47 @@ public class FlexmojosAIRPackager
     }
 
     public void createPackage()
-        throws GeneralSecurityException, IOException
+        throws GeneralSecurityException, IOException, MojoExecutionException, MojoFailureException
     {
-        this.packager.createPackage();
+        Class<? extends AIRPackager> packagerClass = this.packager.getClass();
+        Method packagerMethod = null;
+
+        try
+        {
+            packagerMethod = packagerClass.getMethod( "createPackage" );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            // ignore
+        }
+
+        try
+        {
+            packagerMethod = packagerClass.getMethod( "createAIR" );
+        }
+        catch ( NoSuchMethodException e )
+        {
+            // ignore
+        }
+
+        if ( packagerMethod == null )
+        {
+            throw new MojoFailureException(
+                "Unable to locate the method in AIRPackager to create the package, tried createPackage and createAIR." );
+        }
+
+        try
+        {
+            packagerMethod.invoke( this.packager );
+        }
+        catch ( IllegalAccessException e )
+        {
+            throw new MojoExecutionException( "Error invoking AIR API to create package.", e );
+        }
+        catch ( InvocationTargetException e )
+        {
+            throw new MojoExecutionException( "Error invoking AIR API to create package.", e );
+        }
     }
 
     public void setCertificateChain( Certificate[] certificateChain )

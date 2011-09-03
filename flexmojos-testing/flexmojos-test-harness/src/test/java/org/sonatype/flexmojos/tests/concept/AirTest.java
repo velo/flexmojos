@@ -1,11 +1,11 @@
 package org.sonatype.flexmojos.tests.concept;
 
-import static org.testng.Assert.assertNotNull;
+import org.sonatype.flexmojos.test.FMVerifier;
+import org.testng.annotations.Test;
 
 import java.util.zip.ZipFile;
 
-import org.sonatype.flexmojos.test.FMVerifier;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertNotNull;
 
 public class AirTest
     extends AbstractConceptTest
@@ -68,4 +68,12 @@ public class AirTest
         // v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", "apk" );
         // v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", osPackages );
     }
+
+    @Test( dataProvider = "flex3" )
+    public void simpleAirFlex3( String fdk )
+        throws Exception
+    {
+        standardConceptTester( "simple-air-sdk3", "-Dfdk=" + fdk );
+    }
+
 }
