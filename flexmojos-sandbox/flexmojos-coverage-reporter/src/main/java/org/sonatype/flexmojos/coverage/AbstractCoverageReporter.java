@@ -68,7 +68,9 @@ public abstract class AbstractCoverageReporter
     	{
 	    	for ( String exclude : excludes)
 	    	{
-	    		if ( SelectorUtils.matchPath(exclude, file) ) {
+	    		//replace ; with / because file with be in the form
+	    		//fullpath of folder;ClassName.as (or .mxml)
+	    		if ( SelectorUtils.matchPath(exclude, file.replace(';', File.separatorChar)) ) {
 	    			return true;
 	    		}
 	    	}
