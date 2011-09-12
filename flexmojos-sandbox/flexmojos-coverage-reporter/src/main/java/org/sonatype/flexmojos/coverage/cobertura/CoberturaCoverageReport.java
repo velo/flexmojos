@@ -53,7 +53,7 @@ public class CoberturaCoverageReport
         };
     }
 
-    public void generateReport( CoverageReportRequest request, boolean complexityCalculation )
+    public void generateReport( CoverageReportRequest request )
         throws CoverageReportException
     {
         File dataDirectory = request.getDataDirectory();
@@ -77,8 +77,7 @@ public class CoberturaCoverageReport
             finder.addSourceDirectory( PathUtil.path( dir ) );
         }
 
-        ComplexityCalculator complexity = complexityCalculation ?
-        		new ComplexityCalculator( finder ) : new ZeroComplexityCalculator( finder );
+        ComplexityCalculator complexity = new ZeroComplexityCalculator( finder );
         try
         {
             File coverageReportDestinationDir = request.getReportDestinationDir();
