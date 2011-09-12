@@ -139,7 +139,7 @@ public class TestRunMojo
      * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
      */
     private String coverageProvider;
-
+    
     /**
      * Encoding used to generate coverage report
      * 
