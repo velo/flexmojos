@@ -68,9 +68,13 @@ public class EmmaCoverageReport
         };
     }
 
-    public void generateReport( CoverageReportRequest request )
+    public void generateReport( CoverageReportRequest request, boolean complexityCalculation )
         throws CoverageReportException
     {
+    	if ( complexityCalculation ) {
+    		getLogger().info( "Complexity Calculation not supported for Emma reports." );
+    	}
+    	
         File dataDirectory = request.getDataDirectory();
         File reportDirectory = request.getReportDestinationDir();
 

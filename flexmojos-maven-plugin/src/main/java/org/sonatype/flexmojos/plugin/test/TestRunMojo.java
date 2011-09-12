@@ -156,6 +156,13 @@ public class TestRunMojo
      * @parameter expression="${flex.coverageProvider}" default-value="cobertura"
      */
     private String coverageProvider;
+    
+    /**
+     * Enables/disables complexity calculation when coverage is turned on.
+     * 
+     * @parameter expression="${flex.compexityCalculation}"
+     */
+    protected boolean complexityCalculation;
 
     /**
      * Encoding used to generate coverage report
@@ -369,7 +376,7 @@ public class TestRunMojo
                                                new File( project.getBuild().getSourceDirectory() ) );
                 try
                 {
-                    reporter.generateReport( request );
+                    reporter.generateReport( request, complexityCalculation );
                 }
                 catch ( CoverageReportException e )
                 {
