@@ -896,7 +896,7 @@ public abstract class AbstractMavenMojo
             {
                 fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".as" );
                 fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".mxml" );
-				fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".fxg" );
+                fileIncludes.add( "**/" + classInclude.replace( '.', File.separatorChar ) + ".fxg" );
             }
         }
         return fileIncludes;
