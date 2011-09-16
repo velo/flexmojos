@@ -80,6 +80,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.sonatype.flexmojos.compatibilitykit.FlexCompatibility;
 import org.sonatype.flexmojos.compatibilitykit.FlexMojo;
+import org.sonatype.flexmojos.compatibilitykit.VersionUtils;
 import org.sonatype.flexmojos.compiler.IApplicationDomain;
 import org.sonatype.flexmojos.compiler.ICompcConfiguration;
 import org.sonatype.flexmojos.compiler.ICompilerConfiguration;
@@ -602,21 +603,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter default-name="${project.build.finalName}" expression="${flex.finalName}"
      */
     protected String finalName;
-
-    /**
-     * Pattern to be used for locales resurce bundles names generation. Accepts special tokens:
-     * 
-     * <pre>
-     * {locale}     - replace by locale name
-     * {artifactId} - replace by artifactId
-     * {groupId}    - replace by groupId
-     * {version}    - replace by version
-     * {classifier} - replace by classifier
-     * </pre>
-     * 
-     * @parameter
-     */
-    protected String resourceBundleNames;
 
     /**
      * Fonts configurations to be used on SWF compilation
@@ -1201,6 +1187,21 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @parameter expression="${flex.resourceBundleList}"
      */
     private File resourceBundleList;
+
+    /**
+     * Pattern to be used for locales resurce bundles names generation. Accepts special tokens:
+     * 
+     * <pre>
+     * {locale}     - replace by locale name
+     * {artifactId} - replace by artifactId
+     * {groupId}    - replace by groupId
+     * {version}    - replace by version
+     * {classifier} - replace by classifier
+     * </pre>
+     * 
+     * @parameter
+     */
+    protected String resourceBundleNames;
 
     /**
      * This undocumented option is for compiler performance testing. It allows the Flex 3 compiler to compile the Flex 2
@@ -2128,14 +2129,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                        anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ),
                               scope( nullValue( String.class ) ) )//
                 );
-            return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifact() );
+            return MavenUtils.getFiles( getDependencies( swcs, not( GLOBAL_MATCHER ) ), getGlobalArtifactCollection() );
         }
         else
         {
             return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
                                                          allOf( type( SWC ),//
                                                                 anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ) ) ) ),
-                                        getGlobalArtifact() );
+                                        getGlobalArtifactCollection() );
         }
     }
 
@@ -2200,37 +2201,41 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @SuppressWarnings( "unchecked" )
-    public Collection<Artifact> getGlobalArtifact()
+    protected Artifact getGlobalArtifact()
+    {
+        Artifact global = getDependency( GLOBAL_MATCHER );
+        if ( global == null )
+        {
+            throw new IllegalArgumentException(
+                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
+        }
+
+        File source = global.getFile();
+        File dest =
+            new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
+        global.setFile( dest );
+
+        try
+        {
+            if ( !dest.exists() )
+            {
+                dest.getParentFile().mkdirs();
+                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                FileUtils.copyFile( source, dest );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+        }
+        return global;
+    }
+
+    public Collection<Artifact> getGlobalArtifactCollection()
     {
         synchronized ( lock )
         {
-            Artifact global = getDependency( GLOBAL_MATCHER );
-            if ( global == null )
-            {
-                throw new IllegalArgumentException(
-                                                    "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
-            }
-
-            File source = global.getFile();
-            File dest =
-                new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
-            global.setFile( dest );
-
-            try
-            {
-                if ( !dest.exists() )
-                {
-                    dest.getParentFile().mkdirs();
-                    getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
-                    FileUtils.copyFile( source, dest );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
-            }
-
-            return Collections.singletonList( global );
+            return Collections.singletonList( getGlobalArtifact() );
         }
     }
 
@@ -2940,7 +2945,41 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public Integer getSwfVersion()
     {
-        return swfVersion;
+        if ( swfVersion != null )
+        {
+            return swfVersion;
+        }
+
+        Artifact global = getGlobalArtifact();
+        if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        {
+            String playerVersion = global.getClassifier();
+            if ( playerVersion == null )
+            {
+                playerVersion = "9";
+            }
+
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.3" ) )
+            {
+                return 12;
+            }
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.2" ) )
+            {
+                return 11;
+            }
+            if ( VersionUtils.isMinVersionOK( playerVersion, "10.1" ) )
+            {
+                return 10;
+            }
+            if ( VersionUtils.isMinVersionOK( playerVersion, "9" ) )
+            {
+                return 9;
+            }
+
+            throw new IllegalArgumentException( "Invalid player global version " + playerVersion );
+        }
+
+        return null;
     }
 
     public String getTargetPlayer()

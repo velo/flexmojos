@@ -377,7 +377,7 @@ public class TestCompilerMojo
     @Override
     public File[] getExternalLibraryPath()
     {
-        return MavenUtils.getFiles( getGlobalArtifact() );
+        return MavenUtils.getFiles( getGlobalArtifactCollection() );
     }
 
     private StringBuilder getExtraIncludes( File testOutputDirectory )

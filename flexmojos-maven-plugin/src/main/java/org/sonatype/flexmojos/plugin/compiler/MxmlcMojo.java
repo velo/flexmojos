@@ -285,7 +285,7 @@ public class MxmlcMojo
         return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
                                                      allOf( type( SWC ),//
                                                             anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ),
-                                                                   scope( INTERNAL ) ) ) ), getGlobalArtifact() );
+                                                                   scope( INTERNAL ) ) ) ), getGlobalArtifactCollection() );
     }
 
     public String getProjector()
