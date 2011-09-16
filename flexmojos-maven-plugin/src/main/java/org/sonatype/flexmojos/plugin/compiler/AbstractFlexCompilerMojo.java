@@ -1616,7 +1616,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return;
         }
 
-        getLog().warn( "Added the halo.swc theme because mx.swc was included as a dependency" );
+        getLog().warn( "Adding halo.swc theme because mx.swc was included as a dependency" );
         themes.add( haloSwc );
     }
 
@@ -1629,7 +1629,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return;
         }
 
-        getLog().warn( "Added the spark.css theme because spark.swc was included as a dependency" );
+        getLog().warn( "Adding spark.css theme because spark.swc was included as a dependency" );
         themes.add( sparkCss );
     }
 
@@ -3008,6 +3008,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                                + "you should explicitly state your theme dependencies)" );
 
             configureThemeSparkCss( themes );
+        }
+        if ( themes.isEmpty() )
+        {
             configureThemeHaloSwc( themes );
         }
 
