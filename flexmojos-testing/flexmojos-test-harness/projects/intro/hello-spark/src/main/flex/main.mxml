@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+      Copyright 2008 Marvin Herman Froeder
+    -->
+    <!--
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    -->
+
+    <!--
+        http://www.apache.org/licenses/LICENSE-2.0
+    -->
+
+    <!--
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   creationComplete="kill()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:Sequence repeatCount="0" id="animation">	
+			<s:AnimateColor colorFrom="blue" colorTo="green" duration="5000" />
+			<s:AnimateColor colorFrom="green" colorTo="red" duration="5000" />
+			<s:AnimateColor colorFrom="red" colorTo="black" duration="5000" />
+		</s:Sequence>
+
+	</fx:Declarations>
+
+    <fx:Script>
+        <![CDATA[
+            private function kill():void
+            {
+                CFG::IT {
+                  System.exit( 7727 );
+                }
+            }
+        ]]>
+    </fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle" />
+	</s:layout>
+	<s:Label id="label" text="Hello Homer." fontSize="50" creationComplete="animation.play([label])" />
+</s:Application>

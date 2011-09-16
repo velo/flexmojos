@@ -69,4 +69,17 @@ public class IT0091HelloWordTest
         MatcherAssert.assertThat( asdoc, FileMatcher.exists() );
     }
 
+    @Test
+    public void spark()
+        throws Exception
+    {
+        FMVerifier v = test( getProject( "intro/hello-spark" ), "install", "-DisIt=true" );
+        String dir = v.getBasedir();
+
+        File target = new File( dir, "target" );
+        File main = new File( target, "hello-spark-1.0-SNAPSHOT.swf" );
+
+        assertSeftExit( main, 7727, v );
+    }
+    
 }

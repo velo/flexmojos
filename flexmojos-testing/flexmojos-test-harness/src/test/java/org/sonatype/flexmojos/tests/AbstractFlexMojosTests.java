@@ -410,7 +410,7 @@ public class AbstractFlexMojosTests
 
             t.start();
 
-            t.join( 10000 );
+            t.join( 15000 );
 
             int exitValue = p.exitValue();
             if ( OSUtils.isWindows() )
