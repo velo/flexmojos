@@ -425,7 +425,7 @@ public class AsdocMojo
     @Override
     public File[] getExternalLibraryPath()
     {
-        return MavenUtils.getFiles( getGlobalArtifact() );
+        return MavenUtils.getFiles( getGlobalArtifactCollection() );
     }
 
     public String getFooter()

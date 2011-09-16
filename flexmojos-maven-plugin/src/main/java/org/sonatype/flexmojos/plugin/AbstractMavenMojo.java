@@ -77,7 +77,7 @@ public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
 {
 
-    private static final String AIR_GLOBAL = "airglobal";
+    protected static final String AIR_GLOBAL = "airglobal";
 
     protected static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
 
@@ -93,7 +93,7 @@ public abstract class AbstractMavenMojo
 
     protected static final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
-    private static final String PLAYER_GLOBAL = "playerglobal";
+    protected static final String PLAYER_GLOBAL = "playerglobal";
 
     protected static final Answer<Object> RETURNS_NULL = new Answer<Object>()
     {

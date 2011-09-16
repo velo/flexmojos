@@ -14,19 +14,41 @@ import java.util.Arrays;
 public class VersionUtils
 {
 
-    public static int[] splitVersion( String version, int size )
+    public static boolean isMaxVersionOK( int[] fdkVersion, int[] maxVersion )
     {
-        int[] versions = splitVersion( version );
+        return isVersionOK( maxVersion, fdkVersion );
+    }
 
-        if ( versions.length != size )
+    public static boolean isMaxVersionOK( String fdkVersion, String maxVersion )
+    {
+        return isMaxVersionOK( splitVersion( fdkVersion ), splitVersion( maxVersion ) );
+    }
+
+    public static boolean isMinVersionOK( int[] fdkVersion, int[] minVersion )
+    {
+        return isVersionOK( fdkVersion, minVersion );
+    }
+
+    public static boolean isMinVersionOK( String fdkVersion, String minVersion )
+    {
+        return isVersionOK( splitVersion( fdkVersion ), splitVersion( minVersion ) );
+    }
+
+    private static boolean isVersionOK( int[] fdkVersion, int[] minVersion )
+    {
+        int lenght = min( fdkVersion.length, minVersion.length );
+
+        int result = 0;
+        for ( int i = 0; i < lenght; i++ )
         {
-            int[] temp = new int[size];
-            Arrays.fill( temp, 0 );
-            System.arraycopy( versions, 0, temp, 0, Math.min( versions.length, size ) );
-            versions = temp;
+            result = fdkVersion[i] - minVersion[i];
+            if ( result != 0 )
+            {
+                return result > -1;
+            }
         }
 
-        return versions;
+        return result > -1;
     }
 
     public static int[] splitVersion( String version )
@@ -60,31 +82,19 @@ public class VersionUtils
         return versions;
     }
 
-    public static boolean isMinVersionOK( int[] fdkVersion, int[] minVersion )
+    public static int[] splitVersion( String version, int size )
     {
-        return isVersionOK( fdkVersion, minVersion );
-    }
+        int[] versions = splitVersion( version );
 
-    public static boolean isMaxVersionOK( int[] fdkVersion, int[] maxVersion )
-    {
-        return isVersionOK( maxVersion, fdkVersion );
-    }
-
-    private static boolean isVersionOK( int[] fdkVersion, int[] minVersion )
-    {
-        int lenght = min( fdkVersion.length, minVersion.length );
-
-        int result = 0;
-        for ( int i = 0; i < lenght; i++ )
+        if ( versions.length != size )
         {
-            result = fdkVersion[i] - minVersion[i];
-            if ( result != 0 )
-            {
-                return result > -1;
-            }
+            int[] temp = new int[size];
+            Arrays.fill( temp, 0 );
+            System.arraycopy( versions, 0, temp, 0, Math.min( versions.length, size ) );
+            versions = temp;
         }
 
-        return result > -1;
+        return versions;
     }
 
 }
