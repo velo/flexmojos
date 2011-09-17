@@ -2943,6 +2943,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
+    @FlexCompatibility( minVersion = "4.5" )
     public Integer getSwfVersion()
     {
         if ( swfVersion != null )
