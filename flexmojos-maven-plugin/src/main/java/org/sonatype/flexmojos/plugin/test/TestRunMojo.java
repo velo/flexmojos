@@ -126,6 +126,13 @@ public class TestRunMojo
      * @parameter expression="${flex.coverage}"
      */
     protected boolean coverage;
+    
+    /**
+     * Classes that shouldn't be include on code coverage analysis.
+     * 
+     * @parameter
+     */
+    private String[] coverageExclusions;
 
     /**
      * Location to save temporary files from coverage framework
@@ -347,6 +354,8 @@ public class TestRunMojo
             try
             {
                 reporter = coverageReporterManager.getReporter( coverageProvider );
+                
+                reporter.setExcludes( coverageExclusions );
             }
             catch ( CoverageReportException e )
             {
@@ -365,7 +374,7 @@ public class TestRunMojo
             {
                 CoverageReportRequest request =
                     new CoverageReportRequest( coverageDataDirectory, coverageReportFormat, coverageReportEncoding,
-                                               coverageOutputDirectory,
+                                               coverageOutputDirectory, 
                                                new File( project.getBuild().getSourceDirectory() ) );
                 try
                 {

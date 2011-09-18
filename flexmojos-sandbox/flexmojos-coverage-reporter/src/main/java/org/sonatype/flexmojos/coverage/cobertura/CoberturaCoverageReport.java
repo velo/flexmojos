@@ -58,14 +58,18 @@ public class CoberturaCoverageReport
     }
 
     @Override
-    protected CoverageObserver getInstumentationObserver()
+    protected CoverageObserver getInstrumentationObserver()
     {
         return new CoverageObserver()
         {
             public void instrument( String file, int line )
             {
-                ClassData classData = coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( file ) );
-                classData.addLine( line, null, null );
+            	if ( isExcluded( file ) ) {
+            		getLogger().debug("ignoring " + file);
+            	} else {
+	                ClassData classData = coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( file ) );
+	                classData.addLine( line, null, null );
+            	}
             }
         };
     }
@@ -80,6 +84,7 @@ public class CoberturaCoverageReport
             public Source getSource( String fileName )
             {
                 Source source = super.getSource( fileName.replace( ".java", ".as" ) );
+                
                 if ( source == null )
                 {
                     source = super.getSource( fileName.replace( ".java", ".mxml" ) );
@@ -128,13 +133,19 @@ public class CoberturaCoverageReport
         CoverageDataFileHandler.saveCoverageData( coverageProjectData, new File( dataDirectory, "cobertura.ser" ) );
     }
 
-    public void addResult( String classname, Integer[] touchs )
+    public void addResult( String file, Integer[] touchs )
     {
-        ClassData classData = this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( classname ) );
-        for ( Integer touch : touchs )
-        {
-            classData.touch( touch, 1 );
-        }
+    	getLogger().debug("addresult " + file);
+    	
+    	if ( isExcluded( file ) ) {
+    		getLogger().debug("ignoring " + file + " from touch");
+    	} else {
+	        ClassData classData = this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( file ) );
+	        for ( Integer touch : touchs )
+	        {
+	            classData.touch( touch, 1 );
+	        }
+    	}
     }
 
 }

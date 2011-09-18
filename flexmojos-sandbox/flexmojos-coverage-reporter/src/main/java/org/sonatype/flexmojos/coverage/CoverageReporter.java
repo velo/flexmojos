@@ -28,5 +28,7 @@ public interface CoverageReporter
         throws CoverageReportException;
 
     void addResult( String classname, Integer[] touchs );
+    
+    void setExcludes( String[] excludes );
 
 }
