@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
@@ -28,7 +27,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-RC2</version>
+    <version>4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-super-poms</artifactId>
