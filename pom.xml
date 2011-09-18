@@ -32,7 +32,7 @@
 
   <groupId>org.sonatype.flexmojos</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.0-RC2</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -111,7 +111,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
