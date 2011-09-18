@@ -35,18 +35,21 @@ public class EmmaCoverageReport
     }
 
     @Override
-    protected CoverageObserver getInstumentationObserver()
+    protected CoverageObserver getInstrumentationObserver()
     {
         return new CoverageObserver()
         {
             public void instrument( String file, int line )
             {
-                String classname = ApparatUtil.toClassname( file );
-                synchronized ( cdata.lock() )
-                {
-                    boolean[][] cover = new boolean[0][0];
-                    cdata.addClass( cover, classname, line );
-                }
+            	if ( !isExcluded( file ) )
+            	{
+	                String classname = ApparatUtil.toClassname( file );
+	                synchronized ( cdata.lock() )
+	                {
+	                    boolean[][] cover = new boolean[0][0];
+	                    cdata.addClass( cover, classname, line );
+	                }
+            	}
             }
         };
     }
@@ -85,7 +88,7 @@ public class EmmaCoverageReport
         reporter.run();
     }
 
-    public void addResult( String classname, Integer[] touchs )
+    public void addResult( String file, Integer[] touchs )
     {
         // mdata.ClassData classData =
         // this.coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( classname ) );
