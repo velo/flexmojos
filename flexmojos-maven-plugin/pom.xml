@@ -412,7 +412,7 @@
             <executions>
               <execution>
                 <id>publish-site</id>
-                <phase>deploy</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>upload-file</goal>
                 </goals>
@@ -422,7 +422,7 @@
               </execution>
               <execution>
                 <id>publish-latest-site</id>
-                <phase>deploy</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>upload-file</goal>
                 </goals>
@@ -432,7 +432,7 @@
               </execution>
             </executions>
             <configuration>
-              <serverId>rso</serverId>
+              <serverId>ossrh</serverId>
               <repositoryUrl>http://repository.sonatype.org/service/local/repositories/maven-sites/content-compressed</repositoryUrl>
               <file>target/${project.artifactId}-${project.version}-site.jar</file>
             </configuration>
