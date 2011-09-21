@@ -44,6 +44,8 @@ import scala.actors.threadpool.Arrays;
 public class MavenUtils
 {
 
+    private static final String NET_BSD = "netbsd";
+
     private static final String FREE_BSD = "freebsd";
 
     private static final String WINDOWS_OS = "windows";
@@ -188,6 +190,7 @@ public class MavenUtils
     {
         return osString().startsWith( LINUX_OS ) ||
         // I know, but people said that workds...
+            osString().startsWith( NET_BSD ) ||
             osString().startsWith( FREE_BSD );
     }
 
