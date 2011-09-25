@@ -51,6 +51,7 @@ import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.hamcrest.Matcher;
@@ -77,13 +78,13 @@ public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
 {
 
-    protected static final String AIR_GLOBAL = "airglobal";
+    public static final String AIR_GLOBAL = "airglobal";
 
-    protected static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
+    public static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
 
-    protected static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
-    protected static final String[] DEFAULT_RSL_URLS =
+    public static final String[] DEFAULT_RSL_URLS =
         new String[] { "/{contextRoot}/rsl/{artifactId}-{version}.{extension}" };
 
     public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
@@ -91,12 +92,11 @@ public abstract class AbstractMavenMojo
 
     public static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
 
-    protected static final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
+    public static final String PLAYER_GLOBAL = "playerglobal";
 
-    protected static final String PLAYER_GLOBAL = "playerglobal";
-
-    protected static final Answer<Object> RETURNS_NULL = new Answer<Object>()
+    public static final Answer<Object> RETURNS_NULL = new Answer<Object>()
     {
+        @Override
         public Object answer( InvocationOnMock invocation )
             throws Throwable
         {
@@ -105,13 +105,6 @@ public abstract class AbstractMavenMojo
     };
 
     public static final String TARGET_DIRECTORY = "getTargetDirectory";
-
-    @SuppressWarnings( "unchecked" )
-    private static Matcher<? extends Artifact> initGlobalMatcher()
-    {
-        return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),//
-                      anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );
-    }
 
     /**
      * @component
@@ -144,6 +137,8 @@ public abstract class AbstractMavenMojo
      * @parameter expression="${flex.fullSynchronization}" default-value="false"
      */
     protected boolean fullSynchronization;
+
+    protected final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
     /**
      * Local repository to be used by the plugin to resolve dependencies.
@@ -428,6 +423,7 @@ public abstract class AbstractMavenMojo
         return basedir;
     }
 
+    @Override
     @NotCacheable
     public Map<String, Object> getCache()
     {
@@ -478,10 +474,6 @@ public abstract class AbstractMavenMojo
         Artifact dep = null;
         if ( dep == null )
         {
-            dep = getDependency( GLOBAL_MATCHER );
-        }
-        if ( dep == null )
-        {
             dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
         }
         if ( dep == null )
@@ -516,11 +508,43 @@ public abstract class AbstractMavenMojo
     }
 
     @SuppressWarnings( "unchecked" )
+    protected Artifact getGlobalArtifact()
+    {
+        Artifact global = getDependency( GLOBAL_MATCHER );
+        if ( global == null )
+        {
+            throw new IllegalArgumentException(
+                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
+        }
+
+        File source = global.getFile();
+        File dest =
+            new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
+        global.setFile( dest );
+
+        try
+        {
+            if ( !dest.exists() )
+            {
+                dest.getParentFile().mkdirs();
+                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
+                FileUtils.copyFile( source, dest );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+        }
+        return global;
+    }
+
+    @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
         return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
     }
 
+    @Override
     @NotCacheable
     public Log getLog()
     {
@@ -546,6 +570,7 @@ public abstract class AbstractMavenMojo
     /**
      * @see org.apache.maven.plugin.ContextEnabled#getPluginContext()
      */
+    @Override
     public Map<Object, Object> getPluginContext()
     {
         return pluginContext;
@@ -627,6 +652,13 @@ public abstract class AbstractMavenMojo
 
         return getUnpackedArtifact( frmkCfg.getGroupId(), frmkCfg.getArtifactId(), frmkCfg.getVersion(),
                                     frmkCfg.getClassifier(), frmkCfg.getType() );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected Matcher<? extends Artifact> initGlobalMatcher()
+    {
+        return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),//
+                      anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );
     }
 
     public boolean isSkip()
@@ -812,11 +844,11 @@ public abstract class AbstractMavenMojo
         scanner.setBasedir( directory );
         if ( !pattern.getIncludes().isEmpty() )
         {
-            scanner.setIncludes( (String[]) pattern.getIncludes().toArray( new String[0] ) );
+            scanner.setIncludes( pattern.getIncludes().toArray( new String[0] ) );
         }
         if ( !pattern.getExcludes().isEmpty() )
         {
-            scanner.setExcludes( (String[]) pattern.getExcludes().toArray( new String[0] ) );
+            scanner.setExcludes( pattern.getExcludes().toArray( new String[0] ) );
         }
         scanner.addDefaultExcludes();
         scanner.scan();
@@ -843,6 +875,7 @@ public abstract class AbstractMavenMojo
         this.archiverManager = archiverManager;
     }
 
+    @Override
     public void setLog( Log log )
     {
         this.log = log;
