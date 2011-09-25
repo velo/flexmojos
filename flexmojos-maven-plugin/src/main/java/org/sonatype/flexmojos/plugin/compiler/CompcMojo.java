@@ -144,7 +144,7 @@ public class CompcMojo
      *   &lt;include&gt;b.txt&lt;/include&gt;
      *   &lt;scan&gt;
      *     &lt;includes&gt;
-     *       &lt;include&gt;**\/*.rxml&lt;/include&gt;
+     *       &lt;include&gt;**&#47;*.mxml&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
      *       &lt;exclude&gt;private/*&lt;/exclude&gt;
