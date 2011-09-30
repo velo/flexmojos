@@ -40,7 +40,8 @@
         <configuration>
           <locales>
             <locale>en_US</locale>
-          </locales>         
+          </locales>
+          <debug>true</debug>          
         </configuration>
       </plugin>
     </plugins>

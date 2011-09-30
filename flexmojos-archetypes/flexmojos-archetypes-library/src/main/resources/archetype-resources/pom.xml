@@ -37,6 +37,9 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>${project.version}</version>
         <extensions>true</extensions>
+		<configuration>
+			<debug>true</debug>
+		</configuration>
       </plugin>
     </plugins>
   </build>
@@ -57,5 +60,23 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <!-- Repository and PluginRepository section for Flex SDK and compiler dependencies. 
+       Note: instead of including this in every POM, you can append it to your user (~/.m2/settings.xml) or global 
+  		(M2_HOME/conf/settings.xml) settings file. 
+    -->
+  <repositories>
+     <repository>
+        <id>flex-mojos-repository</id>
+        <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+     </repository>
+  </repositories>
+
+  <pluginRepositories>
+     <pluginRepository>
+        <id>flex-mojos-plugin-repository</id>
+        <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+     </pluginRepository>
+  </pluginRepositories>
 
 </project>
