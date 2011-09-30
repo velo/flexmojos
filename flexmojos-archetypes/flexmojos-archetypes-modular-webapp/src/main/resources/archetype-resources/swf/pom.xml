@@ -38,6 +38,7 @@
           <locales>
             <locale>en_US</locale>
           </locales>
+          <debug>true</debug>
         </configuration>
       </plugin>
     </plugins>
