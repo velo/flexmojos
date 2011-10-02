@@ -397,7 +397,7 @@
             <artifactId>maven-site-plugin</artifactId>
             <executions>
               <execution>
-                <phase>deploy</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>site</goal>
                   <goal>jar</goal>
