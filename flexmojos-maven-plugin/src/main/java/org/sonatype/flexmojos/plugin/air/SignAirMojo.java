@@ -347,6 +347,10 @@ public class SignAirMojo
         }
         catch ( Exception e )
         {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().error( e.getMessage(), e );
+            }
             throw new MojoExecutionException( "Error invoking AIR api", e );
         }
         finally

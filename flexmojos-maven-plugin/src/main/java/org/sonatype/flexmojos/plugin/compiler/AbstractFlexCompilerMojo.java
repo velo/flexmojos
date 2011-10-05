@@ -306,7 +306,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * 
      * @parameter
      */
-    private Map<String, String> compilerWarnings = new LinkedHashMap<String, String>();
+    private final Map<String, String> compilerWarnings = new LinkedHashMap<String, String>();
 
     /**
      * The maven compile source roots
@@ -938,6 +938,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      * @deprecated use dependency with type "xml" and classifier "link-report"
      * @parameter
      */
+    @Deprecated
     protected MavenArtifact[] loadExterns;
 
     /**
@@ -2200,37 +2201,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return generateFrameLoader;
     }
 
-    @SuppressWarnings( "unchecked" )
-    protected Artifact getGlobalArtifact()
-    {
-        Artifact global = getDependency( GLOBAL_MATCHER );
-        if ( global == null )
-        {
-            throw new IllegalArgumentException(
-                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
-        }
-
-        File source = global.getFile();
-        File dest =
-            new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
-        global.setFile( dest );
-
-        try
-        {
-            if ( !dest.exists() )
-            {
-                dest.getParentFile().mkdirs();
-                getLog().debug( "Striping global artifact, source: " + source + ", dest: " + dest );
-                FileUtils.copyFile( source, dest );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
-        }
-        return global;
-    }
-
     public Collection<Artifact> getGlobalArtifactCollection()
     {
         synchronized ( lock )
@@ -2960,24 +2930,18 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 playerVersion = "9";
             }
 
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11" ) )
+                return 13;
             if ( VersionUtils.isMinVersionOK( playerVersion, "10.3" ) )
-            {
                 return 12;
-            }
             if ( VersionUtils.isMinVersionOK( playerVersion, "10.2" ) )
-            {
                 return 11;
-            }
             if ( VersionUtils.isMinVersionOK( playerVersion, "10.1" ) )
-            {
                 return 10;
-            }
             if ( VersionUtils.isMinVersionOK( playerVersion, "9" ) )
-            {
                 return 9;
-            }
 
-            throw new IllegalArgumentException( "Invalid player global version " + playerVersion );
+            getLog().warn( "Unable to determine 'swfVersion' for " + global );
         }
 
         return null;

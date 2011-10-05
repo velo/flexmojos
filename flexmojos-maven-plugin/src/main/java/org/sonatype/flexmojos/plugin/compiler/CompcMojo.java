@@ -87,7 +87,13 @@ public class CompcMojo
     private boolean includeAllNamespaces;
 
     /**
-     * Inclusion/exclusion patterns used to filter classes to include in the output SWC
+     * Inclusion/exclusion patterns used to filter classes to include in the output SWC.
+     * ** denotes a directory wildcard, * denotes a file wildcard.  For example: 
+     * 
+     * <p>
+     * **.model.* -- denotes all classes in any package named "model"
+     * </p>
+     *
      * <p>
      * Equivalent to -include-classes
      * </p>
@@ -99,12 +105,17 @@ public class CompcMojo
      *   &lt;include&gt;org.sonatype.flexmojos.YourClass&lt;/include&gt;
      *   &lt;scan&gt;
      *     &lt;includes&gt;
+     *       &lt;include&gt;**.*&lt;/include&gt;
+     *     &lt;/includes&gt;
+     *   &lt;/scan&gt;
+     *   &lt;scan&gt;
+     *     &lt;includes&gt;
      *       &lt;include&gt;com.mycompany.*&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
      *       &lt;exclude&gt;com.mycompany.ui.*&lt;/exclude&gt;
      *     &lt;/excludes&gt;
-     *   &lt;/scan&gt;
+     *   &lt;/scan&gt;     
      *   &lt;scan&gt;
      *     &lt;includes&gt;
      *       &lt;include&gt;org.mycompany.*&lt;/include&gt;
@@ -133,7 +144,7 @@ public class CompcMojo
      *   &lt;include&gt;b.txt&lt;/include&gt;
      *   &lt;scan&gt;
      *     &lt;includes&gt;
-     *       &lt;include&gt;**\/*.rxml&lt;/include&gt;
+     *       &lt;include&gt;**&#47;*.mxml&lt;/include&gt;
      *     &lt;/includes&gt;
      *     &lt;excludes&gt;
      *       &lt;exclude&gt;private/*&lt;/exclude&gt;

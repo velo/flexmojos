@@ -27,7 +27,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>4.1-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>
@@ -397,7 +397,7 @@
             <artifactId>maven-site-plugin</artifactId>
             <executions>
               <execution>
-                <phase>deploy</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>site</goal>
                   <goal>jar</goal>
