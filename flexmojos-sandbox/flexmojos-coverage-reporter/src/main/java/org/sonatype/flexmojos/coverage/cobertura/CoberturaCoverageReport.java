@@ -51,10 +51,20 @@ public class CoberturaCoverageReport
             		getLogger().debug("ignoring " + file);
             	} else {
 	                ClassData classData = coverageProjectData.getOrCreateClassData( ApparatUtil.toClassname( file ) );
+	                classData.setSourceFileName( getSourceFilePath( file ) );
 	                classData.addLine( line, null, null );
             	}
             }
         };
+    }
+    
+    private String getSourceFilePath( String apparatClassname )
+    {
+        String cn = apparatClassname;
+        cn = cn.substring( cn.lastIndexOf( ';' ) + 1 );
+        cn = cn.replace( ';', '/' );
+        
+        return cn;
     }
 
     public void generateReport( CoverageReportRequest request )
@@ -99,11 +109,13 @@ public class CoberturaCoverageReport
                 new HTMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity,
                                 coverageReportEncoding );
             }
-            else if ( format.contains( "xml" ) )
+            
+            if ( format.contains( "xml" ) )
             {
                 new XMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
             }
-            else if ( format.contains( "summaryXml" ) )
+            
+            if ( format.contains( "summaryXml" ) )
             {
                 new SummaryXMLReport( coverageProjectData, coverageReportDestinationDir, finder, complexity );
             }
