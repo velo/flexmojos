@@ -121,14 +121,12 @@ public class AsdocMojo
      * 
      * <pre>
      * &lt;docClasses&gt;
-     *   &lt;docClass&gt;
-     *     &lt;includes&gt;
-     *       &lt;include&gt;com/mycompany/*&lt;/include&gt;
-     *     &lt;/includes&gt;
-     *     &lt;excludes&gt;
-     *       &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
-     *     &lt;/excludes&gt;
-     *   &lt;/docClass&gt;
+     *   &lt;includes&gt;
+     *     &lt;include&gt;com/mycompany/*&lt;/include&gt;
+     *   &lt;/includes&gt;
+     *   &lt;excludes&gt;
+     *     &lt;exclude&gt;com/mycompany/ui/*&lt;/exclude&gt;
+     *   &lt;/excludes&gt;
      * &lt;/docClasses&gt;
      * </pre>
      * 
