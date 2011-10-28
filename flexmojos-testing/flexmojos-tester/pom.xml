@@ -35,41 +35,6 @@
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-component-metadata</artifactId>
       </plugin>
-      <plugin>
-        <groupId>com.savage7.maven.plugins</groupId>
-        <artifactId>maven-external-dependency-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/flashplayer</outputDirectory>
-              <stripVersion>true</stripVersion>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe</groupId>
-                  <artifactId>flashplayer</artifactId>
-                  <version>10.2</version>
-                  <type>exe</type>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>com.adobe</groupId>
-                  <artifactId>flashplayer</artifactId>
-                  <version>10.2</version>
-                  <classifier>linux</classifier>
-                  <type>uexe</type>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
