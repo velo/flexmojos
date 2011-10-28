@@ -1,5 +1,15 @@
 package org.sonatype.flexmojos.plugin.test;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -13,7 +23,6 @@ import org.sonatype.flexmojos.coverage.CoverageReporter;
 import org.sonatype.flexmojos.coverage.CoverageReporterManager;
 import org.sonatype.flexmojos.plugin.AbstractMavenMojo;
 import org.sonatype.flexmojos.plugin.SourcePathAware;
-import org.sonatype.flexmojos.plugin.compiler.attributes.MavenArtifact;
 import org.sonatype.flexmojos.test.TestRequest;
 import org.sonatype.flexmojos.test.TestRunner;
 import org.sonatype.flexmojos.test.TestRunnerException;
@@ -21,16 +30,6 @@ import org.sonatype.flexmojos.test.launcher.LaunchFlashPlayerException;
 import org.sonatype.flexmojos.test.report.TestCaseReport;
 import org.sonatype.flexmojos.test.report.TestCoverageReport;
 import org.sonatype.flexmojos.util.PathUtil;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Goal to run unit tests on Flex. It does support the following frameworks:
@@ -57,43 +56,11 @@ public class TestRunMojo
     private static final String TEST_INFO = "Tests run: {0}, Failures: {1}, Errors: {2}, Time Elapsed: {3} sec";
 
     /**
-     * Can be of type <code>&lt;argument&gt;</code>
+     * The adl command
      * 
-     * @parameter expression="${flex.adl.command}"
+     * @parameter default-value="adl" expression="${flex.adl.command}"
      */
     private String adlCommand;
-
-    /**
-     * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;adlGav&gt;
-     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
-     *   &lt;artifactId&gt;adl&lt;/artifactId&gt;
-     *   &lt;type&gt;exe&lt;/type&gt;
-     * &lt;/adlGav&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private MavenArtifact adlGav;
-
-    /**
-     * Coordinates to adl. If not set will use <i>com.adobe:adl</i><BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;adlGav&gt;
-     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
-     *   &lt;artifactId&gt;runtime&lt;/artifactId&gt;
-     *   &lt;type&gt;zip&lt;/type&gt;
-     * &lt;/adlGav&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private MavenArtifact adlRuntimeGav;
 
     /**
      * When true, allow flexmojos to launch xvfb-run to run test if it detects headless linux env
@@ -188,27 +155,11 @@ public class TestRunMojo
     private int firstConnectionTimeout;
 
     /**
-     * Can be of type <code>&lt;argument&gt;</code>
+     * The flashplayer command
      * 
-     * @parameter expression="${flex.flashPlayer.command}"
+     * @parameter default-value="flashplayer" expression="${flex.flashPlayer.command}"
      */
     private String flashPlayerCommand;
-
-    /**
-     * Coordinates to flashplayer. If not set will use <i>com.adobe:flashplayer</i><BR>
-     * Usage:
-     * 
-     * <pre>
-     * &lt;flashPlayerGav&gt;
-     *   &lt;groupId&gt;com.adobe&lt;/groupId&gt;
-     *   &lt;artifactId&gt;flashplayer&lt;/artifactId&gt;
-     *   &lt;type&gt;exe&lt;/type&gt;
-     * &lt;/flashPlayerGav&gt;
-     * </pre>
-     * 
-     * @parameter
-     */
-    private MavenArtifact flashPlayerGav;
 
     private int numErrors;
 
@@ -230,17 +181,6 @@ public class TestRunMojo
      * @parameter default-value="false" expression="${skipTests}"
      */
     private boolean skipTest;
-
-    /**
-     * Specifies the version of the player the application is targeting. Features requiring a later version will not be
-     * compiled into the application. The minimum value supported is "9.0.0".
-     * <p>
-     * Equivalent to -target-player
-     * </p>
-     * 
-     * @parameter expression="${flex.targetPlayer}" default-value="10.2"
-     */
-    private String targetPlayer;
 
     /**
      * If specified, the flexmojos will use this value as the control port to connect to during test runs.
@@ -391,13 +331,12 @@ public class TestRunMojo
         testRequest.setUseAirDebugLauncher( isAirProject );
         if ( isAirProject )
         {
-            testRequest.setAdlCommand( resolveAdlVm( adlCommand, adlGav, "adl", getAirTarget(), adlRuntimeGav ) );
+            testRequest.setAdlCommand( adlCommand );
             testRequest.setSwfDescriptor( createSwfDescriptor( swf ) );
         }
         else
         {
-            testRequest.setFlashplayerCommand( resolveFlashVM( flashPlayerCommand, flashPlayerGav, "flashplayer",
-                                                               targetPlayer ) );
+            testRequest.setFlashplayerCommand( flashPlayerCommand );
         }
 
         if ( coverage )
