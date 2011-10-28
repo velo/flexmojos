@@ -75,7 +75,7 @@ public class TestRequest
         return useAirDebugLauncher;
     }
 
-    public void setAdlCommand( String[] adlCommand )
+    public void setAdlCommand( String... adlCommand )
     {
         this.adlCommand = adlCommand;
     }
@@ -90,7 +90,7 @@ public class TestRequest
         this.firstConnectionTimeout = firstConnectionTimeout;
     }
 
-    public void setFlashplayerCommand( String[] flashplayerCommand )
+    public void setFlashplayerCommand( String... flashplayerCommand )
     {
         this.flashplayerCommand = flashplayerCommand;
     }

@@ -7,7 +7,6 @@
  */
 package org.sonatype.flexmojos.tests;
 
-import static org.sonatype.flexmojos.util.PathUtil.file;
 import static org.sonatype.flexmojos.util.PathUtil.path;
 
 import java.io.File;
@@ -58,8 +57,6 @@ public class AbstractFlexMojosTests
     private static File mavenHome;
 
     protected static PlexusContainer container;
-
-    private static File flashplayer;
 
     private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
 
@@ -130,19 +127,6 @@ public class AbstractFlexMojosTests
     public static void makeFlashplayerExecutable()
     {
         FMVerifier.setLocalRepo( getProperty( "fake-repo" ) );
-
-        if ( OSUtils.isWindows() )
-        {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "exe" ) );
-        }
-        else if ( OSUtils.isMacOS() )
-        {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "uexe", "mac" ) );
-        }
-        else
-        {
-            flashplayer = file( FMVerifier.getArtifactPath( "com.adobe", "flashplayer", "10.2", "uexe", "linux" ) );
-        }
     }
 
     private static void updateMavenMemory( File mvn, String memString )
@@ -390,7 +374,7 @@ public class AbstractFlexMojosTests
         Process p = null;
         try
         {
-            p = Runtime.getRuntime().exec( new String[] { path( flashplayer ), path( main ) } );
+            p = Runtime.getRuntime().exec( new String[] { "flashplayer", path( main ) } );
             final Process tp = p;
 
             Thread t = new Thread( new Runnable()
