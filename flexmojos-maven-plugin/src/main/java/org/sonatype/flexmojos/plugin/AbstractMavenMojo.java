@@ -495,11 +495,11 @@ public abstract class AbstractMavenMojo
         }
         if ( dep == null )
         {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
         }
         if ( dep == null )
         {
-            getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
         }
 
         if ( dep == null )
