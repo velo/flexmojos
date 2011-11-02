@@ -6,7 +6,7 @@
   <parent>
     <artifactId>flexmojos-sandbox</artifactId>
     <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.1-beta</version>
+    <version>4.2-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-nexus-plugin</artifactId>
