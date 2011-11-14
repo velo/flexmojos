@@ -2963,7 +2963,21 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         // if themes are specified in the <themes> configuration
         if ( this.themes != null )
         {
-            themes.addAll( asList( files( this.themes, getResourcesTargetDirectories() ) ) );
+            List<File> files = asList( files( this.themes, getResourcesTargetDirectories() ) );
+            // PathUtil returns nulls when files don't exists.
+            // When the contents of the themes list contains paths that
+            // don't exist NPEs will be encountered in other parts of the plugin.
+            // To avoid this check for nulls here and throw a descriptive error.
+            int l = files.size();
+            for ( int i = 0; i < l; i++ )
+            {
+                File file = files.get( i );
+                if ( file == null )
+                    throw new IllegalArgumentException(
+                                                        "The following theme file found in the <theme> section doesn't exist: '"
+                                                            + this.themes[i] + "'." );
+            }
+            themes.addAll( files );
         }
 
         if ( themes.isEmpty() )
