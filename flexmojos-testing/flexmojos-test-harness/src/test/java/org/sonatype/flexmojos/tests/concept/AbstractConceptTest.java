@@ -44,7 +44,7 @@ public abstract class AbstractConceptTest
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { { "4.0.0.14159" }, { "4.1.0.16076" }, { "4.5.0.20967" } };
+        return new Object[][] { { "4.0.0.14159" }, { "4.0.a.14159" }, { "4.1.0.16076" }, { "4.5.0.20967" } };
     }
 
 }
