@@ -173,6 +173,10 @@
             <xml>com.adobe.flex.framework:air-framework:4.0.0.14159:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:4.0.0.14159:pom</xml>
 
+            <xml>com.adobe.flex:compiler:4.0.a.14159:pom</xml>
+            <xml>com.adobe.flex.framework:air-framework:4.0.a.14159:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.0.a.14159:pom</xml>
+
             <xml>com.adobe.flex:compiler:4.1.0.16076:pom</xml>
             <xml>com.adobe.flex.framework:air-framework:4.1.0.16076:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:4.1.0.16076:pom</xml>
@@ -296,40 +300,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>true</skipTests>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <!-- http://www.yourkit.com/docs/80/help/agent.jsp -->
-      <id>yourkit-profile</id>
-
-      <activation>
-        <property>
-          <name>yourkit.home</name>
-        </property>
-      </activation>
-
-      <!-- This is the path on Velo's machine ;) <properties> <yourkit.home>C:\Arquivos de programas\YourKit Java Profiler 8.0.13</yourkit.home> </properties -->
-
-      <dependencies>
-        <dependency>
-          <groupId>com.yourkit</groupId>
-          <artifactId>yjp</artifactId>
-          <version>8.0.13</version>
-          <scope>system</scope>
-          <systemPath>${yourkit.home}\lib\yjp.jar</systemPath>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <argLine>-agentpath:"${yourkit.home}\bin\win64\yjpagent.dll"</argLine>
             </configuration>
           </plugin>
         </plugins>
