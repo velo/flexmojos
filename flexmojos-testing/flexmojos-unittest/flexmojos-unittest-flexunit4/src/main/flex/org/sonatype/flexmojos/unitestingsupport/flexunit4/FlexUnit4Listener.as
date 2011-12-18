@@ -178,7 +178,7 @@ package org.sonatype.flexmojos.unitestingsupport.flexunit4
 		public function testFinished( description:IDescription ):void
 		{
 			var descriptor:Descriptor = getDescriptorFromDescription(description);
-			_socketReporter.testFinished(descriptor.path + "." + descriptor.suite);
+			_socketReporter.testFinished(descriptor.path + "." + descriptor.suite, descriptor.method );
 			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " finished");
 		}
 		
