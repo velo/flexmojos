@@ -12,9 +12,10 @@ package org.sonatype.flexmojos.unitestingsupport
 	import flash.net.XMLSocket;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-
+	import flash.utils.getTimer;
+	
 	import mx.binding.utils.BindingUtils;
-
+	
 	import org.sonatype.flexmojos.test.monitor.CommConstraints;
 	import org.sonatype.flexmojos.test.report.ErrorReport;
 	import org.sonatype.flexmojos.test.report.TestCaseReport;
@@ -38,6 +39,11 @@ package org.sonatype.flexmojos.unitestingsupport
 
 		[Bindable]
 		public var numTestsRun:int=0;
+		
+		/**
+		 * TestMethodReport -> milliseconds
+		 */
+		private var testTimes:Dictionary = new Dictionary();
 
 		private var closeController:CloseController=CloseController.getInstance();
 
@@ -70,7 +76,7 @@ package org.sonatype.flexmojos.unitestingsupport
 		public function addMethod(testName:String, methodName:String):void
 		{
 			var reportObject:TestCaseReport=getReport(testName);
-			reportObject.getMethod(methodName);
+			testTimes[reportObject.getMethod(methodName)] = getTimer();
 			reportObject.tests++;
 		}
 
@@ -90,10 +96,16 @@ package org.sonatype.flexmojos.unitestingsupport
 			methodObject.failure=failure;
 		}
 
-		public function testFinished(testName:String, timeTaken:int=0):void
+		public function testFinished(testName:String, methodName:String=null, timeTaken:int=0):void
 		{
 			var reportObject:TestCaseReport=reports[testName];
 			reportObject.time=timeTaken;
+			
+			if( methodName && !timeTaken )
+			{
+				var methodObject:TestMethodReport = reportObject.getMethod(methodName);
+				methodObject.time = getTimer() - int(testTimes[methodObject]);
+			}
 
 			// If we have finished running all the tests send the results.
 			++numTestsRun;

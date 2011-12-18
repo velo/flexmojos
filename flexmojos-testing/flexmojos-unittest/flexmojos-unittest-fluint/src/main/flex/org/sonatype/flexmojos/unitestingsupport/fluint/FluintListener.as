@@ -108,7 +108,7 @@ package org.sonatype.flexmojos.unitestingsupport.fluint
 
 		private function endTest(testCaseResult:TestCaseResult, testMethodResult:TestMethodResult):void
 		{
-			_socketReporter.testFinished(testCaseResult.qualifiedClassName, testMethodResult.testDuration);
+			_socketReporter.testFinished(testCaseResult.qualifiedClassName, testMethodResult.displayName, testMethodResult.testDuration);
 		}
 
 		private function addError(testCaseResult:TestCaseResult, testMethodResult:TestMethodResult):void
