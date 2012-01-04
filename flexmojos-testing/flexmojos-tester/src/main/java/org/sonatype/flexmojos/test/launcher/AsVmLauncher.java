@@ -75,7 +75,7 @@ public class AsVmLauncher
     private void processExitCode( int returnCode )
     {
 
-        String errorMessage = null;
+        String errorMessage;
 
         switch ( returnCode )
         {
@@ -156,7 +156,6 @@ public class AsVmLauncher
             getLogger().debug( "[LAUNCHER] Flashplayer closed" );
 
             processExitCode( returnCode );
-            return;
         }
         catch ( InterruptedException e )
         {
@@ -190,23 +189,6 @@ public class AsVmLauncher
 
         try
         {
-            FileUtils.forceDelete( "/tmp/.X99-lock" );
-        }
-        catch ( IOException e )
-        {
-            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
-        }
-        try
-        {
-            FileUtils.forceDelete( "/tmp/.X11-unix" );
-        }
-        catch ( IOException e )
-        {
-            getLogger().error( "Failed to delete Xvfb locking files, does the current user has access?", e );
-        }
-
-        try
-        {
             log = File.createTempFile( "xvfbrun", "flashplayer" );
         }
         catch ( IOException e )
@@ -229,8 +211,9 @@ public class AsVmLauncher
     /**
      * Run the SWF that contains the FlexUnit tests.
      * 
-     * @param targetSwf the SWF.
-     * @throws LaunchFlashPlayerException
+     * @param request the TestRequest instance.
+     * @throws LaunchFlashPlayerException Thrown if the flash player fails to launch.
+     * @throws InvalidSwfException Thrown if the requested test swf cannot be found or is not set.
      */
     public void start( TestRequest request )
         throws LaunchFlashPlayerException, InvalidSwfException
