@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.generator.granitedsv2d2d0;
+package org.sonatype.flexmojos.generator.granitedsv2d3d0;
 
 import static java.lang.Thread.currentThread;
 import static org.granite.generator.template.StandardTemplateUris.BEAN;
@@ -57,10 +57,10 @@ import org.sonatype.flexmojos.generator.GenerationException;
 import org.sonatype.flexmojos.generator.GenerationRequest;
 
 /**
- * @author velo.br@gmail.com
- * @since 4.0
+ * @author ffrizzo@gmail.com
+ * @since 4.1
  */
-@Component( role = org.sonatype.flexmojos.generator.Generator.class, hint = "graniteds22" )
+@Component( role = org.sonatype.flexmojos.generator.Generator.class, hint = "graniteds23" )
 public final class GraniteDsGenerator
     implements org.sonatype.flexmojos.generator.Generator
 {

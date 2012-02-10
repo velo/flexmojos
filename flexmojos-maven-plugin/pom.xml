@@ -206,7 +206,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-generator-graniteds-2.2.0</artifactId>
+      <artifactId>flexmojos-generator-graniteds-2.3.0</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
