@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.sonatype.flexmojos</groupId>
     <artifactId>flexmojos-unittest</artifactId>
-    <version>4.2-beta-SNAPSHOT</version>
+    <version>4.2-beta</version>
   </parent>
 
   <artifactId>flexmojos-unittest-advancedflex</artifactId>
