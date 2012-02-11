@@ -93,7 +93,7 @@ public class SimpleGeneratorMojo
     private File baseOutputDirectory;
 
     /**
-     * @parameter default-value="graniteds22" expression="${generatorToUse}"
+     * @parameter default-value="graniteds23" expression="${generatorToUse}"
      */
     private String generatorToUse;
 
