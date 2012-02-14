@@ -114,7 +114,7 @@ package org.sonatype.flexmojos.unitestingsupport
 			if( methodName && !timeTaken )
 			{
 				var methodObject:TestMethodReport = reportObject.getMethod(methodName);
-				methodObject.time = getTimer() - int(testTimes[methodObject]);
+				methodObject.time = (getTimer() - int(testTimes[methodObject]))/1000.0;
 			}
 
 			// If we have finished running all the tests send the results.
