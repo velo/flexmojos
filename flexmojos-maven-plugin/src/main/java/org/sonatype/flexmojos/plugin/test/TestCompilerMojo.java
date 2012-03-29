@@ -27,6 +27,7 @@ import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.groupId;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.scope;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.type;
 import static org.sonatype.flexmojos.matcher.artifact.ArtifactMatcher.version;
+import static org.sonatype.flexmojos.plugin.common.FlexExtension.ANE;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
 import static org.sonatype.flexmojos.plugin.common.FlexExtension.XML;
 import static org.sonatype.flexmojos.plugin.common.FlexScopes.CACHING;
@@ -520,7 +521,7 @@ public class TestCompilerMojo
         return MavenUtils.getFiles( coverArtifact,
                                     Collections.singletonList( getFlexmojosUnittestSupport() ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
-                                    getDependencies( type( SWC ),//
+                                    getDependencies( anyOf( type( SWC ), type( ANE ) ), //
                                                      anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
                                                             scope( TEST ) ),//
                                                      not( GLOBAL_MATCHER ) ) );
