@@ -32,7 +32,7 @@
 
   <groupId>net.flexmojos.oss</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>5.0-beta</version>
+  <version>5.1-beta-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -303,9 +303,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
-    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
-    <url>http://github.com/Flexmojos/flexmojos</url>
+    <connection>scm:git:git://github.com/velo/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:velo/flexmojos.git</developerConnection>
+    <url>http://github.com/velo/flexmojos</url>
   </scm>
 
   <mailingLists>
