@@ -20,7 +20,7 @@
 -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
                 layout="absolute" verticalAlign="middle" horizontalAlign="center"
-                xmlns:screen="org.sonatype.flexmojos.todolist.view.screen.*">
+                xmlns:screen="net.flexmojos.oss.todolist.view.screen.*">
 
     <screen:TodoForm horizontalCenter="0" verticalCenter="0"/>
     <mx:ComboBox id="locales" valueCommit="switchLocale()" dataProvider="{availableLocales}" right="10" top="10"/>

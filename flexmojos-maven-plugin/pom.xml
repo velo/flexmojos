@@ -25,9 +25,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <version>5.0-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-maven-plugin</artifactId>

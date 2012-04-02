@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-super-pom-commons</artifactId>
     <version>%{flexmojos.version}</version>
   </parent>
@@ -53,7 +53,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
+        <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <dependencies>
           <dependency>

@@ -23,7 +23,7 @@
 	<mx:Script>
 		<![CDATA[
 		
-			import org.sonatype.flexmojos.l10n.Resource;
+			import net.flexmojos.oss.l10n.Resource;
 
 			[Bindable]
 			private var resource:Resource = new Resource();

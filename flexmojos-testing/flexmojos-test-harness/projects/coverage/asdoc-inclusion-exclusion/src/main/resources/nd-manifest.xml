@@ -19,6 +19,6 @@
 
 -->
 <componentPackage>
-	<component id="Vermelho" class="org.sonatype.flexmojos.it.Vermelho"/>
-	<component id="Verde" class="org.sonatype.flexmojos.it.Verde"/>
+	<component id="Vermelho" class="net.flexmojos.oss.it.Vermelho"/>
+	<component id="Verde" class="net.flexmojos.oss.it.Verde"/>
 </componentPackage>

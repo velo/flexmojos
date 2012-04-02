@@ -21,7 +21,7 @@
 package  {
 
 	import flexunit.framework.Assert;
-	import org.sonatype.flexmojos.l10n.Resource;
+	import net.flexmojos.oss.l10n.Resource;
 	
 	public class AnnotatedTest {
 		

@@ -33,7 +33,7 @@
 
     <destination id="todoService">
         <properties>
-            <source>org.sonatype.flexmojos.todolist.business.TodoServiceImpl</source>
+            <source>net.flexmojos.oss.todolist.business.TodoServiceImpl</source>
         </properties>
     </destination>
 </service>

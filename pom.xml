@@ -30,9 +30,9 @@
     <version>5</version>
   </parent>
 
-  <groupId>org.sonatype.flexmojos</groupId>
+  <groupId>net.flexmojos.oss</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.3-beta-SNAPSHOT</version>
+  <version>5.0-beta-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>

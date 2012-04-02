@@ -21,9 +21,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <version>5.0-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex2-compatibility-layer</artifactId>
@@ -33,7 +33,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
+        <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-generator-mojo</artifactId>
         <version>${project.version}</version>
         <executions>
@@ -59,7 +59,7 @@
             <version>5.2</version>
           </dependency>
           <dependency>
-            <groupId>org.sonatype.flexmojos</groupId>
+            <groupId>net.flexmojos.oss</groupId>
             <artifactId>flexmojos-generator-internal-flex2</artifactId>
             <version>${project.version}</version>
           </dependency>

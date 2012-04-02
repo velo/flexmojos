@@ -19,7 +19,7 @@ package flex2.compiler.util.test;
 
 import static org.mockito.Mockito.mock;
 
-import org.sonatype.flexmojos.compiler.util.ThreadLocalToolkitHelper;
+import net.flexmojos.oss.compiler.util.ThreadLocalToolkitHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

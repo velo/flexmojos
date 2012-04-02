@@ -23,8 +23,8 @@
 
   <parent>
     <artifactId>flexmojos-archetypes</artifactId>
-    <groupId>org.sonatype.flexmojos</groupId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <groupId>net.flexmojos.oss</groupId>
+    <version>5.0-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-archetypes-modular-webapp</artifactId>

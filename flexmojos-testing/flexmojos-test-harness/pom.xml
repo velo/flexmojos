@@ -26,9 +26,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <version>5.0-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-test-harness</artifactId>
@@ -97,7 +97,7 @@
           <properties>
             <property>
               <name>listener</name>
-              <value>org.sonatype.flexmojos.test.ProgressListener</value>
+              <value>net.flexmojos.oss.test.ProgressListener</value>
             </property>
           </properties>
         </configuration>
@@ -208,33 +208,33 @@
             <xml>com.adobe.flex.framework:air-framework:${flex.sdk.version}:pom</xml>
             <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
 
-            <xml>org.sonatype.flexmojos:flexmojos-maven-plugin:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-archetypes-application:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-archetypes-library:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-archetypes-modular-webapp:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-flex2-compatibility-layer:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-flex3-compatibility-layer:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-maven-plugin:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-archetypes-application:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-archetypes-library:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-archetypes-modular-webapp:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-flex2-compatibility-layer:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-flex3-compatibility-layer:${project.version}</xml>
 
-            <xml>org.sonatype.flexmojos:flexmojos-generator-graniteds-1.1.0:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-generator-graniteds-2.0.0:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-generator-graniteds-2.1.0:${project.version}</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-generator-graniteds-2.2.0:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-generator-graniteds-1.1.0:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.0.0:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.1.0:${project.version}</xml>
+            <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.2.0:${project.version}</xml>
 
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc:air</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-support:${project.version}:swc:flex</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-test-coverage:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-flexunit:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-flexunit4:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-fluint:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-funit:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-asunit:${project.version}:swc</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-unittest-advancedflex:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-support:${project.version}:swc:air</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-support:${project.version}:swc:flex</xml>
+            <xml>net.flexmojos.oss:flexmojos-test-coverage:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-flexunit:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-flexunit4:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-fluint:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-funit:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-asunit:${project.version}:swc</xml>
+            <xml>net.flexmojos.oss:flexmojos-unittest-advancedflex:${project.version}:swc</xml>
 
-            <xml>org.sonatype.flexmojos:flexmojos-air-super-pom:${project.version}:pom</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-flex-super-pom:${project.version}:pom</xml>
-            <xml>org.sonatype.flexmojos:flexmojos-super-pom-commons:${project.version}:pom</xml>
+            <xml>net.flexmojos.oss:flexmojos-air-super-pom:${project.version}:pom</xml>
+            <xml>net.flexmojos.oss:flexmojos-flex-super-pom:${project.version}:pom</xml>
+            <xml>net.flexmojos.oss:flexmojos-super-pom-commons:${project.version}:pom</xml>
             
-            <xml>org.sonatype.flexmojos:flexmojos-sample-configurator:${project.version}:jar</xml>
+            <xml>net.flexmojos.oss:flexmojos-sample-configurator:${project.version}:jar</xml>
           </extraArtifacts>
         </configuration>
         <executions>

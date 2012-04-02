@@ -21,12 +21,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.sonatype.flexmojos</groupId>
+		<groupId>net.flexmojos.oss</groupId>
 		<artifactId>flexmojos-flex-super-pom</artifactId>
 		<version>%{flexmojos.version}</version>
 	</parent>
 
-	<groupId>org.sonatype.flexmojos.itest.issues</groupId>
+	<groupId>net.flexmojos.oss.itest.issues</groupId>
 	<artifactId>issue0066-swc</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
@@ -35,7 +35,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
+				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
 				<version>%{flexmojos.version}</version>
 				<executions>
@@ -70,7 +70,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sonatype.flexmojos.itest.issues</groupId>
+			<groupId>net.flexmojos.oss.itest.issues</groupId>
 			<artifactId>issue0066-jar</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
