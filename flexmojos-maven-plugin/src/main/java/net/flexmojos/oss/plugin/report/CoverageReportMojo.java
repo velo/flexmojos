@@ -20,11 +20,14 @@ package net.flexmojos.oss.plugin.report;
 import static net.flexmojos.oss.util.PathUtil.files;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.FileUtils;
+
 import net.flexmojos.oss.plugin.AbstractMavenMojo;
 import net.flexmojos.oss.plugin.SourcePathAware;
 
@@ -79,6 +82,19 @@ public class CoverageReportMojo
         throws MojoExecutionException, MojoFailureException
     {
         // nothing to be done, the lifecycle deal with this report generation
+    	
+    	File index = new File(coverageReportOutputDirectory.getAbsolutePath() + "/index.bak.html");
+    	if(index.exists())
+    	{
+        	// Fix at site phase
+        	// Copy index.bak.html to index.html
+        	// In the site phase, index.html is opened with a writer by the site plugin and erase its content. index.bak.html is a backup and replaces index.html.
+    		try {
+    			FileUtils.copyFile(index, new File(coverageReportOutputDirectory.getAbsolutePath() + "/index.html"));
+			} catch (IOException e) {
+				getLog().error(e.getMessage());
+			}
+    	}
     }
 
     public String getDescription( Locale locale )

@@ -30,7 +30,9 @@ import java.util.List;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.velocity.texen.util.FileUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -319,8 +321,15 @@ public class TestRunMojo
                 try
                 {
                     reporter.generateReport( request );
+                    File index = new File(coverageOutputDirectory.getAbsolutePath() + "/index.html");
+                    if(index.exists())
+                    	FileUtils.copyFile(index, new File(coverageOutputDirectory.getAbsolutePath() + "/index.bak.html"));
                 }
                 catch ( CoverageReportException e )
+                {
+                    throw new MojoExecutionException( e.getMessage(), e );
+                }
+                catch ( IOException e )
                 {
                     throw new MojoExecutionException( e.getMessage(), e );
                 }
