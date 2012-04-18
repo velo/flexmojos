@@ -22,7 +22,7 @@
 java.io.InvalidClassException: org.apache.velocity.runtime.parser.node.ASTprocess; class invalid for deserialization-->
 <unitestingsupport:TestAirApplication 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	xmlns:unitestingsupport="org.sonatype.flexmojos.unitestingsupport.*"
+	xmlns:unitestingsupport="net.flexmojos.oss.unitestingsupport.*"
 	layout="absolute"
 	initialize="init()" 
 	port="$port" 

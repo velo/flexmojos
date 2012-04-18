@@ -23,7 +23,7 @@
 	xmlns="*"
 	layout="absolute"
 	creationComplete="startUp()"
-	implements="org.sonatype.flexmojos.unitestingsupport.ITestApplication"
+	implements="net.flexmojos.oss.unitestingsupport.ITestApplication"
 	>
 	
 $includes
@@ -32,7 +32,7 @@ $includes
 		<![CDATA[
 			import mx.events.FlexEvent;
 
-			import org.sonatype.flexmojos.unitestingsupport.*;
+			import net.flexmojos.oss.unitestingsupport.*;
 		
 $imports
 

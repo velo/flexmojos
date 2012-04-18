@@ -14,16 +14,16 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <version>5.1-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
@@ -33,7 +33,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
+        <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-generator-mojo</artifactId>
         <version>${project.version}</version>
         <executions>
@@ -57,7 +57,7 @@
         </executions>
         <dependencies>
           <dependency>
-            <groupId>org.sonatype.flexmojos</groupId>
+            <groupId>net.flexmojos.oss</groupId>
             <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
             <version>${project.version}</version>
           </dependency>
@@ -143,7 +143,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.flexmojos</groupId>
+      <groupId>net.flexmojos.oss</groupId>
       <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
       <version>${project.version}</version>
     </dependency>

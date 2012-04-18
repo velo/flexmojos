@@ -17,8 +17,8 @@
  */
 package apparat.coverage
 {
-	import org.sonatype.flexmojos.coverage.CoverageDataCollector;
-	import org.sonatype.flexmojos.test.report.TestCoverageReport;
+	import net.flexmojos.oss.coverage.CoverageDataCollector;
+	import net.flexmojos.oss.test.report.TestCoverageReport;
 	import mx.collections.ArrayCollection;
 
 	public class Coverage

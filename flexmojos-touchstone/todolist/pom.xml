@@ -22,7 +22,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.sonatype.flexmojos.flex-touchstone</groupId>
+  <groupId>net.flexmojos.oss.flex-touchstone</groupId>
   <artifactId>todolist</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -47,7 +47,7 @@
           <version>2.2-beta-2</version>
         </plugin>
         <plugin>
-          <groupId>org.sonatype.flexmojos</groupId>
+          <groupId>net.flexmojos.oss</groupId>
           <artifactId>flexmojos-maven-plugin</artifactId>
           <version>4.0-SNAPSHOT</version>
           <dependencies>

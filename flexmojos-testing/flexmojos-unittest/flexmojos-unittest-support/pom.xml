@@ -15,7 +15,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
 <!-- Copyright 2008 Marvin Herman Froeder Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
@@ -26,9 +26,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.flexmojos</groupId>
+    <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-unittest</artifactId>
-    <version>4.3-beta-SNAPSHOT</version>
+    <version>5.1-beta-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-unittest-support</artifactId>
@@ -39,7 +39,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
+        <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <dependencies>
           <dependency>
@@ -57,7 +57,7 @@
             </goals>
             <configuration>
               <includeJavaClasses>
-                <include>org.sonatype.flexmojos.test.report.*</include>
+                <include>net.flexmojos.oss.test.report.*</include>
               </includeJavaClasses>
               <beanTemplate>
                 <template>${basedir}/src/main/template/beanBase.gsp</template>
@@ -77,7 +77,7 @@
             <configuration>
               <generatorToUse>constraints</generatorToUse>
               <includeJavaClasses>
-                <include>org.sonatype.flexmojos.test.monitor.CommConstraints</include>
+                <include>net.flexmojos.oss.test.monitor.CommConstraints</include>
               </includeJavaClasses>
             </configuration>
           </execution>
@@ -91,7 +91,7 @@
               <includeClasses>
                 <scan>
                   <excludes>
-                    <exclude>org.sonatype.flexmojos.unitestingsupport.TestApplication</exclude>
+                    <exclude>net.flexmojos.oss.unitestingsupport.TestApplication</exclude>
                   </excludes>
                 </scan>
               </includeClasses>
@@ -107,7 +107,7 @@
               <includeClasses>
                 <scan>
                   <excludes>
-                    <exclude>org.sonatype.flexmojos.unitestingsupport.TestAirApplication</exclude>
+                    <exclude>net.flexmojos.oss.unitestingsupport.TestAirApplication</exclude>
                   </excludes>
                 </scan>
               </includeClasses>
@@ -118,8 +118,8 @@
           <includeClasses>
             <scan>
               <excludes>
-                <exclude>org.sonatype.flexmojos.unitestingsupport.TestApplication</exclude>
-                <exclude>org.sonatype.flexmojos.unitestingsupport.TestAirApplication</exclude>
+                <exclude>net.flexmojos.oss.unitestingsupport.TestApplication</exclude>
+                <exclude>net.flexmojos.oss.unitestingsupport.TestAirApplication</exclude>
               </excludes>
             </scan>
           </includeClasses>

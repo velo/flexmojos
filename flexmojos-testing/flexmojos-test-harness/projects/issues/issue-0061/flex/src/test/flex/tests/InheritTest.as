@@ -24,7 +24,7 @@
 
 package tests {
 
-import org.sonatype.flexmojos.generator.*;
+import net.flexmojos.oss.generator.*;
 import flexunit.framework.TestCase;
 
 	public class InheritTest extends TestCase {

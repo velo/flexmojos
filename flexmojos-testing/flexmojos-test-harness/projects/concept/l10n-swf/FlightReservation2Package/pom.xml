@@ -29,7 +29,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sonatype.flexmojos</groupId>
+				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
 				<version>%{flexmojos.version}</version>
 				<extensions>true</extensions>

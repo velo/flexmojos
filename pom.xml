@@ -15,7 +15,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
 <!-- Copyright 2008 Marvin Herman Froeder Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
@@ -30,9 +30,9 @@
     <version>5</version>
   </parent>
 
-  <groupId>org.sonatype.flexmojos</groupId>
+  <groupId>net.flexmojos.oss</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>4.3-beta-SNAPSHOT</version>
+  <version>5.1-beta-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -303,9 +303,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:git:git://github.com/Flexmojos/flexmojos.git</connection>
-    <developerConnection>scm:git:git@github.com:Flexmojos/flexmojos.git</developerConnection>
-    <url>http://github.com/Flexmojos/flexmojos</url>
+    <connection>scm:git:git://github.com/velo/flexmojos.git</connection>
+    <developerConnection>scm:git:git@github.com:velo/flexmojos.git</developerConnection>
+    <url>http://github.com/velo/flexmojos</url>
   </scm>
 
   <mailingLists>

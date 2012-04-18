@@ -23,7 +23,7 @@
 	<mx:Script>
 		<![CDATA[
 
-			import org.sonatype.flexmojos.it.AClass;
+			import net.flexmojos.oss.it.AClass;
 
 			/**
 			 * AClass
