@@ -151,6 +151,13 @@ public abstract class AbstractMavenMojo
      */
     protected boolean fullSynchronization;
 
+    /**
+     * Adobe AIR version
+     *
+     * @parameter expression="${flex.airVersion}"
+     */
+    private String airVersion;
+
     protected final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
     /**
@@ -410,25 +417,29 @@ public abstract class AbstractMavenMojo
 
     public String getAirTarget()
     {
-        int[] version = VersionUtils.splitVersion( getCompilerVersion() );
-        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
+        if (airVersion == null)
         {
-            return "2.6";
-        }
-        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
-        {
-            return "2.5";
-        }
-        if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
-        {
-            return "2.0";
-        }
-        if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
-        {
-            return "1.5";
-        }
+            int[] version = VersionUtils.splitVersion( getCompilerVersion() );
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
+            {
+                return "2.6";
+            }
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
+            {
+                return "2.5";
+            }
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
+            {
+                return "2.0";
+            }
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
+            {
+                return "1.5";
+            }
 
-        return "1.0";
+            return "1.0";
+        }
+        else return airVersion;
     }
 
     protected File getBasedir()
