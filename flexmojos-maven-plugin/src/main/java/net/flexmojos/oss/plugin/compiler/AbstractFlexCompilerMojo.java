@@ -2126,7 +2126,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         if ( SWC.equals( getProjectType() ) )
         {
             Matcher<? extends Artifact> swcs =
-                allOf( type( SWC ), //
+                allOf( anyOf( type( SWC ), type( ANE ) ), //
                        anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ),
                               scope( nullValue( String.class ) ) )//
                 );
@@ -2135,7 +2135,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         else
         {
             return MavenUtils.getFiles( getDependencies( not( GLOBAL_MATCHER ),//
-                                                         allOf( type( SWC ),//
+                                                         allOf( anyOf( type( SWC ), type( ANE ) ),//
                                                                 anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ) ) ) ),
                                         getGlobalArtifactCollection() );
         }
@@ -2233,7 +2233,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     public File[] getIncludeLibraries()
     {
-        return MavenUtils.getFiles( getDependencies( type( SWC ), scope( INTERNAL ), not( GLOBAL_MATCHER ) ) );
+        return MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( ANE ) ), scope( INTERNAL ), not( GLOBAL_MATCHER ) ) );
     }
 
     public List<String> getIncludes()
@@ -2312,12 +2312,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             includeResourceBundle ? getCompiledResouceBundles() : Collections.EMPTY_LIST;
         if ( SWC.equals( getProjectType() ) )
         {
-            return MavenUtils.getFiles( getDependencies( type( SWC ), scope( MERGED ), not( GLOBAL_MATCHER ) ),
+            return MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( ANE ) ), scope( MERGED ), not( GLOBAL_MATCHER ) ),
                                         resourceBundle );
         }
         else
         {
-            return MavenUtils.getFiles( getDependencies( type( SWC ),//
+            return MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( ANE ) ),//
                                                          anyOf( scope( MERGED ), scope( COMPILE ),
                                                                 scope( nullValue( String.class ) ) ),//
                                                          not( GLOBAL_MATCHER ) ),//

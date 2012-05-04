@@ -520,7 +520,7 @@ public class TestCompilerMojo
         return MavenUtils.getFiles( coverArtifact,
                                     Collections.singletonList( getFlexmojosUnittestSupport() ),
                                     Collections.singletonList( getFlexmojosUnittestFrameworkIntegrationLibrary() ),
-                                    getDependencies( type( SWC ),//
+                                    getDependencies( anyOf( type( SWC ), type( ANE ) ), //
                                                      anyOf( scope( INTERNAL ), scope( RSL ), scope( CACHING ),
                                                             scope( TEST ) ),//
                                                      not( GLOBAL_MATCHER ) ) );
