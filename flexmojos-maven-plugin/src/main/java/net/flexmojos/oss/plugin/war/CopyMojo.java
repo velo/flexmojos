@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.model.Profile;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -234,6 +235,11 @@ public class CopyMojo
             request.setLocalRepository( localRepository );
             request.setRemoteRepositories( remoteRepositories );
             request.setResolveDependencies( true );
+            ArrayList<String> ids = new ArrayList<String>();
+            for(Profile profile : project.getActiveProfiles()){
+            	ids.add(profile.getId());
+            }
+            request.setActiveProfileIds(ids);
             request.setRepositorySession( session.getRepositorySession() );
             return projectBuilder.build( artifact, request ).getProject();
         }
