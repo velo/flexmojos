@@ -1955,7 +1955,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return this.metadata.getDate();
         }
 
-        return DATE_FORMAT.format( new Date() );
+        // If incremental compilation is enabled then we don't use current time
+        return incremental ? "0:00" : DATE_FORMAT.format( new Date() );
     }
 
     public Boolean getDebug()
