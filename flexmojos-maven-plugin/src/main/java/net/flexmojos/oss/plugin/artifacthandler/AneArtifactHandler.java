@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sonatype.flexmojos.plugin.artifacthandler;
+package net.flexmojos.oss.plugin.artifacthandler;
 
+import net.flexmojos.oss.plugin.common.FlexExtension;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.codehaus.plexus.component.annotations.Component;
-import org.sonatype.flexmojos.plugin.common.FlexExtension;
 
 @Component( role = ArtifactHandler.class, hint = FlexExtension.ANE )
 public class AneArtifactHandler

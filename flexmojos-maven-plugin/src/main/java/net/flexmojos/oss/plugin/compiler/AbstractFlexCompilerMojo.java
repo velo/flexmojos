@@ -38,6 +38,7 @@ import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWZ;
 import static net.flexmojos.oss.plugin.common.FlexExtension.XML;
+import static net.flexmojos.oss.plugin.common.FlexExtension.ANE;
 import static net.flexmojos.oss.plugin.common.FlexScopes.CACHING;
 import static net.flexmojos.oss.plugin.common.FlexScopes.COMPILE;
 import static net.flexmojos.oss.plugin.common.FlexScopes.EXTERNAL;
