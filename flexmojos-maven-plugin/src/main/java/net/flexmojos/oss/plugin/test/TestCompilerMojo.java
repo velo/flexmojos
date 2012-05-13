@@ -28,6 +28,7 @@ import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.version;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
+import static net.flexmojos.oss.plugin.common.FlexExtension.ANE;
 import static net.flexmojos.oss.plugin.common.FlexExtension.XML;
 import static net.flexmojos.oss.plugin.common.FlexScopes.CACHING;
 import static net.flexmojos.oss.plugin.common.FlexScopes.COMPILE;

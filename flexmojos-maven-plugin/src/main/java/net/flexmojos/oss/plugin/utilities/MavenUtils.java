@@ -142,7 +142,8 @@ public class MavenUtils
         File fontsSer = new File( build.getOutputDirectory(), "fonts.ser" );
         try
         {
-            FileUtils.copyURLToFile( url, fontsSer );
+            if (!fontsSer.exists())
+                FileUtils.copyURLToFile( url, fontsSer );
         }
         catch ( IOException e )
         {

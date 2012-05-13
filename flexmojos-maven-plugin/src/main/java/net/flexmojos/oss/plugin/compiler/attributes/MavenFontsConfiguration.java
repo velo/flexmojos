@@ -214,7 +214,8 @@ public class MavenFontsConfiguration
         File fontsSer = new File( outputDirectory, "fonts.ser" );
         try
         {
-            FileUtils.copyURLToFile( url, fontsSer );
+            if (!fontsSer.exists())
+                FileUtils.copyURLToFile( url, fontsSer );
         }
         catch ( IOException e )
         {
