@@ -39,7 +39,7 @@ public class Flexmojos168Test
         String log = FileUtils.fileRead( new File( v.getBasedir(), v.getLogFileName() ) );
         Assert.assertTrue( log.contains( "Skipping flexmojos goal execution" ) );
         Assert.assertFalse( log.contains( "Flexmojos " + MavenUtils.getFlexMojosVersion()
-            + " - Apache License (NO WARRANTY) - See COPYRIGHT file" ) );
+            + " - GPL License (NO WARRANTY) - See COPYRIGHT file" ) );
 
         File target = new File( v.getBasedir(), "target" );
         File swf = new File( target, "flexmojos-168-skip-1.0-SNAPSHOT.swf" );
