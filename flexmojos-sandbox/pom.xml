@@ -40,7 +40,6 @@
   	<module>flexmojos-coverage-reporter</module>
   	<module>flexmojos-configurator</module>
   	<module>flexmojos-sample-configurator</module>
-  	<module>flexmojos-nexus-plugin</module>
   </modules>
 
 </project>
