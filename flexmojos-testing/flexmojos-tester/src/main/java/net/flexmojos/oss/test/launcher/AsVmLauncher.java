@@ -208,9 +208,12 @@ public class AsVmLauncher
 
         try
         {
-            process =
-                Runtime.getRuntime().exec( merge( new String[] { "xvfb-run", "-a", "-e", log.getAbsolutePath() },
-                                                  asvmCommand, new String[] { targetFile } ) );
+            final String[] cmdArray = merge( new String[]{ "xvfb-run", "-a", "-e", log.getAbsolutePath() },
+                    asvmCommand, new String[] { targetFile } );
+
+            getLogger().debug( "[LAUNCHER] Executing command: " + Arrays.toString( cmdArray ) );
+
+            process = Runtime.getRuntime().exec( cmdArray );
         }
         catch ( IOException e )
         {
