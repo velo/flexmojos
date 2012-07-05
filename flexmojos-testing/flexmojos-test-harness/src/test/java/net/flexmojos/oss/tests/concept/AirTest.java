@@ -86,11 +86,11 @@ public class AirTest
         // v.assertArtifactPresent( "info.rvin.itest", "native-air", "1.0-SNAPSHOT", osPackages );
     }
 
-    @Test( dataProvider = "flex3" )
+    @Test( dataProvider = "flex3Air" )
     public void simpleAirFlex3( String fdk )
         throws Exception
     {
-        standardConceptTester( "simple-air-sdk3", "-Dfdk=" + fdk );
+        standardConceptTesterWithForcedSdk( "simple-air-sdk3", fdk );
     }
 
 }

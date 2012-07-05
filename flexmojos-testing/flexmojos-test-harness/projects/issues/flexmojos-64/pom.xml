@@ -45,7 +45,6 @@
             <rsl>{artifactId}-{version}.{extension}</rsl>
             <rsl>{artifactId}-{version}.swf</rsl>
           </rslUrls>
-          <targetPlayer>9.0.124</targetPlayer>
         </configuration>
       </plugin>
     </plugins>

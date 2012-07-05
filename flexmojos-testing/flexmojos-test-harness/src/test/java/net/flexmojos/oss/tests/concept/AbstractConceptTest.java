@@ -27,6 +27,13 @@ public abstract class AbstractConceptTest
     extends AbstractFlexMojosTests
 {
 
+    public FMVerifier standardConceptTesterWithForcedSdk( String conceptName, String sdkVersion )
+            throws Exception
+    {
+        File testDir = getProjectWithForcedSdk( "/concept/" + conceptName, sdkVersion );
+        return test( testDir, "install", "-Dfdk=" + sdkVersion );
+    }
+
     public FMVerifier standardConceptTester( String conceptName, String... args )
         throws Exception
     {
@@ -40,6 +47,18 @@ public abstract class AbstractConceptTest
         return new Object[][] { { "3.0.0.477" }, { "3.1.0.2710" }, { "3.2.0.3958" }, { "3.3.0.4852" },
             { "3.4.0.9271" }, { "3.5.a.12683" }, { "3.6.0.16995" } };
     }
+
+    /**
+ 	 * Older Flex3 Versions don't come with AIR capabilities, so if we
+ 	 * run the AIR tests against them, we will be getting errors.
+ 	 *
+ 	 * @return List of Flex3 versions that support building of AIR applications.
+ 	*/
+ 	@DataProvider( name = "flex3Air" )
+ 	public Object[][] flex3Air()
+ 	{
+ 	    return new Object[][] { { "3.5.a.12683" }, { "3.6.0.16995" } };
+ 	}
 
     @DataProvider( name = "flex4" )
     public Object[][] flex4()

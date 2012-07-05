@@ -50,6 +50,7 @@ import net.flexmojos.oss.test.FMVerifier;
 import net.flexmojos.oss.test.report.TestCaseReport;
 import net.flexmojos.oss.util.OSUtils;
 import net.flexmojos.oss.util.PathUtil;
+import org.jetbrains.annotations.Nullable;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeSuite;
@@ -271,11 +272,23 @@ public class AbstractFlexMojosTests
     protected File getProject( String projectName, String... filesToInterpolate )
         throws IOException
     {
-        return getProjectCustom( projectName, null, filesToInterpolate );
+        return getProjectCustom( projectName, null, null, filesToInterpolate );
+    }
+
+    protected File getProjectWithForcedSdk( String projectName, String sdkVersion, String... filesToInterpolate )
+            throws IOException
+    {
+        return getProjectCustom( projectName, null, sdkVersion, filesToInterpolate );
     }
 
     protected File getProjectCustom( String projectName, String output, String... filesToInterpolate )
         throws IOException
+    {
+        return getProjectCustom( projectName, output, null, filesToInterpolate );
+    }
+
+    protected File getProjectCustom( String projectName, @Nullable String output, @Nullable String sdkVersion, String... filesToInterpolate )
+            throws IOException
     {
         if ( filesToInterpolate == null || filesToInterpolate.length == 0 )
         {
@@ -291,7 +304,7 @@ public class AbstractFlexMojosTests
 
             if ( output == null )
             {
-                output = projectName + "_" + getTestName();
+                output = projectName + "_" + getTestName() + ( ( sdkVersion != null ) ? "-" + sdkVersion : "" );
             }
             File destDir = new File( projectsWorkdir, output );
 
@@ -311,6 +324,10 @@ public class AbstractFlexMojosTests
                 String pomContent = FileUtils.fileRead( pom );
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
                 pomContent = pomContent.replace( "%{flex.version}", getFlexSDKVersion() );
+                if( sdkVersion != null)
+                {
+                    pomContent = pomContent.replace( "${fdk}", sdkVersion );
+                }
                 FileUtils.fileWrite( path( pom ), pomContent );
             }
 
