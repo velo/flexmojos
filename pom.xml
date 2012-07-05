@@ -108,7 +108,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>2.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
@@ -281,6 +281,15 @@
         <role>Author Developer</role>
       </roles>
       <timezone>-3</timezone>
+    </developer>
+    <developer>
+      <id>cdutz</id>
+      <name>Christofer Dutz</name>
+      <email>christofer.dutz at c-ware.de</email>
+      <roles>
+        <role>Author Developer</role>
+      </roles>
+      <timezone>+1</timezone>
     </developer>
   </developers>
 

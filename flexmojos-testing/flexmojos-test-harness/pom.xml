@@ -38,7 +38,7 @@
     <fake-repo>${project.build.directory}/local-repository</fake-repo>
     <sources>${project.build.directory}/sources</sources>
 
-    <flexmojos-maven-plugin>${fake-repo}/org/sonatype/flexmojos/flexmojos-maven-plugin/${project.version}/flexmojos-maven-plugin-${project.version}.jar</flexmojos-maven-plugin>
+    <flexmojos-maven-plugin>${fake-repo}/net/flexmojos/oss/flexmojos-maven-plugin/${project.version}/flexmojos-maven-plugin-${project.version}.jar</flexmojos-maven-plugin>
   </properties>
 
   <build>

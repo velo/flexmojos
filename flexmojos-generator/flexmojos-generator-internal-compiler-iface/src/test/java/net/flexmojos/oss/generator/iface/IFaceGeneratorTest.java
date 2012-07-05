@@ -82,7 +82,7 @@ public class IFaceGeneratorTest
         StandardJavaFileManager fileManager = compiler.getStandardFileManager( null, null, null );
 
         Iterable<? extends JavaFileObject> compilationUnits1 =
-            fileManager.getJavaFileObjects( new File( files, "org/sonatype/flexmojos/compiler" ).listFiles() );
+            fileManager.getJavaFileObjects( new File( files, "net/flexmojos/oss/compiler" ).listFiles() );
         assertTrue( compiler.getTask( null, fileManager, null, null, null, compilationUnits1 ).call(),
                     "Problems compiling files" );
 
