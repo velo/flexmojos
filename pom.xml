@@ -331,6 +331,7 @@
   <profiles>
     <profile>
       <id>release</id>
+
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -391,6 +392,13 @@
     <profile>
       <id>skip-test-harness-tests</id>
 
+      <activation>
+        <property>
+          <name>profile</name>
+          <value>skipTestHarnessTests</value>
+        </property>
+      </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -406,6 +414,14 @@
 
     <profile>
       <id>coverage</id>
+
+      <activation>
+        <property>
+          <name>profile</name>
+          <value>coverage</value>
+        </property>
+      </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -425,8 +441,17 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>minimal</id>
+
+      <activation>
+        <property>
+          <name>profile</name>
+          <value>minimal</value>
+        </property>
+      </activation>
+
       <modules>
         <module>flexmojos-util</module>
         <module>flexmojos-sandbox</module>
@@ -435,9 +460,25 @@
         <module>flexmojos-super-poms</module>
         <module>flexmojos-testing</module>
       </modules>
+
       <properties>
         <maven.test.skip>true</maven.test.skip>
       </properties>
+    </profile>
+
+    <profile>
+      <id>testharness</id>
+
+      <activation>
+        <property>
+          <name>profile</name>
+          <value>testharness</value>
+        </property>
+      </activation>
+
+      <modules>
+        <module>flexmojos-testing/flexmojos-test-harness</module>
+      </modules>
     </profile>
   </profiles>
 
