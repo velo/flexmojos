@@ -22,7 +22,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://maven.apache.org/setrings/1.0.0 
           http://maven.apache.org/xsd/settings-1.0.0.xsd">
-
+  
   <profiles>
     <profile>
       <id>flex-extras</id>
@@ -46,17 +46,11 @@
           <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-          <id>flex</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
+          <id>sonatype</id>
+          <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-          <id>flexmojos-releases</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/sonatype-flex-releases</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>false</enabled></snapshots>
-        </repository>
+        </repository>		
         <repository>
           <id>central</id>
           <url>http://repo1.maven.org/maven2/</url>
@@ -84,14 +78,8 @@
           <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
         <pluginRepository>
-          <id>flex</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/flex</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>false</enabled></snapshots>
-        </pluginRepository>
-        <pluginRepository>
-          <id>flexmojos-releases</id>
-          <url>http://repository.sonatype.org:8081/content/repositories/sonatype-flex-releases</url>
+          <id>sonatype</id>
+          <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>

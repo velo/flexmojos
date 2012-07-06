@@ -1,7 +1,7 @@
 /**
  * Flexmojos is a set of maven goals to allow maven users to compile,
  * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
- * Copyright (C) 2008-2012  Marvin Froeder &lt;marvin (at) flexmojos.net&gt
+ * Copyright (C) 2008-2012  Marvin Froeder &lt;marvin (at) flexmojos.net&gt;
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

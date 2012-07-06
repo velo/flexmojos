@@ -1956,7 +1956,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         // If incremental compilation is enabled then we don't use current time
-        return incremental ? "0:00" : DATE_FORMAT.format( new Date() );
+        return ((incremental != null) && incremental) ? "0:00" : DATE_FORMAT.format( new Date() );
     }
 
     public Boolean getDebug()

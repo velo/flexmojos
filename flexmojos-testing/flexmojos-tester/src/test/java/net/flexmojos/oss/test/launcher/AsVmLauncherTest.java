@@ -52,8 +52,9 @@ public class AsVmLauncherTest
         }
         while ( !( ThreadStatus.DONE.equals( launcher.getStatus() ) || ThreadStatus.ERROR.equals( launcher.getStatus() ) ) );
 
-        assertEquals( launcher.getStatus(), ThreadStatus.DONE, " got error: " + launcher.getError().getMessage() + " tmp: "
-            + Arrays.toString( new File( "/tmp" ).listFiles() ) );
+        assertEquals( launcher.getStatus(), ThreadStatus.DONE, 
+			((launcher.getError() != null) ? " got error: " + launcher.getError().getMessage() : "") + 
+			" tmp: " + Arrays.toString( new File( "/tmp" ).listFiles() ) );
 
         // TODO most recent flashplayer aren't dumping trace, no idea why
         // String log = launcher.getConsoleOutput();

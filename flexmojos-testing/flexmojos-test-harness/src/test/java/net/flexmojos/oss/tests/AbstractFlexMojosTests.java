@@ -113,9 +113,9 @@ public class AbstractFlexMojosTests
         throws Exception
     {
         File repo = new File( getProperty( "fake-repo" ) );
-        addCobertura( new File( repo, "net/flexmojos/oss/flexmojos/flexmojos-parent/" + getFlexmojosVersion()
+        addCobertura( new File( repo, "net/flexmojos/oss/flexmojos-parent/" + getFlexmojosVersion()
             + "/flexmojos-parent-" + getFlexmojosVersion() + ".pom" ) );
-        addCobertura( new File( repo, "net/flexmojos/oss/flexmojos/flexmojos-maven-plugin/" + getFlexmojosVersion()
+        addCobertura( new File( repo, "net/flexmojos/oss/flexmojos-maven-plugin/" + getFlexmojosVersion()
             + "/flexmojos-maven-plugin-" + getFlexmojosVersion() + ".pom" ) );
     }
 

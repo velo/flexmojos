@@ -89,6 +89,11 @@
   <build>
     <pluginManagement>
       <plugins>
+		<plugin>
+          <groupId>net.flexmojos.oss</groupId>
+          <artifactId>flexmojos-maven-plugin</artifactId>
+		  <version>5.1-beta-SNAPSHOT</version>
+		</plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
@@ -201,6 +206,11 @@
             <tagNameFormat>flexmojos-@{project.version}</tagNameFormat>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>com.savage7.maven.plugins</groupId>
+          <artifactId>maven-external-dependency-plugin</artifactId>
+          <version>0.5-SONATYPE-r116</version>
+        </plugin>		
       </plugins>
     </pluginManagement>
 

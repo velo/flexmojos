@@ -37,15 +37,15 @@ public class Issue0066Test
 
         // Issue 62 test
         // is excluded!
-        File another = new File( testDir, "flex/src/main/flex/net/flexmojos/oss/flexmojos/generator/AnotherPojo.as" );
+        File another = new File( testDir, "flex/src/main/flex/net/flexmojos/oss/generator/AnotherPojo.as" );
         assertFalse( "File not found " + another, another.isFile() );
 
         // Issue 65 test
-        File pojo = new File( testDir, "flex/src/main/flex/net/flexmojos/oss/flexmojos/generator/SimplePojo.as" );
+        File pojo = new File( testDir, "flex/src/main/flex/net/flexmojos/oss/generator/SimplePojo.as" );
         assertTrue( "File not found " + pojo, pojo.isFile() );
         File base =
             new File( testDir,
-                      "flex/target/generated-sources/flexmojos/net/flexmojos/oss/flexmojos/generator/SimplePojoBase.as" );
+                      "flex/target/generated-sources/flexmojos/net/flexmojos/oss/generator/SimplePojoBase.as" );
         assertTrue( "File not found " + base, base.isFile() );
     }
 
