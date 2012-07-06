@@ -50,7 +50,6 @@
             <module>modules/module1.mxml</module>
             <module>modules/module2.mxml</module>
           </modules>
-          <targetPlayer>9.0.124</targetPlayer>
         </configuration>
         <dependencies>
           <dependency>
@@ -61,7 +60,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>3.2.0.3958</version>
+            <version>%{flex.version}</version>
             <type>pom</type>
           </dependency>
         </dependencies>
@@ -73,14 +72,14 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>%{flex.version}</version>
       <type>swc</type>
       <scope>rsl</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>%{flex.version}</version>
       <type>pom</type>
     </dependency>
   </dependencies>

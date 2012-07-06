@@ -45,23 +45,22 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.flash.framework</groupId>
       <artifactId>playerglobal</artifactId>
-      <version>3.2.0.3958</version>
-      <classifier>9</classifier>
+      <version>9.0</version>
       <type>swc</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>swc</type>
     </dependency>
     <dependency> 
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>rb.swc</type>
     </dependency>
   </dependencies>

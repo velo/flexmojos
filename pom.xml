@@ -29,7 +29,7 @@
 
   <groupId>net.flexmojos.oss</groupId>
   <artifactId>flexmojos-parent</artifactId>
-  <version>5.1-beta-SNAPSHOT</version>
+  <version>6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Flexmojos Parent</name>
@@ -78,9 +78,14 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.sdk.version>4.5.1.21328</flex.sdk.version>
+    <!--flex.version>4.5.1.21328A</flex.version>
+    <player.version>10.2</player.version-->
+    <flex.version>4.6.0.23201</flex.version>
+    <player.version>11.1</player.version>
+    <!--flex.version>4.8.0.1355137</flex.version>
+    <player.version>11.1</player.version-->
     <maven.version>3.0.4</maven.version>
-    <maven-site-plugin.version>3.0-beta-3</maven-site-plugin.version>
+    <maven-site-plugin.version>3.1</maven-site-plugin.version>
     <sisu.version>2.1.1</sisu.version>
     <plexus.version>1.5.4</plexus.version>
     <apparat.version>1.0-RC9</apparat.version>
@@ -89,11 +94,11 @@
   <build>
     <pluginManagement>
       <plugins>
-		<plugin>
+	    <plugin>
           <groupId>net.flexmojos.oss</groupId>
           <artifactId>flexmojos-maven-plugin</artifactId>
-		  <version>5.1-beta-SNAPSHOT</version>
-		</plugin>
+	      <version>6.0-SNAPSHOT</version>
+	    </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>aspectj-maven-plugin</artifactId>
@@ -200,7 +205,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>2.3.2</version>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagNameFormat>flexmojos-@{project.version}</tagNameFormat>
@@ -236,7 +241,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>${maven-site-plugin.version}</version>
+        <version>3.1</version>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -596,7 +601,7 @@
       <dependency>
         <groupId>com.adobe.flex</groupId>
         <artifactId>compiler</artifactId>
-        <version>${flex.sdk.version}</version>
+        <version>${flex.version}</version>
         <type>pom</type>
       </dependency>
 

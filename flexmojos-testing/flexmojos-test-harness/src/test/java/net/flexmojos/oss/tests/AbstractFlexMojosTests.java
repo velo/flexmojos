@@ -120,7 +120,7 @@ public class AbstractFlexMojosTests
     }
 
     private static void addCobertura( File fmParentPom )
-        throws ComponentLookupException, IOException, ModelParseException
+        throws ComponentLookupException, IOException
     {
         ModelProcessor builder = container.lookup( ModelProcessor.class );
         Model pom = builder.read( fmParentPom, null );
@@ -324,6 +324,7 @@ public class AbstractFlexMojosTests
                 String pomContent = FileUtils.fileRead( pom );
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
                 pomContent = pomContent.replace( "%{flex.version}", getFlexSDKVersion() );
+                pomContent = pomContent.replace( "%{player.version}", getPlayerVersion() );
                 if( sdkVersion != null)
                 {
                     pomContent = pomContent.replace( "${fdk}", sdkVersion );
@@ -342,6 +343,11 @@ public class AbstractFlexMojosTests
     protected static String getFlexSDKVersion()
     {
         return getProperty( "flex-version" );
+    }
+    
+    protected static String getPlayerVersion()
+    {
+        return getProperty( "player-version" );
     }
 
     protected static String getFlexmojosVersion()
@@ -363,8 +369,8 @@ public class AbstractFlexMojosTests
         File reportFile = new File( sureFireReports, "TEST-" + testClass + ".xml" );
         AssertJUnit.assertTrue( "Report was not created!", reportFile.isFile() );
 
-        TestCaseReport report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
-
+        final TestCaseReport report;
+        report = new TestCaseReport( Xpp3DomBuilder.build( new FileReader( reportFile ) ) );
         return report;
     }
 
@@ -415,6 +421,7 @@ public class AbstractFlexMojosTests
                     }
                     catch ( InterruptedException e )
                     {
+                        // Ingore.
                     }
                 }
             } );

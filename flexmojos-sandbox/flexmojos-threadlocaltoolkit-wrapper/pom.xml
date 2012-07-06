@@ -8,7 +8,7 @@
   <parent>
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>5.1-beta-SNAPSHOT</version>
+    <version>6.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>mxmlc</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

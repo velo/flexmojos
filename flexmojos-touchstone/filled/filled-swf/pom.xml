@@ -48,28 +48,28 @@
 				can't point to playerglobal at local repo, must point to a file
 				called playerglobal.swc
 			-->
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.flash.framework</groupId>
       <artifactId>playerglobal</artifactId>
-      <version>9-3.2.0.3958</version>
+      <version>9.0</version>
       <type>swc</type>
       <scope>external</scope>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>swc</type>
     </dependency>
     <dependency> <!-- useless, just a beacon to en_US -->
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>rb.swc</type>
     </dependency>
     <dependency> <!-- normally is not present at pom -->
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>rb.swc</type>
       <classifier>en_US</classifier>
     </dependency>

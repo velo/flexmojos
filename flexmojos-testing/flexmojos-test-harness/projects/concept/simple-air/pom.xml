@@ -48,7 +48,7 @@
   <dependencies>
     <!-- Air SDK dependencies -->
     <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.flex.framework.air</groupId>
       <artifactId>air-framework</artifactId>
       <version>%{flex.version}</version>
       <type>pom</type>

@@ -17,13 +17,13 @@
  */
 package net.flexmojos.oss.plugin.compiler;
 
+import static net.flexmojos.oss.plugin.AbstractMavenMojo.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsCollectionContaining.hasItems;
 import static org.hamcrest.text.StringContains.containsString;
 import static org.mockito.Mockito.mock;
 import static net.flexmojos.oss.matcher.file.FileMatcher.withAbsolutePath;
-import static net.flexmojos.oss.plugin.AbstractMavenMojo.FRAMEWORK_GROUP_ID;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,8 +106,8 @@ public class DependencyFilteringTest
 
         airArtifacts = new LinkedHashSet<Artifact>( flexArtifacts );
 
-        flexArtifacts.add( createArtifact( FRAMEWORK_GROUP_ID, "playerglobal", "1.0", "provided", "swc", "10" ) );
-        airArtifacts.add( createArtifact( FRAMEWORK_GROUP_ID, "airglobal", "1.0", "provided", "swc", null ) );
+        flexArtifacts.add( createArtifact( FLASH_GROUP_ID, PLAYER_GLOBAL, "1.0", "provided", "swc", "10" ) );
+        airArtifacts.add( createArtifact( AIR_GROUP_ID, AIR_GLOBAL, "1.0", "provided", "swc", null ) );
     }
 
     private Artifact createArtifact( String groupId, String artifactId, String version, String scope, String type,

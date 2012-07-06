@@ -23,7 +23,7 @@
   <parent>
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-sandbox</artifactId>
-    <version>5.1-beta-SNAPSHOT</version>
+    <version>6.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-flex-compiler</artifactId>
@@ -103,7 +103,7 @@
                 <artifactItem>
                   <groupId>com.adobe.flex.framework</groupId>
                   <artifactId>framework</artifactId>
-                  <version>${flex.sdk.version}</version>
+                  <version>${flex.version}</version>
                   <classifier>configs</classifier>
                   <type>zip</type>
                 </artifactItem>
@@ -120,10 +120,9 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>com.adobe.flex.framework</groupId>
+                  <groupId>com.adobe.flash.framework</groupId>
                   <artifactId>playerglobal</artifactId>
-                  <version>${flex.sdk.version}</version>
-                  <classifier>10.2</classifier>
+                  <version>${player.version}</version>
                   <type>swc</type>
                   <destFileName>playerglobal.swc</destFileName>
                 </artifactItem>
@@ -155,33 +154,33 @@
     <dependency>
       <groupId>com.adobe.flex</groupId>
       <artifactId>compiler</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>mxmlc</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>digest</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>optimizer</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>asdoc</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.compiler</groupId>
       <artifactId>swcdepends</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
 
     <dependency>

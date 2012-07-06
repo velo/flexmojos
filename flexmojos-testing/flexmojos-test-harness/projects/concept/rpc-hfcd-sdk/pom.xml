@@ -60,22 +60,22 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
+			<groupId>com.adobe.flash.framework</groupId>
 			<artifactId>playerglobal</artifactId>
-			<version>3.0.0.477</version>
+			<version>9.0</version>
 			<type>swc</type>
 			<scope>external</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
+			<groupId>com.adobe.flex</groupId>
 			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
+			<version>3.0.0.477A</version>
 			<type>swc</type>
 		</dependency>
 		<dependency>
-			<groupId>com.adobe.flex.sdk</groupId>
+			<groupId>com.adobe.flex</groupId>
 			<artifactId>framework</artifactId>
-			<version>3.0.0.477</version>
+			<version>3.0.0.477A</version>
 			<type>resource-bundle</type>
 			<classifier>en_US</classifier>
 		</dependency>

@@ -91,7 +91,6 @@ public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
 {
 
-    public static final String AIR_GLOBAL = "airglobal";
 
     public static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
 
@@ -103,8 +102,11 @@ public abstract class AbstractMavenMojo
     public static final String DEFAULT_RUNTIME_LOCALE_OUTPUT_PATH =
         "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}";
 
-    public static final String FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
+    public static final String AIR_GROUP_ID = "com.adobe.air.framework";
+    public static final String FLASH_GROUP_ID = "com.adobe.flash.framework";
+    public static final String FLEX_GROUP_ID = "com.adobe.flex.framework";
 
+    public static final String AIR_GLOBAL = "airglobal";
     public static final String PLAYER_GLOBAL = "playerglobal";
 
     public static final Answer<Object> RETURNS_NULL = new Answer<Object>()
@@ -419,18 +421,26 @@ public abstract class AbstractMavenMojo
     {
         if (airVersion == null)
         {
-            int[] version = VersionUtils.splitVersion( getCompilerVersion() );
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
+             int[] version = VersionUtils.splitVersion( getCompilerVersion() );
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 6, 0 } ) )
             {
-                return "2.6";
+                return "3.1";
             }
             if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
             {
-                return "2.5";
+                return "2.6";
             }
             if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
             {
-                return "2.0";
+                return "2.0.2";
+            }
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 5, 0 } ) )
+            {
+                return "1.5.3";
+            }
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 4, 0 } ) )
+            {
+                return "1.5.2";
             }
             if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
             {
@@ -481,13 +491,13 @@ public abstract class AbstractMavenMojo
     protected Artifact getFrameworkConfig()
     {
         Artifact frmkCfg =
-            getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( "framework" ), classifier( "configs" ),
+            getDependency( groupId( FLEX_GROUP_ID ), artifactId( "framework" ), classifier( "configs" ),
                            type( "zip" ) );
 
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
         {
-            frmkCfg = resolve( FRAMEWORK_GROUP_ID, "framework", getFrameworkVersion(), "configs", "zip" );
+            frmkCfg = resolve( FLEX_GROUP_ID, "framework", getFrameworkVersion(), "configs", "zip" );
         }
         return frmkCfg;
     }
@@ -502,7 +512,7 @@ public abstract class AbstractMavenMojo
         }
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "air-framework" ), type( "pom" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework.air" ), artifactId( "air-framework" ), type( "pom" ) );
         }
         if ( dep == null )
         {
@@ -565,7 +575,7 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
-        return getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
+        return getDependency( groupId( FLEX_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
     }
 
     @Override
@@ -681,8 +691,14 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     protected Matcher<? extends Artifact> initGlobalMatcher()
     {
-        return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),//
-                      anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );
+        return anyOf( allOf( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ),
+                allOf( groupId( FLASH_GROUP_ID ), artifactId( PLAYER_GLOBAL ), type( SWC ) ),
+                /*
+                    This is a legacy rule for old SDKs where the playerglobal and
+                    airglobal were deployed withing the flex framework.
+                 */
+                allOf( groupId( FLEX_GROUP_ID ), type( SWC ),
+                        anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) ) );
     }
 
     public boolean isSkip()

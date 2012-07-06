@@ -49,7 +49,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>4.0.0.13875</version>
+            <version>4.0.0.14159A</version>
             <type>pom</type>
           </dependency>
         </dependencies>
@@ -59,26 +59,25 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.flex.framework.air</groupId>
       <artifactId>air-framework</artifactId>
-      <version>4.0.0.13875</version>
+      <version>4.0.0.14159A</version>
       <type>pom</type>
       <exclusions>
         <exclusion>
-          <groupId>com.adobe.flex.framework</groupId>
+          <groupId>com.adobe.air.framework</groupId>
           <artifactId>airglobal</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.adobe.flex.framework</groupId>
+          <groupId>com.adobe.flash.framework</groupId>
           <artifactId>playerglobal</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.air.framework</groupId>
       <artifactId>airglobal</artifactId>
-      <version>4.0.0.13875</version>
-      <classifier>2.0</classifier>
+      <version>2.0.2</version>
       <type>swc</type>
     </dependency>
   </dependencies>

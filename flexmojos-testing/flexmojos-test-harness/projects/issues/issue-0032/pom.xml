@@ -53,7 +53,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>3.2.0.3958</version>
+            <version>3.2.0.3958A</version>
             <type>pom</type>
           </dependency>
         </dependencies>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>3.2.0.3958</version>
+      <version>3.2.0.3958A</version>
       <type>pom</type>
     </dependency>
   </dependencies>

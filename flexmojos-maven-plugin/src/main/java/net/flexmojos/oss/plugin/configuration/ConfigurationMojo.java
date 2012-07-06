@@ -141,7 +141,7 @@ public class ConfigurationMojo
             }
             catch ( Exception e )
             {
-                throw new MojoExecutionException( "Erro creating a new configurator instance: " + configurator, e );
+                throw new MojoExecutionException( "Error creating a new configurator instance: " + configurator, e );
             }
         }
 

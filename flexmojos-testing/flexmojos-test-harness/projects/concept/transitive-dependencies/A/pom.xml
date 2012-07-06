@@ -40,10 +40,9 @@
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
+      <groupId>com.adobe.flash.framework</groupId>
       <artifactId>playerglobal</artifactId>
-      <version>%{flex.version}</version>
-      <classifier>10.2</classifier>
+      <version>%{player.version}</version>
       <type>swc</type>
     </dependency>
     <dependency>

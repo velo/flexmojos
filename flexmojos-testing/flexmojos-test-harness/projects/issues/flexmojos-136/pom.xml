@@ -33,10 +33,6 @@
 
   <packaging>pom</packaging>
 
-  <properties>
-    <flex.sdk.version>4.0.0.8811</flex.sdk.version>
-  </properties>
-
   <modules>
     <module>lib</module>
   </modules>
@@ -45,7 +41,7 @@
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>%{flex.version}</version>
       <type>pom</type>
     </dependency>
   </dependencies>
@@ -59,7 +55,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>${flex.sdk.version}</version>
+            <version>%{flex.version}</version>
             <type>pom</type>
           </dependency>
         </dependencies>

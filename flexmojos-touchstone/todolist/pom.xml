@@ -29,10 +29,6 @@
 
   <name>todolist</name>
   
-  <properties>
-    <flex.version>4.0.0.14159</flex.version>
-  </properties>
-
   <build>
     <pluginManagement>
       <plugins>

@@ -25,7 +25,7 @@
   <parent>
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-testing</artifactId>
-    <version>5.1-beta-SNAPSHOT</version>
+    <version>6.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>flexmojos-test-harness</artifactId>
@@ -143,7 +143,7 @@
             <xml>org.apache.maven.plugins:maven-deploy-plugin:2.7:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-install-plugin:2.3.1:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-resources-plugin:2.5:maven-plugin</xml>
-            <xml>org.apache.maven.plugins:maven-site-plugin:${maven-site-plugin.version}:maven-plugin</xml>
+            <xml>org.apache.maven.plugins:maven-site-plugin:3.1:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-source-plugin:2.1.2</xml>
             <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.2:maven-plugin</xml>
             <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.1.2:maven-plugin</xml>
@@ -154,56 +154,555 @@
 
             <xml>net.sourceforge.cobertura:cobertura:1.9.4.1</xml>
 
+	    <!-- 
+		
+	    	Flex SDK 2.0.1.180927
+			
+	    -->
+
             <xml>com.adobe.flex:compiler:2.0.1.180927:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:2.0.1.180927:zip:template</xml>
             <xml>com.adobe.flex.framework:flex-framework:2.0.1.180927:pom</xml>
+            <xml>com.adobe.flex.framework:framework:2.0.1.180927:zip:configs</xml>
+ 
+	    <!-- 
+			
+		Flex SDK 3.0.0.477A
+			
+	    -->
+ 
+            <xml>com.adobe.flex:compiler:3.0.0.477A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.0.0.477A:zip:template</xml>
+            <!--xml>com.adobe.flex.framework.air:air-framework:3.0.0.477A:pom</xml-->
+            <xml>com.adobe.flex.framework:flex-framework:3.0.0.477A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.0.0.477A:zip:configs</xml>
+			  
+	    <xml>com.adobe.flex.framework:framework:3.0.0.477A:rb.swc:en_US</xml>
+	    <xml>com.adobe.flex.framework:rpc:3.0.0.477A:rb.swc:en_US</xml>
+	    <xml>com.adobe.flex.framework.air:airframework:3.0.0.477A:rb.swc:en_US</xml>
+ 
+	    <!-- 
+			
+					Flex SDK 3.0.1.1732A
+			
+			-->
+ 
+            <xml>com.adobe.flex:compiler:3.0.1.1732A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.0.1.1732A:zip:template</xml>
+            <!--xml>com.adobe.flex.framework.air:air-framework:3.0.1.1732A:pom</xml-->
+            <xml>com.adobe.flex.framework:flex-framework:3.0.1.1732A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.0.1.1732A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.0.1.1732A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.0.1.1732A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.0.1.1732A:rb.swc:en_US</xml>
+ 
+			<!-- 
+			
+					Flex SDK 3.1.0.2710A
+			
+			-->
+ 
+            <xml>com.adobe.flex:compiler:3.1.0.2710A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.1.0.2710A:zip:template</xml>
+            <!--xml>com.adobe.flex.framework.air:air-framework:3.1.0.2710A:pom</xml-->
+            <xml>com.adobe.flex.framework:flex-framework:3.1.0.2710A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.1.0.2710A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.1.0.2710A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.1.0.2710A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.1.0.2710A:rb.swc:en_US</xml>
+ 
+			<!-- 
+			
+					Flex SDK 3.2.0.3958A
+			
+			-->
+ 
+            <xml>com.adobe.flex:compiler:3.2.0.3958A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.2.0.3958A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.2.0.3958A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.2.0.3958A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.2.0.3958A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.2.0.3958A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.2.0.3958A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.2.0.3958A:rb.swc:en_US</xml>
+ 
+			<!-- 
+			
+					Flex SDK 3.3.0.4852A
+			
+			-->
+ 
+			<xml>com.adobe.flex:compiler:3.3.0.4852A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.3.0.4852A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.3.0.4852A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.3.0.4852A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.3.0.4852A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.3.0.4852A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.3.0.4852A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.3.0.4852A:rb.swc:en_US</xml>
+ 
+			<!-- 
+			
+					Flex SDK 3.4.0.9271A
+			
+			-->
+ 
+			<xml>com.adobe.flex:compiler:3.4.0.9271A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.4.0.9271A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.4.0.9271A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.4.0.9271A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.4.0.9271A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.4.0.9271A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.4.0.9271A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.4.0.9271A:rb.swc:en_US</xml>
+ 
+			<!-- 
+			
+					Flex SDK 3.4.1.10084A
+			
+			-->
 
-            <xml>com.adobe.flex:compiler:3.0.0.477:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.0.0.477:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.0.0.477:pom</xml>
+			<xml>com.adobe.flex:compiler:3.4.1.10084A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.4.1.10084A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.4.1.10084A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.4.1.10084A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.4.1.10084A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.4.1.10084A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.4.1.10084A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.4.1.10084A:rb.swc:en_US</xml>
 
-            <xml>com.adobe.flex:compiler:3.1.0.2710:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.1.0.2710:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.1.0.2710:pom</xml>
+			<!-- 
+			
+					Flex SDK 3.5.0.12683B
+			
+			-->
 
-            <xml>com.adobe.flex:compiler:3.2.0.3958:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.2.0.3958:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.2.0.3958:pom</xml>
+			<xml>com.adobe.flex:compiler:3.5.0.12683B:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.5.0.12683B:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.5.0.12683B:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.5.0.12683B:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.5.0.12683B:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.5.0.12683B:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.5.0.12683B:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.5.0.12683B:rb.swc:en_US</xml>
 
-            <xml>com.adobe.flex:compiler:3.3.0.4852:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.3.0.4852:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.3.0.4852:pom</xml>
+			<!-- 
+			
+					Flex SDK 3.6.0.16995A
+			
+			-->
 
-            <xml>com.adobe.flex:compiler:3.4.0.9271:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.4.0.9271:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.4.0.9271:pom</xml>
+			<xml>com.adobe.flex:compiler:3.6.0.16995A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:3.6.0.16995A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:3.6.0.16995A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:3.6.0.16995A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:3.6.0.16995A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:framework:3.6.0.16995A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:3.6.0.16995A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:3.6.0.16995A:rb.swc:en_US</xml>
 
-            <xml>com.adobe.flex:compiler:3.5.a.12683:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.5.a.12683:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.5.a.12683:pom</xml>
+			<!-- 
+			
+					Flex SDK 4.0.0.14159A
+			
+			-->
 
-            <xml>com.adobe.flex:compiler:3.6.0.16321:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:3.6.0.16995:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:3.6.0.16995:pom</xml>
+			<xml>com.adobe.flex:compiler:4.0.0.14159A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:4.0.0.14159A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.0.0.14159A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.0.0.14159A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.0.0.14159A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:datavisualization:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:framework:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:osmf:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:spark:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.0.0.14159A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.0.0.14159A:rb.swc:en_US</xml>
 
-            <xml>com.adobe.flex:compiler:4.0.0.14159:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:4.0.0.14159:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:4.0.0.14159:pom</xml>
+			<xml>com.adobe.flex.framework:datavisualization:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:framework:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:osmf:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:rpc:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:spark:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.0.0.14159A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.0.0.14159A:rb.swc:ja_JP</xml>
 
-            <xml>com.adobe.flex:compiler:4.0.a.14159:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:4.0.a.14159:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:4.0.a.14159:pom</xml>
+			<xml>com.adobe.flex.framework:datavisualization:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:framework:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:osmf:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:rpc:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:spark:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.0.0.14159A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.0.0.14159A:rb.swc:pt_BR</xml>
+			
+			<xml>com.adobe.flex.framework:datavisualization:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:framework:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:osmf:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:rpc:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:spark:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.0.0.14159A:swz</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.0.0.14159A:swz</xml>
+			  
+			<xml>com.adobe.flex.framework:datavisualization:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:osmf:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.0.0.14159A:swf</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.0.0.14159A:swf</xml>
 
-            <xml>com.adobe.flex:compiler:4.1.0.16076:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:4.1.0.16076:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:4.1.0.16076:pom</xml>
+			<!-- 
+			
+					Flex SDK 4.1.0.16076A
+			
+			-->
 
-            <xml>com.adobe.flex:compiler:4.5.0.20967:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:4.5.0.20967:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:4.5.0.20967:pom</xml>
+			<xml>com.adobe.flex:compiler:4.1.0.16076A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:4.1.0.16076A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.1.0.16076A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.1.0.16076A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.1.0.16076A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:datavisualization:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:framework:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:osmf:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:spark:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.1.0.16076A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.1.0.16076A:rb.swc:en_US</xml>
 
-            <xml>com.adobe.flex:compiler:${flex.sdk.version}:pom</xml>
-            <xml>com.adobe.flex.framework:air-framework:${flex.sdk.version}:pom</xml>
-            <xml>com.adobe.flex.framework:flex-framework:${flex.sdk.version}:pom</xml>
+			<xml>com.adobe.flex.framework:datavisualization:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:framework:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:osmf:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:rpc:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:spark:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.1.0.16076A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.1.0.16076A:rb.swc:ja_JP</xml>
+			
+			<xml>com.adobe.flex.framework:datavisualization:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:framework:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:osmf:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:rpc:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:spark:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.1.0.16076A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.1.0.16076A:rb.swc:pt_BR</xml>
+			
+            <xml>com.adobe.flex.framework:datavisualization:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:framework:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:osmf:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:rpc:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:spark:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.1.0.16076A:swz</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.1.0.16076A:swz</xml>
+			  
+			<xml>com.adobe.flex.framework:datavisualization:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:osmf:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.1.0.16076A:swf</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.1.0.16076A:swf</xml>
+
+			<!-- 
+			
+					Flex SDK 4.5.0.20967A
+			
+			-->
+
+			<xml>com.adobe.flex:compiler:4.5.0.20967A:pom</xml>
+			<xml>com.adobe.flex.compiler:asdoc:4.5.0.20967A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.5.0.20967A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.5.0.20967A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.5.0.20967A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.0.20967A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.0.20967A:rb.swc:en_US</xml>
+
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.0.20967A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.0.20967A:rb.swc:ja_JP</xml>
+
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.0.20967A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.0.20967A:rb.swc:ja_JP</xml>
+			
+            <xml>com.adobe.flex.framework:advancedgrids:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.0.20967A:swz</xml>
+		<xml>com.adobe.flex.framework:osmf:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.5.0.20967A:swz</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.0.20967A:swz</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.5.0.20967A:swf</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.0.20967A:swf</xml>
+
+			<!-- 
+			
+					Flex SDK 4.5.1.21328A
+			
+			-->
+
+			<xml>com.adobe.flex:compiler:4.5.1.21328A:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:4.5.1.21328A:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.5.1.21328A:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.5.1.21328A:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.5.1.21328A:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.1.21328A:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.1.21328A:rb.swc:en_US</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.1.21328A:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.1.21328A:rb.swc:ja_JP</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.5.1.21328A:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.5.1.21328A:rb.swc:pt_BR</xml>
+			  
+            <xml>com.adobe.flex.framework:advancedgrids:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.5.1.21328A:swz</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.1.21328A:swz</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:charts:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:mx:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:osmf:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.5.1.21328A:swf</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.5.1.21328A:swf</xml>
+
+			<!-- 
+			
+					Flex SDK 4.6.0.23201
+			
+			-->
+
+			<xml>com.adobe.flex:compiler:4.6.0.23201:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:4.6.0.23201:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.6.0.23201:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.6.0.23201:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.6.0.23201:zip:configs</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:charts:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:framework:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:mx:4.6.0.23201:rb.swc:en_US</xml>
+		<xml>com.adobe.flex.framework:osmf:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:rpc:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:spark:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.6.0.23201:rb.swc:en_US</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.6.0.23201:rb.swc:en_US</xml>
+
+			<xml>com.adobe.flex.framework:advancedgrids:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:charts:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:flash-integration:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:framework:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:mx:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:osmf:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:rpc:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:spark:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.6.0.23201:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.6.0.23201:rb.swc:ja_JP</xml>
+
+			<xml>com.adobe.flex.framework:advancedgrids:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:charts:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:framework:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:mx:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:osmf:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:rpc:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:spark:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airframework:4.6.0.23201:rb.swc:pt_BR</xml>
+			<xml>com.adobe.flex.framework.air:airspark:4.6.0.23201:rb.swc:pt_BR</xml>
+
+            <xml>com.adobe.flex.framework:advancedgrids:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:charts:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:framework:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:mx:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:osmf:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:rpc:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:spark:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.6.0.23201:swz</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.6.0.23201:swz</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:charts:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:mx:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:osmf:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.6.0.23201:swf</xml>
+			<xml>com.adobe.flex.framework:textLayout:4.6.0.23201:swf</xml>
+
+			<!-- 
+			
+					Flex SDK 4.8.0.1358354
+			
+			-->
+
+			<xml>com.adobe.flex:compiler:4.8.0.1358354:pom</xml>
+            <xml>com.adobe.flex.compiler:asdoc:4.8.0.1358354:zip:template</xml>
+            <xml>com.adobe.flex.framework.air:air-framework:4.8.0.1358354:pom</xml>
+            <xml>com.adobe.flex.framework:flex-framework:4.8.0.1358354:pom</xml>
+            <xml>com.adobe.flex.framework:framework:4.8.0.1358354:zip:configs</xml>
+
+            <xml>com.adobe.flex.framework:advancedgrids:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:charts:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:flash-integration:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:framework:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:mx:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:rpc:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework:spark:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework.air:airframework:4.8.0.1358354:rb.swc:en_US</xml>
+            <xml>com.adobe.flex.framework.air:airspark:4.8.0.1358354:rb.swc:en_US</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:charts:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:flash-integration:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:framework:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:mx:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:rpc:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework:spark:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework.air:airframework:4.8.0.1358354:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flex.framework.air:airspark:4.8.0.1358354:rb.swc:ja_JP</xml>
+
+            <xml>com.adobe.flex.framework:advancedgrids:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework:charts:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework:framework:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework:mx:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework:rpc:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework:spark:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework.air:airframework:4.8.0.1358354:rb.swc:pt_BR</xml>
+            <xml>com.adobe.flex.framework.air:airspark:4.8.0.1358354:rb.swc:pt_BR</xml>
+			  
+			<xml>com.adobe.flex.framework:advancedgrids:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:charts:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:framework:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:mx:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:rpc:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:spark:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:spark_dmv:4.8.0.1358354:swf</xml>
+			<xml>com.adobe.flex.framework:sparkskins:4.8.0.1358354:swf</xml>
+
+			<!-- 
+			
+					Flash Player 
+			
+			-->
+
+			<xml>com.adobe.flash.framework:playerglobal:10.0:rb.swc:en_US</xml>
+			<xml>com.adobe.flash.framework:playerglobal:10.1:rb.swc:en_US</xml>
+			<xml>com.adobe.flash.framework:playerglobal:10.2:rb.swc:en_US</xml>
+			<xml>com.adobe.flash.framework:playerglobal:11.1:rb.swc:en_US</xml>
+            <xml>com.adobe.flash.framework:playerglobal:${player.version}:rb.swc:en_US</xml>
+
+			<xml>com.adobe.flash.framework:playerglobal:10.0:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flash.framework:playerglobal:10.1:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flash.framework:playerglobal:10.2:rb.swc:ja_JP</xml>
+			<xml>com.adobe.flash.framework:playerglobal:11.1:rb.swc:ja_JP</xml>
+            <xml>com.adobe.flash.framework:playerglobal:${player.version}:rb.swc:ja_JP</xml>
+
+            <!-- 
+		
+		Flexmojos 
+			
+            -->
 
             <xml>net.flexmojos.oss:flexmojos-maven-plugin:${project.version}</xml>
             <xml>net.flexmojos.oss:flexmojos-archetypes-application:${project.version}</xml>

@@ -2924,14 +2924,31 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         Artifact global = getGlobalArtifact();
-        if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        if ( AIR_GLOBAL.equals( global.getArtifactId() ) )
         {
-            String playerVersion = global.getClassifier();
-            if ( playerVersion == null )
-            {
-                playerVersion = "9";
-            }
+            String airVersion = global.getVersion();
+            
+            if ( VersionUtils.isMinVersionOK( airVersion, "3.0" ) )
+                return 13;
+            if ( VersionUtils.isMinVersionOK( airVersion, "2.7" ) )
+                return 12;
+            if ( VersionUtils.isMinVersionOK( airVersion, "2.6" ) )
+                return 11;
+            if ( VersionUtils.isMinVersionOK( airVersion, "1.5" ) )
+                return 10;
 
+            getLog().warn( "Unable to determine 'swfVersion' for " + global );
+        }
+        else if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        {
+            String playerVersion = global.getVersion();
+
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.3" ) )
+                return 16;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.2" ) )
+                return 15;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.1" ) )
+                return 14;
             if ( VersionUtils.isMinVersionOK( playerVersion, "11" ) )
                 return 13;
             if ( VersionUtils.isMinVersionOK( playerVersion, "10.3" ) )
@@ -3330,7 +3347,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     private File resolveThemeFile( String artifactName, String themeName, String type, String path )
     {
-        Artifact sparkSwc = getDependency( groupId( FRAMEWORK_GROUP_ID ), artifactId( artifactName ), type( "swc" ) );
+        Artifact sparkSwc = getDependency( groupId( FLEX_GROUP_ID ), artifactId( artifactName ), type( "swc" ) );
         if ( sparkSwc == null )
         {
             return null;
@@ -3340,7 +3357,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         try
         {
             // first try to get the artifact from maven local repository for the appropriated flex version
-            sparkCss = resolve( FRAMEWORK_GROUP_ID, themeName, getFrameworkVersion(), "theme", type ).getFile();
+            sparkCss = resolve( FLEX_GROUP_ID, themeName, getFrameworkVersion(), "theme", type ).getFile();
         }
         catch ( RuntimeMavenResolutionException e )
         {

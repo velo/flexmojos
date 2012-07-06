@@ -33,15 +33,11 @@
 
   <packaging>swf</packaging>
 
-  <properties>
-    <flex.sdk.version>4.0.0.8811</flex.sdk.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>flex-framework</artifactId>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -49,7 +45,7 @@
       <artifactId>spark</artifactId>
       <type>swc</type>
       <scope>rsl</scope>
-      <version>${flex.sdk.version}</version>
+      <version>${flex.version}</version>
     </dependency>
   </dependencies>
 
@@ -62,7 +58,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>${flex.sdk.version}</version>
+            <version>${flex.version}</version>
             <type>pom</type>
           </dependency>
         </dependencies>

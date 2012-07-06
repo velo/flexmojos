@@ -71,7 +71,7 @@
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
 						<artifactId>compiler</artifactId>
-						<version>4.0.0.2480</version>
+						<version>4.0.0.14159A</version>
 						<type>pom</type>
 					</dependency>
 				</dependencies>
@@ -83,13 +83,13 @@
 		<dependency>
 			<groupId>com.adobe.flex.framework</groupId>
 			<artifactId>flex-framework</artifactId>
-			<version>4.0.0.2480</version>
+			<version>4.0.0.14159A</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
+			<groupId>com.adobe.flash.framework</groupId>
 			<artifactId>playerglobal</artifactId>
-			<version>10-4.0.0.2480</version>
+			<version>10.0</version>
 			<type>swc</type>
 		</dependency>
 	</dependencies>

@@ -44,8 +44,8 @@ public abstract class AbstractConceptTest
     @DataProvider( name = "flex3" )
     public Object[][] flex3()
     {
-        return new Object[][] { { "3.0.0.477" }, { "3.1.0.2710" }, { "3.2.0.3958" }, { "3.3.0.4852" },
-            { "3.4.0.9271" }, { "3.5.a.12683" }, { "3.6.0.16995" } };
+        return new Object[][] { { "3.0.0.477A" }, { "3.0.1.1732A" }, { "3.1.0.2710A" }, { "3.2.0.3958A" },
+                { "3.3.0.4852A" }, { "3.4.0.9271A" }, { "3.4.1.10084A" }, { "3.5.0.12683B" }, { "3.6.0.16995A" } };
     }
 
     /**
@@ -57,13 +57,14 @@ public abstract class AbstractConceptTest
  	@DataProvider( name = "flex3Air" )
  	public Object[][] flex3Air()
  	{
- 	    return new Object[][] { { "3.5.a.12683" }, { "3.6.0.16995" } };
+ 	    return new Object[][] { { "3.5.0.12683B" }, { "3.6.0.16995A" } };
  	}
 
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { { "4.0.0.14159" }, { "4.0.a.14159" }, { "4.1.0.16076" }, { "4.5.0.20967" } };
+        return new Object[][] { { "4.0.0.14159A" }, { "4.1.0.16076A" }, { "4.5.0.20967A" }, { "4.5.1.21328A" },
+                { "4.6.0.23201" } };
     }
 
 }
