@@ -41,6 +41,13 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <version>%{flexmojos.version}</version>
         <extensions>true</extensions>
+        <dependencies>
+          <dependency>
+            <groupId>com.adobe.flex</groupId>
+            <artifactId>compiler</artifactId>
+            <version>%{flex.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

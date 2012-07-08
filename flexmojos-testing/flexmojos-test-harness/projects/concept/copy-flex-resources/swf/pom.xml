@@ -53,11 +53,6 @@
         </configuration>
         <dependencies>
           <dependency>
-            <groupId>net.flexmojos.oss</groupId>
-            <artifactId>flexmojos-flex3-compatibility-layer</artifactId>
-            <version>%{flexmojos.version}</version>
-          </dependency>
-          <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
             <version>%{flex.version}</version>
