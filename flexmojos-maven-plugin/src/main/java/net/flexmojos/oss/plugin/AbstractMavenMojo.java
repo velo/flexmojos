@@ -520,7 +520,7 @@ public abstract class AbstractMavenMojo
         }
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "airframework" ), type( "swc" ) );
+            dep = getDependency( groupId( "com.adobe.flex.framework.air" ), artifactId( "airframework" ), type( "swc" ) );
         }
 
         if ( dep == null )
