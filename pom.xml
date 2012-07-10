@@ -78,11 +78,11 @@
 
   <properties>
     <commons_io.version>1.4</commons_io.version>
-    <flex.version>4.5.1.21328A</flex.version>
-    <player.version>10.2</player.version>
-    <!--flex.version>4.6.0.23201</flex.version>
-    <player.version>11.1</player.version-->
-    <!--flex.version>4.8.0.1355137</flex.version>
+    <!--flex.version>4.5.1.21328A</flex.version>
+    <player.version>10.2</player.version-->
+    <flex.version>4.6.0.23201</flex.version>
+    <player.version>11.1</player.version>
+    <!--flex.version>4.8.0.1358354</flex.version>
     <player.version>11.1</player.version-->
     <maven.version>3.0.4</maven.version>
     <maven-site-plugin.version>3.1</maven-site-plugin.version>
