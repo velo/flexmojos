@@ -575,7 +575,12 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
-        return getDependency( groupId( FLEX_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null;
+        return (getDependency( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null) ||
+                /*
+                    This is a legacy rule for old SDKs where the
+                    airglobal was deployed withing the flex framework.
+                 */
+                (getDependency( groupId( FLEX_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null);
     }
 
     @Override
