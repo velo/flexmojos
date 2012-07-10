@@ -2924,22 +2924,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         Artifact global = getGlobalArtifact();
-        if ( AIR_GLOBAL.equals( global.getArtifactId() ) )
-        {
-            String airVersion = global.getVersion();
-            
-            if ( VersionUtils.isMinVersionOK( airVersion, "3.0" ) )
-                return 13;
-            if ( VersionUtils.isMinVersionOK( airVersion, "2.7" ) )
-                return 12;
-            if ( VersionUtils.isMinVersionOK( airVersion, "2.6" ) )
-                return 11;
-            if ( VersionUtils.isMinVersionOK( airVersion, "1.5" ) )
-                return 10;
-
-            getLog().warn( "Unable to determine 'swfVersion' for " + global );
-        }
-        else if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
         {
             String playerVersion = global.getVersion();
 

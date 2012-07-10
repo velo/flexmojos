@@ -20,7 +20,7 @@
 -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:itest="info.rvin.itest.*" 
     verticalAlign="top" layout="horizontal"
-    horizontalAlign="center" backgroundGradientColors="[0x000000,0x323232]" paddingTop="0">
+    horizontalAlign="center" paddingTop="0">
     
     <mx:Script>
 
@@ -53,7 +53,7 @@
         </mx:Panel>
     </mx:Component>
     
-    <mx:ApplicationControlBar dock="true" fillColors="[0x000000,0x323232]" fillAlphas="[1,1]" horizontalAlign="center">
+    <mx:ApplicationControlBar dock="true" horizontalAlign="center">
         <mx:Button label="Load Module 1" click="loadModule('module 1', 'labels/label1.swf')"/>
         <mx:Button label="Load Module 2" click="loadModule('module 2', 'labels/label2.swf')"/>
     </mx:ApplicationControlBar>
