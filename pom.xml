@@ -82,7 +82,7 @@
     <player.version>10.2</player.version-->
     <flex.version>4.6.0.23201</flex.version>
     <player.version>11.1</player.version>
-    <!--flex.version>4.8.0.1358354</flex.version>
+    <!--flex.version>4.8.0.1359417</flex.version>
     <player.version>11.1</player.version-->
     <maven.version>3.0.4</maven.version>
     <maven-site-plugin.version>3.1</maven-site-plugin.version>
@@ -439,6 +439,16 @@
         </property>
       </activation>
 
+      <modules>
+        <module>flexmojos-util</module>
+        <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
+        <module>flexmojos-maven-plugin</module>
+        <module>flexmojos-super-poms</module>
+        <module>flexmojos-archetypes</module>
+        <module>flexmojos-testing</module>
+      </modules>
+
       <build>
         <plugins>
           <plugin>
@@ -461,6 +471,16 @@
           <value>coverage</value>
         </property>
       </activation>
+
+      <modules>
+        <module>flexmojos-util</module>
+        <module>flexmojos-sandbox</module>
+        <module>flexmojos-generator</module>
+        <module>flexmojos-maven-plugin</module>
+        <module>flexmojos-super-poms</module>
+        <module>flexmojos-archetypes</module>
+        <module>flexmojos-testing</module>
+      </modules>
 
       <build>
         <plugins>
