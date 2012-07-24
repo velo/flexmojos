@@ -420,6 +420,10 @@ public abstract class AbstractMavenMojo
         if (airVersion == null)
         {
             int[] version = VersionUtils.splitVersion( getCompilerVersion() );
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 6 } ) )
+            {
+                return "3.1";
+            }
             if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
             {
                 return "2.6";
