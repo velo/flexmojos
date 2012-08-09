@@ -69,7 +69,7 @@ package net.flexmojos.oss.unitestingsupport.fluint
 			var tests:Array=testApp.tests;
 
 			var listener:FluintListener=new FluintListener(tests, _socketReporter);
-			return listener.runTests();
+            return listener.runTests();
 		}
 
 		public function runTests():int
@@ -89,6 +89,7 @@ package net.flexmojos.oss.unitestingsupport.fluint
 			var suiteResult:TestSuiteResult=_testMonitor.getTestSuiteResult(_testSuite);
 			var testResults:Array=suiteResult.children.toArray();
 			testResults.forEach(reportTestCaseResult);
+            _socketReporter.sendResults();
 		}
 
 		private function reportTestCaseResult(element:*, index:int, arr:Array):void

@@ -29,7 +29,10 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 	{
 		
 		private var _socketReporter:SocketReporter;
-		
+
+        private var totalTestCount:int = 0;
+        private var executedTestCount:int = 0;
+
 		public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
@@ -54,7 +57,9 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 	        
     	    suite.runWithResult( result );
     	    
-    	    return suite.countTestCases();
+            totalTestCount = suite.countTestCases();
+
+            return totalTestCount;
 		}
 		
     	/**
@@ -73,6 +78,10 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		public function endTest( test : Test ) : void
 		{	
 			_socketReporter.testFinished(test.className);
+            executedTestCount++;
+            if(executedTestCount == totalTestCount) {
+                _socketReporter.sendResults();
+            }
 		}
 	
 		/**

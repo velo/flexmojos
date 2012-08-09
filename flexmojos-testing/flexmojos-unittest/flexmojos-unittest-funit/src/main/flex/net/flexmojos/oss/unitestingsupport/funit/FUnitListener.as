@@ -92,7 +92,7 @@ package net.flexmojos.oss.unitestingsupport.funit
 		 */
 		public function runFinished(result:TestResult):void
 		{
-
+            _socketReporter.sendResults();
 		}
 
 		/**

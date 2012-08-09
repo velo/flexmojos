@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +24,7 @@ package net.flexmojos.oss.unitestingsupport
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
-	
-	import mx.binding.utils.BindingUtils;
-	
+
 	import net.flexmojos.oss.test.monitor.CommConstraints;
 	import net.flexmojos.oss.test.report.ErrorReport;
 	import net.flexmojos.oss.test.report.TestCaseReport;
@@ -49,7 +48,7 @@ package net.flexmojos.oss.unitestingsupport
 
 		[Bindable]
 		public var numTestsRun:int=0;
-		
+
 		/**
 		 * TestMethodReport -> milliseconds
 		 */
@@ -121,7 +120,6 @@ package net.flexmojos.oss.unitestingsupport
 			++numTestsRun;
 		}
 
-
 		/**
 		 * Return the report Object from the internal report model for the
 		 * currently executing Test.
@@ -152,7 +150,7 @@ package net.flexmojos.oss.unitestingsupport
 		 * Sends the results. This sends the reports back to the controlling Ant
 		 * task using an XMLSocket.
 		 */
-		private function sendResults():void
+		public function sendResults():void
 		{
 			// Open an XML socket.
 			socket=new XMLSocket();
@@ -292,21 +290,6 @@ package net.flexmojos.oss.unitestingsupport
 			if (instance == null)
 			{
 				instance=new SocketReporter();
-
-				var checkIsDone:Function=function(e:*):void
-					{
-						if (instance.totalTestCount == 0)
-						{
-							return;
-						}
-						if (instance.totalTestCount == instance.numTestsRun)
-						{
-							instance.sendResults();
-						}
-					};
-
-				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
-				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");
 			}
 			return instance;
 		}
