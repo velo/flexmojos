@@ -35,9 +35,6 @@ package net.flexmojos.oss.unitestingsupport.asunit
 		
 		private var _socketReporter:SocketReporter;
 
-        private var totalTestCount:int = 0;
-        private var executedTestCount:int = 0;
-
 		public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
@@ -46,7 +43,7 @@ package net.flexmojos.oss.unitestingsupport.asunit
         {
             var tests:Array = testApp.tests;
 
-            totalTestCount = 0;
+            var totalTestCount:int = 0;
 			
 			for each (var test:Class in tests)
 			{
@@ -65,8 +62,11 @@ package net.flexmojos.oss.unitestingsupport.asunit
 		        suite.setResult(result);
 	    	    suite.run();
 			}
-	        
-    	    
+
+            if(totalTestCount > 0) {
+                _socketReporter.sendResults();
+            }
+
     	    return totalTestCount;
 		}
 		
@@ -93,10 +93,6 @@ package net.flexmojos.oss.unitestingsupport.asunit
 		public function endTest( test : Test ) : void
 		{	
 			_socketReporter.testFinished(className);
-            executedTestCount++;
-            if(executedTestCount == totalTestCount) {
-                _socketReporter.sendResults();
-            }
 		}
 	
 		/**

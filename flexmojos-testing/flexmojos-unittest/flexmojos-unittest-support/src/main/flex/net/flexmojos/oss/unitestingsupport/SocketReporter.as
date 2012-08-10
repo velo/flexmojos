@@ -255,7 +255,7 @@ package net.flexmojos.oss.unitestingsupport
 			}
 		}
 
-		private function tryGetDefinitionByName(classname:String):Class
+		private static function tryGetDefinitionByName(classname:String):Class
 		{
 			try
 			{
