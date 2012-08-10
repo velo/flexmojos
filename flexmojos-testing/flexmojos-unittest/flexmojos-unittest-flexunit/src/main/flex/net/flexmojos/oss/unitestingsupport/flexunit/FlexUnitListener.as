@@ -30,9 +30,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		
 		private var _socketReporter:SocketReporter;
 
-        private var totalTestCount:int = 0;
-        private var executedTestCount:int = 0;
-
 		public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
@@ -54,12 +51,15 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 					suite.addTestSuite(test);
 				}
 			}
-	        
+
+            trace("running testsuite.");
+
     	    suite.runWithResult( result );
     	    
-            totalTestCount = suite.countTestCases();
+            trace("finished running testsuite.");
+            _socketReporter.sendResults();
 
-            return totalTestCount;
+            return suite.countTestCases();
 		}
 		
     	/**
@@ -68,6 +68,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
     	 */
     	public function startTest( test : Test ) : void
 		{
+            trace("startTest(" + test.className + "." + test[ "methodName" ]);
 			_socketReporter.addMethod( test.className, test[ "methodName" ] );
 		}
 		
@@ -77,11 +78,8 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function endTest( test : Test ) : void
 		{	
+            trace("endTest(" + test.className + "." + test[ "methodName" ]);
 			_socketReporter.testFinished(test.className);
-            executedTestCount++;
-            if(executedTestCount == totalTestCount) {
-                _socketReporter.sendResults();
-            }
 		}
 	
 		/**
@@ -91,6 +89,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addError( test : Test, error : Error ) : void
 		{
+            trace("addError(" + test.className + "." + test[ "methodName" ]);
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
@@ -106,6 +105,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addFailure( test : Test, error : AssertionFailedError ) : void
 		{
+            trace("addFailure(" + test.className + "." + test[ "methodName" ]);
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;

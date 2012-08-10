@@ -205,16 +205,9 @@ package net.flexmojos.oss.unitestingsupport
 			closeController.canClose=true;
 		}
 
-		private function formatQualifiedClassName(className:String):String
-		{
-			var pattern:RegExp=/::/;
-
-			return className.replace(pattern, ".");
-		}
-
 		public function runTests(testApplication:ITestApplication):void
 		{
-			var def:*=null;
+			var def:Class;
 
 			//flexunit supported
 			if ((def=tryGetDefinitionByName("net.flexmojos.oss.unitestingsupport.flexunit.FlexUnitListener")) != null)
