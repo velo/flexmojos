@@ -52,11 +52,9 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 				}
 			}
 
-            trace("running testsuite.");
-
     	    suite.runWithResult( result );
-    	    
-            trace("finished running testsuite.");
+
+            // As the suite is finished running, send the results.
             _socketReporter.sendResults();
 
             return suite.countTestCases();

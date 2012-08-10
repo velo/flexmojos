@@ -43,12 +43,6 @@ package net.flexmojos.oss.unitestingsupport
 
 		private var reports:Dictionary=new Dictionary();
 
-		[Bindable]
-		public var totalTestCount:int=0;
-
-		[Bindable]
-		public var numTestsRun:int=0;
-
 		/**
 		 * TestMethodReport -> milliseconds
 		 */
@@ -115,9 +109,6 @@ package net.flexmojos.oss.unitestingsupport
 				var methodObject:TestMethodReport = reportObject.getMethod(methodName);
 				methodObject.time = (getTimer() - int(testTimes[methodObject]))/1000.0;
 			}
-
-			// If we have finished running all the tests send the results.
-			++numTestsRun;
 		}
 
 		/**
@@ -254,10 +245,10 @@ package net.flexmojos.oss.unitestingsupport
 
 			var runner:UnitTestRunner=new def();
 			runner.socketReporter=this;
-			totalTestCount=runner.run(testApplication);
-			trace("Running " + totalTestCount + " tests");
+			var totalTestFunctionCount:int=runner.run(testApplication);
+			trace("Running " + totalTestFunctionCount + " test functions");
 
-			if (totalTestCount == 0)
+			if (totalTestFunctionCount == 0)
 			{
 				trace("No tests to run, exiting");
 				exit();
