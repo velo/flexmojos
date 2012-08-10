@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,7 +28,10 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 
 	public class FlexUnitListener implements TestListener, UnitTestRunner
 	{
-		
+
+        private var totalTests:int;
+        private var testsExecuted:int;
+
 		private var _socketReporter:SocketReporter;
 
 		public function set socketReporter(socketReporter:SocketReporter):void {
@@ -36,6 +40,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		
         public function run( testApp:ITestApplication ):int
         {
+
             var tests:Array = testApp.tests;
 
     		var result:TestResult = new TestResult();
@@ -52,12 +57,16 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 				}
 			}
 
+            // Strange things happen here ... usually one test is executed immediately
+            // the rest is then executes asynchronously. That's why I have to reset
+            // testsExecuted before starting the test execution.
+            testsExecuted = 0;
+
     	    suite.runWithResult( result );
 
-            // As the suite is finished running, send the results.
-            _socketReporter.sendResults();
+            totalTests = suite.countTestCases();
 
-            return suite.countTestCases();
+            return totalTests;
 		}
 		
     	/**
@@ -66,7 +75,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
     	 */
     	public function startTest( test : Test ) : void
 		{
-            trace("startTest(" + test.className + "." + test[ "methodName" ]);
+            trace("startTest(" + test.className + "." + test[ "methodName" ] + ")");
 			_socketReporter.addMethod( test.className, test[ "methodName" ] );
 		}
 		
@@ -76,8 +85,13 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function endTest( test : Test ) : void
 		{	
-            trace("endTest(" + test.className + "." + test[ "methodName" ]);
+            trace("endTest(" + test.className + "." + test[ "methodName" ] + ")");
 			_socketReporter.testFinished(test.className);
+
+            testsExecuted++;
+            if(totalTests == testsExecuted) {
+                _socketReporter.sendResults();
+            }
 		}
 	
 		/**
@@ -87,7 +101,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addError( test : Test, error : Error ) : void
 		{
-            trace("addError(" + test.className + "." + test[ "methodName" ]);
+            trace("addError(" + test.className + "." + test[ "methodName" ] + ")");
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
@@ -103,7 +117,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addFailure( test : Test, error : AssertionFailedError ) : void
 		{
-            trace("addFailure(" + test.className + "." + test[ "methodName" ]);
+            trace("addFailure(" + test.className + "." + test[ "methodName" ] + ")");
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
