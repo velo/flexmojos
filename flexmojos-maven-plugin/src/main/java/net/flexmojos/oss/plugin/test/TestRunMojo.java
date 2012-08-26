@@ -30,7 +30,6 @@ import java.util.List;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.velocity.texen.util.FileUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -404,7 +403,8 @@ public class TestRunMojo
     public List<String> runTest( TestRequest testRequest )
         throws TestRunnerException, LaunchFlashPlayerException
     {
-        List<String> results = testRunner.run( testRequest );
+        List<String> results;
+        results = testRunner.run( testRequest );
         return results;
     }
 
@@ -414,13 +414,15 @@ public class TestRunMojo
         if ( testPort == null )
         {
             // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
-            // "test-compile" goal!
+            // "test-compile" goal! The reason is that the port is compiled into the generated swf and this is done
+            // in the "test-compile" goal.
             testPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_PORT );
         }
         if ( testControlPort == null )
         {
             // This will fail if you are trying to run the "test-run" goal in a separate maven execution from the
-            // "test-compile" goal!
+            // "test-compile" goal! The reason is that the port is compiled into the generated swf and this is done
+            // in the "test-compile" goal.
             testControlPort = getFromPluginContext( TestCompilerMojo.FLEXMOJOS_TEST_CONTROL_PORT );
         }
         getLog().debug( "Found " + swfs.length + " test runners:\n" + Arrays.toString( swfs ) );
@@ -436,8 +438,8 @@ public class TestRunMojo
     {
 
         getLog().info( "------------------------------------------------------------------------" );
-        getLog().info( MessageFormat.format( TEST_INFO, new Object[] { new Integer( numTests ),
-                           new Integer( numErrors ), new Integer( numFailures ), new Integer( time ) } ) );
+        getLog().info( MessageFormat.format( TEST_INFO, new Object[] { numTests,
+                           numErrors, numFailures, time} ) );
 
         if ( !testFailureIgnore )
         {

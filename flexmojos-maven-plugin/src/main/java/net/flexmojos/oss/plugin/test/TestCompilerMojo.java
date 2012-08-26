@@ -321,7 +321,7 @@ public class TestCompilerMojo
         }
         catch ( IOException e )
         {
-            throw new MavenRuntimeException( "Failed to alocate socket port", e );
+            throw new MavenRuntimeException( "Failed to allocate socket port", e );
         }
     }
 
