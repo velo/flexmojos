@@ -57,41 +57,37 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 				}
 			}
 
-            // Strange things happen here ... usually one test is executed immediately
-            // the rest is then executes asynchronously. That's why I have to reset
-            // testsExecuted before starting the test execution.
             testsExecuted = 0;
 
     	    suite.runWithResult( result );
 
             totalTests = suite.countTestCases();
 
+            checkFinished();
+
             return totalTests;
 		}
 		
     	/**
     	 * Called when a Test starts.
-    	 * @param Test the test.
+    	 * @param test the test.
     	 */
     	public function startTest( test : Test ) : void
 		{
-            trace("startTest(" + test.className + "." + test[ "methodName" ] + ")");
 			_socketReporter.addMethod( test.className, test[ "methodName" ] );
 		}
 		
 		/**
 		 * Called when a Test ends.
-		 * @param Test the test.
+		 * @param test the test.
 		 */
 		public function endTest( test : Test ) : void
 		{	
-            trace("endTest(" + test.className + "." + test[ "methodName" ] + ")");
 			_socketReporter.testFinished(test.className);
 
             testsExecuted++;
-            if(totalTests == testsExecuted) {
-                _socketReporter.sendResults();
-            }
+
+            checkFinished();
 		}
 	
 		/**
@@ -101,7 +97,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addError( test : Test, error : Error ) : void
 		{
-            trace("addError(" + test.className + "." + test[ "methodName" ] + ")");
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
@@ -117,7 +112,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		 */
 		public function addFailure( test : Test, error : AssertionFailedError ) : void
 		{
-            trace("addFailure(" + test.className + "." + test[ "methodName" ] + ")");
 			var failure:ErrorReport = new ErrorReport();
 			failure.type = ClassnameUtil.getClassName(error);
 			failure.message = error.message;
@@ -125,6 +119,12 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 			
 			_socketReporter.addFailure(test.className, test[ "methodName" ], failure);
 		}
+
+        protected function checkFinished():void {
+            if(totalTests == testsExecuted) {
+                _socketReporter.sendResults();
+            }
+        }
 
 	}
 }

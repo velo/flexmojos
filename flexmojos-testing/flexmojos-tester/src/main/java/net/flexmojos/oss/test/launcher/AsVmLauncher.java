@@ -89,8 +89,11 @@ public class AsVmLauncher
 
         switch ( returnCode )
         {
+            // TODO: Depending on the executed command, interpret the return codes
+            // ADL: http://help.adobe.com/en_US/air/build/WSfffb011ac560372f-6fa6d7e0128cca93d31-8000.html
+            // Flashplayer:
             case 0:
-                getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+                getLogger().debug( "[LAUNCHER] runtime exit as expected" );
 
                 status = ThreadStatus.DONE;
                 return;
@@ -117,7 +120,7 @@ public class AsVmLauncher
                 if ( useXvfb() )
                 {
                     errorMessage =
-                        "Xvfb-run error: A problem was encountered while cleanning up the temporary directory.";
+                        "Xvfb-run error: A problem was encountered while cleaning up the temporary directory.";
                     break;
                 }
             case 6:
@@ -129,7 +132,7 @@ public class AsVmLauncher
             case 139:
                 if ( OSUtils.isLinux() )
                 {
-                    getLogger().debug( "[LAUNCHER] Flashplayer exit as expected" );
+                    getLogger().debug( "[LAUNCHER] runtime exit as expected" );
 
                     status = ThreadStatus.DONE;
                     return;
@@ -182,13 +185,18 @@ public class AsVmLauncher
         getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
         try
         {
-            process = Runtime.getRuntime().exec( merge( asvmCommand, new String[] { targetFile } ) );
+            final String[] cmdArray = merge( asvmCommand, new String[] { targetFile } );
+
+            getLogger().debug( "[LAUNCHER] Executing command: " + Arrays.toString( cmdArray ) );
+
+            process = Runtime.getRuntime().exec( cmdArray );
             new StreamPumper( process.getInputStream(), new ConsoleConsumer( "[SYSOUT]: " ) ).start();
             new StreamPumper( process.getErrorStream(), new ConsoleConsumer( "[SYSERR]: " ) ).start();
         }
         catch ( IOException e )
         {
-            throw new LaunchFlashPlayerException( "Failed to launch Flash Player.", e );
+            throw new LaunchFlashPlayerException(
+                    "Failed to launch runtime (executable file name: '" + asvmCommand[0] + "').", e );
         }
     }
 
@@ -217,7 +225,9 @@ public class AsVmLauncher
         }
         catch ( IOException e )
         {
-            throw new LaunchFlashPlayerException( "Failed to launch Flash Player in headless environment.", e );
+            throw new LaunchFlashPlayerException(
+                    "Failed to launch runtime (executable file name: '" + asvmCommand[0] + "') " +
+                            "in headless environment.", e );
         }
     }
 
