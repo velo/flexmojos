@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,15 +28,19 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 
 	public class FlexUnitListener implements TestListener, UnitTestRunner
 	{
-		
+
+        private var totalTests:int;
+        private var testsExecuted:int;
+
 		private var _socketReporter:SocketReporter;
-		
+
 		public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
 		
         public function run( testApp:ITestApplication ):int
         {
+
             var tests:Array = testApp.tests;
 
     		var result:TestResult = new TestResult();
@@ -51,15 +56,21 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 					suite.addTestSuite(test);
 				}
 			}
-	        
+
+            testsExecuted = 0;
+
     	    suite.runWithResult( result );
-    	    
-    	    return suite.countTestCases();
+
+            totalTests = suite.countTestCases();
+
+            checkFinished();
+
+            return totalTests;
 		}
 		
     	/**
     	 * Called when a Test starts.
-    	 * @param Test the test.
+    	 * @param test the test.
     	 */
     	public function startTest( test : Test ) : void
 		{
@@ -68,11 +79,15 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 		
 		/**
 		 * Called when a Test ends.
-		 * @param Test the test.
+		 * @param test the test.
 		 */
 		public function endTest( test : Test ) : void
 		{	
 			_socketReporter.testFinished(test.className);
+
+            testsExecuted++;
+
+            checkFinished();
 		}
 	
 		/**
@@ -104,6 +119,12 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 			
 			_socketReporter.addFailure(test.className, test[ "methodName" ], failure);
 		}
+
+        protected function checkFinished():void {
+            if(totalTests == testsExecuted) {
+                _socketReporter.sendResults();
+            }
+        }
 
 	}
 }

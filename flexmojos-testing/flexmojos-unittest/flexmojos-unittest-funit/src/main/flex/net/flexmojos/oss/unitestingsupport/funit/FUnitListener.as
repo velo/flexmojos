@@ -64,6 +64,7 @@ package net.flexmojos.oss.unitestingsupport.funit
 				}
 			}
 
+            _socketReporter.sendResults();
 
 			return testCount;
 		}
@@ -92,7 +93,6 @@ package net.flexmojos.oss.unitestingsupport.funit
 		 */
 		public function runFinished(result:TestResult):void
 		{
-
 		}
 
 		/**

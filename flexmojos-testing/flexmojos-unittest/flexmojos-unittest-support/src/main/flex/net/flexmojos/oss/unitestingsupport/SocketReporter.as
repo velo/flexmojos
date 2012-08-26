@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +24,7 @@ package net.flexmojos.oss.unitestingsupport
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
-	
-	import mx.binding.utils.BindingUtils;
-	
+
 	import net.flexmojos.oss.test.monitor.CommConstraints;
 	import net.flexmojos.oss.test.report.ErrorReport;
 	import net.flexmojos.oss.test.report.TestCaseReport;
@@ -44,12 +43,6 @@ package net.flexmojos.oss.unitestingsupport
 
 		private var reports:Dictionary=new Dictionary();
 
-		[Bindable]
-		public var totalTestCount:int=0;
-
-		[Bindable]
-		public var numTestsRun:int=0;
-		
 		/**
 		 * TestMethodReport -> milliseconds
 		 */
@@ -116,11 +109,7 @@ package net.flexmojos.oss.unitestingsupport
 				var methodObject:TestMethodReport = reportObject.getMethod(methodName);
 				methodObject.time = (getTimer() - int(testTimes[methodObject]))/1000.0;
 			}
-
-			// If we have finished running all the tests send the results.
-			++numTestsRun;
 		}
-
 
 		/**
 		 * Return the report Object from the internal report model for the
@@ -152,7 +141,7 @@ package net.flexmojos.oss.unitestingsupport
 		 * Sends the results. This sends the reports back to the controlling Ant
 		 * task using an XMLSocket.
 		 */
-		private function sendResults():void
+		public function sendResults():void
 		{
 			// Open an XML socket.
 			socket=new XMLSocket();
@@ -207,16 +196,9 @@ package net.flexmojos.oss.unitestingsupport
 			closeController.canClose=true;
 		}
 
-		private function formatQualifiedClassName(className:String):String
-		{
-			var pattern:RegExp=/::/;
-
-			return className.replace(pattern, ".");
-		}
-
 		public function runTests(testApplication:ITestApplication):void
 		{
-			var def:*=null;
+			var def:Class;
 
 			//flexunit supported
 			if ((def=tryGetDefinitionByName("net.flexmojos.oss.unitestingsupport.flexunit.FlexUnitListener")) != null)
@@ -263,17 +245,17 @@ package net.flexmojos.oss.unitestingsupport
 
 			var runner:UnitTestRunner=new def();
 			runner.socketReporter=this;
-			totalTestCount=runner.run(testApplication);
-			trace("Running " + totalTestCount + " tests");
+			var totalTestFunctionCount:int=runner.run(testApplication);
+			trace("Running " + totalTestFunctionCount + " test functions");
 
-			if (totalTestCount == 0)
+			if (totalTestFunctionCount == 0)
 			{
 				trace("No tests to run, exiting");
 				exit();
 			}
 		}
 
-		private function tryGetDefinitionByName(classname:String):Class
+		private static function tryGetDefinitionByName(classname:String):Class
 		{
 			try
 			{
@@ -292,21 +274,6 @@ package net.flexmojos.oss.unitestingsupport
 			if (instance == null)
 			{
 				instance=new SocketReporter();
-
-				var checkIsDone:Function=function(e:*):void
-					{
-						if (instance.totalTestCount == 0)
-						{
-							return;
-						}
-						if (instance.totalTestCount == instance.numTestsRun)
-						{
-							instance.sendResults();
-						}
-					};
-
-				BindingUtils.bindSetter(checkIsDone, instance, "numTestsRun");
-				BindingUtils.bindSetter(checkIsDone, instance, "totalTestCount");
 			}
 			return instance;
 		}

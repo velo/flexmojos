@@ -37,7 +37,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 
 	public class FlexUnit4Listener implements IRunListener, UnitTestRunner
 	{
-		private var running:Boolean = false;
 
 		private var _socketReporter:SocketReporter;
 		
@@ -60,7 +59,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
  			flexUnitCore.addListener( listener );
 
 			//This run statements executes the unit tests for the FlexUnit4 framework
- 			var result:Result = flexUnitCore.run.apply( flexUnitCore, tests ); // The result seems to be always null
+ 			flexUnitCore.run.apply( flexUnitCore, tests );
 
 			var count:int = 0;
 			for each (var test:Class in tests)
@@ -86,8 +85,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 			}
 			else
 			{ // It's a Test ?
-				var testMethods:Array = computeTestMethods(test);
-				return testMethods.length;			
+				return computeTestMethods(test).length;
 			}
 		}
 		
@@ -154,12 +152,12 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 
 		public function testRunStarted( description:IDescription ):void
 		{
-			running = true;
+
 		}
 		
 		public function testRunFinished( result:Result ):void
 		{
-			running = false;
+            _socketReporter.sendResults();
 		}
 		
     	/**
@@ -193,6 +191,9 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 			errorReport.message = failure.exception.message;
 			errorReport.stackTrace = failure.exception.getStackTrace();
 
+            // When a FlexUnit Assertion fails, an error is thrown. Therefore the method
+            // testAssumptionFailure is never called. Therefore it is better to log testFailures
+            // as failures and not errors.
 			_socketReporter.addFailure(descriptor.path + "." + descriptor.suite, descriptor.method, errorReport);
 			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " failed");
 		}
@@ -219,7 +220,7 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 		}
 		
 		/* This method comes from the FlexUnit4UIRunner org.flexunit.flexui.data.TestRunnerBasePresentationModel class */
- 	    private function getDescriptorFromDescription(description:IDescription):Descriptor
+ 	    private static function getDescriptorFromDescription(description:IDescription):Descriptor
  	    {
 			var descriptor:Descriptor = new Descriptor();
 			var descriptionArray:Array = description.displayName.split("::");
@@ -245,5 +246,5 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 
 			return descriptor;
 		}
-	}
+    }
 }
