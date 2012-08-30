@@ -30,7 +30,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import net.flexmojos.oss.matcher.artifact.DependencyMatcher;
+import static com.marvinformatics.kiss.matchers.maven.dependency.DependencyMatchers.*;
 
 @Component( role = AbstractMavenLifecycleParticipant.class, hint = "DependencyOrder" )
 public class DependencyOrderMavenExtension
@@ -71,9 +71,9 @@ public class DependencyOrderMavenExtension
     private List<Dependency> fixDependencies( List<Dependency> deps, String fmVersion )
     {
         @SuppressWarnings( "unchecked" )
-        Dependency compiler = selectFirst( deps, allOf( DependencyMatcher.groupId( "com.adobe.flex" ),//
-                                                        DependencyMatcher.artifactId( "compiler" ),//
-                                                        DependencyMatcher.type( "pom" ) )//
+        Dependency compiler = selectFirst( deps, allOf( groupId( "com.adobe.flex" ),//
+                                                        artifactId( "compiler" ),//
+                                                        type( "pom" ) )//
             );
 
         if ( compiler == null )

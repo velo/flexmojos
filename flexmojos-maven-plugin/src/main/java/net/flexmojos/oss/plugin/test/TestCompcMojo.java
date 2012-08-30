@@ -17,7 +17,7 @@
  */
 package net.flexmojos.oss.plugin.test;
 
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 
 import java.io.File;
