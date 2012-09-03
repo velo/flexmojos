@@ -65,7 +65,7 @@
       <type>rb.swc</type>
     </dependency>
     <dependency>
-      <groupId>com.adobe.flexunit</groupId>
+      <groupId>org.flexunit</groupId>
       <artifactId>flexunit</artifactId>
       <version>4.1.0</version>
       <classifier>flex4</classifier>
