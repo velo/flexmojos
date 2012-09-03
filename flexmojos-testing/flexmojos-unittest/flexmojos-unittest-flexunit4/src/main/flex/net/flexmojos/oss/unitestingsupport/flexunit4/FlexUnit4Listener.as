@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -167,7 +168,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 		{
 			var descriptor:Descriptor = getDescriptorFromDescription(description);
 			_socketReporter.addMethod( descriptor.path + "." + descriptor.suite, descriptor.method );
-			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " started");
 		}
 		
 		/**
@@ -177,7 +177,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 		{
 			var descriptor:Descriptor = getDescriptorFromDescription(description);
 			_socketReporter.testFinished(descriptor.path + "." + descriptor.suite, descriptor.method );
-			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " finished");
 		}
 		
 		/**
@@ -195,7 +194,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
             // testAssumptionFailure is never called. Therefore it is better to log testFailures
             // as failures and not errors.
 			_socketReporter.addFailure(descriptor.path + "." + descriptor.suite, descriptor.method, errorReport);
-			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " failed");
 		}
 
 		/**
@@ -210,13 +208,11 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 			errorReport.stackTrace = failure.exception.getStackTrace();
 
 			_socketReporter.addFailure(descriptor.path + "." + descriptor.suite, descriptor.method, errorReport);
-			trace("FlexUnit4: Assumption Failure on Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite);
 		}
 		
 		public function testIgnored( description:IDescription ):void
 		{
 			var descriptor:Descriptor = getDescriptorFromDescription(description);
-			trace("FlexUnit4: Test " + descriptor.method + " in " + descriptor.path + "." + descriptor.suite + " ignored");
 		}
 		
 		/* This method comes from the FlexUnit4UIRunner org.flexunit.flexui.data.TestRunnerBasePresentationModel class */
@@ -245,6 +241,6 @@ package net.flexmojos.oss.unitestingsupport.flexunit4
 			descriptor.method = classMethodArray[1];
 
 			return descriptor;
-		}
+        }
     }
 }

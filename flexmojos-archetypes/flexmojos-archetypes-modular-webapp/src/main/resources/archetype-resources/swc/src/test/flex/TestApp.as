@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,19 +18,20 @@
  */
 package {
 
-	import flexunit.framework.TestCase;
+    import flexunit.framework.Assert;
 
-	public class TestApp extends TestCase {
+	public class TestApp {
 
 		/**
 		 * Tests our greeting() method
 		 */
+        [Test]
 		public function testGreeting():void {
 			var name:String = "Buck Rogers";
 			var expectedGreeting:String = "Hello, Buck Rogers";
 
 			var result:String = App.greeting(name);
-			assertEquals("Greeting is incorrect", expectedGreeting, result);
+			Assert.assertEquals("Greeting is incorrect", expectedGreeting, result);
 		}
 	}
 }

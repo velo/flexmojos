@@ -18,13 +18,11 @@
 package $package 
 {
 
-	import flexunit.framework.TestCase;
-	import Main;
-
-	public class TestApp extends TestCase 
+	public class TestApp
 	{
 
-		public function testNothing():void 
+        [Test]
+		public function testNothing():void
 		{
 			//TODO un implemented
 			trace("Hello test"); 
