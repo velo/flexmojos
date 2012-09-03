@@ -62,7 +62,8 @@
     <dependency>
       <groupId>com.adobe.flexunit</groupId>
       <artifactId>flexunit</artifactId>
-      <version>0.85</version>
+      <version>4.1.0</version>
+      <classifier>flex4</classifier>
       <type>swc</type>
       <scope>test</scope>
     </dependency>
