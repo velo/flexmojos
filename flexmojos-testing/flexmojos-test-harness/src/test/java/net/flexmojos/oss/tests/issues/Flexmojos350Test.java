@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile, 
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,15 +37,6 @@ public class Flexmojos350Test
     {
         File basedir = getProject( "issues/flexmojos-350" );
         FMVerifier verifier = getVerifier( basedir );
-
-        // TODO remove this once flexunit is released!
-        File or = file( FMVerifier.getArtifactPath( "com.adobe.flexunit", "flexunit", "4.0-beta-2", "swc" ) );
-        File fk = file( FMVerifier.getArtifactPath( "org.flexunit", "flexunit", "4.1", "swc" ) );
-
-        assertThat( or, FileMatcher.exists() );
-        fk.getParentFile().mkdirs();
-
-        FileUtils.copyFile( or, fk );
 
         verifier.executeGoal( "install" );
 
