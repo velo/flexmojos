@@ -22,8 +22,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.io.IOException;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.apache.maven.it.VerificationException;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -48,7 +48,7 @@ public class Issue0152Test
 
         File module = new File( testDir, "target/issue-0152-1.0-SNAPSHOT-anmodule.swf" );
 
-        assertThat( module, FileMatcher.exists() );
+        assertThat( module, FileMatchers.exists() );
 
         return module.length();
     }

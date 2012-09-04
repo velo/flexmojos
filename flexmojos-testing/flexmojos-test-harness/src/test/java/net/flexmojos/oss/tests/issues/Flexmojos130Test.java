@@ -23,7 +23,7 @@ import static org.testng.Assert.assertNotNull;
 import java.io.File;
 import java.util.zip.ZipFile;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.testng.annotations.Test;
 
 public class Flexmojos130Test
@@ -38,7 +38,7 @@ public class Flexmojos130Test
         test( testDir, "install" ).verifyErrorFreeLog();
 
         File swc = new File( testDir, "target/flexmojos-130-1.0-SNAPSHOT.swc" );
-        assertThat( swc, FileMatcher.exists() );
+        assertThat( swc, FileMatchers.exists() );
 
         ZipFile swcC = new ZipFile( swc );
         try

@@ -19,8 +19,8 @@ package net.flexmojos.oss.tests;
 
 import java.io.File;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.hamcrest.MatcherAssert;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
@@ -63,7 +63,7 @@ public class IT0091HelloWordTest
         File target = new File( dir, "target" );
         File asdoc = new File( target, "asdoc" );
 
-        MatcherAssert.assertThat( asdoc, FileMatcher.exists() );
+        MatcherAssert.assertThat( asdoc, FileMatchers.exists() );
     }
 
     @Test

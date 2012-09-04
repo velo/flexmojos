@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.testng.annotations.Test;
 
 public class Issue0039Test
@@ -35,7 +35,7 @@ public class Issue0039Test
         File testDir = getProject( "/issues/issue-0039" );
         test( testDir, "flexmojos:asdoc" );
 
-        assertThat( new File( testDir, "target/asdoc/main.html" ), FileMatcher.exists() );
+        assertThat( new File( testDir, "target/asdoc/main.html" ), FileMatchers.exists() );
     }
 
 }

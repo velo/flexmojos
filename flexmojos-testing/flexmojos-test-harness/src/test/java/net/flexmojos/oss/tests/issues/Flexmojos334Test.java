@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -28,7 +29,6 @@ import org.dom4j.io.SAXReader;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsCollectionContaining;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -91,7 +91,7 @@ public class Flexmojos334Test
     {
         File coverageXml = new File( v.getBasedir(), "target/coverage/coverage.xml" );
 
-        MatcherAssert.assertThat( coverageXml, FileMatcher.exists() );
+        MatcherAssert.assertThat( coverageXml, FileMatchers.exists() );
 
         List<String> linkedFiles = new ArrayList<String>();
         SAXReader saxReader = new SAXReader();

@@ -22,7 +22,8 @@ import static org.hamcrest.Matchers.not;
 
 import java.io.File;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,19 +46,19 @@ public class Flexmojos230Test
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=false" ).getBasedir();
         File asdoc = new File( baseDir, "target/asdoc" );
-        assertThat( asdoc, not( FileMatcher.exists() ) );
+        assertThat( asdoc, not( FileMatchers.exists() ) );
 
         File moduleA = new File( baseDir, "moduleA/target/asdoc" );
-        assertThat( moduleA, FileMatcher.exists() );
+        assertThat( moduleA, FileMatchers.exists() );
 
         File moduleB = new File( baseDir, "moduleB/target/asdoc" );
-        assertThat( moduleB, FileMatcher.exists() );
+        assertThat( moduleB, FileMatchers.exists() );
 
         File aClass = new File( moduleA, "AClass.html" );
-        assertThat( aClass, FileMatcher.exists() );
+        assertThat( aClass, FileMatchers.exists() );
 
         File bClass = new File( moduleB, "BClass.html" );
-        assertThat( bClass, FileMatcher.exists() );
+        assertThat( bClass, FileMatchers.exists() );
 
     }
 
@@ -67,19 +68,19 @@ public class Flexmojos230Test
     {
         String baseDir = testIssue( "flexmojos-230", "-Dflex.asdoc.aggregate=true" ).getBasedir();
         File target = new File( baseDir, "target" );
-        assertThat( target, FileMatcher.exists() );
+        assertThat( target, FileMatchers.exists() );
 
         File aClass = new File( target, "asdoc/AClass.html" );
-        assertThat( aClass, FileMatcher.exists() );
+        assertThat( aClass, FileMatchers.exists() );
 
         File bClass = new File( target, "asdoc/BClass.html" );
-        assertThat( bClass, FileMatcher.exists() );
+        assertThat( bClass, FileMatchers.exists() );
 
         File moduleA = new File( baseDir, "moduleA/target/asdoc" );
-        assertThat( moduleA, not( FileMatcher.exists() ) );
+        assertThat( moduleA, not( FileMatchers.exists() ) );
 
         File moduleB = new File( baseDir, "moduleB/target/asdoc" );
-        assertThat( moduleB, not( FileMatcher.exists() ) );
+        assertThat( moduleB, not( FileMatchers.exists() ) );
     }
 
 }

@@ -19,8 +19,8 @@ package net.flexmojos.oss.tests.issues;
 
 import java.io.File;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.hamcrest.MatcherAssert;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
@@ -63,12 +63,12 @@ public class Flexmojos248Test
     {
         File target = new File( dir, "target" );
         File main = new File( target, "test-flex-modules-0.0.1-SNAPSHOT.swf" );
-        MatcherAssert.assertThat( main, FileMatcher.isFile() );
+        MatcherAssert.assertThat( main, FileMatchers.isFile() );
 
         File module1 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-Module1.swf" );
-        MatcherAssert.assertThat( module1, FileMatcher.isFile() );
+        MatcherAssert.assertThat( module1, FileMatchers.isFile() );
         File module2 = new File( target, "test-flex-modules-0.0.1-SNAPSHOT-Module2.swf" );
-        MatcherAssert.assertThat( module2, FileMatcher.isFile() );
+        MatcherAssert.assertThat( module2, FileMatchers.isFile() );
 
         assertSeftExit( main, 3539, v );
     }

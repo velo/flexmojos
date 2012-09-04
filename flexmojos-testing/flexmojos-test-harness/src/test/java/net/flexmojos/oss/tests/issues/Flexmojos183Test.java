@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
@@ -42,6 +42,6 @@ public class Flexmojos183Test
         assertSeftExit( main, 3539, v );
 
         File font = new File( target, "classes/myFont.swf" );
-        assertThat( font, FileMatcher.exists() );
+        assertThat( font, FileMatchers.exists() );
     }
 }
