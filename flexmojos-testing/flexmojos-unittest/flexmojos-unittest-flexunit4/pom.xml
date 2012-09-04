@@ -43,10 +43,11 @@
     </dependency>
 
     <dependency>
-      <groupId>com.adobe.flexunit</groupId>
+      <groupId>org.flexunit</groupId>
       <artifactId>flexunit</artifactId>
       <version>4.1.0</version>
-      <type>swc</type>
+      <classifier>flex4</classifier>
+	  <type>swc</type>
       <scope>external</scope>
     </dependency>
   </dependencies>
