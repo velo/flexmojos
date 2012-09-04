@@ -17,11 +17,8 @@
  */
 package net.flexmojos.oss.plugin.compiler;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.not;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.scope;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
 import static net.flexmojos.oss.plugin.common.FlexScopes.CACHING;
@@ -29,16 +26,15 @@ import static net.flexmojos.oss.plugin.common.FlexScopes.EXTERNAL;
 import static net.flexmojos.oss.plugin.common.FlexScopes.INTERNAL;
 import static net.flexmojos.oss.plugin.common.FlexScopes.RSL;
 import static net.flexmojos.oss.util.PathUtil.file;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.not;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import net.flexmojos.oss.compiler.ICommandLineConfiguration;
 import net.flexmojos.oss.compiler.MxmlcConfigurationHolder;
 import net.flexmojos.oss.compiler.command.Result;
@@ -47,6 +43,11 @@ import net.flexmojos.oss.plugin.utilities.MavenUtils;
 import net.flexmojos.oss.plugin.utilities.SourceFileResolver;
 import net.flexmojos.oss.truster.FlashPlayerTruster;
 import net.flexmojos.oss.util.PathUtil;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * <p>

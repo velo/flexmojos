@@ -353,6 +353,12 @@
       <version>${flex.sdk.version}</version>
       <type>pom</type>
     </dependency>
+
+    <dependency>
+      <groupId>com.marvinformatics</groupId>
+      <artifactId>kiss-matchers</artifactId>
+      <version>0.7</version>
+    </dependency>
   </dependencies>
 
   <reporting>

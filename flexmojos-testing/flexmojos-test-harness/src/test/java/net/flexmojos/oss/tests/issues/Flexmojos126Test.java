@@ -25,11 +25,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.hamcrest.MatcherAssert;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
@@ -48,7 +48,7 @@ public class Flexmojos126Test
                       v.getBasedir(),
                       "FlexMojos-Jira-126-FlexSide/target/FlexMojos-Jira-126-FlexSide-1.0-SNAPSHOT-link-report.xml" );
 
-        MatcherAssert.assertThat( linkReportXml, FileMatcher.exists() );
+        MatcherAssert.assertThat( linkReportXml, FileMatchers.exists() );
 
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read( linkReportXml );

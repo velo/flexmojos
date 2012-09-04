@@ -22,8 +22,8 @@ import static net.flexmojos.oss.util.PathUtil.file;
 
 import java.io.File;
 
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import org.codehaus.plexus.util.FileUtils;
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
@@ -41,15 +41,15 @@ public class Flexmojos350Test
         File or = file( FMVerifier.getArtifactPath( "com.adobe.flexunit", "flexunit", "4.0-beta-2", "swc" ) );
         File fk = file( FMVerifier.getArtifactPath( "org.flexunit", "flexunit", "4.1", "swc" ) );
 
-        assertThat( or, FileMatcher.exists() );
+        assertThat( or, FileMatchers.exists() );
         fk.getParentFile().mkdirs();
 
         FileUtils.copyFile( or, fk );
 
         verifier.executeGoal( "install" );
 
-        assertThat( new File( basedir, "target/test-classes/TestRunner.swf" ), FileMatcher.exists() );
+        assertThat( new File( basedir, "target/test-classes/TestRunner.swf" ), FileMatchers.exists() );
         assertThat( new File( basedir, "target/surefire-reports/TEST-AnnotatedTest.dummyTest.AnnotatedTest.xml" ),
-                    FileMatcher.exists() );
+                    FileMatchers.exists() );
     }
 }

@@ -17,18 +17,14 @@
  */
 package net.flexmojos.oss.plugin.test;
 
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.artifactId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.groupId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.scope;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.version;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.version;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexExtension.ANE;
+import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexExtension.XML;
 import static net.flexmojos.oss.plugin.common.FlexScopes.CACHING;
 import static net.flexmojos.oss.plugin.common.FlexScopes.COMPILE;
@@ -40,6 +36,10 @@ import static net.flexmojos.oss.plugin.common.FlexScopes.TEST;
 import static net.flexmojos.oss.util.PathUtil.existingFiles;
 import static net.flexmojos.oss.util.PathUtil.file;
 import static net.flexmojos.oss.util.PathUtil.files;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,12 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.FileSet;
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import net.flexmojos.oss.compiler.IRuntimeSharedLibraryPath;
 import net.flexmojos.oss.compiler.MxmlcConfigurationHolder;
 import net.flexmojos.oss.compiler.command.Result;
@@ -75,6 +69,13 @@ import net.flexmojos.oss.plugin.utilities.MavenUtils;
 import net.flexmojos.oss.util.CollectionUtils;
 import net.flexmojos.oss.util.PathUtil;
 import net.flexmojos.oss.util.SocketUtil;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.FileSet;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import flex2.compiler.common.SinglePathResolver;
 

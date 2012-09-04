@@ -18,14 +18,14 @@
 package net.flexmojos.oss.plugin.compiler;
 
 import static ch.lambdaj.Lambda.filter;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.not;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.scope;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static net.flexmojos.oss.plugin.common.FlexExtension.AIR;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
 import static net.flexmojos.oss.plugin.common.FlexScopes.TEST;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,6 +33,17 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import net.flexmojos.oss.compatibilitykit.FlexCompatibility;
+import net.flexmojos.oss.compiler.IASDocConfiguration;
+import net.flexmojos.oss.compiler.IPackagesConfiguration;
+import net.flexmojos.oss.compiler.IRuntimeSharedLibraryPath;
+import net.flexmojos.oss.compiler.command.Result;
+import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
+import net.flexmojos.oss.plugin.compiler.attributes.SimplifiablePattern;
+import net.flexmojos.oss.plugin.utilities.MavenUtils;
+import net.flexmojos.oss.util.OSUtils;
+import net.flexmojos.oss.util.PathUtil;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.Mojo;
@@ -46,16 +57,6 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.hamcrest.Matcher;
-import net.flexmojos.oss.compatibilitykit.FlexCompatibility;
-import net.flexmojos.oss.compiler.IASDocConfiguration;
-import net.flexmojos.oss.compiler.IPackagesConfiguration;
-import net.flexmojos.oss.compiler.IRuntimeSharedLibraryPath;
-import net.flexmojos.oss.compiler.command.Result;
-import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
-import net.flexmojos.oss.plugin.compiler.attributes.SimplifiablePattern;
-import net.flexmojos.oss.plugin.utilities.MavenUtils;
-import net.flexmojos.oss.util.OSUtils;
-import net.flexmojos.oss.util.PathUtil;
 
 /**
  * <p>
@@ -483,7 +484,7 @@ public class AsdocMojo
     @Override
     public File[] getLibraryPath()
     {
-        Matcher<? extends Artifact>[] filter =
+        Matcher<? super Artifact>[] filter =
             new Matcher[] { type( SWC ), not( scope( TEST ) ), not( GLOBAL_MATCHER ) };
         if ( aggregate )
         {

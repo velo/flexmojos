@@ -17,13 +17,13 @@
  */
 package net.flexmojos.oss.plugin.compiler;
 
+import static com.marvinformatics.kiss.matchers.file.FileMatchers.withAbsolutePath;
+import static net.flexmojos.oss.plugin.AbstractMavenMojo.FRAMEWORK_GROUP_ID;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsCollectionContaining.hasItems;
 import static org.hamcrest.text.StringContains.containsString;
 import static org.mockito.Mockito.mock;
-import static net.flexmojos.oss.matcher.file.FileMatcher.withAbsolutePath;
-import static net.flexmojos.oss.plugin.AbstractMavenMojo.FRAMEWORK_GROUP_ID;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +32,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.flexmojos.oss.matcher.collection.CollectionsMatcher;
+import net.flexmojos.oss.plugin.test.TestCompilerMojo;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.repository.RepositorySystem;
@@ -39,8 +42,6 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.hamcrest.MatcherAssert;
-import net.flexmojos.oss.matcher.collection.CollectionsMatcher;
-import net.flexmojos.oss.plugin.test.TestCompilerMojo;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;

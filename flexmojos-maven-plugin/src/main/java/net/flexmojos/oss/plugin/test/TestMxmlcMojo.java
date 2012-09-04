@@ -17,13 +17,13 @@
  */
 package net.flexmojos.oss.plugin.test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.anyOf;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.scope;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static net.flexmojos.oss.plugin.common.FlexScopes.INTERNAL;
 import static net.flexmojos.oss.plugin.common.FlexScopes.TEST;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.anyOf;
 
 import java.io.File;
 

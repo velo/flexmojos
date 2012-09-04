@@ -19,15 +19,15 @@ package net.flexmojos.oss.plugin;
 
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.selectFirst;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.classifier;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.artifactId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.classifier;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.groupId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static net.flexmojos.oss.plugin.common.FlexExtension.AS;
 import static net.flexmojos.oss.plugin.common.FlexExtension.MXML;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -45,6 +45,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import net.flexmojos.oss.compatibilitykit.VersionUtils;
+import net.flexmojos.oss.compiler.command.Result;
+import net.flexmojos.oss.plugin.common.flexbridge.MavenLogger;
+import net.flexmojos.oss.plugin.common.flexbridge.MavenPathResolver;
+import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
+import net.flexmojos.oss.plugin.compiler.lazyload.Cacheable;
+import net.flexmojos.oss.plugin.compiler.lazyload.NotCacheable;
+import net.flexmojos.oss.plugin.utilities.MavenUtils;
+import net.flexmojos.oss.util.PathUtil;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -73,15 +83,6 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.hamcrest.Matcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import net.flexmojos.oss.compatibilitykit.VersionUtils;
-import net.flexmojos.oss.compiler.command.Result;
-import net.flexmojos.oss.plugin.common.flexbridge.MavenLogger;
-import net.flexmojos.oss.plugin.common.flexbridge.MavenPathResolver;
-import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
-import net.flexmojos.oss.plugin.compiler.lazyload.Cacheable;
-import net.flexmojos.oss.plugin.compiler.lazyload.NotCacheable;
-import net.flexmojos.oss.plugin.utilities.MavenUtils;
-import net.flexmojos.oss.util.PathUtil;
 
 import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
@@ -158,7 +159,7 @@ public abstract class AbstractMavenMojo
      */
     private String airVersion;
 
-    protected final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
+    protected final Matcher<? super Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
     /**
      * Local repository to be used by the plugin to resolve dependencies.
@@ -420,6 +421,10 @@ public abstract class AbstractMavenMojo
         if (airVersion == null)
         {
             int[] version = VersionUtils.splitVersion( getCompilerVersion() );
+            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 6 } ) )
+            {
+                return "3.1";
+            }
             if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0, 19787 } ) )
             {
                 return "2.6";
@@ -465,14 +470,14 @@ public abstract class AbstractMavenMojo
         return Collections.unmodifiableSet( project.getArtifacts() );
     }
 
-    protected Set<Artifact> getDependencies( Matcher<? extends Artifact>... matchers )
+    protected Set<Artifact> getDependencies( Matcher<? super Artifact>... matchers )
     {
         Set<Artifact> dependencies = getDependencies();
 
         return new LinkedHashSet<Artifact>( filter( allOf( matchers ), dependencies ) );
     }
 
-    protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
+    protected Artifact getDependency( Matcher<? super Artifact>... matchers )
     {
         return selectFirst( getDependencies(), allOf( matchers ) );
     }
@@ -679,7 +684,7 @@ public abstract class AbstractMavenMojo
     }
 
     @SuppressWarnings( "unchecked" )
-    protected Matcher<? extends Artifact> initGlobalMatcher()
+    protected Matcher<? super Artifact> initGlobalMatcher()
     {
         return allOf( groupId( FRAMEWORK_GROUP_ID ), type( SWC ),//
                       anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) );

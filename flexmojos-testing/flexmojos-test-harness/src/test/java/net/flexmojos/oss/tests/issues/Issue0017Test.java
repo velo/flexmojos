@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.not;
 
 import java.io.File;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+import com.marvinformatics.kiss.matchers.file.FileMatchers;
 import net.flexmojos.oss.test.FMVerifier;
 import net.flexmojos.oss.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
@@ -40,17 +40,17 @@ public class Issue0017Test
         verifier.executeGoal( siteGoal() );
 
         File asdoc = new File( testDir, "target/site/asdoc" );
-        assertThat( asdoc, FileMatcher.exists() );
-        assertThat( new File( asdoc, "index.html" ), FileMatcher.exists() );
-        assertThat( new File( asdoc, "main.html" ), FileMatcher.exists() );
+        assertThat( asdoc, FileMatchers.exists() );
+        assertThat( new File( asdoc, "index.html" ), FileMatchers.exists() );
+        assertThat( new File( asdoc, "main.html" ), FileMatchers.exists() );
 
         File coverage = new File( testDir, "target/site/coverage" );
-        assertThat( coverage, FileMatcher.exists() );
-        assertThat( new File( coverage, "index.html" ), FileMatcher.exists() );
-        assertThat( new File( coverage, "net.flexmojos.oss.coverage.CoverageDataCollector.html" ), FileMatcher.exists() );
+        assertThat( coverage, FileMatchers.exists() );
+        assertThat( new File( coverage, "index.html" ), FileMatchers.exists() );
+        assertThat( new File( coverage, "net.flexmojos.oss.coverage.CoverageDataCollector.html" ), FileMatchers.exists() );
         
-        assertThat( new File( testDir, "target/asdoc" ), not( FileMatcher.exists() ) );
-        assertThat( new File( testDir, "target/coverage" ), not( FileMatcher.exists() ) );
+        assertThat( new File( testDir, "target/asdoc" ), not( FileMatchers.exists() ) );
+        assertThat( new File( testDir, "target/coverage" ), not( FileMatchers.exists() ) );
     }
 
 }

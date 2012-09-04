@@ -17,18 +17,12 @@
  */
 package net.flexmojos.oss.plugin.compiler;
 
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.artifactId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.classifier;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.groupId;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.scope;
+import static com.marvinformatics.kiss.matchers.maven.artifact.ArtifactMatchers.type;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.classifier;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
 import static net.flexmojos.oss.plugin.common.FlexClassifier.CONFIGS;
 import static net.flexmojos.oss.plugin.common.FlexClassifier.LINK_REPORT;
 import static net.flexmojos.oss.plugin.common.FlexClassifier.SIZE_REPORT;
@@ -47,6 +41,12 @@ import static net.flexmojos.oss.plugin.common.FlexScopes.MERGED;
 import static net.flexmojos.oss.plugin.common.FlexScopes.RSL;
 import static net.flexmojos.oss.util.PathUtil.files;
 import static net.flexmojos.oss.util.PathUtil.pathsList;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -66,19 +66,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.filefilter.AgeFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Contributor;
-import org.apache.maven.model.Developer;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.archiver.UnArchiver;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.hamcrest.Matcher;
 import net.flexmojos.oss.compatibilitykit.FlexCompatibility;
 import net.flexmojos.oss.compatibilitykit.FlexMojo;
 import net.flexmojos.oss.compatibilitykit.VersionUtils;
@@ -121,6 +108,20 @@ import net.flexmojos.oss.plugin.compiler.lazyload.Cacheable;
 import net.flexmojos.oss.plugin.utilities.ConfigurationResolver;
 import net.flexmojos.oss.plugin.utilities.MavenUtils;
 import net.flexmojos.oss.util.PathUtil;
+
+import org.apache.commons.io.filefilter.AgeFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Contributor;
+import org.apache.maven.model.Developer;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.hamcrest.Matcher;
 
 public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompilerMojo<CFG, C>>
     extends AbstractMavenMojo
@@ -2127,7 +2128,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         if ( SWC.equals( getProjectType() ) )
         {
-            Matcher<? extends Artifact> swcs =
+            Matcher<? super Artifact> swcs =
                 allOf( anyOf( type( SWC ), type( ANE ) ), //
                        anyOf( scope( EXTERNAL ), scope( CACHING ), scope( RSL ), scope( COMPILE ),
                               scope( nullValue( String.class ) ) )//
