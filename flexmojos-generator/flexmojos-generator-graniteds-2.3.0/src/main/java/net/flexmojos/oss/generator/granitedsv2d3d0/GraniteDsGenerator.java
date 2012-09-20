@@ -26,6 +26,7 @@ import static org.granite.generator.template.StandardTemplateUris.ENUM;
 import static org.granite.generator.template.StandardTemplateUris.INTERFACE;
 import static org.granite.generator.template.StandardTemplateUris.REMOTE;
 import static org.granite.generator.template.StandardTemplateUris.REMOTE_BASE;
+import static org.granite.generator.template.StandardTemplateUris.TIDE_BEAN_BASE;
 import static org.granite.generator.template.StandardTemplateUris.TIDE_ENTITY_BASE;
 import static org.granite.generator.template.StandardTemplateUris.TIDE_REMOTE_BASE;
 
@@ -169,6 +170,10 @@ public final class GraniteDsGenerator
         if ( getStringIndex0( beanTemplate ) != null )
         {
             baseTemplateUri = getStringIndex0( beanTemplate );
+        }
+        else if ( tide )
+        {
+            baseTemplateUri = TIDE_BEAN_BASE.replaceFirst( PREFIX_TO_REPLACE, SHADED_PREFIX );
         }
 
         return createTemplateUris( baseTemplateUri, templateUri );
