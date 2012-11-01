@@ -18,65 +18,77 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>\${groupId}</groupId>
-  <artifactId>\${artifactId}</artifactId>
-  <version>\${version}</version>
-  <packaging>swf</packaging>
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
+    <version>\${version}</version>
+    <packaging>swf</packaging>
 
-  <name>\${artifactId} Flex</name>
+    <name>\${artifactId} Flex</name>
 
-  <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
-    <testSourceDirectory>src/test/flex</testSourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <extensions>true</extensions>
-		<configuration>
-			<debug>true</debug>
-		</configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>flex-framework</artifactId>
-      <version>${flex.version}</version>
-      <type>pom</type>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>flex-framework</artifactId>
+            <type>pom</type>
+        </dependency>
 
-    <dependency>
-      <groupId>org.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>4.1.0</version>
-      <classifier>flex4</classifier>
-      <type>swc</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>4.1.0</version>
+            <classifier>flex4</classifier>
+            <type>swc</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <!-- Repository and PluginRepository section for Flex SDK and compiler dependencies. 
-       Note: instead of including this in every POM, you can append it to your user (~/.m2/settings.xml) or global 
-  		(M2_HOME/conf/settings.xml) settings file. 
-    -->
-  <repositories>
-     <repository>
-        <id>flex-mojos-repository</id>
-        <url>http://repository.sonatype.org/content/groups/flexgroup</url>
-     </repository>
-  </repositories>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.adobe.flex</groupId>
+                <artifactId>framework</artifactId>
+                <version>${flex.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-  <pluginRepositories>
-     <pluginRepository>
-        <id>flex-mojos-plugin-repository</id>
-        <url>http://repository.sonatype.org/content/groups/flexgroup</url>
-     </pluginRepository>
-  </pluginRepositories>
+    <!-- Repository and PluginRepository section for Flex SDK and compiler dependencies.
+         Note: instead of including this in every POM, you can append it to your user (~/.m2/settings.xml) or global
+            (M2_HOME/conf/settings.xml) settings file.
+      -->
+    <repositories>
+        <repository>
+            <id>flex-mojos-repository</id>
+            <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>flex-mojos-plugin-repository</id>
+            <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

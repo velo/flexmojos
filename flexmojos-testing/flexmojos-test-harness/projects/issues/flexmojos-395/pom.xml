@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Flexmojos is a set of maven goals to allow maven users to compile,
+    optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
     Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
 
     This program is free software: you can redistribute it and/or modify
@@ -18,50 +19,50 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>%{flexmojos.version}</version>
-  </parent>
-
-  <groupId>info.rvin.itest</groupId>
-  <artifactId>flexunit4</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <packaging>swc</packaging>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
+        <artifactId>flexmojos-flex-super-pom</artifactId>
         <version>%{flexmojos.version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <localesCompiled>
-            <locale>en_US</locale>
-          </localesCompiled>
-          <localesRuntime>
-            <locale>es_MX,es_ES,en_US</locale>
-          </localesRuntime>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    </parent>
 
+    <groupId>info.rvin.itest</groupId>
+    <artifactId>flexunit4</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>4.1.0</version>
-      <classifier>flex4</classifier>
-      <type>swc</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <packaging>swc</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <localesCompiled>
+                        <locale>en_US</locale>
+                    </localesCompiled>
+                    <localesRuntime>
+                        <locale>es_MX,es_ES,en_US</locale>
+                    </localesRuntime>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>4.1.0</version>
+            <classifier>flex4</classifier>
+            <type>swc</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

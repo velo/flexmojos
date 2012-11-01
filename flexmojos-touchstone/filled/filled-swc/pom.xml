@@ -19,49 +19,49 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>net.flexmojos.oss.flex-touchstone</groupId>
-  <artifactId>filled-swc</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>swc</packaging>
+    <groupId>net.flexmojos.oss.flex-touchstone</groupId>
+    <artifactId>filled-swc</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>swc</packaging>
 
-  <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
-    <testSourceDirectory>src/test/flex</testSourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>4.0-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <configuration>
-        <targetPlayer>9.0.0</targetPlayer>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>4.0-SNAPSHOT</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <targetPlayer>9.0.0</targetPlayer>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flash.framework</groupId>
-      <artifactId>playerglobal</artifactId>
-      <version>9.0</version>
-      <type>swc</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>framework</artifactId>
-      <version>3.2.0.3958A</version>
-      <type>swc</type>
-    </dependency>
-    <dependency> 
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>framework</artifactId>
-      <version>3.2.0.3958A</version>
-      <type>rb.swc</type>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>9.0</version>
+            <type>swc</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>framework</artifactId>
+            <version>3.2.0.3958A</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>framework</artifactId>
+            <version>3.2.0.3958A</version>
+            <type>rb.swc</type>
+        </dependency>
+    </dependencies>
 </project>

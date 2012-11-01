@@ -34,7 +34,6 @@ import org.apache.maven.it.VerificationException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.ModelProcessor;
-import org.apache.maven.model.io.ModelParseException;
 import org.apache.maven.model.io.ModelWriter;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
@@ -344,7 +343,18 @@ public class AbstractFlexMojosTests
     {
         return getProperty( "flex-version" );
     }
-    
+
+    /**
+     * @param groupId artifactId of the artifact you want to get the version of.
+     * @param artifactId artifactId of the artifact you want to get the version of.
+     * @return version of the given artifact as defined in the corresponding framework-pom.
+     */
+    protected static String getArtifactVersion( String groupId, String artifactId )
+    {
+        // FIXME: This only works for FDKs 4.6 and greater.
+        return getFlexSDKVersion();
+    }
+
     protected static String getPlayerVersion()
     {
         return getProperty( "player-version" );

@@ -17,66 +17,66 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>3.6-SNAPSHOT</version>
-  </parent>
-
-  <groupId>com.lixar.gridpoitn</groupId>
-  <artifactId>test-flex-modules</artifactId>
-  <packaging>swf</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
+        <artifactId>flexmojos-flex-super-pom</artifactId>
         <version>3.6-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <configuration>
-          <sourceFile>main.mxml</sourceFile>
-          <modules>
-            <module>Module1.mxml</module>
-            <module>Module2.mxml</module>
-            <module>Module3.mxml</module>
-            <module>Module4.mxml</module>
-            <module>Module5.mxml</module>
-            <module>Module6.mxml</module>
-          </modules>
-          <moduleFiles>
-            <module>Module1.mxml</module>
-            <module>Module2.mxml</module>
-            <module>Module3.mxml</module>
-            <module>Module4.mxml</module>
-            <module>Module5.mxml</module>
-            <module>Module6.mxml</module>
-          </moduleFiles>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>compiler</artifactId>
+    </parent>
+
+    <groupId>com.lixar.gridpoitn</groupId>
+    <artifactId>test-flex-modules</artifactId>
+    <packaging>swf</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>3.6-SNAPSHOT</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <sourceFile>main.mxml</sourceFile>
+                    <modules>
+                        <module>Module1.mxml</module>
+                        <module>Module2.mxml</module>
+                        <module>Module3.mxml</module>
+                        <module>Module4.mxml</module>
+                        <module>Module5.mxml</module>
+                        <module>Module6.mxml</module>
+                    </modules>
+                    <moduleFiles>
+                        <module>Module1.mxml</module>
+                        <module>Module2.mxml</module>
+                        <module>Module3.mxml</module>
+                        <module>Module4.mxml</module>
+                        <module>Module5.mxml</module>
+                        <module>Module6.mxml</module>
+                    </moduleFiles>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>4.0.0.14159A</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>flex-framework</artifactId>
             <version>4.0.0.14159A</version>
             <type>pom</type>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>flex-framework</artifactId>
-      <version>4.0.0.14159A</version>
-      <type>pom</type>
-    </dependency>
-  </dependencies>
-
+        </dependency>
+    </dependencies>
 
 </project>

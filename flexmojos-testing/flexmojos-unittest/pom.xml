@@ -17,95 +17,109 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-testing</artifactId>
-    <version>6.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>flexmojos-unittest</artifactId>
-  <packaging>pom</packaging>
-
-  <name>Flexmojos Unit Test support - parent</name>
-
-  <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <!-- dita is bugged, why it doesn't surprises me? -->
-          <ditaSkip>true</ditaSkip>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>compiler</artifactId>
-            <version>${flex.version}</version>
+        <artifactId>flexmojos-testing</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>flexmojos-unittest</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Flexmojos Unit Test support - parent</name>
+
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- dita is bugged, why it doesn't surprises me? -->
+                    <ditaSkip>true</ditaSkip>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.adobe.flex.framework.air</groupId>
+            <artifactId>air-framework</artifactId>
             <type>pom</type>
-          </dependency>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework.air</groupId>
+            <artifactId>airframework</artifactId>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>framework</artifactId>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>mx</artifactId>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>framework</artifactId>
+            <type>rb.swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>mx</artifactId>
+            <type>rb.swc</type>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.adobe.flex</groupId>
+                <artifactId>framework</artifactId>
+                <version>${flex.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.flex.framework</groupId>
+                <artifactId>air</artifactId>
+                <version>${flex.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
-      </plugin>
-    </plugins>
-  </build>
+    </dependencyManagement>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flex.framework.air</groupId>
-      <artifactId>air-framework</artifactId>
-      <version>${flex.version}</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework.air</groupId>
-      <artifactId>airframework</artifactId>
-      <version>${flex.version}</version>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>framework</artifactId>
-      <version>${flex.version}</version>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>mx</artifactId>
-      <version>${flex.version}</version>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>framework</artifactId>
-      <version>${flex.version}</version>
-      <type>rb.swc</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>mx</artifactId>
-      <version>${flex.version}</version>
-      <type>rb.swc</type>
-    </dependency>
-  </dependencies>
-
-  <modules>
-    <module>flexmojos-test-coverage</module>
-    <module>flexmojos-unittest-advancedflex</module>
-    <module>flexmojos-unittest-asunit</module>
-    <module>flexmojos-unittest-flexunit</module>
-    <module>flexmojos-unittest-flexunit4</module>
-    <module>flexmojos-unittest-fluint</module>
-    <module>flexmojos-unittest-funit</module>
-    <module>flexmojos-unittest-support</module>
-  </modules>
+    <modules>
+        <module>flexmojos-test-coverage</module>
+        <module>flexmojos-unittest-advancedflex</module>
+        <module>flexmojos-unittest-asunit</module>
+        <module>flexmojos-unittest-flexunit</module>
+        <module>flexmojos-unittest-flexunit4</module>
+        <module>flexmojos-unittest-fluint</module>
+        <module>flexmojos-unittest-funit</module>
+        <module>flexmojos-unittest-support</module>
+    </modules>
 
 </project>

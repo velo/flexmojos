@@ -17,184 +17,197 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-sandbox</artifactId>
-    <version>6.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>flexmojos-flex-compiler</artifactId>
-
-  <name>Flexmojos Flex compiler</name>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-generator-mojo</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <id>generate-interface</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <generatorToUse>internal-ifaces</generatorToUse>
-              <includeJavaClasses>
-                <include>flex2.tools.DigestRootConfiguration</include>
-                <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
-                <!-- <include>flex2.tools.SwcDependencies$DependencyConfiguration</include> -->
-                <include>flex2.tools.ASDocConfiguration</include>
-                <include>flex2.tools.CompcConfiguration</include>
-                <include>flex2.tools.CommandLineConfiguration</include>
-              </includeJavaClasses>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
+        <artifactId>flexmojos-sandbox</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>flexmojos-flex-compiler</artifactId>
+
+    <name>Flexmojos Flex compiler</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-generator-mojo</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-interface</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorToUse>internal-ifaces</generatorToUse>
+                            <includeJavaClasses>
+                                <include>flex2.tools.DigestRootConfiguration</include>
+                                <include>flex2.tools.Optimizer$OptimizerConfiguration</include>
+                                <!-- <include>flex2.tools.SwcDependencies$DependencyConfiguration</include> -->
+                                <include>flex2.tools.ASDocConfiguration</include>
+                                <include>flex2.tools.CompcConfiguration</include>
+                                <include>flex2.tools.CommandLineConfiguration</include>
+                            </includeJavaClasses>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.flexmojos.oss</groupId>
+                        <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/flexmojos</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-fdk-configs</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.adobe.flex.framework</groupId>
+                                    <artifactId>framework</artifactId>
+                                    <classifier>configs</classifier>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-playerglobal</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.adobe.flash.framework</groupId>
+                                    <artifactId>playerglobal</artifactId>
+                                    <version>${player.version}</version>
+                                    <type>swc</type>
+                                    <destFileName>playerglobal.swc</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>net.flexmojos.oss</groupId>
             <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
             <version>${project.version}</version>
-          </dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu.inject</groupId>
+            <artifactId>guice-plexus-shim</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.adobe.flex</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>mxmlc</artifactId>
+            <version>${flex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>digest</artifactId>
+            <version>${flex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>optimizer</artifactId>
+            <version>${flex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>asdoc</artifactId>
+            <version>${flex.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.compiler</groupId>
+            <artifactId>swcdepends</artifactId>
+            <version>${flex.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.adobe.flex</groupId>
+                <artifactId>framework</artifactId>
+                <version>${flex.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
-      </plugin>
+    </dependencyManagement>
 
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.3</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/flexmojos</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-metadata</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-fdk-configs</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe.flex.framework</groupId>
-                  <artifactId>framework</artifactId>
-                  <version>${flex.version}</version>
-                  <classifier>configs</classifier>
-                  <type>zip</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-playerglobal</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe.flash.framework</groupId>
-                  <artifactId>playerglobal</artifactId>
-                  <version>${player.version}</version>
-                  <type>swc</type>
-                  <destFileName>playerglobal.swc</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.testOutputDirectory}/fdk</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.flexmojos.oss</groupId>
-      <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.sisu.inject</groupId>
-      <artifactId>guice-plexus-shim</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.adobe.flex</groupId>
-      <artifactId>compiler</artifactId>
-      <version>${flex.version}</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>mxmlc</artifactId>
-      <version>${flex.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>digest</artifactId>
-      <version>${flex.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>optimizer</artifactId>
-      <version>${flex.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>asdoc</artifactId>
-      <version>${flex.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>swcdepends</artifactId>
-      <version>${flex.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <classifier>jdk15</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-    </dependency>
-  </dependencies>
 </project>

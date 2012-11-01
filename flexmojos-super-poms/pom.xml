@@ -18,80 +18,81 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-parent</artifactId>
-    <version>6.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>net.flexmojos.oss</groupId>
+        <artifactId>flexmojos-parent</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-super-poms</artifactId>
+    <artifactId>flexmojos-super-poms</artifactId>
 
-  <packaging>pom</packaging>
-  <name>Flexmojos Super poms</name>
-  <description>Work around to get super poms installed/deployed automatically</description>
+    <packaging>pom</packaging>
+    <name>Flexmojos Super poms</name>
+    <description>Work around to get super poms installed/deployed automatically</description>
 
-  <build>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- Work around to get super poms installed automatically -->
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>attach-artifact-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.outputDirectory}/common.pom</file>
-                  <artifactId>flexmojos-super-pom-commons</artifactId>
-                  <type>pom</type>
-                </artifact>
-                <artifact>
-                  <file>${project.build.outputDirectory}/air.pom</file>
-                  <artifactId>flexmojos-air-super-pom</artifactId>
-                  <type>pom</type>
-                </artifact>
-                <artifact>
-                  <file>${project.build.outputDirectory}/flex.pom</file>
-                  <artifactId>flexmojos-flex-super-pom</artifactId>
-                  <type>pom</type>
-                </artifact>
-              </artifacts>
-              <updatePom>true</updatePom>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Work around to get super poms installed automatically -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>attach-artifact-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.outputDirectory}/common.pom</file>
+                                    <artifactId>flexmojos-super-pom-commons</artifactId>
+                                    <type>pom</type>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.outputDirectory}/air.pom</file>
+                                    <artifactId>flexmojos-air-super-pom</artifactId>
+                                    <type>pom</type>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.outputDirectory}/flex.pom</file>
+                                    <artifactId>flexmojos-flex-super-pom</artifactId>
+                                    <type>pom</type>
+                                </artifact>
+                            </artifacts>
+                            <updatePom>true</updatePom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
