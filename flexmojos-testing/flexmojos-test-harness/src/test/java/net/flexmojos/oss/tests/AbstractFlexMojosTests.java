@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -66,6 +68,8 @@ public class AbstractFlexMojosTests
 
     private static File mavenHome;
 
+    private static File repo;
+
     protected static PlexusContainer container;
 
     private static final ReadWriteLock copyProjectLock = new ReentrantReadWriteLock();
@@ -98,6 +102,7 @@ public class AbstractFlexMojosTests
         projectsSource = new File( getProperty( "projects-source" ) );
         projectsWorkdir = new File( getProperty( "projects-target" ) );
         mavenHome = new File( getProperty( "fake-maven" ) );
+        repo = new File( getProperty( "fake-repo" ));
 
         File mvn = new File( mavenHome, "bin/mvn" );
         updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M -Duser.language=en -Duser.region=US\"\n" );
@@ -111,7 +116,6 @@ public class AbstractFlexMojosTests
     public static void addEmmaToClasshPath()
         throws Exception
     {
-        File repo = new File( getProperty( "fake-repo" ) );
         addCobertura( new File( repo, "net/flexmojos/oss/flexmojos-parent/" + getFlexmojosVersion()
             + "/flexmojos-parent-" + getFlexmojosVersion() + ".pom" ) );
         addCobertura( new File( repo, "net/flexmojos/oss/flexmojos-maven-plugin/" + getFlexmojosVersion()
@@ -339,6 +343,21 @@ public class AbstractFlexMojosTests
         }
     }
 
+    protected static String getFlexGroupId()
+    {
+        return getProperty( "flex-groupId" );
+    }
+
+    protected static String getFlexCompilerGroupId()
+    {
+        return getFlexGroupId() + ".compiler";
+    }
+
+    protected static String getFlexFrameworkGroupId()
+    {
+        return getFlexGroupId() + ".framework";
+    }
+
     protected static String getFlexSDKVersion()
     {
         return getProperty( "flex-version" );
@@ -351,8 +370,47 @@ public class AbstractFlexMojosTests
      */
     protected static String getArtifactVersion( String groupId, String artifactId )
     {
-        // FIXME: This only works for FDKs 4.6 and greater.
-        return getFlexSDKVersion();
+        return getFrameworkVersions().get(groupId + ":" + artifactId);
+    }
+
+    private static Map<String, String> frameworkVersions;
+
+    protected static Map<String, String> getFrameworkVersions()
+    {
+        if(frameworkVersions == null) {
+            frameworkVersions = new HashMap<String, String>();
+
+            final String flexGroupIp = getFlexGroupId();
+            final String flexVersion = getFlexSDKVersion();
+
+            final File frameworkVersionPom = new File(repo, flexGroupIp.replace(".", "/") + "/framework/" +
+                    flexVersion + "/framework-" + flexVersion + ".pom");
+
+            // Check that the file exists.
+            AssertJUnit.assertTrue("Couldn't find the framework versions pom at " + frameworkVersionPom.getAbsolutePath(),
+                    frameworkVersionPom.exists());
+
+            try {
+                // Parse the document.
+                final Xpp3Dom document = Xpp3DomBuilder.build( new FileReader( frameworkVersionPom ) );
+
+                // Get all dependency elements.
+                final Xpp3Dom[] dependencies = document.getChild("dependencyManagement").getChild(
+                        "dependencies").getChildren("dependency");
+
+                // Add them to the index.
+                for(final Xpp3Dom dependency : dependencies) {
+                    final String groupId = dependency.getChild("groupId").getValue();
+                    final String artifactId = dependency.getChild("artifactId").getValue();
+                    final String version = dependency.getChild("version").getValue();
+                    frameworkVersions.put(groupId + ":" + artifactId, version);
+                }
+            } catch(Exception e) {
+                Assert.fail( "Unable to parse \n" + frameworkVersionPom, e );
+            }
+        }
+
+        return frameworkVersions;
     }
 
     protected static String getPlayerVersion()

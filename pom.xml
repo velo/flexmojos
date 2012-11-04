@@ -88,15 +88,22 @@
         is outside the valid version range and for air applications 4.6 and above 2.5 is outside the lower bound of
         valid versions
         -->
+
         <!-- Compile for 4.5.1 -->
         <flex.version>4.5.1.21328A</flex.version>
         <player.version>10.2</player.version>
+        <flex.groupId>com.adobe.flex</flex.groupId>
+
         <!-- Compile with 4.6.0 -->
         <!--flex.version>4.6.0.23201</flex.version>
-        <player.version>11.1</player.version-->
+        <player.version>11.1</player.version>
+        <flex.groupId>com.adobe.flex</flex.groupId-->
+
         <!-- Compile with 4.8.0 -->
         <!--flex.version>4.8.0.1359417</flex.version>
-        <player.version>11.1</player.version-->
+        <player.version>11.1</player.version>
+        <flex.groupId>org.apache.flex</flex.groupId-->
+
         <commons_io.version>1.4</commons_io.version>
         <maven.version>3.0.4</maven.version>
         <maven-site-plugin.version>3.1</maven-site-plugin.version>

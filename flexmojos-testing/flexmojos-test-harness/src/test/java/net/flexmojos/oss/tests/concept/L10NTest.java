@@ -54,9 +54,11 @@ public class L10NTest
         throws Exception
     {
         FMVerifier v = standardConceptTester( "l10n-locale-chain" );
-        v.assertArtifactPresent( "com.adobe.flex.framework", "charts", getFlexSDKVersion(), "rb.swc",
+
+        final String chartsLibVersion = getArtifactVersion(getFlexFrameworkGroupId(), "charts");
+        v.assertArtifactPresent( "com.adobe.flex.framework", "charts", chartsLibVersion, "rb.swc",
                                  "pt_BR2pt_PT" );
-        v.assertArtifactNotPresent( "com.adobe.flex.framework", "charts", getFlexSDKVersion(), "rb.swc",
+        v.assertArtifactNotPresent( "com.adobe.flex.framework", "charts", chartsLibVersion, "rb.swc",
                                     "pt_PT" );
     }
 

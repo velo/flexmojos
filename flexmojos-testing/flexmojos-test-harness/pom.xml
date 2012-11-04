@@ -100,9 +100,6 @@
                             <value>net.flexmojos.oss.test.ProgressListener</value>
                         </property>
                     </properties>
-                    <!--includes>
-                        <include>**/*TestAgain.java</include>
-                    </includes-->
                 </configuration>
             </plugin>
             <plugin>
