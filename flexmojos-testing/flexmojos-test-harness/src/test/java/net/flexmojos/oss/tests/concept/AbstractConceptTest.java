@@ -31,7 +31,8 @@ public abstract class AbstractConceptTest
             throws Exception
     {
         File testDir = getProjectWithForcedSdk( "/concept/" + conceptName, sdkVersion );
-        return test( testDir, "install", "-Dfdk=" + sdkVersion );
+        return test( testDir, "install", "-DfdkVersion=" + sdkVersion +
+                " -DfdkGroupId=" + getFlexGroupId(sdkVersion));
     }
 
     public FMVerifier standardConceptTester( String conceptName, String... args )

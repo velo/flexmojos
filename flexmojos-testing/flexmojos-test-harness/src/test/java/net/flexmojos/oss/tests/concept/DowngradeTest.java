@@ -52,7 +52,7 @@ public class DowngradeTest
     {
         String projectName = "/concept/" + conceptName;
         File testDir = getProjectCustom( projectName, projectName + "_" + getTestName() + "_" + fdk );
-        return test( testDir, "install", "-Dfdk=" + fdk );
+        return test( testDir, "install", "-DfdkVersion=" + fdk + " -DfdkGroupId=" + getFlexGroupId(fdk));
     }
 
 }

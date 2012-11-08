@@ -29,11 +29,7 @@ import static net.flexmojos.oss.plugin.common.FlexExtension.AS;
 import static net.flexmojos.oss.plugin.common.FlexExtension.MXML;
 import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,6 +66,8 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -86,13 +84,19 @@ import net.flexmojos.oss.util.PathUtil;
 import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
 import flex2.tools.oem.internal.OEMLogAdapter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
 {
-
-
-    public static final String COMPILER_GROUP_ID = "com.adobe.flex.compiler";
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat();
 
@@ -104,7 +108,6 @@ public abstract class AbstractMavenMojo
 
     public static final String AIR_GROUP_ID = "com.adobe.air.framework";
     public static final String FLASH_GROUP_ID = "com.adobe.flash.framework";
-    public static final String FLEX_GROUP_ID = "com.adobe.flex.framework";
 
     public static final String AIR_GLOBAL = "airglobal";
     public static final String PLAYER_GLOBAL = "playerglobal";
@@ -464,10 +467,88 @@ public abstract class AbstractMavenMojo
         return cache;
     }
 
+    protected Artifact getCompilerArtifact()
+    {
+        Artifact apacheCompiler = MavenUtils.searchFor( pluginArtifacts, "org.apache.flex", "compiler", null, "pom", null );
+        if(apacheCompiler != null) {
+            return apacheCompiler;
+        }
+        Artifact adobeCompiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
+        if(adobeCompiler != null) {
+            return adobeCompiler;
+        }
+        return null;
+    }
+
+    public String getFdkGroupId()
+    {
+        Artifact compilerArtifact = getCompilerArtifact();
+        if(compilerArtifact != null) {
+            return compilerArtifact.getGroupId();
+        }
+        return null;
+    }
+
+    public String getCompilerGroupId()
+    {
+        final String fdkGroupId = getFdkGroupId();
+        if(fdkGroupId != null) {
+            return fdkGroupId + ".compiler";
+        }
+        return null;
+    }
+
+    public String getFrameworkGroupId()
+    {
+        final String fdkGroupId = getFdkGroupId();
+        if(fdkGroupId != null) {
+            return fdkGroupId + ".framework";
+        }
+        return null;
+    }
+
     public String getCompilerVersion()
     {
-        Artifact compiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        return compiler.getVersion();
+        Artifact compilerArtifact = getCompilerArtifact();
+        if(compilerArtifact != null) {
+            return compilerArtifact.getVersion();
+        }
+        return null;
+    }
+
+    public String getFrameworkArtifactVersion(String groupId, String artifactId)
+    {
+        final Artifact frameworkDependencyManagementPomArtifact =
+                resolve( getFdkGroupId(), "framework", getCompilerVersion(), null, "pom");
+        if(frameworkDependencyManagementPomArtifact != null) {
+            final File frameworkDependencyManagementPom =frameworkDependencyManagementPomArtifact.getFile();
+            if(frameworkDependencyManagementPom.exists()) {
+                FileInputStream pomFile = null;
+                try {
+                    pomFile = new FileInputStream( frameworkDependencyManagementPom );
+
+                    final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    final DocumentBuilder builder = dbf.newDocumentBuilder();
+                    final Document doc = builder.parse(pomFile);
+
+                    final XPathFactory xpFactory = XPathFactory.newInstance();
+                    final XPath xpath = xpFactory.newXPath();
+                    final XPathExpression expr = xpath.compile(
+                            "//dependency[groupId = '" + groupId + "' and artifactId = '" + artifactId + "']/version");
+
+                    final Node versionNode = (Node) expr.evaluate(doc, XPathConstants.NODE);
+                    if(versionNode != null) {
+                        return versionNode.getTextContent().trim();
+                    }
+                }
+                catch ( Exception e ) {
+                    throw new MavenRuntimeException( "Unable to load framework artifact version!", e );
+                } finally {
+                    IOUtil.close( pomFile );
+                }
+            }
+        }
+        return null;
     }
 
     public Set<Artifact> getDependencies()
@@ -491,13 +572,14 @@ public abstract class AbstractMavenMojo
     protected Artifact getFrameworkConfig()
     {
         Artifact frmkCfg =
-            getDependency( groupId( FLEX_GROUP_ID ), artifactId( "framework" ), classifier( "configs" ),
+            getDependency( groupId( getFrameworkGroupId() ), artifactId( "framework" ), classifier( "configs" ),
                            type( "zip" ) );
 
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
         {
-            frmkCfg = resolve( FLEX_GROUP_ID, "framework", getFrameworkVersion(), "configs", "zip" );
+            frmkCfg = resolve( getFrameworkGroupId(), "framework",
+                    getFrameworkArtifactVersion(getFrameworkGroupId(), "framework"), "configs", "zip" );
         }
         return frmkCfg;
     }
@@ -508,19 +590,20 @@ public abstract class AbstractMavenMojo
         Artifact dep = null;
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "flex-framework" ), type( "pom" ) );
+            dep = getDependency( groupId("com.adobe.flex.framework"), artifactId( "flex-framework" ), type( "pom" ) );
         }
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework.air" ), artifactId( "air-framework" ), type( "pom" ) );
+            dep = getDependency( groupId("com.adobe.flex.framework.air"), artifactId( "air-framework" ), type( "pom" ) );
         }
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework" ), artifactId( "framework" ), type( "swc" ) );
+            // TODO: This is actually not 100% correct as the framework lib can have a different version.
+            dep = getDependency( groupId("com.adobe.flex.framework"), artifactId( "framework" ), type( "swc" ) );
         }
         if ( dep == null )
         {
-            dep = getDependency( groupId( "com.adobe.flex.framework.air" ), artifactId( "airframework" ), type( "swc" ) );
+            dep = getDependency( groupId("com.adobe.flex.framework.air"), artifactId( "airframework" ), type( "swc" ) );
         }
 
         if ( dep == null )
@@ -575,12 +658,7 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
-        return (getDependency( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null) ||
-                /*
-                    This is a legacy rule for old SDKs where the
-                    airglobal was deployed withing the flex framework.
-                 */
-                (getDependency( groupId( FLEX_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null);
+        return (getDependency( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null);
     }
 
     @Override
@@ -697,13 +775,7 @@ public abstract class AbstractMavenMojo
     protected Matcher<? extends Artifact> initGlobalMatcher()
     {
         return anyOf( allOf( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ),
-                allOf( groupId( FLASH_GROUP_ID ), artifactId( PLAYER_GLOBAL ), type( SWC ) ),
-                /*
-                    This is a legacy rule for old SDKs where the playerglobal and
-                    airglobal were deployed withing the flex framework.
-                 */
-                allOf( groupId( FLEX_GROUP_ID ), type( SWC ),
-                        anyOf( artifactId( PLAYER_GLOBAL ), artifactId( AIR_GLOBAL ) ) ) );
+                allOf( groupId( FLASH_GROUP_ID ), artifactId( PLAYER_GLOBAL ), type( SWC ) ) );
     }
 
     public boolean isSkip()

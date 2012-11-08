@@ -2,87 +2,88 @@
   it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses 
   />. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-sandbox</artifactId>
-    <version>6.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-
-  <name>Flexmojos ThreadLocalToolkit wrapper</name>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-generator-mojo</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <id>generate-threadlocal</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <generatorToUse>thread-local</generatorToUse>
-              <includeJavaClasses>
-                <include>flex2.compiler.util.ThreadLocalToolkit</include>
-              </includeJavaClasses>
-              <baseOutputDirectory>${project.build.outputDirectory}</baseOutputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>5.2</version>
-          </dependency>
-          <dependency>
-            <groupId>net.flexmojos.oss</groupId>
-            <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
-                  <type>jar</type>
-                  <classifier>javadoc</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+        <artifactId>flexmojos-sandbox</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
 
-  <dependencies>
+    <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
 
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>mxmlc</artifactId>
-      <version>${flex.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <name>Flexmojos ThreadLocalToolkit wrapper</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-generator-mojo</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-threadlocal</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generatorToUse>thread-local</generatorToUse>
+                            <includeJavaClasses>
+                                <include>flex2.compiler.util.ThreadLocalToolkit</include>
+                            </includeJavaClasses>
+                            <baseOutputDirectory>${project.build.outputDirectory}</baseOutputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.bcel</groupId>
+                        <artifactId>bcel</artifactId>
+                        <version>5.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.flexmojos.oss</groupId>
+                        <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+                                    <type>jar</type>
+                                    <classifier>javadoc</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${flex.groupId}.compiler</groupId>
+            <artifactId>mxmlc</artifactId>
+            <version>${flex.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>

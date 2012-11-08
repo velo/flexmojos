@@ -33,7 +33,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.adobe.flex.framework.air</groupId>
+      <groupId>%{flex.groupId}.framework.air</groupId>
       <artifactId>air-framework</artifactId>
       <version>%{flex.version}</version>
       <type>pom</type>

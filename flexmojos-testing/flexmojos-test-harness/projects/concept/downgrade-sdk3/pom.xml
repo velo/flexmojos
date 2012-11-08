@@ -46,9 +46,9 @@
                         <version>%{flexmojos.version}</version>
                     </dependency>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>${fdkGroupId}</groupId>
                         <artifactId>compiler</artifactId>
-                        <version>${fdk}</version>
+                        <version>${fdkVersion}</version>
                         <type>pom</type>
                     </dependency>
                 </dependencies>
@@ -67,9 +67,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.adobe.flex</groupId>
+                <groupId>${fdkGroupId}</groupId>
                 <artifactId>framework</artifactId>
-                <version>${fdk}</version>
+                <version>${fdkVersion}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

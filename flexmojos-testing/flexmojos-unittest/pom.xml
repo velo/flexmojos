@@ -45,7 +45,7 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>${flex.groupId}</groupId>
                         <artifactId>compiler</artifactId>
                         <version>${flex.version}</version>
                         <type>pom</type>
@@ -57,36 +57,36 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.adobe.flex.framework.air</groupId>
+            <groupId>${flex.groupId}.framework.air</groupId>
             <artifactId>air-framework</artifactId>
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework.air</groupId>
+            <groupId>${flex.groupId}.framework.air</groupId>
             <artifactId>airframework</artifactId>
             <type>swc</type>
             <scope>external</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>${flex.groupId}.framework</groupId>
             <artifactId>framework</artifactId>
             <type>swc</type>
             <scope>external</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>${flex.groupId}.framework</groupId>
             <artifactId>mx</artifactId>
             <type>swc</type>
             <scope>external</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>${flex.groupId}.framework</groupId>
             <artifactId>framework</artifactId>
             <type>rb.swc</type>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>${flex.groupId}.framework</groupId>
             <artifactId>mx</artifactId>
             <type>rb.swc</type>
         </dependency>
@@ -95,14 +95,14 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.adobe.flex</groupId>
+                <groupId>${flex.groupId}</groupId>
                 <artifactId>framework</artifactId>
                 <version>${flex.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.adobe.flex.framework</groupId>
+                <groupId>${flex.groupId}.framework</groupId>
                 <artifactId>air</artifactId>
                 <version>${flex.version}</version>
                 <type>pom</type>

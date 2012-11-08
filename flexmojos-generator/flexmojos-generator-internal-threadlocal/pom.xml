@@ -17,77 +17,78 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-generator</artifactId>
-    <version>6.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>net.flexmojos.oss</groupId>
+        <artifactId>flexmojos-generator</artifactId>
+        <version>6.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
+    <artifactId>flexmojos-generator-internal-threadlocal</artifactId>
 
-  <name>Flexmojos Generator - Internal Threadlocal generator</name>
+    <name>Flexmojos Generator - Internal Threadlocal generator</name>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-metadata</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.adobe.flex.compiler</groupId>
-                  <artifactId>mxmlc</artifactId>
-                  <version>${flex.version}</version>
-                  <type>jar</type>
-                  <destFileName>mxmlc.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${flex.groupId}.compiler</groupId>
+                                    <artifactId>mxmlc</artifactId>
+                                    <version>${flex.version}</version>
+                                    <type>jar</type>
+                                    <destFileName>mxmlc.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-    </plugins>
-  </build>
+        </plugins>
+    </build>
 
-  <dependencies>
-    <dependency>
-      <groupId>net.flexmojos.oss</groupId>
-      <artifactId>flexmojos-generator-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.bcel</groupId>
-      <artifactId>bcel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <classifier>jdk15</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.compiler</groupId>
-      <artifactId>mxmlc</artifactId>
-      <version>${flex.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>net.flexmojos.oss</groupId>
+            <artifactId>flexmojos-generator-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <classifier>jdk15</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${flex.groupId}.compiler</groupId>
+            <artifactId>mxmlc</artifactId>
+            <version>${flex.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

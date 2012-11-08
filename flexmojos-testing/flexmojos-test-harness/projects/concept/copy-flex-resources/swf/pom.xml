@@ -54,7 +54,7 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>%{flex.groupId}</groupId>
                         <artifactId>compiler</artifactId>
                         <version>%{flex.version}</version>
                         <type>pom</type>
@@ -66,13 +66,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>%{flex.groupId}.framework</groupId>
             <artifactId>framework</artifactId>
             <type>swc</type>
             <scope>rsl</scope>
         </dependency>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>%{flex.groupId}.framework</groupId>
             <artifactId>flex-framework</artifactId>
             <type>pom</type>
         </dependency>
@@ -81,7 +81,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.adobe.flex</groupId>
+                <groupId>%{flex.groupId}</groupId>
                 <artifactId>framework</artifactId>
                 <version>%{flex.version}</version>
                 <type>pom</type>

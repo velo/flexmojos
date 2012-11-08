@@ -126,7 +126,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.adobe.flex.framework</groupId>
+                                    <groupId>${flex.groupId}.framework</groupId>
                                     <artifactId>framework</artifactId>
                                     <type>swc</type>
                                     <destFileName>framework-4.swc</destFileName>
@@ -178,23 +178,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Start NEEDED FOR FLEX 4.8 -->
-        <!--dependency>
-          <groupId>org.apache.velocity</groupId>
-          <artifactId>velocity</artifactId>
-          <version>1.5</version>
-        </dependency>
-        <dependency>
-          <groupId>com.adobe.flex.compiler</groupId>
-          <artifactId>adt</artifactId>
-          <version>4.6.0.23201</version>
-        </dependency>
-        <dependency>
-          <groupId>com.adobe.flex.compiler</groupId>
-          <artifactId>flex-fontkit</artifactId>
-          <version>4.5.0.20967A</version>
-        </dependency-->
-        <!-- End NEEDED FOR FLEX 4.8 -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
@@ -366,7 +349,7 @@
 
         <dependency>
             <!-- must be the last dependency -->
-            <groupId>com.adobe.flex</groupId>
+            <groupId>${flex.groupId}</groupId>
             <artifactId>compiler</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
@@ -376,7 +359,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.adobe.flex</groupId>
+                <groupId>${flex.groupId}</groupId>
                 <artifactId>framework</artifactId>
                 <version>${flex.version}</version>
                 <type>pom</type>

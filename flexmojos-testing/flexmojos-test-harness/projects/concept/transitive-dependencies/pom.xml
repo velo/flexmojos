@@ -46,13 +46,13 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <dependencies>
           <dependency>
-            <groupId>com.adobe.flex</groupId>
+            <groupId>%{flex.groupId}</groupId>
             <artifactId>compiler</artifactId>
             <version>%{flex.version}</version>
             <type>pom</type>
           </dependency>
           <dependency>
-            <groupId>com.adobe.flex.compiler</groupId>
+            <groupId>%{flex.groupId}.compiler</groupId>
             <artifactId>asdoc</artifactId>
             <version>%{flex.version}</version>
             <type>zip</type>

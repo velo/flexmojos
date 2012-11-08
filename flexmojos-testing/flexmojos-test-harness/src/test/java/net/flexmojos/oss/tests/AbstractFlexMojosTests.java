@@ -326,11 +326,13 @@ public class AbstractFlexMojosTests
 
                 String pomContent = FileUtils.fileRead( pom );
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
-                pomContent = pomContent.replace( "%{flex.version}", getFlexSDKVersion() );
+                pomContent = pomContent.replace( "%{flex.groupId}", getFlexGroupId() );
+                pomContent = pomContent.replace( "%{flex.version}", getFlexVersion() );
                 pomContent = pomContent.replace( "%{player.version}", getPlayerVersion() );
                 if( sdkVersion != null)
                 {
-                    pomContent = pomContent.replace( "${fdk}", sdkVersion );
+                    pomContent = pomContent.replace( "${fdkVersion}", sdkVersion );
+                    pomContent = pomContent.replace( "${fdkGroupId}", getFlexGroupId(sdkVersion) );
                 }
                 FileUtils.fileWrite( path( pom ), pomContent );
             }
@@ -348,6 +350,16 @@ public class AbstractFlexMojosTests
         return getProperty( "flex-groupId" );
     }
 
+    protected static String getFlexGroupId(String version)
+    {
+        // TODO: This should be solved differently ...
+        /*if("4.8.0.1359417".equals(version)) {
+            return "org.apache.flex";
+        } else {*/
+            return "com.adobe.flex";
+        //}
+    }
+
     protected static String getFlexCompilerGroupId()
     {
         return getFlexGroupId() + ".compiler";
@@ -358,7 +370,7 @@ public class AbstractFlexMojosTests
         return getFlexGroupId() + ".framework";
     }
 
-    protected static String getFlexSDKVersion()
+    protected static String getFlexVersion()
     {
         return getProperty( "flex-version" );
     }
@@ -381,7 +393,7 @@ public class AbstractFlexMojosTests
             frameworkVersions = new HashMap<String, String>();
 
             final String flexGroupIp = getFlexGroupId();
-            final String flexVersion = getFlexSDKVersion();
+            final String flexVersion = getFlexVersion();
 
             final File frameworkVersionPom = new File(repo, flexGroupIp.replace(".", "/") + "/framework/" +
                     flexVersion + "/framework-" + flexVersion + ".pom");

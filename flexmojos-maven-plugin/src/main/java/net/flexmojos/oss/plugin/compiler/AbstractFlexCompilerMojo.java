@@ -1612,7 +1612,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeHaloSwc( List<File> themes )
     {
-        File haloSwc = resolveThemeFile( "mx", "halo", "swc", "Halo" );
+        File haloSwc = resolveThemeFile( "halo" );
         if ( haloSwc == null )
         {
             return;
@@ -1625,14 +1625,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeSparkCss( List<File> themes )
     {
-        File sparkCss = resolveThemeFile( "spark", "spark", "css", "Spark" );
-        if ( sparkCss == null )
+        File sparkTheme = resolveThemeFile( "spark" );
+        if ( sparkTheme == null )
         {
             return;
         }
 
-        getLog().warn( "Adding spark.css theme because spark.swc was included as a dependency" );
-        themes.add( sparkCss );
+        getLog().warn( "Adding spark theme because spark.swc was included as a dependency" );
+        themes.add( sparkTheme );
     }
 
     public abstract Result doCompile( CFG cfg, boolean synchronize )
@@ -3330,43 +3330,23 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     }
 
     @SuppressWarnings( "unchecked" )
-    private File resolveThemeFile( String artifactName, String themeName, String type, String path )
+    private File resolveThemeFile( String artifactName )
     {
-        Artifact sparkSwc = getDependency( groupId( FLEX_GROUP_ID ), artifactId( artifactName ), type( "swc" ) );
-        if ( sparkSwc == null )
-        {
-            return null;
-        }
-
-        File sparkCss;
+        File themeArtifact;
+        final String themeGroupId = getFrameworkGroupId() + ".themes";
+        final String themeArtifactId = artifactName;
+        final String themeVersion = getFrameworkArtifactVersion(getFrameworkGroupId(), artifactName);
         try
         {
             // first try to get the artifact from maven local repository for the appropriated flex version
-            sparkCss = resolve( FLEX_GROUP_ID, themeName, getFrameworkVersion(), "theme", type ).getFile();
+            themeArtifact = resolve( themeGroupId, themeArtifactId, themeVersion, "theme", "swc" ).getFile();
         }
         catch ( RuntimeMavenResolutionException e )
         {
-            // then try to get it from framework-config.zip
-            File dir = getUnpackedFrameworkConfig();
-            sparkCss = new File( dir, "themes/" + path + "/" + themeName + "." + type );
-
-            // if not possible get it from flexmojos jar
-            if ( !sparkCss.exists() )
-            {
-                sparkCss = new File( getOutputDirectory(), themeName + "." + type );
-                sparkCss.getParentFile().mkdirs();
-                try
-                {
-                    FileUtils.copyURLToFile( MavenUtils.class.getResource( "/themes/" + themeName + "." + type ),
-                                             sparkCss );
-                }
-                catch ( IOException ioE )
-                {
-                    throw new MavenRuntimeException( "Error copying " + themeName + "." + type + " file.", ioE );
-                }
-            }
+            throw new MavenRuntimeException( "Unable to resolve theme artifact (" + themeGroupId + ":" +
+                    themeArtifactId + ":" + themeVersion + ":theme:swc.", e );
         }
-        return sparkCss;
+        return themeArtifact;
     }
 
     public void versionCheck()

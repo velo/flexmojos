@@ -120,7 +120,7 @@ public class ResourceBundleChainingTest
             {
                 Set<Artifact> set = new LinkedHashSet<Artifact>();
                 set.add( createArtifact( FLASH_GROUP_ID, PLAYER_GLOBAL, "4", "provided", "swc", "10" ) );
-                set.add( createArtifact( FLEX_GROUP_ID, "framework", "4", "compile", "swc", null ) );
+                set.add( createArtifact( getFrameworkGroupId(), "framework", "4", "compile", "swc", null ) );
                 return set;
             }
 

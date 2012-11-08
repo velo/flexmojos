@@ -43,7 +43,7 @@
         <extensions>true</extensions>
         <dependencies>
           <dependency>
-            <groupId>com.adobe.flex</groupId>
+            <groupId>%{flex.groupId}</groupId>
             <artifactId>compiler</artifactId>
             <version>%{flex.version}</version>
 			<type>pom</type>
@@ -56,7 +56,7 @@
   <dependencies>
     <!-- Air SDK dependencies -->
     <dependency>
-      <groupId>com.adobe.flex.framework.air</groupId>
+      <groupId>%{flex.groupId}.framework.air</groupId>
       <artifactId>air-framework</artifactId>
       <version>%{flex.version}</version>
       <type>pom</type>

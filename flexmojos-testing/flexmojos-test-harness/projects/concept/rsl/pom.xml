@@ -36,13 +36,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>%{flex.groupId}.framework</groupId>
             <artifactId>flex-framework</artifactId>
             <type>pom</type>
         </dependency>
 
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
+            <groupId>%{flex.groupId}.framework</groupId>
             <artifactId>spark</artifactId>
             <type>swc</type>
             <scope>rsl</scope>
@@ -52,9 +52,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.adobe.flex</groupId>
+                <groupId>%{flex.groupId}</groupId>
                 <artifactId>framework</artifactId>
-                <version>${flex.version}</version>
+                <version>%{flex.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -68,9 +68,9 @@
                 <artifactId>flexmojos-maven-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>%{flex.groupId}</groupId>
                         <artifactId>compiler</artifactId>
-                        <version>${flex.version}</version>
+                        <version>%{flex.version}</version>
                         <type>pom</type>
                     </dependency>
                 </dependencies>
