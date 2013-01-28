@@ -391,7 +391,7 @@
                         <xml>com.adobe.flex.framework:sparkskins:4.0.0.14159:swf</xml>
                         <xml>com.adobe.flex.framework:textLayout:1.0.0.595:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.0.0.14159:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.0.0.14159:swc</xml>
 
                         <!--
 
@@ -452,7 +452,7 @@
                         <xml>com.adobe.flex.framework:sparkskins:4.1.0.16076:swf</xml>
                         <xml>com.adobe.flex.framework:textLayout:1.1.0.604:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.1.0.16076:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.1.0.16076:swc</xml>
 
                         <!--
 
@@ -525,7 +525,7 @@
                         <xml>com.adobe.flex.framework:sparkskins:4.5.0.20967:swf</xml>
                         <xml>com.adobe.flex.framework:textLayout:2.0.0.232:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.5.0.21746:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.5.0.21746:swc</xml>
 
                         <!--
 
@@ -598,7 +598,7 @@
                         <xml>com.adobe.flex.framework:sparkskins:4.5.1.21328:swf</xml>
                         <xml>com.adobe.flex.framework:textLayout:2.0.0.232:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.5.1.21489:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.5.1.21489:swc</xml>
 
                         <!--
 
@@ -671,7 +671,7 @@
                         <xml>com.adobe.flex.framework:sparkskins:4.6.0.23201:swf</xml>
                         <xml>com.adobe.flex.framework:textLayout:2.0.0.232:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.6.0.23201:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.6.0.23201:swc</xml>
 
                         <!--
 
@@ -725,7 +725,7 @@
                         <xml>com.adobe.flex.framework:spark_dmv:4.8.0.1359417:swf</xml>
                         <xml>com.adobe.flex.framework:sparkskins:4.8.0.1359417:swf</xml>
 
-                        <xml>com.adobe.flex.framework.themes:spark:4.8.0.1359417:swc:theme</xml>
+                        <xml>com.adobe.flex.framework.themes:spark:4.8.0.1359417:swc</xml>
 
                         <!--
 

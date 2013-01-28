@@ -369,6 +369,16 @@
             </roles>
             <timezone>-5</timezone>
         </contributor>
+        <contributor>
+            <name>Jose Barragan</name>
+            <email>jose.barragan at codeoscopic.com</email>
+            <organization>Codeoscopic, S.A.</organization>
+            <organizationUrl>http://www.codeoscopic.com</organizationUrl>
+            <roles>
+                <role>Developer Compatibility</role>
+            </roles>
+            <timezone>+1</timezone>
+        </contributor>
     </contributors>
 
 
@@ -385,7 +395,7 @@
 
     <mailingLists>
         <mailingList>
-            <name>flexmojos Google Group</name>
+            <name>Flexmojos Google Group</name>
             <subscribe>flexmojos-subscribe@googlegroups.com</subscribe>
             <unsubscribe>flexmojos-unsubscribe@googlegroups.com</unsubscribe>
             <post>flexmojos@googlegroups.com</post>
@@ -414,9 +424,16 @@
             <build>
                 <plugins>
                     <plugin>
+                     	<artifactId>maven-release-plugin</artifactId>
+                     	<version>2.3.2</version>
+                     	<configuration>
+                     	    <preparationGoals>clean deploy</preparationGoals>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.5</version>
+                        <version>2.9</version>
                     </plugin>
                     <plugin>
                         <groupId>com.mycila.maven-license-plugin</groupId>
@@ -572,7 +589,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
                 <configuration>
                     <targetJdk>1.5</targetJdk>
                 </configuration>
@@ -595,7 +612,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.6.1</version>
+                <version>2.9</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -628,12 +645,12 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.5.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.5.2</version>
             </plugin>
         </plugins>
     </reporting>
@@ -698,7 +715,7 @@
             <dependency>
                 <groupId>plexus</groupId>
                 <artifactId>plexus-velocity</artifactId>
-                <version>1.1.1</version>
+                <version>1.1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -778,7 +795,7 @@
             <dependency>
                 <groupId>org.codehaus.izpack</groupId>
                 <artifactId>izpack-standalone-compiler</artifactId>
-                <version>4.3.0</version>
+                <version>4.3.5</version>
             </dependency>
             <dependency>
                 <groupId>org.sonatype.sisu.inject</groupId>

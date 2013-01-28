@@ -129,6 +129,9 @@ public class AsVmLauncher
                     errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
                     break;
                 }
+/*            case 7:
+                errorMessage = "This code was typically related with the wrong version of adl being executed.";
+                break;*/
             case 139:
                 if ( OSUtils.isLinux() )
                 {

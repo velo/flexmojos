@@ -30,6 +30,9 @@ package net.flexmojos.oss.unitestingsupport.advancedflex
 
         private var _socketReporter:SocketReporter;
 
+        public function AdvancedFlexListener() {
+        }
+
         public function set socketReporter( socketReporter:SocketReporter ):void
         {
             this._socketReporter = socketReporter;

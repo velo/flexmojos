@@ -19,11 +19,13 @@ target/
 *.ipr
 *.iml
 *.iws
+.idea/
 
 # Other
 .svn/
 bin/
 
 .scala_dependencies
+dependency-reduced-pom.xml
 
 .DS_Store

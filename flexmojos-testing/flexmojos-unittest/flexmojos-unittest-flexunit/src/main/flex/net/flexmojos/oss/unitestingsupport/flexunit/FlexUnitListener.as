@@ -34,7 +34,10 @@ package net.flexmojos.oss.unitestingsupport.flexunit
 
 		private var _socketReporter:SocketReporter;
 
-		public function set socketReporter(socketReporter:SocketReporter):void {
+        public function FlexUnitListener() {
+        }
+
+        public function set socketReporter(socketReporter:SocketReporter):void {
 			 this._socketReporter = socketReporter;
 		}
 		
