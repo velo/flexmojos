@@ -328,6 +328,7 @@ public class AbstractFlexMojosTests
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
                 pomContent = pomContent.replace( "%{flex.groupId}", getFlexGroupId() );
                 pomContent = pomContent.replace( "%{flex.version}", getFlexVersion() );
+                pomContent = pomContent.replace( "%{air.version}", getAirVersion() );
                 pomContent = pomContent.replace( "%{player.version}", getPlayerVersion() );
                 if( sdkVersion != null)
                 {
@@ -373,6 +374,11 @@ public class AbstractFlexMojosTests
     protected static String getFlexVersion()
     {
         return getProperty( "flex-version" );
+    }
+
+    protected static String getAirVersion()
+    {
+        return getProperty( "air-version" );
     }
 
     /**

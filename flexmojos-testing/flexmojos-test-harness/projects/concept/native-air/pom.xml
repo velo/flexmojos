@@ -21,48 +21,57 @@
 <!-- Copyright 2008 Marvin Herman Froeder Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
   required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions 
   and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-air-super-pom</artifactId>
-    <version>%{flexmojos.version}</version>
-  </parent>
-
-  <groupId>info.rvin.itest</groupId>
-  <artifactId>native-air</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <packaging>air</packaging>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
+        <artifactId>flexmojos-air-super-pom</artifactId>
         <version>%{flexmojos.version}</version>
-        <configuration>
-          <storepass>flexmojos</storepass>
-          <packages>
-            <pack>air</pack>
-            <!-- <pack>${os.packages}</pack> -->
-            <!-- <pack>apk</pack> -->
-          </packages>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    </parent>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>4.1.0</version>
-      <classifier>flex4</classifier>
-      <type>swc</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <groupId>info.rvin.itest</groupId>
+    <artifactId>native-air</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>air</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <configuration>
+                    <storepass>flexmojos</storepass>
+                    <packages>
+                        <pack>air</pack>
+                        <!-- <pack>${os.packages}</pack> -->
+                        <!-- <pack>apk</pack> -->
+                    </packages>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.air</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{air.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>4.1.0</version>
+            <classifier>flex4</classifier>
+            <type>swc</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
