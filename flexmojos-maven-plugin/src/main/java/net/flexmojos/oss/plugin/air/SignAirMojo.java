@@ -74,7 +74,7 @@ public class SignAirMojo
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
-     * 
+     *
      * @parameter expression="${flexmojos.classifier}"
      */
     private String classifier;
@@ -88,21 +88,21 @@ public class SignAirMojo
     /**
      * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
      * prefer to reinvent wheel, so more work to all of us.
-     * 
+     *
      * @parameter expression="${flexmojos.flexbuilderCompatibility}"
      */
     private boolean flexBuilderCompatibility;
 
     /**
      * Include specified files in AIR package.
-     * 
+     *
      * @parameter
      */
     private List<String> includeFiles;
 
     /**
      * Include specified files or directories in AIR package.
-     * 
+     *
      * @parameter
      */
     private FileSet[] includeFileSets;
@@ -132,21 +132,21 @@ public class SignAirMojo
 
     /**
      * The type of keystore, determined by the keystore implementation.
-     * 
+     *
      * @parameter default-value="pkcs12"
      */
     private String storetype;
 
     /**
      * Strip artifact version during copy of dependencies.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean stripVersion;
 
     /**
      * The URL for the timestamp server. If 'none', no timestamp will be used.
-     * 
+     *
      * @parameter
      */
     private String timestampURL;
@@ -198,6 +198,11 @@ public class SignAirMojo
     protected void doPackage( String packagerName, FlexmojosAIRPackager packager )
         throws MojoExecutionException
     {
+        final List<Message> messages = new ArrayList<Message>();
+        String c = this.classifier == null ? "" : "-" + this.classifier;
+        File output =
+                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
+
         try
         {
             KeyStore keyStore = KeyStore.getInstance( storetype );
@@ -206,9 +211,6 @@ public class SignAirMojo
             PrivateKey key = (PrivateKey) keyStore.getKey( alias, storepass.toCharArray() );
             packager.setPrivateKey( key );
 
-            String c = this.classifier == null ? "" : "-" + this.classifier;
-            File output =
-                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
             packager.setOutput( output );
             packager.setDescriptor( getAirDescriptor() );
 
@@ -297,7 +299,6 @@ public class SignAirMojo
                 }
             }
 
-            final List<Message> messages = new ArrayList<Message>();
 
             try
             {
@@ -325,20 +326,6 @@ public class SignAirMojo
             }
 
             packager.createPackage();
-
-            if ( messages.size() > 0 )
-            {
-                for ( final Message message : messages )
-                {
-                    getLog().error( "  " + message.errorDescription );
-                }
-
-                throw new MojoExecutionException( "Error creating AIR application" );
-            }
-            else
-            {
-                getLog().info( "  AIR package created: " + output.getAbsolutePath() );
-            }
         }
         catch ( MojoExecutionException e )
         {
@@ -355,6 +342,19 @@ public class SignAirMojo
         }
         finally
         {
+            if ( messages.size() > 0 )
+            {
+                for ( final Message message : messages )
+                {
+                    getLog().error( "  " + message.errorDescription );
+                }
+
+                throw new MojoExecutionException( "Error creating AIR application" );
+            }
+            else
+            {
+                getLog().info( "  AIR package created: " + output.getAbsolutePath() );
+            }
             packager.close();
         }
     }
