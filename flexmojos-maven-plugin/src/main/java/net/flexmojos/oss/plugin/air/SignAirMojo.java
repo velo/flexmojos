@@ -17,27 +17,12 @@
  */
 package net.flexmojos.oss.plugin.air;
 
-import static net.flexmojos.oss.plugin.common.FlexExtension.AIR;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
-import static net.flexmojos.oss.util.PathUtil.file;
-import static net.flexmojos.oss.util.PathUtil.path;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.adobe.air.Listener;
+import com.adobe.air.Message;
+import net.flexmojos.oss.plugin.AbstractMavenMojo;
+import net.flexmojos.oss.plugin.air.packager.FlexmojosAIRPackager;
+import net.flexmojos.oss.plugin.utilities.FileInterpolationUtil;
+import net.flexmojos.oss.util.PathUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
@@ -47,13 +32,21 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
-import net.flexmojos.oss.plugin.AbstractMavenMojo;
-import net.flexmojos.oss.plugin.air.packager.FlexmojosAIRPackager;
-import net.flexmojos.oss.plugin.utilities.FileInterpolationUtil;
-import net.flexmojos.oss.util.PathUtil;
 
-import com.adobe.air.Listener;
-import com.adobe.air.Message;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import static net.flexmojos.oss.plugin.common.FlexExtension.*;
+import static net.flexmojos.oss.util.PathUtil.file;
+import static net.flexmojos.oss.util.PathUtil.path;
 
 /**
  * @goal sign-air
@@ -74,7 +67,7 @@ public class SignAirMojo
 
     /**
      * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
-     * 
+     *
      * @parameter expression="${flexmojos.classifier}"
      */
     private String classifier;
@@ -86,23 +79,29 @@ public class SignAirMojo
     private File descriptorTemplate;
 
     /**
+     * Additional properties to substitute into the air descriptor
+     * @parameter
+     */
+    private Map<String, String> descriptorTemplateProperties;
+
+    /**
      * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
      * prefer to reinvent wheel, so more work to all of us.
-     * 
+     *
      * @parameter expression="${flexmojos.flexbuilderCompatibility}"
      */
     private boolean flexBuilderCompatibility;
 
     /**
      * Include specified files in AIR package.
-     * 
+     *
      * @parameter
      */
     private List<String> includeFiles;
 
     /**
      * Include specified files or directories in AIR package.
-     * 
+     *
      * @parameter
      */
     private FileSet[] includeFileSets;
@@ -132,21 +131,21 @@ public class SignAirMojo
 
     /**
      * The type of keystore, determined by the keystore implementation.
-     * 
+     *
      * @parameter default-value="pkcs12"
      */
     private String storetype;
 
     /**
      * Strip artifact version during copy of dependencies.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean stripVersion;
 
     /**
      * The URL for the timestamp server. If 'none', no timestamp will be used.
-     * 
+     *
      * @parameter
      */
     private String timestampURL;
@@ -384,9 +383,9 @@ public class SignAirMojo
         File dest = new File( airOutput, project.getBuild().getFinalName() + "-descriptor.xml" );
         try
         {
-            Map<String, String> props = new HashMap<String, String>();
-            props.put( "output", output.getName() );
-            props.put( "version", version );
+            ConcurrentMap<String, String> props = getDescriptorProperties();
+            props.putIfAbsent("output", output.getName());
+            props.putIfAbsent("version", version);
 
             FileInterpolationUtil.copyFile( descriptorTemplate, dest, props );
 
@@ -409,6 +408,14 @@ public class SignAirMojo
         }
 
         return dest;
+    }
+
+    private ConcurrentMap<String, String> getDescriptorProperties() {
+        final ConcurrentHashMap<String, String> templateProps = new ConcurrentHashMap<String, String>();
+        if (descriptorTemplateProperties != null) {
+            templateProps.putAll(descriptorTemplateProperties);
+        }
+        return templateProps;
     }
 
     private File getOutput()
