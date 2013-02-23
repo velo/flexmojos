@@ -396,7 +396,7 @@
 
     <scm>
         <connection>scm:git:https://chrisdutz@github.com/chrisdutz/flexmojos.git</connection>
-        <developerConnection>scm:git:https://chrisdutz@github.com:chrisdutz/flexmojos.git</developerConnection>
+        <developerConnection>scm:git:https://chrisdutz@github.com/chrisdutz/flexmojos.git</developerConnection>
         <url>http://github.com/chrisdutz/flexmojos</url>
     </scm>
 
