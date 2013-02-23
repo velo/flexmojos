@@ -18,7 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -29,7 +30,7 @@
 
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>6.0.0</version>
+    <version>6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Flexmojos Parent</name>
@@ -122,7 +123,7 @@
                 <plugin>
                     <groupId>net.flexmojos.oss</groupId>
                     <artifactId>flexmojos-maven-plugin</artifactId>
-                    <version>6.0.0</version>
+                    <version>6.0-SNAPSHOT</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -397,8 +398,7 @@
         <connection>scm:git:https://chrisdutz@github.com/chrisdutz/flexmojos.git</connection>
         <developerConnection>scm:git:https://chrisdutz@github.com:chrisdutz/flexmojos.git</developerConnection>
         <url>http://github.com/chrisdutz/flexmojos</url>
-      <tag>flexmojos-6.0.0</tag>
-  </scm>
+    </scm>
 
     <mailingLists>
         <mailingList>
