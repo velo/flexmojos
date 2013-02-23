@@ -31,7 +31,7 @@ public class Flexmojos395Test
     extends AbstractIssueTest
 {
 
-    @Test
+    @Test(enabled = false)
     public void testFlexUnit4Example()
         throws Exception
     {
