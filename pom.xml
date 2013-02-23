@@ -389,9 +389,9 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/velo/flexmojos.git</connection>
-        <developerConnection>scm:git:git@github.com:velo/flexmojos.git</developerConnection>
-        <url>http://github.com/velo/flexmojos</url>
+        <connection>scm:git:git://github.com/chrisdutz/flexmojos.git</connection>
+        <developerConnection>scm:git:git@github.com:chrisdutz/flexmojos.git</developerConnection>
+        <url>http://github.com/chrisdutz/flexmojos</url>
     </scm>
 
     <mailingLists>
