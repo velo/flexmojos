@@ -25,7 +25,7 @@
     <parent>
         <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-testing</artifactId>
-        <version>6.0.0</version>
+        <version>6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>flexmojos-test-harness</artifactId>
