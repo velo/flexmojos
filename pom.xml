@@ -230,11 +230,17 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>flexmojos-@{project.version}</tagNameFormat>
+						<mavenExecutorId>forked-path</mavenExecutorId>
                     </configuration>
                 </plugin>
                 <plugin>
