@@ -114,38 +114,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>flex</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${flex.groupId}.framework</groupId>
-                                    <artifactId>framework</artifactId>
-                                    <type>swc</type>
-                                    <destFileName>framework-4.swc</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.adobe.flash.framework</groupId>
-                                    <artifactId>playerglobal</artifactId>
-                                    <version>${player.version}</version>
-                                    <type>swc</type>
-                                    <destFileName>playerglobal-${player.version}.swc</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.testOutputDirectory}/swcs</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
@@ -361,18 +329,6 @@
             <type>pom</type>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${flex.groupId}</groupId>
-                <artifactId>framework</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <reporting>
         <plugins>

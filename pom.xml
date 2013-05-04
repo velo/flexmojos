@@ -676,13 +676,6 @@
                 <version>${flex.version}</version>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>${flex.groupId}</groupId>
-                <artifactId>framework</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <dependency>
                 <groupId>org.apache.maven</groupId>
