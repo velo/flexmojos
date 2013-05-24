@@ -29,11 +29,7 @@ import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -268,6 +264,19 @@ public abstract class AbstractMavenMojo
      */
     protected File targetDirectory;
 
+    /**
+     * Set this configuration parameter when your AIR unit tests
+     * require a special configuration in the app descriptor in order to run.
+     * e.g. requiring a specific renderMode setting
+     *
+     * You may want to take a look under resources at
+     * the file /templates/test/air-descriptor-template.xml
+     * for a good baseline example to modify.
+     *
+     * @parameter
+     */
+    private File testAirDescriptorTemplate;
+
     public AbstractMavenMojo()
     {
         super();
@@ -317,8 +326,15 @@ public abstract class AbstractMavenMojo
         FileWriter writer = null;
         try
         {
-            reader =
-                new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
+            if (testAirDescriptorTemplate != null)
+            {
+                reader = new FileReader(testAirDescriptorTemplate);
+            }
+            else
+            {
+                reader =
+                    new InputStreamReader( getClass().getResourceAsStream( "/templates/test/air-descriptor-template.xml" ) );
+            }
 
             Map<String, String> variables = new LinkedHashMap<String, String>();
             variables.put( "id", swf.getName().replaceAll( "[^A-Za-z0-9]", "" ) );
