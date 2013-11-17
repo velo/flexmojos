@@ -353,12 +353,7 @@ public class AbstractFlexMojosTests
 
     protected static String getFlexGroupId(String version)
     {
-        // TODO: This should be solved differently ...
-        /*if("4.8.0.1359417".equals(version)) {
-            return "org.apache.flex";
-        } else {*/
-            return "com.adobe.flex";
-        //}
+        return "org.apache.flex";
     }
 
     protected static String getFlexCompilerGroupId()

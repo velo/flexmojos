@@ -18,31 +18,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>flexmojos-parent</artifactId>
-    <groupId>net.flexmojos.oss</groupId>
-    <version>6.1.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <artifactId>flexmojos-parent</artifactId>
+        <groupId>net.flexmojos.oss</groupId>
+        <version>7.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-generator</artifactId>
-  <packaging>pom</packaging>
+    <artifactId>flexmojos-generator</artifactId>
+    <packaging>pom</packaging>
 
-  <name>Flexmojos Generator</name>
+    <name>Flexmojos Generator</name>
 
-  <modules>
-    <module>flexmojos-generator-api</module>
-    <module>flexmojos-generator-graniteds-1.1.0</module>
-    <module>flexmojos-generator-graniteds-2.0.0</module>
-    <module>flexmojos-generator-graniteds-2.1.0</module>
-    <module>flexmojos-generator-graniteds-2.2.0</module>
-	<module>flexmojos-generator-graniteds-2.3.0</module>
-    <module>flexmojos-generator-constraints</module>
-    <module>flexmojos-generator-mojo</module>
-    <module>flexmojos-generator-internal-compiler-iface</module>
-    <module>flexmojos-generator-internal-threadlocal</module>
-    <module>flexmojos-generator-internal-flex2</module>
-  </modules>
+    <modules>
+        <module>flexmojos-generator-api</module>
+        <module>flexmojos-generator-graniteds-1.1.0</module>
+        <module>flexmojos-generator-graniteds-2.0.0</module>
+        <module>flexmojos-generator-graniteds-2.1.0</module>
+        <module>flexmojos-generator-graniteds-2.2.0</module>
+        <module>flexmojos-generator-graniteds-2.3.0</module>
+        <module>flexmojos-generator-graniteds-2.3.2</module>
+        <module>flexmojos-generator-constraints</module>
+        <module>flexmojos-generator-mojo</module>
+        <module>flexmojos-generator-internal-compiler-iface</module>
+        <module>flexmojos-generator-internal-threadlocal</module>
+        <module>flexmojos-generator-internal-flex2</module>
+    </modules>
 </project>

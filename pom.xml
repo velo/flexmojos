@@ -29,7 +29,7 @@
 
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Flexmojos Parent</name>
@@ -77,36 +77,10 @@
     </licenses>
 
     <properties>
-        <!-- Compile for 4.5.1 (PASSED)
-            When compiling against 4.5.1 several files have to be modified:
-            - flexmojos-testing/flexmojos-test-harness/projects/concept/native-air/src/main/resources/descriptor.xml
-            - flexmojos-testing/flexmojos-test-harness/projects/concept/simple-air/air/src/main/resources/descriptor.xml
-            - flexmojos-testing/flexmojos-test-harness/projects/concept/simple-air-application/src/main/resources/main-app.xml
-            - flexmojos-testing/flexmojos-test-harness/projects/concept/simplify-air/src/main/resources/descriptor.xml
-            In all of these files the schema has to be changed to "http://ns.adobe.com/air/application/2.5" because 3.1
-            is outside the valid version range and for air applications 4.6 and above 2.5 is outside the lower bound of
-            valid versions
-        -->
-        <!--flex.version>4.5.1.21328A</flex.version>
-        <player.version>10.2</player.version>
-        <flex.groupId>com.adobe.flex</flex.groupId-->
-
-        <!-- Compile with 4.6.0 (PASSED) -->
-        <flex.version>4.6.0.23201</flex.version>
+        <flex.version>4.11.0.20131017</flex.version>
         <air.version>3.1</air.version>
         <player.version>11.1</player.version>
-        <flex.groupId>com.adobe.flex</flex.groupId>
-
-        <!-- Compile with 4.8.0
-            - All tests addressing the caching framework will fail as no 4.8 SWZ libraries are provided by adobe.
-                - CachingFrameworkTest.testHelloCaching
-                - Flexmojos333Test.multipleRslUrls
-                - Flexmojos64Test.flexmojos64
-        -->
-        <!--flex.version>4.8.0.1359417</flex.version>
-        <player.version>11.1</player.version>
-        <flex.groupId>com.adobe.flex</flex.groupId-->
-        <!--flex.groupId>org.apache.flex</flex.groupId-->
+        <flex.groupId>org.apache.flex</flex.groupId>
 
         <commons_io.version>1.4</commons_io.version>
         <maven.version>3.0.4</maven.version>
@@ -122,7 +96,7 @@
                 <plugin>
                     <groupId>net.flexmojos.oss</groupId>
                     <artifactId>flexmojos-maven-plugin</artifactId>
-                    <version>6.1.0-SNAPSHOT</version>
+                    <version>7.0.0-SNAPSHOT</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -835,7 +809,7 @@
             <dependency>
                 <groupId>net.sourceforge.cobertura</groupId>
                 <artifactId>cobertura</artifactId>
-                <version>1.9.4</version>
+                <version>1.9.4.1</version>
             </dependency>
             <dependency>
                 <groupId>emma</groupId>

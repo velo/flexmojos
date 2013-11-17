@@ -42,30 +42,11 @@ public abstract class AbstractConceptTest
         return test( testDir, "install", args );
     }
 
-    @DataProvider( name = "flex3" )
-    public Object[][] flex3()
-    {
-        return new Object[][] { { "3.0.0.477A" }, { "3.0.1.1732A" }, { "3.1.0.2710A" }, { "3.2.0.3958A" },
-                { "3.3.0.4852A" }, { "3.4.0.9271A" }, { "3.4.1.10084A" }, { "3.5.0.12683B" }, { "3.6.0.16995A" } };
-    }
-
-    /**
- 	 * Older Flex3 Versions don't come with AIR capabilities, so if we
- 	 * run the AIR tests against them, we will be getting errors.
- 	 *
- 	 * @return List of Flex3 versions that support building of AIR applications.
- 	*/
- 	@DataProvider( name = "flex3Air" )
- 	public Object[][] flex3Air()
- 	{
- 	    return new Object[][] { { "3.5.0.12683B" }, { "3.6.0.16995A" } };
- 	}
-
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { { "4.0.0.14159A" }, { "4.1.0.16076A" }, { "4.5.0.20967A" }, { "4.5.1.21328A" },
-                { "4.6.0.23201" } };
+        return new Object[][] { /*{ "4.8.0.1359417" },*/ { "4.9.0.1425567" }, { "4.9.1.1447119" },
+                { "4.10.0.20130801" }, { "4.11.0.20131017" } };
     }
 
 }
