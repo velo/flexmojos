@@ -49,4 +49,10 @@ public abstract class AbstractConceptTest
                 { "4.10.0.20130801" }, { "4.11.0.20131017" } };
     }
 
+    @DataProvider( name = "flex4WithAdvancedTelemetrySupport" )
+    public Object[][] flex4WithAdvancedTelemetrySupport()
+    {
+        return new Object[][] { { "4.10.0.20130801" }, { "4.11.0.20131017" } };
+    }
+
 }
