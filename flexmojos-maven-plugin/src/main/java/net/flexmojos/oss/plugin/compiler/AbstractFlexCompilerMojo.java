@@ -1451,6 +1451,16 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean verifyDigests;
 
+    /**
+     * DOCME Guess what, undocumented by adobe. Looks like it was overwritten by source paths
+     * <p>
+     * Equivalent to -root
+     * </p>
+     *
+     * @parameter expression="${flex.advancedTelemetry}"
+     */
+    private Boolean advancedTelemetry;
+
     protected Artifact adaptResourceBundle( final Artifact baseRbSwc, String requestedLocale )
     {
         getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
@@ -2335,7 +2345,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
         catch ( ClassNotFoundException e )
         {
-            getLog().warn( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
+            getLog().debug( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
                                + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
             return null;
         }
@@ -3055,6 +3065,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     public Boolean getVerifyDigests()
     {
         return verifyDigests;
+    }
+
+    @Override
+    public Boolean getAdvancedTelemetry() {
+        return advancedTelemetry;
     }
 
     public final Boolean getVersion()

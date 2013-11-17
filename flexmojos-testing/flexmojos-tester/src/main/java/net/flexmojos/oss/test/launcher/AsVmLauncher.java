@@ -185,7 +185,7 @@ public class AsVmLauncher
     private void runFlashplayer( String asvmCommand[], String targetFile )
         throws LaunchFlashPlayerException
     {
-        getLogger().warn( "[LAUNCHER] Using regular flashplayer tests" );
+        getLogger().debug( "[LAUNCHER] Using regular flashplayer tests" );
         try
         {
             final String[] cmdArray = merge( asvmCommand, new String[] { targetFile } );
