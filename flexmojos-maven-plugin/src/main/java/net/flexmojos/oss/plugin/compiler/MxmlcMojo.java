@@ -162,7 +162,7 @@ public class MxmlcMojo
     {
         if ( !PathUtil.existAny( getSourcePath() ) )
         {
-            getLog().warn( "Skipping compiler, source path doesn't exist. " + Arrays.toString( getSourcePath() ) );
+            getLog().info( "Skipping compiler, source path doesn't exist. " + Arrays.toString( getSourcePath() ) );
             return;
         }
 

@@ -255,7 +255,7 @@ public class TestRunMojo
         }
         else if ( testOutputDirectory == null || !testOutputDirectory.isDirectory() )
         {
-            getLog().warn( "Skipping test run. Runner not found: " + testOutputDirectory );
+            getLog().info( "Skipping test run. Runner not found: " + testOutputDirectory );
         }
         else
         {

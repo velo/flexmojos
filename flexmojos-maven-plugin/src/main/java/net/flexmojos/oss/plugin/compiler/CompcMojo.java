@@ -244,7 +244,7 @@ public class CompcMojo
     {
         if ( !( PathUtil.existAny( getSourcePath() ) || getIncludeFile() != null ) )
         {
-            getLog().warn( "Skipping compiler, nothing available to be included on swc." );
+            getLog().info( "Skipping compiler, nothing available to be included on swc." );
             return;
         }
 

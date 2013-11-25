@@ -292,7 +292,7 @@ public class TestCompilerMojo
 
         if ( !PathUtil.existAll( testCompileSourceRoots ) )
         {
-            getLog().warn( "Skipping compiler, test source path doesn't exist." );
+            getLog().info( "Skipping compiler, test source path doesn't exist." );
             return;
         }
 
