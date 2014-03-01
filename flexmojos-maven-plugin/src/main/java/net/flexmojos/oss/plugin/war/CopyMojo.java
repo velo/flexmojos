@@ -321,10 +321,10 @@ public class CopyMojo
 
         String rslUrls = getLastRslUrls( artifactProject );
 
-        for ( Artifact rslArtifact : rslDeps )
+        for ( Artifact artifact : rslDeps )
         {
             String extension;
-            if ( RSL.equals( rslArtifact.getScope() ) )
+            if ( RSL.equals( artifact.getScope() ) )
             {
                 extension = SWF;
             }
@@ -333,12 +333,12 @@ public class CopyMojo
                 extension = SWZ;
             }
 
-            rslArtifact =
-                repositorySystem.createArtifactWithClassifier( rslArtifact.getGroupId(), rslArtifact.getArtifactId(),
-                                                               rslArtifact.getVersion(), extension, rslArtifact.getClassifier() );
+            Artifact rslArtifact =
+                repositorySystem.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                        artifact.getVersion(), extension, artifact.getClassifier() );
             rslArtifact = replaceWithResolvedArtifact( rslArtifact );
 
-            File destFile = resolveRslDestination( rslUrls, rslArtifact, extension );
+            File destFile = resolveRslDestination( rslUrls, artifact, extension );
             File sourceFile = rslArtifact.getFile();
             copy( sourceFile, destFile );
         }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
@@ -272,6 +273,21 @@ public class MavenUtils
         sample = sample.replace( "{groupId}", artifact.getGroupId() );
         sample = sample.replace( "{artifactId}", artifact.getArtifactId() );
         sample = sample.replace( "{version}", artifact.getBaseVersion() );
+
+        if(sample.contains("{hash}"))
+        {
+            String hash = "CANT_CALCULATE_HASH";
+            try
+            {
+                byte[] artifactBytes = org.apache.commons.io.FileUtils.readFileToByteArray( artifact.getFile() );
+                hash = DigestUtils.md5Hex(artifactBytes);
+            }
+            catch (IOException ignored)
+            {
+            }
+            sample = sample.replace( "{hash}", hash );
+        }
+
         if ( artifact.getClassifier() != null )
         {
             sample = sample.replace( "{classifier}", artifact.getClassifier() );
