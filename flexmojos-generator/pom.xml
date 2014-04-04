@@ -35,7 +35,6 @@
 
     <modules>
         <module>flexmojos-generator-api</module>
-        <module>flexmojos-generator-graniteds-1.1.0</module>
         <module>flexmojos-generator-graniteds-2.0.0</module>
         <module>flexmojos-generator-graniteds-2.1.0</module>
         <module>flexmojos-generator-graniteds-2.2.0</module>

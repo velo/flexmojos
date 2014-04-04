@@ -380,8 +380,8 @@ public class MavenUtils
         {
             return null;
         }
-
-        return getFilesSet( Arrays.asList( dependencies ) ).toArray( new File[0] );
+        final Set<File> filesSet = getFilesSet(Arrays.asList(dependencies));
+        return filesSet.toArray(new File[filesSet.size()]);
     }
 
     public static File[] getFiles( Collection<Artifact>... dependencies )
@@ -391,7 +391,8 @@ public class MavenUtils
             return null;
         }
 
-        return getFilesSet( dependencies ).toArray( new File[0] );
+        final Set<File> filesSet = getFilesSet(dependencies);
+        return filesSet.toArray(new File[filesSet.size()]);
     }
 
 }

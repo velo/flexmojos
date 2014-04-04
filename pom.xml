@@ -77,7 +77,7 @@
     </licenses>
 
     <properties>
-        <flex.version>4.11.0.20131017</flex.version>
+        <flex.version>4.12.0.20140303</flex.version>
         <air.version>3.1</air.version>
         <player.version>11.1</player.version>
         <flex.groupId>org.apache.flex</flex.groupId>
@@ -294,11 +294,11 @@
                                         <exclude>org.hamcrest:hamcrest-all</exclude>
                                     </excludes>
                                 </bannedDependencies>
-                                <requireMavenVersion>
+                                <!--requireMavenVersion>
                                     <version>${maven.version}</version>
-                                </requireMavenVersion>
+                                </requireMavenVersion-->
                                 <requireJavaVersion>
-                                    <version>[1.5,1.7.0-12)</version>
+                                    <version>[1.5,1.8)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -721,7 +721,7 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
-                <version>1.6.10</version>
+                <version>1.6.12</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
