@@ -1758,7 +1758,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         if ( benchmarkCompilerDetails != 0 && benchmarkCompilerDetails != 1 && benchmarkCompilerDetails != 5 )
         {
-            throw new IllegalArgumentException( "Invalid benchmarck compiler details level: '"
+            throw new IllegalArgumentException( "Invalid benchmark compiler details level: '"
                 + benchmarkCompilerDetails + "', it does accept 0 = none, 1 = light, 5 = verbose" );
         }
 
