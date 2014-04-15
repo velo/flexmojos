@@ -572,7 +572,6 @@
                         <xml>net.flexmojos.oss:flexmojos-flex2-compatibility-layer:${project.version}</xml>
                         <xml>net.flexmojos.oss:flexmojos-flex3-compatibility-layer:${project.version}</xml>
 
-                        <xml>net.flexmojos.oss:flexmojos-generator-graniteds-1.1.0:${project.version}</xml>
                         <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.0.0:${project.version}</xml>
                         <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.1.0:${project.version}</xml>
                         <xml>net.flexmojos.oss:flexmojos-generator-graniteds-2.2.0:${project.version}</xml>

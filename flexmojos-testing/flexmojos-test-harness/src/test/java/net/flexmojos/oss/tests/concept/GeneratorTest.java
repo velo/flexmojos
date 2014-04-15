@@ -24,14 +24,6 @@ public class GeneratorTest
 {
 
     @Test( groups = { "generator" } )
-    public void testGenerationGranite1()
-        throws Exception
-    {
-        standardConceptTester( "simple-generation", "-DgeneratorArtifact=flexmojos-generator-graniteds-1.1.0",
-                               "-DgeneratorToUse=graniteds1" );
-    }
-
-    @Test( groups = { "generator" } )
     public void testGenerationGranite2()
         throws Exception
     {
