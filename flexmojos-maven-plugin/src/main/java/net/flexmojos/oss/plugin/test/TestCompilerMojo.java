@@ -471,6 +471,14 @@ public class TestCompilerMojo
         {
             return getFlexmojosTestArtifact( "flexmojos-unittest-funit" );
         }
+        else if ( getDependency( groupId( "org.apache.flex.flexunit" ), artifactId( "flexunit-flex" ) ) != null )
+        {
+            return getFlexmojosTestArtifact( "flexmojos-unittest-flexunit4" );
+        }
+        else if ( getDependency( groupId( "org.apache.flex.flexunit" ), artifactId( "flexunit-as3" ) ) != null )
+        {
+            return getFlexmojosTestArtifact( "flexmojos-unittest-flexunit4" );
+        }
         else
         {
             if ( getLog().isDebugEnabled() )
