@@ -47,6 +47,7 @@ import org.granite.generator.as3.JavaAs3Input;
 import org.granite.generator.as3.PackageTranslator;
 import org.granite.generator.as3.reflect.JavaType;
 import org.granite.generator.gsp.GroovyTemplateFactory;
+
 import net.flexmojos.oss.generator.GenerationException;
 import net.flexmojos.oss.generator.GenerationRequest;
 
@@ -69,6 +70,10 @@ public final class GraniteDsGenerator
     private String as3typefactory = null;
 
     private boolean tide = false;
+
+    private boolean generateEnumToTransientStorage = false;
+
+    private boolean generateInterfaceToTransientStorage = false;
 
     private String transformer = null;
 
@@ -205,8 +210,24 @@ public final class GraniteDsGenerator
     	String useTide = request.getExtraOptions().get("tide");
     	if(useTide != null)
     	{
-    		tide = new Boolean(useTide.trim());
+    		tide = Boolean.valueOf(useTide.trim());
     	}
+
+        // Enums and Interfaces don't have Base classes, per default these
+        // classes are generated into the checked-in code part. As these classes
+        // are overwritten, someone will probably want them to be generated
+        // to the transient (target/generated-source) directory.
+        String useGenerateEnumToTransientStorage = request.getExtraOptions().get( "generateEnumToTransientStorage" );
+        if ( useGenerateEnumToTransientStorage != null )
+        {
+            generateEnumToTransientStorage = Boolean.valueOf(useGenerateEnumToTransientStorage.trim());
+        }
+        String useGenerateInterfaceToTransientStorage = request.getExtraOptions().get( "generateInterfaceToTransientStorage" );
+        if ( useGenerateInterfaceToTransientStorage != null )
+        {
+            generateInterfaceToTransientStorage = Boolean.valueOf(useGenerateInterfaceToTransientStorage.trim());
+        }
+
         uid = request.getExtraOptions().get( "uid" );
         
         transformer = request.getExtraOptions().get( "transformer" );
@@ -372,12 +393,7 @@ public final class GraniteDsGenerator
 
         public boolean isGenerated( Class<?> clazz )
         {
-            if ( !clazz.isMemberClass() || clazz.isEnum() )
-            {
-                return classes.containsKey( clazz.getName() );
-            }
-
-            return false;
+            return (!clazz.isMemberClass() || clazz.isEnum()) && classes.containsKey(clazz.getName());
         }
 
         public As3TypeFactory getAs3TypeFactory()
@@ -409,7 +425,22 @@ public final class GraniteDsGenerator
 
         public File getOutputDir( JavaAs3Input input )
         {
-            return outputDirectory;
+            switch (input.getJavaType().getKind()) {
+                case INTERFACE:
+                    if(generateInterfaceToTransientStorage) {
+                        return baseOutputDirectory;
+                    } else {
+                        return outputDirectory;
+                    }
+                case ENUM:
+                    if(generateEnumToTransientStorage) {
+                        return baseOutputDirectory;
+                    } else {
+                        return outputDirectory;
+                    }
+                default:
+                    return outputDirectory;
+            }
         }
 
         public File getBaseOutputDir( JavaAs3Input input )

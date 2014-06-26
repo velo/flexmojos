@@ -18,49 +18,64 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>info.rvin.itest</groupId>
-  <artifactId>simple-air</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>info.rvin.itest</groupId>
+    <artifactId>simple-air</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <packaging>pom</packaging>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>air</module>
-    <module>swf</module>
-    <module>swc</module>
-  </modules>
+    <modules>
+        <module>air</module>
+        <module>swf</module>
+        <module>swc</module>
+    </modules>
 
-  <build>
-    <sourceDirectory>src/main/flex</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>%{flexmojos.version}</version>
-        <extensions>true</extensions>
-        <dependencies>
-          <dependency>
-            <groupId>%{flex.groupId}</groupId>
-            <artifactId>compiler</artifactId>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- Flex SDK dependencies -->
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
             <version>%{flex.version}</version>
-			<type>pom</type>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <!-- Air SDK dependencies -->
-    <dependency>
-      <groupId>%{flex.groupId}.framework.air</groupId>
-      <artifactId>air-framework</artifactId>
-      <version>%{flex.version}</version>
-      <type>pom</type>
-    </dependency>
-  </dependencies>
+            <type>pom</type>
+        </dependency>
+        <!-- Air SDK dependencies -->
+        <dependency>
+            <groupId>org.apache.flex.framework</groupId>
+            <artifactId>air</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <!-- Air runtime dependencies -->
+        <dependency>
+            <groupId>com.adobe.air</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{air.version}</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
 
 </project>

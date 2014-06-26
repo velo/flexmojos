@@ -32,7 +32,7 @@ public class CopyMojoTest
 {
 
     @Test
-    public void copyFlexResouces()
+    public void copyFlexResources()
         throws Exception
     {
         File testDir = getProject( "/concept/copy-flex-resources" );
@@ -51,7 +51,7 @@ public class CopyMojoTest
     }
 
     @Test
-    public void copyFlexResoucesWithHashRsls()
+    public void copyFlexResourcesWithHashRsls()
             throws Exception
     {
         final File testDir = getProject( "/concept/copy-flex-resources-with-hash" );

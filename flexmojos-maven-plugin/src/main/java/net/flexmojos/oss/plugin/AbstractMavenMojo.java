@@ -473,10 +473,6 @@ public abstract class AbstractMavenMojo
         if(apacheCompiler != null) {
             return apacheCompiler;
         }
-        Artifact adobeCompiler = MavenUtils.searchFor( pluginArtifacts, "com.adobe.flex", "compiler", null, "pom", null );
-        if(adobeCompiler != null) {
-            return adobeCompiler;
-        }
         return null;
     }
 
@@ -587,24 +583,8 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     public String getFrameworkVersion()
     {
-        Artifact dep = null;
-        if ( dep == null )
-        {
-            dep = getDependency( groupId("com.adobe.flex.framework"), artifactId( "flex-framework" ), type( "pom" ) );
-        }
-        if ( dep == null )
-        {
-            dep = getDependency( groupId("com.adobe.flex.framework.air"), artifactId( "air-framework" ), type( "pom" ) );
-        }
-        if ( dep == null )
-        {
-            // TODO: This is actually not 100% correct as the framework lib can have a different version.
-            dep = getDependency( groupId("com.adobe.flex.framework"), artifactId( "framework" ), type( "swc" ) );
-        }
-        if ( dep == null )
-        {
-            dep = getDependency( groupId("com.adobe.flex.framework.air"), artifactId( "airframework" ), type( "swc" ) );
-        }
+        Artifact dep = getDependency(
+                    groupId("org.apache.flex.framework"), artifactId( "framework" ), type( "swc" ) );
 
         if ( dep == null )
         {
@@ -631,12 +611,12 @@ public abstract class AbstractMavenMojo
         if ( global == null )
         {
             throw new IllegalArgumentException(
-                                                "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to this project." );
+                    "Global artifact is not available. Make sure to add " +
+                            "'playerglobal' or 'airglobal' to this project.");
         }
 
         File source = global.getFile();
-        File dest =
-            new File( source.getParentFile(), global.getClassifier() + "/" + global.getArtifactId() + "." + SWC );
+        File dest = new File( source.getParentFile(), global.getArtifactId() + "." + SWC );
         global.setFile( dest );
 
         try
@@ -650,7 +630,7 @@ public abstract class AbstractMavenMojo
         }
         catch ( IOException e )
         {
-            throw new IllegalStateException( "Error renamming '" + global.getArtifactId() + "'.", e );
+            throw new IllegalStateException( "Error renaming '" + global.getArtifactId() + "'.", e );
         }
         return global;
     }

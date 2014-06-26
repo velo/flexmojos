@@ -18,28 +18,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-parent</artifactId>
-    <version>7.1.0-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>flexmojos-sandbox</artifactId>
-  <packaging>pom</packaging>
+    <parent>
+        <groupId>net.flexmojos.oss</groupId>
+        <artifactId>flexmojos-parent</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
 
-  <name>Flexmojos Sandbox</name>
+    <artifactId>flexmojos-sandbox</artifactId>
+    <packaging>pom</packaging>
 
-  <modules>
-    <!-- <module>flexmojos-installer</module> -->
-  	<module>flexmojos-flex-compiler</module>
-  	<module>flexmojos-threadlocaltoolkit-wrapper</module>
-  	<module>flexmojos-flex3-compatibility-layer</module>
-  	<module>flexmojos-flex2-compatibility-layer</module>
-  	<module>flexmojos-coverage-reporter</module>
-  	<module>flexmojos-configurator</module>
-  	<module>flexmojos-sample-configurator</module>
-  </modules>
+    <name>Flexmojos Sandbox</name>
+
+    <modules>
+        <module>flexmojos-flex-compiler</module>
+        <module>flexmojos-threadlocaltoolkit-wrapper</module>
+        <module>flexmojos-coverage-reporter</module>
+        <module>flexmojos-configurator</module>
+        <module>flexmojos-sample-configurator</module>
+    </modules>
 
 </project>

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.flexmojos.oss.generator.granitedsv2d3d0;
+package net.flexmojos.oss.generator.granitedsv2d3d2;
 
 import org.granite.generator.Input;
 import org.granite.generator.Listener;

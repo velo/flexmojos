@@ -40,7 +40,7 @@
                 <artifactId>flexmojos-maven-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>${flex.groupId}</groupId>
+                        <groupId>org.apache.flex</groupId>
                         <artifactId>compiler</artifactId>
                         <version>${flex.version}</version>
                         <type>pom</type>
@@ -56,14 +56,12 @@
                             <includeJavaClasses>
                                 <include>net.flexmojos.oss.test.report.*</include>
                             </includeJavaClasses>
-                            <beanTemplate>
-                                <template>${basedir}/src/main/template/beanBase.gsp</template>
-                                <template>${basedir}/src/main/template/bean.gsp</template>
-                            </beanTemplate>
-                            <entityTemplate>
-                                <template>${basedir}/src/main/template/beanBase.gsp</template>
-                                <template>${basedir}/src/main/template/bean.gsp</template>
-                            </entityTemplate>
+                            <templates>
+                                <base-bean-template>${basedir}/src/main/template/beanBase.gsp</base-bean-template>
+                                <bean-template>${basedir}/src/main/template/bean.gsp</bean-template>
+                                <base-entity-template>${basedir}/src/main/template/beanBase.gsp</base-entity-template>
+                                <entity-template>${basedir}/src/main/template/bean.gsp</entity-template>
+                            </templates>
                         </configuration>
                     </execution>
                     <execution>
@@ -132,18 +130,30 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flex.framework.air</groupId>
+            <artifactId>airframework</artifactId>
+            <version>${flex.version}</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.air</groupId>
+            <artifactId>framework</artifactId>
+            <version>${air.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>${flash.version}</version>
+            <type>swc</type>
+        </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${flex.groupId}</groupId>
-                <artifactId>framework</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

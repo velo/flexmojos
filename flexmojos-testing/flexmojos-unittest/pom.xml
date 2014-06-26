@@ -44,7 +44,7 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>${flex.groupId}</groupId>
+                        <groupId>org.apache.flex</groupId>
                         <artifactId>compiler</artifactId>
                         <version>${flex.version}</version>
                         <type>pom</type>
@@ -53,62 +53,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>${flex.groupId}.framework.air</groupId>
-            <artifactId>air-framework</artifactId>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${flex.groupId}.framework.air</groupId>
-            <artifactId>airframework</artifactId>
-            <type>swc</type>
-            <scope>external</scope>
-        </dependency>
-        <dependency>
-            <groupId>${flex.groupId}.framework</groupId>
-            <artifactId>framework</artifactId>
-            <type>swc</type>
-            <scope>external</scope>
-        </dependency>
-        <dependency>
-            <groupId>${flex.groupId}.framework</groupId>
-            <artifactId>mx</artifactId>
-            <type>swc</type>
-            <scope>external</scope>
-        </dependency>
-        <dependency>
-            <groupId>${flex.groupId}.framework</groupId>
-            <artifactId>framework</artifactId>
-            <type>rb.swc</type>
-        </dependency>
-        <dependency>
-            <groupId>${flex.groupId}.framework</groupId>
-            <artifactId>mx</artifactId>
-            <type>rb.swc</type>
-        </dependency>
-    </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>${flex.groupId}</groupId>
-                <artifactId>framework</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>${flex.groupId}.framework</groupId>
-                <artifactId>air</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <modules>
         <module>flexmojos-test-coverage</module>

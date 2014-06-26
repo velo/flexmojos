@@ -50,7 +50,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>${flex.groupId}.compiler</groupId>
+                                    <groupId>org.apache.flex.compiler</groupId>
                                     <artifactId>mxmlc</artifactId>
                                     <version>${flex.version}</version>
                                     <type>jar</type>
@@ -83,7 +83,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>mxmlc</artifactId>
             <version>${flex.version}</version>
             <scope>test</scope>

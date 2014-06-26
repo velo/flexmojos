@@ -178,7 +178,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>flexmojos-generator-graniteds-2.3.0</artifactId>
+            <artifactId>flexmojos-generator-graniteds-2.3.2</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -231,11 +231,6 @@
         <dependency> <!-- required by unit tests -->
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.reporting</groupId>
@@ -327,10 +322,22 @@
 
         <dependency>
             <!-- must be the last dependency -->
-            <groupId>${flex.groupId}</groupId>
+            <groupId>org.apache.flex</groupId>
             <artifactId>compiler</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <classifier>jdk15</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-integration</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

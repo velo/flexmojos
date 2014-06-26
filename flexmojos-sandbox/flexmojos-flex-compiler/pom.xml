@@ -101,7 +101,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>${flex.groupId}.framework</groupId>
+                                    <groupId>org.apache.flex.framework</groupId>
                                     <artifactId>framework</artifactId>
                                     <version>${flex.version}</version>
                                     <classifier>configs</classifier>
@@ -122,7 +122,7 @@
                                 <artifactItem>
                                     <groupId>com.adobe.flash.framework</groupId>
                                     <artifactId>playerglobal</artifactId>
-                                    <version>${player.version}</version>
+                                    <version>${flash.version}</version>
                                     <type>swc</type>
                                     <destFileName>playerglobal.swc</destFileName>
                                 </artifactItem>
@@ -152,49 +152,57 @@
         </dependency>
 
         <dependency>
-            <groupId>${flex.groupId}</groupId>
+            <groupId>org.apache.flex</groupId>
             <artifactId>compiler</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>mxmlc</artifactId>
             <version>${flex.version}</version>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>digest</artifactId>
             <version>${flex.version}</version>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>optimizer</artifactId>
             <version>${flex.version}</version>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>asdoc</artifactId>
             <version>${flex.version}</version>
         </dependency>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>swcdepends</artifactId>
             <version>${flex.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <classifier>jdk15</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
+            <artifactId>hamcrest-integration</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -18,40 +18,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-parent</artifactId>
-    <version>7.1.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>net.flexmojos.oss</groupId>
+        <artifactId>flexmojos-parent</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-testing</artifactId>
-  <packaging>pom</packaging>
+    <artifactId>flexmojos-testing</artifactId>
+    <packaging>pom</packaging>
 
-  <name>Flexmojos Testing</name>
+    <name>Flexmojos Testing</name>
 
-  <profiles>
-    <profile>
-      <id>minimal</id>
-      <modules>
-        <module>flexmojos-tester</module>
-      </modules>
-    </profile>
+    <profiles>
+        <profile>
+            <id>minimal</id>
 
-    <profile>
-      <id>release</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
+            <modules>
+                <module>flexmojos-tester</module>
+            </modules>
+        </profile>
 
-      <modules>
-        <module>flexmojos-tester</module>
-        <module>flexmojos-unittest</module>
-        <module>flexmojos-test-harness</module>
-      </modules>
-    </profile>
-  </profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <modules>
+                <module>flexmojos-tester</module>
+                <module>flexmojos-unittest</module>
+                <module>flexmojos-test-harness</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

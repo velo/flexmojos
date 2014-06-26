@@ -38,6 +38,7 @@
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
 				<configuration>
 					<moduleFiles>
 						<module>module1/AnModule.mxml</module>

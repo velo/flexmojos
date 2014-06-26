@@ -47,4 +47,20 @@ public class GeneratorTest
         "-DgeneratorToUse=graniteds22" );
     }
 
+    @Test( groups = { "generator" } )
+    public void testGenerationGranite23()
+            throws Exception
+    {
+        standardConceptTester( "simple-generation", "-DgeneratorArtifact=flexmojos-generator-graniteds-2.3.0",
+                "-DgeneratorToUse=graniteds23" );
+    }
+
+    @Test( groups = { "generator" } )
+    public void testGenerationGranite232()
+            throws Exception
+    {
+        standardConceptTester( "simple-generation", "-DgeneratorArtifact=flexmojos-generator-graniteds-2.3.2",
+                "-DgeneratorToUse=graniteds232" );
+    }
+
 }

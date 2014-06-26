@@ -18,6 +18,7 @@
 package net.flexmojos.oss.test;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.testng.ITestContext;
@@ -86,7 +87,11 @@ public class ProgressListener
 
     private void showResult( ITestResult result, String status, PrintStream printer )
     {
-        printer.println( "Result: " + result.getTestClass().getName() + "." + result.getName() + "() ===> " + status );
+        String paramString = "";
+        if((result.getParameters() != null) && (result.getParameters().length > 0)) {
+            paramString = Arrays.toString(result.getParameters());
+        }
+        printer.println( "Result: " + result.getTestClass().getName() + "." + result.getName() + "(" + paramString + ") ===> " + status );
     }
 
 }

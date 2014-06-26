@@ -1,5 +1,6 @@
 /**
- * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+ * Flexmojos is a set of maven goals to allow maven users to compile,
+ * optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -45,7 +46,7 @@ package net.flexmojos.oss.unitestingsupport
 
 		public function TestAirApplication()
 		{
-			this._tests=new Array();
+			this._tests=[];
 
             addEventListener( FlexEvent.CREATION_COMPLETE, runTests );
 		}

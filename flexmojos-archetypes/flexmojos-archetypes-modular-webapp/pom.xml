@@ -18,17 +18,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>flexmojos-archetypes</artifactId>
-    <groupId>net.flexmojos.oss</groupId>
-    <version>7.1.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <artifactId>flexmojos-archetypes</artifactId>
+        <groupId>net.flexmojos.oss</groupId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
+    <artifactId>flexmojos-archetypes-modular-webapp</artifactId>
 
-  <name>Flexmojos Archetypes - modular web application</name>
+    <name>Flexmojos Archetypes - modular web application</name>
 
 </project>

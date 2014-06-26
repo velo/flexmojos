@@ -36,10 +36,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>%{flex.groupId}.framework</groupId>
-            <artifactId>flex-framework</artifactId>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
             <version>%{flex.version}</version>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
         </dependency>
     </dependencies>
 
@@ -48,19 +54,19 @@
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>
                 <artifactId>flexmojos-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>%{flex.groupId}</groupId>
-                        <artifactId>compiler</artifactId>
-                        <version>%{flex.version}</version>
-                        <type>pom</type>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <localesCompiled>
                         <locale>en_US</locale>
                     </localesCompiled>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

@@ -706,16 +706,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Boolean headlessServer;
 
     /**
-     * EXTREMELLY UN-ADVISIBLE. When true, flexmojos will check if the compiler and the framework versions match.
-     * Usually, you must use the same compiler and framework versions. Set this to true to avoid this check. EXTREMELLY
-     * UN-ADVISIBLE.
-     * 
-     * @parameter default-value="false"
-     *            expression="${flex.iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking}"
-     */
-    private boolean iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking;
-
-    /**
      * Only include inheritance dependencies of classes specified with include-classes.
      * <p>
      * Equivalent to -include-inheritance-dependencies-only
@@ -2938,6 +2928,24 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             String playerVersion = global.getVersion();
 
+            if ( VersionUtils.isMinVersionOK( playerVersion, "14.0" ) )
+                return 25;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "13.0" ) )
+                return 24;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "12.0" ) )
+                return 23;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.9" ) )
+                return 22;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.8" ) )
+                return 21;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.7" ) )
+                return 20;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.6" ) )
+                return 19;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.5" ) )
+                return 18;
+            if ( VersionUtils.isMinVersionOK( playerVersion, "11.4" ) )
+                return 17;
             if ( VersionUtils.isMinVersionOK( playerVersion, "11.3" ) )
                 return 16;
             if ( VersionUtils.isMinVersionOK( playerVersion, "11.2" ) )
@@ -3366,13 +3374,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public void versionCheck()
     {
-        if ( iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking )
-        {
-            return;
-        }
-
-        String compilerVersion = getCompilerVersion();
-        String frameworkVersion = getFrameworkVersion();
+        final String compilerVersion = getCompilerVersion();
+        final String frameworkVersion = getFrameworkVersion();
         if ( compilerVersion == null || frameworkVersion == null )
         {
             // ignore, missing version
@@ -3381,14 +3384,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         if ( !compilerVersion.equals( frameworkVersion ) )
         {
+            // TODO: Change the URL to the new one ...
             String msg =
                 "Flex compiler and flex framework versions doesn't match. Compiler: '"
                     + compilerVersion
                     + "' - Framework: '"
                     + frameworkVersion
                     + "'.\n"
-                    + " You can use 'iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking' to disable this check.  Please refer to Flexmojos maven doc.\n"
-                    + "If you prefer fixing it instead of ignoring, take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
+                    + " Please take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
             throw new IllegalStateException( msg );
         }
     }

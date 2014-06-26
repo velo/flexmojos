@@ -77,7 +77,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>${flex.groupId}.compiler</groupId>
+            <groupId>org.apache.flex.compiler</groupId>
             <artifactId>mxmlc</artifactId>
             <version>${flex.version}</version>
             <scope>test</scope>

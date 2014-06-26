@@ -48,6 +48,12 @@
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <extraOptions>
+                <generateEnumToTransientStorage>${generateEnumToTransientStorage}</generateEnumToTransientStorage>
+                <generateInterfaceToTransientStorage>${generateInterfaceToTransientStorage}</generateInterfaceToTransientStorage>
+              </extraOptions>
+            </configuration>
           </execution>
         </executions>
         <dependencies>

@@ -40,7 +40,7 @@ public class AdvancedTelemetryTest
     {
         String projectName = "/concept/" + conceptName;
         File testDir = getProjectCustom( projectName, projectName + "_" + getTestName() + "_" + fdk, fdk, (String[]) null );
-        return test( testDir, "install", "-DfdkVersion=" + fdk + " -DfdkGroupId=" + getFlexGroupId(fdk));
+        return test( testDir, "install", "-DfdkVersion=" + fdk);
     }
 
 }

@@ -18,53 +18,53 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>info.rvin.itest</groupId>
-  <artifactId>copy-war</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>info.rvin.itest</groupId>
+    <artifactId>copy-war</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
-  <packaging>war</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>copy-flex-resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>%{flexmojos.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>copy-flex-resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>info.rvin.itest</groupId>
-      <artifactId>copy-swf</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <type>swf</type>
-    </dependency>
-    <dependency>
-      <groupId>info.rvin.itest</groupId>
-      <artifactId>copy-swf</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>module1</classifier>
-      <type>swf</type>
-    </dependency>
-    <dependency>
-      <groupId>info.rvin.itest</groupId>
-      <artifactId>copy-swf</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>module2</classifier>
-      <type>swf</type>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>info.rvin.itest</groupId>
+            <artifactId>copy-swf</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>swf</type>
+        </dependency>
+        <dependency>
+            <groupId>info.rvin.itest</groupId>
+            <artifactId>copy-swf</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>module1</classifier>
+            <type>swf</type>
+        </dependency>
+        <dependency>
+            <groupId>info.rvin.itest</groupId>
+            <artifactId>copy-swf</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>module2</classifier>
+            <type>swf</type>
+        </dependency>
+    </dependencies>
 
 </project>

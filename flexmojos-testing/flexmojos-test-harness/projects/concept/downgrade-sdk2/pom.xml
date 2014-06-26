@@ -46,9 +46,9 @@
                         <version>%{flexmojos.version}</version>
                     </dependency>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>org.apache.flex</groupId>
                         <artifactId>compiler</artifactId>
-                        <version>2.0.1.180927</version>
+                        <version>${fdkVersion}</version>
                         <type>pom</type>
                     </dependency>
                 </dependencies>
@@ -58,22 +58,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
-            <artifactId>flex-framework</artifactId>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>${fdkVersion}</version>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.adobe.flex</groupId>
-                <artifactId>framework</artifactId>
-                <version>2.0.1.180927</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

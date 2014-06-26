@@ -278,10 +278,10 @@ public class AbstractFlexMojosTests
         return getProjectCustom( projectName, null, null, filesToInterpolate );
     }
 
-    protected File getProjectWithForcedSdk( String projectName, String sdkVersion, String... filesToInterpolate )
+    protected File getProjectWithForcedSdk( String projectName, String fdkVersion, String... filesToInterpolate )
             throws IOException
     {
-        return getProjectCustom( projectName, null, sdkVersion, filesToInterpolate );
+        return getProjectCustom( projectName, null, fdkVersion, filesToInterpolate );
     }
 
     protected File getProjectCustom( String projectName, String output, String... filesToInterpolate )
@@ -290,7 +290,7 @@ public class AbstractFlexMojosTests
         return getProjectCustom( projectName, output, null, filesToInterpolate );
     }
 
-    protected File getProjectCustom( String projectName, @Nullable String output, @Nullable String sdkVersion, String... filesToInterpolate )
+    protected File getProjectCustom( String projectName, @Nullable String output, @Nullable String fdkVersion, String... filesToInterpolate )
             throws IOException
     {
         if ( filesToInterpolate == null || filesToInterpolate.length == 0 )
@@ -307,7 +307,8 @@ public class AbstractFlexMojosTests
 
             if ( output == null )
             {
-                output = projectName + "_" + getTestName() + ( ( sdkVersion != null ) ? "-" + sdkVersion : "" );
+                output = getClass().getCanonicalName() + "." + getTestName() +
+                        ( ( fdkVersion != null ) ? "-" + fdkVersion : "" );
             }
             File destDir = new File( projectsWorkdir, output );
 
@@ -326,14 +327,12 @@ public class AbstractFlexMojosTests
 
                 String pomContent = FileUtils.fileRead( pom );
                 pomContent = pomContent.replace( "%{flexmojos.version}", getFlexmojosVersion() );
-                pomContent = pomContent.replace( "%{flex.groupId}", getFlexGroupId() );
                 pomContent = pomContent.replace( "%{flex.version}", getFlexVersion() );
                 pomContent = pomContent.replace( "%{air.version}", getAirVersion() );
-                pomContent = pomContent.replace( "%{player.version}", getPlayerVersion() );
-                if( sdkVersion != null)
+                pomContent = pomContent.replace( "%{flash.version}", getFlashVersion() );
+                if( fdkVersion != null)
                 {
-                    pomContent = pomContent.replace( "${fdkVersion}", sdkVersion );
-                    pomContent = pomContent.replace( "${fdkGroupId}", getFlexGroupId(sdkVersion) );
+                    pomContent = pomContent.replace( "${fdkVersion}", fdkVersion );
                 }
                 FileUtils.fileWrite( path( pom ), pomContent );
             }
@@ -383,52 +382,12 @@ public class AbstractFlexMojosTests
      */
     protected static String getArtifactVersion( String groupId, String artifactId )
     {
-        return getFrameworkVersions().get(groupId + ":" + artifactId);
+        return getFlexVersion();
     }
 
-    private static Map<String, String> frameworkVersions;
-
-    protected static Map<String, String> getFrameworkVersions()
+    protected static String getFlashVersion()
     {
-        if(frameworkVersions == null) {
-            frameworkVersions = new HashMap<String, String>();
-
-            final String flexGroupIp = getFlexGroupId();
-            final String flexVersion = getFlexVersion();
-
-            final File frameworkVersionPom = new File(repo, flexGroupIp.replace(".", "/") + "/framework/" +
-                    flexVersion + "/framework-" + flexVersion + ".pom");
-
-            // Check that the file exists.
-            AssertJUnit.assertTrue("Couldn't find the framework versions pom at " + frameworkVersionPom.getAbsolutePath(),
-                    frameworkVersionPom.exists());
-
-            try {
-                // Parse the document.
-                final Xpp3Dom document = Xpp3DomBuilder.build( new FileReader( frameworkVersionPom ) );
-
-                // Get all dependency elements.
-                final Xpp3Dom[] dependencies = document.getChild("dependencyManagement").getChild(
-                        "dependencies").getChildren("dependency");
-
-                // Add them to the index.
-                for(final Xpp3Dom dependency : dependencies) {
-                    final String groupId = dependency.getChild("groupId").getValue();
-                    final String artifactId = dependency.getChild("artifactId").getValue();
-                    final String version = dependency.getChild("version").getValue();
-                    frameworkVersions.put(groupId + ":" + artifactId, version);
-                }
-            } catch(Exception e) {
-                Assert.fail( "Unable to parse \n" + frameworkVersionPom, e );
-            }
-        }
-
-        return frameworkVersions;
-    }
-
-    protected static String getPlayerVersion()
-    {
-        return getProperty( "player-version" );
+        return getProperty( "flash-version" );
     }
 
     protected static String getFlexmojosVersion()

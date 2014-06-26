@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.flexmojos.oss.generator.granitedsv2d3d0;
+package net.flexmojos.oss.generator.granitedsv2d3d2;
 
 import static java.lang.Thread.currentThread;
 import static org.granite.generator.template.StandardTemplateUris.BEAN;
@@ -53,6 +53,7 @@ import org.granite.generator.as3.PackageTranslator;
 import org.granite.generator.as3.RemoteDestinationFactory;
 import org.granite.generator.as3.reflect.JavaType;
 import org.granite.generator.gsp.GroovyTemplateFactory;
+
 import net.flexmojos.oss.generator.GenerationException;
 import net.flexmojos.oss.generator.GenerationRequest;
 
@@ -80,6 +81,10 @@ public final class GraniteDsGenerator
     private boolean externalizeBigInteger = false;
     
     private boolean externalizeLong = false;
+
+    private boolean generateEnumToTransientStorage = false;
+
+    private boolean generateInterfaceToTransientStorage = false;
 
     private String transformer = null;
 
@@ -243,25 +248,40 @@ public final class GraniteDsGenerator
         String useTide = request.getExtraOptions().get( "tide" );
         if ( useTide != null )
         {
-            tide = new Boolean( useTide.trim() );
+            tide = Boolean.valueOf(useTide.trim());
         }
         
         String useExternalizeLong = request.getExtraOptions().get( "externalizeLong" );
         if ( useExternalizeLong != null )
         {
-        	externalizeLong = new Boolean( useExternalizeLong.trim() );
+        	externalizeLong = Boolean.valueOf(useExternalizeLong.trim());
         }
         String useExternalizeBigDecimal = request.getExtraOptions().get( "externalizeBigDecimal" );
         if ( useExternalizeBigDecimal != null )
         {
-        	externalizeBigDecimal = new Boolean( useExternalizeBigDecimal.trim() );
+        	externalizeBigDecimal = Boolean.valueOf(useExternalizeBigDecimal.trim());
         }
         String useExternalizeBigInteger = request.getExtraOptions().get( "externalizeBigInteger" );
         if ( useExternalizeBigInteger != null )
         {
-        	externalizeBigInteger = new Boolean( useExternalizeBigInteger.trim() );
+        	externalizeBigInteger = Boolean.valueOf(useExternalizeBigInteger.trim());
         }
-        
+
+        // Enums and Interfaces don't have Base classes, per default these
+        // classes are generated into the checked-in code part. As these classes
+        // are overwritten, someone will probably want them to be generated
+        // to the transient (target/generated-source) directory.
+        String useGenerateEnumToTransientStorage = request.getExtraOptions().get( "generateEnumToTransientStorage" );
+        if ( useGenerateEnumToTransientStorage != null )
+        {
+            generateEnumToTransientStorage = Boolean.valueOf(useGenerateEnumToTransientStorage.trim());
+        }
+        String useGenerateInterfaceToTransientStorage = request.getExtraOptions().get( "generateInterfaceToTransientStorage" );
+        if ( useGenerateInterfaceToTransientStorage != null )
+        {
+            generateInterfaceToTransientStorage = Boolean.valueOf(useGenerateInterfaceToTransientStorage.trim());
+        }
+
         uid = request.getExtraOptions().get( "uid" );
 
         transformer = request.getExtraOptions().get( "transformer" );
@@ -455,12 +475,7 @@ public final class GraniteDsGenerator
 
         public boolean isGenerated( Class<?> clazz )
         {
-            if ( !clazz.isMemberClass() || clazz.isEnum() )
-            {
-                return classes.containsKey( clazz.getName() );
-            }
-
-            return false;
+            return (!clazz.isMemberClass() || clazz.isEnum()) && classes.containsKey(clazz.getName());
         }
 
         public As3TypeFactory getAs3TypeFactory()
@@ -504,7 +519,22 @@ public final class GraniteDsGenerator
 
         public File getOutputDir( JavaAs3Input input )
         {
-            return outputDirectory;
+            switch (input.getJavaType().getKind()) {
+                case INTERFACE:
+                    if(generateInterfaceToTransientStorage) {
+                        return baseOutputDirectory;
+                    } else {
+                        return outputDirectory;
+                    }
+                case ENUM:
+                    if(generateEnumToTransientStorage) {
+                        return baseOutputDirectory;
+                    } else {
+                        return outputDirectory;
+                    }
+                default:
+                    return outputDirectory;
+            }
         }
 
         public File getBaseOutputDir( JavaAs3Input input )

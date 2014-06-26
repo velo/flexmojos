@@ -106,7 +106,7 @@ public class DependencyFilteringTest
 
         airArtifacts = new LinkedHashSet<Artifact>( flexArtifacts );
 
-        flexArtifacts.add( createArtifact( FLASH_GROUP_ID, PLAYER_GLOBAL, "1.0", "provided", "swc", "10" ) );
+        flexArtifacts.add( createArtifact( FLASH_GROUP_ID, PLAYER_GLOBAL, "1.0", "provided", "swc", null ) );
         airArtifacts.add( createArtifact( AIR_GROUP_ID, AIR_GLOBAL, "1.0", "provided", "swc", null ) );
     }
 

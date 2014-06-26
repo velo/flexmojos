@@ -24,7 +24,7 @@
     <parent>
         <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-flex-super-pom</artifactId>
-        <version>3.6-SNAPSHOT</version>
+        <version>%{flexmojos.version}</version>
     </parent>
 
     <groupId>com.lixar.gridpoitn</groupId>
@@ -37,7 +37,7 @@
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>
                 <artifactId>flexmojos-maven-plugin</artifactId>
-                <version>3.6-SNAPSHOT</version>
+                <version>%{flexmojos.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <sourceFile>main.mxml</sourceFile>
@@ -60,9 +60,9 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.adobe.flex</groupId>
+                        <groupId>org.apache.flex</groupId>
                         <artifactId>compiler</artifactId>
-                        <version>4.0.0.14159A</version>
+                        <version>%{flex.version}</version>
                         <type>pom</type>
                     </dependency>
                 </dependencies>
@@ -72,10 +72,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
-            <artifactId>flex-framework</artifactId>
-            <version>4.0.0.14159A</version>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
         </dependency>
     </dependencies>
 

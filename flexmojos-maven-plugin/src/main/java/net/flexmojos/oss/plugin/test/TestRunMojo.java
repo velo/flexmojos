@@ -391,12 +391,19 @@ public class TestRunMojo
         }
         catch ( LaunchFlashPlayerException e )
         {
-            throw new MojoExecutionException(
-                                              "Failed to launch Flash Player.  Probably java was not able to find flashplayer."
-                                                  + "\n\t\tMake sure flashplayer is available on PATH"
-                                                  + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}"
-                                                  + "\nRead more at: https://docs.sonatype.org/display/FLEXMOJOS/Running+unit+tests",
-                                              e );
+            if(isAirProject) {
+                throw new MojoExecutionException(
+                        "Failed to launch Air Debug Launcher. Probably java was not able to find adl."
+                                + "\n\t\tMake sure adl is available on PATH"
+                                + "\n\t\tor use -Dadl.command=${adl executable}",
+                        e );
+            } else {
+                throw new MojoExecutionException(
+                        "Failed to launch Flash Player. Probably java was not able to find flashplayer."
+                                + "\n\t\tMake sure flashplayer is available on PATH"
+                                + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}",
+                        e );
+            }
         }
     }
 

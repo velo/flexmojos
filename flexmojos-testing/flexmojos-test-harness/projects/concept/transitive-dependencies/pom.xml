@@ -18,51 +18,53 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-super-pom-commons</artifactId>
-    <version>%{flexmojos.version}</version>
-  </parent>
-
-  <groupId>info.rvin.itest.transitive-dependency</groupId>
-  <artifactId>aggregator</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>internalLib</module>
-    <module>A</module>
-    <module>B</module>
-  </modules>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>%{flex.groupId}</groupId>
-            <artifactId>compiler</artifactId>
-            <version>%{flex.version}</version>
-            <type>pom</type>
-          </dependency>
-          <dependency>
-            <groupId>%{flex.groupId}.compiler</groupId>
-            <artifactId>asdoc</artifactId>
-            <version>%{flex.version}</version>
-            <type>zip</type>
-            <classifier>template</classifier>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <ditaSkip>true</ditaSkip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <artifactId>flexmojos-super-pom-commons</artifactId>
+        <version>%{flexmojos.version}</version>
+    </parent>
+
+    <groupId>info.rvin.itest.transitive-dependency</groupId>
+    <artifactId>aggregator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>internalLib</module>
+        <module>A</module>
+        <module>B</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.flex.compiler</groupId>
+                        <artifactId>asdoc</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>zip</type>
+                        <classifier>template</classifier>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <ditaSkip>true</ditaSkip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

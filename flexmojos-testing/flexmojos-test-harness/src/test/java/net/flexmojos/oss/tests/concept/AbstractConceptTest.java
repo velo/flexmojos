@@ -27,12 +27,11 @@ public abstract class AbstractConceptTest
     extends AbstractFlexMojosTests
 {
 
-    public FMVerifier standardConceptTesterWithForcedSdk( String conceptName, String sdkVersion )
+    public FMVerifier standardConceptTesterWithForcedSdk( String conceptName, String fdkVersion )
             throws Exception
     {
-        File testDir = getProjectWithForcedSdk( "/concept/" + conceptName, sdkVersion );
-        return test( testDir, "install", "-DfdkVersion=" + sdkVersion +
-                " -DfdkGroupId=" + getFlexGroupId(sdkVersion));
+        File testDir = getProjectWithForcedSdk( "/concept/" + conceptName, fdkVersion );
+        return test( testDir, "install", "-DfdkVersion=" + fdkVersion);
     }
 
     public FMVerifier standardConceptTester( String conceptName, String... args )
@@ -45,14 +44,15 @@ public abstract class AbstractConceptTest
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { /*{ "4.8.0.1359417" },*/ { "4.9.0.1425567" }, { "4.9.1.1447119" },
-                { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" } };
+        return new Object[][] { { "4.8.0.1359417" }, { "4.9.0.1425567" }, { "4.9.1.1447119" },
+                { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" }, { "4.12.1.20140427" } };
     }
 
     @DataProvider( name = "flex4WithAdvancedTelemetrySupport" )
     public Object[][] flex4WithAdvancedTelemetrySupport()
     {
-        return new Object[][] { { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" } };
+        return new Object[][] { { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" },
+                { "4.12.1.20140427" } };
     }
 
 }

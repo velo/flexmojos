@@ -43,11 +43,25 @@
     <packaging>pom</packaging>
 
     <dependencies>
+        <!-- Flex SDK dependencies -->
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
         <!-- Air SDK dependencies -->
         <dependency>
-            <groupId>${flex.groupId}.framework.air</groupId>
-            <artifactId>air-framework</artifactId>
+            <groupId>org.apache.flex.framework</groupId>
+            <artifactId>air</artifactId>
             <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <!-- Air runtime dependencies -->
+        <dependency>
+            <groupId>com.adobe.air</groupId>
+            <artifactId>framework</artifactId>
+            <version>${air.version}</version>
             <type>pom</type>
         </dependency>
     </dependencies>

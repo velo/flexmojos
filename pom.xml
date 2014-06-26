@@ -36,7 +36,7 @@
     <url>http://docs.flexmojos.info</url>
     <organization>
         <name>flexmojos</name>
-        <url>http://www.flexmojos.info</url>
+        <url>https://flexmojos.atlassian.net</url>
     </organization>
     <inceptionYear>2008</inceptionYear>
 
@@ -77,10 +77,9 @@
     </licenses>
 
     <properties>
-        <flex.version>4.12.0.20140303</flex.version>
-        <air.version>3.1</air.version>
-        <player.version>11.1</player.version>
-        <flex.groupId>org.apache.flex</flex.groupId>
+        <flex.version>4.12.1.20140427</flex.version>
+        <air.version>13.0</air.version>
+        <flash.version>13.0</flash.version>
 
         <commons_io.version>1.4</commons_io.version>
         <maven.version>3.0.4</maven.version>
@@ -101,7 +100,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.4</version>
+                    <version>1.6</version>
                     <configuration>
                         <complianceLevel>1.6</complianceLevel>
                         <source>1.6</source>
@@ -294,11 +293,11 @@
                                         <exclude>org.hamcrest:hamcrest-all</exclude>
                                     </excludes>
                                 </bannedDependencies>
-                                <!--requireMavenVersion>
+                                <requireMavenVersion>
                                     <version>${maven.version}</version>
-                                </requireMavenVersion-->
+                                </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[1.5,1.8)</version>
+                                    <version>[1.5,)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -364,17 +363,17 @@
 
     <issueManagement>
         <system>jira</system>
-        <url>https://issues.sonatype.org/browse/FLEXMOJOS</url>
+        <url>https://flexmojos.atlassian.net/browse/FLEXMOJOS</url>
     </issueManagement>
 
     <scm>
         <connection>scm:git:https://chrisdutz@github.com/chrisdutz/flexmojos.git</connection>
         <developerConnection>scm:git:https://chrisdutz@github.com/chrisdutz/flexmojos.git</developerConnection>
         <url>http://github.com/chrisdutz/flexmojos</url>
-      <tag>flexmojos-6.0.0</tag>
-  </scm>
+        <tag>flexmojos-6.0.0</tag>
+    </scm>
 
-    <mailingLists>
+    <!--mailingLists>
         <mailingList>
             <name>Flexmojos Google Group</name>
             <subscribe>flexmojos-subscribe@googlegroups.com</subscribe>
@@ -382,7 +381,7 @@
             <post>flexmojos@googlegroups.com</post>
             <archive>http://groups.google.com/group/flexmojos/</archive>
         </mailingList>
-    </mailingLists>
+    </mailingLists-->
 
     <profiles>
         <profile>
@@ -645,13 +644,6 @@
             </dependency>
 
             <dependency>
-                <groupId>${flex.groupId}</groupId>
-                <artifactId>compiler</artifactId>
-                <version>${flex.version}</version>
-                <type>pom</type>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>${maven.version}</version>
@@ -800,6 +792,16 @@
                 <groupId>com.googlecode.apparat</groupId>
                 <artifactId>apparat-core</artifactId>
                 <version>${apparat.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.adobe.flex.framework</groupId>
+                        <artifactId>playerglobal</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.adobe.flex.framework</groupId>
+                        <artifactId>flex</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.apparat</groupId>
@@ -830,21 +832,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-integration</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

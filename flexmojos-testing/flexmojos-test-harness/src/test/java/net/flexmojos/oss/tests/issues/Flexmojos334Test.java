@@ -45,7 +45,6 @@ public class Flexmojos334Test
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=link-report", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 3, classes.toString() );
-        // bug on flexmojos/cobertura support, it does think the files are .java
         MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.as",
                                                                             "FlexMaven/sampleInclude.as",
                                                                             "FlexMaven/App.as" ) );
@@ -61,7 +60,6 @@ public class Flexmojos334Test
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=disabled", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 2, classes.toString() );
-        // bug on flexmojos/cobertura support, it does think the files are .java
         MatcherAssert.assertThat( classes,
                                   IsCollectionContaining.hasItems( "FlexMaven/sampleInclude.as", "FlexMaven/App.as" ) );
         MatcherAssert.assertThat( classes,
@@ -78,7 +76,6 @@ public class Flexmojos334Test
             testIssue( "flexmojos-334", "-Dflex.coverageStrategy=as3Content", "-Dflex.coverageOverwriteSourceRoots=src/main/flex" );
         List<String> classes = getCoveredClasses( v );
         Assert.assertEquals( classes.size(), 4, classes.toString() );
-        // bug on flexmojos/cobertura support, it does think the files are .java
         MatcherAssert.assertThat( classes, IsCollectionContaining.hasItems( "FlexMaven/UntestedClass.as",
                                                                             "FlexMaven/sampleInclude.as",
                                                                             "FlexMaven/unusedInclude.as",

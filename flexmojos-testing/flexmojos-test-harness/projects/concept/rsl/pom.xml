@@ -36,30 +36,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>%{flex.groupId}.framework</groupId>
-            <artifactId>flex-framework</artifactId>
-            <type>pom</type>
-        </dependency>
-
-        <dependency>
-            <groupId>%{flex.groupId}.framework</groupId>
+            <groupId>org.apache.flex.framework</groupId>
             <artifactId>spark</artifactId>
+            <version>%{flex.version}</version>
             <type>swc</type>
             <scope>rsl</scope>
         </dependency>
-    </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>%{flex.groupId}</groupId>
-                <artifactId>framework</artifactId>
-                <version>%{flex.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -68,7 +64,7 @@
                 <artifactId>flexmojos-maven-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>%{flex.groupId}</groupId>
+                        <groupId>org.apache.flex</groupId>
                         <artifactId>compiler</artifactId>
                         <version>%{flex.version}</version>
                         <type>pom</type>

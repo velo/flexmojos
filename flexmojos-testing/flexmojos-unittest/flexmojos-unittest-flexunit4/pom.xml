@@ -18,38 +18,52 @@
     along with this program.  If not, see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-unittest</artifactId>
-    <version>7.1.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>net.flexmojos.oss</groupId>
+        <artifactId>flexmojos-unittest</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>flexmojos-unittest-flexunit4</artifactId>
-  <packaging>swc</packaging>
+    <artifactId>flexmojos-unittest-flexunit4</artifactId>
+    <packaging>swc</packaging>
 
-  <name>Flexmojos Unit Test support - flexunit 4</name>
+    <name>Flexmojos Unit Test support - flexunit 4</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>flexmojos-unittest-support</artifactId>
-      <version>${project.version}</version>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flexmojos-unittest-support</artifactId>
+            <version>${project.version}</version>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>4.1.0</version>
-      <classifier>flex4</classifier>
-      <type>swc</type>
-      <scope>external</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>org.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>4.1.0</version>
+            <classifier>flex4</classifier>
+            <type>swc</type>
+            <scope>external</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>${flash.version}</version>
+            <type>swc</type>
+        </dependency>
+    </dependencies>
 
 </project>
