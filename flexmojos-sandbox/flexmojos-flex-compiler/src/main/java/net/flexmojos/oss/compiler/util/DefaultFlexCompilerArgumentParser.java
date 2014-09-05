@@ -19,24 +19,11 @@ package net.flexmojos.oss.compiler.util;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import net.flexmojos.oss.compiler.*;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import net.flexmojos.oss.compiler.IASDocConfiguration;
-import net.flexmojos.oss.compiler.IFlexArgument;
-import net.flexmojos.oss.compiler.IFlexConfiguration;
-import net.flexmojos.oss.compiler.IFontsConfiguration;
-import net.flexmojos.oss.compiler.IMetadataConfiguration;
-import net.flexmojos.oss.compiler.IRuntimeSharedLibraryPath;
 import net.flexmojos.oss.generator.iface.StringUtil;
 
 @Component( role = FlexCompilerArgumentParser.class )
@@ -52,8 +39,8 @@ public class DefaultFlexCompilerArgumentParser
 
     public <E> String[] parseArguments( E cfg, Class<? extends E> configClass, ClassLoader classLoader )
     {
-        String[] args = getArgumentsList( cfg, configClass, classLoader ).toArray( new String[0] );
-        return args;
+        List<String> argList = getArgumentsList( cfg, configClass, classLoader );
+        return argList.toArray( new String[argList.size()] );
     }
 
     public <E> List<String> getArgumentsList( E cfg, Class<? extends E> configClass )
@@ -190,7 +177,8 @@ public class DefaultFlexCompilerArgumentParser
 
                 for ( IFlexArgument iFlexArgument : values )
                 {
-                    String[] order = (String[]) type.getField( "ORDER" ).get( iFlexArgument );
+                    // Get the names of the arguments in the order of their appearance.
+                    String[] order = (String[]) type.getField( "ORDER" ).get(iFlexArgument);
                     List<String> subArg = new LinkedList<String>();
                     for ( String argMethodName : order )
                     {
@@ -236,7 +224,12 @@ public class DefaultFlexCompilerArgumentParser
                         }
                     }
 
-                    args.add( new Entry<String, List<String>>( name, subArg ) );
+                    if(type == INamespace.class) {
+                        args.add( new Entry<String, List<String>>(
+                                name + "=" + subArg.get(0) + "," + subArg.get(1), null ) );
+                    } else {
+                        args.add( new Entry<String, List<String>>( name, subArg ) );
+                    }
                 }
             }
             else if ( returnType.isArray() || value instanceof Collection<?> )

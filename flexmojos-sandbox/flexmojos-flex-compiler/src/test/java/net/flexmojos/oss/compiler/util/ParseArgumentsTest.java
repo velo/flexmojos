@@ -125,7 +125,7 @@ public class ParseArgumentsTest
         List<String> args = parser.getArgumentsList( cfg, ICompcConfiguration.class );
 
         Assert.assertNotNull( args );
-        Assert.assertEquals( args.size(), 25, args.toString() );
+        Assert.assertEquals( args.size(), 21, args.toString() );
         Assert.assertTrue( args.contains( "-include-classes=AClass,BClass" ) );
         Assert.assertTrue( args.contains( "-compiler.accessible=true" ) );
         Assert.assertTrue( args.contains( "-metadata.creator=Marvin" ) );
@@ -133,14 +133,11 @@ public class ParseArgumentsTest
         Assert.assertTrue( args.contains( "-metadata.creator+=Froeder" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.fonts.languages.language-range", "Thai", "U+0E01-0E5B" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.fonts.languages.language-range", "ptBR", "U+0A0C-0EAA" ) );
-        assertThat(
-                    args,
+        assertThat( args,
                     ArrayMatcher.subArray( "-runtime-shared-library-path=MyLibrary.swc,http://a.com/rsls/MyLibrary.swf,http://a.com/rsls/crossdomain.xml,MyLibrary.swf" ) );
         assertThat( args, ArrayMatcher.subArray( "-frames.frame", "my-frame", "org.package.1", "org.package.2" ) );
-        assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace", "http://www.adobe.com/2006/mxml",
-                                                 "mx-manifest.xml" ) );
-        assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace", "library://ns.adobe.com/flex/spark",
-                                                 "spark-manifest.xml" ) );
+        assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace=http://www.adobe.com/2006/mxml,mx-manifest.xml" ) );
+        assertThat( args, ArrayMatcher.subArray( "-compiler.namespaces.namespace=library://ns.adobe.com/flex/spark,spark-manifest.xml" ) );
         assertThat( args, ArrayMatcher.subArray( "-compiler.define", "CFG::AAA", "true" ) );
     }
 
