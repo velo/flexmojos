@@ -179,7 +179,17 @@ public class TestRunMojo
      */
     private String flashPlayerCommand;
 
-    private int numErrors;
+	/**
+	 * Usually every return code other than 0 is bad, especially on some linux machines
+	 * however other return codes might be returned, breaking the build. With this
+	 * option the user can specify a list of return codes that flexmojos will treat
+	 * as "OK".
+	 *
+	 * @parameter default-value="" expression="${flex.flashPlayer.returnCodesToIgnore}"
+	 */
+	private String flashPlayerReturnCodesToIgnore;
+
+	private int numErrors;
 
     private int numFailures;
 
@@ -349,6 +359,15 @@ public class TestRunMojo
         testRequest.setTestPort( testPort );
         testRequest.setSwf( swf );
         testRequest.setAllowHeadlessMode( allowHeadlessMode );
+        // Convert a comma separated list of strings into an array of Integers.
+        if(flashPlayerReturnCodesToIgnore != null) {
+            String[] codeStrings = flashPlayerReturnCodesToIgnore.split(",");
+            Integer[] codes = new Integer[codeStrings.length];
+            for(int i = 0; i < codeStrings.length; i++) {
+                codes[i] = Integer.valueOf(codeStrings[i]);
+            }
+            testRequest.setFlashPlayerReturnCodesToIgnore( codes );
+        }
         testRequest.setTestTimeout( testTimeout );
         testRequest.setFirstConnectionTimeout( firstConnectionTimeout );
 

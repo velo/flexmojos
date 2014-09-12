@@ -73,6 +73,8 @@ public class AsVmLauncher
 
     private StringBuffer consoleLog = new StringBuffer();
 
+    private Integer[] flashPlayerReturnCodesToIgnore;
+
     private File log;
 
     private Process process;
@@ -87,6 +89,20 @@ public class AsVmLauncher
 
         String errorMessage;
 
+        // On some systems flashplayer returns unexpected error codes.
+        // The flashPlayerReturnCodesToIgnore parameter allows us to
+        // prevent the test from failing if we observe the flashplayer
+        // is actually working correctly.
+        if( flashPlayerReturnCodesToIgnore != null ) {
+            for(Integer ignoredReturnCode : flashPlayerReturnCodesToIgnore) {
+                if(returnCode == ignoredReturnCode) {
+                    getLogger().debug( "[LAUNCHER] runtime exited with ignored return code: " + ignoredReturnCode );
+
+                    status = ThreadStatus.DONE;
+                    return;
+                }
+            }
+        }
         switch ( returnCode )
         {
             // TODO: Depending on the executed command, interpret the return codes
@@ -132,6 +148,10 @@ public class AsVmLauncher
 /*            case 7:
                 errorMessage = "This code was typically related with the wrong version of adl being executed.";
                 break;*/
+            /*
+             *  Segmentation fault 128 + signal = 139 --> signal = 11 (http://de.wikipedia.org/wiki/Signal_(Unix))
+             *  Usually occurring when closing the flashplayer on a headless linux system with xvfb.
+             */
             case 139:
                 if ( OSUtils.isLinux() )
                 {
@@ -276,6 +296,8 @@ public class AsVmLauncher
         }
 
         allowHeadlessMode = request.getAllowHeadlessMode();
+
+        flashPlayerReturnCodesToIgnore = request.getFlashPlayerReturnCodesToIgnore();
 
         if ( targetFile == null )
         {
