@@ -622,42 +622,12 @@ public class AsdocMojo
             throw new MavenRuntimeException( "Unable to unpack asdoc template", e );
         }
 
-        makeAsdocExecutable( templateOutput );
-
         return PathUtil.path( templateOutput );
     }
 
     public String getWindowTitle()
     {
         return windowTitle;
-    }
-
-    @FlexCompatibility( maxVersion = "4.0.0.3127" )
-    private void makeAsdocExecutable( File templateOutput )
-    {
-        // must use chmod to make asdoc executable
-        if ( !OSUtils.isWindows() )
-        {
-            Runtime runtime = Runtime.getRuntime();
-            String pathname =
-                String.format( "%s/%s", templateOutput.getAbsolutePath(), "asDocHelper"
-                    + ( MavenUtils.isLinux() ? ".linux" : "" ) );
-            String[] statements = new String[] { "chmod", "u+x", pathname };
-            try
-            {
-                Process p = runtime.exec( statements );
-                int result = p.waitFor();
-                if ( 0 != result )
-                {
-                    throw new MavenRuntimeException( String.format( "Unable to execute %s. Return value = %d",
-                                                                    Arrays.asList( statements ), result ) );
-                }
-            }
-            catch ( Exception e )
-            {
-                throw new MavenRuntimeException( String.format( "Unable to execute %s", Arrays.asList( statements ) ) );
-            }
-        }
     }
 
 }

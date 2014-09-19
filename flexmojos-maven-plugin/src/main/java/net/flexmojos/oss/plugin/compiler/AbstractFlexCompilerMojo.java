@@ -24,9 +24,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.classifier;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
 import static net.flexmojos.oss.plugin.common.FlexClassifier.CONFIGS;
@@ -68,6 +66,7 @@ import java.util.Set;
 
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.flex.utilities.converter.core.FlashDownloader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -79,7 +78,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
-import net.flexmojos.oss.compatibilitykit.FlexCompatibility;
 import net.flexmojos.oss.compatibilitykit.FlexMojo;
 import net.flexmojos.oss.compatibilitykit.VersionUtils;
 import net.flexmojos.oss.compiler.IApplicationDomain;
@@ -1311,17 +1309,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     private Integer swfVersion;
 
     /**
-     * Specifies the version of the player the application is targeting. Features requiring a later version will not be
-     * compiled into the application. The minimum value supported is "9.0.0".
-     * <p>
-     * Equivalent to -target-player
-     * </p>
-     * 
-     * @parameter expression="${flex.targetPlayer}"
-     */
-    private String targetPlayer;
-
-    /**
      * List of CSS or SWC files to apply as a theme
      * <p>
      * Equivalent to -compiler.theme
@@ -1609,7 +1596,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
     }
 
-    @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeHaloSwc( List<File> themes )
     {
         File haloSwc = resolveThemeFile( "halo" );
@@ -1622,7 +1608,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         themes.add( haloSwc );
     }
 
-    @FlexCompatibility( minVersion = "4.0.0.11420" )
     private void configureThemeSparkCss( List<File> themes )
     {
         File sparkTheme = resolveThemeFile( "spark" );
@@ -2244,7 +2229,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             return null;
         }
-        return Arrays.asList( includes );
+        return Arrays.asList(includes);
     }
 
     public Boolean getIncremental()
@@ -2329,53 +2314,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public ILicense[] getLicense()
     {
-        try
-        {
-            Class.forName( "flex.license.License" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            getLog().debug( "Unable to find license.jar on plugin classpath.  No license will be added.  Check wiki for instructions about how to add it:\n\t"
-                               + "https://docs.sonatype.org/display/FLEXMOJOS/FAQ#FAQ-1.3" );
-            return null;
-        }
-
-        Map<String, String> licenses = new LinkedHashMap<String, String>();
-
-        if ( licenseLocalLookup )
-        {
-            licenses.putAll( licenseCalculator.getInstalledLicenses() );
-        }
-
-        if ( this.licenses != null )
-        {
-            licenses.putAll( this.licenses );
-        }
-
-        if ( licenses.isEmpty() )
-        {
-            return null;
-        }
-
-        Set<Entry<String, String>> entries = licenses.entrySet();
-        List<ILicense> keys = new ArrayList<ILicense>();
-        for ( final Entry<String, String> entry : entries )
-        {
-            keys.add( new ILicense()
-            {
-                public String product()
-                {
-                    return entry.getKey();
-                }
-
-                public String serialNumber()
-                {
-                    return entry.getValue();
-                }
-            } );
-        }
-
-        return keys.toArray( new ILicense[keys.size()] );
+        return null;
     }
 
     public ILicensesConfiguration getLicensesConfiguration()
@@ -2864,7 +2803,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return signatureDirectory;
     }
 
-    @FlexCompatibility( minVersion = "4.5.0" )
     public String getSizeReport()
     {
         File sizeReport = new File( getTargetDirectory(), getFinalName() + "-" + SIZE_REPORT + "." + XML );
@@ -2897,7 +2835,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             }
         }
 
-        return files.toArray( new File[0] );
+        return files.toArray(new File[files.size()]);
     }
 
     public Boolean getStaticLinkRuntimeSharedLibraries()
@@ -2915,7 +2853,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
-    @FlexCompatibility( minVersion = "4.5" )
     public Integer getSwfVersion()
     {
         if ( swfVersion != null )
@@ -2923,47 +2860,50 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             return swfVersion;
         }
 
-        Artifact global = getGlobalArtifact();
-        if ( PLAYER_GLOBAL.equals( global.getArtifactId() ) )
+        if(flashVersion == null) {
+            Artifact global = getGlobalArtifact();
+            if  (PLAYER_GLOBAL.equals(global.getArtifactId())) {
+                flashVersion = global.getVersion();
+            }
+        }
+        if ( flashVersion != null )
         {
-            String playerVersion = global.getVersion();
-
-            if ( VersionUtils.isMinVersionOK( playerVersion, "14.0" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "14.0" ) )
                 return 25;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "13.0" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "13.0" ) )
                 return 24;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "12.0" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "12.0" ) )
                 return 23;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.9" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.9" ) )
                 return 22;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.8" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.8" ) )
                 return 21;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.7" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.7" ) )
                 return 20;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.6" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.6" ) )
                 return 19;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.5" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.5" ) )
                 return 18;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.4" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.4" ) )
                 return 17;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.3" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.3" ) )
                 return 16;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.2" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.2" ) )
                 return 15;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11.1" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11.1" ) )
                 return 14;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "11" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "11" ) )
                 return 13;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "10.3" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "10.3" ) )
                 return 12;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "10.2" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "10.2" ) )
                 return 11;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "10.1" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "10.1" ) )
                 return 10;
-            if ( VersionUtils.isMinVersionOK( playerVersion, "9" ) )
+            if ( VersionUtils.isMinVersionOK( flashVersion, "9" ) )
                 return 9;
 
-            getLog().warn( "Unable to determine 'swfVersion' for " + global );
+            getLog().warn( "Unable to determine 'swfVersion' for " + flashVersion );
         }
 
         return null;
@@ -2971,7 +2911,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getTargetPlayer()
     {
-        return targetPlayer;
+        return flashVersion;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -3028,7 +2968,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return project.getName();
     }
 
-    @FlexCompatibility( minVersion = "4.0.0.13007" )
     public String getToolsLocale()
     {
         if ( toolsLocale == null )

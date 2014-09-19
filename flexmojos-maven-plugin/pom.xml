@@ -208,6 +208,16 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--
+            Add the flash-converter for downloading and
+            converting flash artifacts.
+        -->
+        <dependency>
+            <groupId>org.apache.flex.utilities.converter</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>

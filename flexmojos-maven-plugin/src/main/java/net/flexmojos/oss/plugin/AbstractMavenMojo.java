@@ -19,15 +19,13 @@ package net.flexmojos.oss.plugin;
 
 import static ch.lambdaj.Lambda.filter;
 import static ch.lambdaj.Lambda.selectFirst;
+import static net.flexmojos.oss.plugin.common.FlexExtension.*;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.classifier;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
 import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
-import static net.flexmojos.oss.plugin.common.FlexExtension.AS;
-import static net.flexmojos.oss.plugin.common.FlexExtension.MXML;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -44,6 +42,9 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.flex.utilities.converter.core.AirDownloader;
+import org.apache.flex.utilities.converter.core.FlashDownloader;
+import org.apache.flex.utilities.converter.retrievers.types.PlatformType;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -66,8 +67,6 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.InterpolationFilterReader;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.hamcrest.Matcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -157,11 +156,18 @@ public abstract class AbstractMavenMojo
     protected boolean fullSynchronization;
 
     /**
+     * Adobe Flash version
+     *
+     * @parameter expression="${flex.flashVersion}"
+     */
+    protected String flashVersion;
+
+    /**
      * Adobe AIR version
      *
      * @parameter expression="${flex.airVersion}"
      */
-    private String airVersion;
+    protected String airVersion;
 
     protected final Matcher<? extends Artifact> GLOBAL_MATCHER = initGlobalMatcher();
 
@@ -469,7 +475,7 @@ public abstract class AbstractMavenMojo
 
     protected Artifact getCompilerArtifact()
     {
-        Artifact apacheCompiler = MavenUtils.searchFor( pluginArtifacts, "org.apache.flex", "compiler", null, "pom", null );
+        Artifact apacheCompiler = MavenUtils.searchFor(pluginArtifacts, "org.apache.flex", "compiler", null, "pom", null);
         if(apacheCompiler != null) {
             return apacheCompiler;
         }
@@ -610,9 +616,32 @@ public abstract class AbstractMavenMojo
         Artifact global = getDependency( GLOBAL_MATCHER );
         if ( global == null )
         {
-            throw new IllegalArgumentException(
-                    "Global artifact is not available. Make sure to add " +
-                            "'playerglobal' or 'airglobal' to this project.");
+            if(flashVersion != null) {
+                global = getFlashRuntimeArtifact();
+            } else if(airVersion != null) {
+                global = getAirRuntimeArtifact();
+            } else {
+                throw new IllegalArgumentException(
+                        "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to " +
+                                "this project or set the 'flashVersion' or 'airVersion' configuration parameters " +
+                                "to have missing artifacts automatically downloaded.");
+            }
+        } else {
+            if(PLAYER_GLOBAL.equals(global.getArtifactId()) && (flashVersion != null) &&
+                    !global.getVersion().equals(flashVersion)) {
+                throw new IllegalArgumentException(
+                        "Version of 'playerglobal' artifact doesn't match the version configured in the " +
+                                "'flashVersion' configuration parameter. Make sure the versions match or remove " +
+                                "either the 'playerglobal' dependency or the 'flashVersion' configuration parameter " +
+                                "as they are redundant.");
+            } else if(AIR_GLOBAL.equals(global.getArtifactId()) && (airVersion != null) &&
+                    !global.getVersion().equals(airVersion)) {
+                throw new IllegalArgumentException(
+                        "Version of 'airglobal' artifact doesn't match the version configured in the " +
+                                "'airVersion' configuration parameter. Make sure the versions match or remove " +
+                                "either the 'airglobal' dependency or the 'airVersion' configuration parameter " +
+                                "as they are redundant.");
+            }
         }
 
         File source = global.getFile();
@@ -633,6 +662,96 @@ public abstract class AbstractMavenMojo
             throw new IllegalStateException( "Error renaming '" + global.getArtifactId() + "'.", e );
         }
         return global;
+    }
+
+    protected Artifact getFlashRuntimeArtifact() {
+        Artifact playerglobalArtifact = null;
+        try
+        {
+            // first try to get the artifact from maven local repository for the appropriated flex version
+            playerglobalArtifact = resolve(
+                    FLASH_GROUP_ID, PLAYER_GLOBAL, flashVersion, null, "swc" );
+        }
+        catch ( RuntimeMavenResolutionException e ) {
+            getLog().info("Couldn't resolve playerglobal swc artifact from remote repository, " +
+                    "falling back to using the Apache Mavenizer");
+
+            // Get the maven local repo directory.
+            File mavenLocalRepoDir = new File(localRepository.getBasedir());
+            if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
+                // Use the Mavenizer to download and install the playerglobal artifact.
+                FlashDownloader flashDownloader = new FlashDownloader();
+                try {
+                    // Download and convert the flashplayer artifacts.
+                    flashDownloader.downloadAndConvert(mavenLocalRepoDir, flashVersion);
+
+                    // Try to resolve the artifact again (This time it should work).
+                    playerglobalArtifact = resolve(
+                            FLASH_GROUP_ID, PLAYER_GLOBAL, flashVersion, null, "swc" );
+                } catch(Exception ce) {
+                    getLog().error("Caught exception while downloading and converting artifact.");
+                }
+            } else {
+                getLog().error("Could not access maven local repo directory at: " +
+                        mavenLocalRepoDir.getAbsolutePath());
+            }
+        }
+
+        // If an artifact was found, add that to the dependencies.
+        if(playerglobalArtifact != null) {
+            project.getArtifacts().add(playerglobalArtifact);
+        }
+
+        return playerglobalArtifact;
+    }
+
+    protected Artifact getAirRuntimeArtifact() {
+        Artifact airglobalArtifact = null;
+        try
+        {
+            // first try to get the artifact from maven local repository for the appropriated flex version
+            airglobalArtifact = resolve(
+                    AIR_GROUP_ID, AIR_GLOBAL, airVersion, null, SWC );
+        }
+        catch ( RuntimeMavenResolutionException e ) {
+            getLog().info("Couldn't resolve playerglobal swc artifact from remote repository, " +
+                    "falling back to using the Apache Mavenizer");
+
+            // Get the maven local repo directory.
+            File mavenLocalRepoDir = new File(localRepository.getBasedir());
+            if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
+                // Use the Mavenizer to download and install the playerglobal artifact.
+                AirDownloader airDownloader = new AirDownloader();
+                try {
+                    PlatformType platformType = null;
+                    if(MavenUtils.isWindows()) {
+                        platformType = PlatformType.WINDOWS;
+                    } else if(MavenUtils.isMac()) {
+                        platformType = PlatformType.MAC;
+                    } else if(MavenUtils.isLinux()) {
+                        platformType = PlatformType.LINUX;
+                    }
+                    // Download and convert the air artifacts.
+                    airDownloader.downloadAndConvert(mavenLocalRepoDir, airVersion, platformType);
+
+                    // Try to resolve the artifact again (This time it should work).
+                    airglobalArtifact = resolve(
+                            AIR_GROUP_ID, AIR_GLOBAL, airVersion, null, SWC );
+                } catch(Exception ce) {
+                    getLog().error("Caught exception while downloading and converting artifact.");
+                }
+            } else {
+                getLog().error("Could not access maven local repo directory at: " +
+                        mavenLocalRepoDir.getAbsolutePath());
+            }
+        }
+
+        // If an artifact was found, add that to the dependencies.
+        if(airglobalArtifact != null) {
+            project.getArtifacts().add(airglobalArtifact);
+        }
+
+        return airglobalArtifact;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -705,7 +824,7 @@ public abstract class AbstractMavenMojo
     public File getTargetDirectory()
     {
         targetDirectory.mkdirs();
-        return PathUtil.file( targetDirectory );
+        return PathUtil.file(targetDirectory);
     }
 
     public File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier, String type )
@@ -747,15 +866,15 @@ public abstract class AbstractMavenMojo
             return null;
         }
 
-        return getUnpackedArtifact( frmkCfg.getGroupId(), frmkCfg.getArtifactId(), frmkCfg.getVersion(),
-                                    frmkCfg.getClassifier(), frmkCfg.getType() );
+        return getUnpackedArtifact(frmkCfg.getGroupId(), frmkCfg.getArtifactId(), frmkCfg.getVersion(),
+                frmkCfg.getClassifier(), frmkCfg.getType());
     }
 
     @SuppressWarnings( "unchecked" )
     protected Matcher<? extends Artifact> initGlobalMatcher()
     {
-        return anyOf( allOf( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ),
-                allOf( groupId( FLASH_GROUP_ID ), artifactId( PLAYER_GLOBAL ), type( SWC ) ) );
+        return anyOf(allOf(groupId(AIR_GROUP_ID), artifactId(AIR_GLOBAL), type(SWC)),
+                allOf(groupId(FLASH_GROUP_ID), artifactId(PLAYER_GLOBAL), type(SWC)));
     }
 
     public boolean isSkip()
@@ -818,11 +937,13 @@ public abstract class AbstractMavenMojo
         scanner.setBasedir( directory );
         if ( !pattern.getIncludes().isEmpty() )
         {
-            scanner.setIncludes( pattern.getIncludes().toArray( new String[0] ) );
+            List<String> includes = pattern.getIncludes();
+            scanner.setIncludes(includes.toArray(new String[includes.size()]));
         }
         if ( !pattern.getExcludes().isEmpty() )
         {
-            scanner.setExcludes( pattern.getExcludes().toArray( new String[0] ) );
+            List<String> excludes = pattern.getExcludes();
+            scanner.setExcludes(excludes.toArray(new String[excludes.size()]));
         }
         scanner.addDefaultExcludes();
         scanner.scan();
