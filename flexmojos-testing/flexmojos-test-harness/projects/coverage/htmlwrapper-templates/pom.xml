@@ -24,7 +24,6 @@
 	<groupId>info.rvin.itest.coverage</groupId>
 	<artifactId>htmwrapper-templates</artifactId>
 	<version>1.0-SNAPSHOT</version>
-
 	<packaging>pom</packaging>
 
 	<modules>

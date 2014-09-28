@@ -18,37 +18,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.apache.flex.sdk</groupId>
-	<artifactId>projects</artifactId>
-	<version>3.0-SNAPSHOT</version>
+    <groupId>org.apache.flex.sdk</groupId>
+    <artifactId>projects</artifactId>
+    <version>3.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<name>Adobe Flex SDK</name>
+    <name>Adobe Flex SDK</name>
 
-	<packaging>pom</packaging>
+    <repositories>
+        <repository>
+            <id>flexmojos-repository</id>
+            <url>http://svn.sonatype.org/flexmojos/repository/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-	<repositories>
-		<repository>
-			<id>flexmojos-repository</id>
-			<url>http://svn.sonatype.org/flexmojos/repository/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<modules>
-		<module>framework</module>
-		<module>rpc</module>
-		<module>airframework</module>
-		<module>flex</module>
-		<module>utilities</module>
-		<module>haloclassic</module>
-		<module>flash-integration</module>
-	</modules>
+    <modules>
+        <module>framework</module>
+        <module>rpc</module>
+        <module>airframework</module>
+        <module>flex</module>
+        <module>utilities</module>
+        <module>haloclassic</module>
+        <module>flash-integration</module>
+    </modules>
 </project>

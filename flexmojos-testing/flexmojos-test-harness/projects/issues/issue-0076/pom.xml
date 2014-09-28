@@ -22,28 +22,35 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>net.flexmojos.oss</groupId>
-		<artifactId>flexmojos-flex-super-pom</artifactId>
-		<version>%{flexmojos.version}</version>
-	</parent>
-
+    <groupId>info.rvin.itest.issues</groupId>
 	<artifactId>issue0076</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>swc</packaging>
 
 	<build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<configuration>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <configuration>
 					<locales>
 						<locale>en_US</locale>
 						<locale>es_ES</locale>
 					</locales>
 				</configuration>
-			</plugin>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -55,10 +62,20 @@
 					<plugin>
 						<groupId>net.flexmojos.oss</groupId>
 						<artifactId>flexmojos-maven-plugin</artifactId>
-						<configuration>
+                        <version>%{flexmojos.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
 							<mergeResourceBundle>true</mergeResourceBundle>
 						</configuration>
-					</plugin>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.flex</groupId>
+                                <artifactId>compiler</artifactId>
+                                <version>%{flex.version}</version>
+                                <type>pom</type>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -70,13 +87,38 @@
 					<plugin>
 						<groupId>net.flexmojos.oss</groupId>
 						<artifactId>flexmojos-maven-plugin</artifactId>
-						<configuration>
+                        <version>%{flexmojos.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
 							<mergeResourceBundle>false</mergeResourceBundle>
 						</configuration>
-					</plugin>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.flex</groupId>
+                                <artifactId>compiler</artifactId>
+                                <version>%{flex.version}</version>
+                                <type>pom</type>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+    </dependencies>
 
 </project>

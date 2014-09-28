@@ -336,6 +336,7 @@
             <artifactId>compiler</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

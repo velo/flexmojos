@@ -40,6 +40,19 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.flexmojos.oss</groupId>
+                        <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>

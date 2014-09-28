@@ -18,77 +18,97 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>other-wrapper-test</artifactId>
+        <groupId>sandbox</groupId>
+        <version>1</version>
+    </parent>
 
-  <parent>
-    <artifactId>other-wrapper-test</artifactId>
-    <groupId>sandbox</groupId>
+    <artifactId>other-project</artifactId>
     <version>1</version>
-  </parent>
+    <packaging>pom</packaging>
 
-  <groupId>sandbox</groupId>
-  <artifactId>other-project</artifactId>
-  <version>1</version>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wrapper</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <wrapperArtifact>
+                        <groupId>sandbox</groupId>
+                        <artifactId>swf-project</artifactId>
 
-  <packaging>pom</packaging>
+                        <!-- Optional, as a swf dependency with the same id will be
+                                         searched for if not defined. -->
+                        <version>1</version>
+                    </wrapperArtifact>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>%{flexmojos.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>wrapper</goal>
-            </goals>
-          </execution>
-        </executions>
+                    <templateInclusions>
+                        <String>**/*.jsp</String>
+                        <String>WEB-INF/**/*</String>
+                    </templateInclusions>
 
-        <configuration>
-          <wrapperArtifact>
+                    <templateExclusions>
+                        <String>**/*.txt</String>
+                    </templateExclusions>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assemblies/main.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
             <groupId>sandbox</groupId>
             <artifactId>swf-project</artifactId>
-
-            <!-- Optional, as a swf dependency with the same id will be
-						     searched for if not defined. -->
             <version>1</version>
-          </wrapperArtifact>
+            <type>swf</type>
+        </dependency>
+    </dependencies>
 
-          <templateInclusions>
-            <String>**/*.jsp</String>
-            <String>WEB-INF/**/*</String>
-          </templateInclusions>
-
-          <templateExclusions>
-            <String>**/*.txt</String>
-          </templateExclusions>
-        </configuration>
-
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-
-        <configuration>
-          <descriptors>
-            <descriptor>src/assemblies/main.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>sandbox</groupId>
-      <artifactId>swf-project</artifactId>
-      <version>1</version>
-      <type>swf</type>
-    </dependency>
-  </dependencies>
 </project>

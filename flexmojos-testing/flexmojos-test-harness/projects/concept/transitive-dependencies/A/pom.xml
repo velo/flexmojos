@@ -31,6 +31,27 @@
     <artifactId>A</artifactId>
     <packaging>swc</packaging>
 
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <!-- http://groups.google.com/group/flex-mojos/browse_thread/thread/8242dc44810c4463 -->
         <dependency>
@@ -54,20 +75,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.flexmojos.oss</groupId>
-                <artifactId>flexmojos-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.flex</groupId>
-                        <artifactId>compiler</artifactId>
-                        <version>%{flex.version}</version>
-                        <type>pom</type>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
 </project>

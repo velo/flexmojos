@@ -18,33 +18,55 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>net.flexmojos.oss</groupId>
-    <artifactId>flexmojos-flex-super-pom</artifactId>
-    <version>%{flexmojos.version}</version>
-  </parent>
+    <groupId>info.rvin.itest.issues</groupId>
+    <artifactId>issue-0008-1</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>swf</packaging>
 
-  <groupId>info.rvin.itest.issues</groupId>
-  <artifactId>issue-0008-1</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
-  <packaging>swf</packaging>
-
-  <build>
-    <testSourceDirectory>src/main/flex</testSourceDirectory>
-  </build>
-
-  <dependencies>
-    <dependency>
-      <groupId>com.adobe.flexunit</groupId>
-      <artifactId>flexunit</artifactId>
-      <version>0.90</version>
-      <type>swc</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>0.90</version>
+            <type>swc</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

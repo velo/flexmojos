@@ -31,6 +31,27 @@
     <artifactId>internalLib</artifactId>
     <packaging>swc</packaging>
 
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.flex</groupId>
@@ -45,22 +66,5 @@
             <type>swc</type>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.flexmojos.oss</groupId>
-                <artifactId>flexmojos-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.flex</groupId>
-                        <artifactId>compiler</artifactId>
-                        <version>%{flex.version}</version>
-                        <type>pom</type>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

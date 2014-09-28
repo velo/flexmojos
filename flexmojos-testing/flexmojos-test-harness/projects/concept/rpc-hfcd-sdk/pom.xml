@@ -28,19 +28,27 @@
 	<packaging>swf</packaging>
 
 	<build>
-		<sourceDirectory>src/main/flex</sourceDirectory>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<extensions>true</extensions>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
 				<dependencies>
 					<dependency>
 						<groupId>com.adobe.flex</groupId>
 						<artifactId>flex-compiler-oem</artifactId>
 						<version>3.0.0.477-hfcd-SNAPSHOT</version>
 					</dependency>
-				</dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
 			</plugin>
 		</plugins>
 	</build>

@@ -20,35 +20,58 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>info.rvin.itest.test-special-version</groupId>
-    <artifactId>aggregator</artifactId>
-    <version>1.0</version>
-  </parent>
+    <parent>
+        <groupId>info.rvin.itest.test-special-version</groupId>
+        <artifactId>aggregator</artifactId>
+        <version>1.0</version>
+    </parent>
 
-  <artifactId>app</artifactId>
-  <packaging>swf</packaging>
+    <artifactId>app</artifactId>
+    <packaging>swf</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>info.rvin.itest.test-special-version</groupId>
-      <artifactId>lib</artifactId>
-      <version>RELEASE</version>
-      <type>swc</type>
-      <scope>rsl</scope>
-    </dependency>
-  </dependencies>
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>%{flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <configuration>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>info.rvin.itest.test-special-version</groupId>
+            <artifactId>lib</artifactId>
+            <version>RELEASE</version>
+            <type>swc</type>
+            <scope>rsl</scope>
+        </dependency>
+    </dependencies>
+
 </project>

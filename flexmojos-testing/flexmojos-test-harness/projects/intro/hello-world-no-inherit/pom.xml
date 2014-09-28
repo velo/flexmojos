@@ -35,6 +35,7 @@
 
     <build>
         <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>

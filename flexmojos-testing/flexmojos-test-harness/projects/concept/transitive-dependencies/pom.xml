@@ -22,16 +22,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>net.flexmojos.oss</groupId>
-        <artifactId>flexmojos-super-pom-commons</artifactId>
-        <version>%{flexmojos.version}</version>
-    </parent>
-
     <groupId>info.rvin.itest.transitive-dependency</groupId>
     <artifactId>aggregator</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <packaging>pom</packaging>
 
     <modules>
@@ -41,10 +34,17 @@
     </modules>
 
     <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>
                 <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>%{flexmojos.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <ditaSkip>true</ditaSkip>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.flex</groupId>
@@ -60,11 +60,23 @@
                         <classifier>template</classifier>
                     </dependency>
                 </dependencies>
-                <configuration>
-                    <ditaSkip>true</ditaSkip>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>%{flex.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>%{flash.version}</version>
+            <type>swc</type>
+        </dependency>
+    </dependencies>
 
 </project>

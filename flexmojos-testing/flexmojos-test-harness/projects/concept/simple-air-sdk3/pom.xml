@@ -25,7 +25,6 @@
     <groupId>info.rvin.itest</groupId>
     <artifactId>simple-air</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <packaging>pom</packaging>
 
     <modules>
@@ -36,6 +35,7 @@
 
     <build>
         <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>

@@ -145,6 +145,12 @@
             <groupId>net.flexmojos.oss</groupId>
             <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.flex</groupId>
+                    <artifactId>compiler</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.sonatype.sisu.inject</groupId>
@@ -156,31 +162,37 @@
             <artifactId>compiler</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>mxmlc</artifactId>
             <version>${flex.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>digest</artifactId>
             <version>${flex.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>optimizer</artifactId>
             <version>${flex.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>asdoc</artifactId>
             <version>${flex.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>swcdepends</artifactId>
             <version>${flex.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
