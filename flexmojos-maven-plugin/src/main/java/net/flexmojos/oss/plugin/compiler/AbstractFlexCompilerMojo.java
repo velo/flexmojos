@@ -2868,6 +2868,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
         if ( flashVersion != null )
         {
+            if ( VersionUtils.isMinVersionOK( flashVersion, "15.0" ) )
+                return 26;
             if ( VersionUtils.isMinVersionOK( flashVersion, "14.0" ) )
                 return 25;
             if ( VersionUtils.isMinVersionOK( flashVersion, "13.0" ) )
