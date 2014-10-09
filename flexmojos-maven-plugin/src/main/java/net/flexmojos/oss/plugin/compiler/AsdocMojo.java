@@ -609,7 +609,7 @@ public class AsdocMojo
         File templateOutput = new File( project.getBuild().getDirectory(), "templates" );
         templateOutput.mkdirs();
 
-        Artifact template = resolve( getCompilerGroupId(), "asdoc", getCompilerVersion(), "template", "zip" );
+        Artifact template = resolve( "org.apache.flex.compiler", "asdoc", getCompilerVersion(), "template", "zip" );
         try
         {
             UnArchiver unarchiver = archiverManager.getUnArchiver( "zip" );

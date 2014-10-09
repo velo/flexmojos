@@ -100,7 +100,7 @@
                         </property>
                     </properties>
                     <includes>
-                        <include>**/*Test.java</include>
+                        <include>**/*ReTest.java</include>
                     </includes>
                 </configuration>
             </plugin>

@@ -479,8 +479,22 @@ public abstract class AbstractMavenMojo
         if(apacheCompiler != null) {
             return apacheCompiler;
         }
+        Artifact apacheFalconCompiler = MavenUtils.searchFor(pluginArtifacts, "org.apache.flex.compiler", "falcon-compiler", null, "jar", null);
+        if(apacheFalconCompiler != null) {
+            return apacheFalconCompiler;
+        }
         return null;
     }
+
+    protected Artifact getFrameworkArtifact()
+    {
+        Artifact apacheFramework = MavenUtils.searchFor(getDependencies(), "org.apache.flex", "framework", null, "pom", null);
+        if(apacheFramework != null) {
+            return apacheFramework;
+        }
+        return null;
+    }
+
 
     public String getFdkGroupId()
     {
@@ -493,18 +507,18 @@ public abstract class AbstractMavenMojo
 
     public String getCompilerGroupId()
     {
-        final String fdkGroupId = getFdkGroupId();
-        if(fdkGroupId != null) {
-            return fdkGroupId + ".compiler";
+        final Artifact compilerArtifact = getCompilerArtifact();
+        if(compilerArtifact != null) {
+            return compilerArtifact.getGroupId();
         }
         return null;
     }
 
     public String getFrameworkGroupId()
     {
-        final String fdkGroupId = getFdkGroupId();
-        if(fdkGroupId != null) {
-            return fdkGroupId + ".framework";
+        final Artifact frameworkArtifact = getFrameworkArtifact();
+        if(frameworkArtifact != null) {
+            return frameworkArtifact.getGroupId() + ".framework";
         }
         return null;
     }
@@ -520,35 +534,9 @@ public abstract class AbstractMavenMojo
 
     public String getFrameworkArtifactVersion(String groupId, String artifactId)
     {
-        final Artifact frameworkDependencyManagementPomArtifact =
-                resolve( getFdkGroupId(), "framework", getCompilerVersion(), null, "pom");
-        if(frameworkDependencyManagementPomArtifact != null) {
-            final File frameworkDependencyManagementPom =frameworkDependencyManagementPomArtifact.getFile();
-            if(frameworkDependencyManagementPom.exists()) {
-                FileInputStream pomFile = null;
-                try {
-                    pomFile = new FileInputStream( frameworkDependencyManagementPom );
-
-                    final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    final DocumentBuilder builder = dbf.newDocumentBuilder();
-                    final Document doc = builder.parse(pomFile);
-
-                    final XPathFactory xpFactory = XPathFactory.newInstance();
-                    final XPath xpath = xpFactory.newXPath();
-                    final XPathExpression expr = xpath.compile(
-                            "//dependency[groupId = '" + groupId + "' and artifactId = '" + artifactId + "']/version");
-
-                    final Node versionNode = (Node) expr.evaluate(doc, XPathConstants.NODE);
-                    if(versionNode != null) {
-                        return versionNode.getTextContent().trim();
-                    }
-                }
-                catch ( Exception e ) {
-                    throw new MavenRuntimeException( "Unable to load framework artifact version!", e );
-                } finally {
-                    IOUtil.close( pomFile );
-                }
-            }
+        final Artifact frameworkArtifact = getFrameworkArtifact();
+        if(frameworkArtifact != null) {
+            return frameworkArtifact.getVersion();
         }
         return null;
     }
@@ -573,9 +561,12 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     protected Artifact getFrameworkConfig()
     {
+        Matcher<? extends Artifact>[] frmkCfgMatchers = new  Matcher[] {
+                groupId( getFrameworkGroupId() ), artifactId( "framework" ), classifier( "configs" ),
+                type( "zip" )
+        };
         Artifact frmkCfg =
-            getDependency( groupId( getFrameworkGroupId() ), artifactId( "framework" ), classifier( "configs" ),
-                           type( "zip" ) );
+            getDependency( frmkCfgMatchers );
 
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )

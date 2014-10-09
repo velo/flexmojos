@@ -3299,7 +3299,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         File themeArtifact;
         final String themeGroupId = getFrameworkGroupId() + ".themes";
         final String themeArtifactId = artifactName;
-        final String themeVersion = getFrameworkArtifactVersion(getFrameworkGroupId(), artifactName);
+        final String themeVersion = getFrameworkVersion();
         try
         {
             // first try to get the artifact from maven local repository for the appropriated flex version
@@ -3315,7 +3315,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public void versionCheck()
     {
-        final String compilerVersion = getCompilerVersion();
+/*        final String compilerVersion = getCompilerVersion();
         final String frameworkVersion = getFrameworkVersion();
         if ( compilerVersion == null || frameworkVersion == null )
         {
@@ -3335,6 +3335,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                     + " Please take a look at: https://docs.sonatype.org/display/FLEXMOJOS/How+to+set+Flex+SDK+version";
             throw new IllegalStateException( msg );
         }
-    }
+*/    }
 
 }
