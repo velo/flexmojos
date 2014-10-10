@@ -23,7 +23,7 @@ import org.apache.maven.it.VerificationException;
 import net.flexmojos.oss.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
-public class IT0013IssuesReTest
+public class IT0013IssuesTest
     extends AbstractFlexMojosTests
 {
 

@@ -21,15 +21,15 @@ import java.io.File;
 
 import org.testng.annotations.Test;
 
-public class Issue0106ReTest
+public class Issue67Test
     extends AbstractIssueTest
 {
 
     @Test
-    public void issue106()
+    public void issue67()
         throws Exception
     {
-        File testDir = getProject( "/issues/issue-0106" );
+        File testDir = getProject( "/issues/issue-0067" );
         test( testDir, "net.flexmojos.oss:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
 

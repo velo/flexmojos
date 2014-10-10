@@ -227,12 +227,6 @@
             <artifactId>maven-compat</artifactId>
             <version>${maven.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>sisu-inject-plexus</artifactId>
-                    <groupId>org.sonatype.sisu</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>

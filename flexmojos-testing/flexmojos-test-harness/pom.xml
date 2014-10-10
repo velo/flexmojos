@@ -138,7 +138,7 @@
 
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
-                <version>1.8</version>
+                <version>1.9</version>
                 <configuration>
                     <localRepositoryPath>${fake-repo}</localRepositoryPath>
                     <extraArtifacts>
@@ -149,7 +149,7 @@
                         <xml>org.apache.maven.plugins:maven-deploy-plugin:2.7:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-install-plugin:2.3.1:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-resources-plugin:2.5:maven-plugin</xml>
-                        <xml>org.apache.maven.plugins:maven-site-plugin:3.1:maven-plugin</xml>
+                        <xml>org.apache.maven.plugins:maven-site-plugin:3.4:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-source-plugin:2.1.2</xml>
                         <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.2:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.1.2:maven-plugin</xml>
@@ -771,6 +771,10 @@
                     <scalaVersion>2.8.0</scalaVersion>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 
@@ -841,7 +845,7 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.8</version>
+            <version>1.9</version>
         </dependency>
 
         <dependency>

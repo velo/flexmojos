@@ -26,7 +26,7 @@ import java.io.File;
 import net.flexmojos.oss.tests.coverage.AbstractCoverageTest;
 import org.testng.annotations.Test;
 
-public class IT0015CoverageReTest
+public class IT0015CoverageTest
     extends AbstractCoverageTest
 {
 

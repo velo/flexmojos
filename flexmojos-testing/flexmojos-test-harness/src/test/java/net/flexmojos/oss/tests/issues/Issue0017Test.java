@@ -27,7 +27,7 @@ import net.flexmojos.oss.test.FMVerifier;
 import net.flexmojos.oss.tests.AbstractFlexMojosTests;
 import org.testng.annotations.Test;
 
-public class Issue0017ReTest
+public class Issue0017Test
     extends AbstractFlexMojosTests
 {
     @Test

@@ -17,41 +17,20 @@
  */
 package net.flexmojos.oss.tests.issues;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testng.Assert.assertNotNull;
-
 import java.io.File;
-import java.util.zip.ZipFile;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
-public class Flexmojos130ReTest
+public class Issue0106Test
     extends AbstractIssueTest
 {
 
     @Test
-    public void attachAsdoc()
+    public void issue106()
         throws Exception
     {
-        File testDir = getProject( "/issues/flexmojos-130" );
-        test( testDir, "install" ).verifyErrorFreeLog();
-
-        File swc = new File( testDir, "target/flexmojos-130-1.0-SNAPSHOT.swc" );
-        assertThat( swc, FileMatcher.exists() );
-
-        ZipFile swcC = new ZipFile( swc );
-        try
-        {
-            assertNotNull( swcC.getEntry( "docs/ASDoc_Config.xml" ) );
-            assertNotNull( swcC.getEntry( "docs/net.flexmojos.oss.it.xml" ) );
-            assertNotNull( swcC.getEntry( "docs/overviews.xml" ) );
-            assertNotNull( swcC.getEntry( "docs/packages.dita" ) );
-            assertNotNull( swcC.getEntry( "docs/__Global__.xml" ) );
-        }
-        finally
-        {
-            swcC.close();
-        }
+        File testDir = getProject( "/issues/issue-0106" );
+        test( testDir, "net.flexmojos.oss:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
     }
+
 }

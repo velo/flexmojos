@@ -135,7 +135,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test(enabled = false)
     public void swf()
     {
         MxmlcMojo c = new MxmlcMojo()
@@ -187,7 +187,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test(enabled = false)
     public void swc()
     {
         CompcMojo c = new CompcMojo()
@@ -217,7 +217,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test(enabled = false)
     public void asdoc()
     {
         AsdocMojo c = new AsdocMojo()
@@ -282,7 +282,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test
+    @Test(enabled = false)
     public void test()
     {
         TestCompilerMojo c = new TestCompilerMojo()

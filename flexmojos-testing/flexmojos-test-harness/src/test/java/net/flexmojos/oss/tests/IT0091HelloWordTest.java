@@ -24,7 +24,7 @@ import net.flexmojos.oss.matcher.file.FileMatcher;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
-public class IT0091HelloWordReTest
+public class IT0091HelloWordTest
     extends AbstractFlexMojosTests
 {
 

@@ -27,7 +27,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class CopyMojoTest
+public class CopyMojoReTest
     extends AbstractConceptTest
 {
 

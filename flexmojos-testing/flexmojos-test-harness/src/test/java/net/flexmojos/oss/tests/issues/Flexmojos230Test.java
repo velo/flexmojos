@@ -27,7 +27,7 @@ import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class Flexmojos230ReTest
+public class Flexmojos230Test
     extends AbstractIssueTest
 {
 

@@ -82,8 +82,8 @@
         <flash.version>13.0</flash.version>
 
         <commons_io.version>1.4</commons_io.version>
-        <maven.version>3.0.4</maven.version>
-        <maven-site-plugin.version>3.1</maven-site-plugin.version>
+        <maven.version>3.1.1</maven.version>
+        <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <sisu.version>2.1.1</sisu.version>
         <plexus.version>1.5.4</plexus.version>
         <apparat.version>1.0-RC9</apparat.version>
@@ -225,6 +225,11 @@
                     <artifactId>maven-external-dependency-plugin</artifactId>
                     <version>0.5-SONATYPE-r116</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -250,7 +255,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.1</version>
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -782,6 +786,11 @@
                 <artifactId>guice-plexus-shim</artifactId>
                 <version>${sisu.version}</version>
             </dependency>
+            <!--dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>17.0</version>
+            </dependency-->
 
             <dependency>
                 <groupId>org.hamcrest</groupId>

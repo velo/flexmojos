@@ -15,22 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.flexmojos.oss.tests.issues;
+package net.flexmojos.oss.tests.concept;
 
 import java.io.File;
 
+import net.flexmojos.oss.test.FMVerifier;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class Issue67ReTest
-    extends AbstractIssueTest
+public class AttachAsdocTest
+    extends AbstractConceptTest
 {
 
     @Test
-    public void issue67()
+    public void attachAsdoc()
         throws Exception
     {
-        File testDir = getProject( "/issues/issue-0067" );
-        test( testDir, "net.flexmojos.oss:flexmojos-maven-plugin:" + getProperty( "version" ) + ":asdoc" );
-    }
+        FMVerifier v = standardConceptTester( "attach-asdoc" );
+        File target = new File( v.getBasedir(), "target" );
 
+        Assert.assertTrue( target.exists() );
+
+        File doc = new File( target, "attach-asdoc-1.0-SNAPSHOT-asdoc.zip" );
+        Assert.assertTrue( doc.exists() );
+    }
 }

@@ -15,28 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.flexmojos.oss.tests.concept;
+package net.flexmojos.oss.tests.issues;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 
-import net.flexmojos.oss.test.FMVerifier;
-import org.testng.Assert;
+import net.flexmojos.oss.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
-public class AttachAsdocReTest
-    extends AbstractConceptTest
+public class Issue0039Test
+    extends AbstractIssueTest
 {
 
     @Test
-    public void attachAsdoc()
+    public void issue39()
         throws Exception
     {
-        FMVerifier v = standardConceptTester( "attach-asdoc" );
-        File target = new File( v.getBasedir(), "target" );
+        File testDir = getProject( "/issues/issue-0039" );
+        test( testDir, "flexmojos:asdoc" );
 
-        Assert.assertTrue( target.exists() );
-
-        File doc = new File( target, "attach-asdoc-1.0-SNAPSHOT-asdoc.zip" );
-        Assert.assertTrue( doc.exists() );
+        assertThat( new File( testDir, "target/asdoc/main.html" ), FileMatcher.exists() );
     }
+
 }

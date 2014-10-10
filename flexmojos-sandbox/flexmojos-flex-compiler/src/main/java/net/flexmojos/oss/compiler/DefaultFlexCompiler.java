@@ -20,6 +20,7 @@ package net.flexmojos.oss.compiler;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.plexus.component.annotations.Component;
@@ -29,9 +30,6 @@ import net.flexmojos.oss.compiler.command.Command;
 import net.flexmojos.oss.compiler.command.CommandUtil;
 import net.flexmojos.oss.compiler.command.Result;
 import net.flexmojos.oss.compiler.util.FlexCompilerArgumentParser;
-
-import flex2.tools.ASDoc;
-import flex2.tools.DigestTool;
 
 @Component( role = FlexCompiler.class )
 public class DefaultFlexCompiler
@@ -92,22 +90,14 @@ public class DefaultFlexCompiler
         return CommandUtil.execute( new Command()
         {
             public void command()
+                    throws Exception
             {
-                String[] args = parser.parseArguments( configuration, IASDocConfiguration.class );
-                logArgs( args );
-                // Force the XML Transformer to the Xalan version that comes with Flex
-                String defaultTransfomer = System.getProperty( "javax.xml.transform.TransformerFactory" );
-                System.setProperty( "javax.xml.transform.TransformerFactory",
-                                    "org.apache.xalan.processor.TransformerFactoryImpl" );
-                ASDoc.asdoc( args );
-                // and set it back to the default
-                if ( defaultTransfomer == null )
-                {
-                    System.getProperties().remove( "javax.xml.transform.TransformerFactory" );
-                }
-                else
-                {
-                    System.setProperty( "javax.xml.transform.TransformerFactory", defaultTransfomer );
+                String[] args = parser.parseArguments(configuration, IASDocConfiguration.class);
+                logArgs(args);
+                try {
+                    executeAsdocMain(args);
+                } catch(Throwable t) {
+                    throw new Exception("Exception during ASDoc execution", t);
                 }
             }
         }, sychronize );
@@ -123,9 +113,11 @@ public class DefaultFlexCompiler
             {
                 String[] args = parser.parseArguments( configuration, IDigestConfiguration.class );
                 logArgs( args );
-                Method m = DigestTool.class.getDeclaredMethod( "digestTool", String[].class );
-                m.setAccessible( true );
-                m.invoke( null, new Object[] { args } );
+                try {
+                    executeDigestMain(args);
+                } catch (Throwable t) {
+                    throw new Exception("Exception during DigestTool execution", t);
+                }
             }
         }, sychronize );
     }
@@ -176,11 +168,19 @@ public class DefaultFlexCompiler
             Method compcMainReflect;
             try {
                 Class<?> compc = Class.forName("org.apache.flex.compiler.clients.COMPC");
-                compcMainReflect = compc.getMethod("main", String[].class);
+                compcMainReflect = compc.getMethod("staticMainNoExit", String[].class);
+                // Falcon doesn't seem to like empty arguments so we have to remove them first.
+                List<String> filteredArgs = new ArrayList<String>();
+                for(String arg : args) {
+                    if(!arg.endsWith("=")) {
+                        filteredArgs.add(arg);
+                    }
+                }
+                args = filteredArgs.toArray(new String[filteredArgs.size()]);
             } catch (Exception e) {
                 try {
                     Class<?> compc = Class.forName("flex2.tools.Compc");
-                    compcMainReflect = compc.getMethod("main", String[].class);
+                    compcMainReflect = compc.getMethod("compc", String[].class);
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.COMPC' or " +
                             "'flex2.tools.Compc' in the current projects classpath.");
@@ -200,11 +200,19 @@ public class DefaultFlexCompiler
             Method mxmlcMainReflect;
             try {
                 Class<?> mxmlc = Class.forName("org.apache.flex.compiler.clients.MXMLC");
-                mxmlcMainReflect = mxmlc.getMethod("main", String[].class);
+                mxmlcMainReflect = mxmlc.getMethod("staticMainNoExit", String[].class);
+                // Falcon doesn't seem to like empty arguments so we have to remove them first.
+                List<String> filteredArgs = new ArrayList<String>();
+                for(String arg : args) {
+                    if(!arg.endsWith("=")) {
+                        filteredArgs.add(arg);
+                    }
+                }
+                args = filteredArgs.toArray(new String[filteredArgs.size()]);
             } catch (Exception e) {
                 try {
                     Class<?> mxmlc = Class.forName("flex2.tools.Mxmlc");
-                    mxmlcMainReflect = mxmlc.getMethod("main", String[].class);
+                    mxmlcMainReflect = mxmlc.getMethod("mxmlc", String[].class);
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.MXMLC' or " +
                             "'flex2.tools.Mxmlc' in the current projects classpath.");
@@ -219,13 +227,71 @@ public class DefaultFlexCompiler
     }
 
 
+    private static MethodHandle asdocMain;
+    private void executeAsdocMain(String[] args) throws Throwable {
+        if(asdocMain == null) {
+            Method asdocMainReflect;
+            try {
+                Class<?> asdoc = Class.forName("flex2.tools.ASDoc");
+                asdocMainReflect = asdoc.getMethod("asdoc", String[].class);
+            } catch (Exception e1) {
+                throw new Exception("Could not find 'flex2.tools.ASDoc' " +
+                        "in the current projects classpath.");
+            }
+            asdocMain = MethodHandles.lookup().unreflect(asdocMainReflect);
+        }
+        if(asdocMain == null) {
+            throw new Exception("Could not find static main method on ASDoc implementation class.");
+        }
+
+        String defaultTransformer = null;
+        try {
+            // Force the XML Transformer to the Xalan version that comes with Flex
+            defaultTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
+            System.setProperty("javax.xml.transform.TransformerFactory",
+                    "org.apache.xalan.processor.TransformerFactoryImpl");
+
+            asdocMain.invoke(args);
+
+        } finally {
+            // and set it back to the default
+            if (defaultTransformer == null) {
+                System.getProperties().remove("javax.xml.transform.TransformerFactory");
+            } else {
+                System.setProperty("javax.xml.transform.TransformerFactory", defaultTransformer);
+            }
+        }
+    }
+
+
+    private static MethodHandle digestMain;
+    private void executeDigestMain(String[] args) throws Throwable {
+        if(digestMain == null) {
+            Method digestMainReflect;
+            try {
+                Class<?> digest = Class.forName("flex2.tools.DigestTool");
+                digestMainReflect = digest.getDeclaredMethod("digestTool", String[].class);
+                digestMainReflect.setAccessible(true);
+            } catch (Exception e1) {
+                throw new Exception("Could not find 'flex2.tools.DigestTool' " +
+                        "in the current projects classpath.", e1);
+            }
+            digestMain = MethodHandles.lookup().unreflect(digestMainReflect);
+        }
+        if(digestMain == null) {
+            throw new Exception("Could not find static main method on DigestTool implementation class.");
+        }
+        digestMain.invoke( args );
+    }
+
+
     private static MethodHandle optimizerMain;
     private void executeOptimizerMain(String[] args) throws Throwable {
         if(optimizerMain == null) {
             Method optimizerMainReflect;
             try {
                 Class<?> optimizer = Class.forName("org.apache.flex.compiler.clients.Optimizer");
-                optimizerMainReflect = optimizer.getMethod("main", String[].class);
+                optimizerMainReflect = optimizer.getMethod("staticMainNoExit", String[].class);
             } catch (Exception e) {
                 try {
                     Class<?> optimizer = Class.forName("flex2.tools.Optimizer");

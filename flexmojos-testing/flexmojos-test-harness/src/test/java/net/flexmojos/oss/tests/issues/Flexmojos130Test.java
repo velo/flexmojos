@@ -17,40 +17,41 @@
  */
 package net.flexmojos.oss.tests.issues;
 
-import java.io.File;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.testng.Assert.assertNotNull;
 
-import org.apache.maven.it.VerificationException;
-import net.flexmojos.oss.test.FMVerifier;
-import org.testng.Assert;
+import java.io.File;
+import java.util.zip.ZipFile;
+
+import net.flexmojos.oss.matcher.file.FileMatcher;
 import org.testng.annotations.Test;
 
-public class Flexmojos141ReTest
+public class Flexmojos130Test
     extends AbstractIssueTest
 {
 
-    /**
-     * This test is disabled because the check had to be disabled in order to have
-     * Flexmojos working with Falcon.
-     *
-     * @throws Exception
-     */
-    @Test(enabled = false)
-    public void testInvalidVersion()
+    @Test
+    public void attachAsdoc()
         throws Exception
     {
-        File testDir = getProject( "/issues/" + "flexmojos-141" );
-        FMVerifier verifier = getVerifier( testDir );
+        File testDir = getProject( "/issues/flexmojos-130" );
+        test( testDir, "install" ).verifyErrorFreeLog();
+
+        File swc = new File( testDir, "target/flexmojos-130-1.0-SNAPSHOT.swc" );
+        assertThat( swc, FileMatcher.exists() );
+
+        ZipFile swcC = new ZipFile( swc );
         try
         {
-            verifier.executeGoal( "install" );
-            Assert.fail();
+            assertNotNull( swcC.getEntry( "docs/ASDoc_Config.xml" ) );
+            assertNotNull( swcC.getEntry( "docs/net.flexmojos.oss.it.xml" ) );
+            assertNotNull( swcC.getEntry( "docs/overviews.xml" ) );
+            assertNotNull( swcC.getEntry( "docs/packages.dita" ) );
+            assertNotNull( swcC.getEntry( "docs/__Global__.xml" ) );
         }
-        catch ( VerificationException e )
+        finally
         {
-            // expected
+            swcC.close();
         }
-
-        verifier.verifyTextInLog( "Flex compiler and flex framework versions doesn't match." );
     }
-
 }

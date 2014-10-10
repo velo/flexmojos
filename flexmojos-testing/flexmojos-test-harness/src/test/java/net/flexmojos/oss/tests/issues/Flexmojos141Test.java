@@ -17,25 +17,40 @@
  */
 package net.flexmojos.oss.tests.issues;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.File;
 
-import net.flexmojos.oss.matcher.file.FileMatcher;
+import org.apache.maven.it.VerificationException;
+import net.flexmojos.oss.test.FMVerifier;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class Issue0039ReTest
+public class Flexmojos141Test
     extends AbstractIssueTest
 {
 
-    @Test
-    public void issue39()
+    /**
+     * This test is disabled because the check had to be disabled in order to have
+     * Flexmojos working with Falcon.
+     *
+     * @throws Exception
+     */
+    @Test(enabled = false)
+    public void testInvalidVersion()
         throws Exception
     {
-        File testDir = getProject( "/issues/issue-0039" );
-        test( testDir, "flexmojos:asdoc" );
+        File testDir = getProject( "/issues/" + "flexmojos-141" );
+        FMVerifier verifier = getVerifier( testDir );
+        try
+        {
+            verifier.executeGoal( "install" );
+            Assert.fail();
+        }
+        catch ( VerificationException e )
+        {
+            // expected
+        }
 
-        assertThat( new File( testDir, "target/asdoc/main.html" ), FileMatcher.exists() );
+        verifier.verifyTextInLog( "Flex compiler and flex framework versions doesn't match." );
     }
 
 }
