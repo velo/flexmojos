@@ -152,10 +152,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.sonatype.sisu.inject</groupId>
             <artifactId>guice-plexus-shim</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.apache.flex</groupId>
@@ -214,6 +214,11 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-integration</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

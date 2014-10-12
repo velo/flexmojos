@@ -37,7 +37,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.log.NullLogSystem;
+import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import net.flexmojos.oss.plugin.utilities.SourceFileResolver;
 
@@ -118,7 +118,7 @@ public class SourceViewMojo
                 p.setProperty( VelocityEngine.RESOURCE_LOADER, "classpath" );
                 p.setProperty( "classpath." + VelocityEngine.RESOURCE_LOADER + ".class",
                                ClasspathResourceLoader.class.getName() );
-                p.setProperty( VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, NullLogSystem.class.getName() );
+                p.setProperty( VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, NullLogChute.class.getName() );
                 p.setProperty( VelocityEngine.VM_CONTEXT_LOCALSCOPE, Boolean.toString( true ) );
                 velocityEngine.init( p );
             }
@@ -287,13 +287,12 @@ public class SourceViewMojo
         }
         finally
         {
-            try
-            {
-                pageWriter.close();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoFailureException( "Failed to write the template '" + templateName + "' .", e );
+            if(pageWriter != null) {
+                try {
+                    pageWriter.close();
+                } catch (IOException e) {
+                    throw new MojoFailureException("Failed to write the template '" + templateName + "' .", e);
+                }
             }
         }
     }

@@ -40,8 +40,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sonatype.sisu.inject</groupId>
-            <artifactId>guice-plexus-shim</artifactId>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -61,6 +61,12 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-integration</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

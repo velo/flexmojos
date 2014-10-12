@@ -27,8 +27,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.repository.RepositorySystem;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.*;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import net.flexmojos.oss.compiler.FlexCompiler;
@@ -47,7 +46,10 @@ public class ResourceBundleChainingTest
     public static void initPlexus()
         throws Exception
     {
-        plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        plexus = new DefaultPlexusContainer(config);
         repositorySystem = plexus.lookup( RepositorySystem.class );
     }
 

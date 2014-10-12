@@ -19,7 +19,10 @@ package net.flexmojos.oss.generator.threadlocal.test;
 
 import java.io.File;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.util.FileUtils;
 import net.flexmojos.oss.generator.GenerationException;
 import net.flexmojos.oss.generator.Generator;
@@ -41,7 +44,10 @@ public class ThreadLocalGeneratorTest
     protected void setUp()
         throws Exception
     {
-        DefaultPlexusContainer plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        DefaultPlexusContainer plexus = new DefaultPlexusContainer(config);
 
         this.generator = plexus.lookup( Generator.class, "thread-local" );
 

@@ -27,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import net.flexmojos.oss.compiler.ICompcConfiguration;
 import net.flexmojos.oss.compiler.ICompilerConfiguration;
@@ -40,6 +42,7 @@ import net.flexmojos.oss.compiler.IMetadataConfiguration;
 import net.flexmojos.oss.compiler.INamespace;
 import net.flexmojos.oss.compiler.INamespacesConfiguration;
 import net.flexmojos.oss.compiler.IRuntimeSharedLibraryPath;
+import org.codehaus.plexus.PlexusConstants;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -53,7 +56,10 @@ public class ParseArgumentsTest
     public void createParser()
         throws Exception
     {
-        DefaultPlexusContainer plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        DefaultPlexusContainer plexus = new DefaultPlexusContainer(config);
         parser = plexus.lookup( FlexCompilerArgumentParser.class );
     }
 

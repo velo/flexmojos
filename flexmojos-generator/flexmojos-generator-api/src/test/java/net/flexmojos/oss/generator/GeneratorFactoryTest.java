@@ -27,7 +27,10 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.util.Map;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.testng.annotations.Test;
 
 public class GeneratorFactoryTest
@@ -38,7 +41,10 @@ public class GeneratorFactoryTest
     public void testFactory()
         throws Exception
     {
-        DefaultPlexusContainer plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        DefaultPlexusContainer plexus = new DefaultPlexusContainer(config);
 
         GeneratorFactory factory = plexus.lookup( GeneratorFactory.class );
 

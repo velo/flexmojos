@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -37,8 +35,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.ModelProcessor;
 import org.apache.maven.model.io.ModelWriter;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.*;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
@@ -109,7 +106,10 @@ public class AbstractFlexMojosTests
         File mvnBat = new File( mavenHome, "bin/mvn.bat" );
         updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
 
-        container = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        container = new DefaultPlexusContainer(config);
     }
 
     @BeforeSuite( dependsOnMethods = { "initFolders" }, alwaysRun = true )

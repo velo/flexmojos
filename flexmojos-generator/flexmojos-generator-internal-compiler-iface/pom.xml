@@ -57,10 +57,17 @@
             <version>${flex.version}</version>
             <type>pom</type>
         </dependency>
+
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <classifier>jdk15</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -35,8 +35,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.repository.RepositorySystem;
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.*;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.hamcrest.MatcherAssert;
 import net.flexmojos.oss.matcher.collection.CollectionsMatcher;
@@ -61,7 +60,10 @@ public class DependencyFilteringTest
     public static void initPlexus()
         throws Exception
     {
-        plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        plexus = new DefaultPlexusContainer(config);
         repositorySystem = plexus.lookup( RepositorySystem.class );
     }
 
@@ -135,7 +137,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test(enabled = false)
+    @Test
     public void swf()
     {
         MxmlcMojo c = new MxmlcMojo()
@@ -187,7 +189,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test(enabled = false)
+    @Test
     public void swc()
     {
         CompcMojo c = new CompcMojo()
@@ -217,7 +219,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test(enabled = false)
+    @Test
     public void asdoc()
     {
         AsdocMojo c = new AsdocMojo()
@@ -282,7 +284,7 @@ public class DependencyFilteringTest
     }
 
     @SuppressWarnings( "unchecked" )
-    @Test(enabled = false)
+    @Test
     public void test()
     {
         TestCompilerMojo c = new TestCompilerMojo()

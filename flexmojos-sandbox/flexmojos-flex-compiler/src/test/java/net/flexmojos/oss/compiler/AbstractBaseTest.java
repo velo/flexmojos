@@ -24,9 +24,7 @@ import static net.flexmojos.oss.compiler.test.MockitoConstraints.RETURNS_NULL;
 import java.io.File;
 import java.util.Collections;
 
-import org.codehaus.plexus.DefaultPlexusContainer;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.*;
 import net.flexmojos.oss.compiler.util.ThreadLocalToolkitHelper;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -54,7 +52,10 @@ public abstract class AbstractBaseTest
     public void init()
         throws PlexusContainerException
     {
-        plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        plexus = new DefaultPlexusContainer(config);
     }
 
     @BeforeMethod

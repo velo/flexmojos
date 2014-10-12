@@ -73,9 +73,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.bcel</groupId>
             <artifactId>bcel</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -86,6 +91,12 @@
             <groupId>org.apache.flex.compiler</groupId>
             <artifactId>mxmlc</artifactId>
             <version>${flex.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

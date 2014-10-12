@@ -19,10 +19,13 @@ package net.flexmojos.oss.generator.contraints;
 
 import java.io.File;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import net.flexmojos.oss.generator.GenerationException;
 import net.flexmojos.oss.generator.Generator;
 import net.flexmojos.oss.generator.TestGenerationRequest;
+import org.codehaus.plexus.PlexusConstants;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,7 +38,10 @@ public class ConstraintsGeneratorTest
     public void setUp()
         throws Exception
     {
-        DefaultPlexusContainer plexus = new DefaultPlexusContainer();
+        ContainerConfiguration config = new DefaultContainerConfiguration();
+        config.setAutoWiring(true);
+        config.setClassPathScanning(PlexusConstants.SCANNING_ON);
+        DefaultPlexusContainer plexus = new DefaultPlexusContainer(config);
         this.generator = plexus.lookup( Generator.class, "constraints" );
     }
 

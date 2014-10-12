@@ -83,15 +83,6 @@ import net.flexmojos.oss.util.PathUtil;
 import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
 import flex2.tools.oem.internal.OEMLogAdapter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
 public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled

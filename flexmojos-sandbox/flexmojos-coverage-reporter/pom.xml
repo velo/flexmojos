@@ -41,8 +41,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sonatype.sisu.inject</groupId>
-            <artifactId>guice-plexus-shim</artifactId>
+            <groupId>org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.plexus</artifactId>
         </dependency>
 
         <dependency>
