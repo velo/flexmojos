@@ -84,7 +84,7 @@
         <commons_io.version>1.4</commons_io.version>
         <maven.version>3.1.1</maven.version>
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
-        <sisu.version>2.3.0</sisu.version>
+        <sisu.version>3.2.4</sisu.version>
         <plexus.version>1.5.5</plexus.version>
         <apparat.version>1.0-RC9</apparat.version>
     </properties>
@@ -755,6 +755,12 @@
                 <groupId>eu.cedarsoft.utils</groupId>
                 <artifactId>zip</artifactId>
                 <version>1.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>eu.cedarsoft</groupId>
+                        <artifactId>guice-annotations</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -874,7 +880,7 @@
             <dependency>
                 <groupId>org.sonatype.sisu</groupId>
                 <artifactId>sisu-guice</artifactId>
-                <version>3.2.4</version>
+                <version>${sisu.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

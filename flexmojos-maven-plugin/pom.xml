@@ -297,6 +297,7 @@
         <dependency><!-- needed on optimizer mojo -->
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <!-- default is test, so we have to override this -->
             <scope>compile</scope>
         </dependency>
 
