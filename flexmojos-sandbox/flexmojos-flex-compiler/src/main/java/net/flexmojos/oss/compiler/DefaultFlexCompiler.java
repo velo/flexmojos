@@ -162,6 +162,7 @@ public class DefaultFlexCompiler
         }
     }
 
+    private static String compcName;
     private static MethodHandle compcMain;
     private void executeCompcMain(String[] args) throws Throwable {
         if(compcMain == null) {
@@ -169,18 +170,12 @@ public class DefaultFlexCompiler
             try {
                 Class<?> compc = Class.forName("org.apache.flex.compiler.clients.COMPC");
                 compcMainReflect = compc.getMethod("staticMainNoExit", String[].class);
-                // Falcon doesn't seem to like empty arguments so we have to remove them first.
-                List<String> filteredArgs = new ArrayList<String>();
-                for(String arg : args) {
-                    if(!arg.endsWith("=")) {
-                        filteredArgs.add(arg);
-                    }
-                }
-                args = filteredArgs.toArray(new String[filteredArgs.size()]);
+                compcName = "falcon";
             } catch (Exception e) {
                 try {
                     Class<?> compc = Class.forName("flex2.tools.Compc");
                     compcMainReflect = compc.getMethod("compc", String[].class);
+                    compcName = "default";
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.COMPC' or " +
                             "'flex2.tools.Compc' in the current projects classpath.");
@@ -191,9 +186,22 @@ public class DefaultFlexCompiler
         if(compcMain == null) {
             throw new Exception("Could not find static main method on compc implementation class.");
         }
+
+        // Falcon doesn't seem to like empty arguments so we have to remove them first.
+        if("falcon".equals(compcName)) {
+            List<String> filteredArgs = new ArrayList<String>();
+            for(String arg : args) {
+                if(!arg.endsWith("=")) {
+                    filteredArgs.add(arg);
+                }
+            }
+            args = filteredArgs.toArray(new String[filteredArgs.size()]);
+        }
+
         compcMain.invoke( args );
     }
 
+    private static String mxmlcName;
     private static MethodHandle mxmlcMain;
     private void executeMxmlcMain(String[] args) throws Throwable {
         if(mxmlcMain == null) {
@@ -201,18 +209,12 @@ public class DefaultFlexCompiler
             try {
                 Class<?> mxmlc = Class.forName("org.apache.flex.compiler.clients.MXMLC");
                 mxmlcMainReflect = mxmlc.getMethod("staticMainNoExit", String[].class);
-                // Falcon doesn't seem to like empty arguments so we have to remove them first.
-                List<String> filteredArgs = new ArrayList<String>();
-                for(String arg : args) {
-                    if(!arg.endsWith("=")) {
-                        filteredArgs.add(arg);
-                    }
-                }
-                args = filteredArgs.toArray(new String[filteredArgs.size()]);
+                mxmlcName = "falcon";
             } catch (Exception e) {
                 try {
                     Class<?> mxmlc = Class.forName("flex2.tools.Mxmlc");
                     mxmlcMainReflect = mxmlc.getMethod("mxmlc", String[].class);
+                    mxmlcName = "default";
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.MXMLC' or " +
                             "'flex2.tools.Mxmlc' in the current projects classpath.");
@@ -223,6 +225,18 @@ public class DefaultFlexCompiler
         if(mxmlcMain == null) {
             throw new Exception("Could not find static main method on mxmlc implementation class.");
         }
+
+        // Falcon doesn't seem to like empty arguments so we have to remove them first.
+        if("falcon".equals(mxmlcName)) {
+            List<String> filteredArgs = new ArrayList<String>();
+            for(String arg : args) {
+                if(!arg.endsWith("=")) {
+                    filteredArgs.add(arg);
+                }
+            }
+            args = filteredArgs.toArray(new String[filteredArgs.size()]);
+        }
+
         mxmlcMain.invoke( args );
     }
 
@@ -252,7 +266,6 @@ public class DefaultFlexCompiler
                     "org.apache.xalan.processor.TransformerFactoryImpl");
 
             asdocMain.invoke(args);
-
         } finally {
             // and set it back to the default
             if (defaultTransformer == null) {
