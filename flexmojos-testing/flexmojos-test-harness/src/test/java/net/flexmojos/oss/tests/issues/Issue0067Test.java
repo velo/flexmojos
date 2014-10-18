@@ -21,7 +21,7 @@ import java.io.File;
 
 import org.testng.annotations.Test;
 
-public class Issue67Test
+public class Issue0067Test
     extends AbstractIssueTest
 {
 

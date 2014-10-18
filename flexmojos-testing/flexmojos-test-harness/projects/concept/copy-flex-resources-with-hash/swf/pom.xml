@@ -83,4 +83,20 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.flex.framework</groupId>
+                <artifactId>framework</artifactId>
+                <version>%{flex.version}</version>
+                <type>rb.swc</type>
+                <!--
+                    Even if compile is the default, in this case
+                    you explicitly have to define it.
+                -->
+                <scope>compile</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>

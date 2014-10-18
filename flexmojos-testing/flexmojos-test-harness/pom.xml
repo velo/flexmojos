@@ -100,7 +100,7 @@
                         </property>
                     </properties>
                     <includes>
-                        <include>**/*ReTest.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
                 </configuration>
             </plugin>
@@ -123,9 +123,6 @@
                                     </includes>
                                 </jarSet>
                             </jarSets>
-                            <excludes>
-                                <exclude>org.granite.*</exclude>
-                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -398,7 +395,7 @@
                         <xml>org.apache.flex.framework:spark:4.10.0.20130801:swf</xml>
                         <xml>org.apache.flex.framework:spark_dmv:4.10.0.20130801:swf</xml>
                         <xml>org.apache.flex.framework:sparkskins:4.10.0.20130801:swf</xml>
-                        <xml>org.apache.flex.framework:textLayout:4.10.0.20130801:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:textLayout:4.10.0.20130801:swf</xml>
 
                         <xml>org.apache.flex.framework.themes:spark:4.10.0.20130801:swc</xml>
 
