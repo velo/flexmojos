@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.flex.compiler</groupId>
+    <artifactId>falcon-flexmojos-testsuite</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <!-- The next module locks up -->
+        <!--module>net.flexmojos.oss.tests.concept.AirTest.airApp</module-->
+
+        <!-- Error: unknown configuration variable 'compiler.advanced-telemetry'. -->
+        <!--module>advanced-telemetry_flex4_4.10.0.20130801</module>
+        <module>advanced-telemetry_flex4_4.11.0.20131017</module>
+        <module>advanced-telemetry_flex4_4.12.0.20140303</module>
+        <module>advanced-telemetry_flex4_4.12.1.20140427</module>
+        <module>advanced-telemetry_flex4_4.13.0.20140701</module-->
+
+        <!-- Modules that don't compile -->
+        <module>net.flexmojos.oss.test.IT0013IssuesTest.issue11</module>
+        <module>net.flexmojos.oss.test.IT0013IssuesTest.issue29</module>
+        <module>net.flexmojos.oss.test.IT0013IssuesTest.issue61</module>
+        <module>net.flexmojos.oss.test.IT0014ConceptTest.testRuntimeCss</module>
+        <module>net.flexmojos.oss.test.IT0015CoverageTest.testAsdocReport</module>
+        <module>net.flexmojos.oss.tests.concept.AirTest.nativeAir</module>
+        <module>net.flexmojos.oss.tests.concept.AirTest.simplify</module>
+        <module>net.flexmojos.oss.tests.concept.AttachAsdocTest.attachAsdoc</module>
+        <module>net.flexmojos.oss.tests.concept.FlexUnitTest.testFlexUnitExample</module>
+        <module>net.flexmojos.oss.tests.concept.FluintUnitTest.failFluint</module>
+        <module>net.flexmojos.oss.tests.concept.L10NTest.testCompiledLocalization</module>
+        <module>net.flexmojos.oss.tests.concept.L10NTest.testRuntimeLocalization</module>
+        <module>net.flexmojos.oss.tests.concept.ManifestTest.manifestCreation</module>
+        <module>net.flexmojos.oss.tests.concept.OptimizationTest.testOptimizedApplication</module>
+        <module>net.flexmojos.oss.tests.concept.OptimizationTest.testOptimizedFlexLibrary</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos130Test.attachAsdoc</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos159Test.localizationFromLibrary</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos220Test.localizedModules</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos230Test.aggregatedAsdoc</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos230Test.regularAsdoc</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos872Test.testParametrizedTestsExecution</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0015Test.issue15</module>
+
+        <!-- ASDoc related problems -->
+        <!--module>net.flexmojos.oss.test.IT0013IssuesTest.issue68</module>
+        <module>net.flexmojos.oss.test.IT0015CoverageTest.testAsdocInclusionExclusion</module>
+        <module>net.flexmojos.oss.tests.concept.AsUnitTest.testAsUnitExample</module>
+        <module>net.flexmojos.oss.tests.IT0091HelloWordTest.asdoc</module-->
+
+        <!-- Compiles ok, but flexmojos test-problem seems to be something else -->
+        <!--module>net.flexmojos.oss.tests.concept.AdvancedFlexTest.testAdvancedFlexUnitExample</module>
+        <module>net.flexmojos.oss.tests.concept.FlexUnit4Test.testFlexUnit4Example</module>
+        <module>net.flexmojos.oss.tests.concept.FluintUnitTest.passFluint</module>
+        <module>net.flexmojos.oss.tests.concept.L10NTest.testLocalizedLibraryAndApplication</module>
+        <module>net.flexmojos.oss.tests.concept.MetadataTest.testMetadataTest</module>
+        <module>net.flexmojos.oss.tests.concept.TestSwfTest.testSwf</module>
+        <module>net.flexmojos.oss.tests.features.FlashPlayerIgnoreReturnCodesTest.ignoreByPomConfiguration</module>
+        <module>net.flexmojos.oss.tests.features.FlashPlayerIgnoreReturnCodesTest.ignoreByProperty</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos136Test.resolveReleaseVersion</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos167Test.linkReportResolve</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos321Test.multiple</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos334Test.disabledScanner</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos334Test.linkReportScanner</module>
+        <module>net.flexmojos.oss.tests.issues.Flexmojos350Test.orgFlexunit</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0017Test.issue17</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0039Test.issue39</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0067Test.issue67</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0069Test.issue69</module>
+        <module>net.flexmojos.oss.tests.concept.CopyMojoTest.copyFlexResources</module>
+        <module>net.flexmojos.oss.tests.concept.CopyMojoTest.copyFlexResourcesWithHashRsls</module>
+        <module>net.flexmojos.oss.tests.issues.Issue0013Test.issue13</module>
+        <module>net.flexmojos.oss.tests.coverage.SourceFileResolverTest.testSourceFileResolver</module-->
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
