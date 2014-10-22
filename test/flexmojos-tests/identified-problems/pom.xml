@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.flex.compiler.falcon.tests</groupId>
+    <artifactId>identified-problems</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <!--
+            Problem area: Compiling of MXML Modules
+            - It seems that compiling of mxml based modules does not work
+            - Compiling of AS modules does however work
+        -->
+        <module>mx-mxml-module</module>
+        <module>mx-as-module</module>
+        <module>spark-mxml-module</module>
+        <module>spark-as-module</module>
+
+        <!--
+            Problem area: CSS Style with missing namespace produces NullPointerException
+        -->
+        <module>css-with-missing-namespace</module>
+        <module>css-with-namespace</module>
+
+        <!--
+            Problem area: Generated sources with multiple source paths
+            - The application compiles, but is ony executable in flashplayer without
+              errors, when compiled with the default compiler.
+        -->
+        <module>generated-sources</module>
+    </modules>
+
+</project>

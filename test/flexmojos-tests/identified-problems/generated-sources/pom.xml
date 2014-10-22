@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.flex.compiler.falcon.tests</groupId>
+    <artifactId>generated-sources</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>swf</packaging>
+
+	<build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <plugins>
+			<plugin>
+				<groupId>net.flexmojos.oss</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>7.1.0-SNAPSHOT</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+                        <configuration>
+                            <includeJavaClasses>
+                                <class>org.apache.flex.swc.SWCDigest</class>
+                            </includeJavaClasses>
+                        </configuration>
+					</execution>
+				</executions>
+                <dependencies>
+                    <!--dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>4.13.0.20140701</version>
+                        <type>pom</type>
+                    </dependency-->
+                    <dependency>
+                        <groupId>org.apache.flex.compiler</groupId>
+                        <artifactId>falcon-compiler</artifactId>
+                        <version>0.0.3-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+		</plugins>
+	</build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>4.13.0.20140701</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flash.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>13.0</version>
+            <type>swc</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flex.compiler</groupId>
+            <artifactId>falcon-compiler</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+	</dependencies>
+
+</project>
