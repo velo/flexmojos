@@ -57,6 +57,13 @@
             will prevent Falcon from finding it.
         -->
         <module>no-font-embedding</module>
+
+        <!--
+            Problem area: It seems the SWF files produced by Falcon are not optimizeable
+            by apparat.
+        -->
+        <module>optimize-swf</module>
+        <module>optimize-swc</module>
     </modules>
 
 </project>
