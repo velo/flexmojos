@@ -11,6 +11,10 @@
 
     <modules>
         <!--
+            Problem area: ASDoc doesn't work at all.
+        -->
+
+        <!--
             Problem area: Compiling of MXML Modules
             - It seems that compiling of mxml based modules does not work
             - Compiling of AS modules does however work
@@ -59,8 +63,8 @@
         <module>no-font-embedding</module>
 
         <!--
-            Problem area: It seems the SWF files produced by Falcon are not optimizeable
-            by apparat.
+            Problem area: It seems the SWF files produced by Falcon are not optimizable
+            by Apparat.
         -->
         <module>optimize-swf</module>
         <module>optimize-swc</module>
