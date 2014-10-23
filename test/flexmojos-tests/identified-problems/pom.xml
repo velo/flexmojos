@@ -45,6 +45,18 @@
             (Tried with Air output as well as air swc library compilation)
         --> 
         <module>air-test-swf-not-runnable</module>
+
+        <!--
+            Problem area: It seems that runtime loaded locales don't work in Falcon
+        -->
+        <module>l10n-locales-runtime</module>
+
+        <!--
+            Problem area: It seems FontEmbedding is currently completely disabled.
+            But still it seems that locating the embedded fonts in a resources directory
+            will prevent Falcon from finding it.
+        -->
+        <module>no-font-embedding</module>
     </modules>
 
 </project>
