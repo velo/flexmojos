@@ -63,6 +63,11 @@
         <module>no-font-embedding</module>
 
         <!--
+            Problem area: Embeding of images (or other static resrouces)
+        -->
+        <module>no-embedding-of-resources</module>
+
+        <!--
             Problem area: It seems the SWF files produced by Falcon are not optimizable
             by Apparat.
         -->
