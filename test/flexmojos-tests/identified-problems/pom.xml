@@ -32,6 +32,19 @@
               errors, when compiled with the default compiler.
         -->
         <module>generated-sources</module>
+
+        <!--
+            Problem area: It seems that compiler defines can be used for
+            conditional compilations, but you can't access the value directly.
+        -->
+        <module>conditional-compilation</module>
+
+        <!--
+            Problem area: When compiling a test swf for an air module, the compile
+            succeeds, but adl is not able to execute it and returns error code 9.
+            (Tried with Air output as well as air swc library compilation)
+        --> 
+        <module>air-test-swf-not-runnable</module>
     </modules>
 
 </project>

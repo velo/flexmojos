@@ -49,10 +49,16 @@
                 </configuration>
                 <dependencies>
                     <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>4.13.0.20140701</version>
+                        <type>pom</type>
+                    </dependency>
+                    <!--dependency>
                         <groupId>org.apache.flex.compiler</groupId>
                         <artifactId>falcon-compiler</artifactId>
                         <version>0.0.3-SNAPSHOT</version>
-                    </dependency>
+                    </dependency-->
                     <dependency>
                         <groupId>com.adobe.air</groupId>
                         <artifactId>compiler</artifactId>
