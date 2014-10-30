@@ -17,8 +17,6 @@
  */
 package net.flexmojos.oss.compiler;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -163,25 +161,23 @@ public class DefaultFlexCompiler
     }
 
     private static String compcName;
-    private static MethodHandle compcMain;
+    private static Method compcMain;
     private void executeCompcMain(String[] args) throws Throwable {
         if(compcMain == null) {
-            Method compcMainReflect;
             try {
                 Class<?> compc = Class.forName("org.apache.flex.compiler.clients.COMPC");
-                compcMainReflect = compc.getMethod("staticMainNoExit", String[].class);
+                compcMain = compc.getMethod("staticMainNoExit", String[].class);
                 compcName = "falcon";
             } catch (Exception e) {
                 try {
                     Class<?> compc = Class.forName("flex2.tools.Compc");
-                    compcMainReflect = compc.getMethod("compc", String[].class);
+                    compcMain = compc.getMethod("compc", String[].class);
                     compcName = "default";
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.COMPC' or " +
                             "'flex2.tools.Compc' in the current projects classpath.");
                 }
             }
-            compcMain = MethodHandles.lookup().unreflect(compcMainReflect);
         }
         if(compcMain == null) {
             throw new Exception("Could not find static main method on compc implementation class.");
@@ -198,29 +194,27 @@ public class DefaultFlexCompiler
             args = filteredArgs.toArray(new String[filteredArgs.size()]);
         }
 
-        compcMain.invoke( args );
+        compcMain.invoke( null, new Object[] {args} );
     }
 
     private static String mxmlcName;
-    private static MethodHandle mxmlcMain;
+    private static Method mxmlcMain;
     private void executeMxmlcMain(String[] args) throws Throwable {
         if(mxmlcMain == null) {
-            Method mxmlcMainReflect;
             try {
                 Class<?> mxmlc = Class.forName("org.apache.flex.compiler.clients.MXMLC");
-                mxmlcMainReflect = mxmlc.getMethod("staticMainNoExit", String[].class);
+                mxmlcMain = mxmlc.getMethod("staticMainNoExit", String[].class);
                 mxmlcName = "falcon";
             } catch (Exception e) {
                 try {
                     Class<?> mxmlc = Class.forName("flex2.tools.Mxmlc");
-                    mxmlcMainReflect = mxmlc.getMethod("mxmlc", String[].class);
+                    mxmlcMain = mxmlc.getMethod("mxmlc", String[].class);
                     mxmlcName = "default";
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.MXMLC' or " +
                             "'flex2.tools.Mxmlc' in the current projects classpath.");
                 }
             }
-            mxmlcMain = MethodHandles.lookup().unreflect(mxmlcMainReflect);
         }
         if(mxmlcMain == null) {
             throw new Exception("Could not find static main method on mxmlc implementation class.");
@@ -237,25 +231,34 @@ public class DefaultFlexCompiler
             args = filteredArgs.toArray(new String[filteredArgs.size()]);
         }
 
-        mxmlcMain.invoke( args );
+        mxmlcMain.invoke( null, new Object[] {args} );
     }
 
 
-    private static MethodHandle asdocMain;
+    private static Method asdocMain;
     private void executeAsdocMain(String[] args) throws Throwable {
         if(asdocMain == null) {
-            Method asdocMainReflect;
             try {
                 Class<?> asdoc = Class.forName("flex2.tools.ASDoc");
-                asdocMainReflect = asdoc.getMethod("asdoc", String[].class);
+                asdocMain = asdoc.getMethod("asdoc", String[].class);
             } catch (Exception e1) {
                 throw new Exception("Could not find 'flex2.tools.ASDoc' " +
                         "in the current projects classpath.");
             }
-            asdocMain = MethodHandles.lookup().unreflect(asdocMainReflect);
         }
         if(asdocMain == null) {
             throw new Exception("Could not find static main method on ASDoc implementation class.");
+        }
+
+        // Falcon doesn't seem to like empty arguments so we have to remove them first.
+        if("falcon".equals(mxmlcName) || "falcon".equals(compcName)) {
+            List<String> filteredArgs = new ArrayList<String>();
+            for(String arg : args) {
+                if(!arg.endsWith("=")) {
+                    filteredArgs.add(arg);
+                }
+            }
+            args = filteredArgs.toArray(new String[filteredArgs.size()]);
         }
 
         String defaultTransformer = null;
@@ -265,7 +268,7 @@ public class DefaultFlexCompiler
             System.setProperty("javax.xml.transform.TransformerFactory",
                     "org.apache.xalan.processor.TransformerFactoryImpl");
 
-            asdocMain.invoke(args);
+            asdocMain.invoke( null, new Object[] {args} );
         } finally {
             // and set it back to the default
             if (defaultTransformer == null) {
@@ -277,49 +280,69 @@ public class DefaultFlexCompiler
     }
 
 
-    private static MethodHandle digestMain;
+    private static Method digestMain;
     private void executeDigestMain(String[] args) throws Throwable {
         if(digestMain == null) {
-            Method digestMainReflect;
             try {
                 Class<?> digest = Class.forName("flex2.tools.DigestTool");
-                digestMainReflect = digest.getDeclaredMethod("digestTool", String[].class);
-                digestMainReflect.setAccessible(true);
+                digestMain = digest.getDeclaredMethod("digestTool", String[].class);
+                digestMain.setAccessible(true);
             } catch (Exception e1) {
                 throw new Exception("Could not find 'flex2.tools.DigestTool' " +
                         "in the current projects classpath.", e1);
             }
-            digestMain = MethodHandles.lookup().unreflect(digestMainReflect);
         }
         if(digestMain == null) {
             throw new Exception("Could not find static main method on DigestTool implementation class.");
         }
-        digestMain.invoke( args );
+
+        // Falcon doesn't seem to like empty arguments so we have to remove them first.
+        if("falcon".equals(mxmlcName) || "falcon".equals(compcName)) {
+            List<String> filteredArgs = new ArrayList<String>();
+            for(String arg : args) {
+                if(!arg.endsWith("=")) {
+                    filteredArgs.add(arg);
+                }
+            }
+            args = filteredArgs.toArray(new String[filteredArgs.size()]);
+        }
+
+        digestMain.invoke( null, new Object[] {args} );
     }
 
 
-    private static MethodHandle optimizerMain;
+    private static Method optimizerMain;
     private void executeOptimizerMain(String[] args) throws Throwable {
         if(optimizerMain == null) {
-            Method optimizerMainReflect;
             try {
                 Class<?> optimizer = Class.forName("org.apache.flex.compiler.clients.Optimizer");
-                optimizerMainReflect = optimizer.getMethod("staticMainNoExit", String[].class);
+                optimizerMain = optimizer.getMethod("staticMainNoExit", String[].class);
             } catch (Exception e) {
                 try {
                     Class<?> optimizer = Class.forName("flex2.tools.Optimizer");
-                    optimizerMainReflect = optimizer.getMethod("main", String[].class);
+                    optimizerMain = optimizer.getMethod("main", String[].class);
                 } catch (Exception e1) {
                     throw new Exception("Could not find 'org.apache.flex.compiler.clients.Optimizer' or " +
                             "'flex2.tools.Optimizer' in the current projects classpath.");
                 }
             }
-            optimizerMain = MethodHandles.lookup().unreflect(optimizerMainReflect);
         }
         if(optimizerMain == null) {
             throw new Exception("Could not find static main method on optimizer implementation class.");
         }
-        optimizerMain.invoke( args );
+
+        // Falcon doesn't seem to like empty arguments so we have to remove them first.
+        if("falcon".equals(mxmlcName) || "falcon".equals(compcName)) {
+            List<String> filteredArgs = new ArrayList<String>();
+            for(String arg : args) {
+                if(!arg.endsWith("=")) {
+                    filteredArgs.add(arg);
+                }
+            }
+            args = filteredArgs.toArray(new String[filteredArgs.size()]);
+        }
+
+        optimizerMain.invoke( null, new Object[] {args} );
     }
 
 }
