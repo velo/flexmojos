@@ -1,1 +1,0 @@
-This compilation sort of locked up and Falcon never returned.
