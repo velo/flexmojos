@@ -185,6 +185,13 @@ public abstract class AbstractMavenMojo
     private File outputDirectory;
 
     /**
+     * @parameter expression="${project.build.directory}"
+     * @readonly
+     * @required
+     */
+    private File buildDirectory;
+
+    /**
      * @parameter expression="${project.packaging}"
      * @required
      * @readonly
@@ -763,6 +770,12 @@ public abstract class AbstractMavenMojo
     {
         outputDirectory.mkdirs();
         return PathUtil.file( outputDirectory );
+    }
+
+    public File getBuildDirectory()
+    {
+        buildDirectory.mkdirs();
+        return PathUtil.file( buildDirectory );
     }
 
     /**

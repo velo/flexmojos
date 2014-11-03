@@ -42,7 +42,7 @@
                 <version>%{flexmojos.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <descriptorTemplate>src/main/resources/main-app.xml</descriptorTemplate>
+                    <descriptorTemplate>src/main/air/main-app.xml</descriptorTemplate>
                     <storepass>flexmojos</storepass>
                 </configuration>
                 <executions>

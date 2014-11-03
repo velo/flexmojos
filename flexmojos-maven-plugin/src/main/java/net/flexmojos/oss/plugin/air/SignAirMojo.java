@@ -73,7 +73,7 @@ public class SignAirMojo
     private String classifier;
 
     /**
-     * @parameter default-value="${basedir}/src/main/resources/descriptor.xml"
+     * @parameter default-value="${basedir}/src/main/air/descriptor.xml"
      * @required
      */
     private File descriptorTemplate;
@@ -107,7 +107,7 @@ public class SignAirMojo
     private FileSet[] includeFileSets;
 
     /**
-     * @parameter default-value="${basedir}/src/main/resources/sign.p12"
+     * @parameter default-value="${basedir}/src/main/air/sign.p12"
      */
     private File keystore;
 
@@ -268,12 +268,13 @@ public class SignAirMojo
                         scanner = scan( set );
                     }
 
-                    File directory = file( set.getDirectory(), project.getBasedir() );
+                    if( scanner != null ) {
+                        File directory = file(set.getDirectory(), project.getBasedir());
 
-                    String[] files = scanner.getIncludedFiles();
-                    for ( String path : files )
-                    {
-                        addSourceWithPath( packager, directory, path );
+                        String[] files = scanner.getIncludedFiles();
+                        for (String path : files) {
+                            addSourceWithPath(packager, directory, path);
+                        }
                     }
                 }
             }

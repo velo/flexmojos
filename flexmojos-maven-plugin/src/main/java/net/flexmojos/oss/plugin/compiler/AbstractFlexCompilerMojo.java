@@ -2155,7 +2155,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         {
             this.fonts = new MavenFontsConfiguration();
         }
-        return this.fonts.toFontsConfiguration( getOutputDirectory() );
+        return this.fonts.toFontsConfiguration( getBuildDirectory() );
     }
 
     public String[] getForceRsls()
@@ -2514,7 +2514,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             IOUtil.close( cfg );
         }
 
-        return namespaces.toArray( new INamespace[0] );
+        return namespaces.toArray( new INamespace[namespaces.size()] );
     }
 
     public INamespacesConfiguration getNamespacesConfiguration()
@@ -2833,6 +2833,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             {
                 files.add( localesSourcePath );
             }
+        }
+
+        // The Maven resources plugin copies resources to the output directory.
+        // But only add it, if a source directory existed, otherwise the compiler
+        // will result in couldn't find source errors.
+        if(!files.isEmpty()) {
+            files.add( getOutputDirectory() );
         }
 
         return files.toArray(new File[files.size()]);
