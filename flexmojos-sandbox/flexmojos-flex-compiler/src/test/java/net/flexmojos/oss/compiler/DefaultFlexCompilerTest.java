@@ -44,7 +44,7 @@ public class DefaultFlexCompilerTest extends AbstractBaseTest
         when( cfg.getLoadConfig() ).thenReturn( new String[] {} );
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
-        Assert.assertEquals( compiler.compileSwc( cfg, true ).getExitCode(), 0 );
+        Assert.assertEquals( compiler.compileSwc( cfg, true, null ).getExitCode(), 0 );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class DefaultFlexCompilerTest extends AbstractBaseTest
         when( cfg.getOutput() ).thenReturn( output.getAbsolutePath() );
         when( cfg.getCompilerConfiguration() ).thenReturn( compilerCfg );
         Assert.assertEquals(
-                             compiler.compileSwf( new MxmlcConfigurationHolder( cfg, new File( as3, "main.as" ) ), true ).getExitCode(),
+                             compiler.compileSwf( new MxmlcConfigurationHolder( cfg, new File( as3, "main.as" ) ), true, null ).getExitCode(),
                              0 );
 
         Assert.assertTrue( output.exists(), logger.getLogs().toString() );

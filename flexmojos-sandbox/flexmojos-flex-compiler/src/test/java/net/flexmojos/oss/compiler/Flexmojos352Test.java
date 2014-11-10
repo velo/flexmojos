@@ -51,7 +51,7 @@ public class Flexmojos352Test
                                                                  "flash.fonts.BatikFontManager",
                                                                  "flash.fonts.AFEFontManager",
                                                                  "flash.fonts.CFFFontManager" ) );
-        Assert.assertEquals( compiler.compileSwc( cfg, true ).getExitCode(), 0 );
+        Assert.assertEquals( compiler.compileSwc( cfg, true, null ).getExitCode(), 0 );
     }
 
 }

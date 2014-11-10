@@ -22,19 +22,19 @@ import net.flexmojos.oss.compiler.command.Result;
 public interface FlexCompiler
 {
 
-    Result compileSwf( MxmlcConfigurationHolder cfgHolder, boolean sychronize )
+    Result compileSwf( MxmlcConfigurationHolder cfgHolder, boolean sychronize, String compilerName )
         throws Exception;
 
-    Result compileSwc( ICompcConfiguration configuration, boolean sychronize )
+    Result compileSwc( ICompcConfiguration configuration, boolean sychronize, String compilerName )
         throws Exception;
 
-    Result asdoc( final IASDocConfiguration configuration, boolean sychronize )
+    Result asdoc( final IASDocConfiguration configuration, boolean sychronize, String compilerName )
         throws Exception;
 
-    Result optimize( final IOptimizerConfiguration configuration, boolean sychronize )
+    Result optimize( final IOptimizerConfiguration configuration, boolean sychronize, String compilerName )
         throws Exception;
 
-    Result digest( final IDigestConfiguration configuration, boolean sychronize )
+    Result digest( final IDigestConfiguration configuration, boolean sychronize, String compilerName )
         throws Exception;
 
 }
