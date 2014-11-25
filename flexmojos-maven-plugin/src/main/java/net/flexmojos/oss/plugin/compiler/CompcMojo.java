@@ -236,7 +236,7 @@ public class CompcMojo
     public Result doCompile( ICompcConfiguration cfg, boolean synchronize )
         throws Exception
     {
-        return compiler.compileSwc( cfg, synchronize );
+        return compiler.compileSwc( cfg, synchronize, compilerName );
     }
 
     public void execute()

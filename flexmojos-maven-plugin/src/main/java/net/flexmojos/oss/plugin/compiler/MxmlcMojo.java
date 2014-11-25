@@ -154,7 +154,7 @@ public class MxmlcMojo
         {
             truster.updateSecuritySandbox( PathUtil.file( cfg.getConfiguration().getOutput() ) );
         }
-        return compiler.compileSwf( cfg, synchronize );
+        return compiler.compileSwf( cfg, synchronize, compilerName );
     }
 
     public void execute()

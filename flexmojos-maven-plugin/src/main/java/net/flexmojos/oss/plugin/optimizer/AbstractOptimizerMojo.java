@@ -230,6 +230,13 @@ public abstract class AbstractOptimizerMojo
      */
     protected boolean strip;
 
+    /**
+     * Name of the Flex Tool Group that should be used for the build.
+     *
+     * @parameter expression="${flex.compilerName}"
+     */
+    protected String compilerName;
+
     public abstract String getInput();
 
     public String[] getKeepAs3Metadata()
@@ -327,7 +334,7 @@ public abstract class AbstractOptimizerMojo
         int result;
         try
         {
-            result = compiler.optimize( getOptimizerConfiguration( input, output ), true ).getExitCode();
+            result = compiler.optimize( getOptimizerConfiguration( input, output ), true, compilerName ).getExitCode();
         }
         catch ( Exception e )
         {

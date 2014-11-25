@@ -81,6 +81,13 @@ public class RSLCreatorMojo
      */
     private boolean skipRSLCreation;
 
+    /**
+     * Name of the Flex Tool Group that should be used for the build.
+     *
+     * @parameter expression="${flex.compilerName}"
+     */
+    protected String compilerName;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -111,7 +118,7 @@ public class RSLCreatorMojo
             int result;
             try
             {
-                result = compiler.digest( getDigestConfiguration( input ), true ).getExitCode();
+                result = compiler.digest( getDigestConfiguration( input ), true, compilerName ).getExitCode();
             }
             catch ( Exception e )
             {

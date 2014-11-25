@@ -19,8 +19,8 @@
 package net.flexmojos.oss.compiler;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import net.flexmojos.oss.compiler.interceptor.FlexToolInterceptor;
 import org.apache.flex.tools.FlexTool;
@@ -44,7 +44,7 @@ public class DefaultFlexCompiler
     private FlexCompilerArgumentParser parser;
 
     @Requirement( role = FlexToolInterceptor.class )
-    private Collection<FlexToolInterceptor> interceptors;
+    private List<FlexToolInterceptor> interceptors;
 
     public Result compileSwc( final ICompcConfiguration configuration, boolean sychronize,
                               final String compilerName )
@@ -175,7 +175,7 @@ public class DefaultFlexCompiler
 
     private void executeCompcMain(String compilerName, String[] args) throws Throwable {
         if(compilerName != null) {
-            executeTool(compilerName, "COMPC", args);
+            executeTool(compilerName, FlexTool.FLEX_TOOL_COMPC, args);
         } else {
             try {
                 Class<?> compc = Class.forName("flex2.tools.Compc");
@@ -190,7 +190,7 @@ public class DefaultFlexCompiler
 
     private void executeMxmlcMain(String compilerName, String[] args) throws Throwable {
         if(compilerName != null) {
-            executeTool(compilerName, "MXMLC", args);
+            executeTool(compilerName, FlexTool.FLEX_TOOL_MXMLC, args);
         } else {
             try {
                 Class<?> mxmlc = Class.forName("flex2.tools.Mxmlc");
@@ -206,7 +206,7 @@ public class DefaultFlexCompiler
 
     private void executeAsdocMain(String compilerName, String[] args) throws Throwable {
         if(compilerName != null) {
-            executeTool(compilerName, "ASDOC", args);
+            executeTool(compilerName, FlexTool.FLEX_TOOL_ASDOC, args);
         } else {
             try {
                 Class<?> asdoc = Class.forName("flex2.tools.ASDoc");
@@ -238,7 +238,7 @@ public class DefaultFlexCompiler
 
     private void executeDigestMain(String compilerName, String[] args) throws Throwable {
         if(compilerName != null) {
-            executeTool(compilerName, "DIGEST", args);
+            executeTool(compilerName, FlexTool.FLEX_TOOL_DIGEST, args);
         } else {
             try {
                 Class<?> digest = Class.forName("flex2.tools.DigestTool");
@@ -254,7 +254,7 @@ public class DefaultFlexCompiler
 
     private void executeOptimizerMain(String compilerName, String[] args) throws Throwable {
         if(compilerName != null) {
-            executeTool(compilerName, "OPTIMIZER", args);
+            executeTool(compilerName, FlexTool.FLEX_TOOL_OPTIMIZER, args);
         } else {
             try {
                 Class<?> optimizer = Class.forName("flex2.tools.Optimizer");

@@ -23,35 +23,34 @@ import org.apache.flex.tools.FlexTool;
 import org.apache.flex.tools.FlexToolGroup;
 import org.codehaus.plexus.component.annotations.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * In contrast to the old Legacy compiler, the new Falcon compiler
- * doesn't accept empty commandline options. In order to avoid errors
- * we simply filter out empty options.
+ * When performing a build with JavaScript output, the output parameter should
+ * refer to a directory and not a fie. So if the build is done using a JavaScript
+ * output tool, replace the "output" commandline switch.
  *
- * Created by christoferdutz on 10.11.14.
+ * Created by christoferdutz on 11.11.14.
  */
-@Component( role = FlexToolInterceptor.class, hint = "flex-tool-interceptor")
-public class FalconToolInterceptor implements FlexToolInterceptor {
+@Component( role = FlexToolInterceptor.class, hint = "javascript-tool-interceptor")
+public class JavaScriptToolInterceptor implements FlexToolInterceptor {
 
     @Override
     public String[] intercept(FlexToolGroup flexToolGroup, FlexTool flexTool, String[] args) {
-        // All Falcon based compilers don't like empty arguments of the type: "-compilerOption=",
-        // so we have to strip these out first.
-        if("Falcon".equalsIgnoreCase(flexToolGroup.getName()) || "FlexJS".equalsIgnoreCase(flexToolGroup.getName()) ||
-                "VF2JS".equalsIgnoreCase(flexToolGroup.getName()) ) {
+        if("FlexJS".equalsIgnoreCase(flexToolGroup.getName()) ||
+                "VF2JS".equalsIgnoreCase(flexToolGroup.getName())) {
             List<String> filteredArgs = new ArrayList<String>();
             for(String arg : args) {
-                if(!arg.endsWith("=")) {
+                if(arg.startsWith("-output=")) {
+                    // Cut of the file ending.
+                    filteredArgs.add(arg.substring(0, arg.lastIndexOf(".")));
+                } else {
                     filteredArgs.add(arg);
                 }
             }
             args = filteredArgs.toArray(new String[filteredArgs.size()]);
         }
-
         return args;
     }
 

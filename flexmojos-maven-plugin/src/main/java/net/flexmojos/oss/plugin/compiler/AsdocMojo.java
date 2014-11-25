@@ -331,7 +331,7 @@ public class AsdocMojo
     public Result doCompile( IASDocConfiguration cfg, boolean synchronize )
         throws Exception
     {
-        return compiler.asdoc( cfg, synchronize );
+        return compiler.asdoc( cfg, synchronize, compilerName );
     }
 
     public void execute()

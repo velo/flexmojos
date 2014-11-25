@@ -1438,6 +1438,13 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
      */
     private Boolean advancedTelemetry;
 
+    /**
+     * Name of the Flex Tool Group that should be used for the build.
+     *
+     * @parameter expression="${flex.compilerName}"
+     */
+    protected String compilerName;
+
     protected Artifact adaptResourceBundle( final Artifact baseRbSwc, String requestedLocale )
     {
         getLog().debug( "Adapting resource bundle " + baseRbSwc.getArtifactId() + ":" + baseRbSwc.getClassifier()
@@ -1498,7 +1505,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         try
         {
-            checkResult( compiler.compileSwc( cfg, true ) );
+            checkResult( compiler.compileSwc( cfg, true, compilerName ) );
         }
         catch ( Exception e )
         {
