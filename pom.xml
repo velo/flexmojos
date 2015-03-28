@@ -77,7 +77,7 @@
     </licenses>
 
     <properties>
-        <flex.version>4.13.0.20140701</flex.version>
+        <flex.version>4.14.0.20150123</flex.version>
         <air.version>13.0</air.version>
         <flash.version>13.0</flash.version>
 

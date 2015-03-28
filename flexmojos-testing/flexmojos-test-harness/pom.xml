@@ -666,6 +666,73 @@
 
                         <!--
 
+                                Flex SDK 4.14.0.20150123
+
+                        -->
+
+                        <xml>org.apache.flex:framework:4.14.0.20150123:pom</xml>
+
+                        <xml>org.apache.flex:compiler:4.14.0.20150123:pom</xml>
+                        <xml>org.apache.flex.compiler:asdoc:4.14.0.20150123:zip:template</xml>
+                        <xml>org.apache.flex.framework:air:4.14.0.20150123:pom</xml>
+                        <xml>org.apache.flex:framework:4.14.0.20150123:pom</xml>
+                        <xml>org.apache.flex.framework:framework:4.14.0.20150123:zip:configs</xml>
+
+                        <xml>org.apache.flex.framework:apache:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:advancedgrids:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:charts:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:experimental:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:flash-integration:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:framework:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:mx:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:rpc:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:spark:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework:textLayout:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework.air:airframework:4.14.0.20150123:rb.swc:en_US</xml>
+                        <xml>org.apache.flex.framework.air:airspark:4.14.0.20150123:rb.swc:en_US</xml>
+
+                        <xml>org.apache.flex.framework:apache:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:advancedgrids:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:charts:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:experimental:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:flash-integration:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:framework:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:mx:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:rpc:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:spark:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework:textLayout:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework.air:airframework:4.14.0.20150123:rb.swc:ja_JP</xml>
+                        <xml>org.apache.flex.framework.air:airspark:4.14.0.20150123:rb.swc:ja_JP</xml>
+
+                        <xml>org.apache.flex.framework:apache:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:advancedgrids:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:charts:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:experimental:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:framework:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:mx:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:rpc:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:spark:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework:textLayout:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework.air:airframework:4.14.0.20150123:rb.swc:pt_BR</xml>
+                        <xml>org.apache.flex.framework.air:airspark:4.14.0.20150123:rb.swc:pt_BR</xml>
+
+                        <xml>org.apache.flex.framework:apache:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:advancedgrids:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:charts:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:experimental:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:framework:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:mx:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:rpc:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:spark:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:spark_dmv:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:sparkskins:4.14.0.20150123:swf</xml>
+                        <xml>org.apache.flex.framework:textLayout:4.14.0.20150123:swf</xml>
+
+                        <xml>org.apache.flex.framework.themes:spark:4.14.0.20150123:swc</xml>
+
+
+                        <!--
+
                                 Flash Player
 
                         -->
