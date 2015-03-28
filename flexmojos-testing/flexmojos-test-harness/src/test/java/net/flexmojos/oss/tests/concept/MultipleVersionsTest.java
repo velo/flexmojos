@@ -29,7 +29,7 @@ public class MultipleVersionsTest
         throws Exception
     {
         FMVerifier v = standardConceptTester( "multiple-versions" );
-        v.assertFilePresent("multiple-versions-1.0-SNAPSHOT.swf");
-        v.assertFilePresent("multiple-versions-enterprise-1.0-SNAPSHOT.swf");
+        v.assertFilePresent("target/multiple-versions-1.0-SNAPSHOT.swf");
+        v.assertFilePresent("target/multiple-versions-enterprise-1.0-SNAPSHOT.swf");
     }
 }
