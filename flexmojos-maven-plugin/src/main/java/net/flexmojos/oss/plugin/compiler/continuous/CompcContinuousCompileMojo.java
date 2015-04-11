@@ -37,7 +37,7 @@ public class CompcContinuousCompileMojo
      * {@inheritDoc}
      */
     @Override
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         //

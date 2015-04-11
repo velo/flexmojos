@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.apache.flex</groupId>
             <artifactId>framework</artifactId>
-            <version>4.8.0.1359417</version>
+            <version>4.9.1.1447119</version>
             <type>pom</type>
         </dependency>
         <dependency>

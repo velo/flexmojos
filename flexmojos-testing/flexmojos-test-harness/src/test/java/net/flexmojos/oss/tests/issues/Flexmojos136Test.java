@@ -31,7 +31,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import net.flexmojos.oss.test.FMVerifier;
 import org.testng.annotations.Test;
 
-public class Flexmojos136Test extends AbstractIssueTest {
+public class Flexmojos136Test
+		extends AbstractIssueTest
+{
+
 	@Test
 	public void resolveReleaseVersion() throws Exception {
 		File libTestDir = getProject("/issues/flexmojos-136");

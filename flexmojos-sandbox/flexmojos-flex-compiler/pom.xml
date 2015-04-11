@@ -137,11 +137,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.flexmojos.oss</groupId>
             <artifactId>flexmojos-generator-internal-compiler-iface</artifactId>
             <version>${project.version}</version>

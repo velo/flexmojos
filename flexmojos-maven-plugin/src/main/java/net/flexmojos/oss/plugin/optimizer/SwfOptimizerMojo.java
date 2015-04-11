@@ -55,7 +55,7 @@ public class SwfOptimizerMojo
      */
     private String originalClassifierName;
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         getLog().debug( "project.getPackaging = " + packaging );

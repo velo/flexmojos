@@ -373,7 +373,7 @@ public class HtmlWrapperMojo
         extractZipTemplate( templateOutputDirectory, source );
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         String packaging = project.getPackaging();

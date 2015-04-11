@@ -124,7 +124,7 @@ public class Font2SwfMojo
      */
     protected String fontSwfFinalName;
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !font.exists() )

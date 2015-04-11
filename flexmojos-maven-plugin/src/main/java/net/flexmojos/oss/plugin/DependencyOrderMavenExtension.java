@@ -83,12 +83,6 @@ public class DependencyOrderMavenExtension
 
         List<Dependency> ad = new ArrayList<Dependency>();
 
-        Dependency threadtoolkit = new Dependency();
-        threadtoolkit.setGroupId( "net.flexmojos.oss" );
-        threadtoolkit.setArtifactId( "flexmojos-threadlocaltoolkit-wrapper" );
-        threadtoolkit.setVersion( fmVersion );
-        ad.add( threadtoolkit );
-
         if ( compiler.getVersion().startsWith( "2" ) )
         {
             Dependency compatibility = new Dependency();

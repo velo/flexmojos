@@ -113,7 +113,7 @@ public class ConfigurationMojo
 
     @SuppressWarnings( "unchecked" )
     @Override
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !( packaging.equals( SWC ) || packaging.equals( SWF ) ) )

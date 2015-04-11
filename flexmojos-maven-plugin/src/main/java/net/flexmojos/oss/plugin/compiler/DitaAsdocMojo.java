@@ -78,7 +78,7 @@ public class DitaAsdocMojo
         return PathUtil.path( ditaOutputDirectory );
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !SWC.equals( project.getPackaging() ) )

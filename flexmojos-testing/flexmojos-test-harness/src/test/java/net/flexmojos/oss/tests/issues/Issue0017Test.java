@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 public class Issue0017Test
     extends AbstractFlexMojosTests
 {
+
     @Test
     public void issue17()
         throws Exception

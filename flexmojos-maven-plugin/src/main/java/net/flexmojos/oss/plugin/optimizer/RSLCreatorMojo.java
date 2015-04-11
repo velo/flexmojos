@@ -88,7 +88,7 @@ public class RSLCreatorMojo
      */
     protected String compilerName;
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( skipRSLCreation )

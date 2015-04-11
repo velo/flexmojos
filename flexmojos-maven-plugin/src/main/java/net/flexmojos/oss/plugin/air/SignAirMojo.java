@@ -359,7 +359,7 @@ public class SignAirMojo
         }
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         doPackage( AIR, new FlexmojosAIRPackager() );

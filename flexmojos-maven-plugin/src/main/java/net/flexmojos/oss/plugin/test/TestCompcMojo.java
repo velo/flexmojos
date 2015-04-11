@@ -134,6 +134,7 @@ public class TestCompcMojo
         return null;
     }
 
+    @Override
     public SinglePathResolver getMavenPathResolver()
     {
         List<Resource> resources = new ArrayList<Resource>();

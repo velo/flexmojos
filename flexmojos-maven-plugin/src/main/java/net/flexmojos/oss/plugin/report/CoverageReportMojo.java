@@ -78,7 +78,7 @@ public class CoverageReportMojo
      */
     private List<String> sourcePaths;
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         // nothing to be done, the lifecycle deal with this report generation

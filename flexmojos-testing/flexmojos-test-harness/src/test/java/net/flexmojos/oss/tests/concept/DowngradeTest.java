@@ -30,11 +30,7 @@ public class DowngradeTest
     public void flex4( String fdk )
         throws Exception
     {
-        // README: There seems to be a problem with 4.8.0 resulting in an old version of commons-io
-        // (prior to 1.1 being included) which will cause the test to fail, so we simply skip this for now.
-        if(!"4.8.0.1359417".equals(fdk)) {
-            standardConceptTester( "downgrade-sdk4", fdk );
-        }
+        standardConceptTester( "downgrade-sdk4", fdk );
     }
 
     public FMVerifier standardConceptTester( String conceptName, String fdk )

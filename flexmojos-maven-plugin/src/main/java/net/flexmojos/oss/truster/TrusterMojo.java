@@ -49,7 +49,7 @@ public class TrusterMojo
      */
     private File[] filesToTrust;
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         for ( File fileToTrust : filesToTrust )

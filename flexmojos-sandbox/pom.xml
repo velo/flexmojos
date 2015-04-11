@@ -34,7 +34,6 @@
 
     <modules>
         <module>flexmojos-flex-compiler</module>
-        <module>flexmojos-threadlocaltoolkit-wrapper</module>
         <module>flexmojos-coverage-reporter</module>
         <module>flexmojos-configurator</module>
         <module>flexmojos-sample-configurator</module>

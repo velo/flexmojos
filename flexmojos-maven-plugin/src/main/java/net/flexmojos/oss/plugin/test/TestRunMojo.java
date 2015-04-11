@@ -252,7 +252,7 @@ public class TestRunMojo
     /**
      * Create a server socket for receiving the test reports from FlexUnit. We read the test reports inside of a Thread.
      */
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         // I'm not surefire, but ok

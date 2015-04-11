@@ -239,7 +239,7 @@ public class CompcMojo
         return compiler.compileSwc( cfg, synchronize, compilerName );
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !( PathUtil.existAny( getSourcePath() ) || getIncludeFile() != null ) )

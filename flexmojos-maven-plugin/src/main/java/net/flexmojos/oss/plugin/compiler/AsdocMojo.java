@@ -334,7 +334,7 @@ public class AsdocMojo
         return compiler.asdoc( cfg, synchronize, compilerName );
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( aggregate && !project.isExecutionRoot() )

@@ -122,7 +122,7 @@ public class CopyMojo
         }
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( skip )

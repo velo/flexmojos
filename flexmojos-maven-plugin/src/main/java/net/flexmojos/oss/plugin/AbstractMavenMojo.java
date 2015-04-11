@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.flexmojos.oss.compiler.util.ThreadLocalToolkitHelper;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.flex.utilities.converter.core.AirDownloader;
@@ -395,7 +396,7 @@ public abstract class AbstractMavenMojo
 
     protected Collection<File> filterFiles( List<FileSet> patterns, List<File> directories )
     {
-        directories = PathUtil.existingFilesList( directories );
+        directories = PathUtil.existingFilesList(directories);
 
         Set<File> includedFiles = new LinkedHashSet<File>();
         for ( FileSet pattern : patterns )
@@ -591,7 +592,7 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     public <E> E getFromPluginContext( String key )
     {
-        Object valueHolder = getPluginContext().get( key );
+        Object valueHolder = getPluginContext().get(key);
         if ( valueHolder instanceof ThreadLocal )
         {
             return ( (ThreadLocal<E>) valueHolder ).get();
@@ -602,7 +603,7 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     protected Artifact getGlobalArtifact()
     {
-        Artifact global = getDependency( GLOBAL_MATCHER );
+        Artifact global = getDependency(GLOBAL_MATCHER);
         if ( global == null )
         {
             if(flashVersion != null) {
@@ -893,7 +894,7 @@ public abstract class AbstractMavenMojo
         throws RuntimeMavenResolutionException
     {
         Artifact artifact =
-            repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, type, classifier );
+            repositorySystem.createArtifactWithClassifier(groupId, artifactId, version, type, classifier);
         if ( !artifact.isResolved() )
         {
             ArtifactResolutionRequest req = new ArtifactResolutionRequest();
@@ -1025,5 +1026,14 @@ public abstract class AbstractMavenMojo
             checkResult( result );
         }
     }
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        ThreadLocalToolkitHelper.setMavenLogger(getMavenLogger());
+        ThreadLocalToolkitHelper.setMavenResolver(getMavenPathResolver() );
+        fmExecute();
+    }
+
+    public abstract void fmExecute() throws MojoExecutionException, MojoFailureException;
 
 }

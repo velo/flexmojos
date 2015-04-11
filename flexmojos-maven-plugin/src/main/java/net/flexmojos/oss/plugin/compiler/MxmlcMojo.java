@@ -157,7 +157,7 @@ public class MxmlcMojo
         return compiler.compileSwf( cfg, synchronize, compilerName );
     }
 
-    public void execute()
+    public void fmExecute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !PathUtil.existAny( getSourcePath() ) )
