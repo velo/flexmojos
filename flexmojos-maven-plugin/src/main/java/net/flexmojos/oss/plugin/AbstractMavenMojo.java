@@ -17,35 +17,26 @@
  */
 package net.flexmojos.oss.plugin;
 
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.selectFirst;
-import static net.flexmojos.oss.plugin.common.FlexExtension.*;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.artifactId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.classifier;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.groupId;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
-
-import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import flex2.compiler.Logger;
+import flex2.compiler.common.SinglePathResolver;
+import flex2.tools.oem.internal.OEMLogAdapter;
+import net.flexmojos.oss.compatibilitykit.VersionUtils;
+import net.flexmojos.oss.compiler.command.Result;
 import net.flexmojos.oss.compiler.util.ThreadLocalToolkitHelper;
+import net.flexmojos.oss.plugin.common.flexbridge.MavenLogger;
+import net.flexmojos.oss.plugin.common.flexbridge.MavenPathResolver;
+import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
+import net.flexmojos.oss.plugin.compiler.lazyload.Cacheable;
+import net.flexmojos.oss.plugin.compiler.lazyload.NotCacheable;
+import net.flexmojos.oss.plugin.utilities.MavenUtils;
+import net.flexmojos.oss.util.PathUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.flex.utilities.converter.core.AirDownloader;
-import org.apache.flex.utilities.converter.core.FlashDownloader;
+import org.apache.flex.utilities.converter.air.AirConverter;
+import org.apache.flex.utilities.converter.flash.FlashConverter;
+import org.apache.flex.utilities.converter.retrievers.download.DownloadRetriever;
 import org.apache.flex.utilities.converter.retrievers.types.PlatformType;
+import org.apache.flex.utilities.converter.retrievers.types.SdkType;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -71,19 +62,18 @@ import org.codehaus.plexus.util.InterpolationFilterReader;
 import org.hamcrest.Matcher;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import net.flexmojos.oss.compatibilitykit.VersionUtils;
-import net.flexmojos.oss.compiler.command.Result;
-import net.flexmojos.oss.plugin.common.flexbridge.MavenLogger;
-import net.flexmojos.oss.plugin.common.flexbridge.MavenPathResolver;
-import net.flexmojos.oss.plugin.compiler.attributes.MavenRuntimeException;
-import net.flexmojos.oss.plugin.compiler.lazyload.Cacheable;
-import net.flexmojos.oss.plugin.compiler.lazyload.NotCacheable;
-import net.flexmojos.oss.plugin.utilities.MavenUtils;
-import net.flexmojos.oss.util.PathUtil;
 
-import flex2.compiler.Logger;
-import flex2.compiler.common.SinglePathResolver;
-import flex2.tools.oem.internal.OEMLogAdapter;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static ch.lambdaj.Lambda.filter;
+import static ch.lambdaj.Lambda.selectFirst;
+import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.*;
+import static net.flexmojos.oss.plugin.common.FlexExtension.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.anyOf;
 
 public abstract class AbstractMavenMojo
     implements Mojo, Cacheable, ContextEnabled
@@ -356,7 +346,7 @@ public abstract class AbstractMavenMojo
 
     protected List<String> filterClasses( List<FileSet> classesPattern, File[] directories )
     {
-        directories = PathUtil.existingFiles( directories );
+        directories = PathUtil.existingFiles(directories);
 
         Set<String> includedFiles = new LinkedHashSet<String>();
         for ( FileSet pattern : classesPattern )
@@ -429,32 +419,12 @@ public abstract class AbstractMavenMojo
     {
         if (airVersion == null)
         {
-             int[] version = VersionUtils.splitVersion( getCompilerVersion() );
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 6, 0 } ) )
-            {
-                return "3.1";
+            // Get the Air-Version from the air runtime artifact (airglobal.swc)
+            Artifact airRuntimeArtifact = getDependency(
+                    allOf(groupId(AIR_GROUP_ID), artifactId(AIR_GLOBAL), type(SWC)));
+            if(airRuntimeArtifact != null) {
+                return airRuntimeArtifact.getVersion();
             }
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 5, 0 } ) )
-            {
-                return "2.6";
-            }
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 4, 1, 0 } ) )
-            {
-                return "2.0.2";
-            }
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 5, 0 } ) )
-            {
-                return "1.5.3";
-            }
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 4, 0 } ) )
-            {
-                return "1.5.2";
-            }
-            if ( VersionUtils.isMinVersionOK( version, new int[] { 3, 2, 0 } ) )
-            {
-                return "1.5";
-            }
-
             return "1.0";
         }
         else return airVersion;
@@ -580,7 +550,7 @@ public abstract class AbstractMavenMojo
     public String getFrameworkVersion()
     {
         Artifact dep = getDependency(
-                    groupId("org.apache.flex.framework"), artifactId( "framework" ), type( "swc" ) );
+                groupId("org.apache.flex.framework"), artifactId("framework"), type("swc"));
 
         if ( dep == null )
         {
@@ -670,10 +640,11 @@ public abstract class AbstractMavenMojo
             File mavenLocalRepoDir = new File(localRepository.getBasedir());
             if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
                 // Use the Mavenizer to download and install the playerglobal artifact.
-                FlashDownloader flashDownloader = new FlashDownloader();
                 try {
-                    // Download and convert the flashplayer artifacts.
-                    flashDownloader.downloadAndConvert(mavenLocalRepoDir, flashVersion);
+                    DownloadRetriever downloadRetriever = new DownloadRetriever();
+                    File flashSdkRoot = downloadRetriever.retrieve(SdkType.FLASH, flashVersion);
+                    FlashConverter flashConverter = new FlashConverter(flashSdkRoot, mavenLocalRepoDir);
+                    flashConverter.convert();
 
                     // Try to resolve the artifact again (This time it should work).
                     playerglobalArtifact = resolve(
@@ -711,7 +682,6 @@ public abstract class AbstractMavenMojo
             File mavenLocalRepoDir = new File(localRepository.getBasedir());
             if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
                 // Use the Mavenizer to download and install the playerglobal artifact.
-                AirDownloader airDownloader = new AirDownloader();
                 try {
                     PlatformType platformType = null;
                     if(MavenUtils.isWindows()) {
@@ -721,8 +691,10 @@ public abstract class AbstractMavenMojo
                     } else if(MavenUtils.isLinux()) {
                         platformType = PlatformType.LINUX;
                     }
-                    // Download and convert the air artifacts.
-                    airDownloader.downloadAndConvert(mavenLocalRepoDir, airVersion, platformType);
+                    DownloadRetriever downloadRetriever = new DownloadRetriever();
+                    File airSdkRoot = downloadRetriever.retrieve(SdkType.AIR, airVersion, platformType);
+                    AirConverter airConverter = new AirConverter(airSdkRoot, mavenLocalRepoDir);
+                    airConverter.convert();
 
                     // Try to resolve the artifact again (This time it should work).
                     airglobalArtifact = resolve(

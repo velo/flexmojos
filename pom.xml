@@ -78,8 +78,8 @@
 
     <properties>
         <flex.version>4.14.1.20150325</flex.version>
-        <air.version>13.0</air.version>
-        <flash.version>13.0</flash.version>
+        <air.version>14.0</air.version>
+        <flash.version>14.0</flash.version>
 
         <commons_io.version>1.4</commons_io.version>
         <maven.version>3.1.1</maven.version>

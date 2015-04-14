@@ -66,7 +66,6 @@ import java.util.Set;
 
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.flex.utilities.converter.core.FlashDownloader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Contributor;
 import org.apache.maven.model.Developer;
@@ -1594,8 +1593,8 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         cfg.includeResourceBundles = getResourceBundleListContent();
-        cfg.getCache().put( EXTERNAL_LIBRARY_PATH, MavenUtils.getFiles( getDependencies( type( SWC ) ) ) );
-        cfg.getCache().put( LIBRARY_PATH, MavenUtils.getFiles( cfg.getCompiledResouceBundles() ) );
+        cfg.getCache().put(EXTERNAL_LIBRARY_PATH, MavenUtils.getFiles(getDependencies(type(SWC))));
+        cfg.getCache().put(LIBRARY_PATH, MavenUtils.getFiles(cfg.getCompiledResouceBundles()));
 
         if ( localesOutputPath != null )
         {
@@ -2016,7 +2015,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
             } );
         }
 
-        return keys.toArray( new IDefine[keys.size()] );
+        return keys.toArray(new IDefine[keys.size()]);
     }
 
     public String getDescription()
@@ -2227,7 +2226,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     public File[] getIncludeLibraries()
     {
-        return MavenUtils.getFiles( getDependencies( anyOf( type( SWC ), type( ANE ) ), scope( INTERNAL ), not( GLOBAL_MATCHER ) ) );
+        return MavenUtils.getFiles(getDependencies(anyOf(type(SWC), type(ANE)), scope(INTERNAL), not(GLOBAL_MATCHER)));
     }
 
     public List<String> getIncludes()
@@ -2344,12 +2343,12 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 projectHelper.attachArtifact( project, XML, LINK_REPORT, linkReport );
             }
         }
-        return PathUtil.path( linkReport );
+        return PathUtil.path(linkReport);
     }
 
     public String[] getLoadConfig()
     {
-        return PathUtil.paths( ConfigurationResolver.resolveConfiguration( loadConfigs, loadConfig, configDirectory ) );
+        return PathUtil.paths( ConfigurationResolver.resolveConfiguration(loadConfigs, loadConfig, configDirectory) );
     }
 
     @SuppressWarnings( { "unchecked", "deprecation" } )
@@ -2630,7 +2629,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     public String getResourceBundleList()
     {
-        return PathUtil.path( getResourceBundleListFile() );
+        return PathUtil.path(getResourceBundleListFile());
     }
 
     protected List<String> getResourceBundleListContent()
@@ -2825,7 +2824,7 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
                 projectHelper.attachArtifact( project, XML, SIZE_REPORT, sizeReport );
             }
         }
-        return PathUtil.path( sizeReport );
+        return PathUtil.path(sizeReport);
     }
 
     public File[] getSourcePath()
@@ -2867,63 +2866,113 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return swcChecksum;
     }
 
-    public Integer getSwfVersion()
-    {
-        if ( swfVersion != null )
-        {
+    /**
+     * Get the swfVersion based upon the flashVersion or airVersion.
+     * http://www.adobe.com/devnet/articles/flashplayer-air-feature-list.html
+     *
+     * @return swfVersion the selected flash or air runtime requires.
+     */
+    public Integer getSwfVersion() {
+        if (swfVersion != null) {
             return swfVersion;
         }
 
-        if(flashVersion == null) {
-            Artifact global = getGlobalArtifact();
-            if  (PLAYER_GLOBAL.equals(global.getArtifactId())) {
+        Artifact global = getGlobalArtifact();
+
+        // If flashVersion is not explicitly set, get the
+        // flashVersion from the used global artifact.
+        if (flashVersion == null) {
+            if (PLAYER_GLOBAL.equals(global.getArtifactId())) {
                 flashVersion = global.getVersion();
             }
         }
-        if ( flashVersion != null )
-        {
-            if ( VersionUtils.isMinVersionOK( flashVersion, "17.0" ) )
+        // Get the swfVersion based upon the used flashVersion.
+        if (flashVersion != null) {
+            if (VersionUtils.isMinVersionOK(flashVersion, "17.0"))
                 return 28;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "16.0" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "16.0"))
                 return 27;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "15.0" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "15.0"))
                 return 26;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "14.0" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "14.0"))
                 return 25;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "13.0" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "13.0"))
                 return 24;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "12.0" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "12.0"))
                 return 23;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.9" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.9"))
                 return 22;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.8" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.8"))
                 return 21;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.7" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.7"))
                 return 20;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.6" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.6"))
                 return 19;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.5" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.5"))
                 return 18;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.4" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.4"))
                 return 17;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.3" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.3"))
                 return 16;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.2" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.2"))
                 return 15;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11.1" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11.1"))
                 return 14;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "11" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "11"))
                 return 13;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "10.3" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "10.3"))
                 return 12;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "10.2" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "10.2"))
                 return 11;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "10.1" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "10.1"))
                 return 10;
-            if ( VersionUtils.isMinVersionOK( flashVersion, "9" ) )
+            if (VersionUtils.isMinVersionOK(flashVersion, "9"))
                 return 9;
 
-            getLog().warn( "Unable to determine 'swfVersion' for " + flashVersion );
+            getLog().warn("Unable to determine 'swfVersion' for flashVersion " + flashVersion);
+        }
+
+        // If airVersion is not explicitly set, get the
+        // airVersion from the used global artifact.
+        if (airVersion == null) {
+            if (AIR_GLOBAL.equals(global.getArtifactId())) {
+                airVersion = global.getVersion();
+            }
+        }
+        // Get the swfVersion based upon the used airVersion.
+        if (airVersion != null) {
+            if (VersionUtils.isMinVersionOK(airVersion, "17.0"))
+                return 28;
+            if (VersionUtils.isMinVersionOK(airVersion, "16.0"))
+                return 27;
+            if (VersionUtils.isMinVersionOK(airVersion, "15.0"))
+                return 26;
+            if (VersionUtils.isMinVersionOK(airVersion, "14.0"))
+                return 25;
+            if (VersionUtils.isMinVersionOK(airVersion, "13.0"))
+                return 24;
+            if (VersionUtils.isMinVersionOK(airVersion, "4.0"))
+                return 23;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.9"))
+                return 22;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.8"))
+                return 21;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.7"))
+                return 20;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.6"))
+                return 19;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.5"))
+                return 18;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.4"))
+                return 17;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.3"))
+                return 16;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.2"))
+                return 15;
+            if (VersionUtils.isMinVersionOK(airVersion, "3.0"))
+                return 13;
+
+            getLog().warn("Unable to determine 'swfVersion' for airVersion " + airVersion);
         }
 
         return null;

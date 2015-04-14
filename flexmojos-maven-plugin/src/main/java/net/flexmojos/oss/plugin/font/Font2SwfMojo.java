@@ -20,24 +20,23 @@ package net.flexmojos.oss.plugin.font;
 import static net.flexmojos.oss.util.PathUtil.path;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 
+import net.flexmojos.oss.plugin.font.types.TranscoderType;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.flex.utilities.converter.fontkit.FontkitConverter;
+import org.apache.flex.utilities.converter.retrievers.download.DownloadRetriever;
+import org.apache.flex.utilities.converter.retrievers.types.SdkType;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.IOUtil;
 import net.flexmojos.oss.plugin.AbstractMavenMojo;
-
-import com.adobe.fonts.transcoder.DefineFont3Transcoder;
-import com.adobe.fonts.transcoder.DefineFont4Transcoder;
-import com.adobe.fonts.transcoder.Font2SWF;
-import com.adobe.fonts.transcoder.Font2SWF.DefineFontKind;
-import com.adobe.fonts.transcoder.FontTranscoder;
-import com.adobe.fonts.transcoder.FontTranscoderException;
 
 import flash.fonts.FontDescription;
 
@@ -72,7 +71,7 @@ public class Font2SwfMojo
      * 
      * @parameter default-value="DEFINEFONT4" expression="${flex.font.transcoder}"
      */
-    private DefineFontKind transcoder;
+    private TranscoderType transcoder;
 
     /**
      * Set the font alias (defaults to font file name)
@@ -158,18 +157,30 @@ public class Font2SwfMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
-        FontTranscoder fontTranscoder;
-        if ( transcoder == Font2SWF.DefineFontKind.DEFINEFONT3 )
-        {
-            fontTranscoder = new DefineFont3Transcoder();
+        Class fontTranscoderType = getTranscoderType(getClass().getClassLoader());
+        if(fontTranscoderType == null) {
+            File mavenLocalRepoDir = new File(localRepository.getBasedir());
+            try {
+                DownloadRetriever downloadRetriever = new DownloadRetriever();
+                File fontkitRoot = downloadRetriever.retrieve(SdkType.FONTKIT);
+                FontkitConverter fontkitConverter = new FontkitConverter(fontkitRoot, mavenLocalRepoDir);
+                fontkitConverter.convert();
+
+                // Try to resolve the artifact again (This time it should work).
+                Artifact fontkitArtifact = resolve(
+                        "com.adobe", "fontkit", "1.0", null, "jar");
+
+                // Create a new Classloader that knows about the fontkit jar and
+                // re-try to load the transcoder.
+                URLClassLoader classLoader = new URLClassLoader(new URL[]{fontkitArtifact.getFile().toURL()}, getClass().getClassLoader());
+                fontTranscoderType = getTranscoderType(classLoader);
+            } catch (Exception ce) {
+                getLog().error("Caught exception while downloading and converting fontkit libraries.");
+            }
         }
-        else if ( transcoder == Font2SWF.DefineFontKind.DEFINEFONT4 )
-        {
-            fontTranscoder = new DefineFont4Transcoder();
-        }
-        else
-        {
-            throw new IllegalStateException( "Unexpected font transcoder: " + transcoder );
+
+        if(fontTranscoderType == null) {
+            throw new MojoExecutionException( "Failed to load the trancoder" );
         }
 
         if ( fontSwfFinalName == null )
@@ -182,13 +193,11 @@ public class Font2SwfMojo
         {
             File outputFile = new File( getTargetDirectory(), fontSwfFinalName + ".swf" );
             output = new FileOutputStream( outputFile );
-            fontTranscoder.transcode( description, output );
+            Object fontTranscoderInstance = fontTranscoderType.newInstance();
+            Method transcodeMethod = fontTranscoderType.getMethod("transcode", FontDescription.class, OutputStream.class);
+            transcodeMethod.invoke(fontTranscoderInstance, description, output);
         }
-        catch ( FontTranscoderException e )
-        {
-            throw new MojoExecutionException( "Failed to create the font swf", e );
-        }
-        catch ( FileNotFoundException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to create the font swf", e );
         }
@@ -196,6 +205,21 @@ public class Font2SwfMojo
         {
             IOUtil.close( output );
         }
+    }
+
+    protected Class getTranscoderType(ClassLoader classloader) {
+        try {
+            if (transcoder == TranscoderType.DEFINEFONT3) {
+                return Class.forName("com.adobe.fonts.transcoder.DefineFont3Transcoder",
+                        true, classloader);
+            } else if (transcoder == TranscoderType.DEFINEFONT4) {
+                return Class.forName("com.adobe.fonts.transcoder.DefineFont4Transcoder",
+                        true, classloader);
+            }
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+        return null;
     }
 
 }
