@@ -44,16 +44,16 @@ public abstract class AbstractConceptTest
     @DataProvider( name = "flex4" )
     public Object[][] flex4()
     {
-        return new Object[][] { { "4.9.1.1447119" },
-                { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" }, { "4.12.1.20140427" },
-                { "4.13.0.20140701" }, { "4.14.1.20150325" } };
+        return new Object[][] { { "4.9.1" },
+                { "4.10.0" }, { "4.11.0" }, { "4.12.0" }, { "4.12.1" },
+                { "4.13.0" }, { "4.14.1" } };
     }
 
     @DataProvider( name = "flex4WithAdvancedTelemetrySupport" )
     public Object[][] flex4WithAdvancedTelemetrySupport()
     {
-        return new Object[][] { { "4.10.0.20130801" }, { "4.11.0.20131017" }, { "4.12.0.20140303" },
-                { "4.12.1.20140427" }, { "4.13.0.20140701" }, { "4.14.1.20150325" } };
+        return new Object[][] { { "4.10.0" }, { "4.11.0" }, { "4.12.0" },
+                { "4.12.1" }, { "4.13.0" }, { "4.14.1" } };
     }
 
 }

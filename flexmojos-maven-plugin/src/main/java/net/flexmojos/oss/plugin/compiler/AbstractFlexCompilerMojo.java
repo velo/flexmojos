@@ -3083,7 +3083,6 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         return verifyDigests;
     }
 
-    @Override
     public Boolean getAdvancedTelemetry() {
         return advancedTelemetry;
     }

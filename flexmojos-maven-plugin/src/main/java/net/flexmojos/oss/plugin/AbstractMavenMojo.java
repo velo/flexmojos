@@ -20,7 +20,6 @@ package net.flexmojos.oss.plugin;
 import flex2.compiler.Logger;
 import flex2.compiler.common.SinglePathResolver;
 import flex2.tools.oem.internal.OEMLogAdapter;
-import net.flexmojos.oss.compatibilitykit.VersionUtils;
 import net.flexmojos.oss.compiler.command.Result;
 import net.flexmojos.oss.compiler.util.ThreadLocalToolkitHelper;
 import net.flexmojos.oss.plugin.common.flexbridge.MavenLogger;
@@ -32,11 +31,6 @@ import net.flexmojos.oss.plugin.utilities.MavenUtils;
 import net.flexmojos.oss.util.PathUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.flex.utilities.converter.air.AirConverter;
-import org.apache.flex.utilities.converter.flash.FlashConverter;
-import org.apache.flex.utilities.converter.retrievers.download.DownloadRetriever;
-import org.apache.flex.utilities.converter.retrievers.types.PlatformType;
-import org.apache.flex.utilities.converter.retrievers.types.SdkType;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -512,7 +506,7 @@ public abstract class AbstractMavenMojo
 
     public Set<Artifact> getDependencies()
     {
-        return Collections.unmodifiableSet( project.getArtifacts() );
+        return Collections.unmodifiableSet(project.getArtifacts());
     }
 
     protected Set<Artifact> getDependencies( Matcher<? extends Artifact>... matchers )
@@ -524,7 +518,7 @@ public abstract class AbstractMavenMojo
 
     protected Artifact getDependency( Matcher<? extends Artifact>... matchers )
     {
-        return selectFirst( getDependencies(), allOf( matchers ) );
+        return selectFirst(getDependencies(), allOf(matchers));
     }
 
     @SuppressWarnings( "unchecked" )
@@ -535,7 +529,7 @@ public abstract class AbstractMavenMojo
                 type( "zip" )
         };
         Artifact frmkCfg =
-            getDependency( frmkCfgMatchers );
+            getDependency(frmkCfgMatchers);
 
         // not on dependency list, trying to resolve it manually
         if ( frmkCfg == null )
@@ -576,32 +570,9 @@ public abstract class AbstractMavenMojo
         Artifact global = getDependency(GLOBAL_MATCHER);
         if ( global == null )
         {
-            if(flashVersion != null) {
-                global = getFlashRuntimeArtifact();
-            } else if(airVersion != null) {
-                global = getAirRuntimeArtifact();
-            } else {
-                throw new IllegalArgumentException(
-                        "Global artifact is not available. Make sure to add 'playerglobal' or 'airglobal' to " +
-                                "this project or set the 'flashVersion' or 'airVersion' configuration parameters " +
-                                "to have missing artifacts automatically downloaded.");
-            }
-        } else {
-            if(PLAYER_GLOBAL.equals(global.getArtifactId()) && (flashVersion != null) &&
-                    !global.getVersion().equals(flashVersion)) {
-                throw new IllegalArgumentException(
-                        "Version of 'playerglobal' artifact doesn't match the version configured in the " +
-                                "'flashVersion' configuration parameter. Make sure the versions match or remove " +
-                                "either the 'playerglobal' dependency or the 'flashVersion' configuration parameter " +
-                                "as they are redundant.");
-            } else if(AIR_GLOBAL.equals(global.getArtifactId()) && (airVersion != null) &&
-                    !global.getVersion().equals(airVersion)) {
-                throw new IllegalArgumentException(
-                        "Version of 'airglobal' artifact doesn't match the version configured in the " +
-                                "'airVersion' configuration parameter. Make sure the versions match or remove " +
-                                "either the 'airglobal' dependency or the 'airVersion' configuration parameter " +
-                                "as they are redundant.");
-            }
+            throw new IllegalArgumentException(
+                    "Global artifact is not available. Make sure to add " +
+                            "'playerglobal' or 'airglobal' to this project.");
         }
 
         File source = global.getFile();
@@ -622,98 +593,6 @@ public abstract class AbstractMavenMojo
             throw new IllegalStateException( "Error renaming '" + global.getArtifactId() + "'.", e );
         }
         return global;
-    }
-
-    protected Artifact getFlashRuntimeArtifact() {
-        Artifact playerglobalArtifact = null;
-        try
-        {
-            // first try to get the artifact from maven local repository for the appropriated flex version
-            playerglobalArtifact = resolve(
-                    FLASH_GROUP_ID, PLAYER_GLOBAL, flashVersion, null, "swc" );
-        }
-        catch ( RuntimeMavenResolutionException e ) {
-            getLog().info("Couldn't resolve playerglobal swc artifact from remote repository, " +
-                    "falling back to using the Apache Mavenizer");
-
-            // Get the maven local repo directory.
-            File mavenLocalRepoDir = new File(localRepository.getBasedir());
-            if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
-                // Use the Mavenizer to download and install the playerglobal artifact.
-                try {
-                    DownloadRetriever downloadRetriever = new DownloadRetriever();
-                    File flashSdkRoot = downloadRetriever.retrieve(SdkType.FLASH, flashVersion);
-                    FlashConverter flashConverter = new FlashConverter(flashSdkRoot, mavenLocalRepoDir);
-                    flashConverter.convert();
-
-                    // Try to resolve the artifact again (This time it should work).
-                    playerglobalArtifact = resolve(
-                            FLASH_GROUP_ID, PLAYER_GLOBAL, flashVersion, null, "swc" );
-                } catch(Exception ce) {
-                    getLog().error("Caught exception while downloading and converting artifact.");
-                }
-            } else {
-                getLog().error("Could not access maven local repo directory at: " +
-                        mavenLocalRepoDir.getAbsolutePath());
-            }
-        }
-
-        // If an artifact was found, add that to the dependencies.
-        if(playerglobalArtifact != null) {
-            project.getArtifacts().add(playerglobalArtifact);
-        }
-
-        return playerglobalArtifact;
-    }
-
-    protected Artifact getAirRuntimeArtifact() {
-        Artifact airglobalArtifact = null;
-        try
-        {
-            // first try to get the artifact from maven local repository for the appropriated flex version
-            airglobalArtifact = resolve(
-                    AIR_GROUP_ID, AIR_GLOBAL, airVersion, null, SWC );
-        }
-        catch ( RuntimeMavenResolutionException e ) {
-            getLog().info("Couldn't resolve playerglobal swc artifact from remote repository, " +
-                    "falling back to using the Apache Mavenizer");
-
-            // Get the maven local repo directory.
-            File mavenLocalRepoDir = new File(localRepository.getBasedir());
-            if(mavenLocalRepoDir.exists() && mavenLocalRepoDir.isDirectory()) {
-                // Use the Mavenizer to download and install the playerglobal artifact.
-                try {
-                    PlatformType platformType = null;
-                    if(MavenUtils.isWindows()) {
-                        platformType = PlatformType.WINDOWS;
-                    } else if(MavenUtils.isMac()) {
-                        platformType = PlatformType.MAC;
-                    } else if(MavenUtils.isLinux()) {
-                        platformType = PlatformType.LINUX;
-                    }
-                    DownloadRetriever downloadRetriever = new DownloadRetriever();
-                    File airSdkRoot = downloadRetriever.retrieve(SdkType.AIR, airVersion, platformType);
-                    AirConverter airConverter = new AirConverter(airSdkRoot, mavenLocalRepoDir);
-                    airConverter.convert();
-
-                    // Try to resolve the artifact again (This time it should work).
-                    airglobalArtifact = resolve(
-                            AIR_GROUP_ID, AIR_GLOBAL, airVersion, null, SWC );
-                } catch(Exception ce) {
-                    getLog().error("Caught exception while downloading and converting artifact.");
-                }
-            } else {
-                getLog().error("Could not access maven local repo directory at: " +
-                        mavenLocalRepoDir.getAbsolutePath());
-            }
-        }
-
-        // If an artifact was found, add that to the dependencies.
-        if(airglobalArtifact != null) {
-            project.getArtifacts().add(airglobalArtifact);
-        }
-
-        return airglobalArtifact;
     }
 
     @SuppressWarnings( "unchecked" )
