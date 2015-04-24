@@ -618,7 +618,7 @@ public class HtmlWrapperMojo
                 }
 
                 sourceArtifact =
-                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, "pom", classifier );
+                    repositorySystem.createArtifactWithClassifier( groupId, artifactId, version, "jar", classifier );
             }
         }
         else
@@ -634,12 +634,9 @@ public class HtmlWrapperMojo
         // Does source pom contain flexmojos plugin?
         Map<String, Plugin> sourcePlugins = sourceProject.getBuild().getPluginsAsMap();
         Plugin sourceFlexmojos = sourcePlugins.get( "net.flexmojos.oss:flexmojos-maven-plugin" );
-        if ( sourceFlexmojos == null )
-        {
-            throw new MojoExecutionException( "Could not locate flexmojos plugin in wrapper source pom" );
+        if ( sourceFlexmojos != null ) {
+            this.parameters = MavenPluginUtil.extractParameters( sourceFlexmojos );
         }
-
-        this.parameters = MavenPluginUtil.extractParameters( sourceFlexmojos );
     }
 
     /**
