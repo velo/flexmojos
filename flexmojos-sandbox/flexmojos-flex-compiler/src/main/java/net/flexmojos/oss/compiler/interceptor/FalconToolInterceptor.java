@@ -23,7 +23,6 @@ import org.apache.flex.tools.FlexTool;
 import org.apache.flex.tools.FlexToolGroup;
 import org.codehaus.plexus.component.annotations.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +37,7 @@ import java.util.List;
 public class FalconToolInterceptor implements FlexToolInterceptor {
 
     @Override
-    public String[] intercept(FlexToolGroup flexToolGroup, FlexTool flexTool, String[] args) {
+    public String[] interceptArgs(FlexToolGroup flexToolGroup, FlexTool flexTool, String[] args) {
         // All Falcon based compilers don't like empty arguments of the type: "-compilerOption=",
         // so we have to strip these out first.
         if("Falcon".equalsIgnoreCase(flexToolGroup.getName()) || "FlexJS".equalsIgnoreCase(flexToolGroup.getName()) ||

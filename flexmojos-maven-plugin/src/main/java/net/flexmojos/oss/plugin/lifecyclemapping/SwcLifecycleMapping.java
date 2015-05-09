@@ -32,4 +32,9 @@ public class SwcLifecycleMapping
         return "net.flexmojos.oss:flexmojos-maven-plugin:compile-swc";
     }
 
+    @Override
+    protected String getPackage() {
+        return "net.flexmojos.oss:flexmojos-maven-plugin:package";
+    }
+
 }

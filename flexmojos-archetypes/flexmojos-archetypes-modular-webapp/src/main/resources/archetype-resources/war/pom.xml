@@ -90,7 +90,7 @@
                 </configuration>
             </plugin>
             <!--
-                Make the war project "runable" by running mvn jetty:run
+                Make the war project "runnable" by running mvn jetty:run
             -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>

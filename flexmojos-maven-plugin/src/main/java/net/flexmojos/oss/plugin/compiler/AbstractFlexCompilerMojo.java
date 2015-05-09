@@ -1861,7 +1861,14 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
     protected File getCompilerOutput()
     {
-        File output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
+        File output;
+        // The FlexJS compiler creates zip-files.
+        if("FlexJS".equals(compilerName)) {
+            output = new File( getTargetDirectory(), getFinalName() );
+        }
+        else {
+            output = new File( getTargetDirectory(), getFinalName() + "." + getProjectType() );
+        }
         output.getParentFile().mkdirs();
         return output;
     }
@@ -2198,7 +2205,11 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     {
         synchronized ( lock )
         {
-            return Collections.singletonList( getGlobalArtifact() );
+            Artifact globalArtifact = getGlobalArtifact();
+            if(globalArtifact != null) {
+                return Collections.singletonList( globalArtifact );
+            }
+            return Collections.emptySet();
         }
     }
 
@@ -2878,6 +2889,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         }
 
         Artifact global = getGlobalArtifact();
+        if(global == null) {
+            return null;
+        }
 
         // If flashVersion is not explicitly set, get the
         // flashVersion from the used global artifact.
@@ -3362,6 +3376,10 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
     @SuppressWarnings( "unchecked" )
     private File resolveThemeFile( String artifactName )
     {
+        if(getFrameworkGroupId() == null) {
+            return null;
+        }
+
         File themeArtifact;
         final String themeGroupId = getFrameworkGroupId() + ".themes";
         final String themeArtifactId = artifactName;

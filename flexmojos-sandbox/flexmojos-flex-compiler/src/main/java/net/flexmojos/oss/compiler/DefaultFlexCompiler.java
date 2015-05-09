@@ -18,21 +18,20 @@
  */
 package net.flexmojos.oss.compiler;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
+import net.flexmojos.oss.compiler.command.Command;
+import net.flexmojos.oss.compiler.command.CommandUtil;
+import net.flexmojos.oss.compiler.command.Result;
 import net.flexmojos.oss.compiler.interceptor.FlexToolInterceptor;
+import net.flexmojos.oss.compiler.util.FlexCompilerArgumentParser;
 import org.apache.flex.tools.FlexTool;
 import org.apache.flex.tools.FlexToolGroup;
 import org.apache.flex.tools.FlexToolRegistry;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import net.flexmojos.oss.compiler.command.Command;
-import net.flexmojos.oss.compiler.command.CommandUtil;
-import net.flexmojos.oss.compiler.command.Result;
-import net.flexmojos.oss.compiler.util.FlexCompilerArgumentParser;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 @Component( role = FlexCompiler.class )
 public class DefaultFlexCompiler
@@ -287,7 +286,7 @@ public class DefaultFlexCompiler
         // If interceptors are provided, let each one process the argument list.
         if(interceptors != null) {
             for(FlexToolInterceptor interceptor : interceptors) {
-                args = interceptor.intercept(toolGroup, tool, args);
+                args = interceptor.interceptArgs(toolGroup, tool, args);
             }
         }
 

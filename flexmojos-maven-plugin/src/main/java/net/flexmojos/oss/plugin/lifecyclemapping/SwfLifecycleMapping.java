@@ -32,4 +32,9 @@ public class SwfLifecycleMapping
         return "net.flexmojos.oss:flexmojos-maven-plugin:compile-swf";
     }
 
+    @Override
+    protected String getPackage() {
+        return "net.flexmojos.oss:flexmojos-maven-plugin:package";
+    }
+
 }

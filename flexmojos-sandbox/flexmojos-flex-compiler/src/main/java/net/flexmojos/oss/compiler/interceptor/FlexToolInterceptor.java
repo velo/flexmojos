@@ -27,6 +27,6 @@ import org.apache.flex.tools.FlexToolGroup;
  */
 public interface FlexToolInterceptor {
 
-    String[] intercept(FlexToolGroup flexToolGroup, FlexTool flexTool, String[] args);
+    String[] interceptArgs(FlexToolGroup flexToolGroup, FlexTool flexTool, String[] args);
 
 }

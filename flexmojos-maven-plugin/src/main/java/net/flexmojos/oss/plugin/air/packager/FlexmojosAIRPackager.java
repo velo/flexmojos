@@ -17,18 +17,17 @@
  */
 package net.flexmojos.oss.plugin.air.packager;
 
+import com.adobe.air.AIRPackager;
+import com.adobe.air.Listener;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-
-import com.adobe.air.AIRPackager;
-import com.adobe.air.Listener;
 
 public class FlexmojosAIRPackager
 {

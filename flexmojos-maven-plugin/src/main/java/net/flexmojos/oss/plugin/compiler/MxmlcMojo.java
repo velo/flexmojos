@@ -17,28 +17,6 @@
  */
 package net.flexmojos.oss.plugin.compiler;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.not;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
-import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
-import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
-import static net.flexmojos.oss.plugin.common.FlexScopes.CACHING;
-import static net.flexmojos.oss.plugin.common.FlexScopes.EXTERNAL;
-import static net.flexmojos.oss.plugin.common.FlexScopes.INTERNAL;
-import static net.flexmojos.oss.plugin.common.FlexScopes.RSL;
-import static net.flexmojos.oss.util.PathUtil.file;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import net.flexmojos.oss.compiler.ICommandLineConfiguration;
 import net.flexmojos.oss.compiler.MxmlcConfigurationHolder;
 import net.flexmojos.oss.compiler.command.Result;
@@ -47,6 +25,26 @@ import net.flexmojos.oss.plugin.utilities.MavenUtils;
 import net.flexmojos.oss.plugin.utilities.SourceFileResolver;
 import net.flexmojos.oss.truster.FlashPlayerTruster;
 import net.flexmojos.oss.util.PathUtil;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProjectHelper;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.scope;
+import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.type;
+import static net.flexmojos.oss.plugin.common.FlexExtension.SWC;
+import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
+import static net.flexmojos.oss.plugin.common.FlexScopes.*;
+import static net.flexmojos.oss.util.PathUtil.file;
+import static org.hamcrest.Matchers.*;
 
 /**
  * <p>
@@ -167,9 +165,10 @@ public class MxmlcMojo
         }
 
         executeCompiler( new MxmlcConfigurationHolder( this, getSourceFile() ), true );
-        if ( !file( getOutput() ).exists() )
+        File output = file( getOutput() );
+        if ( !output.exists() )
         {
-            throw new IllegalStateException( "Output file doesn't exist and now error was throw by the compiler!" );
+            throw new IllegalStateException( "Output file doesn't exist and no error was thrown by the compiler!" );
         }
 
         if ( getLocalesRuntime() != null )
@@ -308,6 +307,18 @@ public class MxmlcMojo
     public boolean isUpdateSecuritySandbox()
     {
         return updateSecuritySandbox;
+    }
+
+    @Override
+    protected Artifact getGlobalArtifact() {
+        if("FlexJS".equals(compilerName)) {
+            Artifact global = getDependency(GLOBAL_MATCHER);
+            if(global != null) {
+                return super.getGlobalArtifact();
+            }
+            return null;
+        }
+        return super.getGlobalArtifact();
     }
 
 }

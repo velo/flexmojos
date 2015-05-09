@@ -524,6 +524,9 @@ public abstract class AbstractMavenMojo
     @SuppressWarnings( "unchecked" )
     protected Artifact getFrameworkConfig()
     {
+        if(getFrameworkGroupId() == null) {
+            return null;
+        }
         Matcher<? extends Artifact>[] frmkCfgMatchers = new  Matcher[] {
                 groupId( getFrameworkGroupId() ), artifactId( "framework" ), classifier( "configs" ),
                 type( "zip" )

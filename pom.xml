@@ -81,7 +81,7 @@
         <air.version>14.0</air.version>
         <flash.version>14.0</flash.version>
 
-        <commons_io.version>1.4</commons_io.version>
+        <commons_io.version>2.4</commons_io.version>
         <maven.version>3.1.1</maven.version>
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <sisu.version>3.2.4</sisu.version>
