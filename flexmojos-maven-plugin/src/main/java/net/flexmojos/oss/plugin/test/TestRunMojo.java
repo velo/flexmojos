@@ -414,13 +414,13 @@ public class TestRunMojo
                 throw new MojoExecutionException(
                         "Failed to launch Air Debug Launcher. Probably java was not able to find adl."
                                 + "\n\t\tMake sure adl is available on PATH"
-                                + "\n\t\tor use -Dadl.command=${adl executable}",
+                                + "\n\t\tor use -Dflex.adl.command=${adl executable}",
                         e );
             } else {
                 throw new MojoExecutionException(
                         "Failed to launch Flash Player. Probably java was not able to find flashplayer."
                                 + "\n\t\tMake sure flashplayer is available on PATH"
-                                + "\n\t\tor use -DflashPlayer.command=${flashplayer executable}",
+                                + "\n\t\tor use -Dflex.flashPlayer.command=${flashplayer executable}",
                         e );
             }
         }
