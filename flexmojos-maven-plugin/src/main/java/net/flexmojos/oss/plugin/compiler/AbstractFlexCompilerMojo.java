@@ -2498,7 +2498,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
 
         if ( dir == null )
         {
-            return this.namespaces;
+            getLog().error("Could not find framework. Namespaces not included in configuration; " +
+                    "errors in the build may occur.");
+            return namespaces.toArray( new INamespace[namespaces.size()] );
         }
 
         Reader cfg = null;

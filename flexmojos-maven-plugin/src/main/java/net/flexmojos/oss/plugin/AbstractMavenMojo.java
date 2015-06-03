@@ -483,7 +483,9 @@ public abstract class AbstractMavenMojo
         if(frameworkArtifact != null) {
             return frameworkArtifact.getGroupId() + ".framework";
         }
-        return null;
+        // This is a sensible default, and is what is always returned currently
+        // from getFrameworkArtifact anyway.
+        return "org.apache.flex.framework";
     }
 
     public String getCompilerVersion()
