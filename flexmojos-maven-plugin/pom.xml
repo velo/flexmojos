@@ -281,7 +281,7 @@
             <!-- Workaround to get DITA asdoc, flexmojos doesn't need that -->
             <groupId>net.sf.saxon</groupId>
             <artifactId>saxon-dom</artifactId>
-            <version>9.0</version>
+            <version>8.7</version>
         </dependency>
 
         <dependency>
