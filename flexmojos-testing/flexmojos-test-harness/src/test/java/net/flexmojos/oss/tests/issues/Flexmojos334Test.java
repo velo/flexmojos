@@ -17,10 +17,8 @@
  */
 package net.flexmojos.oss.tests.issues;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import net.flexmojos.oss.matcher.file.FileMatcher;
+import net.flexmojos.oss.test.FMVerifier;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -28,10 +26,13 @@ import org.dom4j.io.SAXReader;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsCollectionContaining;
-import net.flexmojos.oss.matcher.file.FileMatcher;
-import net.flexmojos.oss.test.FMVerifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Flexmojos334Test
     extends AbstractIssueTest
@@ -91,13 +92,18 @@ public class Flexmojos334Test
         MatcherAssert.assertThat( coverageXml, FileMatcher.exists() );
 
         List<String> linkedFiles = new ArrayList<String>();
-        SAXReader saxReader = new SAXReader();
-        Document document = saxReader.read( coverageXml );
+        try {
+            SAXReader saxReader = new SAXReader();
+            // Disable DTD validation (Needed because of inavailalbity of sonatype servers in the time aroung 19.07.2015
+            saxReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            Document document = saxReader.read(coverageXml);
 
-        List<Attribute> list = document.selectNodes( "//class/@filename" );
-        for ( Attribute attribute : list )
-        {
-            linkedFiles.add( attribute.getValue() );
+            List<Attribute> list = document.selectNodes("//class/@filename");
+            for (Attribute attribute : list) {
+                linkedFiles.add(attribute.getValue());
+            }
+        } catch (SAXException e) {
+            throw new RuntimeException("Error parsing coverage report", e);
         }
         return linkedFiles;
     }
