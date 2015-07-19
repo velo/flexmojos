@@ -1,76 +1,97 @@
 /**
  * Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
  * Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.flexmojos.oss.plugin.air;
 
-import com.adobe.air.Listener;
-import com.adobe.air.Message;
 import net.flexmojos.oss.plugin.AbstractMavenMojo;
-import net.flexmojos.oss.plugin.air.packager.FlexmojosAIRPackager;
+import net.flexmojos.oss.plugin.air.packager.*;
 import net.flexmojos.oss.plugin.utilities.FileInterpolationUtil;
-import net.flexmojos.oss.util.PathUtil;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.FileSet;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-import static net.flexmojos.oss.plugin.common.FlexExtension.*;
+import static ch.lambdaj.Lambda.filter;
+import static net.flexmojos.oss.matcher.artifact.ArtifactMatcher.*;
+import static net.flexmojos.oss.plugin.common.FlexExtension.AIR;
+import static net.flexmojos.oss.plugin.common.FlexExtension.SWF;
 import static net.flexmojos.oss.util.PathUtil.file;
-import static net.flexmojos.oss.util.PathUtil.path;
+
 
 /**
- * @goal sign-air
+ * @author Marvin Froeder
+ * @goal package-air
  * @phase package
  * @requiresDependencyResolution compile
- * @author Marvin Froeder
  */
-public class SignAirMojo
-    extends AbstractMavenMojo
-{
-
-    private static String TIMESTAMP_NONE = "none";
+public class PackageAirMojo
+        extends AbstractMavenMojo {
 
     /**
-     * @parameter default-value="${project.build.directory}/air"
+     * @component role="net.flexmojos.oss.plugin.air.packager.PackagerFactory"
      */
-    private File airOutput;
+    private PackagerFactory packagerFactory;
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
+     * Target platform the application should be packaged.
+     * Default "air" will create an ".air" file that can be run on any
+     * system for which an AIR runtime is available. Alternate values are:
+     * - air (default)
+     * - windows
+     * - mac
+     * - linux-debian
+     * - linux-rpm
+     * - android
+     * - ios
      *
-     * @parameter expression="${flexmojos.classifier}"
+     * @parameter default-value="air"
+     * @required
      */
-    private String classifier;
+    private String targetPlatform;
+
+    /**
+     * If set to true the created output will contain the AIR runtime.
+     * This will dramatically increase the size of the output (about 9MB)
+     * but the application will be able to be run without having to install
+     * the AIR runtime.
+     * <p/>
+     * Only used in Android and Desktop (Windows, Mac, Linux) output.
+     *
+     * @parameter default-value="false"
+     * @required
+     */
+    private boolean includeCaptiveRuntime;
+
+    /**
+     * Directory in which the temporary AIR sdk will be created.
+     *
+     * @parameter default-value="${project.build.directory}/adt"
+     */
+    private File workDir;
 
     /**
      * @parameter default-value="${basedir}/src/main/air/descriptor.xml"
@@ -79,18 +100,73 @@ public class SignAirMojo
     private File descriptorTemplate;
 
     /**
-     * Additional properties to substitute into the air descriptor
+     * Additional properties to substitute into the air descriptor.
+     *
      * @parameter
      */
     private Map<String, String> descriptorTemplateProperties;
 
     /**
-     * Ideally Adobe would have used some parseable token, not a huge pass-phrase on the descriptor output. They did
-     * prefer to reinvent wheel, so more work to all of us.
+     * Path to the keyfile used for signing the AIR application.
      *
-     * @parameter expression="${flexmojos.flexbuilderCompatibility}"
+     * @parameter default-value="${basedir}/src/main/air/sign.p12"
      */
-    private boolean flexBuilderCompatibility;
+    private File storefile;
+
+    /**
+     * Password for accessing the certificate in the keystore.
+     *
+     * @parameter
+     */
+    private String storepass;
+
+    /**
+     * The type of keystore, determined by the keystore implementation.
+     *
+     * @parameter default-value="pkcs12"
+     */
+    private String storetype;
+
+    /**
+     * Path to the provisioning profile document.
+     *
+     * @parameter
+     */
+    private File iosProvisioningProfile;
+
+    /**
+     * Defines the type of ios packaging. Possible values are:
+     * - ipa-ad-hoc
+     * - ipa-app-store (default)
+     * - ipa-debug
+     * - ipa-test
+     * - ipa-debug-interpreter
+     * - ipa-debug-interpreter-simulator
+     * - ipa-test-interpreter
+     * - ipa-test-interpreter-simulator
+     *
+     * @parameter default-value="ipa-app-store"
+     */
+    private String iosPackagingType;
+
+    /**
+     * Path to the ios platform sdk.
+     * <p/>
+     * If not provided, per default the files provided with the AIR sdk is used.
+     * Example Path:
+     * /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk
+     *
+     * @parameter
+     */
+    private File iosPlatformSdk;
+
+    /**
+     * Classifier added to the output file name allowing to produce multiple
+     * Variants of one artifact in one build.
+     *
+     * @parameter
+     */
+    private String classifier;
 
     /**
      * Include specified files in AIR package.
@@ -106,51 +182,130 @@ public class SignAirMojo
      */
     private FileSet[] includeFileSets;
 
-    /**
-     * @parameter default-value="${basedir}/src/main/air/sign.p12"
-     */
-    private File keystore;
+    public void fmExecute()
+            throws MojoExecutionException, MojoFailureException {
+        PackagingRequest packagingRequest = new PackagingRequest();
+        packagingRequest.setLog(getLog());
+        Resolver resolver = new Resolver(repositorySystem, localRepository, remoteRepositories);
+        packagingRequest.setResolver(resolver);
+        Set<Artifact> airCompilerArtifacts = new LinkedHashSet<Artifact>(filter(groupId("com.adobe.air.compiler"),
+                pluginArtifacts));
+        packagingRequest.setArtifacts(airCompilerArtifacts);
 
-    /**
-     * @parameter expression="${project}"
-     */
-    private MavenProject project;
+        packagingRequest.setTargetPlatform(targetPlatform);
+        packagingRequest.setIncludeCaptiveRuntime(includeCaptiveRuntime);
+        packagingRequest.setClassifier(classifier);
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    protected MavenProjectHelper projectHelper;
+        includeFileSets = resources.toArray(new FileSet[0]);
+        if (includeFileSets != null) {
+            for (FileSet set : includeFileSets) {
+                DirectoryScanner scanner;
+                if (set instanceof Resource) {
+                    scanner = scan((Resource) set);
+                } else {
+                    scanner = scan(set);
+                }
 
-    /**
-     * @parameter
-     * @required
-     */
-    private String storepass;
+                if (scanner != null) {
+                    File directory = file(set.getDirectory(), project.getBasedir());
 
-    /**
-     * The type of keystore, determined by the keystore implementation.
-     *
-     * @parameter default-value="pkcs12"
-     */
-    private String storetype;
+                    String[] files = scanner.getIncludedFiles();
+                    for (String file : files) {
+                       packagingRequest.addIncludedFile(directory.getAbsolutePath(), file);
+                    }
+                }
+            }
+        }
 
-    /**
-     * Strip artifact version during copy of dependencies.
-     *
-     * @parameter default-value="false"
-     */
-    private boolean stripVersion;
+        packagingRequest.setWorkDir(workDir);
+        packagingRequest.setBuildDir(getBuildDirectory());
+        packagingRequest.setFinalName(project.getBuild().getFinalName());
 
-    /**
-     * The URL for the timestamp server. If 'none', no timestamp will be used.
-     *
-     * @parameter
-     */
-    private String timestampURL;
+        packagingRequest.setStorefile(storefile);
+        packagingRequest.setStoretype(storetype);
+        packagingRequest.setStorepass(storepass);
 
-    private void addSourceWithPath( FlexmojosAIRPackager packager, File directory, String includePath )
+        packagingRequest.setIosProvisioningProfile(iosProvisioningProfile);
+        packagingRequest.setIosPlatformSdk(iosPlatformSdk);
+        packagingRequest.setIosPackagingType(iosPackagingType);
+
+        Artifact swfArtifact = getSwfArtifact();
+        if (swfArtifact == null) {
+            throw new MojoExecutionException("Unable to find SWF artifact.");
+        }
+        packagingRequest.setInputFile(swfArtifact.getFile());
+        packagingRequest.setDescriptorFile(getDescriptorFile());
+
+        Packager packager = packagerFactory.getPackager(packagingRequest);
+        if (packager == null) {
+            throw new MojoExecutionException("Unable to get packager for current configuration.");
+        }
+
+        packager.setRequest(packagingRequest);
+        try {
+            packager.prepare();
+        } catch (PackagingException e) {
+            throw new MojoExecutionException("An error occurred while preparing packager of type " +
+                    packager.getClass().getName(), e);
+        }
+
+        try {
+            File output = packager.execute();
+            String fileType = output.getName().substring(output.getName().lastIndexOf(".") + 1);
+            if (classifier != null) {
+                projectHelper.attachArtifact(project, fileType, classifier, output);
+            } else if (SWF.equals(packaging)) {
+                projectHelper.attachArtifact(project, fileType, output);
+            } else if (AIR.equals(fileType) && AIR.equals(packaging)) {
+                project.getArtifact().setFile(output);
+            } else {
+                projectHelper.attachArtifact(project, fileType, output);
+            }
+        } catch (PackagingException e) {
+            throw new MojoExecutionException("An error occurred while executing packager of type " +
+                    packager.getClass().getName(), e);
+        }
+    }
+
+    protected Artifact getSwfArtifact() throws MojoExecutionException {
+        if ((project.getActiveProfiles() != null) && SWF.equals(project.getArtifact().getType())) {
+            return project.getArtifact();
+        }
+        for (Artifact attachedArtifact : project.getAttachedArtifacts()) {
+            if (SWF.equalsIgnoreCase(attachedArtifact.getType())) {
+                return attachedArtifact;
+            }
+        }
+        Set<Artifact> swfArtifacts = getDependencies(type(SWF), scope("compile"));
+        if (swfArtifacts.size() == 1) {
+            return swfArtifacts.iterator().next();
+        } else if (swfArtifacts.size() > 1) {
+            throw new MojoExecutionException("More than one SWF artifact with scope compile added as dependency.");
+        }
+        return null;
+    }
+
+    protected File getDescriptorFile() throws MojoExecutionException {
+        File descriptorFile = new File(getBuildDirectory(), project.getBuild().getFinalName() + "-descriptor.xml");
+
+        ConcurrentHashMap<String, String> templateProps = new ConcurrentHashMap<String, String>();
+        if (descriptorTemplateProperties != null) {
+            templateProps.putAll(descriptorTemplateProperties);
+        }
+        templateProps.putIfAbsent("output", getSwfArtifact().getFile().getName());
+        templateProps.putIfAbsent("version", project.getVersion());
+
+        try {
+            FileInterpolationUtil.copyFile(descriptorTemplate, descriptorFile, templateProps);
+
+            return descriptorFile;
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error preparing descriptor.", e);
+        }
+    }
+
+
+/*    private void addSourceWithPath(BasePackager packager, File directory, String includePath )
         throws MojoFailureException
     {
         if ( includePath == null )
@@ -176,7 +331,7 @@ public class SignAirMojo
         packager.addSourceWithPath( includeFile, includePath );
     }
 
-    private void appendArtifacts( FlexmojosAIRPackager packager, Collection<Artifact> deps )
+    private void appendArtifacts(BasePackager packager, Collection<Artifact> deps )
     {
         for ( Artifact artifact : deps )
         {
@@ -194,13 +349,13 @@ public class SignAirMojo
         }
     }
 
-    protected void doPackage( String packagerName, FlexmojosAIRPackager packager )
+    protected void doPackage( String fileEnding, BasePackager packager )
         throws MojoExecutionException
     {
         final List<Message> messages = new ArrayList<Message>();
         String c = this.classifier == null ? "" : "-" + this.classifier;
         File output =
-                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + packagerName );
+                new File( project.getBuild().getDirectory(), project.getBuild().getFinalName() + c + "." + fileEnding );
 
         try
         {
@@ -242,7 +397,7 @@ public class SignAirMojo
 
             if ( includeFiles == null && includeFileSets == null )
             {
-                includeFileSets = resources.toArray( new FileSet[0] );
+                includeFileSets = resources.toArray( new FileSet[resources.size()] );
             }
 
             if ( includeFiles != null )
@@ -281,21 +436,21 @@ public class SignAirMojo
 
             if ( classifier != null )
             {
-                projectHelper.attachArtifact( project, packagerName, classifier, output );
+                projectHelper.attachArtifact( project, fileEnding, classifier, output );
             }
             else if ( SWF.equals( packaging ) )
             {
-                projectHelper.attachArtifact( project, packagerName, output );
+                projectHelper.attachArtifact( project, fileEnding, output );
             }
             else
             {
-                if ( AIR.equals( packagerName ) && AIR.equals( packaging ) )
+                if ( AIR.equalsIgnoreCase( fileEnding ) && AIR.equals( packaging ) )
                 {
                     project.getArtifact().setFile( output );
                 }
                 else
                 {
-                    projectHelper.attachArtifact( project, packagerName, output );
+                    projectHelper.attachArtifact( project, fileEnding, output );
                 }
             }
 
@@ -359,14 +514,8 @@ public class SignAirMojo
         }
     }
 
-    public void fmExecute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        doPackage( AIR, new FlexmojosAIRPackager() );
-    }
-
-    private File getAirDescriptor()
-        throws MojoExecutionException
+    protected File getAirDescriptor()
+            throws MojoExecutionException
     {
         File output = getOutput();
 
@@ -374,7 +523,7 @@ public class SignAirMojo
         if ( project.getArtifact().isSnapshot() )
         {
             version =
-                project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
+                    project.getVersion().replace( "SNAPSHOT", new SimpleDateFormat( "yyyyMMdd.HHmmss" ).format( new Date() ) );
         }
         else
         {
@@ -395,11 +544,11 @@ public class SignAirMojo
                 // Workaround Flexbuilder/Flashbuilder weirdness
                 String str = FileUtils.fileRead( dest );
                 str =
-                    str.replace( "[This value will be overwritten by Flex Builder in the output app.xml]",
-                                 output.getName() );
+                        str.replace( "[This value will be overwritten by Flex Builder in the output app.xml]",
+                                output.getName() );
                 str =
-                    str.replace( "[This value will be overwritten by Flash Builder in the output app.xml]",
-                                 output.getName() );
+                        str.replace( "[This value will be overwritten by Flash Builder in the output app.xml]",
+                                output.getName() );
                 FileUtils.fileWrite( PathUtil.path( dest ), str );
             }
         }
@@ -447,5 +596,24 @@ public class SignAirMojo
         }
         return output;
     }
+
+    protected Artifact getAirPackagingResources()
+    {
+        Matcher<? extends Artifact>[] packagingResourcesMatchers = new  Matcher[] {
+                groupId( "com.adobe.air.compiler" ), artifactId( "adt" ), classifier( "android" ),
+                type( "zip" )
+        };
+        Artifact packagingResources =
+                getDependency(packagingResourcesMatchers);
+
+        // not on dependency list, trying to resolve it manually
+        if ( packagingResources == null )
+        {
+            if(getIsAirProject()) {
+                packagingResources = resolve("com.adobe.air.compiler", "adt", getAirVersion(), "android", "zip");
+            }
+        }
+        return packagingResources;
+    }*/
 
 }

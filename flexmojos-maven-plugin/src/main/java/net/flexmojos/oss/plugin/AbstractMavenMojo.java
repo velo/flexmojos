@@ -598,10 +598,38 @@ public abstract class AbstractMavenMojo
         return global;
     }
 
+    public Artifact getAirGlobal() {
+        return getDependency( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) );
+    }
+
     @SuppressWarnings( "unchecked" )
     public boolean getIsAirProject()
     {
-        return (getDependency( groupId( AIR_GROUP_ID ), artifactId( AIR_GLOBAL ), type( SWC ) ) != null);
+        return (getAirGlobal() != null);
+    }
+
+    public String getAirVersion() {
+        if(getIsAirProject()) {
+            return getAirGlobal().getVersion();
+        }
+        return null;
+    }
+
+    public Artifact getFlashGlobal() {
+        return getDependency( groupId( FLASH_GROUP_ID ), artifactId( PLAYER_GLOBAL ), type( SWC ) );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public boolean getIsFlashProject()
+    {
+        return (getFlashGlobal() != null);
+    }
+
+    public String getFlashVersion() {
+        if(getIsFlashProject()) {
+            return getFlashGlobal().getVersion();
+        }
+        return null;
     }
 
     @Override
@@ -677,13 +705,21 @@ public abstract class AbstractMavenMojo
         return PathUtil.file(targetDirectory);
     }
 
-    public File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier, String type )
+    public File getUnpackedArtifact( String groupId, String artifactId, String version, String classifier, String type ) {
+        return getUnpackedArtifact(null, groupId, artifactId, version, classifier, type);
+    }
+
+    public File getUnpackedArtifact( File destDir,  String groupId, String artifactId, String version, String classifier, String type )
     {
         Artifact artifact = resolve( groupId, artifactId, version, classifier, type );
 
-        String dirName = ( classifier == null ? "" : classifier ) + "_" + type;
-
-        File dir = new File( artifact.getFile().getParentFile(), dirName );
+        File dir;
+        if(destDir == null) {
+            String dirName = ( classifier == null ? "" : classifier ) + "_" + type;
+            dir = new File( artifact.getFile().getParentFile(), dirName );
+        } else {
+            dir = destDir;
+        }
         if ( dir.isDirectory() )
         {
             return dir;

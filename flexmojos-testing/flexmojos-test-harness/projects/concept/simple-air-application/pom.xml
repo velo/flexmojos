@@ -48,7 +48,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>sign-air</goal>
+                            <goal>package-air</goal>
                         </goals>
                     </execution>
                 </executions>

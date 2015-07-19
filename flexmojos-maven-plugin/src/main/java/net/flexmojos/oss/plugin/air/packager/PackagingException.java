@@ -15,27 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.flexmojos.oss.plugin.lifecyclemapping;
+package net.flexmojos.oss.plugin.air.packager;
 
-import org.apache.maven.lifecycle.mapping.LifecycleMapping;
-import org.codehaus.plexus.component.annotations.Component;
-import net.flexmojos.oss.plugin.common.FlexExtension;
-
-@Component( role = LifecycleMapping.class, hint = FlexExtension.AIR )
-public class AirLifecycleMapping
-    extends AbstractActionScriptLifecycleMapping
-    implements LifecycleMapping
+public class PackagingException
+    extends Exception
 {
 
-    public String getCompiler()
+    private static final long serialVersionUID = -4101638383564443510L;
+
+    public PackagingException()
     {
-        return "net.flexmojos.oss:flexmojos-maven-plugin:compile-swf";
+        this( null );
     }
 
-    @Override
-    protected String getPackage()
+    public PackagingException(String message, Throwable cause )
     {
-        return "net.flexmojos.oss:flexmojos-maven-plugin:package-air";
+        super( message, cause );
+    }
+
+    public PackagingException(String message )
+    {
+        this( message, null );
     }
 
 }
