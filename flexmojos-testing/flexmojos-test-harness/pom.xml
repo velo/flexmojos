@@ -35,7 +35,6 @@
 
     <properties>
         <maven-version>${maven.version}</maven-version>
-        <fake-maven>${project.build.directory}/apache-maven-${maven-version}</fake-maven>
         <fake-repo>${project.build.directory}/local-repository</fake-repo>
         <sources>${project.build.directory}/sources</sources>
 
@@ -83,6 +82,20 @@
                                     <type>tar.gz</type>
                                     <classifier>bin</classifier>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.maven</groupId>
+                                    <artifactId>apache-maven</artifactId>
+                                    <version>3.2.5</version>
+                                    <type>tar.gz</type>
+                                    <classifier>bin</classifier>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.maven</groupId>
+                                    <artifactId>apache-maven</artifactId>
+                                    <version>3.3.3</version>
+                                    <type>tar.gz</type>
+                                    <classifier>bin</classifier>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
@@ -93,6 +106,56 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-maven-3.1.1</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <fake-maven>${project.build.directory}/apache-maven-3.1.1</fake-maven>
+                                <projects-target>${project.build.directory}/maven-3.1.1-pojects</projects-target>
+                            </systemPropertyVariables>
+                            <reportsDirectory>${project.build.directory}/maven-3.1.1-surefire-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-maven-3.2.5</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <fake-maven>${project.build.directory}/apache-maven-3.2.5</fake-maven>
+                                <projects-target>${project.build.directory}/maven-3.2.5-pojects</projects-target>
+                            </systemPropertyVariables>
+                            <reportsDirectory>${project.build.directory}/maven-3.2.5-surefire-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-maven-3.3.3</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <fake-maven>${project.build.directory}/apache-maven-3.3.3</fake-maven>
+                                <projects-target>${project.build.directory}/maven-3.3.3-pojects</projects-target>
+                            </systemPropertyVariables>
+                            <reportsDirectory>${project.build.directory}/maven-3.3.3-surefire-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <properties>
                         <property>
@@ -104,29 +167,6 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.maven.plugin</groupId>
-                <artifactId>cobertura4it-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>instrument-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <jarSets>
-                                <jarSet>
-                                    <directory>${fake-repo}</directory>
-                                    <includes>
-                                        <include>org/sonatype/flexmojos/**/*.jar</include>
-                                    </includes>
-                                </jarSet>
-                            </jarSets>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
@@ -149,8 +189,7 @@
                         <xml>org.apache.maven.plugins:maven-resources-plugin:2.5:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-site-plugin:3.4:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-source-plugin:2.1.2</xml>
-                        <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.2:maven-plugin</xml>
-                        <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.1.2:maven-plugin</xml>
+                        <xml>org.apache.maven.plugins:maven-project-info-reports-plugin:2.8:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-archetype-plugin:2.0-alpha-5:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-surefire-plugin:2.5:maven-plugin</xml>
                         <xml>org.apache.maven.plugins:maven-compiler-plugin:2.4:maven-plugin</xml>
@@ -679,7 +718,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>mrm-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
+                <version>1.0-beta-2</version>
                 <executions>
                     <execution>
                         <id>start-mrm</id>
@@ -706,22 +745,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.14</version>
-                <executions>
-                    <execution>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaVersion>2.8.0</scalaVersion>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
@@ -806,7 +829,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>

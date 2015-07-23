@@ -96,15 +96,24 @@ public class AbstractFlexMojosTests
             }
         }
 
+        // As we are setting this differently for each execution, get
+        // maven-home and projects-target as a System properties.
+        mavenHome = new File( System.getProperty( "fake-maven" ) );
+        projectsWorkdir = new File( System.getProperty( "projects-target" ) );
+
         projectsSource = new File( getProperty( "projects-source" ) );
-        projectsWorkdir = new File( getProperty( "projects-target" ) );
-        mavenHome = new File( getProperty( "fake-maven" ) );
         repo = new File( getProperty( "fake-repo" ));
 
         File mvn = new File( mavenHome, "bin/mvn" );
         updateMavenMemory( mvn, "\nMAVEN_OPTS=\"-Xmx512M -Duser.language=en -Duser.region=US\"\n" );
         File mvnBat = new File( mavenHome, "bin/mvn.bat" );
-        updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
+        // Starting with Maven 3.3 the mvn.bat is now called mvn.cmd
+        if(mvnBat.exists()) {
+            updateMavenMemory( mvnBat, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
+        } else {
+            File mvnCmd = new File( mavenHome, "bin/mvn.cmd" );
+            updateMavenMemory( mvnCmd, "\nset MAVEN_OPTS=-Xmx512M -Duser.language=en -Duser.region=US\n" );
+        }
 
         ContainerConfiguration config = new DefaultContainerConfiguration();
         config.setAutoWiring(true);

@@ -196,7 +196,7 @@ public class PackageAirMojo
         packagingRequest.setIncludeCaptiveRuntime(includeCaptiveRuntime);
         packagingRequest.setClassifier(classifier);
 
-        includeFileSets = resources.toArray(new FileSet[0]);
+        includeFileSets = resources.toArray(new FileSet[resources.size()]);
         if (includeFileSets != null) {
             for (FileSet set : includeFileSets) {
                 DirectoryScanner scanner;
