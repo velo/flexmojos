@@ -35,6 +35,7 @@
     <module>flexmojos-archetypes-application</module>
     <module>flexmojos-archetypes-library</module>
     <module>flexmojos-archetypes-modular-webapp</module>
+    <module>flexmojos-archetypes-mobile-application</module>
   </modules>
   
   <build>
@@ -44,6 +45,7 @@
         <filtering>true</filtering>
         <includes>
           <include>**/pom.xml</include>
+          <include>**/descriptor.xml</include>
         </includes>
       </resource>
       <resource>
@@ -51,6 +53,7 @@
         <filtering>false</filtering>
         <excludes>
           <exclude>**/pom.xml</exclude>
+          <exclude>**/descriptor.xml</exclude>
         </excludes>
       </resource>
     </resources>
@@ -61,6 +64,9 @@
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
           <escapeString>\</escapeString>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>p12</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
         </configuration>
       </plugin>
     </plugins>

@@ -40,7 +40,12 @@ public class AndroidPackager extends BasePackager {
                     adt.getVersion(), "android", "zip");
             if(androidResources != null) {
                 unpackArtifactToLocation(androidResources, workDir);
+
                 // Some files need to manually be made executable.
+                makeExecutableIfExists(new File(workDir, "bin/adt"));
+                makeExecutableIfExists(new File(workDir, "bin/adt.bat"));
+                makeExecutableIfExists(new File(workDir, "bin/adl"));
+                makeExecutableIfExists(new File(workDir, "bin/adl.exe"));
                 makeExecutableIfExists(new File(workDir, "lib/android/bin/aapt"));
                 makeExecutableIfExists(new File(workDir, "lib/android/bin/aapt.exe"));
                 makeExecutableIfExists(new File(workDir, "lib/android/bin/adb"));

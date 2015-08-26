@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Flexmojos is a set of maven goals to allow maven users to compile, optimize and test Flex SWF, Flex SWC, Air SWF and Air SWC.
+    Copyright (C) 2008-2012  Marvin Froeder <marvin@flexmojos.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>\${groupId}</groupId>
+    <artifactId>\${artifactId}</artifactId>
+    <version>\${version}</version>
+    <packaging>air</packaging>
+
+    <name>\${artifactId} Flex</name>
+
+    <build>
+        <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+
+                <executions>
+                    <!-- Seems to be working -->
+                    <execution>
+                        <id>default-package-air</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                    </execution>
+                    <!--
+                        Packaging for Android
+                    -->
+                    <!-- Seems to be working -->
+                    <execution>
+                        <id>package-android-shared</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>android</targetPlatform>
+                            <classifier>android-shared</classifier>
+                        </configuration>
+                    </execution>
+                    <!-- Seems to be working -->
+                    <execution>
+                        <id>package-android-captive</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>android</targetPlatform>
+                            <includeCaptiveRuntime>true</includeCaptiveRuntime>
+                            <classifier>android-captive</classifier>
+                        </configuration>
+                    </execution>
+                    <!--
+                        Packaging for ios
+                    -->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <execution>
+                        <id>package-ios</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>ios</targetPlatform>
+                            <iosPackagingType>ipa-debug</iosPackagingType>
+                            <!-- Define these properties in your settings.xml -->
+                            <storefile>\${ios-certificate}</storefile>
+                            <storepass>\${ios-password}</storepass>
+                            <iosProvisioningProfile>\${ios-provisioning-profile}</iosProvisioningProfile>
+                        </configuration>
+                    </execution>
+                    <!--
+                        Packaging for Windows
+                    -->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <!--execution>
+                        <id>package-windows-shared</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>windows</targetPlatform>
+                            <classifier>windows-shared</classifier>
+                        </configuration>
+                    </execution-->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <!--execution>
+                        <id>package-windows-captive</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>windows</targetPlatform>
+                            <includeCaptiveRuntime>true</includeCaptiveRuntime>
+                            <classifier>windows-captive</classifier>
+                        </configuration>
+                    </execution-->
+                    <!--
+                        Packaging for Mac
+                    -->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <!--execution>
+                        <id>package-mac-shared</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>mac</targetPlatform>
+                            <classifier>mac-shared</classifier>
+                        </configuration>
+                    </execution-->
+                    <!--
+                        This variant produces a directory as output.
+                        Therefore mavens "install" goal fails with an error ...
+                        need to zip that up first.
+                    -->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <!--execution>
+                        <id>package-mac-captive</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>mac</targetPlatform>
+                            <includeCaptiveRuntime>true</includeCaptiveRuntime>
+                            <classifier>mac-captive</classifier>
+                        </configuration>
+                    </execution-->
+                    <!--
+                        Packaging for linux
+                    -->
+                    <!-- Doesn't seem to be working ... yet -->
+                    <execution>
+                        <id>package-linux-debian-shared</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>linux-debian</targetPlatform>
+                            <classifier>debian-shared</classifier>
+                        </configuration>
+                    </execution>
+                    <!-- Doesn't seem to be working ... yet -->
+                    <execution>
+                        <id>package-linux-rpm-shared</id>
+                        <goals>
+                            <goal>package-air</goal>
+                        </goals>
+                        <configuration>
+                            <targetPlatform>linux-rpm</targetPlatform>
+                            <classifier>rpm-shared</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <debug>true</debug>
+                    <storepass>flexmojos</storepass>
+                    <sourceFile>MobileApplication.mxml</sourceFile>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.adobe.air</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${air.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.adobe</groupId>
+                        <artifactId>fontkit</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.flex</groupId>
+            <artifactId>framework</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+
+
+        <!-- Add the components optimized for mobile use -->
+        <dependency>
+            <groupId>org.apache.flex.framework</groupId>
+            <artifactId>mobile</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <!-- Add the default mobile skin -->
+        <dependency>
+            <groupId>org.apache.flex.framework.themes</groupId>
+            <artifactId>mobile</artifactId>
+            <version>${flex.version}</version>
+            <type>swc</type>
+            <scope>theme</scope>
+        </dependency>
+
+        <!-- Air runtime dependencies -->
+        <dependency>
+            <groupId>com.adobe.air</groupId>
+            <artifactId>framework</artifactId>
+            <version>${air.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <version>4.1.0</version>
+            <classifier>flex4</classifier>
+            <type>swc</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
