@@ -133,35 +133,57 @@ public class CopyMojo
 
         String packaging = project.getPackaging();
 
-        if ( !"war".equals( packaging ) )
+        if ( "war".equals( packaging ) )
         {
-            getLog().warn( "'copy-flex-resources' was intended to run on war project" );
-        }
+            webappDirectory.mkdirs();
 
-        webappDirectory.mkdirs();
+            List<Artifact> swfDependencies = getSwfArtifacts();
 
-        List<Artifact> swfDependencies = getSwfArtifacts();
-
-        for ( Artifact artifact : swfDependencies )
-        {
-            File sourceFile = artifact.getFile();
-            File destFile = getDestinationFile( artifact );
-
-            copy( sourceFile, destFile );
-            if ( copyRSL || copyRuntimeLocales )
+            for ( Artifact artifact : swfDependencies )
             {
-                performSubArtifactsCopy( artifact );
+                File sourceFile = artifact.getFile();
+                File destFile = getDestinationFile( artifact );
+
+                copy( sourceFile, destFile );
+                if ( copyRSL || copyRuntimeLocales )
+                {
+                    performSubArtifactsCopy( artifact );
+                }
+            }
+
+            List<Artifact> airDependencies = getAirArtifacts();
+
+            for ( Artifact artifact : airDependencies )
+            {
+                File sourceFile = artifact.getFile();
+                File destFile = getDestinationFile( artifact );
+
+                copy( sourceFile, destFile );
             }
         }
-
-        List<Artifact> airDependencies = getAirArtifacts();
-
-        for ( Artifact artifact : airDependencies )
+        // If executed in a swf project, copy the related files to the target directory.
+        // This should only be needed for testing and debugging applications in your IDE.
+        else if( "swf".equals( packaging ) )
         {
-            File sourceFile = artifact.getFile();
-            File destFile = getDestinationFile( artifact );
+            // In case of a swf packaging, the resources are copied
+            // to the default output directory.
+            webappDirectory = new File(project.getBuild().getDirectory());
 
-            copy( sourceFile, destFile );
+            if ( copyRSL || copyRuntimeLocales )
+            {
+                if ( copyRSL )
+                {
+                    performRslCopy( project );
+                }
+                if ( copyRuntimeLocales )
+                {
+                    performRuntimeLocalesCopy( project );
+                }
+            }
+        }
+        else
+        {
+            getLog().warn( "'copy-flex-resources' is intended to run on war or swf projects" );
         }
 
     }
