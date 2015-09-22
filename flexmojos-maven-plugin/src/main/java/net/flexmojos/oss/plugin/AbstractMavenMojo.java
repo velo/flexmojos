@@ -455,6 +455,10 @@ public abstract class AbstractMavenMojo
         if(apacheFramework != null) {
             return apacheFramework;
         }
+        Artifact flexjsFramework = MavenUtils.searchFor(getDependencies(), "org.apache.flex.flexjs", "framework", null, "pom", null);
+        if(flexjsFramework != null) {
+            return flexjsFramework;
+        }
         return null;
     }
 

@@ -3376,6 +3376,9 @@ public abstract class AbstractFlexCompilerMojo<CFG, C extends AbstractFlexCompil
         final String themeGroupId = getFrameworkGroupId() + ".themes";
         final String themeArtifactId = artifactName;
         final String themeVersion = getFrameworkVersion();
+        if(themeVersion == null) {
+            return null;
+        }
         try
         {
             // first try to get the artifact from maven local repository for the appropriated flex version
