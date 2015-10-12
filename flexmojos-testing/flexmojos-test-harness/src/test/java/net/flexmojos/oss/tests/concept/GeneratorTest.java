@@ -63,4 +63,12 @@ public class GeneratorTest
                 "-DgeneratorToUse=graniteds232" );
     }
 
+    @Test( groups = { "generator" } )
+    public void testGenerationGranite310()
+            throws Exception
+    {
+        standardConceptTester( "simple-generation", "-DgeneratorArtifact=flexmojos-generator-graniteds-3.1.0",
+                "-DgeneratorToUse=graniteds310" );
+    }
+
 }

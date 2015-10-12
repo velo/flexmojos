@@ -39,6 +39,7 @@
         <module>flexmojos-generator-graniteds-2.2.0</module>
         <module>flexmojos-generator-graniteds-2.3.0</module>
         <module>flexmojos-generator-graniteds-2.3.2</module>
+        <module>flexmojos-generator-graniteds-3.1.0</module>
         <module>flexmojos-generator-constraints</module>
         <module>flexmojos-generator-mojo</module>
         <module>flexmojos-generator-internal-compiler-iface</module>

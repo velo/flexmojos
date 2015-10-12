@@ -93,7 +93,7 @@ public class SimpleGeneratorMojo
     private File baseOutputDirectory;
 
     /**
-     * @parameter default-value="graniteds232" expression="${generatorToUse}"
+     * @parameter default-value="graniteds310" expression="${generatorToUse}"
      */
     private String generatorToUse;
 
