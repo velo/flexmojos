@@ -67,6 +67,8 @@ public class AsVmLauncher
 
     }
 
+    private String vmType;
+
     private boolean allowHeadlessMode;
 
     private String[] asvmCommand;
@@ -87,81 +89,125 @@ public class AsVmLauncher
     private void processExitCode( int returnCode )
     {
 
-        String errorMessage;
+        String errorMessage = "";
 
-        // On some systems flashplayer returns unexpected error codes.
-        // The flashPlayerReturnCodesToIgnore parameter allows us to
-        // prevent the test from failing if we observe the flashplayer
-        // is actually working correctly.
-        if( flashPlayerReturnCodesToIgnore != null ) {
-            for(Integer ignoredReturnCode : flashPlayerReturnCodesToIgnore) {
-                if(returnCode == ignoredReturnCode) {
-                    getLogger().debug( "[LAUNCHER] runtime exited with ignored return code: " + ignoredReturnCode );
+        if("flashplayer".equals(vmType)) {
+            // On some systems flashplayer returns unexpected error codes.
+            // The flashPlayerReturnCodesToIgnore parameter allows us to
+            // prevent the test from failing if we observe the flashplayer
+            // is actually working correctly.
+            if (flashPlayerReturnCodesToIgnore != null) {
+                for (Integer ignoredReturnCode : flashPlayerReturnCodesToIgnore) {
+                    if (returnCode == ignoredReturnCode) {
+                        getLogger().debug("[LAUNCHER] runtime exited with ignored return code: " + ignoredReturnCode);
 
-                    status = ThreadStatus.DONE;
-                    return;
+                        status = ThreadStatus.DONE;
+                        return;
+                    }
                 }
             }
-        }
-        switch ( returnCode )
-        {
-            // TODO: Depending on the executed command, interpret the return codes
-            // ADL: http://help.adobe.com/en_US/air/build/WSfffb011ac560372f-6fa6d7e0128cca93d31-8000.html
-            // Flashplayer:
-            case 0:
-                getLogger().debug( "[LAUNCHER] runtime exit as expected" );
 
-                status = ThreadStatus.DONE;
-                return;
-            case 2:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: No command run was specified.";
-                    break;
-                }
-            case 3:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: The xauth command is not available.";
-                    break;
-                }
-            case 4:
-                if ( useXvfb() )
-                {
-                    errorMessage =
-                        "Xvfb-run error: Temporary directory already exists. This may indicate a race condition.";
-                    break;
-                }
-            case 5:
-                if ( useXvfb() )
-                {
-                    errorMessage =
-                        "Xvfb-run error: A problem was encountered while cleaning up the temporary directory.";
-                    break;
-                }
-            case 6:
-                if ( useXvfb() )
-                {
-                    errorMessage = "Xvfb-run error: A problem was encountered while parsing command-line arguments.";
-                    break;
-                }
-/*            case 7:
-                errorMessage = "This code was typically related with the wrong version of adl being executed.";
-                break;*/
-            /*
-             *  Segmentation fault 128 + signal = 139 --> signal = 11 (http://de.wikipedia.org/wiki/Signal_(Unix))
-             *  Usually occurring when closing the flashplayer on a headless linux system with xvfb.
-             */
-            case 139:
-                if ( OSUtils.isLinux() )
-                {
+            switch ( returnCode )
+            {
+                // Flashplayer:
+                case 0:
                     getLogger().debug( "[LAUNCHER] runtime exit as expected" );
 
                     status = ThreadStatus.DONE;
                     return;
-                }
-            default:
-                errorMessage = "Unexpected return code " + returnCode;
+                default:
+                    errorMessage = "Unexpected return code " + returnCode;
+            }
+        } else if("xvbf-run".equals(vmType)) {
+            switch ( returnCode )
+            {
+                // xvbf-run: http://manpages.ubuntu.com/manpages/lucid/man1/xvfb-run.1.html#contenttoc6
+                case 0:
+                    getLogger().debug( "[LAUNCHER] runtime exit as expected" );
+
+                    status = ThreadStatus.DONE;
+                    return;
+                case 1:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: Xvfb did not start correctly.";
+                    break;
+                case 2:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: No command run was specified.";
+                    break;
+                case 3:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: The xauth command is not available.";
+                    break;
+                case 4:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: Temporary directory already exists. " +
+                            "This may indicate a race condition.";
+                    break;
+                case 5:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: A problem was encountered while " +
+                            "cleaning up the temporary directory.";
+                    break;
+                case 6:
+                    errorMessage = "[LAUNCHER] Xvfb-run error: A problem was encountered while " +
+                            "parsing command-line arguments.";
+                    break;
+                /*
+                 *  Segmentation fault 128 + signal = 139 --> signal = 11 (http://de.wikipedia.org/wiki/Signal_(Unix))
+                 *  Usually occurring when closing the flashplayer on a headless linux system with xvfb.
+                 */
+                case 139:
+                    if ( OSUtils.isLinux() )
+                    {
+                        getLogger().debug( "[LAUNCHER] runtime exit as expected" );
+
+                        status = ThreadStatus.DONE;
+                        return;
+                    }
+                default:
+                    errorMessage = "Unexpected return code " + returnCode;
+            }
+        } else if("adl".equals(vmType)) {
+            // ADL: http://help.adobe.com/en_US/air/build/WSfffb011ac560372f-6fa6d7e0128cca93d31-8000.html
+            switch ( returnCode )
+            {
+                case 0:
+                    getLogger().debug( "[LAUNCHER] runtime exit as expected" );
+
+                    status = ThreadStatus.DONE;
+                    return;
+                case 1:
+                    errorMessage = "[LAUNCHER] adl was already executing another application: Execution aborted";
+                    break;
+                case 2:
+                    errorMessage = "[LAUNCHER] Usage error. The arguments supplied to ADL are incorrect.";
+                    break;
+                case 3:
+                    errorMessage = "[LAUNCHER] The runtime cannot be found.";
+                    break;
+                case 4:
+                    errorMessage = "[LAUNCHER] The runtime cannot be started. Often, this occurs because the version specified in the application does not match the version of the runtime.";
+                    break;
+                case 5:
+                    errorMessage = "[LAUNCHER] An error of unknown cause occurred.";
+                    break;
+                case 6:
+                    errorMessage = "[LAUNCHER] The application descriptor file cannot be found.";
+                    break;
+                case 7:
+                    errorMessage = "[LAUNCHER] The contents of the application descriptor are not valid. This error usually indicates that the XML is not well formed. This usually happens if the 'adl' version doesn't match the AIR version of your project.";
+                    break;
+                case 8:
+                    errorMessage = "[LAUNCHER] The main application content file (specified in the <content> element of the application descriptor file) cannot be found.";
+                    break;
+                case 9:
+                    errorMessage = "[LAUNCHER] The main application content file is not a valid SWF or HTML file.";
+                    break;
+                case 10:
+                    errorMessage = "[LAUNCHER] The application doesn't support the profile specified with the -profile option.";
+                    break;
+                case 11:
+                    errorMessage = "[LAUNCHER] The -screensize argument is not supported in the current profile.";
+                    break;
+                default:
+                    errorMessage = "Unexpected return code " + returnCode;
+            }
         }
 
         getLogger().debug( "[LAUNCHER] " + errorMessage );
@@ -282,6 +328,8 @@ public class AsVmLauncher
             {
                 asvmCommand = OSUtils.getPlatformDefaultAdl();
             }
+
+            vmType = "adl";
         }
         else
         {
@@ -292,6 +340,13 @@ public class AsVmLauncher
             if ( asvmCommand == null )
             {
                 asvmCommand = OSUtils.getPlatformDefaultFlashPlayer();
+            }
+
+            if( useXvfb() )
+            {
+                vmType = "xvbf-run";
+            } else {
+                vmType = "flashplayer";
             }
         }
 
