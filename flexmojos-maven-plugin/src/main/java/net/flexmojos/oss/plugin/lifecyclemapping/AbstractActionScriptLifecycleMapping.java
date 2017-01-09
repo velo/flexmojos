@@ -17,11 +17,14 @@
  */
 package net.flexmojos.oss.plugin.lifecyclemapping;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.maven.lifecycle.mapping.Lifecycle;
+import org.apache.maven.lifecycle.mapping.LifecyclePhase;
 
 public abstract class AbstractActionScriptLifecycleMapping
 {
@@ -56,10 +59,29 @@ public abstract class AbstractActionScriptLifecycleMapping
         }
         phases.put( "install", "org.apache.maven.plugins:maven-install-plugin:install" );
         phases.put( "deploy", "org.apache.maven.plugins:maven-deploy-plugin:deploy" );
-        lifecycle.setPhases( phases );
+        setPhases(lifecycle, phases );
 
         lifecycleMap.put( "default", lifecycle );
         return lifecycleMap;
+    }
+
+    private void setPhases(Lifecycle lifecycle, Map<String, String> phases)
+    {
+      try
+      {
+        Class.forName("org.apache.maven.lifecycle.mapping.LifecyclePhase");
+        
+        Map<String, LifecyclePhase> lifecyclePhases = new HashMap<String, LifecyclePhase>();
+        for (Entry<String, String> entry : phases.entrySet())
+        {
+          lifecyclePhases.put(entry.getKey(), new LifecyclePhase(entry.getValue()));
+        }
+        lifecycle.setLifecyclePhases(lifecyclePhases);
+      }
+      catch (ClassNotFoundException e)
+      {
+        lifecycle.setPhases((Map) phases);
+      }
     }
 
     protected String getPackage()

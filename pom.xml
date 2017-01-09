@@ -78,7 +78,7 @@
         <flash.version>18.0</flash.version>
 
         <commons_io.version>2.4</commons_io.version>
-        <maven.version>3.1.1</maven.version>
+        <maven.version>3.3.9</maven.version>
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <sisu.version>3.2.4</sisu.version>
         <plexus.version>1.5.5</plexus.version>
