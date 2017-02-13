@@ -70,7 +70,7 @@ public abstract class AbstractActionScriptLifecycleMapping
       try
       {
         Class.forName("org.apache.maven.lifecycle.mapping.LifecyclePhase");
-        
+
         Map<String, LifecyclePhase> lifecyclePhases = new HashMap<String, LifecyclePhase>();
         for (Entry<String, String> entry : phases.entrySet())
         {

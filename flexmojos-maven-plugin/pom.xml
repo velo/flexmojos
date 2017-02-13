@@ -24,7 +24,7 @@
     <parent>
         <groupId>net.flexmojos.oss</groupId>
         <artifactId>flexmojos-parent</artifactId>
-        <version>7.2.0-SNAPSHOT</version>
+        <version>7.1.1</version>
     </parent>
 
     <artifactId>flexmojos-maven-plugin</artifactId>
@@ -35,7 +35,7 @@
     <description>With this maven plugin Flex3/AS3 sources can be compiled into a SWC or SWF package.</description>
 
     <prerequisites>
-        <maven>${maven.version}</maven>
+        <maven>${maven.min.runtime.version}</maven>
     </prerequisites>
 
     <developers>

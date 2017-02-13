@@ -29,7 +29,7 @@
 
     <groupId>net.flexmojos.oss</groupId>
     <artifactId>flexmojos-parent</artifactId>
-    <version>7.2.0-SNAPSHOT</version>
+    <version>7.1.1</version>
     <packaging>pom</packaging>
 
     <name>Flexmojos Parent</name>
@@ -37,7 +37,7 @@
     <inceptionYear>2008</inceptionYear>
 
     <prerequisites>
-        <maven>${maven.version}</maven>
+        <maven>${maven.min.runtime.version}</maven>
     </prerequisites>
 
     <distributionManagement>
@@ -78,6 +78,7 @@
         <flash.version>18.0</flash.version>
 
         <commons_io.version>2.4</commons_io.version>
+        <maven.min.runtime.version>3.1.1</maven.min.runtime.version>
         <maven.version>3.3.9</maven.version>
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <sisu.version>3.2.4</sisu.version>
@@ -91,7 +92,7 @@
                 <plugin>
                     <groupId>net.flexmojos.oss</groupId>
                     <artifactId>flexmojos-maven-plugin</artifactId>
-                    <version>7.2.0-SNAPSHOT</version>
+                    <version>7.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -162,6 +163,7 @@
                     <version>1.5</version>
                     <executions>
                         <execution>
+						<phase>process-classes</phase>
                             <goals>
                                 <goal>inherit</goal>
                             </goals>
@@ -194,7 +196,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <version>2.10.4</version>
+					<configuration>
+						<additionalparam>-Xdoclint:none</additionalparam>
+					</configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -298,7 +303,7 @@
                                     </excludes>
                                 </bannedDependencies>
                                 <requireMavenVersion>
-                                    <version>${maven.version}</version>
+                                    <version>${maven.min.runtime.version}</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>[1.5,)</version>
@@ -307,15 +312,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.3</version>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -457,6 +453,7 @@
                     <plugin>
                         <artifactId>maven-deploy-plugin</artifactId>
                         <configuration>
+						<skip>false</skip>
                             <updateReleaseInfo>true</updateReleaseInfo>
                         </configuration>
                     </plugin>
@@ -605,7 +602,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10.4</version>
+					<configuration>
+						<additionalparam>-Xdoclint:none</additionalparam>
+					</configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
